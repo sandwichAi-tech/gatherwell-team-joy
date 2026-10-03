@@ -14,13 +14,349 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      activity: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          id: string
+          payload: Json
+          team_id: string
+          type: string
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          payload?: Json
+          team_id: string
+          type: string
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          payload?: Json
+          team_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          address: string | null
+          capacity: number | null
+          cover_url: string | null
+          created_at: string
+          description_en: string | null
+          description_es: string | null
+          ends_at: string | null
+          host_id: string
+          id: string
+          lat: number | null
+          lng: number | null
+          location_name: string | null
+          online_url: string | null
+          recurrence: string
+          starts_at: string
+          status: string
+          team_id: string
+          template_id: string | null
+          theme: string | null
+          timezone: string
+          title: string
+          visibility: string
+        }
+        Insert: {
+          address?: string | null
+          capacity?: number | null
+          cover_url?: string | null
+          created_at?: string
+          description_en?: string | null
+          description_es?: string | null
+          ends_at?: string | null
+          host_id?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          location_name?: string | null
+          online_url?: string | null
+          recurrence?: string
+          starts_at: string
+          status?: string
+          team_id: string
+          template_id?: string | null
+          theme?: string | null
+          timezone?: string
+          title: string
+          visibility?: string
+        }
+        Update: {
+          address?: string | null
+          capacity?: number | null
+          cover_url?: string | null
+          created_at?: string
+          description_en?: string | null
+          description_es?: string | null
+          ends_at?: string | null
+          host_id?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          location_name?: string | null
+          online_url?: string | null
+          recurrence?: string
+          starts_at?: string
+          status?: string
+          team_id?: string
+          template_id?: string | null
+          theme?: string | null
+          timezone?: string
+          title?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          city: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          language: string
+          onboarded: boolean
+          phone: string | null
+          role_intent: string | null
+          shop_url: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          city?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          language?: string
+          onboarded?: boolean
+          phone?: string | null
+          role_intent?: string | null
+          shop_url?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          city?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          language?: string
+          onboarded?: boolean
+          phone?: string | null
+          role_intent?: string | null
+          shop_url?: string | null
+        }
+        Relationships: []
+      }
+      rsvps: {
+        Row: {
+          checked_in_at: string | null
+          checkin_code: string
+          created_at: string
+          email_opt_in: boolean
+          event_id: string
+          guest_email: string | null
+          guest_name: string | null
+          guest_phone: string | null
+          id: string
+          language: string
+          plus_ones: number
+          sms_opt_in: boolean
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          checked_in_at?: string | null
+          checkin_code?: string
+          created_at?: string
+          email_opt_in?: boolean
+          event_id: string
+          guest_email?: string | null
+          guest_name?: string | null
+          guest_phone?: string | null
+          id?: string
+          language?: string
+          plus_ones?: number
+          sms_opt_in?: boolean
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          checked_in_at?: string | null
+          checkin_code?: string
+          created_at?: string
+          email_opt_in?: boolean
+          event_id?: string
+          guest_email?: string | null
+          guest_name?: string | null
+          guest_phone?: string | null
+          id?: string
+          language?: string
+          plus_ones?: number
+          sms_opt_in?: boolean
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rsvps_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_members: {
+        Row: {
+          custom_badge: string | null
+          joined_at: string
+          role: string
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          custom_badge?: string | null
+          joined_at?: string
+          role?: string
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          custom_badge?: string | null
+          joined_at?: string
+          role?: string
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_members_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teams: {
+        Row: {
+          brand_color: string | null
+          cover_url: string | null
+          created_at: string
+          id: string
+          join_code: string
+          name: string
+          owner_id: string
+          parent_team_id: string | null
+          plan: string
+          slug: string
+        }
+        Insert: {
+          brand_color?: string | null
+          cover_url?: string | null
+          created_at?: string
+          id?: string
+          join_code?: string
+          name: string
+          owner_id?: string
+          parent_team_id?: string | null
+          plan?: string
+          slug: string
+        }
+        Update: {
+          brand_color?: string | null
+          cover_url?: string | null
+          created_at?: string
+          id?: string
+          join_code?: string
+          name?: string
+          owner_id?: string
+          parent_team_id?: string | null
+          plan?: string
+          slug?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teams_parent_team_id_fkey"
+            columns: ["parent_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      can_manage_event: { Args: { _event_id: string }; Returns: boolean }
+      can_rsvp_event: { Args: { _event_id: string }; Returns: boolean }
+      cancel_rsvp_by_code: { Args: { _code: string }; Returns: boolean }
+      create_guest_rsvp: {
+        Args: {
+          _email_opt_in?: boolean
+          _event_id: string
+          _guest_email?: string
+          _guest_name: string
+          _guest_phone?: string
+          _language?: string
+          _plus_ones?: number
+          _sms_opt_in?: boolean
+        }
+        Returns: string
+      }
+      event_going_count: { Args: { _event_id: string }; Returns: number }
+      get_rsvp_by_code: {
+        Args: { _code: string }
+        Returns: {
+          checked_in_at: string
+          created_at: string
+          email_opt_in: boolean
+          event_id: string
+          guest_email: string
+          guest_name: string
+          guest_phone: string
+          id: string
+          language: string
+          plus_ones: number
+          sms_opt_in: boolean
+          status: string
+        }[]
+      }
+      is_team_member: {
+        Args: { _roles: string[]; _team_id: string }
+        Returns: boolean
+      }
+      join_team_by_code: { Args: { _code: string }; Returns: string }
+      shares_team_with: { Args: { _other: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
