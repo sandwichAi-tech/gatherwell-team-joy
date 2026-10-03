@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import type { TFunction } from 'i18next';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -142,7 +143,7 @@ function ComingUp({ teamId, lang, onOpen }: { teamId: string; lang: string; onOp
 
 const REACTIONS = [{ kind: 'like', Icon: ThumbsUp }, { kind: 'celebrate', Icon: PartyPopper }, { kind: 'heart', Icon: Heart }] as const;
 
-function winText(t: (key: string, opts?: Record<string, unknown>) => string, win: Win) {
+function winText(t: TFunction, win: Win) {
   const name = win.actorName || (typeof win.payload['guest'] === 'string' && win.payload['guest']) || t('teamSpace.someone');
   const title = String(win.payload['title'] ?? win.payload['name'] ?? '');
   switch (win.type) {
