@@ -31,7 +31,7 @@ export const eventDetailQuery = (eventId: string) => queryOptions({
       supabase.from('teams').select('name').eq('id', event.team_id).maybeSingle(),
       supabase.from('event_checklists').select('items').eq('event_id', event.id).maybeSingle(),
     ]);
-    const items = Array.isArray(checklist?.items) ? (checklist.items as ChecklistItem[]) : null;
+    const items: ChecklistItem[] | null = Array.isArray(checklist?.items) ? (checklist.items as unknown as ChecklistItem[]) : null;
     return { event, hostName: host?.full_name ?? null, going: going ?? 0, teamName: team?.name ?? null, checklist: items };
   },
 });
