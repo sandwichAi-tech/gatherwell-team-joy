@@ -29,3 +29,5 @@
 - Team wins come only from database triggers (member join + milestones, event publish, check-in, announcement, leadership change, sub-team creation); join_team_by_code no longer writes activity itself, to avoid duplicates.
 - A deferred constraint trigger keeps at least one leader per team; transfer_leadership swaps roles and ownership in one transaction, and a guard trigger blocks clients from changing plan, owner or parent team.
 - team_tree(root) is the single source for sub-team listings and calendar scope: leaders get the whole subtree, everyone else only their own team.
+- Templates launch only through launch_template(), which creates the event, copies the checklist into host-only event_checklists, bumps launches_count (clients can't edit it) and writes the single "launched" win; starter templates have no team and are copied with copy_starter_template().
+- Event detail lives at /event/$id inside the app shell; the public guest page stays at /e/$id.
