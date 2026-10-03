@@ -64,6 +64,7 @@ export function HomePage() {
     <MobileTeamSwitcher />
     <NextCard />
     <HomeTemplates />
+    <LeaderInsightsLink />
     <div className="greeting page-heading"><div><span className="eyebrow">{t('home.eyebrow')}</span><h1>{t('home.greeting', { name: firstName(profile?.full_name) || t('common.name') })}</h1><p>{t('home.subtitle')}</p><span className="chip sample-badge mobile-sample">{t('common.sample')}</span></div><Button className="page-create" onClick={openCreate}><Plus />{t('common.create')}</Button></div>
     <section className="stats-grid" aria-label={t('common.sample')}>
       {stats.map(({ key, Icon }) => <article className="stat-card" key={key}><div className="stat-heading"><span>{t(`stats.${key}.label`)}</span><Icon /></div><strong className="stat-value">{t(`stats.${key}.value`)}</strong><p className={key === 'events' ? '' : 'positive-change'}>{t(`stats.${key}.note`)}</p><Button variant="link" className="detail-link" onClick={() => openDetail(t(`stats.${key}.label`), `${t(`stats.${key}.value`)} · ${t(`stats.${key}.note`)}`)}>{t('home.viewDetails')}<ArrowRight /></Button></article>)}
@@ -91,4 +92,12 @@ export function EmptyPage({ page }: { page: 'events' | 'team' | 'learn' | 'me' }
     </section>
     {page === 'me' && <section className="panel preferences"><h2>{t('me.preferences')}</h2><div className="preference-row"><div className="preference-label"><Globe2 /><span>{t('me.language')}</span></div><div className="segmented" role="group" aria-label={t('me.language')}>{(['en', 'es'] as const).map(lang => <Button key={lang} variant="ghost" aria-pressed={i18n.resolvedLanguage === lang} className={i18n.resolvedLanguage === lang ? 'selected' : ''} onClick={() => changeLanguage(lang)}>{t(lang === 'en' ? 'me.english' : 'me.spanish')}</Button>)}</div></div><div className="preference-row"><div className="preference-label"><Sun /><span>{t('me.appearance')}</span></div><div className="segmented" role="group" aria-label={t('me.appearance')}>{([{ value: 'light', Icon: Sun }, { value: 'dark', Icon: Moon }, { value: 'system', Icon: Monitor }] as const).map(({ value, Icon }) => <Button key={value} variant="ghost" size="icon" className={theme === value ? 'selected' : ''} aria-pressed={theme === value} aria-label={t(`me.${value}`)} title={t(`me.${value}`)} onClick={() => setTheme(value)}><Icon /></Button>)}</div></div><SignOutButton /></section>}
   </>;
+}
+
+function LeaderInsightsLink() {
+  const { t } = useTranslation(); const { userId } = useGatherwell();
+  const { data: workspace } = useQuery(workspaceQuery(userId));
+  if (workspace?.role !== 'leader') return null;
+  return <section className="panel leader-insights-link"><div className="section-heading"><div><span className="eyebrow">{t('insights.eyebrow')}</span><h2>{t('insights.title')}</h2><p>{t('insights.homeText')}</p></div>
+    <div className="leader-links"><Button asChild><Link to="/team/insights">{t('insights.homeLink')}<ArrowRight /></Link></Button><Button asChild variant="secondary"><Link to="/team/map">{t('insights.mapLink')}</Link></Button></div></div></section>;
 }

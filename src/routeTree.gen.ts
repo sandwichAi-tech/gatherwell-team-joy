@@ -23,6 +23,8 @@ import { Route as AuthenticatedAppLearnRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppMeRouteImport } from './routes/_authenticated/_app/me'
 import { Route as AuthenticatedAppTeamRouteImport } from './routes/_authenticated/_app/team'
 import { Route as AuthenticatedAppEventIdRouteImport } from './routes/_authenticated/_app/event.$id'
+import { Route as AuthenticatedAppTeamInsightsRouteImport } from './routes/_authenticated/_app/team_.insights'
+import { Route as AuthenticatedAppTeamMapRouteImport } from './routes/_authenticated/_app/team_.map'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -92,6 +94,17 @@ const AuthenticatedAppEventIdRoute = AuthenticatedAppEventIdRouteImport.update({
   path: '/event/$id',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppTeamInsightsRoute =
+  AuthenticatedAppTeamInsightsRouteImport.update({
+    id: '/team_/insights',
+    path: '/team/insights',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
+const AuthenticatedAppTeamMapRoute = AuthenticatedAppTeamMapRouteImport.update({
+  id: '/team_/map',
+  path: '/team/map',
+  getParentRoute: () => AuthenticatedAppRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedAppIndexRoute
@@ -106,6 +119,8 @@ export interface FileRoutesByFullPath {
   '/me': typeof AuthenticatedAppMeRoute
   '/team': typeof AuthenticatedAppTeamRoute
   '/event/$id': typeof AuthenticatedAppEventIdRoute
+  '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
+  '/team/map': typeof AuthenticatedAppTeamMapRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedAppIndexRoute
@@ -120,6 +135,8 @@ export interface FileRoutesByTo {
   '/me': typeof AuthenticatedAppMeRoute
   '/team': typeof AuthenticatedAppTeamRoute
   '/event/$id': typeof AuthenticatedAppEventIdRoute
+  '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
+  '/team/map': typeof AuthenticatedAppTeamMapRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -137,6 +154,8 @@ export interface FileRoutesById {
   '/_authenticated/_app/team': typeof AuthenticatedAppTeamRoute
   '/_authenticated/_app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/_app/event/$id': typeof AuthenticatedAppEventIdRoute
+  '/_authenticated/_app/team_/insights': typeof AuthenticatedAppTeamInsightsRoute
+  '/_authenticated/_app/team_/map': typeof AuthenticatedAppTeamMapRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -153,6 +172,8 @@ export interface FileRouteTypes {
     | '/me'
     | '/team'
     | '/event/$id'
+    | '/team/insights'
+    | '/team/map'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -167,6 +188,8 @@ export interface FileRouteTypes {
     | '/me'
     | '/team'
     | '/event/$id'
+    | '/team/insights'
+    | '/team/map'
   id:
     | '__root__'
     | '/_authenticated'
@@ -183,6 +206,8 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/team'
     | '/_authenticated/_app/'
     | '/_authenticated/_app/event/$id'
+    | '/_authenticated/_app/team_/insights'
+    | '/_authenticated/_app/team_/map'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -294,6 +319,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppEventIdRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/team_/insights': {
+      id: '/_authenticated/_app/team_/insights'
+      path: '/team/insights'
+      fullPath: '/team/insights'
+      preLoaderRoute: typeof AuthenticatedAppTeamInsightsRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/team_/map': {
+      id: '/_authenticated/_app/team_/map'
+      path: '/team/map'
+      fullPath: '/team/map'
+      preLoaderRoute: typeof AuthenticatedAppTeamMapRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
   }
 }
 
@@ -304,6 +343,8 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppTeamRoute: typeof AuthenticatedAppTeamRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedAppEventIdRoute: typeof AuthenticatedAppEventIdRoute
+  AuthenticatedAppTeamInsightsRoute: typeof AuthenticatedAppTeamInsightsRoute
+  AuthenticatedAppTeamMapRoute: typeof AuthenticatedAppTeamMapRoute
 }
 
 const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
@@ -313,6 +354,8 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppTeamRoute: AuthenticatedAppTeamRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedAppEventIdRoute: AuthenticatedAppEventIdRoute,
+  AuthenticatedAppTeamInsightsRoute: AuthenticatedAppTeamInsightsRoute,
+  AuthenticatedAppTeamMapRoute: AuthenticatedAppTeamMapRoute,
 }
 
 const AuthenticatedAppRouteRouteWithChildren =

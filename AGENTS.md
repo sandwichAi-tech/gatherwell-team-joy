@@ -31,3 +31,4 @@
 - team_tree(root) is the single source for sub-team listings and calendar scope: leaders get the whole subtree, everyone else only their own team.
 - Templates launch only through launch_template(), which creates the event, copies the checklist into host-only event_checklists, bumps launches_count (clients can't edit it) and writes the single "launched" win; starter templates have no team and are copied with copy_starter_template().
 - Event detail lives at /event/$id inside the app shell; the public guest page stays at /e/$id.
+- Leader Insights come only from the leader-checked team_insights() RPC (activity counts, never sales) and shout-outs only from post_shoutout(); the maps key is served by a signed-in server function and the UI falls back to a placeholder plus list when it is missing.
