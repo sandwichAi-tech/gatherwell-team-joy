@@ -1,3 +1,4 @@
+import { FromYourLeader } from '@/components/templates';
 import { TeamSwitcher } from '@/components/team-switcher';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
@@ -54,6 +55,7 @@ function PeopleRows({ follow = false }: { follow?: boolean }) {
   const { t } = useTranslation(); const { openDetail } = useGatherwell();
   return <div>{people.map(person => <div className="person-row" key={person}><div className={`initial-avatar avatar-${person}`}>{t(`people.${person}.initials`)}</div><div className="person-info"><h3>{t(`people.${person}.name`)}</h3><p>{t(`people.${person}.${follow ? 'note' : 'role'}`)}</p></div><Button variant="secondary" size="sm" onClick={() => openDetail(t(`people.${person}.name`), t(`people.${person}.${follow ? 'note' : 'role'}`))}>{follow ? t('home.followAction') : <ChevronRight aria-label={t('home.viewDetails')} />}</Button></div>)}</div>;
 }
+function HomeTemplates() { const { workspace } = useAccount(); return workspace ? <FromYourLeader teamId={workspace.teamId} role={workspace.role} /> : null; }
 function MobileTeamSwitcher() { const { userId } = useGatherwell(); return <TeamSwitcher userId={userId} className="mobile-switcher" />; }
 export function HomePage() {
   const { t } = useTranslation(); const { openCreate, openDetail, openPlaceholder } = useGatherwell(); const { profile } = useAccount();
@@ -61,6 +63,7 @@ export function HomePage() {
   return <>
     <MobileTeamSwitcher />
     <NextCard />
+    <HomeTemplates />
     <div className="greeting page-heading"><div><span className="eyebrow">{t('home.eyebrow')}</span><h1>{t('home.greeting', { name: firstName(profile?.full_name) || t('common.name') })}</h1><p>{t('home.subtitle')}</p><span className="chip sample-badge mobile-sample">{t('common.sample')}</span></div><Button className="page-create" onClick={openCreate}><Plus />{t('common.create')}</Button></div>
     <section className="stats-grid" aria-label={t('common.sample')}>
       {stats.map(({ key, Icon }) => <article className="stat-card" key={key}><div className="stat-heading"><span>{t(`stats.${key}.label`)}</span><Icon /></div><strong className="stat-value">{t(`stats.${key}.value`)}</strong><p className={key === 'events' ? '' : 'positive-change'}>{t(`stats.${key}.note`)}</p><Button variant="link" className="detail-link" onClick={() => openDetail(t(`stats.${key}.label`), `${t(`stats.${key}.value`)} · ${t(`stats.${key}.note`)}`)}>{t('home.viewDetails')}<ArrowRight /></Button></article>)}
