@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { TFunction } from 'i18next';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { FromYourLeader, TemplatesSection } from '@/components/templates';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -77,12 +78,16 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
   const { data: team } = useQuery(teamDetailQuery(teamId));
   const { data: tree = [] } = useQuery(teamTreeQuery(teamId));
   const [sheet, setSheet] = useState<Sheet>(null);
-  const [openEvent, setOpenEvent] = useState<TeamEvent | null>(null);
+  const navigate = useNavigate();
+  const switchTeam = useSwitchTeam(userId);
+  const setOpenEvent = (event: TeamEvent) => { void navigate({ to: '/event/$id', params: { id: event.id } }); };
+  const { data: parent } = useQuery({ queryKey: ['team-parent', team?.parent_team_id], enabled: !!team?.parent_team_id, queryFn: async () => (await supabase.from('teams').select('id, name').eq('id', team!.parent_team_id!).maybeSingle()).data });
   const root = tree.find(node => node.id === teamId);
   const cover = useSignedUrl(team?.cover_url);
   const canCreateSub = isLeader || (workspace.role === 'host' && !!team?.allow_host_subteams);
 
   return <>
+    {parent && <nav className="team-breadcrumb" aria-label={t('teamSpace.breadcrumb')}><button type="button" className="auth-link" onClick={() => switchTeam(parent.id)}><ChevronLeft />{parent.name}</button><span aria-hidden="true">/</span><strong>{workspace.name}</strong></nav>}
     <section className="team-header panel">
       <div className="team-cover" style={cover ? { backgroundImage: `url(${cover})` } : team?.brand_color ? { background: `linear-gradient(135deg, ${team.brand_color}, var(--lavender))` } : undefined}>
         {!cover && <span className="team-cover-initial" aria-hidden="true">{(workspace.name.trim()[0] ?? 'G').toUpperCase()}</span>}
@@ -97,6 +102,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
 
     <PinnedAnnouncement teamId={teamId} />
     <ComingUp teamId={teamId} lang={lang} onOpen={setOpenEvent} />
+    <FromYourLeader teamId={teamId} role={workspace.role} />
 
     {isLeader && <section className="panel leader-tools"><div className="section-heading"><h2>{t('teamSpace.leaderTools')}</h2><span className="chip">{t('roles.leader')}</span></div>
       <div className="tool-grid">
@@ -107,6 +113,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
     {!isLeader && <section className="panel"><button type="button" className="settings-row" onClick={() => setSheet('members')}><UsersRound className="settings-icon" /><span className="settings-label">{t('teamSpace.members')}</span><ChevronRight className="settings-chevron" /></button></section>}
 
     {(tree.length > 1 || canCreateSub) && <SubTeams teamId={teamId} canCreate={canCreateSub} isLeader={isLeader} allowHosts={!!team?.allow_host_subteams} />}
+    {isLeader && <TemplatesSection teamId={teamId} userId={userId} />}
     <TeamCalendar teamId={teamId} lang={lang} onOpen={setOpenEvent} />
     <WinsFeed teamId={teamId} userId={userId} lang={lang} />
 
@@ -115,7 +122,6 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
     <MembersSheet open={sheet === 'members'} onOpenChange={o => !o && setSheet(null)} teamId={teamId} userId={userId} isLeader={isLeader} directLeader={isLeader && !workspace.inherited} />
     {isLeader && <AnnounceSheet open={sheet === 'announce'} onOpenChange={o => !o && setSheet(null)} teamId={teamId} userId={userId} />}
     {isLeader && <ResponsiveSheet open={sheet === 'subteams'} onOpenChange={o => !o && setSheet(null)} title={t('teamSpace.subteams')}><SubTeamSettings teamId={teamId} allowHosts={!!team?.allow_host_subteams} /></ResponsiveSheet>}
-    <EventSheet event={openEvent} onClose={() => setOpenEvent(null)} tree={tree} lang={lang} />
   </>;
 }
 
@@ -154,6 +160,8 @@ function winText(t: TFunction, win: Win) {
     case 'announcement_posted': return t('teamSpace.win.announcement_posted', { name });
     case 'team_created': return t('teamSpace.win.team_created', { name, title });
     case 'leader_changed': return t('teamSpace.win.leader_changed', { name });
+    case 'template_published': return t('teamSpace.win.template_published', { name, title });
+    case 'template_launched': return t('teamSpace.win.template_launched', { name, title });
     case 'subteam_created': return t('teamSpace.win.subteam_created', { name, title });
     default: return t('teamSpace.win.default');
   }
@@ -392,14 +400,3 @@ function TeamCalendar({ teamId, lang, onOpen }: { teamId: string; lang: string; 
   </section>;
 }
 
-function EventSheet({ event, onClose, tree, lang }: { event: TeamEvent | null; onClose: () => void; tree: { id: string; name: string }[]; lang: string }) {
-  const { t } = useTranslation();
-  return <ResponsiveSheet open={!!event} onOpenChange={o => !o && onClose()} title={event?.title ?? ''}>
-    {event && <div className="edit-form">
-      <div className="event-facts"><p>{new Date(event.starts_at).toLocaleString(lang, { weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
-        <p>{event.location_name ?? (event.online_url ? t('teamSpace.online') : t('teamSpace.placeTbd'))}</p><p>{tree.find(n => n.id === event.team_id)?.name}</p></div>
-      <div className="profile-chips"><span className="chip">{t(`teamSpace.status.${event.status}`)}</span><span className="chip">{t(`teamSpace.visibility.${event.visibility}`)}</span></div>
-      {event.status === 'published' && event.visibility === 'public' && <Button asChild><Link to="/e/$id" params={{ id: event.id }}>{t('teamSpace.openEvent')}<ArrowRight /></Link></Button>}
-    </div>}
-  </ResponsiveSheet>;
-}
