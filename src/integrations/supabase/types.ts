@@ -116,6 +116,32 @@ export type Database = {
           },
         ]
       }
+      event_checklists: {
+        Row: {
+          event_id: string
+          items: Json
+          updated_at: string
+        }
+        Insert: {
+          event_id: string
+          items?: Json
+          updated_at?: string
+        }
+        Update: {
+          event_id?: string
+          items?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_checklists_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: true
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           address: string | null
@@ -195,6 +221,13 @@ export type Database = {
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "templates"
             referencedColumns: ["id"]
           },
         ]
@@ -393,6 +426,80 @@ export type Database = {
           },
         ]
       }
+      templates: {
+        Row: {
+          checklist: Json
+          cover_url: string | null
+          created_at: string
+          created_by: string | null
+          default_capacity: number | null
+          default_duration_minutes: number
+          description_en: string | null
+          description_es: string | null
+          followup_script_en: string | null
+          followup_script_es: string | null
+          id: string
+          invite_script_en: string | null
+          invite_script_es: string | null
+          is_published: boolean
+          launches_count: number
+          team_id: string | null
+          theme: string | null
+          title: string
+          visibility_default: string
+        }
+        Insert: {
+          checklist?: Json
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          default_capacity?: number | null
+          default_duration_minutes?: number
+          description_en?: string | null
+          description_es?: string | null
+          followup_script_en?: string | null
+          followup_script_es?: string | null
+          id?: string
+          invite_script_en?: string | null
+          invite_script_es?: string | null
+          is_published?: boolean
+          launches_count?: number
+          team_id?: string | null
+          theme?: string | null
+          title: string
+          visibility_default?: string
+        }
+        Update: {
+          checklist?: Json
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          default_capacity?: number | null
+          default_duration_minutes?: number
+          description_en?: string | null
+          description_es?: string | null
+          followup_script_en?: string | null
+          followup_script_es?: string | null
+          id?: string
+          invite_script_en?: string | null
+          invite_script_es?: string | null
+          is_published?: boolean
+          launches_count?: number
+          team_id?: string | null
+          theme?: string | null
+          title?: string
+          visibility_default?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "templates_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -400,7 +507,12 @@ export type Database = {
     Functions: {
       can_manage_event: { Args: { _event_id: string }; Returns: boolean }
       can_rsvp_event: { Args: { _event_id: string }; Returns: boolean }
+      can_use_team_templates: { Args: { _team: string }; Returns: boolean }
       cancel_rsvp_by_code: { Args: { _code: string }; Returns: boolean }
+      copy_starter_template: {
+        Args: { _team: string; _template: string }
+        Returns: string
+      }
       create_guest_rsvp: {
         Args: {
           _email_opt_in?: boolean
@@ -459,6 +571,18 @@ export type Database = {
       }
       join_team_by_code: {
         Args: { _code: string; _role?: string }
+        Returns: string
+      }
+      launch_template: {
+        Args: {
+          _location_name: string
+          _online_url: string
+          _publish: boolean
+          _starts_at: string
+          _team: string
+          _template: string
+          _timezone: string
+        }
         Returns: string
       }
       my_sole_leader_teams: {
