@@ -592,8 +592,16 @@ export type Database = {
           team_name: string
         }[]
       }
+      post_shoutout: {
+        Args: { _message: string; _team: string; _to: string }
+        Returns: undefined
+      }
       reset_join_code: { Args: { _team: string }; Returns: string }
       shares_team_with: { Args: { _other: string }; Returns: boolean }
+      team_insights: {
+        Args: { _from: string; _root: string; _scope: string; _to: string }
+        Returns: Json
+      }
       team_tree: {
         Args: { _root: string }
         Returns: {
