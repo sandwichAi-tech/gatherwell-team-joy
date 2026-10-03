@@ -1,3 +1,5 @@
+DESIGN RESET: DESIGN_RULES.md replaces all earlier visual, typography, layout, sample-content and tone instructions below. Preserve the product, safety, bilingual and frontend-only requirements.
+
 PROJECT RULES (keep these for the whole project):
 
 APP: Gatherwell — a bilingual (English + Latin American Spanish), mobile-first app where wellness team leaders and their team members organize gatherings: fit camps, wellness nights, walking clubs, trainings, challenges and team events. Simple, warm, fun, and fast.
