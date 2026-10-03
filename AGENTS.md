@@ -18,3 +18,6 @@
 - Home-screen installation is manifest-only, without app-shell service workers, because offline use was not requested.
 - DESIGN_RULES.md is authoritative for visuals and tone over PROJECT_RULES.md, so the permanent premium reset supersedes the initial shell design.
 - Keep bilingual sample dashboard content and detail sheets frontend-only, with session state rather than stored user data, so previews never imply connected services.
+- Team access checks go through the security-definer SQL function is_team_member(team, roles), which also grants leaders of ancestor teams access, so RLS stays non-recursive and sub-team rules live in one place.
+- Guests read, create and cancel RSVPs only through security-definer functions keyed by checkin_code, so the rsvps table never needs an anonymous read policy that would expose contact details.
+- Activity rows are written only by database triggers or backend code; signed-in clients have no insert grant.

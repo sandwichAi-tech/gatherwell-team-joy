@@ -62,3 +62,11 @@ Build the Gatherwell app shell using the rules and design above. Front end only,
 - Web app manifest, icons (a plum rounded square with a peach "g"), cream splash, standalone display, so it installs to a phone home screen.
 
 Smooth page transitions. Keep the bundle light.
+ADDENDUM (Oct 2026, confirmed rules — additive, nothing above removed):
+- Mobile-first with 44–48px tap targets. Every user-facing word in English and Latin American Spanish via i18n.
+- No product catalog or product checkout; hosts can add an external "Shop" link only.
+- Never show sales, volume, commission or income data. Activity only: events, RSVPs, check-ins, trainings, challenges, badges.
+- No health, medical, weight-loss or income claims anywhere.
+- Never mention any outside company or brand in the app.
+- API keys come later: any feature needing an outside service (Claude, Resend, Mailgun, Twilio, Stripe, Google Maps) goes in a backend function that reads the key from Lovable Cloud secrets; if the key is missing, use a realistic mock and a small "Not connected yet" note. Never hard-code keys or put them in front-end code.
+- Row-level security on every table. Accounts are 18+. Guests can RSVP without an account.
