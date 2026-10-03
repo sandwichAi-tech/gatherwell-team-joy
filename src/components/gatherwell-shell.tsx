@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { Link, useRouterState } from '@tanstack/react-router';
+import { ClientOnly, Link, useRouterState } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { Home, CalendarDays, UsersRound, BookOpen, UserRound, Plus, Sparkles, ArrowUpRight, Megaphone, Flag, X, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -67,7 +67,7 @@ export function GatherwellShell({ children }: { children: ReactNode }) {
             <span className="desktop-header-label">{t(`nav.${current.key}`)}</span>
             <div className="header-actions"><Button variant="secondary" size="icon" className="assistant-button" aria-label={t('common.assistant')} title={t('common.assistant')} onClick={() => setSheet('assistant')}><Sparkles size={21} /></Button><Link to="/me" className="header-avatar" aria-label={t('me.profile')}><UserRound size={20} /></Link></div>
           </header>
-          <main className="page-content"><div key={pathname} className="page-transition">{children}</div></main>
+          <main className="page-content"><ClientOnly fallback={<div className="min-h-96" />}><div key={pathname} className="page-transition">{children}</div></ClientOnly></main>
         </div>
         <Button size="icon" className="floating-create" onClick={() => setSheet('create')} aria-label={t('common.create')} title={t('common.create')}><Plus size={28} strokeWidth={2} /></Button>
         <nav className="bottom-nav" aria-label={t('nav.label')}>{tabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: true }} className={`bottom-link ${pathname === path ? 'is-active' : ''}`}><Icon size={22} strokeWidth={pathname === path ? 2.3 : 1.7} /><span>{t(`nav.${key}`)}</span></Link>)}</nav>
