@@ -1,3 +1,4 @@
+import { TeamSwitcher } from '@/components/team-switcher';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, Plus, UsersRound, CalendarDays, Repeat2, CircleCheck, Globe2, Sun, Moon, Monitor, BookOpen, ChevronRight } from 'lucide-react';
@@ -53,10 +54,12 @@ function PeopleRows({ follow = false }: { follow?: boolean }) {
   const { t } = useTranslation(); const { openDetail } = useGatherwell();
   return <div>{people.map(person => <div className="person-row" key={person}><div className={`initial-avatar avatar-${person}`}>{t(`people.${person}.initials`)}</div><div className="person-info"><h3>{t(`people.${person}.name`)}</h3><p>{t(`people.${person}.${follow ? 'note' : 'role'}`)}</p></div><Button variant="secondary" size="sm" onClick={() => openDetail(t(`people.${person}.name`), t(`people.${person}.${follow ? 'note' : 'role'}`))}>{follow ? t('home.followAction') : <ChevronRight aria-label={t('home.viewDetails')} />}</Button></div>)}</div>;
 }
+function MobileTeamSwitcher() { const { userId } = useGatherwell(); return <TeamSwitcher userId={userId} className="mobile-switcher" />; }
 export function HomePage() {
   const { t } = useTranslation(); const { openCreate, openDetail, openPlaceholder } = useGatherwell(); const { profile } = useAccount();
   const stats = [{ key: 'members', Icon: UsersRound }, { key: 'events', Icon: CalendarDays }, { key: 'attendance', Icon: Repeat2 }, { key: 'checkins', Icon: CircleCheck }] as const;
   return <>
+    <MobileTeamSwitcher />
     <NextCard />
     <div className="greeting page-heading"><div><span className="eyebrow">{t('home.eyebrow')}</span><h1>{t('home.greeting', { name: firstName(profile?.full_name) || t('common.name') })}</h1><p>{t('home.subtitle')}</p><span className="chip sample-badge mobile-sample">{t('common.sample')}</span></div><Button className="page-create" onClick={openCreate}><Plus />{t('common.create')}</Button></div>
     <section className="stats-grid" aria-label={t('common.sample')}>
@@ -75,6 +78,7 @@ export function EmptyPage({ page }: { page: 'events' | 'team' | 'learn' | 'me' }
   const actions = { events: 'event', team: 'team', learn: 'training', me: 'profile' } as const;
   const changeLanguage = (language: 'en' | 'es') => { void i18n.changeLanguage(language); localStorage.setItem('gatherwell-language', language); };
   return <>
+    {page === 'team' && <MobileTeamSwitcher />}
     <div className="page-heading"><div><span className="eyebrow">{t(`${page}.eyebrow`)}</span><h1>{t(`${page}.title`)}</h1><p>{t(`${page}.sentence`)}</p></div><Button onClick={() => openPlaceholder(actions[page])}><Plus />{t(`${page}.button`)}</Button></div>
     <section className="panel tab-panel"><div className="section-heading"><h2>{t(`${page}.heading`)}</h2><span className="chip sample-badge">{t('common.sample')}</span></div>
       {page === 'events' && <EventRows />}

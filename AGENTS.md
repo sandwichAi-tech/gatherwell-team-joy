@@ -25,3 +25,4 @@
 - Public surfaces (/login, /join/$code, /e/$id, /terms, /privacy) render through AuthFrame inside ClientOnly so browser-detected language never causes hydration mismatches.
 - Team creation and joining go through create_team / join_team_by_code / get_team_invite RPCs so slugs, join codes and roles are set server-side.
 - Uploaded photos go to the private media bucket under the uploader's folder and are shown via signed URLs, because public buckets are blocked.
+- Active team is stored on profiles.active_team_id (falls back to first leader team, then first team), so the choice follows the person across devices; account deletion goes through delete_my_account(), which refuses while the caller is a team's sole leader.

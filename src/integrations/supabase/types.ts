@@ -134,6 +134,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          active_team_id: string | null
           avatar_url: string | null
           bio: string | null
           city: string | null
@@ -147,6 +148,7 @@ export type Database = {
           shop_url: string | null
         }
         Insert: {
+          active_team_id?: string | null
           avatar_url?: string | null
           bio?: string | null
           city?: string | null
@@ -160,6 +162,7 @@ export type Database = {
           shop_url?: string | null
         }
         Update: {
+          active_team_id?: string | null
           avatar_url?: string | null
           bio?: string | null
           city?: string | null
@@ -172,7 +175,15 @@ export type Database = {
           role_intent?: string | null
           shop_url?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_active_team_id_fkey"
+            columns: ["active_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       rsvps: {
         Row: {
@@ -341,6 +352,7 @@ export type Database = {
           slug: string
         }[]
       }
+      delete_my_account: { Args: never; Returns: undefined }
       event_going_count: { Args: { _event_id: string }; Returns: number }
       get_rsvp_by_code: {
         Args: { _code: string }
@@ -374,6 +386,13 @@ export type Database = {
       join_team_by_code: {
         Args: { _code: string; _role?: string }
         Returns: string
+      }
+      my_sole_leader_teams: {
+        Args: never
+        Returns: {
+          team_id: string
+          team_name: string
+        }[]
       }
       shares_team_with: { Args: { _other: string }; Returns: boolean }
     }
