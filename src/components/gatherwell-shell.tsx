@@ -1,3 +1,4 @@
+import { TeamSwitcher } from '@/components/team-switcher';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { ClientOnly, Link, useRouterState } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
@@ -43,6 +44,7 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
    <aside className="desktop-sidebar">
     <Link to="/" className="brand" aria-label={t('brand')}><span className="brand-mark" aria-hidden="true">g</span><span>{t('brand')}</span></Link>
     <div className="workspace-card"><span className="initial-avatar">{initials}</span><div><strong>{workspace?.name ?? t('workspace.none')}</strong><p>{workspace ? t(`plans.${workspace.plan}`) : profile?.full_name}</p></div></div>
+    <TeamSwitcher userId={userId} className="sidebar-switcher" />
     <nav className="sidebar-nav" aria-label={t('nav.label')}>{tabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: true }} className={`sidebar-link ${pathname === path ? 'is-active' : ''}`}><Icon /><span>{t(`nav.${key}`)}</span></Link>)}</nav>
     <div className="sidebar-bottom"><CircleHelp /><p>{t('common.sampleNote')}</p></div>
    </aside>
