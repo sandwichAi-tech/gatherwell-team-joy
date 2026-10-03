@@ -19,7 +19,7 @@ import { initialsOf, mediaUrl, profileQuery, teamsQuery, uploadMedia, workspaceQ
 
 const HTTPS_URL = /^https:\/\/[^\s/]+\.[^\s]+$/i;
 
-function Avatar({ path, name, size = 64, preview }: { path?: string | null; name?: string | null; size?: number; preview?: string | null }) {
+function Avatar({ path, name, size = 64, preview }: { path?: string | null | undefined; name?: string | null | undefined; size?: number; preview?: string | null | undefined }) {
   const { data: url } = useQuery({ queryKey: ['media-url', path], queryFn: () => mediaUrl(path), enabled: !!path && !preview, staleTime: 50 * 60 * 1000 });
   const src = preview ?? url;
   return src ? <img src={src} alt="" className="profile-avatar" style={{ width: size, height: size }} /> : <span className="initial-avatar profile-avatar" style={{ width: size, height: size, fontSize: size / 3.2 }}>{initialsOf(name)}</span>;
@@ -44,7 +44,7 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
   const [preview, setPreview] = useState<string | null>(null);
   const [removePhoto, setRemovePhoto] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Partial<Record<'full_name' | 'bio' | 'city' | 'phone' | 'shop_url' | 'photo', string>>>({});
 
   useEffect(() => {
     if (!open || !profile) return;
@@ -55,7 +55,7 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
   const pick = (f?: File) => { if (!f) return; if (f.size > 5 * 1024 * 1024) { setErrors({ photo: t('profile.photoTooLarge') }); return; } setFile(f); setPreview(URL.createObjectURL(f)); setRemovePhoto(false); };
 
   const save = async () => {
-    const next: Record<string, string> = {};
+    const next: Partial<Record<'full_name' | 'bio' | 'city' | 'phone' | 'shop_url' | 'photo', string>> = {};
     if (form.full_name.trim().length < 2) next.full_name = t('profile.nameRequired');
     if (form.bio.length > 160) next.bio = t('profile.bioTooLong');
     if (form.shop_url.trim() && !HTTPS_URL.test(form.shop_url.trim())) next.shop_url = t('profile.shopInvalid');
