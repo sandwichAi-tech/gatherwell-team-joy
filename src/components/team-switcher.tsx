@@ -22,9 +22,9 @@ export function TeamSwitcher({ userId, className = '' }: { userId: string; class
   const { data: teams = [] } = useQuery(teamsQuery(userId));
   const { data: active } = useQuery(workspaceQuery(userId));
   const switchTeam = useSwitchTeam(userId);
-  if (teams.length < 2 || !active) return null;
+  if (!active || (teams.length < 2 && !active.inherited)) return null;
   return <Select value={active.teamId} onValueChange={switchTeam}>
     <SelectTrigger className={`team-switcher ${className}`} aria-label={t('profile.switchTeam')}><SelectValue /></SelectTrigger>
-    <SelectContent>{teams.map(team => <SelectItem key={team.teamId} value={team.teamId}>{team.name} · {t(`roles.${team.role}`)}</SelectItem>)}</SelectContent>
+    <SelectContent>{(teams.some(team => team.teamId === active.teamId) ? teams : [...teams, active]).map(team => <SelectItem key={team.teamId} value={team.teamId}>{team.name} · {t(`roles.${team.role}`)}</SelectItem>)}</SelectContent>
   </Select>;
 }

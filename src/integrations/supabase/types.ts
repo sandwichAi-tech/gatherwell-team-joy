@@ -49,6 +49,73 @@ export type Database = {
           },
         ]
       }
+      activity_reactions: {
+        Row: {
+          activity_id: string
+          created_at: string
+          kind: string
+          user_id: string
+        }
+        Insert: {
+          activity_id: string
+          created_at?: string
+          kind: string
+          user_id?: string
+        }
+        Update: {
+          activity_id?: string
+          created_at?: string
+          kind?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_reactions_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activity"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      announcements: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          photo_url: string | null
+          pinned: boolean
+          team_id: string
+        }
+        Insert: {
+          author_id?: string
+          body: string
+          created_at?: string
+          id?: string
+          photo_url?: string | null
+          pinned?: boolean
+          team_id: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          photo_url?: string | null
+          pinned?: boolean
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcements_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           address: string | null
@@ -278,6 +345,7 @@ export type Database = {
       }
       teams: {
         Row: {
+          allow_host_subteams: boolean
           brand_color: string | null
           cover_url: string | null
           created_at: string
@@ -290,6 +358,7 @@ export type Database = {
           slug: string
         }
         Insert: {
+          allow_host_subteams?: boolean
           brand_color?: string | null
           cover_url?: string | null
           created_at?: string
@@ -302,6 +371,7 @@ export type Database = {
           slug: string
         }
         Update: {
+          allow_host_subteams?: boolean
           brand_color?: string | null
           cover_url?: string | null
           created_at?: string
@@ -342,6 +412,10 @@ export type Database = {
           _plus_ones?: number
           _sms_opt_in?: boolean
         }
+        Returns: string
+      }
+      create_subteam: {
+        Args: { _name: string; _parent: string }
         Returns: string
       }
       create_team: {
@@ -394,7 +468,24 @@ export type Database = {
           team_name: string
         }[]
       }
+      reset_join_code: { Args: { _team: string }; Returns: string }
       shares_team_with: { Args: { _other: string }; Returns: boolean }
+      team_tree: {
+        Args: { _root: string }
+        Returns: {
+          depth: number
+          events_this_month: number
+          id: string
+          leader_name: string
+          member_count: number
+          name: string
+          parent_team_id: string
+        }[]
+      }
+      transfer_leadership: {
+        Args: { _team: string; _to: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

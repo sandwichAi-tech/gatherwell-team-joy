@@ -19,7 +19,7 @@ import { initialsOf, mediaUrl, profileQuery, teamsQuery, uploadMedia, workspaceQ
 
 const HTTPS_URL = /^https:\/\/[^\s/]+\.[^\s]+$/i;
 
-function Avatar({ path, name, size = 64, preview }: { path?: string | null | undefined; name?: string | null | undefined; size?: number; preview?: string | null | undefined }) {
+export function Avatar({ path, name, size = 64, preview }: { path?: string | null | undefined; name?: string | null | undefined; size?: number; preview?: string | null | undefined }) {
   const { data: url } = useQuery({ queryKey: ['media-url', path], queryFn: () => mediaUrl(path), enabled: !!path && !preview, staleTime: 50 * 60 * 1000 });
   const src = preview ?? url;
   return src ? <img src={src} alt="" className="profile-avatar" style={{ width: size, height: size }} /> : <span className="initial-avatar profile-avatar" style={{ width: size, height: size, fontSize: size / 3.2 }}>{initialsOf(name)}</span>;
