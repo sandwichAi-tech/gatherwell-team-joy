@@ -22,7 +22,7 @@ export const profileQuery = (userId: string) => queryOptions({
   },
 });
 
-export type TeamMembership = { teamId: string; name: string; plan: string; joinCode: string; role: string; ownerId: string; customBadge: string | null };
+export type TeamMembership = { teamId: string; name: string; plan: string; joinCode: string; role: string; ownerId: string; customBadge: string | null; inherited?: boolean };
 
 export const teamsQuery = (userId: string) => queryOptions({
   queryKey: ['teams', userId],
@@ -45,8 +45,15 @@ export const workspaceQuery = (userId: string) => queryOptions({
   queryKey: ['workspace', userId],
   queryFn: async ({ client }): Promise<Workspace> => {
     const [teams, profile] = await Promise.all([client.fetchQuery(teamsQuery(userId)), client.fetchQuery(profileQuery(userId))]);
-    const pick = teams.find(team => team.teamId === profile?.active_team_id) ?? teams.find(team => team.role === 'leader') ?? teams[0];
-    return pick ?? null;
+    const saved = profile?.active_team_id;
+    const member = teams.find(team => team.teamId === saved);
+    if (member) return member;
+    if (saved) {
+      // Leaders of a parent team can open sub-teams they are not directly in; they act there as leader.
+      const { data } = await supabase.from('teams').select('id, name, plan, join_code, owner_id').eq('id', saved).maybeSingle();
+      if (data) return { teamId: data.id, name: data.name, plan: data.plan, joinCode: data.join_code, role: 'leader', ownerId: data.owner_id, customBadge: null, inherited: true };
+    }
+    return teams.find(team => team.role === 'leader') ?? teams[0] ?? null;
   },
 });
 
@@ -73,7 +80,7 @@ export function parseJoinCode(input: string) {
   return ((match ? match[1] : value) ?? '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
 }
 
-export async function uploadMedia(userId: string, file: File, kind: 'avatar' | 'cover') {
+export async function uploadMedia(userId: string, file: File, kind: 'avatar' | 'cover' | 'announcement') {
   const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
   const path = `${userId}/${kind}-${Date.now()}.${ext}`;
   const { error } = await supabase.storage.from('media').upload(path, file, { upsert: true, contentType: file.type });
