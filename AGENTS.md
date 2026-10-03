@@ -26,3 +26,6 @@
 - Team creation and joining go through create_team / join_team_by_code / get_team_invite RPCs so slugs, join codes and roles are set server-side.
 - Uploaded photos go to the private media bucket under the uploader's folder and are shown via signed URLs, because public buckets are blocked.
 - Active team is stored on profiles.active_team_id (falls back to first leader team, then first team), so the choice follows the person across devices; account deletion goes through delete_my_account(), which refuses while the caller is a team's sole leader.
+- Team wins come only from database triggers (member join + milestones, event publish, check-in, announcement, leadership change, sub-team creation); join_team_by_code no longer writes activity itself, to avoid duplicates.
+- A deferred constraint trigger keeps at least one leader per team; transfer_leadership swaps roles and ownership in one transaction, and a guard trigger blocks clients from changing plan, owner or parent team.
+- team_tree(root) is the single source for sub-team listings and calendar scope: leaders get the whole subtree, everyone else only their own team.
