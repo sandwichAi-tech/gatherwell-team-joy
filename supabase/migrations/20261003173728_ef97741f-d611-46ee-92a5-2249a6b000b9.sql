@@ -1,0 +1,2 @@
+REVOKE EXECUTE ON FUNCTION public.is_team_member(uuid, text[]), public.shares_team_with(uuid), public.can_manage_event(uuid), public.can_rsvp_event(uuid) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.is_team_member(uuid, text[]), public.shares_team_with(uuid), public.can_manage_event(uuid), public.can_rsvp_event(uuid) TO authenticated;
