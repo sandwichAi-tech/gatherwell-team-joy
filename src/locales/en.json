@@ -1,16 +1,244 @@
 {
-  "brand": "Gatherwell", "tagline": "Good things happen together.",
-  "nav": {"home":"Home","events":"Events","team":"Team","learn":"Learn","me":"Me","label":"Main navigation"},
-  "common": {"create":"Create","close":"Close","assistant":"Assistant","notConnected":"Not connected yet","comingSoon":"Coming soon","back":"Back","friend":"friend","gatheringAlt":"Friends enjoying a gathering in the park","peopleAlt":"Your people, growing together","hello":"Hello, friend","you":"You","yourSpace":"Your space, your people."},
-  "home": {"eyebrow":"A LITTLE TOGETHER GOES A LONG WAY","greeting":"Good morning, {{name}}","subtitle":"A fresh day. A little connection. A lot of possibility.","heroTitle":"Make room for\nyour people.","heroText":"Your next great gathering starts with a simple hello.","heroButton":"Create a gathering","next":"Do this next","nextLabel":"YOUR FIRST LITTLE WIN","nextTitle":"Bring your people together","nextText":"A walk, a wellness night, or just a chance to catch up. Start with one gathering.","nextButton":"Create your first event","upcoming":"On the horizon","viewAll":"View all","emptyTitle":"A little quiet, for now","emptyText":"Your upcoming gatherings will find their home here.","footer":"Small moments. Stronger connections."},
-  "events": {"title":"Events","eyebrow":"MAKE A LITTLE TIME FOR TOGETHER","heading":"Good times are on their way","sentence":"Bring your people together — your first gathering starts here.","button":"Create an event"},
-  "team": {"title":"Team","eyebrow":"BETTER WITH YOUR PEOPLE","heading":"Every great team starts with hello","sentence":"A space to connect, celebrate, and grow together.","button":"Start your team"},
-  "learn": {"title":"Learn","eyebrow":"A LITTLE CURIOSITY, A NEW POSSIBILITY","heading":"Your next little lightbulb moment","sentence":"Fresh ideas and shared learning belong right here.","button":"Explore trainings"},
-  "me": {"title":"Me","eyebrow":"A LITTLE SPACE THAT’S ALL YOURS","heading":"Hey, good to see you","sentence":"Your gatherings, your little wins, your own kind of wonderful.","button":"Set up your profile","preferences":"Make yourself at home","language":"Language","english":"English","spanish":"Español","appearance":"Appearance","light":"Light","dark":"Dark","system":"System","profile":"Your profile"},
-  "create": {"title":"Make something happen","description":"A little idea. A new reason to get together.","event":"New event","eventText":"Bring your people together","announcement":"Announcement","announcementText":"Share a little news","challenge":"Challenge","challengeText":"Start something together","training":"Training","trainingText":"Make room to learn"},
-  "placeholder": {"event":"Your next gathering","announcement":"A little news to share","challenge":"A new team challenge","training":"A fresh learning moment","profile":"Your own little corner","team":"Your Team Space","learn":"Fresh ideas ahead"},
-  "error": {"notFound":"Page not found","missing":"This page wandered off. Let’s head home.","home":"Go home","title":"This page didn’t load","message":"Let’s give that another try.","retry":"Try again"},
-  "roles": {"leader":"Leader","host":"Host","member":"Member","guest":"Guest","admin":"Admin"},
-  "activity": {"fitCamp":"Fit camp","wellnessNight":"Wellness night","walkingClub":"Walking club","training":"Training","challenge":"Challenge","teamEvent":"Team event","rsvp":"RSVP","checkIn":"Check-in","badge":"Badge","win":"Win","celebrate":"Celebrate","shop":"Shop"},
-  "meta": {"home":"Your people, brought together.","events":"Make time for gatherings with your people.","team":"A space for your team to connect and celebrate.","learn":"Fresh ideas and trainings for your team.","me":"Your Gatherwell profile and preferences."}
+  "brand": "Gatherwell",
+  "nav": {
+    "home": "Home",
+    "events": "Events",
+    "team": "Team",
+    "learn": "Learn",
+    "me": "Me",
+    "label": "Main navigation"
+  },
+  "common": {
+    "create": "Create",
+    "close": "Close",
+    "assistant": "Assistant",
+    "notConnected": "Not connected yet",
+    "comingSoon": "Coming soon",
+    "back": "Back",
+    "you": "You",
+    "sample": "Sample",
+    "initials": "NC",
+    "name": "Nick",
+    "workspace": "Nick’s workspace",
+    "workspaceLabel": "Workspace",
+    "plan": "Growth plan · Sample",
+    "sampleNote": "Sample data. Changes last for this session.",
+    "memberView": "Switch to member view",
+    "leaderView": "Switch to leader view",
+    "sampleDetails": "Sample details",
+    "previewNote": "Sample preview. This action is not connected yet."
+  },
+  "home": {
+    "eyebrow": "YOUR COMMUNITY, CONNECTED",
+    "greeting": "Good morning, {{name}}.",
+    "subtitle": "A little connection goes a long way. Here’s your community this week.",
+    "upcoming": "Coming up next",
+    "viewAll": "All events",
+    "pulse": "Community pulse",
+    "networkLabel": "BETTER, TOGETHER",
+    "networkTitle": "Your community goes beyond your calendar.",
+    "networkText": "Discover gatherings from trusted hosts and bring your people along.",
+    "networkAction": "Explore your network",
+    "followTitle": "A personal touch goes further",
+    "followSubtitle": "A few people to reconnect with this week.",
+    "followChip": "3 to follow up",
+    "followAction": "Follow up",
+    "viewDetails": "View details"
+  },
+  "events": {
+    "title": "Events",
+    "eyebrow": "Workspace",
+    "heading": "Your community calendar",
+    "sentence": "Three gatherings, one connected community.",
+    "button": "Create an event"
+  },
+  "team": {
+    "title": "Team",
+    "eyebrow": "Workspace",
+    "heading": "Your community",
+    "sentence": "People who make every gathering count.",
+    "button": "Invite members"
+  },
+  "learn": {
+    "title": "Learn",
+    "eyebrow": "Workspace",
+    "heading": "Shared knowledge",
+    "sentence": "Practical ideas for your next gathering.",
+    "button": "Create training"
+  },
+  "me": {
+    "title": "Me",
+    "eyebrow": "Workspace",
+    "heading": "Your workspace",
+    "sentence": "Your profile, activity and preferences.",
+    "button": "Edit profile",
+    "preferences": "Preferences",
+    "language": "Language",
+    "english": "English",
+    "spanish": "Español",
+    "appearance": "Appearance",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "profile": "Your profile"
+  },
+  "create": {
+    "title": "Create",
+    "description": "A new gathering, update or shared goal.",
+    "event": "New event",
+    "eventText": "Bring your people together",
+    "announcement": "Announcement",
+    "announcementText": "Share a little news",
+    "challenge": "Challenge",
+    "challengeText": "Start something together",
+    "training": "Training",
+    "trainingText": "Make room to learn"
+  },
+  "placeholder": {
+    "event": "Your next gathering",
+    "announcement": "A little news to share",
+    "challenge": "A new team challenge",
+    "training": "A fresh learning moment",
+    "profile": "Your own little corner",
+    "team": "Your Team Space",
+    "learn": "Fresh ideas ahead"
+  },
+  "error": {
+    "notFound": "Page not found",
+    "missing": "This page is unavailable. Return to your workspace.",
+    "home": "Go home",
+    "title": "This page didn’t load",
+    "message": "Let’s give that another try.",
+    "retry": "Try again"
+  },
+  "roles": {
+    "leader": "Leader",
+    "host": "Host",
+    "member": "Member",
+    "guest": "Guest",
+    "admin": "Admin"
+  },
+  "activity": {
+    "fitCamp": "Fit camp",
+    "wellnessNight": "Wellness night",
+    "walkingClub": "Walking club",
+    "training": "Training",
+    "challenge": "Challenge",
+    "teamEvent": "Team event",
+    "rsvp": "RSVP",
+    "checkIn": "Check-in",
+    "badge": "Badge",
+    "win": "Win",
+    "celebrate": "Celebrate",
+    "shop": "Shop"
+  },
+  "meta": {
+    "home": "Your people, brought together.",
+    "events": "Make time for gatherings with your people.",
+    "team": "A space for your team to connect and celebrate.",
+    "learn": "Fresh ideas and trainings for your team.",
+    "me": "Your Gatherwell profile and preferences."
+  },
+  "stats": {
+    "members": {
+      "label": "Community members",
+      "value": "128",
+      "note": "+12 this month"
+    },
+    "events": {
+      "label": "Upcoming events",
+      "value": "3",
+      "note": "Across your community"
+    },
+    "attendance": {
+      "label": "Repeat attendance",
+      "value": "68%",
+      "note": "+8 pts vs. last month"
+    },
+    "checkins": {
+      "label": "Check-ins this month",
+      "value": "214",
+      "note": "+18%"
+    }
+  },
+  "sampleEvents": {
+    "month": "SEP",
+    "manage": "Manage",
+    "registered": "{{count}}/{{total}} registered",
+    "camp": {
+      "title": "Saturday community Fit Camp",
+      "time": "08:00 · Citrus Ranch Park, Tustin",
+      "chip": "In person"
+    },
+    "habits": {
+      "title": "Simple habits, stronger routines",
+      "time": "18:00 · Online · Live workshop",
+      "chip": "Online"
+    },
+    "growth": {
+      "title": "Team growth workshop",
+      "time": "12:00 · Online · Team training",
+      "chip": "Training"
+    }
+  },
+  "pulse": {
+    "sofia": {
+      "title": "Sofia joined your Fit Camp",
+      "time": "12 minutes ago"
+    },
+    "challenge": {
+      "title": "4 members completed day 7",
+      "time": "21-day consistency · 1 hour ago"
+    },
+    "maria": {
+      "title": "Maria shared a new event",
+      "time": "Your network · 2 hours ago"
+    }
+  },
+  "people": {
+    "sofia": {
+      "name": "Sofia Martinez",
+      "initials": "SM",
+      "note": "Attended yesterday · Invite her back",
+      "role": "Host · 12 events"
+    },
+    "james": {
+      "name": "James Wilson",
+      "initials": "JW",
+      "note": "Missed the last two events · Check in",
+      "role": "Member · 8 gatherings"
+    },
+    "emily": {
+      "name": "Emily Chen",
+      "initials": "EC",
+      "note": "Asked about upcoming programs",
+      "role": "Host · 6 events"
+    }
+  },
+  "trainingRows": {
+    "hosts": {
+      "title": "The thoughtful host",
+      "note": "Hosting essentials · 12 min",
+      "status": "Continue"
+    },
+    "connections": {
+      "title": "Make every welcome count",
+      "note": "Community building · 8 min",
+      "status": "Start"
+    },
+    "routines": {
+      "title": "A consistent community",
+      "note": "Team training · 15 min",
+      "status": "Start"
+    }
+  },
+  "profileRows": {
+    "name": "Nick Carter",
+    "role": "Community leader",
+    "joined": "Member since September 2026",
+    "activity": "Your activity",
+    "activityValue": "12 gatherings hosted · 3 upcoming",
+    "workspace": "Workspace",
+    "workspaceValue": "128 members · Growth plan"
+  }
 }

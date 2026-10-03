@@ -1,33 +1,53 @@
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, Plus, Sun, CalendarDays, Sparkles, Heart, Globe2, Moon, Monitor } from 'lucide-react';
+import { ArrowRight, Plus, UsersRound, CalendarDays, Repeat2, CircleCheck, Globe2, Sun, Moon, Monitor, BookOpen, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useGatherwell } from './gatherwell-shell';
 import i18n from '@/lib/i18n';
-import gathering from '@/assets/gathering.jpg';
-import people from '@/assets/people.jpg';
 
-export function HomePage() {
+const events = [{ key: 'camp', day: 26, count: 24, total: 30 }, { key: 'habits', day: 28, count: 18, total: 40 }, { key: 'growth', day: 30, count: 32, total: 50 }] as const;
+const people = ['sofia', 'james', 'emily'] as const;
+export function EventRows() {
   const { t } = useTranslation();
-  const { openPlaceholder } = useGatherwell();
+  const { openDetail } = useGatherwell();
+  return <div className="event-list">{events.map(event => <div className="event-row" key={event.key}>
+    <div className="date-tile"><span>{t('sampleEvents.month')}</span><strong>{event.day}</strong></div>
+    <div className="event-info"><h3>{t(`sampleEvents.${event.key}.title`)}</h3><p>{t(`sampleEvents.${event.key}.time`)}</p><div className="event-registration"><span className={`chip ${event.key === 'camp' ? 'warm-chip' : ''}`}>{t(`sampleEvents.${event.key}.chip`)}</span><span>{t('sampleEvents.registered', event)}</span></div><progress className="attendance-progress" value={event.count} max={event.total} aria-label={t('sampleEvents.registered', event)} /></div>
+    <Button variant="secondary" size="sm" onClick={() => openDetail(t(`sampleEvents.${event.key}.title`), `${t(`sampleEvents.${event.key}.time`)} · ${t('sampleEvents.registered', event)}`)}>{t('sampleEvents.manage')}</Button>
+  </div>)}</div>;
+}
+function PeopleRows({ follow = false }: { follow?: boolean }) {
+  const { t } = useTranslation(); const { openDetail } = useGatherwell();
+  return <div>{people.map(person => <div className="person-row" key={person}><div className={`initial-avatar avatar-${person}`}>{t(`people.${person}.initials`)}</div><div className="person-info"><h3>{t(`people.${person}.name`)}</h3><p>{t(`people.${person}.${follow ? 'note' : 'role'}`)}</p></div><Button variant="secondary" size="sm" onClick={() => openDetail(t(`people.${person}.name`), t(`people.${person}.${follow ? 'note' : 'role'}`))}>{follow ? t('home.followAction') : <ChevronRight aria-label={t('home.viewDetails')} />}</Button></div>)}</div>;
+}
+export function HomePage() {
+  const { t } = useTranslation(); const { openCreate, openDetail, openPlaceholder } = useGatherwell();
+  const stats = [{ key: 'members', Icon: UsersRound }, { key: 'events', Icon: CalendarDays }, { key: 'attendance', Icon: Repeat2 }, { key: 'checkins', Icon: CircleCheck }] as const;
   return <>
-    <div className="greeting"><div className="eyebrow"><Sun size={15} />{t('home.eyebrow')}</div><h1>{t('home.greeting', { name: t('common.friend') })}<span className="greeting-sun" aria-hidden="true">☀</span></h1><p>{t('home.subtitle')}</p></div>
-    <section className="gathering-cover" aria-label={t('home.heroTitle')}><img src={gathering} width={1536} height={1024} alt={t('common.gatheringAlt')} /><div className="cover-shade" /><div className="cover-copy"><span className="cover-eyebrow"><span aria-hidden="true">✳</span>{t('brand')}</span><h2>{t('home.heroTitle')}</h2><p>{t('home.heroText')}</p><Button onClick={() => openPlaceholder('event')}>{t('home.heroButton')}<ArrowUpRightIcon /></Button></div></section>
-    <section className="next-section"><div className="section-heading"><h2>{t('home.next')}</h2><Sparkles size={19} className="text-primary" /></div><div className="next-card"><div className="next-icon" aria-hidden="true"><span className="mini-star">✳</span><CalendarDays size={31} strokeWidth={1.5} /><span className="mini-heart"><Heart size={15} fill="currentColor" /></span></div><div className="next-copy"><span className="eyebrow">{t('home.nextLabel')}</span><h3>{t('home.nextTitle')}</h3><p>{t('home.nextText')}</p><Button onClick={() => openPlaceholder('event')}>{t('home.nextButton')}<Plus size={18} /></Button></div></div></section>
-    <section className="horizon-section"><div className="section-heading"><h2>{t('home.upcoming')}</h2><Button asChild variant="ghost" className="view-all"><Link to="/events">{t('home.viewAll')}<ArrowRight size={16} /></Link></Button></div><div className="horizon-empty"><span className="empty-calendar"><CalendarDays size={24} strokeWidth={1.5} /></span><h3>{t('home.emptyTitle')}</h3><p>{t('home.emptyText')}</p><span className="empty-spark" aria-hidden="true">✧</span></div></section>
-    <p className="home-footer"><Heart size={12} />{t('home.footer')}</p>
+    <div className="greeting page-heading"><div><span className="eyebrow">{t('home.eyebrow')}</span><h1>{t('home.greeting', { name: t('common.name') })}</h1><p>{t('home.subtitle')}</p></div><Button className="page-create" onClick={openCreate}><Plus />{t('common.create')}</Button></div>
+    <section className="stats-grid" aria-label={t('common.sample')}>
+      {stats.map(({ key, Icon }) => <article className="stat-card" key={key}><div className="stat-heading"><span>{t(`stats.${key}.label`)}</span><Icon /></div><strong className="stat-value">{t(`stats.${key}.value`)}</strong><p className={key === 'events' ? '' : 'positive-change'}>{t(`stats.${key}.note`)}</p><Button variant="link" className="detail-link" onClick={() => openDetail(t(`stats.${key}.label`), `${t(`stats.${key}.value`)} · ${t(`stats.${key}.note`)}`)}>{t('home.viewDetails')}<ArrowRight /></Button></article>)}
+    </section>
+    <div className="dashboard-columns">
+      <section className="panel upcoming-panel"><div className="section-heading"><h2>{t('home.upcoming')}</h2><Button asChild variant="link"><Link to="/events">{t('home.viewAll')}<ArrowRight /></Link></Button></div><EventRows /></section>
+      <div className="dashboard-right"><section className="network-panel"><div className="circle-lines" aria-hidden="true" /><span className="eyebrow">{t('home.networkLabel')}</span><h2>{t('home.networkTitle')}</h2><p>{t('home.networkText')}</p><Button className="peach-button" onClick={() => openPlaceholder('team')}>{t('home.networkAction')}<ArrowRight /></Button></section>
+      <section className="panel pulse-panel"><h2>{t('home.pulse')}</h2><div className="pulse-list">{(['sofia', 'challenge', 'maria'] as const).map(key => <div className="pulse-item" key={key}><span className="pulse-dot" /><div><h3>{t(`pulse.${key}.title`)}</h3><p>{t(`pulse.${key}.time`)}</p></div></div>)}</div></section></div>
+    </div>
+    <section className="panel follow-panel"><div className="section-heading"><div><h2>{t('home.followTitle')}</h2><p>{t('home.followSubtitle')}</p></div><span className="chip warm-chip">{t('home.followChip')}</span></div><PeopleRows follow /></section>
   </>;
 }
-function ArrowUpRightIcon() { return <ArrowRight size={18} className="-rotate-45" />; }
-
 export function EmptyPage({ page }: { page: 'events' | 'team' | 'learn' | 'me' }) {
-  const { t } = useTranslation();
-  const { openPlaceholder, theme, setTheme } = useGatherwell();
-  const actions = { events: 'event', team: 'team', learn: 'learn', me: 'profile' } as const;
+  const { t } = useTranslation(); const { openPlaceholder, openDetail, theme, setTheme } = useGatherwell();
+  const actions = { events: 'event', team: 'team', learn: 'training', me: 'profile' } as const;
   const changeLanguage = (language: 'en' | 'es') => { void i18n.changeLanguage(language); localStorage.setItem('gatherwell-language', language); };
   return <>
-    <div className="page-title"><span className="eyebrow">{t(`${page}.eyebrow`)}</span><h1>{t(`${page}.title`)}</h1></div>
-    <section className="friendly-empty"><div className={`illustration illustration-${page}`}><img src={people} width={1024} height={1024} alt={t('common.peopleAlt')} /></div><h2>{t(`${page}.heading`)}</h2><p>{t(`${page}.sentence`)}</p><Button onClick={() => openPlaceholder(actions[page])}>{t(`${page}.button`)}<Plus size={18} /></Button></section>
-    {page === 'me' && <section className="preferences"><h2>{t('me.preferences')}</h2><div className="preference-row"><div className="preference-label"><Globe2 size={20} /><span>{t('me.language')}</span></div><div className="segmented" role="group" aria-label={t('me.language')}>{(['en', 'es'] as const).map(lang => <Button key={lang} variant="ghost" aria-pressed={i18n.resolvedLanguage === lang} className={i18n.resolvedLanguage === lang ? 'selected' : ''} onClick={() => changeLanguage(lang)}>{t(lang === 'en' ? 'me.english' : 'me.spanish')}</Button>)}</div></div><div className="preference-row"><div className="preference-label"><Sun size={20} /><span>{t('me.appearance')}</span></div><div className="segmented" role="group" aria-label={t('me.appearance')}>{([{ value: 'light', Icon: Sun }, { value: 'dark', Icon: Moon }, { value: 'system', Icon: Monitor }] as const).map(({ value, Icon }) => <Button key={value} variant="ghost" size="icon" className={theme === value ? 'selected' : ''} aria-pressed={theme === value} aria-label={t(`me.${value}`)} title={t(`me.${value}`)} onClick={() => setTheme(value)}><Icon size={19} /></Button>)}</div></div></section>}
+    <div className="page-heading"><div><span className="eyebrow">{t(`${page}.eyebrow`)}</span><h1>{t(`${page}.title`)}</h1><p>{t(`${page}.sentence`)}</p></div><Button onClick={() => openPlaceholder(actions[page])}><Plus />{t(`${page}.button`)}</Button></div>
+    <section className="panel tab-panel"><div className="section-heading"><h2>{t(`${page}.heading`)}</h2><span className="chip sample-badge">{t('common.sample')}</span></div>
+      {page === 'events' && <EventRows />}
+      {page === 'team' && <PeopleRows />}
+      {page === 'learn' && <div>{(['hosts', 'connections', 'routines'] as const).map(key => <div className="person-row training-row" key={key}><span className="initial-avatar"><BookOpen /></span><div className="person-info"><h3>{t(`trainingRows.${key}.title`)}</h3><p>{t(`trainingRows.${key}.note`)}</p></div><Button variant="secondary" onClick={() => openDetail(t(`trainingRows.${key}.title`), t(`trainingRows.${key}.note`))}>{t(`trainingRows.${key}.status`)}<ArrowRight /></Button></div>)}</div>}
+      {page === 'me' && <div><div className="person-row"><span className="initial-avatar">{t('common.initials')}</span><div className="person-info"><h3>{t('profileRows.name')}</h3><p>{t('profileRows.role')} · {t('profileRows.joined')}</p></div></div>{(['activity', 'workspace'] as const).map(key => <div className="profile-row" key={key}><h3>{t(`profileRows.${key}`)}</h3><p>{t(`profileRows.${key}Value`)}</p></div>)}</div>}
+    </section>
+    {page === 'me' && <section className="panel preferences"><h2>{t('me.preferences')}</h2><div className="preference-row"><div className="preference-label"><Globe2 /><span>{t('me.language')}</span></div><div className="segmented" role="group" aria-label={t('me.language')}>{(['en', 'es'] as const).map(lang => <Button key={lang} variant="ghost" aria-pressed={i18n.resolvedLanguage === lang} className={i18n.resolvedLanguage === lang ? 'selected' : ''} onClick={() => changeLanguage(lang)}>{t(lang === 'en' ? 'me.english' : 'me.spanish')}</Button>)}</div></div><div className="preference-row"><div className="preference-label"><Sun /><span>{t('me.appearance')}</span></div><div className="segmented" role="group" aria-label={t('me.appearance')}>{([{ value: 'light', Icon: Sun }, { value: 'dark', Icon: Moon }, { value: 'system', Icon: Monitor }] as const).map(({ value, Icon }) => <Button key={value} variant="ghost" size="icon" className={theme === value ? 'selected' : ''} aria-pressed={theme === value} aria-label={t(`me.${value}`)} title={t(`me.${value}`)} onClick={() => setTheme(value)}><Icon /></Button>)}</div></div></section>}
   </>;
 }

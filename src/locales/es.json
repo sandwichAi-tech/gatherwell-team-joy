@@ -1,16 +1,244 @@
 {
-  "brand": "Gatherwell", "tagline": "Lo bueno pasa cuando nos juntamos.",
-  "nav": {"home":"Inicio","events":"Eventos","team":"Equipo","learn":"Aprende","me":"Yo","label":"Navegación principal"},
-  "common": {"create":"Crear","close":"Cerrar","assistant":"Asistente","notConnected":"Aún no conectado","comingSoon":"Muy pronto","back":"Volver","friend":"amigo","gatheringAlt":"Amigos disfrutando una reunión en el parque","peopleAlt":"Tu gente, creciendo en equipo","hello":"Hola, amigo","you":"Tú","yourSpace":"Tu espacio, tu gente."},
-  "home": {"eyebrow":"UN RATITO JUNTOS HACE LA DIFERENCIA","greeting":"Buenos días, {{name}}","subtitle":"Un nuevo día. Un poco de conexión. Muchas posibilidades.","heroTitle":"Haz espacio\npara tu gente.","heroText":"Tu próxima gran reunión empieza con un simple hola.","heroButton":"Organiza una reunión","next":"Tu siguiente paso","nextLabel":"TU PRIMER PEQUEÑO LOGRO","nextTitle":"Reúne a tu gente","nextText":"Una caminata, una noche de bienestar o un rato para ponerse al día. Empieza con una reunión.","nextButton":"Crea tu primer evento","upcoming":"Lo que viene","viewAll":"Ver todos","emptyTitle":"Todo tranquilo, por ahora","emptyText":"Aquí encontrarás tus próximas reuniones.","footer":"Pequeños momentos. Grandes conexiones."},
-  "events": {"title":"Eventos","eyebrow":"UN RATITO PARA ESTAR JUNTOS","heading":"Los buenos momentos están por llegar","sentence":"Reúne a tu gente: tu primer encuentro empieza aquí.","button":"Crea un evento"},
-  "team": {"title":"Equipo","eyebrow":"TODO ES MEJOR CON TU GENTE","heading":"Un gran equipo empieza con un hola","sentence":"Un espacio para conectar, celebrar y crecer juntos.","button":"Crea tu equipo"},
-  "learn": {"title":"Aprende","eyebrow":"UN POCO DE CURIOSIDAD, ALGO NUEVO","heading":"Tu próxima gran idea empieza aquí","sentence":"Aquí hay espacio para nuevas ideas y para aprender juntos.","button":"Explora los talleres"},
-  "me": {"title":"Yo","eyebrow":"UN ESPACIO MUY TUYO","heading":"Qué gusto verte","sentence":"Tus reuniones, tus pequeños logros y lo que te hace único.","button":"Completa tu perfil","preferences":"Siéntete como en casa","language":"Idioma","english":"English","spanish":"Español","appearance":"Apariencia","light":"Claro","dark":"Oscuro","system":"Sistema","profile":"Tu perfil"},
-  "create": {"title":"Hagamos que pase","description":"Una pequeña idea. Una nueva razón para reunirnos.","event":"Nuevo evento","eventText":"Reúne a tu gente","announcement":"Anuncio","announcementText":"Comparte una novedad","challenge":"Reto","challengeText":"Empiecen algo juntos","training":"Taller","trainingText":"Un espacio para aprender"},
-  "placeholder": {"event":"Tu próxima reunión","announcement":"Una novedad para compartir","challenge":"Un nuevo reto en equipo","training":"Un momento para aprender","profile":"Tu propio rinconcito","team":"El espacio de tu equipo","learn":"Se vienen nuevas ideas"},
-  "error": {"notFound":"No encontramos la página","missing":"Esta página se fue de paseo. Volvamos al inicio.","home":"Ir al inicio","title":"No se pudo abrir la página","message":"Vamos a intentarlo otra vez.","retry":"Intentar de nuevo"},
-  "roles": {"leader":"Líder","host":"Anfitrión","member":"Miembro","guest":"Invitado","admin":"Administrador"},
-  "activity": {"fitCamp":"Encuentro activo","wellnessNight":"Noche de bienestar","walkingClub":"Club de caminata","training":"Taller","challenge":"Reto","teamEvent":"Evento de equipo","rsvp":"Confirmar asistencia","checkIn":"Registrar llegada","badge":"Insignia","win":"Logro","celebrate":"Celebra","shop":"Tienda"},
-  "meta": {"home":"Tu gente, reunida.","events":"Haz tiempo para reunirte con tu gente.","team":"Un espacio para conectar y celebrar en equipo.","learn":"Ideas nuevas y talleres para tu equipo.","me":"Tu perfil y preferencias de Gatherwell."}
+  "brand": "Gatherwell",
+  "nav": {
+    "home": "Inicio",
+    "events": "Eventos",
+    "team": "Equipo",
+    "learn": "Aprende",
+    "me": "Yo",
+    "label": "Navegación principal"
+  },
+  "common": {
+    "create": "Crear",
+    "close": "Cerrar",
+    "assistant": "Asistente",
+    "notConnected": "Aún no conectado",
+    "comingSoon": "Muy pronto",
+    "back": "Volver",
+    "you": "Tú",
+    "sample": "Ejemplo",
+    "initials": "NC",
+    "name": "Nick",
+    "workspace": "Espacio de Nick",
+    "workspaceLabel": "Espacio",
+    "plan": "Plan de crecimiento · Ejemplo",
+    "sampleNote": "Datos de ejemplo. Los cambios duran esta sesión.",
+    "memberView": "Cambiar a vista de miembro",
+    "leaderView": "Cambiar a vista de líder",
+    "sampleDetails": "Detalles de ejemplo",
+    "previewNote": "Vista de ejemplo. Esta acción aún no está conectada."
+  },
+  "home": {
+    "eyebrow": "TU COMUNIDAD, CONECTADA",
+    "greeting": "Buenos días, {{name}}.",
+    "subtitle": "Un poco de conexión hace la diferencia. Así va tu comunidad esta semana.",
+    "upcoming": "Lo que viene",
+    "viewAll": "Todos los eventos",
+    "pulse": "Actividad de la comunidad",
+    "networkLabel": "MEJOR, EN COMUNIDAD",
+    "networkTitle": "Tu comunidad va más allá de tu calendario.",
+    "networkText": "Descubre encuentros de anfitriones de confianza e invita a tu gente.",
+    "networkAction": "Explorar tu red",
+    "followTitle": "Un detalle personal hace la diferencia",
+    "followSubtitle": "Algunas personas con quienes reconectar esta semana.",
+    "followChip": "3 contactos pendientes",
+    "followAction": "Contactar",
+    "viewDetails": "Ver detalles"
+  },
+  "events": {
+    "title": "Eventos",
+    "eyebrow": "Espacio",
+    "heading": "El calendario de tu comunidad",
+    "sentence": "Tres encuentros, una comunidad conectada.",
+    "button": "Crear un evento"
+  },
+  "team": {
+    "title": "Equipo",
+    "eyebrow": "Espacio",
+    "heading": "Tu comunidad",
+    "sentence": "Personas que hacen que cada encuentro cuente.",
+    "button": "Invitar miembros"
+  },
+  "learn": {
+    "title": "Aprende",
+    "eyebrow": "Espacio",
+    "heading": "Conocimiento compartido",
+    "sentence": "Ideas prácticas para tu próximo encuentro.",
+    "button": "Crear capacitación"
+  },
+  "me": {
+    "title": "Yo",
+    "eyebrow": "Espacio",
+    "heading": "Tu espacio",
+    "sentence": "Tu perfil, actividad y preferencias.",
+    "button": "Editar perfil",
+    "preferences": "Preferencias",
+    "language": "Idioma",
+    "english": "English",
+    "spanish": "Español",
+    "appearance": "Apariencia",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema",
+    "profile": "Tu perfil"
+  },
+  "create": {
+    "title": "Crear",
+    "description": "Un encuentro, una novedad o una meta compartida.",
+    "event": "Nuevo evento",
+    "eventText": "Reúne a tu gente",
+    "announcement": "Anuncio",
+    "announcementText": "Comparte una novedad",
+    "challenge": "Reto",
+    "challengeText": "Empiecen algo juntos",
+    "training": "Taller",
+    "trainingText": "Un espacio para aprender"
+  },
+  "placeholder": {
+    "event": "Tu próxima reunión",
+    "announcement": "Una novedad para compartir",
+    "challenge": "Un nuevo reto en equipo",
+    "training": "Un momento para aprender",
+    "profile": "Tu propio rinconcito",
+    "team": "El espacio de tu equipo",
+    "learn": "Se vienen nuevas ideas"
+  },
+  "error": {
+    "notFound": "No encontramos la página",
+    "missing": "Esta página no está disponible. Vuelve a tu espacio.",
+    "home": "Ir al inicio",
+    "title": "No se pudo abrir la página",
+    "message": "Vamos a intentarlo otra vez.",
+    "retry": "Intentar de nuevo"
+  },
+  "roles": {
+    "leader": "Líder",
+    "host": "Anfitrión",
+    "member": "Miembro",
+    "guest": "Invitado",
+    "admin": "Administrador"
+  },
+  "activity": {
+    "fitCamp": "Encuentro activo",
+    "wellnessNight": "Noche de bienestar",
+    "walkingClub": "Club de caminata",
+    "training": "Taller",
+    "challenge": "Reto",
+    "teamEvent": "Evento de equipo",
+    "rsvp": "Confirmar asistencia",
+    "checkIn": "Registrar llegada",
+    "badge": "Insignia",
+    "win": "Logro",
+    "celebrate": "Celebra",
+    "shop": "Tienda"
+  },
+  "meta": {
+    "home": "Tu gente, reunida.",
+    "events": "Haz tiempo para reunirte con tu gente.",
+    "team": "Un espacio para conectar y celebrar en equipo.",
+    "learn": "Ideas nuevas y talleres para tu equipo.",
+    "me": "Tu perfil y preferencias de Gatherwell."
+  },
+  "stats": {
+    "members": {
+      "label": "Miembros de la comunidad",
+      "value": "128",
+      "note": "+12 este mes"
+    },
+    "events": {
+      "label": "Próximos eventos",
+      "value": "3",
+      "note": "En toda tu comunidad"
+    },
+    "attendance": {
+      "label": "Asistencia recurrente",
+      "value": "68%",
+      "note": "+8 puntos vs. el mes pasado"
+    },
+    "checkins": {
+      "label": "Llegadas este mes",
+      "value": "214",
+      "note": "+18%"
+    }
+  },
+  "sampleEvents": {
+    "month": "SEP",
+    "manage": "Gestionar",
+    "registered": "{{count}}/{{total}} inscritos",
+    "camp": {
+      "title": "Encuentro activo del sábado",
+      "time": "08:00 · Citrus Ranch Park, Tustin",
+      "chip": "Presencial"
+    },
+    "habits": {
+      "title": "Hábitos simples, rutinas más constantes",
+      "time": "18:00 · En línea · Taller en vivo",
+      "chip": "En línea"
+    },
+    "growth": {
+      "title": "Taller de crecimiento del equipo",
+      "time": "12:00 · En línea · Capacitación de equipo",
+      "chip": "Capacitación"
+    }
+  },
+  "pulse": {
+    "sofia": {
+      "title": "Sofia se unió a tu encuentro activo",
+      "time": "Hace 12 minutos"
+    },
+    "challenge": {
+      "title": "4 miembros completaron el día 7",
+      "time": "Constancia de 21 días · Hace 1 hora"
+    },
+    "maria": {
+      "title": "Maria compartió un evento",
+      "time": "Tu red · Hace 2 horas"
+    }
+  },
+  "people": {
+    "sofia": {
+      "name": "Sofia Martinez",
+      "initials": "SM",
+      "note": "Asistió ayer · Invítala de nuevo",
+      "role": "Anfitriona · 12 eventos"
+    },
+    "james": {
+      "name": "James Wilson",
+      "initials": "JW",
+      "note": "Faltó a los últimos dos eventos · Escríbele",
+      "role": "Miembro · 8 encuentros"
+    },
+    "emily": {
+      "name": "Emily Chen",
+      "initials": "EC",
+      "note": "Preguntó por los próximos programas",
+      "role": "Anfitriona · 6 eventos"
+    }
+  },
+  "trainingRows": {
+    "hosts": {
+      "title": "Cómo ser un anfitrión atento",
+      "note": "Bases para anfitriones · 12 min",
+      "status": "Continuar"
+    },
+    "connections": {
+      "title": "Una bienvenida que conecta",
+      "note": "Crear comunidad · 8 min",
+      "status": "Empezar"
+    },
+    "routines": {
+      "title": "Una comunidad constante",
+      "note": "Capacitación de equipo · 15 min",
+      "status": "Empezar"
+    }
+  },
+  "profileRows": {
+    "name": "Nick Carter",
+    "role": "Líder de comunidad",
+    "joined": "Miembro desde septiembre de 2026",
+    "activity": "Tu actividad",
+    "activityValue": "12 encuentros organizados · 3 próximos",
+    "workspace": "Espacio",
+    "workspaceValue": "128 miembros · Plan de crecimiento"
+  }
 }
