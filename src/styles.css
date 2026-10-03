@@ -313,8 +313,8 @@
 .muted-change { color: var(--muted-foreground); font-size: 13px; }
 .insights-chart { width: 100%; height: 220px; display: block; }
 .chart-grid { stroke: var(--border); stroke-width: 1; }
-.chart-line { fill: none; stroke: var(--accent-lavender, #7A5FA8); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-.chart-dot { fill: var(--card); stroke: var(--accent-lavender, #7A5FA8); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.chart-line { fill: none; stroke: var(--lavender); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.chart-dot { fill: var(--card); stroke: var(--lavender); stroke-width: 2; vector-effect: non-scaling-stroke; }
 .chart-label { fill: var(--muted-foreground); font-size: 11px; }
 .insights-columns { grid-template-columns: 1fr 1fr; }
 .rank-list { list-style: none; padding: 0; margin: 0; }

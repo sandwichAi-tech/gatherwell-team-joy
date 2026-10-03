@@ -105,6 +105,10 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
     <FromYourLeader teamId={teamId} role={workspace.role} />
 
     {isLeader && <section className="panel leader-tools"><div className="section-heading"><h2>{t('teamSpace.leaderTools')}</h2><span className="chip">{t('roles.leader')}</span></div>
+      <div className="leader-links">
+        <Link to="/team/insights" className="tool-tile"><BarChart3 /><span>{t('insights.title')}</span><ChevronRight className="settings-chevron" /></Link>
+        <Link to="/team/map" className="tool-tile"><MapPinned /><span>{t('insights.mapLink')}</span><ChevronRight className="settings-chevron" /></Link>
+      </div>
       <div className="tool-grid">
         {([['edit', Pencil, 'editTeam'], ['invite', Share2, 'invite'], ['members', UsersRound, 'members'], ['announce', Megaphone, 'announce'], ['subteams', Network, 'subteams']] as const).map(([key, Icon, label]) =>
           <button type="button" key={key} className="tool-tile" onClick={() => setSheet(key)}><Icon /><span>{t(`teamSpace.${label}`)}</span><ChevronRight className="settings-chevron" /></button>)}
@@ -162,6 +166,7 @@ function winText(t: TFunction, win: Win) {
     case 'leader_changed': return t('teamSpace.win.leader_changed', { name });
     case 'template_published': return t('teamSpace.win.template_published', { name, title });
     case 'template_launched': return t('teamSpace.win.template_launched', { name, title });
+    case 'shoutout': return `${t('teamSpace.win.shoutout', { name, to: String(win.payload['to_name'] ?? '') })}: “${String(win.payload['body'] ?? '')}”`;
     case 'subteam_created': return t('teamSpace.win.subteam_created', { name, title });
     default: return t('teamSpace.win.default');
   }
