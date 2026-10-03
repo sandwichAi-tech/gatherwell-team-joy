@@ -1,6 +1,5 @@
-# Gatherwell shell
-- [x] Bilingual app shell and five screens
-- [x] Creation and assistant sheets
-- [x] Theme and language preferences
-- [x] Manifest and app icons (no offline worker)
-- [x] Verify mobile and desktop flows
+# Gatherwell design reset
+- [x] Save permanent replacement design rules
+- [x] Replace shell, theme, typography and app icons
+- [x] Rebuild Home and four tabs with bilingual sample content
+- [x] Verify desktop/mobile navigation, sheets, language and theme
