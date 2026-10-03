@@ -259,3 +259,45 @@
 .day-event { font-size: 11px; text-align: left; padding: 2px 6px; border-radius: 4px; background: var(--secondary); border-inline-start: 3px solid var(--primary); color: var(--foreground); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 22px; }
 .day-more { font-size: 11px; color: var(--muted-foreground); padding: 0 6px; }
 @media (max-width: 767px) { .day-cell { min-height: 56px; } .day-event { font-size: 0; padding: 0; height: 6px; min-height: 6px; border-inline-start-width: 0; background: currentColor; } .team-cover { height: 104px; } .share-grid { grid-template-columns: 1fr; } }
+
+/* Templates & event detail */
+.team-breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: var(--muted-foreground); font-size: 14px; }
+.team-breadcrumb button { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; }
+.team-breadcrumb svg { width: 16px; height: 16px; }
+.team-breadcrumb strong { color: var(--foreground); font-weight: 600; }
+.template-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.template-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(240px, 280px); gap: 12px; overflow-x: auto; padding-bottom: 4px; scroll-snap-type: x mandatory; }
+.template-row > * { scroll-snap-align: start; }
+.from-leader.compact { padding: 0 0 16px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+.template-card { border: 1px solid var(--border); border-radius: 16px; overflow: hidden; background: var(--card); display: flex; flex-direction: column; }
+.template-cover { height: 96px; background: linear-gradient(135deg, var(--primary), var(--lavender)); background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 12px 16px; }
+.template-cover .team-cover-initial { font-size: 32px; }
+.template-body { padding: 16px; display: grid; gap: 6px; flex: 1; align-content: start; }
+.template-body h3 { font-size: 16px; font-weight: 600; color: var(--foreground); }
+.template-body p { font-size: 14px; color: var(--muted-foreground); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.template-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.template-count { font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.template-actions { margin-top: 8px; display: flex; gap: 8px; }
+.template-actions > * { min-height: 44px; }
+.published-chip { background: color-mix(in oklab, var(--success) 14%, transparent); color: var(--success); }
+.subsection-title { font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--lavender); margin: 24px 0 12px; }
+.bilingual { display: grid; gap: 12px; }
+@media (min-width: 768px) { .bilingual { grid-template-columns: 1fr 1fr; } }
+.translate-button { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: var(--lavender); min-height: 32px; }
+.translate-button svg { width: 14px; height: 14px; }
+.checklist-editor { display: grid; gap: 4px; }
+.checklist-editor li { display: flex; align-items: center; gap: 4px; border: 1px solid var(--border); border-radius: 12px; padding: 4px 4px 4px 12px; color: var(--foreground); }
+.checklist-editor li span { flex: 1; font-size: 14px; }
+.detail-facts { display: grid; gap: 12px; margin-top: 16px; color: var(--foreground); }
+.detail-facts li { display: flex; align-items: center; gap: 12px; }
+.detail-facts svg { width: 20px; height: 20px; stroke-width: 1.5; color: var(--muted-foreground); flex-shrink: 0; }
+.small-avatar { width: 24px; height: 24px; font-size: 10px; }
+.detail-description { margin-top: 16px; white-space: pre-wrap; }
+.detail-actions { justify-content: flex-start; margin-top: 20px; }
+.host-checklist { display: grid; gap: 4px; }
+.check-item { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 48px; padding: 8px; border-radius: 12px; text-align: left; color: var(--foreground); }
+.check-item:hover { background: var(--secondary); }
+.check-item.is-done { color: var(--muted-foreground); text-decoration: line-through; }
+.check-box { width: 22px; height: 22px; border-radius: 6px; border: 1.5px solid var(--border); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.check-item.is-done .check-box { background: var(--success); border-color: var(--success); color: var(--primary-foreground); }
+.check-box svg { width: 14px; height: 14px; }
