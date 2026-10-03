@@ -117,7 +117,7 @@ export function InsightsPage() {
     </ResponsiveSheet>
     <ResponsiveSheet open={!!nudge} onOpenChange={o => !o && setNudge(null)} title={t('insights.checkInTitle', { name: nudge?.name ?? '' })} description={t('insights.noAutoSend')}>
       <div className="edit-form"><div className="copy-field nudge-text"><span>{nudgeText}</span></div>
-        <div className="share-grid"><Button onClick={async () => { await navigator.clipboard.writeText(nudgeText); toast.success(t('onboarding.copied')); }}><Copy />{t('onboarding.copy')}</Button>
+        <div className="share-grid"><Button onClick={async () => { await navigator.clipboard.writeText(nudgeText); toast.success(t('onboarding.copied')); }}><Copy />{t('insights.copy')}</Button>
           <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(nudgeText)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button></div></div>
     </ResponsiveSheet>
   </>;

@@ -113,7 +113,7 @@ export function MapPage() {
         <li><CalendarDays />{new Date(picked.starts_at).toLocaleString(lang, { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</li>
         <li><UserRound />{picked.host ?? t('teamSpace.someone')}</li>
         <li><MapPin />{picked.address ?? picked.location_name ?? t('teamSpace.online')}</li>
-        <li><UsersRound />{picked.capacity ? t('sampleEvents.registered', { count: picked.going ?? 0, total: picked.capacity }) : t('teamSpace.going', { count: picked.going ?? 0 })}</li></ul>
+        <li><UsersRound />{picked.capacity ? t('sampleEvents.registered', { count: picked.going ?? 0, total: picked.capacity }) : t('map.going', { count: picked.going ?? 0 })}</li></ul>
         <Button asChild className="onboarding-continue"><Link to="/event/$id" params={{ id: picked.id }}>{t('map.view')}<ArrowRight /></Link></Button></div>}
     </ResponsiveSheet>
   </>;
