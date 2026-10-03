@@ -16,3 +16,5 @@
 - This stage is frontend-only: creation actions open explicit coming-soon sheets, never imply saved data or connected services.
 - Store only language and theme preferences in localStorage; future user data belongs in Lovable Cloud with team-scoped RLS.
 - Home-screen installation is manifest-only, without app-shell service workers, because offline use was not requested.
+- DESIGN_RULES.md is authoritative for visuals and tone over PROJECT_RULES.md, so the permanent premium reset supersedes the initial shell design.
+- Keep bilingual sample dashboard content and detail sheets frontend-only, with session state rather than stored user data, so previews never imply connected services.
