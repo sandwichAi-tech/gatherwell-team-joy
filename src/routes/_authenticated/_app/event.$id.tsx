@@ -32,7 +32,7 @@ function EventDetailPage() {
   const toggle = async (index: number) => {
     if (!checklist) return;
     const items: ChecklistItem[] = checklist.map((item, i) => i === index ? { ...item, done: !item.done } : item);
-    queryClient.setQueryData(eventDetailQuery(id).queryKey, { ...data, checklist: items });
+    queryClient.setQueryData(eventDetailQuery(id).queryKey, old => (old ? { ...old, checklist: items } : old));
     const { error } = await supabase.from('event_checklists').update({ items, updated_at: new Date().toISOString() }).eq('event_id', id);
     if (error) { toast.error(t('profile.saveError')); await refresh(); }
   };
