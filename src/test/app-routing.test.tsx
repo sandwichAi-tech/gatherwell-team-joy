@@ -9,9 +9,14 @@ import es from "@/locales/es.json";
 // Match routes without running loaders or rendering: loaders may need a server or
 // network the test run lacks, and jsdom never loads the stylesheets React waits on.
 describe("App routing", () => {
-  it.each(["/", "/events", "/team", "/learn", "/me"])("matches Gatherwell tab %s", (path) => {
+  it.each(["/", "/events", "/team", "/learn", "/me"])("matches protected Gatherwell tab %s", (path) => {
     const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
-    expect(router.matchRoutes(path).at(-1)?.routeId).toBe(path);
+    expect(router.matchRoutes(path).at(-1)?.routeId).toBe(`/_authenticated/_app${path}`);
+  });
+
+  it.each([["/login", "/login"], ["/join/ABC123", "/join/$code"], ["/e/123", "/e/$id"], ["/terms", "/terms"], ["/privacy", "/privacy"], ["/onboarding", "/_authenticated/onboarding"]])("matches %s", (path, id) => {
+    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+    expect(router.matchRoutes(path).at(-1)?.routeId).toBe(id);
   });
 
   it("keeps English and Spanish translation keys aligned", () => {

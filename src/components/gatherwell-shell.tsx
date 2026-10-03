@@ -4,16 +4,20 @@ import { useTranslation } from 'react-i18next';
 import { Home, CalendarDays, UsersRound, BookOpen, UserRound, Plus, Sparkles, ArrowUpRight, Megaphone, Flag, X, CircleHelp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
-import i18n from '@/lib/i18n';
+import { useQuery } from '@tanstack/react-query';
+import { profileQuery, workspaceQuery, initialsOf } from '@/lib/account';
 
 type Theme = 'system' | 'light' | 'dark';
 type Creation = 'event' | 'announcement' | 'challenge' | 'training' | 'profile' | 'team' | 'learn';
-const AppContext = createContext<{ openCreate: () => void; openPlaceholder: (kind: Creation) => void; openDetail: (title: string, description: string) => void; theme: Theme; setTheme: (theme: Theme) => void }>({ openCreate: () => {}, openPlaceholder: () => {}, openDetail: () => {}, theme: 'system', setTheme: () => {} });
+const AppContext = createContext<{ openCreate: () => void; openPlaceholder: (kind: Creation) => void; openDetail: (title: string, description: string) => void; theme: Theme; setTheme: (theme: Theme) => void; userId: string }>({ userId: '', openCreate: () => {}, openPlaceholder: () => {}, openDetail: () => {}, theme: 'system', setTheme: () => {} });
 export const useGatherwell = () => useContext(AppContext);
 const tabs = [{ key: 'home', path: '/', icon: Home }, { key: 'events', path: '/events', icon: CalendarDays }, { key: 'team', path: '/team', icon: UsersRound }, { key: 'learn', path: '/learn', icon: BookOpen }, { key: 'me', path: '/me', icon: UserRound }] as const;
 const creations = [{ key: 'event', icon: CalendarDays }, { key: 'announcement', icon: Megaphone }, { key: 'challenge', icon: Flag }, { key: 'training', icon: BookOpen }] as const;
-export function GatherwellShell({ children }: { children: ReactNode }) {
+export function GatherwellShell({ children, userId }: { children: ReactNode; userId: string }) {
  const { t } = useTranslation();
+ const { data: profile } = useQuery(profileQuery(userId));
+ const { data: workspace } = useQuery(workspaceQuery(userId));
+ const initials = initialsOf(profile?.full_name);
  const pathname = useRouterState({ select: state => state.location.pathname });
  const [sheet, setSheet] = useState<'create' | 'assistant' | Creation | null>(null);
  const [detail, setDetail] = useState<{ title: string; description: string } | null>(null);
@@ -22,8 +26,6 @@ export function GatherwellShell({ children }: { children: ReactNode }) {
  const [ready, setReady] = useState(false);
  const current = tabs.find(tab => tab.path === pathname) ?? tabs[0];
  useEffect(() => {
-  const language = localStorage.getItem('gatherwell-language') ?? (navigator.language.toLowerCase().startsWith('es') ? 'es' : 'en');
-  void i18n.changeLanguage(language);
   const stored = localStorage.getItem('gatherwell-theme');
   if (stored === 'dark' || stored === 'light' || stored === 'system') updateTheme(stored);
   setReady(true);
@@ -34,17 +36,13 @@ export function GatherwellShell({ children }: { children: ReactNode }) {
   const apply = () => { document.documentElement.classList.toggle('dark', theme === 'dark' || (theme === 'system' && media.matches)); };
   apply();media.addEventListener('change', apply);return () => media.removeEventListener('change', apply);
  }, [theme, ready]);
- useEffect(() => {
-  const applyLanguage = () => { document.documentElement.lang = i18n.resolvedLanguage ?? 'en'; };
-  applyLanguage();i18n.on('languageChanged', applyLanguage);return () => { i18n.off('languageChanged', applyLanguage); };
- }, []);
  const setTheme = (value: Theme) => { updateTheme(value); localStorage.setItem('gatherwell-theme', value); };
  const openSheet = (value: 'create' | 'assistant' | Creation) => { setDetail(null); setSheet(value); };
- return <AppContext.Provider value={{ openCreate: () => openSheet('create'), openPlaceholder: openSheet, openDetail: (title, description) => { setDetail({ title, description }); setSheet('profile'); }, theme, setTheme }}>
+ return <AppContext.Provider value={{ openCreate: () => openSheet('create'), openPlaceholder: openSheet, openDetail: (title, description) => { setDetail({ title, description }); setSheet('profile'); }, theme, setTheme, userId }}>
   <div className="min-h-dvh bg-background text-foreground">
    <aside className="desktop-sidebar">
     <Link to="/" className="brand" aria-label={t('brand')}><span className="brand-mark" aria-hidden="true">g</span><span>{t('brand')}</span></Link>
-    <div className="workspace-card"><span className="initial-avatar">{t('common.initials')}</span><div><strong>{t('common.workspace')}</strong><p>{t('common.plan')}</p></div></div>
+    <div className="workspace-card"><span className="initial-avatar">{initials}</span><div><strong>{workspace?.name ?? t('workspace.none')}</strong><p>{workspace ? t(`plans.${workspace.plan}`) : profile?.full_name}</p></div></div>
     <nav className="sidebar-nav" aria-label={t('nav.label')}>{tabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: true }} className={`sidebar-link ${pathname === path ? 'is-active' : ''}`}><Icon /><span>{t(`nav.${key}`)}</span></Link>)}</nav>
     <div className="sidebar-bottom"><CircleHelp /><p>{t('common.sampleNote')}</p></div>
    </aside>
@@ -52,7 +50,7 @@ export function GatherwellShell({ children }: { children: ReactNode }) {
     <header className="app-header">
      <Link to="/" className="brand mobile-brand"><span className="brand-mark" aria-hidden="true">g</span><span>{t('brand')}</span></Link>
      <span className="desktop-header-label">{t('common.workspaceLabel')}<span>/</span><strong>{t(`nav.${current.key}`)}</strong></span>
-     <div className="header-actions"><Button variant="secondary" className="member-view-button" onClick={() => { setMemberView(value => !value); setDetail({ title: t('roles.member'), description: t('common.previewNote') }); setSheet('profile'); }}>{t(memberView ? 'common.leaderView' : 'common.memberView')}</Button><span className="chip sample-badge">{t('common.sample')}</span><Button variant="ghost" size="icon" className="assistant-button" aria-label={t('common.assistant')} title={t('common.assistant')} onClick={() => openSheet('assistant')}><Sparkles /></Button><Link to="/me" className="header-avatar" aria-label={t('me.profile')}>{t('common.initials')}</Link></div>
+     <div className="header-actions"><Button variant="secondary" className="member-view-button" onClick={() => { setMemberView(value => !value); setDetail({ title: t('roles.member'), description: t('common.previewNote') }); setSheet('profile'); }}>{t(memberView ? 'common.leaderView' : 'common.memberView')}</Button><span className="chip sample-badge">{t('common.sample')}</span><Button variant="ghost" size="icon" className="assistant-button" aria-label={t('common.assistant')} title={t('common.assistant')} onClick={() => openSheet('assistant')}><Sparkles /></Button><Link to="/me" className="header-avatar" aria-label={t('me.profile')}>{initials}</Link></div>
     </header>
     <main className="page-content"><ClientOnly fallback={<div className="min-h-96" />}><div key={pathname} className="page-transition">{children}</div></ClientOnly></main>
    </div>

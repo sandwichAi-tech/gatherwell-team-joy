@@ -333,6 +333,14 @@ export type Database = {
         }
         Returns: string
       }
+      create_team: {
+        Args: { _name: string }
+        Returns: {
+          id: string
+          join_code: string
+          slug: string
+        }[]
+      }
       event_going_count: { Args: { _event_id: string }; Returns: number }
       get_rsvp_by_code: {
         Args: { _code: string }
@@ -351,11 +359,22 @@ export type Database = {
           status: string
         }[]
       }
+      get_team_invite: {
+        Args: { _code: string }
+        Returns: {
+          leader_name: string
+          team_id: string
+          team_name: string
+        }[]
+      }
       is_team_member: {
         Args: { _roles: string[]; _team_id: string }
         Returns: boolean
       }
-      join_team_by_code: { Args: { _code: string }; Returns: string }
+      join_team_by_code: {
+        Args: { _code: string; _role?: string }
+        Returns: string
+      }
       shares_team_with: { Args: { _other: string }; Returns: boolean }
     }
     Enums: {
