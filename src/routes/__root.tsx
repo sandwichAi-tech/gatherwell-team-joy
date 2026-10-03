@@ -11,7 +11,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { GatherwellShell } from "@/components/gatherwell-shell";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import i18n from "@/lib/i18n";
@@ -128,11 +128,26 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+  useEffect(() => {
+    const language = localStorage.getItem("gatherwell-language") ?? (navigator.language.toLowerCase().startsWith("es") ? "es" : "en");
+    void i18n.changeLanguage(language);
+    const theme = localStorage.getItem("gatherwell-theme") ?? "system";
+    document.documentElement.classList.toggle("dark", theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches));
+    const applyLanguage = () => { document.documentElement.lang = i18n.resolvedLanguage ?? "en"; };
+    applyLanguage(); i18n.on("languageChanged", applyLanguage);
+    const { data } = supabase.auth.onAuthStateChange((event) => {
+      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+      void router.invalidate();
+      if (event !== "SIGNED_OUT") void queryClient.invalidateQueries();
+    });
+    return () => { i18n.off("languageChanged", applyLanguage); data.subscription.unsubscribe(); };
+  }, [router, queryClient]);
 
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <GatherwellShell><Outlet /></GatherwellShell>
+      <Outlet />
     </QueryClientProvider>
   );
 }
