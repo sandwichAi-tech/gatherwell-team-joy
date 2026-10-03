@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export const JOIN_CODE_KEY = 'gatherwell-join-code';
 
-export type Workspace = { teamId: string; name: string; plan: string; joinCode: string; role: string; ownerId: string } | null;
+export type Workspace = TeamMembership | null;
 
 export async function getUserId() {
   const { data } = await supabase.auth.getUser();
@@ -15,26 +15,45 @@ export const profileQuery = (userId: string) => queryOptions({
   queryFn: async () => {
     const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
     if (error) throw error;
-    return data;
+    if (data) return data;
+    const { data: created, error: insertError } = await supabase.from('profiles').insert({ id: userId }).select('*').single();
+    if (insertError) throw insertError;
+    return created;
   },
 });
 
-export const workspaceQuery = (userId: string) => queryOptions({
-  queryKey: ['workspace', userId],
-  queryFn: async (): Promise<Workspace> => {
+export type TeamMembership = { teamId: string; name: string; plan: string; joinCode: string; role: string; ownerId: string; customBadge: string | null };
+
+export const teamsQuery = (userId: string) => queryOptions({
+  queryKey: ['teams', userId],
+  queryFn: async (): Promise<TeamMembership[]> => {
     const { data, error } = await supabase
       .from('team_members')
-      .select('role, joined_at, teams(id, name, plan, join_code, owner_id)')
+      .select('role, custom_badge, joined_at, teams(id, name, plan, join_code, owner_id)')
       .eq('user_id', userId)
       .order('joined_at', { ascending: true });
     if (error) throw error;
-    const rows = (data ?? []).filter(row => row.teams);
-    const pick = rows.find(row => row.role === 'leader') ?? rows[0];
-    if (!pick || !pick.teams) return null;
-    const team = pick.teams as { id: string; name: string; plan: string; join_code: string; owner_id: string };
-    return { teamId: team.id, name: team.name, plan: team.plan, joinCode: team.join_code, role: pick.role, ownerId: team.owner_id };
+    return (data ?? []).filter(row => row.teams).map(row => {
+      const team = row.teams as { id: string; name: string; plan: string; join_code: string; owner_id: string };
+      return { teamId: team.id, name: team.name, plan: team.plan, joinCode: team.join_code, role: row.role, ownerId: team.owner_id, customBadge: row.custom_badge };
+    });
   },
 });
+
+/** The active team: the profile's saved choice when still a member, otherwise the first leader team, otherwise the first team. */
+export const workspaceQuery = (userId: string) => queryOptions({
+  queryKey: ['workspace', userId],
+  queryFn: async ({ client }): Promise<Workspace> => {
+    const [teams, profile] = await Promise.all([client.fetchQuery(teamsQuery(userId)), client.fetchQuery(profileQuery(userId))]);
+    const pick = teams.find(team => team.teamId === profile?.active_team_id) ?? teams.find(team => team.role === 'leader') ?? teams[0];
+    return pick ?? null;
+  },
+});
+
+export async function setActiveTeam(userId: string, teamId: string) {
+  const { error } = await supabase.from('profiles').update({ active_team_id: teamId }).eq('id', userId);
+  if (error) throw error;
+}
 
 export function initialsOf(name?: string | null) {
   const parts = (name ?? '').trim().split(/\s+/).filter(Boolean);
