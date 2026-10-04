@@ -87,7 +87,7 @@ export async function storyImage(opts: { title: string; date: string; link: stri
     } catch { /* fall back to gradient */ }
   }
   if (!drewPhoto) {
-    const stops = (COVER_STYLES[(opts.coverStyle ?? 0) % COVER_STYLES.length].match(/#[0-9A-F]{6}/gi) ?? ['#2F2340', '#7A5FA8']);
+    const stops = ((COVER_STYLES[(opts.coverStyle ?? 0) % COVER_STYLES.length] ?? COVER_STYLES[0]).match(/#[0-9A-F]{6}/gi) ?? ['#2F2340', '#7A5FA8']);
     const grad = g.createLinearGradient(0, 0, 1080, coverH);
     stops.forEach((col, i) => grad.addColorStop(i / Math.max(1, stops.length - 1), col));
     g.fillStyle = grad; g.fillRect(0, 0, 1080, coverH);
