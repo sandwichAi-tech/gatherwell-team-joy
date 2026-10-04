@@ -9,7 +9,7 @@ import { Confirmation, Stepper } from '@/components/guest-rsvp';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { supabase } from '@/integrations/supabase/client';
 import { rsvpByCodeQuery } from '@/lib/guest';
-import { GuestShell } from './e.$id';
+import { GuestShell } from '@/components/guest-shell';
 import i18n from '@/lib/i18n';
 
 export const Route = createFileRoute('/r/$code')({

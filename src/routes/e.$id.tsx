@@ -1,14 +1,14 @@
-import { useState, type ReactNode } from 'react';
-import { ClientOnly, createFileRoute, Link } from '@tanstack/react-router';
+import { useState } from 'react';
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { GuestShell } from '@/components/guest-shell';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Ban, CalendarDays, Clock, MapPin, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Brand, LanguageToggle } from '@/components/auth-frame';
 import { GatheringCover } from '@/components/gathering-cover';
 import { CalendarButtons, Confirmation, DirectionsButton, RsvpSheet, type RsvpResult } from '@/components/guest-rsvp';
 import { initialsOf, mediaUrl } from '@/lib/account';
-import { formatWhen, isUuid, publicEventQuery } from '@/lib/guest';
+import { formatWhen, isUuid, publicEventQuery, rsvpByCodeQuery } from '@/lib/guest';
 import { getPublicEventMeta } from '@/lib/public-event.functions';
 import i18n from '@/lib/i18n';
 
@@ -34,19 +34,6 @@ export const Route = createFileRoute('/e/$id')({
   notFoundComponent: () => <GuestShell><p className="guest-empty">{i18n.t('publicEvent.notFound')}</p></GuestShell>,
   component: PublicEventPage,
 });
-
-export function GuestShell({ children }: { children: ReactNode }) {
-  return <ClientOnly fallback={<div className="guest-screen" />}><GuestShellInner>{children}</GuestShellInner></ClientOnly>;
-}
-
-function GuestShellInner({ children }: { children: ReactNode }) {
-  const { t } = useTranslation();
-  return <div className="guest-screen">
-    <header className="guest-topbar"><Brand /><LanguageToggle /></header>
-    <main className="guest-main">{children}</main>
-    <footer className="guest-footer"><Link to="/login">{t('guest.hostYourOwn')}</Link></footer>
-  </div>;
-}
 
 function PublicEventPage() {
   return <GuestShell><PublicEventBody /></GuestShell>;
@@ -124,7 +111,7 @@ function PublicEventBody() {
 }
 
 function ConfirmationLoader({ code, fallbackStatus }: { code: string; fallbackStatus: RsvpResult['status'] }) {
-  const { data } = useQuery({ queryKey: ['rsvp', code], queryFn: async () => (await import('@/lib/guest')).rsvpByCodeQuery(code).queryFn() });
+  const { data } = useQuery(rsvpByCodeQuery(code));
   if (!data) return null;
   return <article className="guest-body"><Confirmation event={data.event} code={code} status={data.status ?? fallbackStatus} /></article>;
 }
