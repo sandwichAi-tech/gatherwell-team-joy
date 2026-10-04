@@ -526,6 +526,10 @@ export type Database = {
         Args: { _p: Json; _publish: boolean; _team: string; _weekly: boolean }
         Returns: string
       }
+      create_gathering_at: {
+        Args: { _p: Json; _publish: boolean; _team: string; _weekly: boolean }
+        Returns: string
+      }
       create_guest_rsvp: {
         Args: {
           _email_opt_in?: boolean
