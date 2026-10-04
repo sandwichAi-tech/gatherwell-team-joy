@@ -146,6 +146,7 @@ export type Database = {
         Row: {
           address: string | null
           capacity: number | null
+          cover_style: number
           cover_url: string | null
           created_at: string
           description_en: string | null
@@ -156,8 +157,10 @@ export type Database = {
           lat: number | null
           lng: number | null
           location_name: string | null
+          meeting_note: string | null
           online_url: string | null
           recurrence: string
+          series_id: string | null
           starts_at: string
           status: string
           team_id: string
@@ -170,6 +173,7 @@ export type Database = {
         Insert: {
           address?: string | null
           capacity?: number | null
+          cover_style?: number
           cover_url?: string | null
           created_at?: string
           description_en?: string | null
@@ -180,8 +184,10 @@ export type Database = {
           lat?: number | null
           lng?: number | null
           location_name?: string | null
+          meeting_note?: string | null
           online_url?: string | null
           recurrence?: string
+          series_id?: string | null
           starts_at: string
           status?: string
           team_id: string
@@ -194,6 +200,7 @@ export type Database = {
         Update: {
           address?: string | null
           capacity?: number | null
+          cover_style?: number
           cover_url?: string | null
           created_at?: string
           description_en?: string | null
@@ -204,8 +211,10 @@ export type Database = {
           lat?: number | null
           lng?: number | null
           location_name?: string | null
+          meeting_note?: string | null
           online_url?: string | null
           recurrence?: string
+          series_id?: string | null
           starts_at?: string
           status?: string
           team_id?: string
@@ -513,6 +522,14 @@ export type Database = {
         Args: { _team: string; _template: string }
         Returns: string
       }
+      create_gathering: {
+        Args: { _p: Json; _publish: boolean; _team: string; _weekly: boolean }
+        Returns: string
+      }
+      create_gathering_at: {
+        Args: { _p: Json; _publish: boolean; _team: string; _weekly: boolean }
+        Returns: string
+      }
       create_guest_rsvp: {
         Args: {
           _email_opt_in?: boolean
@@ -540,6 +557,7 @@ export type Database = {
       }
       delete_my_account: { Args: never; Returns: undefined }
       event_going_count: { Args: { _event_id: string }; Returns: number }
+      gathering_validate: { Args: { _p: Json }; Returns: undefined }
       get_rsvp_by_code: {
         Args: { _code: string }
         Returns: {
@@ -616,6 +634,10 @@ export type Database = {
       }
       transfer_leadership: {
         Args: { _team: string; _to: string }
+        Returns: undefined
+      }
+      update_gathering: {
+        Args: { _event: string; _p: Json; _whole_series: boolean }
         Returns: undefined
       }
     }

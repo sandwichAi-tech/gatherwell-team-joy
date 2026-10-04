@@ -1,8 +1,7 @@
-import { FromYourLeader, LaunchSheet } from '@/components/templates';
-import type { Template } from '@/lib/templates';
+import { FromYourLeader } from '@/components/templates';
 import { TeamSwitcher } from '@/components/team-switcher';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { ClientOnly, Link, useRouterState } from '@tanstack/react-router';
+import { ClientOnly, Link, useNavigate, useRouterState } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { Home, CalendarDays, UsersRound, BookOpen, UserRound, Plus, Sparkles, ArrowUpRight, Megaphone, Flag, X, CircleHelp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -25,7 +24,7 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
  const [sheet, setSheet] = useState<'create' | 'assistant' | Creation | null>(null);
  const [detail, setDetail] = useState<{ title: string; description: string } | null>(null);
  const [memberView, setMemberView] = useState(false);
- const [launching, setLaunching] = useState<Template | null>(null);
+ const navigate = useNavigate();
  const [theme, updateTheme] = useState<Theme>('system');
  const [ready, setReady] = useState(false);
  const current = tabs.find(tab => tab.path === pathname) ?? tabs[0];
@@ -63,10 +62,9 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
    <nav className="bottom-nav" aria-label={t('nav.label')}>{tabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: true }} className={`bottom-link ${pathname === path ? 'is-active' : ''}`}><Icon /><span>{t(`nav.${key}`)}</span></Link>)}</nav>
    <Drawer open={sheet !== null} onOpenChange={open => { if (!open) { setSheet(null); setDetail(null); } }} shouldScaleBackground={false}>
     <DrawerContent className="gatherwell-sheet"><div className="sheet-heading"><div><DrawerTitle>{detail ? detail.title : sheet === 'create' ? t('create.title') : sheet === 'assistant' ? t('common.assistant') : sheet ? t(`placeholder.${sheet}`) : ''}</DrawerTitle><DrawerDescription className={sheet === 'create' ? 'mt-3' : 'sr-only'}>{sheet === 'create' ? t('create.description') : t('common.comingSoon')}</DrawerDescription></div><Button variant="ghost" size="icon" onClick={() => setSheet(null)} aria-label={t('common.close')}><X /></Button></div>
-    {sheet === 'create' ? <>{workspace && <FromYourLeader compact teamId={workspace.teamId} role={workspace.role} onLaunch={tpl => { setSheet(null); setLaunching(tpl); }} />}<div className="creation-options">{creations.map(({ key, icon: Icon }) => <Button key={key} variant="ghost" className="creation-option" onClick={() => openSheet(key)}><span className="creation-icon"><Icon /></span><span><strong>{t(`create.${key}`)}</strong><small>{t(`create.${key}Text`)}</small></span><ArrowUpRight /></Button>)}</div></> : sheet === 'assistant' ? <div className="empty-assistant" /> : <div className="placeholder-state"><span className="chip sample-badge">{t('common.sample')}</span>{detail && <p>{detail.description}</p>}<p>{detail ? t('common.previewNote') : t('common.comingSoon')}</p></div>}
+    {sheet === 'create' ? <>{workspace && <FromYourLeader compact teamId={workspace.teamId} role={workspace.role} onLaunch={tpl => { setSheet(null); void navigate({ to: '/gathering/new', search: { template: tpl.id } }); }} />}<div className="creation-options">{creations.map(({ key, icon: Icon }) => <Button key={key} variant="ghost" className="creation-option" onClick={() => { if (key === 'event') { setSheet(null); void navigate({ to: '/gathering/new' }); } else openSheet(key); }}><span className="creation-icon"><Icon /></span><span><strong>{t(`create.${key}`)}</strong><small>{t(`create.${key}Text`)}</small></span><ArrowUpRight /></Button>)}</div></> : sheet === 'assistant' ? <div className="empty-assistant" /> : <div className="placeholder-state"><span className="chip sample-badge">{t('common.sample')}</span>{detail && <p>{detail.description}</p>}<p>{detail ? t('common.previewNote') : t('common.comingSoon')}</p></div>}
     </DrawerContent>
    </Drawer>
-   {workspace && <LaunchSheet template={launching} teamId={workspace.teamId} onClose={() => setLaunching(null)} />}
   </div>
  </AppContext.Provider>;
 }

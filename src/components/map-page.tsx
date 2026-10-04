@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
-import { useServerFn } from '@tanstack/react-start';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { ArrowLeft, ArrowRight, LocateFixed, MapPin, Globe2, CalendarDays, UserRound, UsersRound } from 'lucide-react';
@@ -11,21 +10,10 @@ import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { supabase } from '@/integrations/supabase/client';
 import { workspaceQuery } from '@/lib/account';
-import { getMapsConfig } from '@/lib/maps.functions';
+import { loadMaps, useMapsKey } from '@/lib/maps-client';
 import { teamKey, teamTreeQuery } from '@/lib/team';
 
-type MapEvent = { id: string; team_id: string; title: string; starts_at: string; location_name: string | null; address: string | null; online_url: string | null; lat: number | null; lng: number | null; capacity: number | null; host_id: string; host?: string | null; going?: number };
-
-declare global { interface Window { google?: any; __gwMapsLoading?: Promise<void> } }
-
-function loadMaps(key: string) {
-  if (window.google?.maps) return Promise.resolve();
-  if (!window.__gwMapsLoading) window.__gwMapsLoading = new Promise((resolve, reject) => {
-    const s = document.createElement('script'); s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}`; s.async = true;
-    s.onload = () => resolve(); s.onerror = () => reject(new Error('maps_failed')); document.head.appendChild(s);
-  });
-  return window.__gwMapsLoading;
-}
+export type MapEvent = { id: string; team_id: string; title: string; starts_at: string; location_name: string | null; address: string | null; online_url: string | null; lat: number | null; lng: number | null; capacity: number | null; host_id: string; host?: string | null; going?: number };
 
 const km = (a: { lat: number; lng: number }, b: { lat: number; lng: number }) => {
   const r = (d: number) => (d * Math.PI) / 180; const dLat = r(b.lat - a.lat), dLng = r(b.lng - a.lng);
@@ -34,7 +22,7 @@ const km = (a: { lat: number; lng: number }, b: { lat: number; lng: number }) =>
 };
 const cityOf = (address: string | null) => address?.split(',').slice(-2, -1)[0]?.trim() || address?.split(',')[0]?.trim() || null;
 
-function RealMap({ apiKey, events, onPick }: { apiKey: string; events: MapEvent[]; onPick: (e: MapEvent) => void }) {
+export function RealMap<T extends { lat: number | null; lng: number | null; title: string }>({ apiKey, events, onPick }: { apiKey: string; events: T[]; onPick: (e: T) => void }) {
   const ref = useRef<HTMLDivElement>(null); const [failed, setFailed] = useState(false);
   useEffect(() => {
     let markers: any[] = [];
@@ -51,7 +39,7 @@ function RealMap({ apiKey, events, onPick }: { apiKey: string; events: MapEvent[
   return failed ? <MapPlaceholder /> : <div ref={ref} className="map-canvas" />;
 }
 
-function MapPlaceholder() {
+export function MapPlaceholder() {
   const { t } = useTranslation();
   return <div className="map-canvas map-placeholder" role="img" aria-label={t('map.placeholder')}><MapPin /><span>{t('map.placeholder')}</span></div>;
 }
@@ -61,8 +49,7 @@ export function MapPage() {
   const { data: workspace } = useQuery(workspaceQuery(userId));
   const rootId = workspace?.teamId ?? '';
   const { data: tree = [] } = useQuery({ ...teamTreeQuery(rootId), enabled: !!rootId });
-  const fetchConfig = useServerFn(getMapsConfig);
-  const { data: config } = useQuery({ queryKey: ['maps-config'], queryFn: () => fetchConfig(), staleTime: 10 * 60 * 1000 });
+  const mapsKey = useMapsKey();
   const ids = tree.map(n => n.id);
   const { data: events = [] } = useQuery({
     queryKey: [...teamKey(rootId), 'map', ids.join(',')], enabled: ids.length > 0,
@@ -101,7 +88,7 @@ export function MapPage() {
         <SelectContent><SelectItem value="all">{t('insights.wholeOrg')}</SelectItem>{tree.map(n => <SelectItem key={n.id} value={n.id}>{n.name}</SelectItem>)}</SelectContent></Select>}
       <Button variant="secondary" onClick={nearMe} aria-pressed={!!me}><LocateFixed />{t('map.nearMe')}</Button>
     </div>
-    <section className="panel map-panel">{config?.key ? <RealMap apiKey={config.key} events={filtered} onPick={setPicked} /> : <MapPlaceholder />}</section>
+    <section className="panel map-panel">{mapsKey ? <RealMap apiKey={mapsKey} events={filtered} onPick={setPicked} /> : <MapPlaceholder />}</section>
     <section className="panel"><div className="section-heading"><h2>{t('map.list', { count: filtered.length })}</h2></div>
       {filtered.length ? <div className="event-list">{filtered.map(e => <button type="button" key={e.id} className="event-row event-button" onClick={() => setPicked(e)}>
         <div className="date-tile"><span>{new Date(e.starts_at).toLocaleDateString(lang, { month: 'short' })}</span><strong>{new Date(e.starts_at).getDate()}</strong></div>

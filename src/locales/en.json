@@ -2,7 +2,7 @@
   "brand": "Gatherwell",
   "nav": {
     "home": "Home",
-    "events": "Events",
+    "events": "Gatherings",
     "team": "Team",
     "learn": "Learn",
     "me": "Me",
@@ -33,7 +33,7 @@
     "greeting": "Good morning, {{name}}.",
     "subtitle": "A little connection goes a long way. Here’s your community this week.",
     "upcoming": "Coming up next",
-    "viewAll": "All events",
+    "viewAll": "All gatherings",
     "pulse": "Community pulse",
     "networkLabel": "BETTER, TOGETHER",
     "networkTitle": "Your community goes beyond your calendar.",
@@ -46,11 +46,26 @@
     "viewDetails": "View details"
   },
   "events": {
-    "title": "Events",
+    "title": "Gatherings",
     "eyebrow": "Workspace",
     "heading": "Your community calendar",
     "sentence": "Three gatherings, one connected community.",
-    "button": "Create an event"
+    "button": "Create an gathering",
+    "liveSentence": "Everything coming up across your teams.",
+    "tabs": {
+      "upcoming": "Upcoming",
+      "hosting": "Hosting",
+      "past": "Past"
+    },
+    "view": "View",
+    "list": "List",
+    "map": "Map",
+    "empty": {
+      "upcoming": "Create your first gathering",
+      "hosting": "Create your first gathering",
+      "past": "No past gatherings yet"
+    },
+    "emptyText": "It takes under a minute. Pick a time, a place and share the link."
   },
   "team": {
     "title": "Team",
@@ -86,7 +101,7 @@
   "create": {
     "title": "Create",
     "description": "A new gathering, update or shared goal.",
-    "event": "New event",
+    "event": "New gathering",
     "eventText": "Bring your people together",
     "announcement": "Announcement",
     "announcementText": "Share a little news",
@@ -125,7 +140,7 @@
     "walkingClub": "Walking club",
     "training": "Training",
     "challenge": "Challenge",
-    "teamEvent": "Team event",
+    "teamEvent": "Team gathering",
     "rsvp": "RSVP",
     "checkIn": "Check-in",
     "badge": "Badge",
@@ -153,7 +168,7 @@
       "note": "+12 this month"
     },
     "events": {
-      "label": "Upcoming events",
+      "label": "Upcoming gatherings",
       "value": "3",
       "note": "Across your community"
     },
@@ -198,7 +213,7 @@
       "time": "21-day consistency · 1 hour ago"
     },
     "maria": {
-      "title": "Maria shared a new event",
+      "title": "Maria shared a new gathering",
       "time": "Your network · 2 hours ago"
     }
   },
@@ -207,19 +222,19 @@
       "name": "Sofia Martinez",
       "initials": "SM",
       "note": "Attended yesterday · Invite her back",
-      "role": "Host · 12 events"
+      "role": "Host · 12 gatherings"
     },
     "james": {
       "name": "James Wilson",
       "initials": "JW",
-      "note": "Missed the last two events · Check in",
+      "note": "Missed the last two gatherings · Check in",
       "role": "Member · 8 gatherings"
     },
     "emily": {
       "name": "Emily Chen",
       "initials": "EC",
       "note": "Asked about upcoming programs",
-      "role": "Host · 6 events"
+      "role": "Host · 6 gatherings"
     }
   },
   "trainingRows": {
@@ -287,7 +302,7 @@
     "leader": "I lead a team",
     "leaderText": "Build your Team Space and invite your people.",
     "host": "I host gatherings",
-    "hostText": "Plan events and welcome guests.",
+    "hostText": "Plan gatherings and welcome guests.",
     "member": "I'm part of a team",
     "memberText": "Join gatherings, trainings and challenges.",
     "joinTitle": "Join your team",
@@ -494,8 +509,8 @@
     "newSubteam": "New sub-team",
     "subteamName": "Sub-team name",
     "subteamCreated": "Sub-team created",
-    "eventsThisMonth_one": "{{count}} event this month",
-    "eventsThisMonth_other": "{{count}} events this month",
+    "eventsThisMonth_one": "{{count}} gathering this month",
+    "eventsThisMonth_other": "{{count}} gatherings this month",
     "noSubteams": "No sub-teams yet. Create one, or let hosts start their own.",
     "noSubteamsHosts": "No sub-teams yet. Hosts can now start their own.",
     "noSubteamsHost": "Start a sub-team and lead your own group.",
@@ -514,7 +529,7 @@
       "public": "Public",
       "team": "Team only"
     },
-    "openEvent": "Open event page",
+    "openEvent": "Open gathering page",
     "breadcrumb": "Team path"
   },
   "templates": {
@@ -651,5 +666,118 @@
     "view": "View gathering",
     "going_one": "{{count}} registered",
     "going_other": "{{count}} registered"
+  },
+  "gathering": {
+    "create": "Create gathering",
+    "createFirst": "Create your first gathering",
+    "newTitle": "New gathering",
+    "editTitle": "Edit gathering",
+    "fromTemplate": "From template: {{title}}",
+    "hostsOnly": "Gatherings are created by hosts and leaders",
+    "hostsOnlyText": "Ask your leader to make you a host.",
+    "addPhoto": "Upload or take a photo",
+    "changePhoto": "Change photo",
+    "useDefault": "Use a default cover",
+    "coverStyle": "Cover style",
+    "styleN": "Style {{n}}",
+    "photoTooBig": "Choose an image under 8 MB.",
+    "title": "Title",
+    "titlePlaceholder": "Saturday Fit Camp",
+    "when": "Date and time",
+    "custom": "Custom date and time",
+    "presets": {
+      "tonight": "Tonight {{time}}",
+      "tomorrow": "Tomorrow {{time}}",
+      "saturday": "This Saturday {{time}}",
+      "monday": "Next Monday {{time}}"
+    },
+    "duration": "Duration",
+    "durations": {
+      "30": "30 min",
+      "60": "1 hr",
+      "90": "90 min",
+      "120": "2 hr"
+    },
+    "customDuration": "Custom",
+    "minutes": "minutes",
+    "place": "Place",
+    "locationName": "Location name",
+    "address": "Address",
+    "addressNote": "Map search not connected yet. Type the address.",
+    "note": "Meeting point or parking note (optional)",
+    "link": "Meeting link",
+    "capacity": "Capacity",
+    "noLimit": "No limit",
+    "visibility": "Who can see it",
+    "vis": {
+      "public": "Anyone with the link",
+      "team": "My team only"
+    },
+    "description": "Description",
+    "descPlaceholder": "What to expect and what to bring.",
+    "translate": "Translate",
+    "notConnected": "Not connected yet",
+    "repeat": "Repeat",
+    "noRepeat": "Does not repeat",
+    "weekly": "Every week",
+    "weeklyHelp": "Creates this gathering and the next 7 weeks as a linked series.",
+    "weeklyNote": "repeats weekly for 8 weeks",
+    "applyTo": "Apply changes to",
+    "thisDate": "This date only",
+    "thisAndLater": "This and later dates",
+    "checklistNote_one": "Includes {{count}} checklist item from the template.",
+    "checklistNote_other": "Includes {{count}} checklist items from the template.",
+    "saveDraft": "Save draft",
+    "publish": "Publish",
+    "saveChanges": "Save changes",
+    "fixFields": "Check the highlighted fields.",
+    "saved": "Changes saved",
+    "draftSaved": "Draft saved",
+    "live": "Your gathering is live.",
+    "copyLink": "Copy link",
+    "text": "Text message",
+    "done": "Done",
+    "invite": "You are invited: {{title}} — {{date}}. Save your spot: {{link}}",
+    "kind": {
+      "person": "In person",
+      "online": "Online",
+      "training": "Training"
+    },
+    "goingOf": "{{count}} / {{total}} going",
+    "backToGatherings": "Gatherings",
+    "edit": "Edit",
+    "duplicate": "Duplicate",
+    "share": "Share",
+    "cancel": "Cancel gathering",
+    "deleteDraft": "Delete draft",
+    "keep": "Keep it",
+    "cancelTitle": "Cancel this gathering?",
+    "cancelText": "Guests will see it as cancelled.",
+    "notifyGuests": "Notify guests?",
+    "cancelled": "Gathering cancelled",
+    "deleteTitle": "Delete this draft?",
+    "deleteText": "This can’t be undone.",
+    "deleted": "Draft deleted",
+    "guests": "Guests",
+    "guestStatus": {
+      "going": "Going",
+      "maybe": "Maybe",
+      "waitlist": "Waitlist"
+    },
+    "viewGuests": "View guest list",
+    "guestListSoon": "The full guest list is coming next.",
+    "series": "Weekly series",
+    "seriesHelp": "Open a date to manage it, or edit this and later dates together.",
+    "editSeries": "Edit this or later dates",
+    "errors": {
+      "invalid_title": "Add a title.",
+      "date_required": "Pick a date and time.",
+      "invalid_url": "Use a link that starts with https://",
+      "invalid_capacity": "Capacity must be at least 1.",
+      "invalid_duration": "Choose a duration between 5 minutes and 24 hours.",
+      "not_allowed": "You can’t create gatherings for this team.",
+      "template_not_found": "That template is no longer available.",
+      "too_long": "One of the fields is too long."
+    }
   }
 }
