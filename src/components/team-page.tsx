@@ -160,7 +160,7 @@ function winText(t: TFunction, win: Win) {
   switch (win.type) {
     case 'member_joined': return t('teamSpace.win.member_joined', { name });
     case 'event_published': return t('teamSpace.win.event_published', { name, title });
-    case 'checked_in': return t('teamSpace.win.checked_in', { name, title });
+    case 'checked_in': { const n = Number(win.payload['count'] ?? 1); return n > 1 ? t('teamSpace.win.checked_in_group', { name, title, count: n - 1 }) : t('teamSpace.win.checked_in', { name, title }); }
     case 'milestone': return t('teamSpace.win.milestone', { count: Number(win.payload['members'] ?? 0) });
     case 'announcement_posted': return t('teamSpace.win.announcement_posted', { name });
     case 'team_created': return t('teamSpace.win.team_created', { name, title });

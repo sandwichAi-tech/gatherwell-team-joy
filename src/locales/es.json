@@ -458,7 +458,8 @@
       "template_published": "{{name}} publicó la plantilla {{title}}",
       "template_launched": "{{name}} lanzó {{title}}",
       "shoutout": "{{name}} reconoció a {{to}}",
-      "guest_milestone": "{{title}} llegó a {{count}} invitados"
+      "guest_milestone": "{{title}} llegó a {{count}} invitados",
+      "checked_in_group": "{{name}} y {{count}} personas más se registraron en {{title}}"
     },
     "react": {
       "like": "Me gusta",
@@ -856,7 +857,8 @@
       "invalid_email": "Revisa tu correo.",
       "not_open": "Esta reunión no está recibiendo confirmaciones.",
       "too_long": "Uno de los campos es demasiado largo.",
-      "generic": "Algo salió mal. Inténtalo de nuevo."
+      "generic": "Algo salió mal. Inténtalo de nuevo.",
+      "rate_limited": "Demasiadas confirmaciones en poco tiempo. Espera un minuto."
     }
   },
   "guestList": {
@@ -885,5 +887,92 @@
     "moveCancelled": "Cancelar",
     "hideList": "Ocultar quién va",
     "hideListHelp": "Los invitados solo ven el número."
+  },
+  "live": {
+    "polls": "Encuestas",
+    "addPoll": "Agregar encuesta",
+    "noPolls": "Aún no hay encuestas.",
+    "closed": "Cerrada",
+    "votes_one": "{{count}} voto",
+    "votes_other": "{{count}} votos",
+    "rsvpToVote": "Confirma para votar",
+    "reopen": "Reabrir",
+    "close": "Cerrar encuesta",
+    "delete": "Eliminar",
+    "alreadyVoted": "Ya votaste.",
+    "pollClosed": "Esta encuesta está cerrada.",
+    "pollInvalid": "Agrega una pregunta y al menos 2 opciones.",
+    "question": "Pregunta",
+    "questionExample": "¿Qué horario te funciona la próxima semana?",
+    "option": "Opción {{n}}",
+    "removeOption": "Quitar opción",
+    "addOption": "Agregar opción",
+    "publishPoll": "Publicar encuesta",
+    "photos": "Fotos",
+    "addPhoto": "Agregar foto",
+    "photosLater": "Las fotos se abren cuando empieza la reunión.",
+    "noPhotos": "Aún no hay fotos.",
+    "photoAdded": "Foto agregada",
+    "photoAlt": "Foto de la reunión",
+    "show": "Mostrar foto",
+    "hide": "Ocultar foto",
+    "photoErrors": {
+      "not_open": "Esta reunión no recibe fotos.",
+      "not_started": "Las fotos se abren cuando empieza la reunión.",
+      "not_checked_in": "Regístrate en la reunión para agregar fotos.",
+      "not_allowed": "Solo quien organiza y los invitados registrados pueden agregar fotos.",
+      "too_large": "La foto es demasiado grande.",
+      "upload_failed": "La foto no se subió. Inténtalo de nuevo."
+    },
+    "weather": "Clima a la hora de inicio: {{temp}}, {{conditions}}",
+    "conditions": {
+      "clear": "despejado",
+      "cloudy": "nublado",
+      "fog": "neblina",
+      "rain": "lluvia",
+      "snow": "nieve",
+      "storm": "tormentas"
+    },
+    "summaryTitle": "Después de la reunión",
+    "summary": {
+      "rsvps": "Confirmaciones",
+      "checkins": "Registros",
+      "walk_ins": "Sin confirmar",
+      "first_timers": "Primera vez",
+      "photos": "Fotos agregadas"
+    },
+    "completed": "Completada",
+    "startCheckin": "Iniciar registro"
+  },
+  "checkin": {
+    "exit": "Salir del registro",
+    "counts": {
+      "going": "Van",
+      "checked_in": "Registrados",
+      "walk_ins": "Sin confirmar",
+      "waitlist": "En espera"
+    },
+    "search": "Buscar por nombre",
+    "scan": "Escanear QR",
+    "walkIn": "Agregar sin confirmar",
+    "toCheckIn": "Por registrar",
+    "allIn": "Todos en la lista ya están registrados.",
+    "checkIn": "Registrar",
+    "checkedIn": "Registrados",
+    "walkInTag": "Sin confirmar",
+    "undo": "Deshacer registro",
+    "closeScanner": "Cerrar escáner",
+    "cameraDenied": "La cámara está desactivada. Aún puedes registrar desde la lista.",
+    "useList": "Usar la lista",
+    "pointCamera": "Apunta la cámara al código QR del invitado",
+    "scanResult": {
+      "ok": "{{name}} quedó registrado",
+      "already": "{{name}} ya estaba registrado",
+      "not_found": "No está en la lista de esta reunión",
+      "error": "No se pudo leer el código. Inténtalo de nuevo."
+    },
+    "scanNext": "Escanear otro",
+    "walkInAdded": "{{name}} agregado y registrado",
+    "addAndCheckIn": "Agregar y registrar"
   }
 }
