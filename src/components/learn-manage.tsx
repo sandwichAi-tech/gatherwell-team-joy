@@ -11,7 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { supabase } from '@/integrations/supabase/client';
 import { COVER_STYLES } from '@/lib/gatherings';
-import { compressImage, lessonTitle, lessonsOf, listOf, RECIPE_TAGS, trackTitle, uploadLearnFile, type Lesson, type LessonType, type Recipe, type Track } from '@/lib/learn';
+import { compressImage, lessonTitle, lessonsOf, listOf, RECIPE_TAGS, recipesQuery, trackTitle, uploadLearnFile, type Lesson, type LessonType, type Recipe, type Track } from '@/lib/learn';
 import { LearnCover, useLearn } from '@/components/learn';
 
 type Tab = 'tracks' | 'recipes' | 'progress';
@@ -221,7 +221,7 @@ function RecipeEditor({ recipe, teamId, onClose }: { recipe: Partial<Recipe> | n
 
 function RecipesTab({ teamId }: { teamId: string }) {
   const { t, i18n } = useTranslation(); const { userId } = useLearn();
-  const { data } = useQuery({ queryKey: ['recipes', userId], queryFn: async () => ({ recipes: (await supabase.from('recipes').select('*').order('created_at', { ascending: false })).data ?? [], saved: new Set<string>() }) });
+  const { data } = useQuery(recipesQuery(userId));
   const [editing, setEditing] = useState<Partial<Recipe> | null>(null);
   const own = (data?.recipes ?? []).filter(r => r.team_id === teamId);
   return <section className="panel">

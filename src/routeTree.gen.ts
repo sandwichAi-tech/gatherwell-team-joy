@@ -25,11 +25,16 @@ import { Route as AuthenticatedAppMeRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAppTeamRouteImport } from './routes/_authenticated/_app/team'
 import { Route as AuthenticatedAppEventIdRouteImport } from './routes/_authenticated/_app/event.$id'
 import { Route as AuthenticatedAppGatheringNewRouteImport } from './routes/_authenticated/_app/gathering.new'
+import { Route as AuthenticatedAppLearnManageRouteImport } from './routes/_authenticated/_app/learn_.manage'
+import { Route as AuthenticatedAppLearnRecipesRouteImport } from './routes/_authenticated/_app/learn_.recipes'
 import { Route as AuthenticatedAppTeamInsightsRouteImport } from './routes/_authenticated/_app/team_.insights'
 import { Route as AuthenticatedAppTeamMapRouteImport } from './routes/_authenticated/_app/team_.map'
 import { Route as AuthenticatedAppEventIdCheckinRouteImport } from './routes/_authenticated/_app/event_.$id.checkin'
 import { Route as AuthenticatedAppEventIdGuestsRouteImport } from './routes/_authenticated/_app/event_.$id.guests'
 import { Route as AuthenticatedAppGatheringIdEditRouteImport } from './routes/_authenticated/_app/gathering.$id.edit'
+import { Route as AuthenticatedAppLearnLessonIdRouteImport } from './routes/_authenticated/_app/learn_.lesson.$id'
+import { Route as AuthenticatedAppLearnRecipeIdRouteImport } from './routes/_authenticated/_app/learn_.recipe.$id'
+import { Route as AuthenticatedAppLearnTrackIdRouteImport } from './routes/_authenticated/_app/learn_.track.$id'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -110,6 +115,18 @@ const AuthenticatedAppGatheringNewRoute =
     path: '/gathering/new',
     getParentRoute: () => AuthenticatedAppRouteRoute,
   } as any)
+const AuthenticatedAppLearnManageRoute =
+  AuthenticatedAppLearnManageRouteImport.update({
+    id: '/learn_/manage',
+    path: '/learn/manage',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
+const AuthenticatedAppLearnRecipesRoute =
+  AuthenticatedAppLearnRecipesRouteImport.update({
+    id: '/learn_/recipes',
+    path: '/learn/recipes',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppTeamInsightsRoute =
   AuthenticatedAppTeamInsightsRouteImport.update({
     id: '/team_/insights',
@@ -139,6 +156,24 @@ const AuthenticatedAppGatheringIdEditRoute =
     path: '/gathering/$id/edit',
     getParentRoute: () => AuthenticatedAppRouteRoute,
   } as any)
+const AuthenticatedAppLearnLessonIdRoute =
+  AuthenticatedAppLearnLessonIdRouteImport.update({
+    id: '/learn_/lesson/$id',
+    path: '/learn/lesson/$id',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
+const AuthenticatedAppLearnRecipeIdRoute =
+  AuthenticatedAppLearnRecipeIdRouteImport.update({
+    id: '/learn_/recipe/$id',
+    path: '/learn/recipe/$id',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
+const AuthenticatedAppLearnTrackIdRoute =
+  AuthenticatedAppLearnTrackIdRouteImport.update({
+    id: '/learn_/track/$id',
+    path: '/learn/track/$id',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedAppIndexRoute
@@ -155,11 +190,16 @@ export interface FileRoutesByFullPath {
   '/team': typeof AuthenticatedAppTeamRoute
   '/event/$id': typeof AuthenticatedAppEventIdRoute
   '/gathering/new': typeof AuthenticatedAppGatheringNewRoute
+  '/learn/manage': typeof AuthenticatedAppLearnManageRoute
+  '/learn/recipes': typeof AuthenticatedAppLearnRecipesRoute
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
   '/event/$id/checkin': typeof AuthenticatedAppEventIdCheckinRoute
   '/event/$id/guests': typeof AuthenticatedAppEventIdGuestsRoute
   '/gathering/$id/edit': typeof AuthenticatedAppGatheringIdEditRoute
+  '/learn/lesson/$id': typeof AuthenticatedAppLearnLessonIdRoute
+  '/learn/recipe/$id': typeof AuthenticatedAppLearnRecipeIdRoute
+  '/learn/track/$id': typeof AuthenticatedAppLearnTrackIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedAppIndexRoute
@@ -176,11 +216,16 @@ export interface FileRoutesByTo {
   '/team': typeof AuthenticatedAppTeamRoute
   '/event/$id': typeof AuthenticatedAppEventIdRoute
   '/gathering/new': typeof AuthenticatedAppGatheringNewRoute
+  '/learn/manage': typeof AuthenticatedAppLearnManageRoute
+  '/learn/recipes': typeof AuthenticatedAppLearnRecipesRoute
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
   '/event/$id/checkin': typeof AuthenticatedAppEventIdCheckinRoute
   '/event/$id/guests': typeof AuthenticatedAppEventIdGuestsRoute
   '/gathering/$id/edit': typeof AuthenticatedAppGatheringIdEditRoute
+  '/learn/lesson/$id': typeof AuthenticatedAppLearnLessonIdRoute
+  '/learn/recipe/$id': typeof AuthenticatedAppLearnRecipeIdRoute
+  '/learn/track/$id': typeof AuthenticatedAppLearnTrackIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -200,11 +245,16 @@ export interface FileRoutesById {
   '/_authenticated/_app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/_app/event/$id': typeof AuthenticatedAppEventIdRoute
   '/_authenticated/_app/gathering/new': typeof AuthenticatedAppGatheringNewRoute
+  '/_authenticated/_app/learn_/manage': typeof AuthenticatedAppLearnManageRoute
+  '/_authenticated/_app/learn_/recipes': typeof AuthenticatedAppLearnRecipesRoute
   '/_authenticated/_app/team_/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/_authenticated/_app/team_/map': typeof AuthenticatedAppTeamMapRoute
   '/_authenticated/_app/event_/$id/checkin': typeof AuthenticatedAppEventIdCheckinRoute
   '/_authenticated/_app/event_/$id/guests': typeof AuthenticatedAppEventIdGuestsRoute
   '/_authenticated/_app/gathering/$id/edit': typeof AuthenticatedAppGatheringIdEditRoute
+  '/_authenticated/_app/learn_/lesson/$id': typeof AuthenticatedAppLearnLessonIdRoute
+  '/_authenticated/_app/learn_/recipe/$id': typeof AuthenticatedAppLearnRecipeIdRoute
+  '/_authenticated/_app/learn_/track/$id': typeof AuthenticatedAppLearnTrackIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -223,11 +273,16 @@ export interface FileRouteTypes {
     | '/team'
     | '/event/$id'
     | '/gathering/new'
+    | '/learn/manage'
+    | '/learn/recipes'
     | '/team/insights'
     | '/team/map'
     | '/event/$id/checkin'
     | '/event/$id/guests'
     | '/gathering/$id/edit'
+    | '/learn/lesson/$id'
+    | '/learn/recipe/$id'
+    | '/learn/track/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -244,11 +299,16 @@ export interface FileRouteTypes {
     | '/team'
     | '/event/$id'
     | '/gathering/new'
+    | '/learn/manage'
+    | '/learn/recipes'
     | '/team/insights'
     | '/team/map'
     | '/event/$id/checkin'
     | '/event/$id/guests'
     | '/gathering/$id/edit'
+    | '/learn/lesson/$id'
+    | '/learn/recipe/$id'
+    | '/learn/track/$id'
   id:
     | '__root__'
     | '/_authenticated'
@@ -267,11 +327,16 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/'
     | '/_authenticated/_app/event/$id'
     | '/_authenticated/_app/gathering/new'
+    | '/_authenticated/_app/learn_/manage'
+    | '/_authenticated/_app/learn_/recipes'
     | '/_authenticated/_app/team_/insights'
     | '/_authenticated/_app/team_/map'
     | '/_authenticated/_app/event_/$id/checkin'
     | '/_authenticated/_app/event_/$id/guests'
     | '/_authenticated/_app/gathering/$id/edit'
+    | '/_authenticated/_app/learn_/lesson/$id'
+    | '/_authenticated/_app/learn_/recipe/$id'
+    | '/_authenticated/_app/learn_/track/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -398,6 +463,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppGatheringNewRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/learn_/manage': {
+      id: '/_authenticated/_app/learn_/manage'
+      path: '/learn/manage'
+      fullPath: '/learn/manage'
+      preLoaderRoute: typeof AuthenticatedAppLearnManageRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/learn_/recipes': {
+      id: '/_authenticated/_app/learn_/recipes'
+      path: '/learn/recipes'
+      fullPath: '/learn/recipes'
+      preLoaderRoute: typeof AuthenticatedAppLearnRecipesRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/team_/insights': {
       id: '/_authenticated/_app/team_/insights'
       path: '/team/insights'
@@ -433,6 +512,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppGatheringIdEditRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/learn_/lesson/$id': {
+      id: '/_authenticated/_app/learn_/lesson/$id'
+      path: '/learn/lesson/$id'
+      fullPath: '/learn/lesson/$id'
+      preLoaderRoute: typeof AuthenticatedAppLearnLessonIdRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/learn_/recipe/$id': {
+      id: '/_authenticated/_app/learn_/recipe/$id'
+      path: '/learn/recipe/$id'
+      fullPath: '/learn/recipe/$id'
+      preLoaderRoute: typeof AuthenticatedAppLearnRecipeIdRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/learn_/track/$id': {
+      id: '/_authenticated/_app/learn_/track/$id'
+      path: '/learn/track/$id'
+      fullPath: '/learn/track/$id'
+      preLoaderRoute: typeof AuthenticatedAppLearnTrackIdRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
   }
 }
 
@@ -444,11 +544,16 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedAppEventIdRoute: typeof AuthenticatedAppEventIdRoute
   AuthenticatedAppGatheringNewRoute: typeof AuthenticatedAppGatheringNewRoute
+  AuthenticatedAppLearnManageRoute: typeof AuthenticatedAppLearnManageRoute
+  AuthenticatedAppLearnRecipesRoute: typeof AuthenticatedAppLearnRecipesRoute
   AuthenticatedAppTeamInsightsRoute: typeof AuthenticatedAppTeamInsightsRoute
   AuthenticatedAppTeamMapRoute: typeof AuthenticatedAppTeamMapRoute
   AuthenticatedAppEventIdCheckinRoute: typeof AuthenticatedAppEventIdCheckinRoute
   AuthenticatedAppEventIdGuestsRoute: typeof AuthenticatedAppEventIdGuestsRoute
   AuthenticatedAppGatheringIdEditRoute: typeof AuthenticatedAppGatheringIdEditRoute
+  AuthenticatedAppLearnLessonIdRoute: typeof AuthenticatedAppLearnLessonIdRoute
+  AuthenticatedAppLearnRecipeIdRoute: typeof AuthenticatedAppLearnRecipeIdRoute
+  AuthenticatedAppLearnTrackIdRoute: typeof AuthenticatedAppLearnTrackIdRoute
 }
 
 const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
@@ -459,11 +564,16 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedAppEventIdRoute: AuthenticatedAppEventIdRoute,
   AuthenticatedAppGatheringNewRoute: AuthenticatedAppGatheringNewRoute,
+  AuthenticatedAppLearnManageRoute: AuthenticatedAppLearnManageRoute,
+  AuthenticatedAppLearnRecipesRoute: AuthenticatedAppLearnRecipesRoute,
   AuthenticatedAppTeamInsightsRoute: AuthenticatedAppTeamInsightsRoute,
   AuthenticatedAppTeamMapRoute: AuthenticatedAppTeamMapRoute,
   AuthenticatedAppEventIdCheckinRoute: AuthenticatedAppEventIdCheckinRoute,
   AuthenticatedAppEventIdGuestsRoute: AuthenticatedAppEventIdGuestsRoute,
   AuthenticatedAppGatheringIdEditRoute: AuthenticatedAppGatheringIdEditRoute,
+  AuthenticatedAppLearnLessonIdRoute: AuthenticatedAppLearnLessonIdRoute,
+  AuthenticatedAppLearnRecipeIdRoute: AuthenticatedAppLearnRecipeIdRoute,
+  AuthenticatedAppLearnTrackIdRoute: AuthenticatedAppLearnTrackIdRoute,
 }
 
 const AuthenticatedAppRouteRouteWithChildren =

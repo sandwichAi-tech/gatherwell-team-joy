@@ -169,6 +169,7 @@ function winText(t: TFunction, win: Win) {
     case 'template_launched': return t('teamSpace.win.template_launched', { name, title });
     case 'shoutout': return `${t('teamSpace.win.shoutout', { name, to: String(win.payload['to_name'] ?? '') })}: “${String(win.payload['body'] ?? '')}”`;
     case 'guest_milestone': return t('teamSpace.win.guest_milestone', { title, count: Number(win.payload['guests'] ?? 0) });
+    case 'track_completed': return t('teamSpace.win.track_completed', { name, title: (lang === 'es' && typeof win.payload['title_es'] === 'string' && win.payload['title_es']) || title });
     case 'subteam_created': return t('teamSpace.win.subteam_created', { name, title });
     default: return t('teamSpace.win.default');
   }
