@@ -1,0 +1,222 @@
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate, useRouter } from '@tanstack/react-router';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+import { X, Camera, Check, Languages, Copy, MessageCircle, MessageSquareText, MapPin, Globe2, Repeat } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { GatheringCover } from '@/components/gathering-cover';
+import { useGatherwell } from '@/components/gatherwell-shell';
+import { supabase } from '@/integrations/supabase/client';
+import { uploadMedia, workspaceQuery } from '@/lib/account';
+import { COVER_STYLES, datePresets, isOnline, rpcError, shareLink, toLocalInput } from '@/lib/gatherings';
+import { useMapsKey, loadMaps } from '@/lib/maps-client';
+import { checklistOf, eventDetailQuery, templatesQuery } from '@/lib/templates';
+
+type Props = { eventId?: string; templateId?: string; fromId?: string };
+const DURATIONS = [30, 60, 90, 120] as const;
+
+export function GatheringForm({ eventId, templateId, fromId }: Props) {
+  const { t, i18n } = useTranslation(); const { userId } = useGatherwell(); const navigate = useNavigate(); const router = useRouter(); const queryClient = useQueryClient();
+  const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
+  const editing = !!eventId;
+  const { data: workspace } = useQuery(workspaceQuery(userId));
+  const { data: templates = [] } = useQuery({ ...templatesQuery(), enabled: !!templateId });
+  const sourceId = eventId ?? fromId;
+  const { data: source } = useQuery({ ...eventDetailQuery(sourceId ?? ''), enabled: !!sourceId });
+  const mapsKey = useMapsKey();
+
+  const [title, setTitle] = useState(''); const [coverPath, setCoverPath] = useState<string | null>(null); const [coverStyle, setCoverStyle] = useState(0);
+  const [start, setStart] = useState(''); const [duration, setDuration] = useState<number>(60); const [customDuration, setCustomDuration] = useState(false);
+  const [place, setPlace] = useState<'person' | 'online'>('person'); const [locationName, setLocationName] = useState(''); const [address, setAddress] = useState('');
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null); const [note, setNote] = useState(''); const [url, setUrl] = useState('');
+  const [capacity, setCapacity] = useState(''); const [visibility, setVisibility] = useState<'public' | 'team'>('public');
+  const [descEn, setDescEn] = useState(''); const [descEs, setDescEs] = useState(''); const [descTab, setDescTab] = useState<'en' | 'es'>(lang);
+  const [weekly, setWeekly] = useState(false); const [wholeSeries, setWholeSeries] = useState(false); const [tpl, setTpl] = useState<{ id: string; title: string } | null>(null);
+  const [translateNote, setTranslateNote] = useState(false); const [busy, setBusy] = useState(false); const [uploading, setUploading] = useState(false);
+  const [done, setDone] = useState<{ id: string; visibility: string } | null>(null); const [tried, setTried] = useState(false); const [ready, setReady] = useState(false);
+  const addressRef = useRef<HTMLInputElement>(null);
+
+  // Prefill once from template, the gathering being edited, or the one being duplicated.
+  useEffect(() => {
+    if (ready) return;
+    if (templateId) {
+      const tp = templates.find(x => x.id === templateId); if (!tp) return;
+      setTpl({ id: tp.id, title: tp.title }); setTitle(tp.title); setCoverPath(tp.cover_url); setDescEn(tp.description_en ?? ''); setDescEs(tp.description_es ?? '');
+      setDuration(tp.default_duration_minutes); setCustomDuration(!DURATIONS.includes(tp.default_duration_minutes as 60)); setCapacity(tp.default_capacity ? String(tp.default_capacity) : '');
+      setVisibility(tp.visibility_default === 'team' ? 'team' : 'public'); setStart(toLocalInput(datePresets()[1]!.date)); setReady(true); return;
+    }
+    if (sourceId) {
+      if (!source) return; const e = source.event;
+      setTitle(e.title); setCoverPath(e.cover_url); setCoverStyle(e.cover_style ?? 0); setDescEn(e.description_en ?? ''); setDescEs(e.description_es ?? '');
+      const mins = e.ends_at ? Math.max(5, Math.round((new Date(e.ends_at).getTime() - new Date(e.starts_at).getTime()) / 60000)) : 60;
+      setDuration(mins); setCustomDuration(!DURATIONS.includes(mins as 60));
+      setPlace(isOnline(e) ? 'online' : 'person'); setLocationName(e.location_name ?? ''); setAddress(e.address ?? ''); setNote(e.meeting_note ?? ''); setUrl(e.online_url ?? '');
+      setCoords(e.lat != null && e.lng != null ? { lat: e.lat, lng: e.lng } : null);
+      setCapacity(e.capacity ? String(e.capacity) : ''); setVisibility(e.visibility === 'team' ? 'team' : 'public');
+      if (editing) setStart(toLocalInput(new Date(e.starts_at)));
+      else { const d = new Date(e.starts_at); const next = new Date(); next.setDate(next.getDate() + 7); next.setHours(d.getHours(), d.getMinutes(), 0, 0); setStart(toLocalInput(next)); }
+      if (fromId && e.template_id) setTpl(null);
+      setReady(true); return;
+    }
+    setStart(toLocalInput(datePresets()[1]!.date)); setReady(true);
+  }, [ready, templateId, templates, sourceId, source, editing, fromId]);
+
+  // Address becomes places autocomplete once the maps key exists.
+  useEffect(() => {
+    if (!mapsKey || place !== 'person' || !addressRef.current) return;
+    let listener: any;
+    loadMaps(mapsKey).then(() => {
+      const g = window.google?.maps; if (!g?.places || !addressRef.current) return;
+      const ac = new g.places.Autocomplete(addressRef.current, { fields: ['name', 'formatted_address', 'geometry'] });
+      listener = ac.addListener('place_changed', () => {
+        const p = ac.getPlace(); if (!p) return;
+        if (p.formatted_address) setAddress(p.formatted_address);
+        if (p.name && !locationName) setLocationName(p.name);
+        const loc = p.geometry?.location; if (loc) setCoords({ lat: loc.lat(), lng: loc.lng() });
+      });
+    }).catch(() => {});
+    return () => listener?.remove?.();
+  }, [mapsKey, place, ready]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (!workspace) return null;
+  const teamId = editing && source ? source.event.team_id : workspace.teamId;
+  if (!editing && workspace.role === 'member') return <section className="panel"><h2>{t('gathering.hostsOnly')}</h2><p>{t('gathering.hostsOnlyText')}</p></section>;
+
+  const urlBad = place === 'online' && url.trim() !== '' && !/^https:\/\/\S+$/i.test(url.trim());
+  const valid = title.trim() && start && !urlBad && (place === 'person' || url.trim()) && (!capacity || Number(capacity) >= 1);
+  const presets = datePresets();
+  const startDate = start ? new Date(start) : null;
+
+  const payload = () => ({
+    title: title.trim(), cover_url: coverPath ?? '', cover_style: coverStyle, starts_at: new Date(start).toISOString(), duration_minutes: duration,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, location_name: place === 'person' ? locationName : '', address: place === 'person' ? address : '',
+    meeting_note: place === 'person' ? note : '', online_url: place === 'online' ? url.trim() : '', capacity: capacity ? Number(capacity) : '',
+    visibility, description_en: descEn.trim(), description_es: descEs.trim(), template_id: tpl?.id ?? '',
+    lat: place === 'person' && coords ? coords.lat : '', lng: place === 'person' && coords ? coords.lng : '',
+  });
+
+  const submit = async (publish: boolean) => {
+    setTried(true); if (!valid) { toast.error(t('gathering.fixFields')); return; }
+    setBusy(true);
+    if (editing) {
+      const { error } = await supabase.rpc('update_gathering', { _event: eventId!, _p: payload(), _whole_series: wholeSeries });
+      if (!error && publish && source?.event.status === 'draft') { const r = await supabase.from('events').update({ status: 'published' }).eq('id', eventId!); if (r.error) { setBusy(false); toast.error(rpcError(t, r.error)); return; } }
+      setBusy(false);
+      if (error) { toast.error(rpcError(t, error)); return; }
+      await queryClient.invalidateQueries(); toast.success(t('gathering.saved'));
+      void navigate({ to: '/event/$id', params: { id: eventId! } }); return;
+    }
+    const { data, error } = await supabase.rpc('create_gathering_at', { _team: teamId, _p: payload(), _publish: publish, _weekly: weekly });
+    setBusy(false);
+    if (error || !data) { toast.error(rpcError(t, error)); return; }
+    await queryClient.invalidateQueries();
+    if (publish) setDone({ id: data, visibility }); else { toast.success(t('gathering.draftSaved')); void navigate({ to: '/event/$id', params: { id: data } }); }
+  };
+
+  const onPhoto = async (file?: File) => {
+    if (!file) return; if (!file.type.startsWith('image/') || file.size > 8 * 1024 * 1024) { toast.error(t('gathering.photoTooBig')); return; }
+    setUploading(true);
+    try { setCoverPath(await uploadMedia(userId, file, 'cover')); } catch { toast.error(t('profile.saveError')); } finally { setUploading(false); }
+  };
+  const close = () => (window.history.length > 1 ? router.history.back() : void navigate({ to: '/events' }));
+
+  if (done) {
+    const link = shareLink(done);
+    const when = startDate!.toLocaleString(lang, { weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const invite = t('gathering.invite', { title: title.trim(), date: when, link });
+    return <div className="gathering-screen"><div className="gathering-success">
+      <GatheringCover path={coverPath} style={coverStyle} title={title} className="success-cover" />
+      <span className="success-check"><Check /></span>
+      <h1>{t('gathering.live')}</h1>
+      <p className="success-title">{title}</p><p className="auth-subtitle">{when}{weekly ? ` · ${t('gathering.weeklyNote')}` : ''}</p>
+      <div className="share-grid success-share">
+        <Button variant="secondary" onClick={async () => { await navigator.clipboard.writeText(link); toast.success(t('onboarding.copied')); }}><Copy />{t('gathering.copyLink')}</Button>
+        <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(invite)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button>
+        <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(invite)}`}><MessageSquareText />{t('gathering.text')}</a></Button>
+      </div>
+      <Button className="onboarding-continue" onClick={() => navigate({ to: '/events', search: { tab: 'hosting' } })}>{t('gathering.done')}</Button>
+    </div></div>;
+  }
+
+  return <div className="gathering-screen">
+    <div className="gathering-form">
+      <header className="gathering-form-head">
+        <Button variant="ghost" size="icon" onClick={close} aria-label={t('common.close')}><X /></Button>
+        <h1>{t(editing ? 'gathering.editTitle' : 'gathering.newTitle')}</h1>
+        {tpl && <span className="chip">{t('gathering.fromTemplate', { title: tpl.title })}</span>}
+      </header>
+
+      <section className="form-section">
+        <GatheringCover path={coverPath} style={coverStyle} title={title || 'G'} className="form-cover" />
+        <div className="cover-actions">
+          <label className="file-button"><Camera /><span>{uploading ? t('onboarding.saving') : t(coverPath ? 'gathering.changePhoto' : 'gathering.addPhoto')}</span>
+            <input type="file" accept="image/*" className="sr-only" onChange={e => onPhoto(e.target.files?.[0])} /></label>
+          {coverPath && <Button variant="ghost" onClick={() => setCoverPath(null)}>{t('gathering.useDefault')}</Button>}
+        </div>
+        {!coverPath && <div className="style-picker" role="radiogroup" aria-label={t('gathering.coverStyle')}>{COVER_STYLES.map((bg, i) =>
+          <button key={i} type="button" role="radio" aria-checked={coverStyle === i} aria-label={t('gathering.styleN', { n: i + 1 })} className={`style-swatch ${coverStyle === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} onClick={() => setCoverStyle(i)} />)}</div>}
+      </section>
+
+      <section className="form-section">
+        <label className="field-label" htmlFor="g-title">{t('gathering.title')}</label>
+        <Input id="g-title" className="field-input" maxLength={120} value={title} onChange={e => setTitle(e.target.value)} placeholder={t('gathering.titlePlaceholder')} aria-invalid={tried && !title.trim()} />
+        {tried && !title.trim() && <p className="field-error">{t('gathering.errors.invalid_title')}</p>}
+      </section>
+
+      <section className="form-section">
+        <span className="field-label">{t('gathering.when')}</span>
+        <div className="chip-row">{presets.map(p => { const v = toLocalInput(p.date); return <button key={p.key} type="button" className={`preset-chip ${start === v ? 'is-selected' : ''}`} aria-pressed={start === v} onClick={() => setStart(v)}>{t(`gathering.presets.${p.key}`, { time: p.date.toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' }) })}</button>; })}</div>
+        <Input type="datetime-local" className="field-input" value={start} onChange={e => setStart(e.target.value)} aria-label={t('gathering.custom')} />
+        <span className="field-label">{t('gathering.duration')}</span>
+        <div className="chip-row">{DURATIONS.map(d => <button key={d} type="button" className={`preset-chip ${!customDuration && duration === d ? 'is-selected' : ''}`} aria-pressed={!customDuration && duration === d} onClick={() => { setCustomDuration(false); setDuration(d); }}>{t(`gathering.durations.${d}`)}</button>)}
+          <button type="button" className={`preset-chip ${customDuration ? 'is-selected' : ''}`} aria-pressed={customDuration} onClick={() => setCustomDuration(true)}>{t('gathering.customDuration')}</button></div>
+        {customDuration && <div className="inline-field"><Input type="number" min={5} max={1440} className="field-input" value={duration} onChange={e => setDuration(Math.max(5, Math.min(1440, Number(e.target.value) || 5)))} aria-label={t('gathering.minutes')} /><span>{t('gathering.minutes')}</span></div>}
+      </section>
+
+      <section className="form-section">
+        <span className="field-label">{t('gathering.place')}</span>
+        <div className="segmented full" role="group" aria-label={t('gathering.place')}>{(['person', 'online'] as const).map(p => <Button key={p} variant="ghost" className={place === p ? 'selected' : ''} aria-pressed={place === p} onClick={() => setPlace(p)}>{p === 'person' ? <MapPin /> : <Globe2 />}{t(`map.${p}`)}</Button>)}</div>
+        {place === 'person' ? <>
+          <Input className="field-input" maxLength={160} value={locationName} onChange={e => setLocationName(e.target.value)} placeholder={t('gathering.locationName')} aria-label={t('gathering.locationName')} />
+          <Input ref={addressRef} className="field-input" maxLength={300} value={address} onChange={e => { setAddress(e.target.value); setCoords(null); }} placeholder={t('gathering.address')} aria-label={t('gathering.address')} autoComplete="off" />
+          {!mapsKey && <p className="not-connected">{t('gathering.addressNote')}</p>}
+          <Input className="field-input" maxLength={300} value={note} onChange={e => setNote(e.target.value)} placeholder={t('gathering.note')} aria-label={t('gathering.note')} />
+        </> : <>
+          <Input type="url" inputMode="url" className="field-input" maxLength={500} value={url} onChange={e => setUrl(e.target.value)} placeholder="https://" aria-label={t('gathering.link')} aria-invalid={urlBad || (tried && !url.trim())} />
+          {(urlBad || (tried && !url.trim())) && <p className="field-error">{t('gathering.errors.invalid_url')}</p>}
+        </>}
+      </section>
+
+      <section className="form-section two-col">
+        <div><label className="field-label" htmlFor="g-cap">{t('gathering.capacity')}</label>
+          <Input id="g-cap" type="number" min={1} inputMode="numeric" className="field-input" value={capacity} onChange={e => setCapacity(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder={t('gathering.noLimit')} /></div>
+        <div><span className="field-label">{t('gathering.visibility')}</span>
+          <div className="segmented full" role="group" aria-label={t('gathering.visibility')}>{(['public', 'team'] as const).map(v => <Button key={v} variant="ghost" className={visibility === v ? 'selected' : ''} aria-pressed={visibility === v} onClick={() => setVisibility(v)}>{t(`gathering.vis.${v}`)}</Button>)}</div></div>
+      </section>
+
+      <section className="form-section">
+        <div className="desc-head"><div className="segmented" role="tablist" aria-label={t('gathering.description')}>{(['en', 'es'] as const).map(l => <Button key={l} role="tab" variant="ghost" aria-selected={descTab === l} className={descTab === l ? 'selected' : ''} onClick={() => setDescTab(l)}>{t(l === 'en' ? 'me.english' : 'me.spanish')}</Button>)}</div>
+          <Button variant="ghost" size="sm" onClick={() => { setTranslateNote(true); console.info('[translate] not connected — mock'); }}><Languages />{t('gathering.translate')}</Button></div>
+        <Textarea rows={4} maxLength={4000} className="field-textarea" value={descTab === 'en' ? descEn : descEs} onChange={e => (descTab === 'en' ? setDescEn : setDescEs)(e.target.value)} aria-label={t('gathering.description')} placeholder={t('gathering.descPlaceholder')} />
+        {translateNote && <p className="not-connected">{t('gathering.notConnected')}</p>}
+      </section>
+
+      {!editing ? <section className="form-section">
+        <span className="field-label">{t('gathering.repeat')}</span>
+        <div className="segmented full" role="group" aria-label={t('gathering.repeat')}>{([false, true] as const).map(w => <Button key={String(w)} variant="ghost" className={weekly === w ? 'selected' : ''} aria-pressed={weekly === w} onClick={() => setWeekly(w)}>{w && <Repeat />}{t(w ? 'gathering.weekly' : 'gathering.noRepeat')}</Button>)}</div>
+        {weekly && <p className="auth-subtitle">{t('gathering.weeklyHelp')}</p>}
+      </section> : source?.event.series_id ? <section className="form-section">
+        <span className="field-label">{t('gathering.applyTo')}</span>
+        <div className="segmented full" role="group" aria-label={t('gathering.applyTo')}>{([false, true] as const).map(w => <Button key={String(w)} variant="ghost" className={wholeSeries === w ? 'selected' : ''} aria-pressed={wholeSeries === w} onClick={() => setWholeSeries(w)}>{t(w ? 'gathering.thisAndLater' : 'gathering.thisDate')}</Button>)}</div>
+      </section> : null}
+      {tpl && <p className="auth-subtitle">{t('gathering.checklistNote', { count: checklistOf(templates.find(x => x.id === tpl.id) ?? { checklist: [] }).length })}</p>}
+    </div>
+    <div className="sticky-actions">
+      {(!editing || source?.event.status === 'draft') && <Button variant="secondary" disabled={busy} onClick={() => submit(false)}>{t('gathering.saveDraft')}</Button>}
+      <Button disabled={busy} onClick={() => submit(!editing || source?.event.status === 'draft')}>{busy ? t('onboarding.saving') : t(editing && source?.event.status !== 'draft' ? 'gathering.saveChanges' : 'gathering.publish')}</Button>
+    </div>
+  </div>;
+}
