@@ -27,7 +27,8 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
  const navigate = useNavigate();
  const [theme, updateTheme] = useState<Theme>('system');
  const [ready, setReady] = useState(false);
- const current = tabs.find(tab => tab.path === pathname) ?? tabs[0];
+ const isActive = (path: string) => pathname === path || (path !== '/' && pathname.startsWith(`${path}/`));
+ const current = tabs.find(tab => isActive(tab.path)) ?? tabs[0];
  useEffect(() => {
   const stored = localStorage.getItem('gatherwell-theme');
   if (stored === 'dark' || stored === 'light' || stored === 'system') updateTheme(stored);
@@ -47,7 +48,7 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
     <Link to="/" className="brand" aria-label={t('brand')}><span className="brand-mark" aria-hidden="true">g</span><span>{t('brand')}</span></Link>
     <div className="workspace-card"><span className="initial-avatar">{initials}</span><div><strong>{workspace?.name ?? t('workspace.none')}</strong><p>{workspace ? t(`plans.${workspace.plan}`) : profile?.full_name}</p></div></div>
     <TeamSwitcher userId={userId} className="sidebar-switcher" />
-    <nav className="sidebar-nav" aria-label={t('nav.label')}>{tabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: true }} className={`sidebar-link ${pathname === path ? 'is-active' : ''}`}><Icon /><span>{t(`nav.${key}`)}</span></Link>)}</nav>
+    <nav className="sidebar-nav" aria-label={t('nav.label')}>{tabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: true }} className={`sidebar-link ${isActive(path) ? 'is-active' : ''}`}><Icon /><span>{t(`nav.${key}`)}</span></Link>)}</nav>
     <div className="sidebar-bottom"><CircleHelp /><p>{t('common.sampleNote')}</p></div>
    </aside>
    <div className="app-main">
@@ -59,10 +60,10 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
     <main className="page-content"><ClientOnly fallback={<div className="min-h-96" />}><div key={pathname} className="page-transition">{children}</div></ClientOnly></main>
    </div>
    <Button size="icon" className="floating-create" onClick={() => openSheet('create')} aria-label={t('common.create')} title={t('common.create')}><Plus /></Button>
-   <nav className="bottom-nav" aria-label={t('nav.label')}>{tabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: true }} className={`bottom-link ${pathname === path ? 'is-active' : ''}`}><Icon /><span>{t(`nav.${key}`)}</span></Link>)}</nav>
+   <nav className="bottom-nav" aria-label={t('nav.label')}>{tabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: true }} className={`bottom-link ${isActive(path) ? 'is-active' : ''}`}><Icon /><span>{t(`nav.${key}`)}</span></Link>)}</nav>
    <Drawer open={sheet !== null} onOpenChange={open => { if (!open) { setSheet(null); setDetail(null); } }} shouldScaleBackground={false}>
     <DrawerContent className="gatherwell-sheet"><div className="sheet-heading"><div><DrawerTitle>{detail ? detail.title : sheet === 'create' ? t('create.title') : sheet === 'assistant' ? t('common.assistant') : sheet ? t(`placeholder.${sheet}`) : ''}</DrawerTitle><DrawerDescription className={sheet === 'create' ? 'mt-3' : 'sr-only'}>{sheet === 'create' ? t('create.description') : t('common.comingSoon')}</DrawerDescription></div><Button variant="ghost" size="icon" onClick={() => setSheet(null)} aria-label={t('common.close')}><X /></Button></div>
-    {sheet === 'create' ? <>{workspace && <FromYourLeader compact teamId={workspace.teamId} role={workspace.role} onLaunch={tpl => { setSheet(null); void navigate({ to: '/gathering/new', search: { template: tpl.id } }); }} />}<div className="creation-options">{creations.map(({ key, icon: Icon }) => <Button key={key} variant="ghost" className="creation-option" onClick={() => { if (key === 'event') { setSheet(null); void navigate({ to: '/gathering/new' }); } else openSheet(key); }}><span className="creation-icon"><Icon /></span><span><strong>{t(`create.${key}`)}</strong><small>{t(`create.${key}Text`)}</small></span><ArrowUpRight /></Button>)}</div></> : sheet === 'assistant' ? <div className="empty-assistant" /> : <div className="placeholder-state"><span className="chip sample-badge">{t('common.sample')}</span>{detail && <p>{detail.description}</p>}<p>{detail ? t('common.previewNote') : t('common.comingSoon')}</p></div>}
+    {sheet === 'create' ? <>{workspace && <FromYourLeader compact teamId={workspace.teamId} role={workspace.role} onLaunch={tpl => { setSheet(null); void navigate({ to: '/gathering/new', search: { template: tpl.id } }); }} />}<div className="creation-options">{creations.map(({ key, icon: Icon }) => <Button key={key} variant="ghost" className="creation-option" onClick={() => { if (key === 'event') { setSheet(null); void navigate({ to: '/gathering/new' }); } else if (key === 'training' && workspace?.role === 'leader') { setSheet(null); void navigate({ to: '/learn/manage' }); } else openSheet(key); }}><span className="creation-icon"><Icon /></span><span><strong>{t(`create.${key}`)}</strong><small>{t(`create.${key}Text`)}</small></span><ArrowUpRight /></Button>)}</div></> : sheet === 'assistant' ? <div className="empty-assistant" /> : <div className="placeholder-state"><span className="chip sample-badge">{t('common.sample')}</span>{detail && <p>{detail.description}</p>}<p>{detail ? t('common.previewNote') : t('common.comingSoon')}</p></div>}
     </DrawerContent>
    </Drawer>
   </div>

@@ -447,12 +447,147 @@ export type Database = {
           },
         ]
       }
+      lesson_live_links: {
+        Row: {
+          lesson_id: string
+          url: string
+        }
+        Insert: {
+          lesson_id: string
+          url: string
+        }
+        Update: {
+          lesson_id?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_live_links_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: true
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lesson_progress: {
+        Row: {
+          completed_at: string
+          lesson_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          lesson_id: string
+          user_id?: string
+        }
+        Update: {
+          completed_at?: string
+          lesson_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lesson_reminders: {
+        Row: {
+          created_at: string
+          lesson_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          lesson_id: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          lesson_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_reminders_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lessons: {
+        Row: {
+          created_at: string
+          duration_minutes: number | null
+          id: string
+          live_starts_at: string | null
+          notes_en: string | null
+          notes_es: string | null
+          replay_url: string | null
+          sort_order: number
+          storage_path: string | null
+          title_en: string
+          title_es: string
+          track_id: string
+          type: string
+          url: string | null
+        }
+        Insert: {
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          live_starts_at?: string | null
+          notes_en?: string | null
+          notes_es?: string | null
+          replay_url?: string | null
+          sort_order?: number
+          storage_path?: string | null
+          title_en?: string
+          title_es?: string
+          track_id: string
+          type?: string
+          url?: string | null
+        }
+        Update: {
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          live_starts_at?: string | null
+          notes_en?: string | null
+          notes_es?: string | null
+          replay_url?: string | null
+          sort_order?: number
+          storage_path?: string | null
+          title_en?: string
+          title_es?: string
+          track_id?: string
+          type?: string
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lessons_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "tracks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_outbox: {
         Row: {
           channel: string
           created_at: string
           event_id: string | null
           id: string
+          lesson_id: string | null
           payload: Json
           recipient: string
           rsvp_id: string | null
@@ -465,6 +600,7 @@ export type Database = {
           created_at?: string
           event_id?: string | null
           id?: string
+          lesson_id?: string | null
           payload?: Json
           recipient: string
           rsvp_id?: string | null
@@ -477,6 +613,7 @@ export type Database = {
           created_at?: string
           event_id?: string | null
           id?: string
+          lesson_id?: string | null
           payload?: Json
           recipient?: string
           rsvp_id?: string | null
@@ -490,6 +627,13 @@ export type Database = {
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_outbox_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
             referencedColumns: ["id"]
           },
           {
@@ -548,6 +692,59 @@ export type Database = {
           {
             foreignKeyName: "profiles_active_team_id_fkey"
             columns: ["active_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipes: {
+        Row: {
+          cover_style: number
+          cover_url: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          ingredients: Json
+          prep_minutes: number | null
+          steps: Json
+          tags: string[]
+          team_id: string | null
+          title_en: string
+          title_es: string
+        }
+        Insert: {
+          cover_style?: number
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          ingredients?: Json
+          prep_minutes?: number | null
+          steps?: Json
+          tags?: string[]
+          team_id?: string | null
+          title_en?: string
+          title_es?: string
+        }
+        Update: {
+          cover_style?: number
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          ingredients?: Json
+          prep_minutes?: number | null
+          steps?: Json
+          tags?: string[]
+          team_id?: string | null
+          title_en?: string
+          title_es?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipes_team_id_fkey"
+            columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
             referencedColumns: ["id"]
@@ -627,6 +824,32 @@ export type Database = {
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saved_recipes: {
+        Row: {
+          created_at: string
+          recipe_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          recipe_id: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          recipe_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_recipes_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
             referencedColumns: ["id"]
           },
         ]
@@ -787,6 +1010,59 @@ export type Database = {
           },
         ]
       }
+      tracks: {
+        Row: {
+          cover_style: number
+          cover_url: string | null
+          created_at: string
+          description_en: string | null
+          description_es: string | null
+          id: string
+          is_published: boolean
+          is_start_here: boolean
+          sort_order: number
+          team_id: string
+          title_en: string
+          title_es: string
+        }
+        Insert: {
+          cover_style?: number
+          cover_url?: string | null
+          created_at?: string
+          description_en?: string | null
+          description_es?: string | null
+          id?: string
+          is_published?: boolean
+          is_start_here?: boolean
+          sort_order?: number
+          team_id: string
+          title_en?: string
+          title_es?: string
+        }
+        Update: {
+          cover_style?: number
+          cover_url?: string | null
+          created_at?: string
+          description_en?: string | null
+          description_es?: string | null
+          id?: string
+          is_published?: boolean
+          is_start_here?: boolean
+          sort_order?: number
+          team_id?: string
+          title_en?: string
+          title_es?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tracks_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -805,7 +1081,9 @@ export type Database = {
         }
         Returns: string
       }
+      can_edit_track: { Args: { _track: string }; Returns: boolean }
       can_manage_event: { Args: { _event_id: string }; Returns: boolean }
+      can_read_track: { Args: { _track: string }; Returns: boolean }
       can_rsvp_event: { Args: { _event_id: string }; Returns: boolean }
       can_use_team_templates: { Args: { _team: string }; Returns: boolean }
       can_view_event: { Args: { _event_id: string }; Returns: boolean }
@@ -878,6 +1156,7 @@ export type Database = {
         }
         Returns: string
       }
+      live_lesson_link: { Args: { _lesson: string }; Returns: string }
       my_poll_votes: {
         Args: { _code: string; _event: string }
         Returns: {
@@ -935,6 +1214,15 @@ export type Database = {
           member_count: number
           name: string
           parent_team_id: string
+        }[]
+      }
+      track_progress: {
+        Args: { _team: string }
+        Returns: {
+          completed: number
+          lessons: number
+          started: number
+          track_id: string
         }[]
       }
       transfer_leadership: {
