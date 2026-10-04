@@ -1,14 +1,18 @@
 import { useState } from 'react';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ArrowLeft, ArrowRight, CalendarDays, MapPin, UserRound, UsersRound, Check, Save, Rocket } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CalendarDays, MapPin, UserRound, UsersRound, Check, Save, Rocket, Pencil, CopyPlus, Share2, Ban, Trash2, Copy, MessageCircle, MessageSquareText, Repeat } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ResponsiveSheet } from '@/components/responsive-sheet';
+import { GatheringCover } from '@/components/gathering-cover';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { TemplateEditor, type TemplateDraft } from '@/components/templates';
 import { supabase } from '@/integrations/supabase/client';
 import { initialsOf, teamsQuery } from '@/lib/account';
+import { guestSummaryQuery, placeOf, seriesQuery, shareLink } from '@/lib/gatherings';
 import { eventDetailQuery, type ChecklistItem } from '@/lib/templates';
 import { gatherwellHead } from '@/lib/gatherwell-head';
 
@@ -16,19 +20,23 @@ export const Route = createFileRoute('/_authenticated/_app/event/$id')({ head: (
 
 function EventDetailPage() {
   const { id } = Route.useParams();
-  const { t, i18n } = useTranslation(); const { userId } = useGatherwell(); const queryClient = useQueryClient();
+  const { t, i18n } = useTranslation(); const { userId } = useGatherwell(); const queryClient = useQueryClient(); const navigate = useNavigate();
   const lang = i18n.resolvedLanguage ?? 'en';
   const { data, isLoading } = useQuery(eventDetailQuery(id));
   const { data: teams = [] } = useQuery(teamsQuery(userId));
+  const event = data?.event;
+  const leadsTeam = !!event && teams.some(team => team.teamId === event.team_id && team.role === 'leader');
+  const manages = !!event && (event.host_id === userId || leadsTeam);
+  const { data: guests } = useQuery({ ...guestSummaryQuery(id), enabled: manages });
+  const { data: series = [] } = useQuery({ ...seriesQuery(event?.series_id ?? null), enabled: manages && !!event?.series_id });
   const [draft, setDraft] = useState<TemplateDraft | null>(null);
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving] = useState(false); const [sheet, setSheet] = useState<'share' | 'cancel' | 'delete' | null>(null); const [notify, setNotify] = useState(true);
   if (isLoading) return <div className="panel"><p className="auth-subtitle">{t('publicEvent.loading')}</p></div>;
-  if (!data) return <section className="panel"><h2>{t('eventDetail.notFound')}</h2><Button asChild variant="secondary" className="mt-4"><Link to="/team"><ArrowLeft />{t('eventDetail.backToTeam')}</Link></Button></section>;
-  const { event, hostName, going, teamName, checklist } = data;
+  if (!data || !event) return <section className="panel"><h2>{t('eventDetail.notFound')}</h2><Button asChild variant="secondary" className="mt-4"><Link to="/events"><ArrowLeft />{t('gathering.backToGatherings')}</Link></Button></section>;
+  const { hostName, going, teamName, checklist } = data;
   const isHost = event.host_id === userId;
-  const leadsTeam = teams.some(team => team.teamId === event.team_id && team.role === 'leader');
   const description = lang === 'es' ? event.description_es || event.description_en : event.description_en || event.description_es;
-  const refresh = () => queryClient.invalidateQueries({ queryKey: ['event', id] });
+  const refresh = async () => { await queryClient.invalidateQueries({ queryKey: ['event', id] }); await queryClient.invalidateQueries({ queryKey: ['gatherings'] }); await queryClient.invalidateQueries({ queryKey: ['team', event.team_id] }); };
   const toggle = async (index: number) => {
     if (!checklist) return;
     const items: ChecklistItem[] = checklist.map((item, i) => i === index ? { ...item, done: !item.done } : item);
@@ -36,35 +44,79 @@ function EventDetailPage() {
     const { error } = await supabase.from('event_checklists').update({ items, updated_at: new Date().toISOString() }).eq('event_id', id);
     if (error) { toast.error(t('profile.saveError')); await refresh(); }
   };
-  const publish = async () => {
-    setSaving(true); const { error } = await supabase.from('events').update({ status: 'published' }).eq('id', id); setSaving(false);
-    if (error) toast.error(t('profile.saveError')); else { toast.success(t('templates.launchedToast')); await refresh(); await queryClient.invalidateQueries({ queryKey: ['team', event.team_id] }); }
+  const setStatus = async (status: 'published' | 'cancelled') => {
+    setSaving(true); const { error } = await supabase.from('events').update({ status }).eq('id', id); setSaving(false);
+    if (error) { toast.error(t('profile.saveError')); return; }
+    if (status === 'cancelled' && notify) console.info('[notify] guest notification not connected — mock for', id);
+    toast.success(t(status === 'published' ? 'templates.launchedToast' : 'gathering.cancelled')); setSheet(null); await refresh();
+  };
+  const remove = async () => {
+    setSaving(true); const { error } = await supabase.from('events').delete().eq('id', id); setSaving(false);
+    if (error) { toast.error(t('profile.saveError')); return; }
+    toast.success(t('gathering.deleted')); await queryClient.invalidateQueries({ queryKey: ['gatherings'] }); void navigate({ to: '/events', search: { tab: 'hosting' } });
   };
   const start = new Date(event.starts_at);
+  const when = start.toLocaleString(lang, { weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const link = shareLink(event); const invite = t('gathering.invite', { title: event.title, date: when, link });
+  const statusChip = <span className={`chip ${event.status === 'published' ? 'published-chip' : ''}`}>{t(`teamSpace.status.${event.status}`)}</span>;
+
   return <>
-    <Link to="/team" className="auth-link back-link"><ArrowLeft />{teamName ?? t('eventDetail.backToTeam')}</Link>
-    <div className="page-heading"><div><span className="eyebrow">{t('eventDetail.eyebrow')}</span><h1>{event.title}</h1></div></div>
-    <section className="panel">
-      <div className="profile-chips"><span className={`chip ${event.status === 'published' ? 'published-chip' : ''}`}>{t(`teamSpace.status.${event.status}`)}</span><span className="chip">{t(`teamSpace.visibility.${event.visibility}`)}</span></div>
-      <ul className="detail-facts">
-        <li><CalendarDays />{start.toLocaleString(lang, { weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</li>
-        <li><MapPin />{event.location_name ?? (event.online_url ? t('teamSpace.online') : t('teamSpace.placeTbd'))}</li>
-        <li><UserRound /><span className="initial-avatar small-avatar">{initialsOf(hostName)}</span>{t('eventDetail.hostedBy', { name: hostName ?? t('teamSpace.someone') })}</li>
-        <li><UsersRound />{event.capacity ? t('sampleEvents.registered', { count: going, total: event.capacity }) : t('teamSpace.going', { count: going })}</li>
-      </ul>
-      {description && <p className="detail-description">{description}</p>}
-      <div className="confirm-actions detail-actions">
-        {isHost && event.status === 'draft' && <Button disabled={saving} onClick={publish}><Rocket />{t('templates.publish')}</Button>}
-        {isHost && leadsTeam && <Button variant="secondary" onClick={() => setDraft({ title: event.title, description_en: event.description_en, description_es: event.description_es, cover_url: event.cover_url,
-          default_duration_minutes: event.ends_at ? Math.max(5, Math.round((new Date(event.ends_at).getTime() - start.getTime()) / 60000)) : 60, default_capacity: event.capacity,
-          visibility_default: event.visibility, checklist: checklist?.map(item => item.label) ?? [], is_published: false })}><Save />{t('templates.saveAs')}</Button>}
-        {event.status === 'published' && event.visibility === 'public' && <Button asChild variant="secondary"><Link to="/e/$id" params={{ id: event.id }}>{t('teamSpace.openEvent')}<ArrowRight /></Link></Button>}
+    <Link to="/events" className="auth-link back-link"><ArrowLeft />{t('gathering.backToGatherings')}</Link>
+    <section className="panel manage-header">
+      <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="manage-cover" />
+      <div className="manage-body">
+        <div className="profile-chips">{statusChip}<span className="chip">{t(`gathering.vis.${event.visibility === 'public' ? 'public' : 'team'}`)}</span>{event.series_id && <span className="chip"><Repeat className="inline-icon" />{t('gathering.weekly')}</span>}</div>
+        <h1 className="manage-title">{event.title}</h1>
+        <ul className="detail-facts">
+          <li><CalendarDays />{when}</li>
+          <li><MapPin />{placeOf(event) ?? (event.online_url ? t('teamSpace.online') : t('teamSpace.placeTbd'))}{event.address && event.location_name ? ` · ${event.address}` : ''}</li>
+          {event.meeting_note && <li><MapPin />{event.meeting_note}</li>}
+          <li><UserRound /><span className="initial-avatar small-avatar">{initialsOf(hostName)}</span>{t('eventDetail.hostedBy', { name: hostName ?? t('teamSpace.someone') })}{teamName ? ` · ${teamName}` : ''}</li>
+          <li><UsersRound />{event.capacity ? t('gathering.goingOf', { count: going, total: event.capacity }) : t('map.going', { count: going })}</li>
+        </ul>
+        {description && <p className="detail-description">{description}</p>}
+        {manages ? <div className="manage-actions">
+          {event.status === 'draft' && <Button disabled={saving} onClick={() => setStatus('published')}><Rocket />{t('gathering.publish')}</Button>}
+          {event.status !== 'cancelled' && <Button asChild variant="secondary"><Link to="/gathering/$id/edit" params={{ id }}><Pencil />{t('gathering.edit')}</Link></Button>}
+          <Button asChild variant="secondary"><Link to="/gathering/new" search={{ from: id }}><CopyPlus />{t('gathering.duplicate')}</Link></Button>
+          {event.status === 'published' && <Button variant="secondary" onClick={() => setSheet('share')}><Share2 />{t('gathering.share')}</Button>}
+          {isHost && leadsTeam && <Button variant="secondary" onClick={() => setDraft({ title: event.title, description_en: event.description_en, description_es: event.description_es, cover_url: event.cover_url,
+            default_duration_minutes: event.ends_at ? Math.max(5, Math.round((new Date(event.ends_at).getTime() - start.getTime()) / 60000)) : 60, default_capacity: event.capacity,
+            visibility_default: event.visibility, checklist: checklist?.map(item => item.label) ?? [], is_published: false })}><Save />{t('templates.saveAs')}</Button>}
+          {event.status === 'published' && <Button variant="ghost" className="danger-text" onClick={() => setSheet('cancel')}><Ban />{t('gathering.cancel')}</Button>}
+          {event.status === 'draft' && <Button variant="ghost" className="danger-text" onClick={() => setSheet('delete')}><Trash2 />{t('gathering.deleteDraft')}</Button>}
+        </div> : event.status === 'published' && event.visibility === 'public' && <div className="manage-actions"><Button asChild variant="secondary"><Link to="/e/$id" params={{ id: event.id }}>{t('teamSpace.openEvent')}<ArrowRight /></Link></Button></div>}
       </div>
     </section>
-    {isHost && checklist && checklist.length > 0 && <section className="panel">
+
+    {manages && <section className="panel"><div className="section-heading"><h2>{t('gathering.guests')}</h2></div>
+      <div className="guest-stats">{(['going', 'maybe', 'waitlist'] as const).map(k => <div key={k} className="guest-stat"><strong className="tabular">{guests?.[k] ?? 0}</strong><span>{t(`gathering.guestStatus.${k}`)}</span></div>)}</div>
+      <Button variant="link" className="detail-link" onClick={() => toast(t('gathering.guestListSoon'))}>{t('gathering.viewGuests')}<ArrowRight /></Button></section>}
+
+    {manages && checklist && checklist.length > 0 && <section className="panel">
       <div className="section-heading"><h2>{t('eventDetail.checklist')}</h2><span className="chip">{t('eventDetail.onlyYou')}</span></div>
       <ul className="host-checklist">{checklist.map((item, i) => <li key={i}><button type="button" className={`check-item ${item.done ? 'is-done' : ''}`} aria-pressed={item.done} onClick={() => toggle(i)}><span className="check-box">{item.done && <Check />}</span>{item.label}</button></li>)}</ul>
     </section>}
+
+    {manages && series.length > 1 && <section className="panel"><div className="section-heading"><div><h2>{t('gathering.series')}</h2><p>{t('gathering.seriesHelp')}</p></div></div>
+      <ul className="series-list">{series.map(s => <li key={s.id}><Link to="/event/$id" params={{ id: s.id }} className={`series-row ${s.id === id ? 'is-current' : ''}`}>
+        <span>{new Date(s.starts_at).toLocaleString(lang, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</span>
+        <span className="chip">{t(`teamSpace.status.${s.status}`)}</span></Link></li>)}</ul>
+      {event.status !== 'cancelled' && <Button asChild variant="secondary"><Link to="/gathering/$id/edit" params={{ id }}><Pencil />{t('gathering.editSeries')}</Link></Button>}
+    </section>}
+
+    <ResponsiveSheet open={sheet === 'share'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.share')} description={event.title}>
+      <div className="share-grid"><Button variant="secondary" onClick={async () => { await navigator.clipboard.writeText(link); toast.success(t('onboarding.copied')); }}><Copy />{t('gathering.copyLink')}</Button>
+        <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(invite)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button>
+        <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(invite)}`}><MessageSquareText />{t('gathering.text')}</a></Button></div>
+    </ResponsiveSheet>
+    <ResponsiveSheet open={sheet === 'cancel'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.cancelTitle')} description={t('gathering.cancelText')}>
+      <div className="edit-form"><label className="switch-row"><Checkbox checked={notify} onCheckedChange={v => setNotify(!!v)} /><span><strong>{t('gathering.notifyGuests')}</strong><small>{t('gathering.notConnected')}</small></span></label>
+        <div className="confirm-actions"><Button variant="secondary" onClick={() => setSheet(null)}>{t('gathering.keep')}</Button><Button className="danger-button" disabled={saving} onClick={() => setStatus('cancelled')}>{t('gathering.cancel')}</Button></div></div>
+    </ResponsiveSheet>
+    <ResponsiveSheet open={sheet === 'delete'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.deleteTitle')} description={t('gathering.deleteText')}>
+      <div className="confirm-actions"><Button variant="secondary" onClick={() => setSheet(null)}>{t('gathering.keep')}</Button><Button className="danger-button" disabled={saving} onClick={remove}>{t('gathering.deleteDraft')}</Button></div>
+    </ResponsiveSheet>
     {leadsTeam && <TemplateEditor draft={draft} teamId={event.team_id} userId={userId} onClose={() => setDraft(null)} />}
   </>;
 }

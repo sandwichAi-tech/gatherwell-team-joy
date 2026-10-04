@@ -1,4 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { EmptyPage } from '@/components/gatherwell-pages';
+import { z } from 'zod';
+import { EventsPage } from '@/components/events-page';
 import { gatherwellHead } from '@/lib/gatherwell-head';
-export const Route = createFileRoute('/_authenticated/_app/events')({ head: () => gatherwellHead('events'), component: () => <EmptyPage page="events" /> });
+
+const search = z.object({ tab: z.enum(['upcoming', 'hosting', 'past']).optional() });
+export const Route = createFileRoute('/_authenticated/_app/events')({
+  validateSearch: search,
+  head: () => gatherwellHead('events'),
+  component: Events,
+});
+function Events() { const { tab } = Route.useSearch(); return <EventsPage tab={tab ?? 'upcoming'} />; }
