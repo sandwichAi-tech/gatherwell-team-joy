@@ -415,3 +415,4 @@
   .success-share { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { .gathering-card, .style-swatch, .preset-chip { transition: none; } }
+@media (min-width: 768px) { .sticky-actions { left: 248px; } }
