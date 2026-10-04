@@ -31,3 +31,4 @@
 - Signed-out visitors may call only the guest RPCs (get_public_event, rsvp_event, get/update/cancel_rsvp_by_code, vote_poll, my_poll_votes, can_view_event, get_team_invite); everything else requires sign-in and checks team role inside, because the guest page is the only anonymous surface.
 - Live counts come from event_live_counts (trigger-maintained, no names) over realtime so anonymous pages never read rsvps; hosts subscribe to rsvps directly through RLS.
 - Event photos live in the private event-photos bucket and are uploaded/listed only through event-day server functions (host via bearer, guests via checked-in checkin_code), with signed URLs.
+- Learn screens are leaf routes under /learn (track, lesson, recipes, recipe, manage?tab=) and lesson files live in the private learn-media bucket under <team_id>/, uploaded by leaders with signed-URL playback.
