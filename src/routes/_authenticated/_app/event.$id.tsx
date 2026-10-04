@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ArrowLeft, ArrowRight, CalendarDays, MapPin, UserRound, UsersRound, Check, Save, Rocket, Pencil, CopyPlus, Share2, Ban, Trash2, Copy, MessageCircle, MessageSquareText, Repeat } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CalendarDays, MapPin, UserRound, UsersRound, Check, Save, Rocket, Pencil, CopyPlus, Share2, Ban, Trash2, Copy, MessageCircle, MessageSquareText, Repeat, ImageDown, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
@@ -15,6 +15,9 @@ import { initialsOf, teamsQuery } from '@/lib/account';
 import { guestSummaryQuery, placeOf, seriesQuery, shareLink } from '@/lib/gatherings';
 import { eventDetailQuery, type ChecklistItem } from '@/lib/templates';
 import { gatherwellHead } from '@/lib/gatherwell-head';
+import { mediaUrl } from '@/lib/account';
+import { storyImage } from '@/lib/guest';
+import { Switch } from '@/components/ui/switch';
 
 export const Route = createFileRoute('/_authenticated/_app/event/$id')({ head: () => gatherwellHead('events'), component: EventDetailPage });
 
@@ -91,7 +94,8 @@ function EventDetailPage() {
 
     {manages && <section className="panel"><div className="section-heading"><h2>{t('gathering.guests')}</h2></div>
       <div className="guest-stats">{(['going', 'maybe', 'waitlist'] as const).map(k => <div key={k} className="guest-stat"><strong className="tabular">{guests?.[k] ?? 0}</strong><span>{t(`gathering.guestStatus.${k}`)}</span></div>)}</div>
-      <Button variant="link" className="detail-link" onClick={() => toast(t('gathering.guestListSoon'))}>{t('gathering.viewGuests')}<ArrowRight /></Button></section>}
+      <label className="switch-row guest-hide-row"><EyeOff className="inline-icon" /><span><strong>{t('guestList.hideList')}</strong><small>{t('guestList.hideListHelp')}</small></span><Switch checked={!!event.hide_guest_list} onCheckedChange={async v => { const { error } = await supabase.from('events').update({ hide_guest_list: v }).eq('id', id); if (error) toast.error(t('profile.saveError')); else await refresh(); }} /></label>
+      <Button asChild variant="link" className="detail-link"><Link to="/event/$id/guests" params={{ id }}>{t('gathering.viewGuests')}<ArrowRight /></Link></Button></section>}
 
     {manages && checklist && checklist.length > 0 && <section className="panel">
       <div className="section-heading"><h2>{t('eventDetail.checklist')}</h2><span className="chip">{t('eventDetail.onlyYou')}</span></div>
@@ -108,7 +112,8 @@ function EventDetailPage() {
     <ResponsiveSheet open={sheet === 'share'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.share')} description={event.title}>
       <div className="share-grid"><Button variant="secondary" onClick={async () => { await navigator.clipboard.writeText(link); toast.success(t('onboarding.copied')); }}><Copy />{t('gathering.copyLink')}</Button>
         <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(invite)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button>
-        <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(invite)}`}><MessageSquareText />{t('gathering.text')}</a></Button></div>
+        <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(invite)}`}><MessageSquareText />{t('gathering.text')}</a></Button>
+        {event.visibility === 'public' && <Button variant="secondary" onClick={async () => { toast(t('guest.storyMaking')); await storyImage({ title: event.title, date: when, link, coverUrl: await mediaUrl(event.cover_url), coverStyle: event.cover_style, brand: t('brand') }); }}><ImageDown />{t('guest.story')}</Button>}</div>
     </ResponsiveSheet>
     <ResponsiveSheet open={sheet === 'cancel'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.cancelTitle')} description={t('gathering.cancelText')}>
       <div className="edit-form"><label className="switch-row"><Checkbox checked={notify} onCheckedChange={v => setNotify(!!v)} /><span><strong>{t('gathering.notifyGuests')}</strong><small>{t('gathering.notConnected')}</small></span></label>
