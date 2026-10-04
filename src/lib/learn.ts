@@ -77,7 +77,7 @@ export const ancestorsQuery = (teamId: string) => queryOptions({
     const ids: string[] = []; let cur: string | null = teamId;
     for (let i = 0; cur && i < 10; i++) {
       ids.push(cur);
-      const res = await supabase.from('teams').select('parent_team_id').eq('id', cur).maybeSingle();
+      const res: { data: { parent_team_id: string | null } | null } = await supabase.from('teams').select('parent_team_id').eq('id', cur).maybeSingle();
       cur = res.data?.parent_team_id ?? null;
     }
     return ids;
@@ -96,12 +96,12 @@ export async function uploadLearnFile(teamId: string, file: File, onProgress: (p
   if (!session) throw new Error('not_signed_in');
   const ext = (file.name.split('.').pop() || 'bin').toLowerCase().replace(/[^a-z0-9]/g, '');
   const path = `${teamId}/${crypto.randomUUID()}.${ext}`;
-  const url = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/learn-media/${path}`;
+  const url = `${import.meta.env['VITE_SUPABASE_URL']}/storage/v1/object/learn-media/${path}`;
   await new Promise<void>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open('POST', url);
     xhr.setRequestHeader('Authorization', `Bearer ${session.access_token}`);
-    xhr.setRequestHeader('apikey', import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+    xhr.setRequestHeader('apikey', import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'] as string);
     xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
     xhr.setRequestHeader('x-upsert', 'false');
     xhr.upload.onprogress = e => { if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100)); };
