@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { GatheringCover } from '@/components/gathering-cover';
 import { Confirmation, Stepper } from '@/components/guest-rsvp';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
+import { Polls, PhotoRoll } from '@/components/event-live';
 import { supabase } from '@/integrations/supabase/client';
 import { rsvpByCodeQuery } from '@/lib/guest';
 import { GuestShell } from '@/components/guest-shell';
@@ -53,6 +54,7 @@ function ManageRsvp() {
         </div>
         <Button variant="ghost" className="danger-text" disabled={busy} onClick={() => setConfirmCancel(true)}>{t('guest.cancelRsvp')}</Button>
       </section>}
+      {data.status !== 'cancelled' && <><Polls eventId={data.event_id} code={code} /><PhotoRoll eventId={data.event_id} code={code} canAdd={!!data.checked_in_at} /></>}
     </article>
     <ResponsiveSheet open={confirmCancel} onOpenChange={setConfirmCancel} title={t('guest.cancelRsvpTitle')} description={t('guest.cancelRsvpText')}>
       <div className="confirm-actions"><Button variant="secondary" onClick={() => setConfirmCancel(false)}>{t('gathering.keep')}</Button><Button className="danger-button" disabled={busy} onClick={cancel}>{t('guest.cancelRsvp')}</Button></div>

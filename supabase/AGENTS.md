@@ -1,0 +1,10 @@
+## Database rules (Gatherwell)
+- Team creation and joining go through create_team / join_team_by_code / get_team_invite RPCs so slugs, join codes and roles are set server-side.
+- Active team is stored on profiles.active_team_id (falls back to first leader team, then first team), so the choice follows the person across devices; account deletion goes through delete_my_account(), which refuses while the caller is a team's sole leader.
+- A deferred constraint trigger keeps at least one leader per team; transfer_leadership swaps roles and ownership in one transaction, and a guard trigger blocks clients from changing plan, owner or parent team.
+- team_tree(root) is the single source for sub-team listings and calendar scope: leaders get the whole subtree, everyone else only their own team.
+- Templates launch only through launch_template(), which creates the event, copies the checklist into host-only event_checklists, bumps launches_count (clients can't edit it) and writes the single "launched" win; starter templates have no team and are copied with copy_starter_template().
+- Leader Insights come only from the leader-checked team_insights() RPC (activity counts, never sales) and shout-outs only from post_shoutout(); the maps key is served by a signed-in server function and the UI falls back to a placeholder plus list when it is missing.
+- Gatherings are created only through create_gathering_at()/create_gathering() (one row or an 8-week series sharing series_id, one win per creation, template checklist copied) and edited through update_gathering() (one date or this-and-later in the series); the UI calls events "gatherings" and the Events tab reads ?tab=upcoming|hosting|past.
+- Freed spots promote the waitlist via the rsvp_freed trigger, and guest milestones (10/25/50) come from a trigger; reminders are queued in notification_outbox with status 'simulated' until texting/email keys exist.
+- Check-in, walk-ins, polls and the after-gathering summary go through host-checked RPCs (check_in_code, check_in_rsvp, add_walk_in, create_poll, event_summary); check-in wins are grouped into one activity row per gathering per 12 hours.

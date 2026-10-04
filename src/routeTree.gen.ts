@@ -27,6 +27,7 @@ import { Route as AuthenticatedAppEventIdRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAppGatheringNewRouteImport } from './routes/_authenticated/_app/gathering.new'
 import { Route as AuthenticatedAppTeamInsightsRouteImport } from './routes/_authenticated/_app/team_.insights'
 import { Route as AuthenticatedAppTeamMapRouteImport } from './routes/_authenticated/_app/team_.map'
+import { Route as AuthenticatedAppEventIdCheckinRouteImport } from './routes/_authenticated/_app/event_.$id.checkin'
 import { Route as AuthenticatedAppEventIdGuestsRouteImport } from './routes/_authenticated/_app/event_.$id.guests'
 import { Route as AuthenticatedAppGatheringIdEditRouteImport } from './routes/_authenticated/_app/gathering.$id.edit'
 
@@ -120,6 +121,12 @@ const AuthenticatedAppTeamMapRoute = AuthenticatedAppTeamMapRouteImport.update({
   path: '/team/map',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppEventIdCheckinRoute =
+  AuthenticatedAppEventIdCheckinRouteImport.update({
+    id: '/event_/$id/checkin',
+    path: '/event/$id/checkin',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppEventIdGuestsRoute =
   AuthenticatedAppEventIdGuestsRouteImport.update({
     id: '/event_/$id/guests',
@@ -150,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/gathering/new': typeof AuthenticatedAppGatheringNewRoute
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
+  '/event/$id/checkin': typeof AuthenticatedAppEventIdCheckinRoute
   '/event/$id/guests': typeof AuthenticatedAppEventIdGuestsRoute
   '/gathering/$id/edit': typeof AuthenticatedAppGatheringIdEditRoute
 }
@@ -170,6 +178,7 @@ export interface FileRoutesByTo {
   '/gathering/new': typeof AuthenticatedAppGatheringNewRoute
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
+  '/event/$id/checkin': typeof AuthenticatedAppEventIdCheckinRoute
   '/event/$id/guests': typeof AuthenticatedAppEventIdGuestsRoute
   '/gathering/$id/edit': typeof AuthenticatedAppGatheringIdEditRoute
 }
@@ -193,6 +202,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/gathering/new': typeof AuthenticatedAppGatheringNewRoute
   '/_authenticated/_app/team_/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/_authenticated/_app/team_/map': typeof AuthenticatedAppTeamMapRoute
+  '/_authenticated/_app/event_/$id/checkin': typeof AuthenticatedAppEventIdCheckinRoute
   '/_authenticated/_app/event_/$id/guests': typeof AuthenticatedAppEventIdGuestsRoute
   '/_authenticated/_app/gathering/$id/edit': typeof AuthenticatedAppGatheringIdEditRoute
 }
@@ -215,6 +225,7 @@ export interface FileRouteTypes {
     | '/gathering/new'
     | '/team/insights'
     | '/team/map'
+    | '/event/$id/checkin'
     | '/event/$id/guests'
     | '/gathering/$id/edit'
   fileRoutesByTo: FileRoutesByTo
@@ -235,6 +246,7 @@ export interface FileRouteTypes {
     | '/gathering/new'
     | '/team/insights'
     | '/team/map'
+    | '/event/$id/checkin'
     | '/event/$id/guests'
     | '/gathering/$id/edit'
   id:
@@ -257,6 +269,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/gathering/new'
     | '/_authenticated/_app/team_/insights'
     | '/_authenticated/_app/team_/map'
+    | '/_authenticated/_app/event_/$id/checkin'
     | '/_authenticated/_app/event_/$id/guests'
     | '/_authenticated/_app/gathering/$id/edit'
   fileRoutesById: FileRoutesById
@@ -399,6 +412,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppTeamMapRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/event_/$id/checkin': {
+      id: '/_authenticated/_app/event_/$id/checkin'
+      path: '/event/$id/checkin'
+      fullPath: '/event/$id/checkin'
+      preLoaderRoute: typeof AuthenticatedAppEventIdCheckinRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/event_/$id/guests': {
       id: '/_authenticated/_app/event_/$id/guests'
       path: '/event/$id/guests'
@@ -426,6 +446,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppGatheringNewRoute: typeof AuthenticatedAppGatheringNewRoute
   AuthenticatedAppTeamInsightsRoute: typeof AuthenticatedAppTeamInsightsRoute
   AuthenticatedAppTeamMapRoute: typeof AuthenticatedAppTeamMapRoute
+  AuthenticatedAppEventIdCheckinRoute: typeof AuthenticatedAppEventIdCheckinRoute
   AuthenticatedAppEventIdGuestsRoute: typeof AuthenticatedAppEventIdGuestsRoute
   AuthenticatedAppGatheringIdEditRoute: typeof AuthenticatedAppGatheringIdEditRoute
 }
@@ -440,6 +461,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppGatheringNewRoute: AuthenticatedAppGatheringNewRoute,
   AuthenticatedAppTeamInsightsRoute: AuthenticatedAppTeamInsightsRoute,
   AuthenticatedAppTeamMapRoute: AuthenticatedAppTeamMapRoute,
+  AuthenticatedAppEventIdCheckinRoute: AuthenticatedAppEventIdCheckinRoute,
   AuthenticatedAppEventIdGuestsRoute: AuthenticatedAppEventIdGuestsRoute,
   AuthenticatedAppGatheringIdEditRoute: AuthenticatedAppGatheringIdEditRoute,
 }

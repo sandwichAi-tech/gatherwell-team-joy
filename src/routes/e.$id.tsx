@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { GatheringCover } from '@/components/gathering-cover';
 import { CalendarButtons, Confirmation, DirectionsButton, RsvpSheet, type RsvpResult } from '@/components/guest-rsvp';
 import { initialsOf, mediaUrl } from '@/lib/account';
+import { Polls, PhotoRoll, WeatherNote, useLiveCounts } from '@/components/event-live';
 import { formatWhen, isUuid, publicEventQuery, rsvpByCodeQuery } from '@/lib/guest';
 import { getPublicEventMeta } from '@/lib/public-event.functions';
 import i18n from '@/lib/i18n';
@@ -43,7 +44,8 @@ function PublicEventBody() {
   const { t, i18n: inst } = useTranslation(); const lang = inst.resolvedLanguage === 'es' ? 'es' : 'en';
   const { id } = Route.useParams(); const meta = Route.useLoaderData();
   const queryClient = useQueryClient();
-  const { data: event, isLoading } = useQuery({ ...publicEventQuery(id), refetchInterval: 15000 });
+  const { data: event, isLoading } = useQuery(publicEventQuery(id));
+  useLiveCounts(id, () => void queryClient.invalidateQueries({ queryKey: ['public-event', id] }));
   const { data: hostPhoto } = useQuery({ queryKey: ['media-url', event?.host?.avatar_url], queryFn: () => mediaUrl(event?.host?.avatar_url), enabled: !!event?.host?.avatar_url });
   const [intent, setIntent] = useState<'going' | 'maybe' | null>(null);
   const [result, setResult] = useState<RsvpResult | null>(null);
@@ -62,6 +64,7 @@ function PublicEventBody() {
   if (result) return <>
     <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="guest-cover" />
     <ConfirmationLoader code={result.code} fallbackStatus={result.status} />
+    <div className="guest-body live-extras"><Polls eventId={id} code={result.code} /></div>
   </>;
 
   return <>
@@ -73,6 +76,7 @@ function PublicEventBody() {
         <li><CalendarDays /><span>{day}</span></li>
         <li><Clock /><span>{time}</span></li>
       </ul>
+      {!event.is_online && !cancelled && <WeatherNote lat={event.lat} lng={event.lng} startsAt={event.starts_at} />}
 
       <div className="guest-host">
         {hostPhoto ? <img src={hostPhoto} alt="" className="guest-host-photo" /> : <span className="initial-avatar">{initialsOf(event.host?.name ?? null)}</span>}
@@ -105,6 +109,8 @@ function PublicEventBody() {
           </div>}
         <CalendarButtons event={event} />
       </>}
+      <Polls eventId={id} code={event.my_code} />
+      <PhotoRoll eventId={id} code={event.my_code} canAdd={!!event.my_code} />
     </article>
     <RsvpSheet event={event} intent={intent} onClose={() => setIntent(null)} onDone={r => { setIntent(null); setResult(r); void queryClient.invalidateQueries({ queryKey: ['public-event', id] }); window.scrollTo({ top: 0 }); }} />
   </>;

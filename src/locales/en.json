@@ -458,7 +458,8 @@
       "template_published": "{{name}} published the template {{title}}",
       "template_launched": "{{name}} launched {{title}}",
       "shoutout": "{{name}} gave a shout-out to {{to}}",
-      "guest_milestone": "{{title}} reached {{count}} guests"
+      "guest_milestone": "{{title}} reached {{count}} guests",
+      "checked_in_group": "{{name}} and {{count}} others checked in to {{title}}"
     },
     "react": {
       "like": "Like",
@@ -856,7 +857,8 @@
       "invalid_email": "Check your email address.",
       "not_open": "This gathering isn't taking RSVPs.",
       "too_long": "One of the fields is too long.",
-      "generic": "Something went wrong. Please try again."
+      "generic": "Something went wrong. Please try again.",
+      "rate_limited": "Too many RSVPs in a short time. Please wait a minute."
     }
   },
   "guestList": {
@@ -885,5 +887,92 @@
     "moveCancelled": "Cancel",
     "hideList": "Hide who's going",
     "hideListHelp": "Guests see only the count."
+  },
+  "live": {
+    "polls": "Polls",
+    "addPoll": "Add a poll",
+    "noPolls": "No polls yet.",
+    "closed": "Closed",
+    "votes_one": "{{count}} vote",
+    "votes_other": "{{count}} votes",
+    "rsvpToVote": "RSVP to vote",
+    "reopen": "Reopen",
+    "close": "Close poll",
+    "delete": "Delete",
+    "alreadyVoted": "You already voted.",
+    "pollClosed": "This poll is closed.",
+    "pollInvalid": "Add a question and at least 2 choices.",
+    "question": "Question",
+    "questionExample": "Which time works next week?",
+    "option": "Choice {{n}}",
+    "removeOption": "Remove choice",
+    "addOption": "Add a choice",
+    "publishPoll": "Publish poll",
+    "photos": "Photo roll",
+    "addPhoto": "Add photo",
+    "photosLater": "Photos open when the gathering starts.",
+    "noPhotos": "No photos yet.",
+    "photoAdded": "Photo added",
+    "photoAlt": "Photo from the gathering",
+    "show": "Show photo",
+    "hide": "Hide photo",
+    "photoErrors": {
+      "not_open": "This gathering isn't open for photos.",
+      "not_started": "Photos open when the gathering starts.",
+      "not_checked_in": "Check in at the gathering to add photos.",
+      "not_allowed": "Only the host and checked-in guests can add photos.",
+      "too_large": "That photo is too large.",
+      "upload_failed": "The photo didn't upload. Try again."
+    },
+    "weather": "Weather around start time: {{temp}}, {{conditions}}",
+    "conditions": {
+      "clear": "clear",
+      "cloudy": "cloudy",
+      "fog": "foggy",
+      "rain": "rain",
+      "snow": "snow",
+      "storm": "thunderstorms"
+    },
+    "summaryTitle": "After the gathering",
+    "summary": {
+      "rsvps": "RSVPs",
+      "checkins": "Check-ins",
+      "walk_ins": "Walk-ins",
+      "first_timers": "First-timers",
+      "photos": "Photos added"
+    },
+    "completed": "Complete",
+    "startCheckin": "Start check-in"
+  },
+  "checkin": {
+    "exit": "Exit check-in",
+    "counts": {
+      "going": "Going",
+      "checked_in": "Checked in",
+      "walk_ins": "Walk-ins",
+      "waitlist": "Waitlist"
+    },
+    "search": "Search by name",
+    "scan": "Scan QR",
+    "walkIn": "Add walk-in",
+    "toCheckIn": "To check in",
+    "allIn": "Everyone on the list is checked in.",
+    "checkIn": "Check in",
+    "checkedIn": "Checked in",
+    "walkInTag": "Walk-in",
+    "undo": "Undo check-in",
+    "closeScanner": "Close scanner",
+    "cameraDenied": "Camera access is off. You can still check guests in from the list.",
+    "useList": "Use the list",
+    "pointCamera": "Point the camera at the guest's QR code",
+    "scanResult": {
+      "ok": "{{name}} is checked in",
+      "already": "{{name}} is already checked in",
+      "not_found": "Not on the list for this gathering",
+      "error": "Couldn't read that code. Try again."
+    },
+    "scanNext": "Scan next",
+    "walkInAdded": "{{name}} added and checked in",
+    "addAndCheckIn": "Add and check in"
   }
 }
