@@ -36,3 +36,7 @@
 - Guests RSVP only through rsvp_event() / update_rsvp_by_code() / cancel_rsvp_by_code() and read the public page through get_public_event() (initials only, never contact details), so capacity, waitlist and the online link stay enforced server-side.
 - Freed spots promote the waitlist via the rsvp_freed trigger, and guest milestones (10/25/50) come from a trigger; reminders are queued in notification_outbox with status 'simulated' until texting/email keys exist.
 - Shared public guest chrome lives in GuestShell (client-only); /e/$id link previews come from the public getPublicEventMeta server function.
+- Signed-out visitors may call only the guest RPCs (get_public_event, rsvp_event, get/update/cancel_rsvp_by_code, vote_poll, my_poll_votes, can_view_event, get_team_invite); everything else requires sign-in and checks team role inside, because the guest page is the only anonymous surface.
+- Live counts come from event_live_counts (trigger-maintained, no names) over realtime so anonymous pages never read rsvps; hosts subscribe to rsvps directly through RLS.
+- Event photos live in the private event-photos bucket and are uploaded/listed only through event-day server functions (host via bearer, guests via checked-in checkin_code), with signed URLs.
+- Check-in, walk-ins, polls and the after-gathering summary go through host-checked RPCs (check_in_code, check_in_rsvp, add_walk_in, create_poll, event_summary); check-in wins are grouped into one activity row per gathering per 12 hours.
