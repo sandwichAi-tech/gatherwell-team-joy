@@ -44,14 +44,13 @@ export function TemplateCard({ template, children }: { template: Template; child
 export function FromYourLeader({ teamId, role, onLaunch, compact = false }: { teamId: string; role: string; onLaunch?: (template: Template) => void; compact?: boolean }) {
   const { t } = useTranslation();
   const { data = [] } = useQuery(templatesQuery());
-  const [launching, setLaunching] = useState<Template | null>(null);
+  const navigate = useNavigate();
   const list = data.filter(tpl => tpl.team_id && tpl.is_published);
   if (role === 'member' || !list.length) return null;
-  const launch = onLaunch ?? setLaunching;
+  const launch = onLaunch ?? ((tpl: Template) => void navigate({ to: '/gathering/new', search: { template: tpl.id } }));
   return <section className={compact ? 'from-leader compact' : 'panel from-leader'}>
     <div className="section-heading"><h2>{t('templates.fromLeader')}</h2></div>
     <div className="template-row">{list.map(tpl => <TemplateCard key={tpl.id} template={tpl}><Button size="sm" onClick={() => launch(tpl)}><Rocket />{t('templates.launchMine')}</Button></TemplateCard>)}</div>
-    {!onLaunch && <LaunchSheet template={launching} teamId={teamId} onClose={() => setLaunching(null)} />}
   </section>;
 }
 
