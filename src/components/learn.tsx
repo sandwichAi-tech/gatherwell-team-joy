@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { toast } from 'sonner';
 import { ArrowLeft, ArrowRight, Bell, BellRing, Bookmark, BookmarkCheck, CalendarPlus, Check, Clock, ExternalLink, FileText, Link2, Play, Radio, Settings2, Share2, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -46,9 +47,9 @@ export function LearnCover({ path, style = 0, title, className = '' }: { path?: 
 }
 
 const TYPE_ICON = { video: Video, pdf: FileText, link: Link2, live: Radio } as const;
-export const minutesLabel = (t: (k: string, o?: object) => string, m: number) => (m >= 60 ? t('learnHub.hours', { h: Math.floor(m / 60), m: m % 60 }) : t('learnHub.minutes', { count: m }));
+export const minutesLabel = (t: TFunction, m: number) => (m >= 60 ? t('learnHub.hours', { h: Math.floor(m / 60), m: m % 60 }) : t('learnHub.minutes', { count: m }));
 
-export function countdown(t: (k: string, o?: object) => string, startsAt: string, now: number) {
+export function countdown(t: TFunction, startsAt: string, now: number) {
   const diff = new Date(startsAt).getTime() - now;
   if (diff <= 0) return t('learnHub.liveNow');
   const m = Math.round(diff / 60_000);
@@ -86,7 +87,7 @@ function SampleTracks() {
   </article>)}</div>;
 }
 
-export function LiveCard({ lesson, track }: { lesson: Lesson; track?: Track }) {
+export function LiveCard({ lesson, track }: { lesson: Lesson; track?: Track | undefined }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en'; const qc = useQueryClient();
   const { userId } = useGatherwell(); const now = useNow(15_000);
   const { data: reminders } = useQuery(remindersQuery(userId));
@@ -114,7 +115,7 @@ export function LiveCard({ lesson, track }: { lesson: Lesson; track?: Track }) {
   </article>;
 }
 
-export function RecipeCard({ recipe, saved }: { recipe: Recipe; saved?: boolean }) {
+export function RecipeCard({ recipe, saved }: { recipe: Recipe; saved?: boolean | undefined }) {
   const { t, i18n } = useTranslation(); const title = pick(i18n.resolvedLanguage, recipe.title_en, recipe.title_es);
   return <Link to="/learn/recipe/$id" params={{ id: recipe.id }} className="recipe-card">
     <LearnCover path={recipe.cover_url} style={recipe.cover_style} title={title} />
@@ -150,7 +151,7 @@ export function LearnHome() {
 }
 
 function BackLink({ to, params, label }: { to: string; params?: Record<string, string>; label: string }) {
-  return <Link to={to} params={params} className="back-link"><ArrowLeft />{label}</Link>;
+  return <Link to={to} params={params ?? {}} className="back-link"><ArrowLeft />{label}</Link>;
 }
 
 export function TrackPage({ id }: { id: string }) {
