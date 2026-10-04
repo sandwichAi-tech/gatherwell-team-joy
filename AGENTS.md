@@ -33,3 +33,6 @@
 - Event detail lives at /event/$id inside the app shell; the public guest page stays at /e/$id.
 - Leader Insights come only from the leader-checked team_insights() RPC (activity counts, never sales) and shout-outs only from post_shoutout(); the maps key is served by a signed-in server function and the UI falls back to a placeholder plus list when it is missing.
 - Gatherings are created only through create_gathering_at()/create_gathering() (one row or an 8-week series sharing series_id, one win per creation, template checklist copied) and edited through update_gathering() (one date or this-and-later in the series); the UI calls events "gatherings" and the Events tab reads ?tab=upcoming|hosting|past.
+- Guests RSVP only through rsvp_event() / update_rsvp_by_code() / cancel_rsvp_by_code() and read the public page through get_public_event() (initials only, never contact details), so capacity, waitlist and the online link stay enforced server-side.
+- Freed spots promote the waitlist via the rsvp_freed trigger, and guest milestones (10/25/50) come from a trigger; reminders are queued in notification_outbox with status 'simulated' until texting/email keys exist.
+- Shared public guest chrome lives in GuestShell (client-only); /e/$id link previews come from the public getPublicEventMeta server function.

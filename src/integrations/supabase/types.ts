@@ -152,6 +152,7 @@ export type Database = {
           description_en: string | null
           description_es: string | null
           ends_at: string | null
+          hide_guest_list: boolean
           host_id: string
           id: string
           lat: number | null
@@ -179,6 +180,7 @@ export type Database = {
           description_en?: string | null
           description_es?: string | null
           ends_at?: string | null
+          hide_guest_list?: boolean
           host_id?: string
           id?: string
           lat?: number | null
@@ -206,6 +208,7 @@ export type Database = {
           description_en?: string | null
           description_es?: string | null
           ends_at?: string | null
+          hide_guest_list?: boolean
           host_id?: string
           id?: string
           lat?: number | null
@@ -237,6 +240,60 @@ export type Database = {
             columns: ["template_id"]
             isOneToOne: false
             referencedRelation: "templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_outbox: {
+        Row: {
+          channel: string
+          created_at: string
+          event_id: string | null
+          id: string
+          payload: Json
+          recipient: string
+          rsvp_id: string | null
+          send_after: string
+          status: string
+          template: string
+        }
+        Insert: {
+          channel: string
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          payload?: Json
+          recipient: string
+          rsvp_id?: string | null
+          send_after?: string
+          status?: string
+          template: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          payload?: Json
+          recipient?: string
+          rsvp_id?: string | null
+          send_after?: string
+          status?: string
+          template?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_outbox_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_outbox_rsvp_id_fkey"
+            columns: ["rsvp_id"]
+            isOneToOne: false
+            referencedRelation: "rsvps"
             referencedColumns: ["id"]
           },
         ]
@@ -557,24 +614,10 @@ export type Database = {
       }
       delete_my_account: { Args: never; Returns: undefined }
       event_going_count: { Args: { _event_id: string }; Returns: number }
+      event_seats_used: { Args: { _event: string }; Returns: number }
       gathering_validate: { Args: { _p: Json }; Returns: undefined }
-      get_rsvp_by_code: {
-        Args: { _code: string }
-        Returns: {
-          checked_in_at: string
-          created_at: string
-          email_opt_in: boolean
-          event_id: string
-          guest_email: string
-          guest_name: string
-          guest_phone: string
-          id: string
-          language: string
-          plus_ones: number
-          sms_opt_in: boolean
-          status: string
-        }[]
-      }
+      get_public_event: { Args: { _id: string }; Returns: Json }
+      get_rsvp_by_code: { Args: { _code: string }; Returns: Json }
       get_team_invite: {
         Args: { _code: string }
         Returns: {
@@ -614,7 +657,30 @@ export type Database = {
         Args: { _message: string; _team: string; _to: string }
         Returns: undefined
       }
+      promote_waitlist: { Args: { _event: string }; Returns: undefined }
+      queue_rsvp_notices: {
+        Args: { _rsvp: string; _template: string }
+        Returns: undefined
+      }
       reset_join_code: { Args: { _team: string }; Returns: string }
+      rsvp_event: {
+        Args: {
+          _email: string
+          _event_id: string
+          _first: string
+          _language: string
+          _last: string
+          _mail: boolean
+          _phone: string
+          _plus_ones: number
+          _sms: boolean
+          _status: string
+        }
+        Returns: {
+          code: string
+          status: string
+        }[]
+      }
       shares_team_with: { Args: { _other: string }; Returns: boolean }
       team_insights: {
         Args: { _from: string; _root: string; _scope: string; _to: string }
@@ -639,6 +705,10 @@ export type Database = {
       update_gathering: {
         Args: { _event: string; _p: Json; _whole_series: boolean }
         Returns: undefined
+      }
+      update_rsvp_by_code: {
+        Args: { _code: string; _plus_ones: number; _status: string }
+        Returns: string
       }
     }
     Enums: {
