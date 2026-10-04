@@ -142,10 +142,211 @@ export type Database = {
           },
         ]
       }
+      event_live_counts: {
+        Row: {
+          checked_in: number
+          event_id: string
+          going: number
+          updated_at: string
+          waitlist: number
+          walk_ins: number
+        }
+        Insert: {
+          checked_in?: number
+          event_id: string
+          going?: number
+          updated_at?: string
+          waitlist?: number
+          walk_ins?: number
+        }
+        Update: {
+          checked_in?: number
+          event_id?: string
+          going?: number
+          updated_at?: string
+          waitlist?: number
+          walk_ins?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_live_counts_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: true
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_photos: {
+        Row: {
+          created_at: string
+          event_id: string
+          hidden: boolean
+          id: string
+          path: string
+          rsvp_id: string | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          hidden?: boolean
+          id?: string
+          path: string
+          rsvp_id?: string | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          hidden?: boolean
+          id?: string
+          path?: string
+          rsvp_id?: string | null
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_photos_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_photos_rsvp_id_fkey"
+            columns: ["rsvp_id"]
+            isOneToOne: false
+            referencedRelation: "rsvps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_poll_options: {
+        Row: {
+          event_id: string
+          id: string
+          label: string
+          poll_id: string
+          position: number
+          votes: number
+        }
+        Insert: {
+          event_id: string
+          id?: string
+          label: string
+          poll_id: string
+          position?: number
+          votes?: number
+        }
+        Update: {
+          event_id?: string
+          id?: string
+          label?: string
+          poll_id?: string
+          position?: number
+          votes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_poll_options_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_poll_options_poll_id_fkey"
+            columns: ["poll_id"]
+            isOneToOne: false
+            referencedRelation: "event_polls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_poll_votes: {
+        Row: {
+          created_at: string
+          option_id: string
+          poll_id: string
+          rsvp_id: string
+        }
+        Insert: {
+          created_at?: string
+          option_id: string
+          poll_id: string
+          rsvp_id: string
+        }
+        Update: {
+          created_at?: string
+          option_id?: string
+          poll_id?: string
+          rsvp_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_poll_votes_option_id_fkey"
+            columns: ["option_id"]
+            isOneToOne: false
+            referencedRelation: "event_poll_options"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_poll_votes_poll_id_fkey"
+            columns: ["poll_id"]
+            isOneToOne: false
+            referencedRelation: "event_polls"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_poll_votes_rsvp_id_fkey"
+            columns: ["rsvp_id"]
+            isOneToOne: false
+            referencedRelation: "rsvps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_polls: {
+        Row: {
+          closed: boolean
+          created_at: string
+          created_by: string | null
+          event_id: string
+          id: string
+          question: string
+        }
+        Insert: {
+          closed?: boolean
+          created_at?: string
+          created_by?: string | null
+          event_id: string
+          id?: string
+          question: string
+        }
+        Update: {
+          closed?: boolean
+          created_at?: string
+          created_by?: string | null
+          event_id?: string
+          id?: string
+          question?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_polls_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           address: string | null
           capacity: number | null
+          completed_at: string | null
           cover_style: number
           cover_url: string | null
           created_at: string
@@ -174,6 +375,7 @@ export type Database = {
         Insert: {
           address?: string | null
           capacity?: number | null
+          completed_at?: string | null
           cover_style?: number
           cover_url?: string | null
           created_at?: string
@@ -202,6 +404,7 @@ export type Database = {
         Update: {
           address?: string | null
           capacity?: number | null
+          completed_at?: string | null
           cover_style?: number
           cover_url?: string | null
           created_at?: string
@@ -351,6 +554,21 @@ export type Database = {
           },
         ]
       }
+      rsvp_attempts: {
+        Row: {
+          created_at: string
+          key: string
+        }
+        Insert: {
+          created_at?: string
+          key: string
+        }
+        Update: {
+          created_at?: string
+          key?: string
+        }
+        Relationships: []
+      }
       rsvps: {
         Row: {
           checked_in_at: string | null
@@ -362,6 +580,7 @@ export type Database = {
           guest_name: string | null
           guest_phone: string | null
           id: string
+          is_walk_in: boolean
           language: string
           plus_ones: number
           sms_opt_in: boolean
@@ -378,6 +597,7 @@ export type Database = {
           guest_name?: string | null
           guest_phone?: string | null
           id?: string
+          is_walk_in?: boolean
           language?: string
           plus_ones?: number
           sms_opt_in?: boolean
@@ -394,6 +614,7 @@ export type Database = {
           guest_name?: string | null
           guest_phone?: string | null
           id?: string
+          is_walk_in?: boolean
           language?: string
           plus_ones?: number
           sms_opt_in?: boolean
@@ -571,10 +792,29 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_walk_in: {
+        Args: {
+          _email: string
+          _event: string
+          _first: string
+          _language: string
+          _last: string
+          _mail: boolean
+          _phone: string
+          _sms: boolean
+        }
+        Returns: string
+      }
       can_manage_event: { Args: { _event_id: string }; Returns: boolean }
       can_rsvp_event: { Args: { _event_id: string }; Returns: boolean }
       can_use_team_templates: { Args: { _team: string }; Returns: boolean }
+      can_view_event: { Args: { _event_id: string }; Returns: boolean }
       cancel_rsvp_by_code: { Args: { _code: string }; Returns: boolean }
+      check_in_code: { Args: { _code: string; _event: string }; Returns: Json }
+      check_in_rsvp: {
+        Args: { _rsvp: string; _undo?: boolean }
+        Returns: undefined
+      }
       copy_starter_template: {
         Args: { _team: string; _template: string }
         Returns: string
@@ -587,17 +827,8 @@ export type Database = {
         Args: { _p: Json; _publish: boolean; _team: string; _weekly: boolean }
         Returns: string
       }
-      create_guest_rsvp: {
-        Args: {
-          _email_opt_in?: boolean
-          _event_id: string
-          _guest_email?: string
-          _guest_name: string
-          _guest_phone?: string
-          _language?: string
-          _plus_ones?: number
-          _sms_opt_in?: boolean
-        }
+      create_poll: {
+        Args: { _event: string; _options: string[]; _question: string }
         Returns: string
       }
       create_subteam: {
@@ -615,6 +846,7 @@ export type Database = {
       delete_my_account: { Args: never; Returns: undefined }
       event_going_count: { Args: { _event_id: string }; Returns: number }
       event_seats_used: { Args: { _event: string }; Returns: number }
+      event_summary: { Args: { _event: string }; Returns: Json }
       gathering_validate: { Args: { _p: Json }; Returns: undefined }
       get_public_event: { Args: { _id: string }; Returns: Json }
       get_rsvp_by_code: { Args: { _code: string }; Returns: Json }
@@ -645,6 +877,13 @@ export type Database = {
           _timezone: string
         }
         Returns: string
+      }
+      my_poll_votes: {
+        Args: { _code: string; _event: string }
+        Returns: {
+          option_id: string
+          poll_id: string
+        }[]
       }
       my_sole_leader_teams: {
         Args: never
@@ -709,6 +948,10 @@ export type Database = {
       update_rsvp_by_code: {
         Args: { _code: string; _plus_ones: number; _status: string }
         Returns: string
+      }
+      vote_poll: {
+        Args: { _code: string; _option: string }
+        Returns: undefined
       }
     }
     Enums: {
