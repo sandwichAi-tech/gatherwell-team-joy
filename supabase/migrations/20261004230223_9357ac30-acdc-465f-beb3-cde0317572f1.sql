@@ -1,0 +1,2 @@
+CREATE POLICY "No direct client access" ON public.rsvp_attempts FOR SELECT TO authenticated USING (false);
+CREATE POLICY "No direct client access" ON public.event_poll_votes FOR SELECT TO authenticated USING (false);
