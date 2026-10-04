@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ArrowLeft, ArrowRight, CalendarDays, MapPin, UserRound, UsersRound, Check, Save, Rocket, Pencil, CopyPlus, Share2, Ban, Trash2, Copy, MessageCircle, MessageSquareText, Repeat, ImageDown, EyeOff } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CalendarDays, MapPin, UserRound, UsersRound, Check, Save, Rocket, Pencil, CopyPlus, Share2, Ban, Trash2, Copy, MessageCircle, MessageSquareText, Repeat, ImageDown, EyeOff, ScanLine, PartyPopper } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
@@ -17,6 +17,7 @@ import { eventDetailQuery, type ChecklistItem } from '@/lib/templates';
 import { gatherwellHead } from '@/lib/gatherwell-head';
 import { storyImage } from '@/lib/guest';
 import { Switch } from '@/components/ui/switch';
+import { Polls, PhotoRoll, useLiveCounts } from '@/components/event-live';
 
 export const Route = createFileRoute('/_authenticated/_app/event/$id')({ head: () => gatherwellHead('events'), component: EventDetailPage });
 
@@ -31,6 +32,10 @@ function EventDetailPage() {
   const manages = !!event && (event.host_id === userId || leadsTeam);
   const { data: guests } = useQuery({ ...guestSummaryQuery(id), enabled: manages });
   const { data: series = [] } = useQuery({ ...seriesQuery(event?.series_id ?? null), enabled: manages && !!event?.series_id });
+  const live = useLiveCounts(id, () => void queryClient.invalidateQueries({ queryKey: ['event', id, 'guests'] }));
+  const ended = !!event && new Date(event.ends_at ?? new Date(new Date(event.starts_at).getTime() + 3600000)).getTime() < Date.now();
+  const { data: summary } = useQuery({ queryKey: ['event', id, 'summary', live?.checked_in], enabled: manages && ended && event?.status === 'published',
+    queryFn: async () => (await supabase.rpc('event_summary', { _event: id })).data as null | Record<'rsvps' | 'checkins' | 'walk_ins' | 'first_timers' | 'photos', number> });
   const [draft, setDraft] = useState<TemplateDraft | null>(null);
   const [saving, setSaving] = useState(false); const [sheet, setSheet] = useState<'share' | 'cancel' | 'delete' | null>(null); const [notify, setNotify] = useState(true);
   if (isLoading) return <div className="panel"><p className="auth-subtitle">{t('publicEvent.loading')}</p></div>;
@@ -78,6 +83,7 @@ function EventDetailPage() {
         </ul>
         {description && <p className="detail-description">{description}</p>}
         {manages ? <div className="manage-actions">
+          {event.status === 'published' && <Button asChild><Link to="/event/$id/checkin" params={{ id }}><ScanLine />{t('live.startCheckin')}</Link></Button>}
           {event.status === 'draft' && <Button disabled={saving} onClick={() => setStatus('published')}><Rocket />{t('gathering.publish')}</Button>}
           {event.status !== 'cancelled' && <Button asChild variant="secondary"><Link to="/gathering/$id/edit" params={{ id }}><Pencil />{t('gathering.edit')}</Link></Button>}
           <Button asChild variant="secondary"><Link to="/gathering/new" search={{ from: id }}><CopyPlus />{t('gathering.duplicate')}</Link></Button>
@@ -91,10 +97,14 @@ function EventDetailPage() {
       </div>
     </section>
 
+    {manages && summary && <section className="panel summary-panel"><div className="section-heading"><h2><PartyPopper className="inline-icon" />{t('live.summaryTitle')}</h2><span className="chip published-chip">{t('live.completed')}</span></div>
+      <div className="summary-grid">{(['rsvps', 'checkins', 'walk_ins', 'first_timers', 'photos'] as const).map(k => <div key={k} className="guest-stat"><strong className="tabular">{summary[k] ?? 0}</strong><span>{t(`live.summary.${k}`)}</span></div>)}</div></section>}
     {manages && <section className="panel"><div className="section-heading"><h2>{t('gathering.guests')}</h2></div>
       <div className="guest-stats">{(['going', 'maybe', 'waitlist'] as const).map(k => <div key={k} className="guest-stat"><strong className="tabular">{guests?.[k] ?? 0}</strong><span>{t(`gathering.guestStatus.${k}`)}</span></div>)}</div>
       <label className="switch-row guest-hide-row"><EyeOff className="inline-icon" /><span><strong>{t('guestList.hideList')}</strong><small>{t('guestList.hideListHelp')}</small></span><Switch checked={!!event.hide_guest_list} onCheckedChange={async v => { const { error } = await supabase.from('events').update({ hide_guest_list: v }).eq('id', id); if (error) toast.error(t('profile.saveError')); else await refresh(); }} /></label>
       <Button asChild variant="link" className="detail-link"><Link to="/event/$id/guests" params={{ id }}>{t('gathering.viewGuests')}<ArrowRight /></Link></Button></section>}
+
+    {manages && event.status === 'published' && <section className="panel"><Polls eventId={id} manage /><PhotoRoll eventId={id} canAdd /></section>}
 
     {manages && checklist && checklist.length > 0 && <section className="panel">
       <div className="section-heading"><h2>{t('eventDetail.checklist')}</h2><span className="chip">{t('eventDetail.onlyYou')}</span></div>

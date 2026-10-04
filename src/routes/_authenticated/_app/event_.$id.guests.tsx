@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { Stepper } from '@/components/guest-rsvp';
+import { useRsvpChanges } from '@/components/event-live';
 import { supabase } from '@/integrations/supabase/client';
 import { initialsOf } from '@/lib/account';
 import { gatherwellHead } from '@/lib/gatherwell-head';
@@ -22,12 +23,13 @@ function GuestListPage() {
   const queryClient = useQueryClient();
   const { data: event } = useQuery({ queryKey: ['event', id, 'title'], queryFn: async () => (await supabase.from('events').select('id,title,status').eq('id', id).maybeSingle()).data });
   const { data: rows = [], isLoading, error } = useQuery({
-    queryKey: ['event', id, 'guest-list'], refetchInterval: 20000,
+    queryKey: ['event', id, 'guest-list'],
     queryFn: async () => {
       const { data, error } = await supabase.from('rsvps').select('id,user_id,guest_name,guest_phone,guest_email,plus_ones,status,sms_opt_in,email_opt_in,created_at,checked_in_at').eq('event_id', id).order('created_at');
       if (error) throw error; return data ?? [];
     },
   });
+  useRsvpChanges(id, () => void queryClient.invalidateQueries({ queryKey: ['event', id, 'guest-list'] }));
   const [tab, setTab] = useState<Tab>('going'); const [q, setQ] = useState(''); const [adding, setAdding] = useState(false);
   const counts = useMemo(() => Object.fromEntries(TABS.map(k => [k, rows.filter(r => r.status === k).length])) as Record<Tab, number>, [rows]);
   const list = rows.filter(r => r.status === tab && (!q || [r.guest_name, r.guest_phone, r.guest_email].some(v => v?.toLowerCase().includes(q.toLowerCase()))));
