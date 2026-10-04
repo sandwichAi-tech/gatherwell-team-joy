@@ -2,7 +2,7 @@
   "brand": "Gatherwell",
   "nav": {
     "home": "Inicio",
-    "events": "Eventos",
+    "events": "Reuniones",
     "team": "Equipo",
     "learn": "Aprende",
     "me": "Yo",
@@ -33,7 +33,7 @@
     "greeting": "Buenos días, {{name}}.",
     "subtitle": "Un poco de conexión hace la diferencia. Así va tu comunidad esta semana.",
     "upcoming": "Lo que viene",
-    "viewAll": "Todos los eventos",
+    "viewAll": "Todas las reuniones",
     "pulse": "Actividad de la comunidad",
     "networkLabel": "MEJOR, EN COMUNIDAD",
     "networkTitle": "Tu comunidad va más allá de tu calendario.",
@@ -46,11 +46,26 @@
     "viewDetails": "Ver detalles"
   },
   "events": {
-    "title": "Eventos",
+    "title": "Reuniones",
     "eyebrow": "Espacio",
     "heading": "El calendario de tu comunidad",
     "sentence": "Tres encuentros, una comunidad conectada.",
-    "button": "Crear un evento"
+    "button": "Crear una reunión",
+    "liveSentence": "Todo lo que viene en tus equipos.",
+    "tabs": {
+      "upcoming": "Próximas",
+      "hosting": "Organizo",
+      "past": "Pasadas"
+    },
+    "view": "Vista",
+    "list": "Lista",
+    "map": "Mapa",
+    "empty": {
+      "upcoming": "Crea tu primera reunión",
+      "hosting": "Crea tu primera reunión",
+      "past": "Aún no hay reuniones pasadas"
+    },
+    "emptyText": "Toma menos de un minuto. Elige hora y lugar, y comparte el enlace."
   },
   "team": {
     "title": "Equipo",
@@ -86,7 +101,7 @@
   "create": {
     "title": "Crear",
     "description": "Un encuentro, una novedad o una meta compartida.",
-    "event": "Nuevo evento",
+    "event": "Nueva reunión",
     "eventText": "Reúne a tu gente",
     "announcement": "Anuncio",
     "announcementText": "Comparte una novedad",
@@ -125,7 +140,7 @@
     "walkingClub": "Club de caminata",
     "training": "Taller",
     "challenge": "Reto",
-    "teamEvent": "Evento de equipo",
+    "teamEvent": "Reunión de equipo",
     "rsvp": "Confirmar asistencia",
     "checkIn": "Registrar llegada",
     "badge": "Insignia",
@@ -153,7 +168,7 @@
       "note": "+12 este mes"
     },
     "events": {
-      "label": "Próximos eventos",
+      "label": "Próximas reuniones",
       "value": "3",
       "note": "En toda tu comunidad"
     },
@@ -198,7 +213,7 @@
       "time": "Constancia de 21 días · Hace 1 hora"
     },
     "maria": {
-      "title": "Maria compartió un evento",
+      "title": "Maria compartió una reunión",
       "time": "Tu red · Hace 2 horas"
     }
   },
@@ -207,19 +222,19 @@
       "name": "Sofia Martinez",
       "initials": "SM",
       "note": "Asistió ayer · Invítala de nuevo",
-      "role": "Anfitriona · 12 eventos"
+      "role": "Anfitriona · 12 reuniones"
     },
     "james": {
       "name": "James Wilson",
       "initials": "JW",
-      "note": "Faltó a los últimos dos eventos · Escríbele",
+      "note": "Faltó a las últimas dos reuniones · Escríbele",
       "role": "Miembro · 8 encuentros"
     },
     "emily": {
       "name": "Emily Chen",
       "initials": "EC",
       "note": "Preguntó por los próximos programas",
-      "role": "Anfitriona · 6 eventos"
+      "role": "Anfitriona · 6 reuniones"
     }
   },
   "trainingRows": {
@@ -287,7 +302,7 @@
     "leader": "Lidero un equipo",
     "leaderText": "Crea tu espacio de equipo e invita a tu gente.",
     "host": "Organizo encuentros",
-    "hostText": "Planea eventos y recibe a tus invitados.",
+    "hostText": "Planea reuniones y recibe a tus invitados.",
     "member": "Soy parte de un equipo",
     "memberText": "Únete a encuentros, capacitaciones y retos.",
     "joinTitle": "Únete a tu equipo",
@@ -651,5 +666,118 @@
     "view": "Ver reunión",
     "going_one": "{{count}} registrado",
     "going_other": "{{count}} registrados"
+  },
+  "gathering": {
+    "create": "Crear reunión",
+    "createFirst": "Crea tu primera reunión",
+    "newTitle": "Nueva reunión",
+    "editTitle": "Editar reunión",
+    "fromTemplate": "De la plantilla: {{title}}",
+    "hostsOnly": "Las reuniones las crean anfitriones y líderes",
+    "hostsOnlyText": "Pídele a tu líder que te haga anfitrión.",
+    "addPhoto": "Sube o toma una foto",
+    "changePhoto": "Cambiar foto",
+    "useDefault": "Usar una portada predeterminada",
+    "coverStyle": "Estilo de portada",
+    "styleN": "Estilo {{n}}",
+    "photoTooBig": "Elige una imagen de menos de 8 MB.",
+    "title": "Título",
+    "titlePlaceholder": "Fit Camp del sábado",
+    "when": "Fecha y hora",
+    "custom": "Fecha y hora personalizadas",
+    "presets": {
+      "tonight": "Hoy {{time}}",
+      "tomorrow": "Mañana {{time}}",
+      "saturday": "Este sábado {{time}}",
+      "monday": "El próximo lunes {{time}}"
+    },
+    "duration": "Duración",
+    "durations": {
+      "30": "30 min",
+      "60": "1 h",
+      "90": "90 min",
+      "120": "2 h"
+    },
+    "customDuration": "Otra",
+    "minutes": "minutos",
+    "place": "Lugar",
+    "locationName": "Nombre del lugar",
+    "address": "Dirección",
+    "addressNote": "La búsqueda en mapa aún no está conectada. Escribe la dirección.",
+    "note": "Punto de encuentro o estacionamiento (opcional)",
+    "link": "Enlace de la reunión",
+    "capacity": "Cupo",
+    "noLimit": "Sin límite",
+    "visibility": "Quién puede verla",
+    "vis": {
+      "public": "Cualquiera con el enlace",
+      "team": "Solo mi equipo"
+    },
+    "description": "Descripción",
+    "descPlaceholder": "Qué esperar y qué llevar.",
+    "translate": "Traducir",
+    "notConnected": "Aún no conectado",
+    "repeat": "Repetir",
+    "noRepeat": "No se repite",
+    "weekly": "Cada semana",
+    "weeklyHelp": "Crea esta reunión y las de las próximas 7 semanas como una serie.",
+    "weeklyNote": "se repite cada semana por 8 semanas",
+    "applyTo": "Aplicar cambios a",
+    "thisDate": "Solo esta fecha",
+    "thisAndLater": "Esta y las siguientes",
+    "checklistNote_one": "Incluye {{count}} tarea de la plantilla.",
+    "checklistNote_other": "Incluye {{count}} tareas de la plantilla.",
+    "saveDraft": "Guardar borrador",
+    "publish": "Publicar",
+    "saveChanges": "Guardar cambios",
+    "fixFields": "Revisa los campos marcados.",
+    "saved": "Cambios guardados",
+    "draftSaved": "Borrador guardado",
+    "live": "Tu reunión ya está publicada.",
+    "copyLink": "Copiar enlace",
+    "text": "Mensaje de texto",
+    "done": "Listo",
+    "invite": "Te invito: {{title}} — {{date}}. Aparta tu lugar: {{link}}",
+    "kind": {
+      "person": "Presencial",
+      "online": "En línea",
+      "training": "Capacitación"
+    },
+    "goingOf": "{{count}} / {{total}} van",
+    "backToGatherings": "Reuniones",
+    "edit": "Editar",
+    "duplicate": "Duplicar",
+    "share": "Compartir",
+    "cancel": "Cancelar reunión",
+    "deleteDraft": "Eliminar borrador",
+    "keep": "Mantenerla",
+    "cancelTitle": "¿Cancelar esta reunión?",
+    "cancelText": "Tus invitados la verán como cancelada.",
+    "notifyGuests": "¿Avisar a los invitados?",
+    "cancelled": "Reunión cancelada",
+    "deleteTitle": "¿Eliminar este borrador?",
+    "deleteText": "No se puede deshacer.",
+    "deleted": "Borrador eliminado",
+    "guests": "Invitados",
+    "guestStatus": {
+      "going": "Van",
+      "maybe": "Tal vez",
+      "waitlist": "En espera"
+    },
+    "viewGuests": "Ver lista de invitados",
+    "guestListSoon": "La lista completa de invitados llega pronto.",
+    "series": "Serie semanal",
+    "seriesHelp": "Abre una fecha para gestionarla, o edita esta y las siguientes juntas.",
+    "editSeries": "Editar esta o las siguientes",
+    "errors": {
+      "invalid_title": "Agrega un título.",
+      "date_required": "Elige fecha y hora.",
+      "invalid_url": "Usa un enlace que empiece con https://",
+      "invalid_capacity": "El cupo debe ser al menos 1.",
+      "invalid_duration": "Elige una duración entre 5 minutos y 24 horas.",
+      "not_allowed": "No puedes crear reuniones para este equipo.",
+      "template_not_found": "Esa plantilla ya no está disponible.",
+      "too_long": "Uno de los campos es demasiado largo."
+    }
   }
 }
