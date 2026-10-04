@@ -1,5 +1,4 @@
-import { FromYourLeader, LaunchSheet } from '@/components/templates';
-import type { Template } from '@/lib/templates';
+import { FromYourLeader } from '@/components/templates';
 import { TeamSwitcher } from '@/components/team-switcher';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { ClientOnly, Link, useNavigate, useRouterState } from '@tanstack/react-router';
@@ -66,7 +65,6 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
     {sheet === 'create' ? <>{workspace && <FromYourLeader compact teamId={workspace.teamId} role={workspace.role} onLaunch={tpl => { setSheet(null); void navigate({ to: '/gathering/new', search: { template: tpl.id } }); }} />}<div className="creation-options">{creations.map(({ key, icon: Icon }) => <Button key={key} variant="ghost" className="creation-option" onClick={() => { if (key === 'event') { setSheet(null); void navigate({ to: '/gathering/new' }); } else openSheet(key); }}><span className="creation-icon"><Icon /></span><span><strong>{t(`create.${key}`)}</strong><small>{t(`create.${key}Text`)}</small></span><ArrowUpRight /></Button>)}</div></> : sheet === 'assistant' ? <div className="empty-assistant" /> : <div className="placeholder-state"><span className="chip sample-badge">{t('common.sample')}</span>{detail && <p>{detail.description}</p>}<p>{detail ? t('common.previewNote') : t('common.comingSoon')}</p></div>}
     </DrawerContent>
    </Drawer>
-   {workspace && <LaunchSheet template={launching} teamId={workspace.teamId} onClose={() => setLaunching(null)} />}
   </div>
  </AppContext.Provider>;
 }
