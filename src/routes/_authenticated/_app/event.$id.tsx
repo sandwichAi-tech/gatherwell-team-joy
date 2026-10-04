@@ -11,11 +11,10 @@ import { GatheringCover } from '@/components/gathering-cover';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { TemplateEditor, type TemplateDraft } from '@/components/templates';
 import { supabase } from '@/integrations/supabase/client';
-import { initialsOf, teamsQuery } from '@/lib/account';
+import { initialsOf, mediaUrl, teamsQuery } from '@/lib/account';
 import { guestSummaryQuery, placeOf, seriesQuery, shareLink } from '@/lib/gatherings';
 import { eventDetailQuery, type ChecklistItem } from '@/lib/templates';
 import { gatherwellHead } from '@/lib/gatherwell-head';
-import { mediaUrl } from '@/lib/account';
 import { storyImage } from '@/lib/guest';
 import { Switch } from '@/components/ui/switch';
 
