@@ -24,7 +24,7 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
  const [sheet, setSheet] = useState<'create' | 'assistant' | Creation | null>(null);
  const [detail, setDetail] = useState<{ title: string; description: string } | null>(null);
  const [memberView, setMemberView] = useState(false);
- const [launching, setLaunching] = useState<Template | null>(null);
+ const navigate = useNavigate();
  const [theme, updateTheme] = useState<Theme>('system');
  const [ready, setReady] = useState(false);
  const current = tabs.find(tab => tab.path === pathname) ?? tabs[0];

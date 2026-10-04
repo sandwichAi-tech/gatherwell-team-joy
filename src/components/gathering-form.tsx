@@ -15,7 +15,7 @@ import { COVER_STYLES, datePresets, isOnline, rpcError, shareLink, toLocalInput 
 import { useMapsKey, loadMaps } from '@/lib/maps-client';
 import { checklistOf, eventDetailQuery, templatesQuery } from '@/lib/templates';
 
-type Props = { eventId?: string; templateId?: string; fromId?: string };
+type Props = { eventId?: string | undefined; templateId?: string | undefined; fromId?: string | undefined };
 const DURATIONS = [30, 60, 90, 120] as const;
 
 export function GatheringForm({ eventId, templateId, fromId }: Props) {
