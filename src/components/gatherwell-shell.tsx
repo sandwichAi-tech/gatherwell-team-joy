@@ -1,3 +1,4 @@
+import { AssistantPanel } from '@/components/assistant/assistant-panel';
 import { PushPrompt } from '@/components/notifications';
 import { BadgeEarnedWatcher } from '@/components/recognition';
 import { FromYourLeader } from '@/components/templates';
@@ -9,7 +10,7 @@ import { Home, CalendarDays, UsersRound, BookOpen, UserRound, Plus, Sparkles, Ar
 import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
 import { useQuery } from '@tanstack/react-query';
-import { profileQuery, workspaceQuery, initialsOf } from '@/lib/account';
+import { profileQuery, workspaceQuery, initialsOf, firstName } from '@/lib/account';
 
 type Theme = 'system' | 'light' | 'dark';
 type Creation = 'event' | 'announcement' | 'challenge' | 'training' | 'profile' | 'team' | 'learn';
@@ -64,9 +65,10 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
    {userId && <ClientOnly><BadgeEarnedWatcher /><PushPrompt userId={userId} /></ClientOnly>}
    <Button size="icon" className="floating-create" onClick={() => openSheet('create')} aria-label={t('common.create')} title={t('common.create')}><Plus /></Button>
    <nav className="bottom-nav" aria-label={t('nav.label')}>{tabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: true }} className={`bottom-link ${isActive(path) ? 'is-active' : ''}`}><Icon /><span>{t(`nav.${key}`)}</span></Link>)}</nav>
-   <Drawer open={sheet !== null} onOpenChange={open => { if (!open) { setSheet(null); setDetail(null); } }} shouldScaleBackground={false}>
+   {userId && <ClientOnly><AssistantPanel open={sheet === 'assistant'} onOpenChange={o => setSheet(o ? 'assistant' : null)} screen={current.key} name={firstName(profile?.full_name)} /></ClientOnly>}
+    <Drawer open={sheet !== null && sheet !== 'assistant'} onOpenChange={open => { if (!open) { setSheet(null); setDetail(null); } }} shouldScaleBackground={false}>
     <DrawerContent className="gatherwell-sheet"><div className="sheet-heading"><div><DrawerTitle>{detail ? detail.title : sheet === 'create' ? t('create.title') : sheet === 'assistant' ? t('common.assistant') : sheet ? t(`placeholder.${sheet}`) : ''}</DrawerTitle><DrawerDescription className={sheet === 'create' ? 'mt-3' : 'sr-only'}>{sheet === 'create' ? t('create.description') : t('common.comingSoon')}</DrawerDescription></div><Button variant="ghost" size="icon" onClick={() => setSheet(null)} aria-label={t('common.close')}><X /></Button></div>
-    {sheet === 'create' ? <>{workspace && <FromYourLeader compact teamId={workspace.teamId} role={workspace.role} onLaunch={tpl => { setSheet(null); void navigate({ to: '/gathering/new', search: { template: tpl.id } }); }} />}<div className="creation-options">{creations.map(({ key, icon: Icon }) => <Button key={key} variant="ghost" className="creation-option" onClick={() => { if (key === 'event') { setSheet(null); void navigate({ to: '/gathering/new' }); } else if (key === 'challenge' && workspace?.role === 'leader') { setSheet(null); void navigate({ to: '/team', hash: 'challenges' }); } else if (key === 'training' && workspace?.role === 'leader') { setSheet(null); void navigate({ to: '/learn/manage' }); } else openSheet(key); }}><span className="creation-icon"><Icon /></span><span><strong>{t(`create.${key}`)}</strong><small>{t(`create.${key}Text`)}</small></span><ArrowUpRight /></Button>)}</div></> : sheet === 'assistant' ? <div className="empty-assistant" /> : <div className="placeholder-state"><span className="chip sample-badge">{t('common.sample')}</span>{detail && <p>{detail.description}</p>}<p>{detail ? t('common.previewNote') : t('common.comingSoon')}</p></div>}
+    {sheet === 'create' ? <>{workspace && <FromYourLeader compact teamId={workspace.teamId} role={workspace.role} onLaunch={tpl => { setSheet(null); void navigate({ to: '/gathering/new', search: { template: tpl.id } }); }} />}<div className="creation-options">{creations.map(({ key, icon: Icon }) => <Button key={key} variant="ghost" className="creation-option" onClick={() => { if (key === 'event') { setSheet(null); void navigate({ to: '/gathering/new' }); } else if (key === 'challenge' && workspace?.role === 'leader') { setSheet(null); void navigate({ to: '/team', hash: 'challenges' }); } else if (key === 'training' && workspace?.role === 'leader') { setSheet(null); void navigate({ to: '/learn/manage' }); } else openSheet(key); }}><span className="creation-icon"><Icon /></span><span><strong>{t(`create.${key}`)}</strong><small>{t(`create.${key}Text`)}</small></span><ArrowUpRight /></Button>)}</div></> : <div className="placeholder-state"><span className="chip sample-badge">{t('common.sample')}</span>{detail && <p>{detail.description}</p>}<p>{detail ? t('common.previewNote') : t('common.comingSoon')}</p></div>}
     </DrawerContent>
    </Drawer>
   </div>

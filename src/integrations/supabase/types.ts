@@ -78,6 +78,33 @@ export type Database = {
           },
         ]
       }
+      ai_usage: {
+        Row: {
+          created_at: string
+          feature: string
+          id: string
+          input_tokens: number
+          output_tokens: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          feature: string
+          id?: string
+          input_tokens?: number
+          output_tokens?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          feature?: string
+          id?: string
+          input_tokens?: number
+          output_tokens?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       announcements: {
         Row: {
           author_id: string
@@ -1093,6 +1120,7 @@ export type Database = {
           id: string
           ingredients: Json
           prep_minutes: number | null
+          private_owner: string | null
           steps: Json
           tags: string[]
           team_id: string | null
@@ -1107,6 +1135,7 @@ export type Database = {
           id?: string
           ingredients?: Json
           prep_minutes?: number | null
+          private_owner?: string | null
           steps?: Json
           tags?: string[]
           team_id?: string | null
@@ -1121,6 +1150,7 @@ export type Database = {
           id?: string
           ingredients?: Json
           prep_minutes?: number | null
+          private_owner?: string | null
           steps?: Json
           tags?: string[]
           team_id?: string | null
@@ -1751,6 +1781,7 @@ export type Database = {
         }
         Returns: string
       }
+      ai_usage_status: { Args: never; Returns: Json }
       award_badge: {
         Args: { _badge: string; _note: string; _team: string; _user: string }
         Returns: undefined
@@ -1993,6 +2024,10 @@ export type Database = {
         Returns: undefined
       }
       queue_rsvp_reminders: { Args: { _rsvp: string }; Returns: undefined }
+      record_ai_usage: {
+        Args: { _feature: string; _input: number; _output: number }
+        Returns: undefined
+      }
       record_delivery_event: {
         Args: {
           _email: string
@@ -2021,6 +2056,16 @@ export type Database = {
           code: string
           status: string
         }[]
+      }
+      save_assistant_recipe: {
+        Args: {
+          _ingredients: Json
+          _prep: number
+          _steps: Json
+          _title_en: string
+          _title_es: string
+        }
+        Returns: string
       }
       set_email_prefs: {
         Args: { _prefs: Json; _token: string }

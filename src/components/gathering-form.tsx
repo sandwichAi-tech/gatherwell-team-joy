@@ -1,3 +1,4 @@
+import { useTranslateFill } from '@/lib/assistant-client';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -35,7 +36,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const [capacity, setCapacity] = useState(''); const [visibility, setVisibility] = useState<'public' | 'team'>('public');
   const [descEn, setDescEn] = useState(''); const [descEs, setDescEs] = useState(''); const [descTab, setDescTab] = useState<'en' | 'es'>(lang);
   const [weekly, setWeekly] = useState(false); const [wholeSeries, setWholeSeries] = useState(false); const [tpl, setTpl] = useState<{ id: string; title: string } | null>(null);
-  const [translateNote, setTranslateNote] = useState(false); const [busy, setBusy] = useState(false); const [uploading, setUploading] = useState(false);
+  const tr = useTranslateFill(); const [busy, setBusy] = useState(false); const [uploading, setUploading] = useState(false);
   const [done, setDone] = useState<{ id: string; visibility: string } | null>(null); const [tried, setTried] = useState(false); const [ready, setReady] = useState(false);
   const addressRef = useRef<HTMLInputElement>(null);
 
@@ -199,9 +200,9 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
 
       <section className="form-section">
         <div className="desc-head"><div className="segmented" role="tablist" aria-label={t('gathering.description')}>{(['en', 'es'] as const).map(l => <Button key={l} role="tab" variant="ghost" aria-selected={descTab === l} className={descTab === l ? 'selected' : ''} onClick={() => setDescTab(l)}>{t(l === 'en' ? 'me.english' : 'me.spanish')}</Button>)}</div>
-          <Button variant="ghost" size="sm" onClick={() => { setTranslateNote(true); console.info('[translate] not connected — mock'); }}><Languages />{t('gathering.translate')}</Button></div>
+          <Button variant="ghost" size="sm" disabled={tr.busy} onClick={async () => { await tr.run(descEn, descEs, setDescEn, setDescEs); setDescTab(descEn.trim() ? 'es' : 'en'); }}><Languages />{tr.busy ? t('assistant.translating') : t('gathering.translate')}</Button></div>
         <Textarea rows={4} maxLength={4000} className="field-textarea" value={descTab === 'en' ? descEn : descEs} onChange={e => (descTab === 'en' ? setDescEn : setDescEs)(e.target.value)} aria-label={t('gathering.description')} placeholder={t('gathering.descPlaceholder')} />
-        {translateNote && <p className="not-connected">{t('gathering.notConnected')}</p>}
+        {tr.preview && <p className="not-connected">{t('assistant.previewTranslateNote')}</p>}
       </section>
 
       {!editing ? <section className="form-section">
