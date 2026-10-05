@@ -465,7 +465,10 @@
       "challenge_joined_group": "{{name}} y {{count}} más se unieron a {{title}}",
       "challenge_streak": "{{name}} logró una racha de 7 días en {{title}}",
       "challenge_finished": "{{name}} terminó {{title}}: {{count}} días",
-      "challenge_cheer": "{{name}} dio ánimo en {{title}}"
+      "challenge_cheer": "{{name}} dio ánimo en {{title}}",
+      "badge_earned": "{{name}} obtuvo la insignia {{badge}}",
+      "badge_awarded": "{{name}} recibió la insignia {{badge}} de {{by}}",
+      "host_of_month": "{{name}} es anfitriona del mes de {{month}}"
     },
     "react": {
       "like": "Me gusta",
@@ -1242,6 +1245,66 @@
       "out_of_range": "Ese día no es parte del reto.",
       "invalid_message": "Escribe hasta 280 caracteres.",
       "not_allowed": "No tienes acceso a este reto."
+    }
+  },
+  "recognition": {
+    "title": "Reconocimiento",
+    "giveShoutout": "Dar un reconocimiento",
+    "shoutoutText": "Agradece a alguien del equipo por algo que hizo.",
+    "who": "Para quién",
+    "person": "Elige a una persona",
+    "noPeople": "Aún no hay compañeros.",
+    "shoutoutPlaceholder": "Gracias por recibir a cada invitada nueva el sábado.",
+    "send": "Publicar reconocimiento",
+    "shoutoutSent": "Reconocimiento publicado en Logros del equipo",
+    "shoutoutLine": "{{from}} para {{to}}:",
+    "pinnedShoutout": "Reconocimiento fijado",
+    "pinned": "Fijado en el inicio del equipo",
+    "hidden": "Reconocimiento oculto",
+    "hide": "Ocultar",
+    "nameHost": "Anfitriona del mes",
+    "nameHostText": "Destaca a una persona arriba del inicio del equipo durante este mes.",
+    "nameHostCta": "Nombrar anfitriona del mes",
+    "homSaved": "Anfitriona del mes nombrada",
+    "homEyebrow": "Anfitriona del mes · {{month}}",
+    "homTitle": "Anfitriona del mes",
+    "homPlaceholder": "Por reunir al club de caminata cada semana.",
+    "noteOptional": "Nota (opcional)",
+    "awardBadge": "Otorgar insignia",
+    "whichBadge": "Insignia",
+    "awardCta": "Otorgar insignia",
+    "awarded": "Insignia otorgada",
+    "newBadge": "Nueva insignia del equipo",
+    "badgeCreated": "Insignia del equipo creada",
+    "nameEn": "Nombre en inglés",
+    "nameEs": "Nombre en español",
+    "descEn": "Descripción en inglés",
+    "descEs": "Descripción en español",
+    "icon": "Ícono",
+    "tier": "Nivel",
+    "tiers": {
+      "bronze": "Bronce",
+      "silver": "Plata",
+      "gold": "Oro"
+    },
+    "earnedTitle": "Insignia obtenida",
+    "lovely": "Qué bien",
+    "downloadCard": "Descargar tarjeta para historia",
+    "card": "Tarjeta",
+    "cardBadge": "Insignia obtenida",
+    "earnedOn": "Obtenida el {{date}}",
+    "leaderAwarded": "La otorga tu líder.",
+    "noneYet": "Aún no tienes insignias — la primera está cerca",
+    "sumBadges": "Insignias",
+    "sumShoutouts": "Reconocimientos",
+    "sumHom": "Anfitriona del mes",
+    "err": {
+      "claim_blocked": "Hablemos del momento — por favor reescríbelo sin mencionar salud, peso o ingresos.",
+      "already_awarded": "Ya tiene esta insignia.",
+      "invalid_person": "Elige a alguien de este equipo.",
+      "not_leader": "Solo las líderes pueden hacer esto.",
+      "not_allowed": "No puedes hacer eso aquí.",
+      "invalid_message": "Máximo 280 caracteres."
     }
   }
 }

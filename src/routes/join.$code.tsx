@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { AuthFrame, pageHead } from '@/components/auth-frame';
 import { supabase } from '@/integrations/supabase/client';
 import { JOIN_CODE_KEY, initialsOf, parseJoinCode } from '@/lib/account';
+import { JOIN_BY_KEY } from '@/lib/recognition';
 
 export const Route = createFileRoute('/join/$code')({ head: () => pageHead('join.cta', 'meta.join'), component: JoinPage });
 
@@ -20,6 +21,8 @@ function JoinPage() {
       const invite = data?.[0];
       if (!invite) { setState('invalid'); return; }
       localStorage.setItem(JOIN_CODE_KEY, clean);
+      const by = new URLSearchParams(window.location.search).get('by');
+      if (by && /^[0-9a-f-]{36}$/i.test(by)) localStorage.setItem(JOIN_BY_KEY, by); else localStorage.removeItem(JOIN_BY_KEY);
       const { data: auth } = await supabase.auth.getUser();
       if (auth.user) { void navigate({ to: '/onboarding', replace: true }); return; }
       setState({ team: invite.team_name, leader: invite.leader_name });

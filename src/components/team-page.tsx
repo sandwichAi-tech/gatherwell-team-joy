@@ -1,4 +1,6 @@
 import { ActiveChallengeCard, ChallengesSection } from '@/components/challenges';
+import { HostOfMonthCard, Medallion, PinnedShoutout, RecognitionTools, ShoutoutModeration, ShoutoutSheet, useHostOfMonthId } from '@/components/recognition';
+import type { Tier } from '@/lib/recognition';
 import i18n from '@/lib/i18n';
 import { useEffect, useMemo, useState } from 'react';
 import type { TFunction } from 'i18next';
@@ -103,7 +105,9 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
       </div>
     </section>
 
+    <HostOfMonthCard teamId={teamId} teamName={workspace.name} />
     <PinnedAnnouncement teamId={teamId} />
+    <PinnedShoutout teamId={teamId} isLeader={isLeader} />
     <ActiveChallengeCard />
     <ComingUp teamId={teamId} lang={lang} onOpen={setOpenEvent} />
     <FromYourLeader teamId={teamId} role={workspace.role} />
@@ -118,13 +122,15 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
         {([['edit', Pencil, 'editTeam'], ['invite', Share2, 'invite'], ['members', UsersRound, 'members'], ['announce', Megaphone, 'announce'], ['subteams', Network, 'subteams']] as const).map(([key, Icon, label]) =>
           <button type="button" key={key} className="tool-tile" onClick={() => setSheet(key)}><Icon /><span>{t(`teamSpace.${label}`)}</span><ChevronRight className="settings-chevron" /></button>)}
       </div>
+      <h3 className="field-label recognition-heading">{t('recognition.title')}</h3>
+      <RecognitionTools teamId={teamId} />
     </section>}
     {!isLeader && <section className="panel"><button type="button" className="settings-row" onClick={() => setSheet('members')}><UsersRound className="settings-icon" /><span className="settings-label">{t('teamSpace.members')}</span><ChevronRight className="settings-chevron" /></button></section>}
 
     {(tree.length > 1 || canCreateSub) && <SubTeams teamId={teamId} canCreate={canCreateSub} isLeader={isLeader} allowHosts={!!team?.allow_host_subteams} />}
     {isLeader && <TemplatesSection teamId={teamId} userId={userId} />}
     <TeamCalendar teamId={teamId} lang={lang} onOpen={setOpenEvent} />
-    <WinsFeed teamId={teamId} userId={userId} lang={lang} />
+    <WinsFeed teamId={teamId} userId={userId} lang={lang} isLeader={isLeader} />
 
     <InviteSheet open={sheet === 'invite'} onOpenChange={o => !o && setSheet(null)} workspace={workspace} joinCode={team?.join_code ?? workspace.joinCode} isLeader={isLeader} />
     {isLeader && team && <EditTeamSheet open={sheet === 'edit'} onOpenChange={o => !o && setSheet(null)} team={team} userId={userId} />}
@@ -179,13 +185,22 @@ function winText(t: TFunction, win: Win) {
     case 'challenge_finished': return t('teamSpace.win.challenge_finished', { name, title: (i18n.resolvedLanguage === 'es' && typeof win.payload['title_es'] === 'string' && win.payload['title_es']) || title, count: Number(win.payload['days'] ?? 0) });
     case 'challenge_cheer': return `${t('teamSpace.win.challenge_cheer', { name, title: (i18n.resolvedLanguage === 'es' && typeof win.payload['title_es'] === 'string' && win.payload['title_es']) || title })}: “${String(win.payload['body'] ?? '')}”`;
     case 'subteam_created': return t('teamSpace.win.subteam_created', { name, title });
+    case 'badge_earned': { const badge = (i18n.resolvedLanguage === 'es' && typeof win.payload['name_es'] === 'string' && win.payload['name_es']) || String(win.payload['name_en'] ?? ''); return win.payload['by_name'] ? t('teamSpace.win.badge_awarded', { name, badge, by: String(win.payload['by_name']) }) : t('teamSpace.win.badge_earned', { name, badge }); }
+    case 'host_of_month': return t('teamSpace.win.host_of_month', { name, month: new Date(`${String(win.payload['month'] ?? '')}T12:00:00`).toLocaleDateString(i18n.resolvedLanguage, { month: 'long' }) });
     default: return t('teamSpace.win.default');
   }
 }
 
-function WinsFeed({ teamId, userId, lang }: { teamId: string; userId: string; lang: string }) {
+function WinPhoto({ path }: { path: string }) {
+  const url = useSignedUrl(path);
+  return url ? <img className="announcement-photo" src={url} alt="" /> : null;
+}
+
+function WinsFeed({ teamId, userId, lang, isLeader }: { teamId: string; userId: string; lang: string; isLeader: boolean }) {
   const { t } = useTranslation(); const queryClient = useQueryClient();
   const { data = [], isLoading } = useQuery(winsQuery(teamId, userId));
+  const homId = useHostOfMonthId(teamId);
+  const [shouting, setShouting] = useState(false);
   const toggle = async (win: Win, kind: 'like' | 'celebrate' | 'heart') => {
     const mine = win.reactions[kind].mine;
     const { error } = mine
@@ -194,22 +209,29 @@ function WinsFeed({ teamId, userId, lang }: { teamId: string; userId: string; la
     if (error) toast.error(errorText(t, error));
     await queryClient.invalidateQueries({ queryKey: [...teamKey(teamId), 'wins'] });
   };
-  return <section className="panel"><div className="section-heading"><h2>{t('teamSpace.wins')}</h2>{!isLoading && !data.length && <span className="chip sample-badge">{t('common.sample')}</span>}</div>
+  return <section className="panel" id="wins"><div className="section-heading"><h2>{t('teamSpace.wins')}</h2><div className="heading-actions">{!isLoading && !data.length && <span className="chip sample-badge">{t('common.sample')}</span>}<Button variant="secondary" size="sm" onClick={() => setShouting(true)}><Megaphone />{t('recognition.giveShoutout')}</Button></div></div>
     {isLoading ? null : data.length ? <ol className="wins-list">{data.map(win => <li className="win-item" key={win.id}>
-      <span className="initial-avatar">{win.type === 'milestone' ? <Crown /> : initialsOf(win.actorName ?? (win.payload['guest'] as string | undefined))}</span>
+      {win.type === 'badge_earned' ? <Medallion badge={{ icon: String(win.payload['icon'] ?? 'Award'), tier: (['bronze', 'silver', 'gold'].includes(String(win.payload['tier'])) ? win.payload['tier'] : 'bronze') as Tier }} size={40} />
+        : <span className={`initial-avatar ${win.actorId && win.actorId === homId ? 'hom-ring' : ''}`}>{win.type === 'milestone' || win.type === 'host_of_month' ? <Crown /> : initialsOf(win.actorName ?? (win.payload['guest'] as string | undefined))}</span>}
       <div className="win-body"><p className="win-text">{winText(t, win)}</p>
         {win.type === 'announcement_posted' && typeof win.payload['body'] === 'string' && <p className="win-quote">{win.payload['body']}</p>}
+        {win.type === 'badge_earned' && typeof win.payload['note'] === 'string' && <p className="win-quote">{win.payload['note']}</p>}
+        {win.type === 'host_of_month' && typeof win.payload['note'] === 'string' && <p className="win-quote">{win.payload['note']}</p>}
+        {win.type === 'shoutout' && typeof win.payload['photo_path'] === 'string' && <WinPhoto path={win.payload['photo_path']} />}
         <div className="win-meta"><time dateTime={win.created_at}>{relativeTime(win.created_at, lang)}</time>
-          <div className="reactions">{REACTIONS.map(({ kind, Icon }) => <button type="button" key={kind} className={`reaction ${win.reactions[kind].mine ? 'is-mine' : ''}`} aria-pressed={win.reactions[kind].mine} aria-label={t(`teamSpace.react.${kind}`)} onClick={() => toggle(win, kind)}><Icon />{win.reactions[kind].count > 0 && <span>{win.reactions[kind].count}</span>}</button>)}</div>
+          <div className="reactions">{REACTIONS.map(({ kind, Icon }) => <button type="button" key={kind} className={`reaction ${win.reactions[kind].mine ? 'is-mine' : ''}`} aria-pressed={win.reactions[kind].mine} aria-label={t(`teamSpace.react.${kind}`)} onClick={() => toggle(win, kind)}><Icon />{win.reactions[kind].count > 0 && <span>{win.reactions[kind].count}</span>}</button>)}
+            {isLeader && win.type === 'shoutout' && typeof win.payload['shoutout_id'] === 'string' && <ShoutoutModeration teamId={teamId} shoutoutId={win.payload['shoutout_id']} />}</div>
         </div></div></li>)}</ol>
       : <div className="pulse-list">{(['sofia', 'challenge', 'maria'] as const).map(key => <div className="pulse-item" key={key}><span className="pulse-dot" /><div><h3>{t(`pulse.${key}.title`)}</h3><p>{t(`pulse.${key}.time`)}</p></div></div>)}</div>}
+    <ShoutoutSheet open={shouting} onOpenChange={setShouting} teamId={teamId} />
   </section>;
 }
 
 function InviteSheet({ open, onOpenChange, workspace, joinCode, isLeader }: { open: boolean; onOpenChange: (o: boolean) => void; workspace: TeamMembership; joinCode: string; isLeader: boolean }) {
   const { t } = useTranslation(); const queryClient = useQueryClient();
   const [copied, setCopied] = useState(false); const [qr, setQr] = useState(false); const [confirmReset, setConfirmReset] = useState(false);
-  const link = typeof window === 'undefined' ? '' : joinLink(joinCode);
+  const { userId } = useGatherwell();
+  const link = typeof window === 'undefined' ? '' : `${joinLink(joinCode)}?by=${userId}`;
   const message = t('teamSpace.inviteMessage', { team: workspace.name, link });
   useEffect(() => { if (!open) { setCopied(false); setConfirmReset(false); } }, [open]);
   const reset = async () => {
@@ -281,6 +303,7 @@ function EditTeamSheet({ open, onOpenChange, team, userId }: { open: boolean; on
 function MembersSheet({ open, onOpenChange, teamId, userId, isLeader, directLeader }: { open: boolean; onOpenChange: (o: boolean) => void; teamId: string; userId: string; isLeader: boolean; directLeader: boolean }) {
   const { t } = useTranslation(); const queryClient = useQueryClient();
   const { data: roster = [] } = useQuery({ ...rosterQuery(teamId), enabled: open });
+  const homId = useHostOfMonthId(teamId);
   const [search, setSearch] = useState(''); const [selected, setSelected] = useState<Member | null>(null);
   const [badge, setBadge] = useState(''); const [confirm, setConfirm] = useState<'remove' | 'transfer' | null>(null);
   const filtered = roster.filter(m => (m.name ?? '').toLowerCase().includes(search.trim().toLowerCase()));
@@ -298,7 +321,7 @@ function MembersSheet({ open, onOpenChange, teamId, userId, isLeader, directLead
     {!selected ? <>
       <div className="search-field"><Search /><Input className="field-input" placeholder={t('teamSpace.searchMembers')} value={search} onChange={e => setSearch(e.target.value)} aria-label={t('teamSpace.searchMembers')} /></div>
       <div className="member-list">{filtered.map(m => <button type="button" key={m.userId} className="member-row" disabled={!isLeader} onClick={() => setSelected(m)}>
-        <span className="initial-avatar">{initialsOf(m.name)}</span><span className="member-name">{m.name ?? t('teamSpace.someone')}{m.userId === userId && <small> · {t('common.you')}</small>}</span>
+        <span className={`initial-avatar ${m.userId === homId ? 'hom-ring' : ''}`}>{initialsOf(m.name)}</span><span className="member-name">{m.name ?? t('teamSpace.someone')}{m.userId === userId && <small> · {t('common.you')}</small>}</span>
         {m.customBadge && <span className="chip warm-chip">{m.customBadge}</span>}<span className="chip">{t(`roles.${m.role}`)}</span>{isLeader && <ChevronRight className="settings-chevron" />}</button>)}
         {!filtered.length && <p className="auth-subtitle">{t('teamSpace.noMatches')}</p>}</div>
     </> : <div className="edit-form">

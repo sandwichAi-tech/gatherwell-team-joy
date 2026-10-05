@@ -14,6 +14,7 @@ import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { useSwitchTeam } from '@/components/team-switcher';
 import { setLanguage } from '@/components/auth-frame';
+import { BadgeWall, RecognitionSummary, useHostOfMonthId } from '@/components/recognition';
 import { supabase } from '@/integrations/supabase/client';
 import { initialsOf, mediaUrl, profileQuery, teamsQuery, uploadMedia, workspaceQuery } from '@/lib/account';
 
@@ -122,6 +123,7 @@ export function MePage() {
   const { data: profile } = useQuery(profileQuery(userId));
   const { data: workspace } = useQuery(workspaceQuery(userId));
   const { data: teams = [] } = useQuery(teamsQuery(userId));
+  const homId = useHostOfMonthId(workspace?.teamId);
   const switchTeam = useSwitchTeam(userId);
   const saveLanguage = useLanguageSaver(userId);
   const [editing, setEditing] = useState(false);
@@ -151,7 +153,7 @@ export function MePage() {
   const panels: Record<Exclude<Panel, null>, { title: string; body: ReactNode }> = {
     gatherings: { title: t('profile.myGatherings'), body: <p className="auth-subtitle">{t('profile.gatheringsEmpty')}</p> },
     challenges: { title: t('profile.myChallenges'), body: <p className="auth-subtitle">{t('profile.challengesEmpty')}</p> },
-    badges: { title: t('profile.myBadges'), body: <><span className="chip sample-badge">{t('common.sample')}</span><div className="badge-grid">{(['first', 'streak', 'host'] as const).map(key => <div className="badge-card" key={key}><span className="badge-icon"><Award /></span><strong>{t(`profile.badges.${key}`)}</strong><small>{t(`profile.badges.${key}Text`)}</small></div>)}</div></> },
+    badges: { title: t('profile.myBadges'), body: workspace ? <BadgeWall teamId={workspace.teamId} /> : <p className="auth-subtitle">{t('workspace.none')}</p> },
     teams: { title: t('profile.myTeams'), body: teams.length ? <div className="team-list">{teams.map(team => <button type="button" key={team.teamId} className={`choice-card ${workspace?.teamId === team.teamId ? 'is-selected' : ''}`} aria-pressed={workspace?.teamId === team.teamId} onClick={() => switchTeam(team.teamId)}><span className="initial-avatar">{initialsOf(team.name)}</span><span><strong>{team.name}</strong><small>{t(`roles.${team.role}`)}{team.customBadge ? ` · ${team.customBadge}` : ''}</small></span>{workspace?.teamId === team.teamId && <Check className="choice-check" />}</button>)}</div> : <p className="auth-subtitle">{t('workspace.none')}</p> },
     notifications: { title: t('profile.notifications'), body: <p className="not-connected">{t('common.notConnected')}</p> },
     plan: { title: t('profile.plan'), body: <><p className="plan-name">{t(`plans.${workspace?.plan ?? 'free'}`)}</p><p className="auth-subtitle">{workspace?.name ?? t('workspace.none')}</p></> },
@@ -161,7 +163,7 @@ export function MePage() {
     <div className="page-heading"><div><span className="eyebrow">{t('me.eyebrow')}</span><h1>{t('me.title')}</h1></div></div>
 
     <section className="panel profile-header">
-      <Avatar path={profile?.avatar_url} name={profile?.full_name} size={72} />
+      <span className={homId === userId ? 'hom-ring hom-wrap' : 'hom-wrap'}><Avatar path={profile?.avatar_url} name={profile?.full_name} size={72} /></span>
       <div className="profile-meta">
         <h2>{profile?.full_name}</h2>
         {profile?.city && <p>{profile.city}</p>}
@@ -171,6 +173,8 @@ export function MePage() {
       </div>
       <Button variant="secondary" className="profile-edit" onClick={() => setEditing(true)}><Pencil />{t('profile.edit')}</Button>
     </section>
+
+    {workspace && <section className="panel recognition-panel"><div className="section-heading"><h2>{t('recognition.title')}</h2><Button variant="link" onClick={() => setPanel('badges')}>{t('profile.myBadges')}</Button></div><RecognitionSummary teamId={workspace.teamId} /></section>}
 
     <section className="panel settings-list">
       {row(CalendarDays, t('profile.myGatherings'), () => setPanel('gatherings'))}
