@@ -28,9 +28,7 @@
 - Event detail lives at /event/$id inside the app shell; the public guest page stays at /e/$id.
 - Guests RSVP only through rsvp_event() / update_rsvp_by_code() / cancel_rsvp_by_code() and read the public page through get_public_event() (initials only, never contact details), so capacity, waitlist and the online link stay enforced server-side.
 - Signed-out visitors may call only guest RPCs (public event/price, RSVP by code, polls, invites, email prefs by token); all else needs sign-in + team role, as the guest page is the only anonymous surface.
-- Live counts come from event_live_counts (trigger-maintained, no names) over realtime so anonymous pages never read rsvps; hosts subscribe to rsvps directly through RLS.
 - Event photos live in the private event-photos bucket and are uploaded/listed only through event-day server functions (host via bearer, guests via checked-in checkin_code), with signed URLs.
-- Learn screens are leaf routes under /learn (track, lesson, recipes, recipe, manage?tab=) and lesson files live in the private learn-media bucket under <team_id>/, uploaded by leaders with signed-URL playback.
 - All outbound messages go through notification_outbox and are sent only by src/lib/notify/process.server.ts via /api/public/outbox/process (token from app_config, every 5 min); a missing provider secret marks rows 'simulated', so turning a channel on needs only its secrets.
 - Provider webhooks live under /api/public/{sms/inbound,email/resend,email/mailgun}, verify signatures, and return 503 until their secrets exist.
 - Icons render only through GwIcon (src/components/gw-icon.tsx, Phosphor); src/components/icons.tsx re-exports named wrappers so call sites stay simple and nothing imports an icon library directly.
