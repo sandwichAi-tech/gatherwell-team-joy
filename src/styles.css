@@ -947,3 +947,4 @@ ul.as-list{list-style:disc}ol.as-list{list-style:decimal}
 .assistant-usage .progress-track{height:6px;border-radius:999px;background:var(--muted);overflow:hidden;margin-top:12px}
 .assistant-usage .progress-track span{display:block;height:100%;background:var(--lavender);border-radius:inherit}
 @media (prefers-reduced-motion:reduce){.as-typing i{animation:none}}
+.as-head-text strong,.as-preview{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
