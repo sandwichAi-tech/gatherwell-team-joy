@@ -573,9 +573,10 @@ ul.order-list li{grid-template-columns:minmax(0,1fr) auto}
 @media (min-width:768px){.challenge-active{grid-template-columns:auto minmax(0,1fr) auto}.challenge-active>a{grid-column:auto}.checkin-big{width:auto;justify-self:start;padding:0 32px}.day-grid{grid-template-columns:repeat(auto-fill,minmax(52px,1fr))}.starter-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 
 /* Recognition */
-.medallion{position:relative;display:inline-grid;place-items:center;flex-shrink:0;border-radius:50%;background:var(--medal-fill);color:var(--medal-ink);box-shadow:0 0 0 1px var(--card) inset,0 0 0 3px var(--medal-ring),0 0 0 4px var(--card),0 0 0 5px var(--border)}
+.medallion{position:relative;display:inline-grid;place-items:center;flex-shrink:0;border-radius:50%;background:radial-gradient(circle at 35% 28%,rgba(255,255,255,.75),transparent 55%),var(--medal-fill);color:var(--medal-ink);box-shadow:0 0 0 1.5px var(--medal-ring),inset 0 1px 0 rgba(255,255,255,.7),inset 0 -6px 12px rgba(47,35,64,.05)}
+.dark .medallion{background:radial-gradient(circle at 35% 28%,rgba(255,255,255,.08),transparent 55%),var(--medal-fill)}
 .medallion.tier-bronze{--medal-ring:#F3C6A5;--medal-fill:#FBEDE3;--medal-ink:#8A4E2B}
-.medallion.tier-silver{--medal-ring:#B9A2D8;--medal-fill:#EFEBF6;--medal-ink:#5A4380}
+.medallion.tier-silver{--medal-ring:#7A5FA8;--medal-fill:#EFEBF6;--medal-ink:#5A4380}
 .medallion.tier-gold{--medal-ring:#2F2340;--medal-fill:#F3EEF8;--medal-ink:#2F2340}
 .dark .medallion.tier-gold{--medal-ring:#B9A2D8;--medal-fill:#362D43;--medal-ink:#F3C6A5}
 .dark .medallion.tier-silver{--medal-fill:#2E2638;--medal-ink:#D7C8EC}
@@ -632,3 +633,12 @@ ul.order-list li{grid-template-columns:minmax(0,1fr) auto}
 .notify-device{padding:4px 0 8px}
 .outbox-total{margin-top:12px;font-size:13px}
 .unsubscribe-list{margin:16px 0}
+
+/* ---------- Icon system (Phosphor via GwIcon) ---------- */
+.gw-icon{flex-shrink:0}
+.gw-icon-feature{color:var(--plum)}
+.gw-icon-feature [opacity="0.2"]{fill:var(--lavender);opacity:.2}
+.dark .gw-icon-feature{color:#D7C8EC}
+.medallion .gw-icon-feature{color:var(--medal-ink)}
+.gw-feature-tile{display:inline-grid;place-items:center;width:56px;height:56px;flex-shrink:0;border-radius:16px;background:#EFEBF6;border:1px solid #E4DEF0}
+.dark .gw-feature-tile{background:#2E2638;border-color:#3E3450}
