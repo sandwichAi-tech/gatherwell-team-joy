@@ -1,3 +1,4 @@
+import { ClaimGuard } from '@/components/smart';
 import { useTranslateFill } from '@/lib/assistant-client';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useRouter } from '@tanstack/react-router';
@@ -202,6 +203,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         <div className="desc-head"><div className="segmented" role="tablist" aria-label={t('gathering.description')}>{(['en', 'es'] as const).map(l => <Button key={l} role="tab" variant="ghost" aria-selected={descTab === l} className={descTab === l ? 'selected' : ''} onClick={() => setDescTab(l)}>{t(l === 'en' ? 'me.english' : 'me.spanish')}</Button>)}</div>
           <Button variant="ghost" size="sm" disabled={tr.busy} onClick={async () => { await tr.run(descEn, descEs, setDescEn, setDescEs); setDescTab(descEn.trim() ? 'es' : 'en'); }}><Languages />{tr.busy ? t('assistant.translating') : t('gathering.translate')}</Button></div>
         <Textarea rows={4} maxLength={4000} className="field-textarea" value={descTab === 'en' ? descEn : descEs} onChange={e => (descTab === 'en' ? setDescEn : setDescEs)(e.target.value)} aria-label={t('gathering.description')} placeholder={t('gathering.descPlaceholder')} />
+        <ClaimGuard text={descTab === 'en' ? descEn : descEs} lang={descTab} onUse={v => (descTab === 'en' ? setDescEn : setDescEs)(v)} />
         {tr.preview && <p className="not-connected">{t('assistant.previewTranslateNote')}</p>}
       </section>
 

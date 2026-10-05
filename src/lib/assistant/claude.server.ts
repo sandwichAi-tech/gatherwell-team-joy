@@ -11,13 +11,14 @@ export function systemPrompt(o: { lang: Lang; name: string; screen: Screen; toda
     'Never make health, medical, weight-loss or income claims. Never give medical advice; suggest a qualified professional instead.',
     "Never sell products, quote product prices, or mention outside companies or brands. If someone wants to buy something, point them to their host's shop link.",
     'Never use emoji.',
+    "For questions about how this team does things (welcome nights, scripts, routines), call search_team_library and answer only from its results. If nothing matches, say so plainly and suggest asking their leader.",
     'Keep replies under 120 words unless asked for more.',
     'Use tools to produce cards. Nothing is ever created, posted or sent by you; the user confirms on each card. After a tool, reply with one or two short sentences.',
     `The user's first name is ${o.name || 'unknown'}. They are on the ${o.screen} screen. Today is ${o.today} (${o.tz}).`,
   ].join('\n');
 }
 
-async function call(key: string, body: unknown) {
+export async function call(key: string, body: unknown) {
   const res = await fetch(ANTHROPIC_URL, { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': ANTHROPIC_VERSION }, body: JSON.stringify(body) });
   if (!res.ok) {
     const text = await res.text().catch(() => '');

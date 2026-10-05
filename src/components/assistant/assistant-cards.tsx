@@ -3,7 +3,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Check, Copy, MessageCircle, MessageSquareText, MapPin, Megaphone, Pencil, BookmarkCheck, Bookmark, ExternalLink, CalendarDays, UsersRound, Clock } from '@/components/icons';
+import { Check, Copy, MessageCircle, MessageSquareText, MapPin, Megaphone, Pencil, BookmarkCheck, Bookmark, ExternalLink, CalendarDays, UsersRound, Clock, BookOpen } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -94,6 +94,7 @@ export function AssistantCardView({ card, close }: { card: AssistantCard; close:
   switch (card.type) {
     case 'gathering': return <GatheringCardView draft={card.draft} close={close} />;
     case 'recipe': return <RecipeCardView recipe={card.recipe} />;
+    case 'sources': return <div className="as-sources" aria-label={t('smart.library.sources')}>{card.items.map(it => <a key={it.id} className="as-source-chip" href={it.type === 'lesson' ? `/learn/lesson/${it.id}` : it.type === 'recipe' ? `/learn/recipe/${it.id}` : '/team'} onClick={close}><BookOpen />{t('smart.library.from', { title: it.title, type: t(`smart.library.types.${it.type}`) })}</a>)}</div>;
     case 'translation': return <div className="as-card"><div className="as-card-body"><span className="gw-label">{t(`assistant.lang.${card.target}`)}</span><p className="as-text">{card.text}</p><div className="as-actions"><Button variant="secondary" onClick={() => copy(card.text, t)}><Copy />{t('assistant.copy')}</Button></div></div></div>;
     case 'invite': return <div className="as-card"><div className="as-card-body"><span className="gw-label">{t(`assistant.channel.${card.channel}`)}</span><p className="as-text pre">{card.text}</p><div className="as-actions wrap">
       <Button variant="secondary" onClick={() => copy(card.text, t)}><Copy />{t('assistant.copy')}</Button>

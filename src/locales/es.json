@@ -621,7 +621,8 @@
       "checkins": "Asistencias",
       "hosts": "Anfitriones activos",
       "members": "Miembros nuevos",
-      "templates": "Plantillas lanzadas"
+      "templates": "Plantillas lanzadas",
+      "followups": "Seguimientos enviados"
     },
     "same": "Igual que el periodo anterior",
     "up": "+{{count}} vs. periodo anterior",
@@ -1626,5 +1627,118 @@
     "usageFull": "Llegaste al límite de este mes. Se renueva el día 1, o mejora tu plan para tener más.",
     "usagePreview": "El asistente está en modo de vista previa, así que las respuestas todavía no cuentan.",
     "greetingNoName": "Hola. ¿En qué te puedo ayudar?"
+  },
+  "smart": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "claims": {
+      "note": "Este texto podría sonar a promesa de salud o de dinero. En Gatherwell hablamos de la experiencia.",
+      "use": "Usar el texto sugerido",
+      "thinking": "Buscando un texto más amable…",
+      "blocked": "Quita las promesas de salud, peso o dinero antes de enviar."
+    },
+    "brief": {
+      "eyebrow": "Hoy",
+      "title": "Tu resumen de la mañana",
+      "dismiss": "Ocultar por hoy"
+    },
+    "followups": {
+      "eyebrow": "Seguimientos",
+      "title": "Bandeja de seguimientos",
+      "subtitle": "Notas personales para quienes vinieron y para quienes extrañaste. Revisa, edita y envía.",
+      "ready": "{{count}} seguimientos listos de {{title}}",
+      "ready_one": "1 seguimiento listo de {{title}}",
+      "ready_other": "{{count}} seguimientos listos de {{title}}",
+      "readyMany_one": "1 seguimiento listo para revisar",
+      "readyMany_other": "{{count}} seguimientos listos para revisar",
+      "review": "Revisar",
+      "guest": "Invitada",
+      "message": "Mensaje",
+      "edit": "Editar",
+      "approve": "Aprobar",
+      "unapprove": "Quitar aprobación",
+      "skip": "Omitir",
+      "email": "Correo",
+      "text": "Mensaje de texto",
+      "whatsapp": "Abrir en WhatsApp",
+      "sendAll_one": "Enviar 1 aprobado",
+      "sendAll_other": "Enviar todos los aprobados ({{count}})",
+      "progress": "Enviando {{done}} de {{total}}",
+      "sentAll_one": "1 seguimiento enviado",
+      "sentAll_other": "{{count}} seguimientos enviados",
+      "noneSendable": "Las personas aprobadas no aceptaron correo ni mensajes de texto. Usa Abrir en WhatsApp en cada tarjeta.",
+      "whatsappLeft_one": "A 1 persona aprobada hay que escribirle por WhatsApp desde su tarjeta.",
+      "whatsappLeft_other": "A {{count}} personas aprobadas hay que escribirles por WhatsApp desde sus tarjetas.",
+      "empty": "Todavía no hay seguimientos. Aparecen aquí a las 8:00 de la mañana siguiente a cada reunión que organizas.",
+      "prepareTitle": "Reuniones recientes",
+      "prepareText": "¿Los quieres antes? Prepara ahora los seguimientos de una reunión que ya pasó.",
+      "prepare": "Preparar ahora",
+      "prepared_one": "1 seguimiento listo",
+      "prepared_other": "{{count}} seguimientos listos",
+      "noGuests": "No hay invitados para dar seguimiento en esta reunión.",
+      "kind": {
+        "first_time": "Primera vez",
+        "returning": "Regresó",
+        "no_show": "No vino"
+      },
+      "status": {
+        "approved": "Aprobado",
+        "sent": "Enviado",
+        "skipped": "Omitido"
+      },
+      "channel": {
+        "email": "correo",
+        "sms": "mensaje de texto",
+        "whatsapp": "WhatsApp"
+      },
+      "sentVia": {
+        "email": "En cola por correo",
+        "sms": "En cola por mensaje de texto",
+        "whatsapp": "Marcado como enviado por WhatsApp"
+      },
+      "err": {
+        "no_opt_in": "Esta persona no aceptó ese medio.",
+        "claim_blocked": "Quita las promesas de salud, peso o dinero antes de enviar.",
+        "not_allowed": "Solo quien organiza puede enviarlo.",
+        "failed": "No se pudo enviar. Inténtalo de nuevo."
+      }
+    },
+    "plan": {
+      "eyebrow": "Quedan {{days}} días",
+      "title": "Para empezar",
+      "progress": "{{done}} de {{total}} listos",
+      "lesson": "Mira {{title}}",
+      "rsvp": "Confirma tu lugar en {{title}}",
+      "template": "Lanza {{title}}",
+      "introduce": "Preséntate en Logros del equipo"
+    },
+    "summary": {
+      "title": "Resumen",
+      "points": "Puntos clave",
+      "actions": "Pruébalo",
+      "summarize": "Resumir",
+      "redo": "Resumir de nuevo",
+      "edit": "Editar resumen",
+      "pasteHint": "Pega notas o una transcripción. Déjalo vacío para usar la descripción de la lección.",
+      "notes": "Notas o transcripción",
+      "notesPlaceholder": "Pega tus notas aquí…",
+      "working": "Resumiendo…",
+      "review": "Revisa antes de publicar",
+      "publish": "Publicar para el equipo",
+      "saveDraft": "Guardar borrador",
+      "published": "Resumen publicado",
+      "saved": "Resumen guardado",
+      "unpublished": "Borrador"
+    },
+    "library": {
+      "sources": "Fuentes",
+      "from": "De: {{title}} ({{type}})",
+      "types": {
+        "lesson": "lección",
+        "template": "plantilla",
+        "announcement": "aviso",
+        "recipe": "receta"
+      }
+    }
   }
 }

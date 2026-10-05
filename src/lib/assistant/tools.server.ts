@@ -1,10 +1,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { AssistantCard, GatheringDraft, Lang, RecipeCard, UpcomingItem } from './config';
+import type { LibrarySource, AssistantCard, GatheringDraft, Lang, RecipeCard, UpcomingItem } from './config';
 
 export type ToolCtx = { supabase: SupabaseClient<any>; userId: string; lang: Lang; origin: string; translate: (text: string, target: 'en' | 'es' | 'pt') => Promise<string> };
 
 /** Tool definitions sent to Claude. Content-generating tools carry the generated text in their inputs. */
 export const TOOL_DEFS = [
+  { name: 'search_team_library', description: "Search this team's own lessons, templates, announcements and recipes. Use for questions about how the team does things. Answer only from the results.",
+    input_schema: { type: 'object', properties: { query: { type: 'string' } }, required: ['query'] } },
   { name: 'create_gathering_draft', description: 'Prepare a gathering draft for the user to review. Never creates anything; the user confirms on the card. Write a short warm description in both English and Spanish with no health, weight-loss or income claims.',
     input_schema: { type: 'object', properties: { title: { type: 'string' }, date: { type: 'string', description: 'YYYY-MM-DD' }, time: { type: 'string', description: 'HH:MM 24h' }, place: { type: 'string' }, capacity: { type: ['integer', 'null'] }, description_en: { type: 'string' }, description_es: { type: 'string' } }, required: ['title', 'date', 'time', 'place', 'capacity', 'description_en', 'description_es'] } },
   { name: 'translate_text', description: 'Translate text into English, natural Latin American Spanish, or Portuguese.',
@@ -86,6 +88,15 @@ export async function runTool(name: string, input: Record<string, unknown>, ctx:
       const mins = Number(input['minutes']);
       const recipe: RecipeCard = { title_en: str(input['title_en'], 120), title_es: str(input['title_es'], 120), minutes: Number.isFinite(mins) && mins > 0 ? Math.round(mins) : null, ingredients: list(input['ingredients']), steps: list(input['steps']), lang: ctx.lang };
       return { card: { type: 'recipe', recipe }, result: 'Recipe card shown.' };
+    }
+    case 'search_team_library': {
+      const { data: prof } = await ctx.supabase.from('profiles').select('active_team_id').eq('id', ctx.userId).maybeSingle();
+      if (!prof?.active_team_id) return { result: 'No team selected; nothing to search.' };
+      const { data } = await ctx.supabase.rpc('search_team_library', { _team: prof.active_team_id, _q: str(input['query'], 300) });
+      const hits = ((data ?? []) as { source_type: LibrarySource['type']; source_id: string; title: string; excerpt: string }[]);
+      if (!hits.length) return { result: 'NO_MATCH: nothing in the team library matches.' };
+      const items: LibrarySource[] = hits.slice(0, 3).map(h => ({ type: h.source_type, id: h.source_id, title: h.title }));
+      return { card: { type: 'sources', items }, result: JSON.stringify(hits.map(h => ({ source: `${h.source_type}: ${h.title}`, text: h.excerpt }))) };
     }
     default: return { result: 'Unknown tool.' };
   }

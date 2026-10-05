@@ -343,6 +343,36 @@ export type Database = {
           },
         ]
       }
+      daily_briefs: {
+        Row: {
+          created_at: string
+          day: string
+          dismissed: boolean
+          language: string
+          lines: Json
+          preview: boolean
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day: string
+          dismissed?: boolean
+          language?: string
+          lines?: Json
+          preview?: boolean
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          dismissed?: boolean
+          language?: string
+          lines?: Json
+          preview?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
       delivery_events: {
         Row: {
           created_at: string
@@ -761,6 +791,82 @@ export type Database = {
           },
         ]
       }
+      followup_drafts: {
+        Row: {
+          channel: string | null
+          created_at: string
+          event_id: string
+          guest_name: string
+          host_id: string
+          id: string
+          kind: string
+          language: string
+          message: string
+          preview: boolean
+          rsvp_id: string
+          sent_at: string | null
+          status: string
+          team_id: string
+          updated_at: string
+        }
+        Insert: {
+          channel?: string | null
+          created_at?: string
+          event_id: string
+          guest_name?: string
+          host_id: string
+          id?: string
+          kind: string
+          language?: string
+          message: string
+          preview?: boolean
+          rsvp_id: string
+          sent_at?: string | null
+          status?: string
+          team_id: string
+          updated_at?: string
+        }
+        Update: {
+          channel?: string | null
+          created_at?: string
+          event_id?: string
+          guest_name?: string
+          host_id?: string
+          id?: string
+          kind?: string
+          language?: string
+          message?: string
+          preview?: boolean
+          rsvp_id?: string
+          sent_at?: string | null
+          status?: string
+          team_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "followup_drafts_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "followup_drafts_rsvp_id_fkey"
+            columns: ["rsvp_id"]
+            isOneToOne: true
+            referencedRelation: "rsvps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "followup_drafts_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       host_of_month: {
         Row: {
           awarded_by: string | null
@@ -871,6 +977,66 @@ export type Database = {
           },
         ]
       }
+      lesson_summaries: {
+        Row: {
+          actions_en: Json
+          actions_es: Json
+          created_at: string
+          lesson_id: string
+          points_en: Json
+          points_es: Json
+          published: boolean
+          summary_en: string
+          summary_es: string
+          team_id: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          actions_en?: Json
+          actions_es?: Json
+          created_at?: string
+          lesson_id: string
+          points_en?: Json
+          points_es?: Json
+          published?: boolean
+          summary_en?: string
+          summary_es?: string
+          team_id: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          actions_en?: Json
+          actions_es?: Json
+          created_at?: string
+          lesson_id?: string
+          points_en?: Json
+          points_es?: Json
+          published?: boolean
+          summary_en?: string
+          summary_es?: string
+          team_id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_summaries_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: true
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lesson_summaries_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lessons: {
         Row: {
           created_at: string
@@ -926,6 +1092,79 @@ export type Database = {
             columns: ["track_id"]
             isOneToOne: false
             referencedRelation: "tracks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      library_chunks: {
+        Row: {
+          content: string
+          embedding: string | null
+          id: string
+          source_id: string
+          source_type: string
+          team_id: string
+          title: string
+          tsv: unknown
+          updated_at: string
+        }
+        Insert: {
+          content?: string
+          embedding?: string | null
+          id?: string
+          source_id: string
+          source_type: string
+          team_id: string
+          title?: string
+          tsv?: unknown
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          embedding?: string | null
+          id?: string
+          source_id?: string
+          source_type?: string
+          team_id?: string
+          title?: string
+          tsv?: unknown
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "library_chunks_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      member_plans: {
+        Row: {
+          created_at: string
+          items: Json
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          items?: Json
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          items?: Json
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_plans_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
             referencedColumns: ["id"]
           },
         ]
@@ -1786,6 +2025,10 @@ export type Database = {
         Args: { _badge: string; _note: string; _team: string; _user: string }
         Returns: undefined
       }
+      build_member_plan: {
+        Args: { _team: string; _user: string }
+        Returns: undefined
+      }
       can_edit_track: { Args: { _track: string }; Returns: boolean }
       can_manage_event: { Args: { _event_id: string }; Returns: boolean }
       can_read_challenge: { Args: { _c: string }; Returns: boolean }
@@ -1882,6 +2125,7 @@ export type Database = {
         }[]
       }
       delete_my_account: { Args: never; Returns: undefined }
+      due_followup_events: { Args: never; Returns: string[] }
       email_token: { Args: { _email: string; _lang: string }; Returns: string }
       enqueue_message: {
         Args: {
@@ -1908,8 +2152,13 @@ export type Database = {
       event_payload: { Args: { _event: string; _rsvp: string }; Returns: Json }
       event_seats_used: { Args: { _event: string }; Returns: number }
       event_summary: { Args: { _event: string }; Returns: Json }
+      followups_sent: {
+        Args: { _from: string; _root: string; _scope: string; _to: string }
+        Returns: number
+      }
       gathering_validate: { Args: { _p: Json }; Returns: undefined }
       get_email_prefs: { Args: { _token: string }; Returns: Json }
+      get_member_plan: { Args: { _team: string }; Returns: Json }
       get_public_event: { Args: { _id: string }; Returns: Json }
       get_rsvp_by_code: { Args: { _code: string }; Returns: Json }
       get_team_invite: {
@@ -2066,6 +2315,16 @@ export type Database = {
           _title_es: string
         }
         Returns: string
+      }
+      search_team_library: {
+        Args: { _q: string; _team: string }
+        Returns: {
+          excerpt: string
+          rank: number
+          source_id: string
+          source_type: string
+          title: string
+        }[]
       }
       set_email_prefs: {
         Args: { _prefs: Json; _token: string }
