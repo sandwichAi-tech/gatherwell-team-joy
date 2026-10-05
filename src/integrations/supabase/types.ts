@@ -116,6 +116,21 @@ export type Database = {
           },
         ]
       }
+      app_config: {
+        Row: {
+          key: string
+          value: string
+        }
+        Insert: {
+          key: string
+          value: string
+        }
+        Update: {
+          key?: string
+          value?: string
+        }
+        Relationships: []
+      }
       badges: {
         Row: {
           code: string
@@ -300,6 +315,90 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      delivery_events: {
+        Row: {
+          created_at: string
+          email: string | null
+          event: string
+          id: string
+          payload: Json
+          provider: string
+          provider_message_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          event: string
+          id?: string
+          payload?: Json
+          provider: string
+          provider_message_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          event?: string
+          id?: string
+          payload?: Json
+          provider?: string
+          provider_message_id?: string | null
+        }
+        Relationships: []
+      }
+      email_prefs: {
+        Row: {
+          all_off: boolean
+          announcements: boolean
+          badges: boolean
+          email: string
+          followups: boolean
+          language: string
+          reminders: boolean
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          all_off?: boolean
+          announcements?: boolean
+          badges?: boolean
+          email: string
+          followups?: boolean
+          language?: string
+          reminders?: boolean
+          token?: string
+          updated_at?: string
+        }
+        Update: {
+          all_off?: boolean
+          announcements?: boolean
+          badges?: boolean
+          email?: string
+          followups?: boolean
+          language?: string
+          reminders?: boolean
+          token?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      email_suppressions: {
+        Row: {
+          created_at: string
+          email: string
+          reason: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          reason: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          reason?: string
+        }
+        Relationships: []
       }
       event_checklists: {
         Row: {
@@ -803,43 +902,70 @@ export type Database = {
       }
       notification_outbox: {
         Row: {
+          attempts: number
           channel: string
           created_at: string
+          error: string | null
           event_id: string | null
           id: string
+          kind: string
+          language: string
           lesson_id: string | null
+          locked_at: string | null
           payload: Json
+          provider_message_id: string | null
           recipient: string
           rsvp_id: string | null
           send_after: string
+          sent_at: string | null
           status: string
+          team_id: string | null
           template: string
+          user_id: string | null
         }
         Insert: {
+          attempts?: number
           channel: string
           created_at?: string
+          error?: string | null
           event_id?: string | null
           id?: string
+          kind?: string
+          language?: string
           lesson_id?: string | null
+          locked_at?: string | null
           payload?: Json
+          provider_message_id?: string | null
           recipient: string
           rsvp_id?: string | null
           send_after?: string
+          sent_at?: string | null
           status?: string
+          team_id?: string | null
           template: string
+          user_id?: string | null
         }
         Update: {
+          attempts?: number
           channel?: string
           created_at?: string
+          error?: string | null
           event_id?: string | null
           id?: string
+          kind?: string
+          language?: string
           lesson_id?: string | null
+          locked_at?: string | null
           payload?: Json
+          provider_message_id?: string | null
           recipient?: string
           rsvp_id?: string | null
           send_after?: string
+          sent_at?: string | null
           status?: string
+          team_id?: string | null
           template?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -863,6 +989,13 @@ export type Database = {
             referencedRelation: "rsvps"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "notification_outbox_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
         ]
       }
       profiles: {
@@ -875,6 +1008,7 @@ export type Database = {
           full_name: string | null
           id: string
           language: string
+          notify_prefs: Json
           onboarded: boolean
           phone: string | null
           role_intent: string | null
@@ -889,6 +1023,7 @@ export type Database = {
           full_name?: string | null
           id: string
           language?: string
+          notify_prefs?: Json
           onboarded?: boolean
           phone?: string | null
           role_intent?: string | null
@@ -903,6 +1038,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           language?: string
+          notify_prefs?: Json
           onboarded?: boolean
           phone?: string | null
           role_intent?: string | null
@@ -917,6 +1053,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          id: string
+          p256dh: string
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          p256dh: string
+          user_id?: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          p256dh?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       recipes: {
         Row: {
@@ -1120,6 +1283,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      sms_optouts: {
+        Row: {
+          created_at: string
+          phone: string
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          phone: string
+          source?: string
+        }
+        Update: {
+          created_at?: string
+          phone?: string
+          source?: string
+        }
+        Relationships: []
       }
       team_members: {
         Row: {
@@ -1454,6 +1635,22 @@ export type Database = {
         Args: { _rsvp: string; _undo?: boolean }
         Returns: undefined
       }
+      claim_outbox: {
+        Args: { _limit?: number }
+        Returns: {
+          attempts: number
+          channel: string
+          id: string
+          kind: string
+          language: string
+          payload: Json
+          recipient: string
+          skip_reason: string
+          template: string
+          unsub_token: string
+          user_id: string
+        }[]
+      }
       copy_starter_template: {
         Args: { _team: string; _template: string }
         Returns: string
@@ -1483,14 +1680,34 @@ export type Database = {
         }[]
       }
       delete_my_account: { Args: never; Returns: undefined }
+      email_token: { Args: { _email: string; _lang: string }; Returns: string }
+      enqueue_message: {
+        Args: {
+          _channel: string
+          _event?: string
+          _kind: string
+          _language: string
+          _lesson?: string
+          _payload: Json
+          _recipient: string
+          _rsvp?: string
+          _send_after?: string
+          _team?: string
+          _template: string
+          _user?: string
+        }
+        Returns: undefined
+      }
       evaluate_badges: {
         Args: { _team: string; _user: string }
         Returns: undefined
       }
       event_going_count: { Args: { _event_id: string }; Returns: number }
+      event_payload: { Args: { _event: string; _rsvp: string }; Returns: Json }
       event_seats_used: { Args: { _event: string }; Returns: number }
       event_summary: { Args: { _event: string }; Returns: Json }
       gathering_validate: { Args: { _p: Json }; Returns: undefined }
+      get_email_prefs: { Args: { _token: string }; Returns: Json }
       get_public_event: { Args: { _id: string }; Returns: Json }
       get_rsvp_by_code: { Args: { _code: string }; Returns: Json }
       get_team_invite: {
@@ -1518,6 +1735,10 @@ export type Database = {
           _user: string
         }
         Returns: boolean
+      }
+      handle_sms_inbound: {
+        Args: { _body: string; _from: string }
+        Returns: string
       }
       has_blocked_claim: { Args: { _text: string }; Returns: boolean }
       is_team_member: {
@@ -1565,6 +1786,12 @@ export type Database = {
         Args: { _note: string; _team: string; _user: string }
         Returns: undefined
       }
+      normalize_phone: { Args: { _p: string }; Returns: string }
+      notify_announcement: {
+        Args: { _announcement: string; _email: boolean; _subteams: boolean }
+        Returns: number
+      }
+      notify_gathering_cancelled: { Args: { _event: string }; Returns: number }
       post_challenge_encouragement: {
         Args: { _c: string; _message: string }
         Returns: undefined
@@ -1576,6 +1803,17 @@ export type Database = {
       promote_waitlist: { Args: { _event: string }; Returns: undefined }
       queue_rsvp_notices: {
         Args: { _rsvp: string; _template: string }
+        Returns: undefined
+      }
+      queue_rsvp_reminders: { Args: { _rsvp: string }; Returns: undefined }
+      record_delivery_event: {
+        Args: {
+          _email: string
+          _event: string
+          _message_id: string
+          _payload: Json
+          _provider: string
+        }
         Returns: undefined
       }
       reset_join_code: { Args: { _team: string }; Returns: string }
@@ -1596,6 +1834,10 @@ export type Database = {
           code: string
           status: string
         }[]
+      }
+      set_email_prefs: {
+        Args: { _prefs: Json; _token: string }
+        Returns: boolean
       }
       shares_team_with: { Args: { _other: string }; Returns: boolean }
       team_insights: {
@@ -1635,6 +1877,7 @@ export type Database = {
         Args: { _code: string; _plus_ones: number; _status: string }
         Returns: string
       }
+      user_email: { Args: { _user: string }; Returns: string }
       vote_poll: {
         Args: { _code: string; _option: string }
         Returns: undefined
