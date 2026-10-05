@@ -20,7 +20,7 @@ export async function stripe<T = any>(path: string, params?: Record<string, unkn
   const body = params ? encode(params).join('&') : undefined;
   const res = await fetch(`https://api.stripe.com/v1/${path}${method === 'GET' && body ? `?${body}` : ''}`, {
     method, headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: method === 'POST' ? body : undefined,
+    body: method === 'POST' && body ? body : null,
   });
   const json = await res.json() as any;
   if (!res.ok) { console.error('[stripe]', path, json?.error?.message); throw new Error(json?.error?.message || 'stripe_error'); }
