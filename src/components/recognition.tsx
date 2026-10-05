@@ -1,3 +1,4 @@
+import { ClaimGuard } from '@/components/smart';
 import { requestPushMoment } from '@/components/notifications';
 import { useEffect, useMemo, useState, createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -197,6 +198,7 @@ export function ShoutoutSheet({ open, onOpenChange, teamId }: { open: boolean; o
       <div className="form-field"><span className="field-label">{t('recognition.who')}</span><PersonPicker teamId={teamId} value={to} onChange={setTo} excludeSelf /></div>
       <div className="form-field"><div className="label-row"><label className="field-label" htmlFor="shoutout-msg">{t('teamSpace.message')}</label><span className={`char-count ${msg.length > 280 ? 'is-over' : ''}`}>{msg.length}/280</span></div>
         <Textarea id="shoutout-msg" rows={3} className="field-textarea" maxLength={280} value={msg} onChange={e => { setMsg(e.target.value); setClaim(false); }} placeholder={t('recognition.shoutoutPlaceholder')} />
+        <ClaimGuard text={msg} onUse={v => { setMsg(v); setClaim(false); }} />
         {claim && <p className="field-error" role="alert">{t('recognition.err.claim_blocked')}</p>}</div>
       <div className="photo-row"><label className="file-button"><Upload />{file ? file.name : t('teamSpace.addPhoto')}<input type="file" accept="image/*" hidden onChange={e => { const f = e.target.files?.[0]; if (f && f.size > 5 * 1024 * 1024) { toast.error(t('profile.photoTooLarge')); return; } setFile(f ?? null); }} /></label>{file && <button type="button" className="auth-link" onClick={() => setFile(null)}>{t('onboarding.removePhoto')}</button>}</div>
       <Button className="onboarding-continue" disabled={busy || !to || !msg.trim()} onClick={() => void send()}><Megaphone />{busy ? t('onboarding.saving') : t('recognition.send')}</Button>

@@ -132,7 +132,7 @@ function DraftCard({ d, onChanged }: { d: Draft; onChanged: () => void }) {
       <span className={`chip kind-${d.kind}`}>{t(`smart.followups.kind.${d.kind}`)}</span><span className="chip quiet-chip">{d.language.toUpperCase()}</span>
       {d.status !== 'draft' && <span className="chip">{t(`smart.followups.status.${d.status}`)}{d.channel ? ` · ${t(`smart.followups.channel.${d.channel}`)}` : ''}</span>}</div>
     {edit ? <><Textarea rows={5} maxLength={1000} className="field-textarea" value={msg} onChange={e => setMsg(e.target.value)} aria-label={t('smart.followups.message')} /><ClaimGuard text={msg} onUse={setMsg} lang={d.language === 'es' ? 'es' : 'en'} />
-      <div className="as-actions"><Button size="sm" onClick={async () => { if (await update({ message: msg })) setEdit(false); }}><Check />{t('common.save')}</Button><Button size="sm" variant="ghost" onClick={() => { setMsg(d.message); setEdit(false); }}>{t('common.cancel')}</Button></div></>
+      <div className="as-actions"><Button size="sm" onClick={async () => { if (await update({ message: msg })) setEdit(false); }}><Check />{t('smart.save')}</Button><Button size="sm" variant="ghost" onClick={() => { setMsg(d.message); setEdit(false); }}>{t('smart.cancel')}</Button></div></>
       : <p className="followup-msg">{msg}</p>}
     {!done && !edit && <div className="followup-actions">
       <Button size="sm" variant="secondary" onClick={() => setEdit(true)}><Pencil />{t('smart.followups.edit')}</Button>
@@ -233,7 +233,7 @@ export function LessonSummary({ lessonId, leader }: { lessonId: string; leader: 
     {leader && !draft && <div className="summary-cta">{!open ? <Button variant="secondary" onClick={() => setOpen(true)}>{t(shown ? 'smart.summary.redo' : 'smart.summary.summarize')}</Button>
       : <section className="panel"><h2>{t('smart.summary.summarize')}</h2><p className="auth-subtitle">{t('smart.summary.pasteHint')}</p>
         <Textarea rows={6} maxLength={30000} className="field-textarea" value={notes} onChange={e => setNotes(e.target.value)} aria-label={t('smart.summary.notes')} placeholder={t('smart.summary.notesPlaceholder')} />
-        <div className="as-actions"><Button disabled={busy} onClick={run}>{busy ? t('smart.summary.working') : t('smart.summary.summarize')}</Button><Button variant="ghost" onClick={() => setOpen(false)}>{t('common.cancel')}</Button></div></section>}</div>}
+        <div className="as-actions"><Button disabled={busy} onClick={run}>{busy ? t('smart.summary.working') : t('smart.summary.summarize')}</Button><Button variant="ghost" onClick={() => setOpen(false)}>{t('smart.cancel')}</Button></div></section>}</div>}
     {draft && <section className="panel summary-editor"><div className="section-heading"><h2>{t('smart.summary.review')}</h2>{preview && <span className="chip quiet-chip">{t('assistant.previewMode')}</span>}</div>
       {(['en', 'es'] as const).map(l => <div key={l} className="summary-lang"><span className="gw-label">{l.toUpperCase()}</span>
         <Textarea rows={3} className="field-textarea" value={draft[`summary_${l}`]} aria-label={`${t('smart.summary.title')} ${l}`} onChange={e => setDraft({ ...draft, [`summary_${l}`]: e.target.value })} />
@@ -241,7 +241,7 @@ export function LessonSummary({ lessonId, leader }: { lessonId: string; leader: 
         <span className="field-label">{t('smart.summary.points')}</span>{draft[`points_${l}`].map((p, i) => <Input key={i} className="field-input" value={p} aria-label={`${t('smart.summary.points')} ${i + 1}`} onChange={e => { const a = [...draft[`points_${l}`]]; a[i] = e.target.value; setDraft({ ...draft, [`points_${l}`]: a }); }} />)}
         <span className="field-label">{t('smart.summary.actions')}</span>{draft[`actions_${l}`].map((p, i) => <Input key={i} className="field-input" value={p} aria-label={`${t('smart.summary.actions')} ${i + 1}`} onChange={e => { const a = [...draft[`actions_${l}`]]; a[i] = e.target.value; setDraft({ ...draft, [`actions_${l}`]: a }); }} />)}
       </div>)}
-      <div className="as-actions wrap"><Button onClick={() => save(true)}>{t('smart.summary.publish')}</Button><Button variant="secondary" onClick={() => save(false)}>{t('smart.summary.saveDraft')}</Button><Button variant="ghost" onClick={() => setDraft(null)}>{t('common.cancel')}</Button></div>
+      <div className="as-actions wrap"><Button onClick={() => save(true)}>{t('smart.summary.publish')}</Button><Button variant="secondary" onClick={() => save(false)}>{t('smart.summary.saveDraft')}</Button><Button variant="ghost" onClick={() => setDraft(null)}>{t('smart.cancel')}</Button></div>
     </section>}
   </>;
 }

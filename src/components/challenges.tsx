@@ -1,3 +1,4 @@
+import { ClaimGuard } from '@/components/smart';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -102,7 +103,7 @@ export function ChallengeEditor({ draft, teamId, onClose }: { draft: Partial<Cha
     if (res.error) { toast.error(t(rpcErrorKey(res.error))); return; }
     await qc.invalidateQueries({ queryKey: ['challenges'] }); onClose();
   };
-  const field = (id: string, label: string, k: keyof typeof empty, area = false) => <div className="form-field"><label className="field-label" htmlFor={id}>{label}</label>{area ? <Textarea id={id} rows={3} maxLength={1000} className="field-textarea" value={f[k] as string} onChange={set(k)} /> : <Input id={id} maxLength={120} className="field-input" value={f[k] as string} onChange={set(k)} />}</div>;
+  const field = (id: string, label: string, k: keyof typeof empty, area = false) => <div className="form-field"><label className="field-label" htmlFor={id}>{label}</label>{area ? <Textarea id={id} rows={3} maxLength={1000} className="field-textarea" value={f[k] as string} onChange={set(k)} /> : <Input id={id} maxLength={120} className="field-input" value={f[k] as string} onChange={set(k)} />}{area && <ClaimGuard text={f[k] as string} lang={String(k).endsWith('_es') ? 'es' : 'en'} onUse={v => setF({ ...f, [k]: v })} />}</div>;
   return <ResponsiveSheet open={!!draft} onOpenChange={o => !o && onClose()} title={draft?.id ? t('challenges.edit') : t('challenges.new')} description={t('challenges.claimRule')}>
     <div className="edit-form">
       {!draft?.id && <div className="form-field"><span className="field-label">{t('challenges.startFrom')}</span>

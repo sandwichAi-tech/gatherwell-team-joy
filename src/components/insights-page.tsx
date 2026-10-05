@@ -56,9 +56,12 @@ export function InsightsPage() {
   const { from, to } = useMemo(() => range(period), [period]);
   const { data, isLoading, error } = useQuery({
     queryKey: [...teamKey(rootId), 'insights', period, scope], enabled: !!rootId && workspace?.role === 'leader',
-    queryFn: async (): Promise<Insights> => {
+    queryFn: async (): Promise<Insights & { followups: { v: number; p: number } }> => {
       const { data, error } = await supabase.rpc('team_insights', { _root: rootId, _scope: scope === 'all' ? rootId : scope, _from: from, _to: to });
-      if (error) throw error; return data as unknown as Insights;
+      if (error) throw error;
+      const sc = scope === 'all' ? rootId : scope; const span = new Date(to).getTime() - new Date(from).getTime();
+      const [a, b] = await Promise.all([supabase.rpc('followups_sent', { _root: rootId, _scope: sc, _from: from, _to: to }), supabase.rpc('followups_sent', { _root: rootId, _scope: sc, _from: new Date(new Date(from).getTime() - span).toISOString(), _to: from })]);
+      return { ...(data as unknown as Insights), followups: { v: Number(a.data ?? 0), p: Number(b.data ?? 0) } };
     },
   });
   const [shout, setShout] = useState<{ userId: string; name: string } | null>(null); const [message, setMessage] = useState('');
@@ -73,6 +76,7 @@ export function InsightsPage() {
   const cards = [
     { key: 'gatherings', Icon: CalendarDays, v: s.g, p: s.g_prev }, { key: 'guests', Icon: UsersRound, v: s.r, p: s.r_prev }, { key: 'checkins', Icon: CircleCheck, v: s.c, p: s.c_prev },
     { key: 'hosts', Icon: UserRound, v: s.h, p: s.h_prev }, { key: 'members', Icon: UserPlus, v: s.m, p: s.m_prev }, { key: 'templates', Icon: Rocket, v: s.t, p: s.t_prev },
+    { key: 'followups', Icon: MessageCircle, v: real ? data!.followups.v : 14, p: real ? data!.followups.p : 9 },
   ] as const;
   const change = (v: number, p: number) => { const d = v - p; return d === 0 ? t('insights.same') : t(d > 0 ? 'insights.up' : 'insights.down', { count: Math.abs(d) }); };
   const nudgeText = nudge ? t('insights.nudgeMessage', { name: firstName(nudge.name) || nudge.name, team: workspace.name }) : '';

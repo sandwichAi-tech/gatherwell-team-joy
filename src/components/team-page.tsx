@@ -1,3 +1,4 @@
+import { ClaimGuard } from '@/components/smart';
 import { takePendingAnnouncement } from '@/lib/assistant-client';
 import { useChannelStatus } from '@/components/notifications';
 import { ActiveChallengeCard, ChallengesSection } from '@/components/challenges';
@@ -369,7 +370,7 @@ function AnnounceSheet({ open, onOpenChange, teamId, userId, initialBody }: { op
   return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={t('teamSpace.announce')}>
     <div className="edit-form">
       <div className="form-field"><div className="label-row"><label className="field-label" htmlFor="announce-body">{t('teamSpace.message')}</label><span className="char-count">{body.length}/2000</span></div>
-        <Textarea id="announce-body" rows={4} className="field-textarea" maxLength={2000} value={body} onChange={e => setBody(e.target.value)} placeholder={t('teamSpace.messagePlaceholder')} /></div>
+        <Textarea id="announce-body" rows={4} className="field-textarea" maxLength={2000} value={body} onChange={e => setBody(e.target.value)} placeholder={t('teamSpace.messagePlaceholder')} /><ClaimGuard text={body} onUse={setBody} /></div>
       <div className="photo-row"><label className="file-button"><Upload />{file ? file.name : t('teamSpace.addPhoto')}<input type="file" accept="image/*" hidden onChange={e => setFile(e.target.files?.[0] ?? null)} /></label>{file && <button type="button" className="auth-link" onClick={() => setFile(null)}>{t('onboarding.removePhoto')}</button>}</div>
       <label className="switch-row"><Switch checked={pin} onCheckedChange={setPin} /><span>{t('teamSpace.pinThis')}</span></label>
       <Button className="onboarding-continue" disabled={busy || !body.trim()} onClick={post}><Megaphone />{busy ? t('onboarding.saving') : t('teamSpace.post')}</Button>
