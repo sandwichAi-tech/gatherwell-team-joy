@@ -37,4 +37,4 @@
 - Provider webhooks live under /api/public/{sms/inbound,email/resend,email/mailgun}, verify signatures, and return 503 until their secrets exist.
 - Icons render only through GwIcon (src/components/gw-icon.tsx, Phosphor); src/components/icons.tsx re-exports named wrappers so call sites stay simple and nothing imports an icon library directly.
 - Photos render only through BrandImage and come from site_media slots (private site-media bucket, signed URLs, anonymous read); only user_roles admins (has_role) can edit them at /admin/site-media.
-- The Gatherwell Assistant runs only through the askAssistant/translateText server functions (src/lib/assistant.functions.ts, ai-assistant backend); Claude is called server-side with ANTHROPIC_API_KEY and the model lives in src/lib/assistant/config.ts; without the key, mock.server.ts returns preview replies and nothing is counted in ai_usage. Cards never act without a confirm tap.
+- Assistant AI runs only via src/lib/assistant.functions.ts (Claude server-side, model in assistant/config.ts); no key → mock.server.ts preview, not counted. Cards act only on confirm.
