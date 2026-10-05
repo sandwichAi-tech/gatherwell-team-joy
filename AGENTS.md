@@ -35,3 +35,5 @@
 - Challenge pages live at /challenge/$id inside the app shell; the Team tab lists them and Home/Team show the running one.
 - All outbound messages go through notification_outbox and are sent only by src/lib/notify/process.server.ts via /api/public/outbox/process (token from app_config, every 5 min); a missing provider secret marks rows 'simulated', so turning a channel on needs only its secrets.
 - Provider webhooks live under /api/public/{sms/inbound,email/resend,email/mailgun}, verify signatures, and return 503 until their secrets exist.
+- Icons render only through GwIcon (src/components/gw-icon.tsx, Phosphor); src/components/icons.tsx re-exports named wrappers so call sites stay simple and nothing imports an icon library directly.
+- Photos render only through BrandImage and come from site_media slots (private site-media bucket, signed URLs, anonymous read); only user_roles admins (has_role) can edit them at /admin/site-media.
