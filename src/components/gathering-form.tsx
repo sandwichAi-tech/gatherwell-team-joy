@@ -1,3 +1,4 @@
+import { trackEvent } from '@/lib/analytics';
 import { ClaimGuard } from '@/components/smart';
 import { useTranslateFill } from '@/lib/assistant-client';
 import { useEffect, useRef, useState } from 'react';
@@ -126,7 +127,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       await queryClient.invalidateQueries(); toast.success(t('gathering.saved'));
       void navigate({ to: '/event/$id', params: { id: eventId! } }); return;
     }
-    const { data, error } = await supabase.rpc('create_gathering_at', { _team: teamId, _p: payload(), _publish: publish, _weekly: weekly });
+    const { data, error } = await supabase.rpc('create_gathering_at', { _team: teamId, _p: payload(), _publish: publish, _weekly: weekly }); if (!error) { trackEvent('gathering_created', { weekly }); if (publish) trackEvent('gathering_published'); if (template) trackEvent('template_launched'); }
     setBusy(false);
     if (error?.message?.includes('plan_limit_gatherings')) { setLimit('gatherings'); return; }
     if (error || !data) { toast.error(rpcError(t, error)); return; }

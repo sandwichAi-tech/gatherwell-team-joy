@@ -1,3 +1,4 @@
+import { trackEvent } from '@/lib/analytics';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -43,7 +44,7 @@ function CheckInMode() {
     await queryClient.invalidateQueries({ queryKey: listKey });
   };
   const onCode = async (code: string) => {
-    const { data, error } = await supabase.rpc('check_in_code', { _event: id, _code: code });
+    const { data, error } = await supabase.rpc('check_in_code', { _event: id, _code: code }); if (!error) trackEvent('checkin');
     const res = (data ?? null) as Scan | null;
     setScan(error || !res ? { result: 'error' } : res);
     if (res?.result === 'ok' && navigator.vibrate) navigator.vibrate([40, 40, 40]);
