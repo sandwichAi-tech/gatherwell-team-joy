@@ -18,6 +18,7 @@ import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authentic
 import { Route as EIdRouteImport } from './routes/e.$id'
 import { Route as JoinCodeRouteImport } from './routes/join.$code'
 import { Route as RCodeRouteImport } from './routes/r.$code'
+import { Route as UnsubscribeTokenRouteImport } from './routes/unsubscribe.$token'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/_app/index'
 import { Route as AuthenticatedAppEventsRouteImport } from './routes/_authenticated/_app/events'
 import { Route as AuthenticatedAppLearnRouteImport } from './routes/_authenticated/_app/learn'
@@ -82,6 +83,11 @@ const JoinCodeRoute = JoinCodeRouteImport.update({
 const RCodeRoute = RCodeRouteImport.update({
   id: '/r/$code',
   path: '/r/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UnsubscribeTokenRoute = UnsubscribeTokenRouteImport.update({
+  id: '/unsubscribe/$token',
+  path: '/unsubscribe/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
@@ -215,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/e/$id': typeof EIdRoute
   '/join/$code': typeof JoinCodeRoute
   '/r/$code': typeof RCodeRoute
+  '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/events': typeof AuthenticatedAppEventsRoute
   '/learn': typeof AuthenticatedAppLearnRoute
   '/me': typeof AuthenticatedAppMeRoute
@@ -246,6 +253,7 @@ export interface FileRoutesByTo {
   '/e/$id': typeof EIdRoute
   '/join/$code': typeof JoinCodeRoute
   '/r/$code': typeof RCodeRoute
+  '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/events': typeof AuthenticatedAppEventsRoute
   '/learn': typeof AuthenticatedAppLearnRoute
   '/me': typeof AuthenticatedAppMeRoute
@@ -279,6 +287,7 @@ export interface FileRoutesById {
   '/e/$id': typeof EIdRoute
   '/join/$code': typeof JoinCodeRoute
   '/r/$code': typeof RCodeRoute
+  '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/_authenticated/_app/events': typeof AuthenticatedAppEventsRoute
   '/_authenticated/_app/learn': typeof AuthenticatedAppLearnRoute
   '/_authenticated/_app/me': typeof AuthenticatedAppMeRoute
@@ -313,6 +322,7 @@ export interface FileRouteTypes {
     | '/e/$id'
     | '/join/$code'
     | '/r/$code'
+    | '/unsubscribe/$token'
     | '/events'
     | '/learn'
     | '/me'
@@ -344,6 +354,7 @@ export interface FileRouteTypes {
     | '/e/$id'
     | '/join/$code'
     | '/r/$code'
+    | '/unsubscribe/$token'
     | '/events'
     | '/learn'
     | '/me'
@@ -376,6 +387,7 @@ export interface FileRouteTypes {
     | '/e/$id'
     | '/join/$code'
     | '/r/$code'
+    | '/unsubscribe/$token'
     | '/_authenticated/_app/events'
     | '/_authenticated/_app/learn'
     | '/_authenticated/_app/me'
@@ -408,6 +420,7 @@ export interface RootRouteChildren {
   EIdRoute: typeof EIdRoute
   JoinCodeRoute: typeof JoinCodeRoute
   RCodeRoute: typeof RCodeRoute
+  UnsubscribeTokenRoute: typeof UnsubscribeTokenRoute
   ApiPublicEmailMailgunRoute: typeof ApiPublicEmailMailgunRoute
   ApiPublicEmailResendRoute: typeof ApiPublicEmailResendRoute
   ApiPublicOutboxProcessRoute: typeof ApiPublicOutboxProcessRoute
@@ -477,6 +490,13 @@ declare module '@tanstack/react-router' {
       path: '/r/$code'
       fullPath: '/r/$code'
       preLoaderRoute: typeof RCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/unsubscribe/$token': {
+      id: '/unsubscribe/$token'
+      path: '/unsubscribe/$token'
+      fullPath: '/unsubscribe/$token'
+      preLoaderRoute: typeof UnsubscribeTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/_app/': {
@@ -704,6 +724,7 @@ const rootRouteChildren: RootRouteChildren = {
   EIdRoute: EIdRoute,
   JoinCodeRoute: JoinCodeRoute,
   RCodeRoute: RCodeRoute,
+  UnsubscribeTokenRoute: UnsubscribeTokenRoute,
   ApiPublicEmailMailgunRoute: ApiPublicEmailMailgunRoute,
   ApiPublicEmailResendRoute: ApiPublicEmailResendRoute,
   ApiPublicOutboxProcessRoute: ApiPublicOutboxProcessRoute,
