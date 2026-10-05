@@ -888,3 +888,4 @@ ul.order-list li{grid-template-columns:minmax(0,1fr) auto}
   .gw-rsvp-check{animation:none;stroke-dashoffset:0}.gw-rsvp.is-going::after{animation:none;opacity:0}
   .gw-menu-sheet,.gw-phone-list li.is-new{animation:none}
 }
+@media (max-width:479px){.gw-nav-mobile .segmented{display:none}}
