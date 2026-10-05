@@ -131,13 +131,10 @@ export function formatDistance(km: number, lang: string) {
 
 export type AnalyticsEvent = 'hero_find_click' | 'hero_host_click' | 'category_click' | 'feed_rsvp_click' | 'sticky_cta_click' | 'location_prompt_accept' | 'location_prompt_decline';
 
-/** Analytics is not connected yet: events go to window.dataLayer (if present) and a DOM event so a provider can be plugged in later. */
-export function track(event: AnalyticsEvent, props: Record<string, unknown> = {}) {
-  if (typeof window === 'undefined') return;
-  const w = window as unknown as { dataLayer?: unknown[] };
-  w.dataLayer?.push({ event, ...props });
-  window.dispatchEvent(new CustomEvent('gw:analytics', { detail: { event, ...props } }));
-  if (import.meta.env.DEV) console.info('[analytics]', event, props);
+/** Landing events go through the shared analytics helper. */
+export function track(event: AnalyticsEvent, props: Record<string, string | number | boolean | null | undefined> = {}) {
+  const clean = Object.fromEntries(Object.entries(props).filter(([, v]) => v !== undefined)) as Record<string, string | number | boolean | null>;
+  trackEvent(event, clean);
 }
 
 export type H1Variant = 'A' | 'B' | 'C' | 'D';
