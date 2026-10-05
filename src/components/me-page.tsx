@@ -1,3 +1,4 @@
+import { NotificationSettings } from '@/components/notifications';
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -155,7 +156,7 @@ export function MePage() {
     challenges: { title: t('profile.myChallenges'), body: <p className="auth-subtitle">{t('profile.challengesEmpty')}</p> },
     badges: { title: t('profile.myBadges'), body: workspace ? <BadgeWall teamId={workspace.teamId} /> : <p className="auth-subtitle">{t('workspace.none')}</p> },
     teams: { title: t('profile.myTeams'), body: teams.length ? <div className="team-list">{teams.map(team => <button type="button" key={team.teamId} className={`choice-card ${workspace?.teamId === team.teamId ? 'is-selected' : ''}`} aria-pressed={workspace?.teamId === team.teamId} onClick={() => switchTeam(team.teamId)}><span className="initial-avatar">{initialsOf(team.name)}</span><span><strong>{team.name}</strong><small>{t(`roles.${team.role}`)}{team.customBadge ? ` · ${team.customBadge}` : ''}</small></span>{workspace?.teamId === team.teamId && <Check className="choice-check" />}</button>)}</div> : <p className="auth-subtitle">{t('workspace.none')}</p> },
-    notifications: { title: t('profile.notifications'), body: <p className="not-connected">{t('common.notConnected')}</p> },
+    notifications: { title: t('profile.notifications'), body: <NotificationSettings userId={userId} /> },
     plan: { title: t('profile.plan'), body: <><p className="plan-name">{t(`plans.${workspace?.plan ?? 'free'}`)}</p><p className="auth-subtitle">{workspace?.name ?? t('workspace.none')}</p></> },
   };
 
