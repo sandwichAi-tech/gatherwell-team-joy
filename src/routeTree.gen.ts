@@ -41,6 +41,7 @@ import { Route as ApiPublicEmailMailgunRouteImport } from './routes/api/public/e
 import { Route as ApiPublicEmailResendRouteImport } from './routes/api/public/email/resend'
 import { Route as ApiPublicOutboxProcessRouteImport } from './routes/api/public/outbox/process'
 import { Route as ApiPublicSmsInboundRouteImport } from './routes/api/public/sms/inbound'
+import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe/webhook'
 import { Route as AuthenticatedAppEventIdCheckinRouteImport } from './routes/_authenticated/_app/event_.$id.checkin'
 import { Route as AuthenticatedAppEventIdGuestsRouteImport } from './routes/_authenticated/_app/event_.$id.guests'
 import { Route as AuthenticatedAppGatheringIdEditRouteImport } from './routes/_authenticated/_app/gathering.$id.edit'
@@ -213,6 +214,11 @@ const ApiPublicSmsInboundRoute = ApiPublicSmsInboundRouteImport.update({
   path: '/api/public/sms/inbound',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
+  id: '/api/public/stripe/webhook',
+  path: '/api/public/stripe/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAppEventIdCheckinRoute =
   AuthenticatedAppEventIdCheckinRouteImport.update({
     id: '/event_/$id/checkin',
@@ -281,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/api/public/email/resend': typeof ApiPublicEmailResendRoute
   '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
   '/api/public/sms/inbound': typeof ApiPublicSmsInboundRoute
+  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
   '/event/$id/checkin': typeof AuthenticatedAppEventIdCheckinRoute
   '/event/$id/guests': typeof AuthenticatedAppEventIdGuestsRoute
   '/gathering/$id/edit': typeof AuthenticatedAppGatheringIdEditRoute
@@ -319,6 +326,7 @@ export interface FileRoutesByTo {
   '/api/public/email/resend': typeof ApiPublicEmailResendRoute
   '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
   '/api/public/sms/inbound': typeof ApiPublicSmsInboundRoute
+  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
   '/event/$id/checkin': typeof AuthenticatedAppEventIdCheckinRoute
   '/event/$id/guests': typeof AuthenticatedAppEventIdGuestsRoute
   '/gathering/$id/edit': typeof AuthenticatedAppGatheringIdEditRoute
@@ -360,6 +368,7 @@ export interface FileRoutesById {
   '/api/public/email/resend': typeof ApiPublicEmailResendRoute
   '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
   '/api/public/sms/inbound': typeof ApiPublicSmsInboundRoute
+  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
   '/_authenticated/_app/event_/$id/checkin': typeof AuthenticatedAppEventIdCheckinRoute
   '/_authenticated/_app/event_/$id/guests': typeof AuthenticatedAppEventIdGuestsRoute
   '/_authenticated/_app/gathering/$id/edit': typeof AuthenticatedAppGatheringIdEditRoute
@@ -400,6 +409,7 @@ export interface FileRouteTypes {
     | '/api/public/email/resend'
     | '/api/public/outbox/process'
     | '/api/public/sms/inbound'
+    | '/api/public/stripe/webhook'
     | '/event/$id/checkin'
     | '/event/$id/guests'
     | '/gathering/$id/edit'
@@ -438,6 +448,7 @@ export interface FileRouteTypes {
     | '/api/public/email/resend'
     | '/api/public/outbox/process'
     | '/api/public/sms/inbound'
+    | '/api/public/stripe/webhook'
     | '/event/$id/checkin'
     | '/event/$id/guests'
     | '/gathering/$id/edit'
@@ -478,6 +489,7 @@ export interface FileRouteTypes {
     | '/api/public/email/resend'
     | '/api/public/outbox/process'
     | '/api/public/sms/inbound'
+    | '/api/public/stripe/webhook'
     | '/_authenticated/_app/event_/$id/checkin'
     | '/_authenticated/_app/event_/$id/guests'
     | '/_authenticated/_app/gathering/$id/edit'
@@ -503,6 +515,7 @@ export interface RootRouteChildren {
   ApiPublicEmailResendRoute: typeof ApiPublicEmailResendRoute
   ApiPublicOutboxProcessRoute: typeof ApiPublicOutboxProcessRoute
   ApiPublicSmsInboundRoute: typeof ApiPublicSmsInboundRoute
+  ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -731,6 +744,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicSmsInboundRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/stripe/webhook': {
+      id: '/api/public/stripe/webhook'
+      path: '/api/public/stripe/webhook'
+      fullPath: '/api/public/stripe/webhook'
+      preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/_app/event_/$id/checkin': {
       id: '/_authenticated/_app/event_/$id/checkin'
       path: '/event/$id/checkin'
@@ -857,6 +877,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicEmailResendRoute: ApiPublicEmailResendRoute,
   ApiPublicOutboxProcessRoute: ApiPublicOutboxProcessRoute,
   ApiPublicSmsInboundRoute: ApiPublicSmsInboundRoute,
+  ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
