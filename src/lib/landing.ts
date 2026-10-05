@@ -1,3 +1,4 @@
+import { trackEvent } from './analytics';
 import { queryOptions } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { CATEGORY_ICONS } from '@/components/gw-icon';
