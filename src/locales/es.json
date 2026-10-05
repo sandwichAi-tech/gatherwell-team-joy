@@ -1364,5 +1364,30 @@
     "doneAll": "Te diste de baja de todos los correos de Gatherwell.",
     "invalid": "Este enlace ya no es válido.",
     "note": "Aún podrías recibir mensajes importantes sobre una reunión a la que confirmaste."
+  },
+  "siteMedia": {
+    "eyebrow": "Admin",
+    "title": "Fotos del sitio",
+    "subtitle": "Cada espacio de foto del producto. Cambia una imagen y se publica al instante.",
+    "loading": "Cargando…",
+    "denied": "Solo administradores",
+    "deniedBody": "Esta sección es para el equipo de Gatherwell.",
+    "custom": "Tu foto",
+    "temporary": "Foto temporal",
+    "editHint": "Sube o cambia la foto, elige el punto focal y descríbela en ambos idiomas.",
+    "focalHint": "Toca la foto para elegir el punto focal. Se recorta a la proporción de este espacio ({{ratio}}).",
+    "upload": "Subir foto",
+    "replace": "Cambiar foto",
+    "dropHint": "O arrastra aquí un JPG, PNG, WebP o AVIF (hasta 15 MB).",
+    "altEn": "Descripción (inglés)",
+    "altEs": "Descripción (español)",
+    "credit": "Crédito",
+    "reset": "Volver a la foto original",
+    "resetDone": "Se restauró la foto original.",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "saved": "Foto actualizada. Ya está publicada.",
+    "error": "No se pudo guardar. Inténtalo de nuevo.",
+    "menu": "Fotos del sitio"
   }
 }

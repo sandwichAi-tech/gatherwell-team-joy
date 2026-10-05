@@ -1,3 +1,4 @@
+import { isAdminQuery } from '@/lib/site-media';
 import { NotificationSettings } from '@/components/notifications';
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
@@ -119,6 +120,7 @@ type Panel = 'gatherings' | 'challenges' | 'badges' | 'teams' | 'notifications' 
 export function MePage() {
   const { t, i18n } = useTranslation();
   const { userId, theme, setTheme } = useGatherwell();
+  const { data: isAdmin } = useQuery(isAdminQuery(userId));
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: profile } = useQuery(profileQuery(userId));
@@ -188,6 +190,7 @@ export function MePage() {
         <div className="segmented" role="group" aria-label={t('me.language')}>{(['en', 'es'] as const).map(lang => <Button key={lang} variant="ghost" aria-pressed={i18n.resolvedLanguage === lang} className={i18n.resolvedLanguage === lang ? 'selected' : ''} onClick={() => saveLanguage(lang)}>{lang === 'en' ? 'EN' : 'ES'}</Button>)}</div></div>
       <div className="settings-row is-static"><Sun className="settings-icon" /><span className="settings-label">{t('me.appearance')}</span>
         <div className="segmented" role="group" aria-label={t('me.appearance')}>{([{ value: 'light', Icon: Sun }, { value: 'dark', Icon: Moon }, { value: 'system', Icon: Monitor }] as const).map(({ value, Icon }) => <Button key={value} variant="ghost" size="icon" className={theme === value ? 'selected' : ''} aria-pressed={theme === value} aria-label={t(`me.${value}`)} title={t(`me.${value}`)} onClick={() => setTheme(value)}><Icon /></Button>)}</div></div>
+      {isAdmin && <Link className="settings-row" to="/admin/site-media"><ImageDown className="settings-icon" /><span className="settings-label">{t('siteMedia.menu')}</span><ChevronRight className="settings-chevron" /></Link>}
       <a className="settings-row" href="mailto:help@gatherwell.app"><LifeBuoy className="settings-icon" /><span className="settings-label">{t('profile.help')}</span><ChevronRight className="settings-chevron" /></a>
       <Link className="settings-row" to="/terms"><FileText className="settings-icon" /><span className="settings-label">{t('auth.terms')}</span><ChevronRight className="settings-chevron" /></Link>
       <Link className="settings-row" to="/privacy"><ShieldCheck className="settings-icon" /><span className="settings-label">{t('auth.privacy')}</span><ChevronRight className="settings-chevron" /></Link>

@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/hooks/useAuth';
+import { useGatherwell } from '@/components/gatherwell-shell';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
@@ -13,17 +13,17 @@ import { SITE_MEDIA_BUCKET, cropToAspect, isAdminQuery, siteMediaKey, siteMediaQ
 
 export function SiteMediaAdmin() {
   const { t } = useTranslation();
-  const { user } = useAuth();
-  const admin = useQuery(isAdminQuery(user?.id));
+  const { userId } = useGatherwell();
+  const admin = useQuery(isAdminQuery(userId));
   const media = useQuery({ ...siteMediaQuery(), enabled: admin.data === true });
   const [editing, setEditing] = useState<SiteMedia | null>(null);
 
-  if (admin.isLoading) return <div className="page-shell"><p className="muted-copy">{t('common.loading')}</p></div>;
-  if (!admin.data) return <div className="page-shell"><section className="panel empty-panel"><GwFeatureTile name="Lock" /><h2 className="section-title">{t('siteMedia.denied')}</h2><p className="muted-copy">{t('siteMedia.deniedBody')}</p></section></div>;
+  if (admin.isLoading) return <div className="page-content"><p className="muted-copy">{t('siteMedia.loading')}</p></div>;
+  if (!admin.data) return <div className="page-content"><section className="panel empty-panel"><GwFeatureTile name="Lock" /><h2 className="section-title">{t('siteMedia.denied')}</h2><p className="muted-copy">{t('siteMedia.deniedBody')}</p></section></div>;
 
   return (
-    <div className="page-shell site-media-page">
-      <header className="page-header"><div><p className="eyebrow">{t('siteMedia.eyebrow')}</p><h1 className="page-title">{t('siteMedia.title')}</h1><p className="page-subtitle">{t('siteMedia.subtitle')}</p></div></header>
+    <div className="page-content site-media-page">
+      <header className="page-heading"><div><p className="eyebrow">{t('siteMedia.eyebrow')}</p><h1 >{t('siteMedia.title')}</h1><p >{t('siteMedia.subtitle')}</p></div></header>
       <div className="site-media-grid">
         {(media.data ?? []).map(row => (
           <button type="button" key={row.id} className="site-media-card" onClick={() => setEditing(row)}>
@@ -112,7 +112,7 @@ function SlotEditor({ row, onClose }: { row: SiteMedia; onClose: () => void }) {
         <label className="form-field"><span className="field-label">{t('siteMedia.credit')}</span><Input value={credit} onChange={e => setCredit(e.target.value)} maxLength={120} /></label>
         <div className="sheet-actions">
           <Button type="button" variant="ghost" disabled={busy || (!row.image_path && !file)} onClick={() => void reset()}><GwIcon name="ArrowCounterClockwise" />{t('siteMedia.reset')}</Button>
-          <Button type="button" disabled={busy || !altEn.trim() || !altEs.trim()} onClick={() => void save()}>{busy ? t('common.saving') : t('common.save')}</Button>
+          <Button type="button" disabled={busy || !altEn.trim() || !altEs.trim()} onClick={() => void save()}>{busy ? t('siteMedia.saving') : t('siteMedia.save')}</Button>
         </div>
       </div>
     </ResponsiveSheet>
