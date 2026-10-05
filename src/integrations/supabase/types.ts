@@ -116,6 +116,62 @@ export type Database = {
           },
         ]
       }
+      badges: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string | null
+          description_en: string | null
+          description_es: string | null
+          icon: string
+          id: string
+          is_custom: boolean
+          name_en: string
+          name_es: string
+          sort_order: number
+          team_id: string | null
+          tier: string
+        }
+        Insert: {
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          description_en?: string | null
+          description_es?: string | null
+          icon?: string
+          id?: string
+          is_custom?: boolean
+          name_en: string
+          name_es: string
+          sort_order?: number
+          team_id?: string | null
+          tier?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          description_en?: string | null
+          description_es?: string | null
+          icon?: string
+          id?: string
+          is_custom?: boolean
+          name_en?: string
+          name_es?: string
+          sort_order?: number
+          team_id?: string | null
+          tier?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "badges_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       challenge_checkins: {
         Row: {
           challenge_id: string
@@ -576,6 +632,41 @@ export type Database = {
           },
         ]
       }
+      host_of_month: {
+        Row: {
+          awarded_by: string | null
+          created_at: string
+          month: string
+          note: string | null
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          awarded_by?: string | null
+          created_at?: string
+          month: string
+          note?: string | null
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          awarded_by?: string | null
+          created_at?: string
+          month?: string
+          note?: string | null
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "host_of_month_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lesson_live_links: {
         Row: {
           lesson_id: string
@@ -983,9 +1074,57 @@ export type Database = {
           },
         ]
       }
+      shoutouts: {
+        Row: {
+          activity_id: string | null
+          created_at: string
+          from_user: string
+          hidden: boolean
+          id: string
+          message: string
+          photo_path: string | null
+          pinned: boolean
+          team_id: string
+          to_user: string
+        }
+        Insert: {
+          activity_id?: string | null
+          created_at?: string
+          from_user: string
+          hidden?: boolean
+          id?: string
+          message: string
+          photo_path?: string | null
+          pinned?: boolean
+          team_id: string
+          to_user: string
+        }
+        Update: {
+          activity_id?: string | null
+          created_at?: string
+          from_user?: string
+          hidden?: boolean
+          id?: string
+          message?: string
+          photo_path?: string | null
+          pinned?: boolean
+          team_id?: string
+          to_user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shoutouts_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       team_members: {
         Row: {
           custom_badge: string | null
+          invited_by: string | null
           joined_at: string
           role: string
           team_id: string
@@ -993,6 +1132,7 @@ export type Database = {
         }
         Insert: {
           custom_badge?: string | null
+          invited_by?: string | null
           joined_at?: string
           role?: string
           team_id: string
@@ -1000,6 +1140,7 @@ export type Database = {
         }
         Update: {
           custom_badge?: string | null
+          invited_by?: string | null
           joined_at?: string
           role?: string
           team_id?: string
@@ -1192,6 +1333,54 @@ export type Database = {
           },
         ]
       }
+      user_badges: {
+        Row: {
+          awarded_at: string
+          awarded_by: string | null
+          badge_id: string
+          id: string
+          note: string | null
+          seen_at: string | null
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          awarded_at?: string
+          awarded_by?: string | null
+          badge_id: string
+          id?: string
+          note?: string | null
+          seen_at?: string | null
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          awarded_at?: string
+          awarded_by?: string | null
+          badge_id?: string
+          id?: string
+          note?: string | null
+          seen_at?: string | null
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_badges_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -1209,6 +1398,10 @@ export type Database = {
           _sms: boolean
         }
         Returns: string
+      }
+      award_badge: {
+        Args: { _badge: string; _note: string; _team: string; _user: string }
+        Returns: undefined
       }
       can_edit_track: { Args: { _track: string }; Returns: boolean }
       can_manage_event: { Args: { _event_id: string }; Returns: boolean }
@@ -1290,6 +1483,10 @@ export type Database = {
         }[]
       }
       delete_my_account: { Args: never; Returns: undefined }
+      evaluate_badges: {
+        Args: { _team: string; _user: string }
+        Returns: undefined
+      }
       event_going_count: { Args: { _event_id: string }; Returns: number }
       event_seats_used: { Args: { _event: string }; Returns: number }
       event_summary: { Args: { _event: string }; Returns: Json }
@@ -1304,12 +1501,31 @@ export type Database = {
           team_name: string
         }[]
       }
+      give_shoutout: {
+        Args: { _message: string; _photo: string; _team: string; _to: string }
+        Returns: string
+      }
+      grant_auto_badge: {
+        Args: { _code: string; _team: string; _user: string }
+        Returns: undefined
+      }
+      grant_badge: {
+        Args: {
+          _badge: string
+          _by: string
+          _note: string
+          _team: string
+          _user: string
+        }
+        Returns: boolean
+      }
+      has_blocked_claim: { Args: { _text: string }; Returns: boolean }
       is_team_member: {
         Args: { _roles: string[]; _team_id: string }
         Returns: boolean
       }
       join_team_by_code: {
-        Args: { _code: string; _role?: string }
+        Args: { _by?: string; _code: string; _role?: string }
         Returns: string
       }
       launch_template: {
@@ -1326,6 +1542,11 @@ export type Database = {
       }
       live_lesson_link: { Args: { _lesson: string }; Returns: string }
       local_today: { Args: { _tz: string }; Returns: string }
+      mark_badges_seen: { Args: { _ids: string[] }; Returns: undefined }
+      moderate_shoutout: {
+        Args: { _action: string; _id: string }
+        Returns: undefined
+      }
       my_poll_votes: {
         Args: { _code: string; _event: string }
         Returns: {
@@ -1339,6 +1560,10 @@ export type Database = {
           team_id: string
           team_name: string
         }[]
+      }
+      name_host_of_month: {
+        Args: { _note: string; _team: string; _user: string }
+        Returns: undefined
       }
       post_challenge_encouragement: {
         Args: { _c: string; _message: string }
