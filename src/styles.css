@@ -623,3 +623,12 @@ ul.order-list li{grid-template-columns:minmax(0,1fr) auto}
 .badge-tile small{font-size:12px;color:var(--muted-foreground);line-height:1.5}
 .badge-tile.is-locked strong{color:var(--muted-foreground);font-weight:500}
 .badge-share{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-size:13px}.badge-share svg{width:14px;height:14px}
+
+/* Notifications */
+.notify-settings{display:grid;gap:12px}
+.notify-row{display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 0;border-bottom:1px solid var(--border)}
+.notify-row>span{flex:1;display:grid;gap:2px}.notify-row small{color:var(--muted-foreground);font-size:12px}
+.not-connected-badge{display:inline-flex;width:fit-content;padding:2px 8px;border-radius:999px;background:var(--warm-chip);color:var(--foreground);font-size:11px;font-weight:600}
+.notify-device{padding:4px 0 8px}
+.outbox-total{margin-top:12px;font-size:13px}
+.unsubscribe-list{margin:16px 0}

@@ -1,3 +1,4 @@
+import { OutboxSummary } from '@/components/notifications';
 import { useState } from 'react';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -54,7 +55,8 @@ function EventDetailPage() {
   const setStatus = async (status: 'published' | 'cancelled') => {
     setSaving(true); const { error } = await supabase.from('events').update({ status }).eq('id', id); setSaving(false);
     if (error) { toast.error(t('profile.saveError')); return; }
-    if (status === 'cancelled' && notify) console.info('[notify] guest notification not connected — mock for', id);
+    if (status === 'cancelled' && notify) { const { data: n } = await supabase.rpc('notify_gathering_cancelled', { _event: id }); toast.success(t('notify.cancelQueued', { count: n ?? 0 })); }
+    void queryClient.invalidateQueries({ queryKey: ['outbox-summary', id] });
     toast.success(t(status === 'published' ? 'templates.launchedToast' : 'gathering.cancelled')); setSheet(null); await refresh();
   };
   const remove = async () => {
@@ -124,8 +126,9 @@ function EventDetailPage() {
         <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(invite)}`}><MessageSquareText />{t('gathering.text')}</a></Button>
         {event.visibility === 'public' && <Button variant="secondary" onClick={async () => { toast(t('guest.storyMaking')); await storyImage({ title: event.title, date: when, link, coverUrl: await mediaUrl(event.cover_url), coverStyle: event.cover_style, brand: t('brand') }); }}><ImageDown />{t('guest.story')}</Button>}</div>
     </ResponsiveSheet>
+    {manages && event.status !== 'draft' && <OutboxSummary eventId={id} />}
     <ResponsiveSheet open={sheet === 'cancel'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.cancelTitle')} description={t('gathering.cancelText')}>
-      <div className="edit-form"><label className="switch-row"><Checkbox checked={notify} onCheckedChange={v => setNotify(!!v)} /><span><strong>{t('gathering.notifyGuests')}</strong><small>{t('gathering.notConnected')}</small></span></label>
+      <div className="edit-form"><label className="switch-row"><Checkbox checked={notify} onCheckedChange={v => setNotify(!!v)} /><span><strong>{t('gathering.notifyGuests')}</strong><small>{t('notify.cancelNote')}</small></span></label>
         <div className="confirm-actions"><Button variant="secondary" onClick={() => setSheet(null)}>{t('gathering.keep')}</Button><Button className="danger-button" disabled={saving} onClick={() => setStatus('cancelled')}>{t('gathering.cancel')}</Button></div></div>
     </ResponsiveSheet>
     <ResponsiveSheet open={sheet === 'delete'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.deleteTitle')} description={t('gathering.deleteText')}>

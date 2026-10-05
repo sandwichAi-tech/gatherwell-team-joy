@@ -1,3 +1,4 @@
+import { requestPushMoment } from '@/components/notifications';
 import { useEffect, useMemo, useState, createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -100,6 +101,7 @@ export function BadgeEarnedWatcher() {
   const close = async () => {
     if (!current) return;
     await supabase.rpc('mark_badges_seen', { _ids: [current.id] });
+    if (current.badges.code === 'first_gathering') requestPushMoment('hosted');
     await queryClient.invalidateQueries({ queryKey: ['unseen-badges', userId] });
     await queryClient.invalidateQueries({ queryKey: recognitionKey(current.team_id) });
   };

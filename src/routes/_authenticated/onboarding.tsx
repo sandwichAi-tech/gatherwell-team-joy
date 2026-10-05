@@ -1,3 +1,4 @@
+import { requestPushMoment } from '@/components/notifications';
 import { useEffect, useRef, useState } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
@@ -61,7 +62,7 @@ function Onboarding() {
       if (!profile?.city) list.push('place');
       if (!profile?.role_intent) list.push('role');
       if (!workspace && !joinedTeam) list.push('team');
-      setJoined(joinedTeam);
+      setJoined(joinedTeam); if (joinedTeam) requestPushMoment('joined');
       setSteps(list);
       if (!list.length && !joinedTeam) await finish();
     })();
@@ -109,7 +110,7 @@ function Onboarding() {
           if (!invite?.[0]) { setError(t('onboarding.invalidCode')); setBusy(false); return; }
           const { error: e } = await supabase.rpc('join_team_by_code', { _code: clean, _role: role === 'host' ? 'host' : 'member' }); if (e) throw e;
           await queryClient.invalidateQueries({ queryKey: ['workspace', user.id] });
-          setJoined({ team: invite[0].team_name, leader: invite[0].leader_name });
+          setJoined({ team: invite[0].team_name, leader: invite[0].leader_name }); requestPushMoment('joined');
         }
       }
       await queryClient.invalidateQueries({ queryKey: ['profile', user.id] });

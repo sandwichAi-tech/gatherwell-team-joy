@@ -18,6 +18,7 @@ import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authentic
 import { Route as EIdRouteImport } from './routes/e.$id'
 import { Route as JoinCodeRouteImport } from './routes/join.$code'
 import { Route as RCodeRouteImport } from './routes/r.$code'
+import { Route as UnsubscribeTokenRouteImport } from './routes/unsubscribe.$token'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/_app/index'
 import { Route as AuthenticatedAppEventsRouteImport } from './routes/_authenticated/_app/events'
 import { Route as AuthenticatedAppLearnRouteImport } from './routes/_authenticated/_app/learn'
@@ -30,6 +31,10 @@ import { Route as AuthenticatedAppLearnManageRouteImport } from './routes/_authe
 import { Route as AuthenticatedAppLearnRecipesRouteImport } from './routes/_authenticated/_app/learn_.recipes'
 import { Route as AuthenticatedAppTeamInsightsRouteImport } from './routes/_authenticated/_app/team_.insights'
 import { Route as AuthenticatedAppTeamMapRouteImport } from './routes/_authenticated/_app/team_.map'
+import { Route as ApiPublicEmailMailgunRouteImport } from './routes/api/public/email/mailgun'
+import { Route as ApiPublicEmailResendRouteImport } from './routes/api/public/email/resend'
+import { Route as ApiPublicOutboxProcessRouteImport } from './routes/api/public/outbox/process'
+import { Route as ApiPublicSmsInboundRouteImport } from './routes/api/public/sms/inbound'
 import { Route as AuthenticatedAppEventIdCheckinRouteImport } from './routes/_authenticated/_app/event_.$id.checkin'
 import { Route as AuthenticatedAppEventIdGuestsRouteImport } from './routes/_authenticated/_app/event_.$id.guests'
 import { Route as AuthenticatedAppGatheringIdEditRouteImport } from './routes/_authenticated/_app/gathering.$id.edit'
@@ -78,6 +83,11 @@ const JoinCodeRoute = JoinCodeRouteImport.update({
 const RCodeRoute = RCodeRouteImport.update({
   id: '/r/$code',
   path: '/r/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UnsubscribeTokenRoute = UnsubscribeTokenRouteImport.update({
+  id: '/unsubscribe/$token',
+  path: '/unsubscribe/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
@@ -145,6 +155,26 @@ const AuthenticatedAppTeamMapRoute = AuthenticatedAppTeamMapRouteImport.update({
   path: '/team/map',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const ApiPublicEmailMailgunRoute = ApiPublicEmailMailgunRouteImport.update({
+  id: '/api/public/email/mailgun',
+  path: '/api/public/email/mailgun',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicEmailResendRoute = ApiPublicEmailResendRouteImport.update({
+  id: '/api/public/email/resend',
+  path: '/api/public/email/resend',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicOutboxProcessRoute = ApiPublicOutboxProcessRouteImport.update({
+  id: '/api/public/outbox/process',
+  path: '/api/public/outbox/process',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicSmsInboundRoute = ApiPublicSmsInboundRouteImport.update({
+  id: '/api/public/sms/inbound',
+  path: '/api/public/sms/inbound',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAppEventIdCheckinRoute =
   AuthenticatedAppEventIdCheckinRouteImport.update({
     id: '/event_/$id/checkin',
@@ -191,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/e/$id': typeof EIdRoute
   '/join/$code': typeof JoinCodeRoute
   '/r/$code': typeof RCodeRoute
+  '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/events': typeof AuthenticatedAppEventsRoute
   '/learn': typeof AuthenticatedAppLearnRoute
   '/me': typeof AuthenticatedAppMeRoute
@@ -202,6 +233,10 @@ export interface FileRoutesByFullPath {
   '/learn/recipes': typeof AuthenticatedAppLearnRecipesRoute
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
+  '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
+  '/api/public/email/resend': typeof ApiPublicEmailResendRoute
+  '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
+  '/api/public/sms/inbound': typeof ApiPublicSmsInboundRoute
   '/event/$id/checkin': typeof AuthenticatedAppEventIdCheckinRoute
   '/event/$id/guests': typeof AuthenticatedAppEventIdGuestsRoute
   '/gathering/$id/edit': typeof AuthenticatedAppGatheringIdEditRoute
@@ -218,6 +253,7 @@ export interface FileRoutesByTo {
   '/e/$id': typeof EIdRoute
   '/join/$code': typeof JoinCodeRoute
   '/r/$code': typeof RCodeRoute
+  '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/events': typeof AuthenticatedAppEventsRoute
   '/learn': typeof AuthenticatedAppLearnRoute
   '/me': typeof AuthenticatedAppMeRoute
@@ -229,6 +265,10 @@ export interface FileRoutesByTo {
   '/learn/recipes': typeof AuthenticatedAppLearnRecipesRoute
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
+  '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
+  '/api/public/email/resend': typeof ApiPublicEmailResendRoute
+  '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
+  '/api/public/sms/inbound': typeof ApiPublicSmsInboundRoute
   '/event/$id/checkin': typeof AuthenticatedAppEventIdCheckinRoute
   '/event/$id/guests': typeof AuthenticatedAppEventIdGuestsRoute
   '/gathering/$id/edit': typeof AuthenticatedAppGatheringIdEditRoute
@@ -247,6 +287,7 @@ export interface FileRoutesById {
   '/e/$id': typeof EIdRoute
   '/join/$code': typeof JoinCodeRoute
   '/r/$code': typeof RCodeRoute
+  '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/_authenticated/_app/events': typeof AuthenticatedAppEventsRoute
   '/_authenticated/_app/learn': typeof AuthenticatedAppLearnRoute
   '/_authenticated/_app/me': typeof AuthenticatedAppMeRoute
@@ -259,6 +300,10 @@ export interface FileRoutesById {
   '/_authenticated/_app/learn_/recipes': typeof AuthenticatedAppLearnRecipesRoute
   '/_authenticated/_app/team_/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/_authenticated/_app/team_/map': typeof AuthenticatedAppTeamMapRoute
+  '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
+  '/api/public/email/resend': typeof ApiPublicEmailResendRoute
+  '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
+  '/api/public/sms/inbound': typeof ApiPublicSmsInboundRoute
   '/_authenticated/_app/event_/$id/checkin': typeof AuthenticatedAppEventIdCheckinRoute
   '/_authenticated/_app/event_/$id/guests': typeof AuthenticatedAppEventIdGuestsRoute
   '/_authenticated/_app/gathering/$id/edit': typeof AuthenticatedAppGatheringIdEditRoute
@@ -277,6 +322,7 @@ export interface FileRouteTypes {
     | '/e/$id'
     | '/join/$code'
     | '/r/$code'
+    | '/unsubscribe/$token'
     | '/events'
     | '/learn'
     | '/me'
@@ -288,6 +334,10 @@ export interface FileRouteTypes {
     | '/learn/recipes'
     | '/team/insights'
     | '/team/map'
+    | '/api/public/email/mailgun'
+    | '/api/public/email/resend'
+    | '/api/public/outbox/process'
+    | '/api/public/sms/inbound'
     | '/event/$id/checkin'
     | '/event/$id/guests'
     | '/gathering/$id/edit'
@@ -304,6 +354,7 @@ export interface FileRouteTypes {
     | '/e/$id'
     | '/join/$code'
     | '/r/$code'
+    | '/unsubscribe/$token'
     | '/events'
     | '/learn'
     | '/me'
@@ -315,6 +366,10 @@ export interface FileRouteTypes {
     | '/learn/recipes'
     | '/team/insights'
     | '/team/map'
+    | '/api/public/email/mailgun'
+    | '/api/public/email/resend'
+    | '/api/public/outbox/process'
+    | '/api/public/sms/inbound'
     | '/event/$id/checkin'
     | '/event/$id/guests'
     | '/gathering/$id/edit'
@@ -332,6 +387,7 @@ export interface FileRouteTypes {
     | '/e/$id'
     | '/join/$code'
     | '/r/$code'
+    | '/unsubscribe/$token'
     | '/_authenticated/_app/events'
     | '/_authenticated/_app/learn'
     | '/_authenticated/_app/me'
@@ -344,6 +400,10 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/learn_/recipes'
     | '/_authenticated/_app/team_/insights'
     | '/_authenticated/_app/team_/map'
+    | '/api/public/email/mailgun'
+    | '/api/public/email/resend'
+    | '/api/public/outbox/process'
+    | '/api/public/sms/inbound'
     | '/_authenticated/_app/event_/$id/checkin'
     | '/_authenticated/_app/event_/$id/guests'
     | '/_authenticated/_app/gathering/$id/edit'
@@ -360,6 +420,11 @@ export interface RootRouteChildren {
   EIdRoute: typeof EIdRoute
   JoinCodeRoute: typeof JoinCodeRoute
   RCodeRoute: typeof RCodeRoute
+  UnsubscribeTokenRoute: typeof UnsubscribeTokenRoute
+  ApiPublicEmailMailgunRoute: typeof ApiPublicEmailMailgunRoute
+  ApiPublicEmailResendRoute: typeof ApiPublicEmailResendRoute
+  ApiPublicOutboxProcessRoute: typeof ApiPublicOutboxProcessRoute
+  ApiPublicSmsInboundRoute: typeof ApiPublicSmsInboundRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -425,6 +490,13 @@ declare module '@tanstack/react-router' {
       path: '/r/$code'
       fullPath: '/r/$code'
       preLoaderRoute: typeof RCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/unsubscribe/$token': {
+      id: '/unsubscribe/$token'
+      path: '/unsubscribe/$token'
+      fullPath: '/unsubscribe/$token'
+      preLoaderRoute: typeof UnsubscribeTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/_app/': {
@@ -510,6 +582,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/team/map'
       preLoaderRoute: typeof AuthenticatedAppTeamMapRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/api/public/email/mailgun': {
+      id: '/api/public/email/mailgun'
+      path: '/api/public/email/mailgun'
+      fullPath: '/api/public/email/mailgun'
+      preLoaderRoute: typeof ApiPublicEmailMailgunRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/email/resend': {
+      id: '/api/public/email/resend'
+      path: '/api/public/email/resend'
+      fullPath: '/api/public/email/resend'
+      preLoaderRoute: typeof ApiPublicEmailResendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/outbox/process': {
+      id: '/api/public/outbox/process'
+      path: '/api/public/outbox/process'
+      fullPath: '/api/public/outbox/process'
+      preLoaderRoute: typeof ApiPublicOutboxProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/sms/inbound': {
+      id: '/api/public/sms/inbound'
+      path: '/api/public/sms/inbound'
+      fullPath: '/api/public/sms/inbound'
+      preLoaderRoute: typeof ApiPublicSmsInboundRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/_app/event_/$id/checkin': {
       id: '/_authenticated/_app/event_/$id/checkin'
@@ -624,6 +724,11 @@ const rootRouteChildren: RootRouteChildren = {
   EIdRoute: EIdRoute,
   JoinCodeRoute: JoinCodeRoute,
   RCodeRoute: RCodeRoute,
+  UnsubscribeTokenRoute: UnsubscribeTokenRoute,
+  ApiPublicEmailMailgunRoute: ApiPublicEmailMailgunRoute,
+  ApiPublicEmailResendRoute: ApiPublicEmailResendRoute,
+  ApiPublicOutboxProcessRoute: ApiPublicOutboxProcessRoute,
+  ApiPublicSmsInboundRoute: ApiPublicSmsInboundRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

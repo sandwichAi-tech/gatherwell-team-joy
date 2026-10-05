@@ -159,7 +159,8 @@
     "join": "Join your team on Gatherwell.",
     "terms": "Gatherwell terms.",
     "privacy": "Gatherwell privacy.",
-    "event": "A gathering on Gatherwell."
+    "event": "A gathering on Gatherwell.",
+    "unsubscribe": "Choose which Gatherwell emails you receive."
   },
   "stats": {
     "members": {
@@ -1306,5 +1307,62 @@
       "not_allowed": "You can't do that here.",
       "invalid_message": "Keep it to 280 characters."
     }
+  },
+  "notify": {
+    "channels": "Channels",
+    "types": "What to send",
+    "connected": "Connected",
+    "channel": {
+      "email": "Email",
+      "sms": "Text messages",
+      "push": "Push on this phone"
+    },
+    "type": {
+      "reminders": "Reminders",
+      "remindersText": "Gatherings and live sessions you joined.",
+      "announcements": "Team announcements",
+      "announcementsText": "Notes from your leader.",
+      "badges": "Badges and wins",
+      "badgesText": "When you earn a badge.",
+      "followups": "Follow-ups",
+      "followupsText": "Thank-you notes after a gathering."
+    },
+    "enableDevice": "Turn on push for this phone",
+    "deviceOn": "Push is on for this phone.",
+    "deviceBlocked": "Push is blocked in this browser's settings.",
+    "pushTitle": "Stay in the loop?",
+    "pushText": "We'll only send what matters: reminders, team notes and badges. You can change this any time in Me → Notifications.",
+    "pushWhy": {
+      "rsvp": "You're going — want a reminder before it starts?",
+      "joined": "You're on the team now — want a nudge when your leader posts?",
+      "hosted": "You hosted your first gathering — want updates when guests RSVP and reminders go out?"
+    },
+    "notNow": "Not now",
+    "turnOn": "Turn on",
+    "pushOn": "Push notifications are on",
+    "remindersTitle": "Reminders",
+    "status": {
+      "queued": "Queued",
+      "sent": "Sent",
+      "simulated": "Simulated"
+    },
+    "allMessages": "{{count}} messages for this gathering · {{skipped}} skipped",
+    "cancelNote": "Emails and texts everyone going or on the waitlist who asked for updates.",
+    "cancelQueued": "Cancellation notice queued for {{count}} guests",
+    "emailTeam": "Also email my team",
+    "includeSubteams": "Include sub-teams",
+    "announceNote": "Members get a push notification; email goes to everyone who hasn't unsubscribed.",
+    "announceQueued": "Posted · {{count}} emails queued"
+  },
+  "unsubscribe": {
+    "eyebrow": "Email preferences",
+    "title": "Your email choices",
+    "for": "For {{email}}",
+    "all": "Unsubscribe from all emails",
+    "resubscribe": "Turn emails back on",
+    "saved": "Saved. Thank you.",
+    "doneAll": "You're unsubscribed from all Gatherwell emails.",
+    "invalid": "This link isn't valid anymore.",
+    "note": "Important messages about a gathering you RSVP'd to may still arrive."
   }
 }

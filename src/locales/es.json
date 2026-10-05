@@ -159,7 +159,8 @@
     "join": "Únete a tu equipo en Gatherwell.",
     "terms": "Términos de Gatherwell.",
     "privacy": "Privacidad de Gatherwell.",
-    "event": "Un encuentro en Gatherwell."
+    "event": "Un encuentro en Gatherwell.",
+    "unsubscribe": "Elige qué correos de Gatherwell quieres recibir."
   },
   "stats": {
     "members": {
@@ -1306,5 +1307,62 @@
       "not_allowed": "No puedes hacer eso aquí.",
       "invalid_message": "Máximo 280 caracteres."
     }
+  },
+  "notify": {
+    "channels": "Canales",
+    "types": "Qué enviar",
+    "connected": "Conectado",
+    "channel": {
+      "email": "Correo",
+      "sms": "Mensajes de texto",
+      "push": "Notificaciones en este teléfono"
+    },
+    "type": {
+      "reminders": "Recordatorios",
+      "remindersText": "Reuniones y sesiones en vivo a las que te uniste.",
+      "announcements": "Avisos del equipo",
+      "announcementsText": "Notas de tu líder.",
+      "badges": "Insignias y logros",
+      "badgesText": "Cuando obtienes una insignia.",
+      "followups": "Seguimiento",
+      "followupsText": "Notas de agradecimiento después de una reunión."
+    },
+    "enableDevice": "Activar notificaciones en este teléfono",
+    "deviceOn": "Las notificaciones están activas en este teléfono.",
+    "deviceBlocked": "Las notificaciones están bloqueadas en la configuración del navegador.",
+    "pushTitle": "¿Quieres enterarte a tiempo?",
+    "pushText": "Solo enviaremos lo importante: recordatorios, avisos del equipo e insignias. Puedes cambiarlo cuando quieras en Yo → Notificaciones.",
+    "pushWhy": {
+      "rsvp": "Ya tienes lugar — ¿quieres un recordatorio antes de empezar?",
+      "joined": "Ya eres parte del equipo — ¿quieres un aviso cuando tu líder publique algo?",
+      "hosted": "Organizaste tu primera reunión — ¿quieres saber cuando lleguen confirmaciones y salgan recordatorios?"
+    },
+    "notNow": "Ahora no",
+    "turnOn": "Activar",
+    "pushOn": "Notificaciones activadas",
+    "remindersTitle": "Recordatorios",
+    "status": {
+      "queued": "En cola",
+      "sent": "Enviados",
+      "simulated": "Simulados"
+    },
+    "allMessages": "{{count}} mensajes para esta reunión · {{skipped}} omitidos",
+    "cancelNote": "Envía correo y texto a quienes van o están en lista de espera y pidieron avisos.",
+    "cancelQueued": "Aviso de cancelación en cola para {{count}} invitados",
+    "emailTeam": "Enviar también por correo a mi equipo",
+    "includeSubteams": "Incluir subequipos",
+    "announceNote": "Los miembros reciben una notificación; el correo llega a quienes no se han dado de baja.",
+    "announceQueued": "Publicado · {{count}} correos en cola"
+  },
+  "unsubscribe": {
+    "eyebrow": "Preferencias de correo",
+    "title": "Tus preferencias de correo",
+    "for": "Para {{email}}",
+    "all": "Darme de baja de todos los correos",
+    "resubscribe": "Volver a recibir correos",
+    "saved": "Guardado. Gracias.",
+    "doneAll": "Te diste de baja de todos los correos de Gatherwell.",
+    "invalid": "Este enlace ya no es válido.",
+    "note": "Aún podrías recibir mensajes importantes sobre una reunión a la que confirmaste."
   }
 }

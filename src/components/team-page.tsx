@@ -1,3 +1,4 @@
+import { useChannelStatus } from '@/components/notifications';
 import { ActiveChallengeCard, ChallengesSection } from '@/components/challenges';
 import { HostOfMonthCard, Medallion, PinnedShoutout, RecognitionTools, ShoutoutModeration, ShoutoutSheet, useHostOfMonthId } from '@/components/recognition';
 import type { Tier } from '@/lib/recognition';
@@ -347,14 +348,17 @@ function AnnounceSheet({ open, onOpenChange, teamId, userId }: { open: boolean; 
   const { t } = useTranslation(); const queryClient = useQueryClient();
   const { data: list = [] } = useQuery(announcementsQuery(teamId));
   const [body, setBody] = useState(''); const [pin, setPin] = useState(true); const [file, setFile] = useState<File | null>(null); const [busy, setBusy] = useState(false);
+  const [emailTeam, setEmailTeam] = useState(false); const [subteams, setSubteams] = useState(false);
+  const { data: channels } = useChannelStatus();
   const refresh = () => queryClient.invalidateQueries({ queryKey: teamKey(teamId) });
   const post = async () => {
     if (!body.trim()) return; setBusy(true);
     try {
       const photo_url = file ? await uploadMedia(userId, file, 'announcement') : null;
-      const { error } = await supabase.from('announcements').insert({ team_id: teamId, author_id: userId, body: body.trim(), photo_url, pinned: pin });
+      const { data: created, error } = await supabase.from('announcements').insert({ team_id: teamId, author_id: userId, body: body.trim(), photo_url, pinned: pin }).select('id').single();
       if (error) throw error;
-      setBody(''); setFile(null); toast.success(t('teamSpace.posted')); await refresh();
+      const { data: emailed } = await supabase.rpc('notify_announcement', { _announcement: created.id, _email: emailTeam, _subteams: emailTeam && subteams });
+      setBody(''); setFile(null); toast.success(emailTeam ? t('notify.announceQueued', { count: emailed ?? 0 }) : t('teamSpace.posted')); await refresh();
     } catch (error) { toast.error(errorText(t, error)); }
     setBusy(false);
   };
@@ -366,7 +370,9 @@ function AnnounceSheet({ open, onOpenChange, teamId, userId }: { open: boolean; 
       <div className="photo-row"><label className="file-button"><Upload />{file ? file.name : t('teamSpace.addPhoto')}<input type="file" accept="image/*" hidden onChange={e => setFile(e.target.files?.[0] ?? null)} /></label>{file && <button type="button" className="auth-link" onClick={() => setFile(null)}>{t('onboarding.removePhoto')}</button>}</div>
       <label className="switch-row"><Switch checked={pin} onCheckedChange={setPin} /><span>{t('teamSpace.pinThis')}</span></label>
       <Button className="onboarding-continue" disabled={busy || !body.trim()} onClick={post}><Megaphone />{busy ? t('onboarding.saving') : t('teamSpace.post')}</Button>
-      <p className="not-connected">{t('teamSpace.deliveryNote')}</p>
+      <label className="switch-row"><Switch checked={emailTeam} onCheckedChange={setEmailTeam} /><span><strong>{t('notify.emailTeam')}</strong>{channels && !channels.announcements && <small className="not-connected-badge">{t('common.notConnected')}</small>}</span></label>
+      {emailTeam && <label className="switch-row"><Switch checked={subteams} onCheckedChange={setSubteams} /><span>{t('notify.includeSubteams')}</span></label>}
+      <p className="not-connected">{t('notify.announceNote')}</p>
       {list.length > 0 && <div className="announcement-list"><span className="field-label">{t('teamSpace.recent')}</span>{list.map(a => <div className="announcement-row" key={a.id}>
         <p>{a.body}</p><div className="confirm-actions">
           <Button size="sm" variant="secondary" onClick={() => act(() => supabase.from('announcements').update({ pinned: !a.pinned }).eq('id', a.id))}><Pin />{a.pinned ? t('teamSpace.unpin') : t('teamSpace.pin')}</Button>
