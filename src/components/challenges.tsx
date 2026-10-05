@@ -241,9 +241,10 @@ export function ChallengePage({ id }: { id: string }) {
   const timeOf = (iso: string) => new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', { hour: 'numeric', minute: '2-digit' }).format(new Date(iso));
   return <>
     <Link to="/team" hash="challenges" className="back-link"><ArrowLeft />{t('challenges.title')}</Link>
+    {payGate.sheet}
     <GatheringCover path={c.cover_url} style={c.cover_style} title={title} className="challenge-hero" />
     <div className="lesson-head"><span className="eyebrow">{phase === 'active' ? t('challenges.dayOf', { day: dayNumber(c, today), total: len }) : t(`challenges.phase.${phase}`)}</span>
-      <h1>{title}</h1><p className="track-facts">{fmtDate(c.starts_on, lang)} – {fmtDate(c.ends_on, lang)} · {t('challenges.joinedCount', { count: board.length })}</p>
+      <h1>{title}</h1><p className="track-facts">{fmtDate(c.starts_on, lang)} – {fmtDate(c.ends_on, lang)} · {t('challenges.joinedCount', { count: board.length })}{c.is_paid && c.price_cents ? ` · ${formatMoney(c.price_cents, lang)}` : ''}</p>
       {desc && <p className="challenge-desc">{desc}</p>}
       <div className="recipe-actions">{!joined && phase !== 'past' && <Button disabled={busy} onClick={join}>{t('challenges.joinChallenge')}</Button>}{leader && <Button variant="secondary" onClick={() => setEditing(c)}><Pencil />{t('challenges.edit')}</Button>}</div></div>
 

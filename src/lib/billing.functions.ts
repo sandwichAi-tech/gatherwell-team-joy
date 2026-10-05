@@ -133,3 +133,32 @@ export const refundPayments = createServerFn({ method: 'POST' })
     }
     return { ok: true as const, refunded };
   });
+
+/** Signed-in member pays to join a paid challenge; the webhook adds them once paid. */
+export const startChallengeCheckout = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ challengeId: z.string().uuid(), origin, lang: z.enum(['en', 'es']) }).parse(d))
+  .handler(async ({ data, context }): Promise<Result> => {
+    const { stripe, stripeKey, FEE_PCT } = await import('./billing/stripe.server');
+    if (!stripeKey()) return notConnected;
+    const { data: c } = await context.supabase.from('challenges').select('id, title_en, title_es, created_by, is_paid, price_cents').eq('id', data.challengeId).maybeSingle();
+    if (!c?.is_paid || !c.price_cents) return { ok: false, error: 'not_open' };
+    const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
+    const { data: b } = await supabaseAdmin.from('billing_accounts').select('connect_account_id, connect_status, pass_fee').eq('user_id', c.created_by).maybeSingle();
+    if (!b?.connect_account_id || b.connect_status !== 'active') return { ok: false, error: 'host_not_ready' };
+    const { data: ep } = await supabaseAdmin.rpc('effective_plan', { _uid: c.created_by });
+    const plan = ((ep as { plan?: string } | null)?.plan ?? 'free') as keyof typeof FEE_PCT;
+    const fee = Math.round(c.price_cents * FEE_PCT[plan] / 100);
+    const booking = b.pass_fee ? fee : 0;
+    const name = (data.lang === 'es' ? c.title_es : c.title_en) || c.title_en || c.title_es;
+    const items: Record<string, unknown>[] = [{ quantity: 1, price_data: { currency: 'usd', unit_amount: c.price_cents, product_data: { name } } }];
+    if (booking) items.push({ quantity: 1, price_data: { currency: 'usd', unit_amount: booking, product_data: { name: data.lang === 'es' ? 'Cargo por reservación' : 'Booking fee' } } });
+    const meta = { kind: 'challenge', challenge_id: c.id, user_id: context.userId };
+    const s = await stripe<{ id: string; url: string }>('checkout/sessions', {
+      mode: 'payment', customer_email: context.claims.email as string | undefined, locale: data.lang === 'es' ? 'es-419' : 'en', line_items: items, metadata: meta,
+      payment_intent_data: { application_fee_amount: fee, transfer_data: { destination: b.connect_account_id }, metadata: meta },
+      success_url: `${data.origin}/challenge/${c.id}?paid=1`, cancel_url: `${data.origin}/challenge/${c.id}`,
+    });
+    await supabaseAdmin.from('payments').insert({ kind: 'challenge', challenge_id: c.id, host_id: c.created_by, buyer_email: (context.claims.email as string) ?? null, amount_cents: c.price_cents + booking, fee_cents: fee, booking_fee_cents: booking, stripe_session_id: s.id });
+    return { ok: true, url: s.url };
+  });

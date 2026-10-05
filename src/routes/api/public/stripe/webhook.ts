@@ -32,6 +32,9 @@ export const Route = createFileRoute('/api/public/stripe/webhook')({
                 await db.rpc('enqueue_message', { _channel: 'email', _recipient: m.email, _language: m.lang === 'es' ? 'es' : 'en', _template: 'payment_receipt', _kind: 'transactional',
                   _payload: { name: m.first, title: ev?.title ?? '', starts_at: ev?.starts_at, timezone: ev?.timezone, location: ev?.location_name, amount: money(pay?.amount_cents ?? o.amount_total ?? 0), code, event_id: m.event_id },
                   _send_after: new Date().toISOString(), _event: m.event_id, _rsvp: rsvp?.id ?? null, _user: null, _team: null, _lesson: null });
+              } else if (m.kind === 'challenge') {
+                await db.from('challenge_members').upsert({ challenge_id: m.challenge_id, user_id: m.user_id }, { onConflict: 'challenge_id,user_id', ignoreDuplicates: true });
+                await db.from('payments').update({ status: 'paid', stripe_payment_intent: o.payment_intent }).eq('stripe_session_id', o.id);
               } else if (m.kind === 'plan') {
                 await db.from('billing_accounts').upsert({ user_id: m.user_id, stripe_customer_id: o.customer, stripe_subscription_id: o.subscription, plan: m.plan, billing_period: m.period, status: 'active' }, { onConflict: 'user_id' });
               } else if (m.kind === 'license') {
