@@ -2159,5 +2159,160 @@
       "text_required": "Add the edited text.",
       "not_editable": "This item can't be edited, only approved or removed."
     }
+  },
+  "legalDocs": {
+    "draft": "Draft — pending legal review",
+    "updated": "Last updated October 2026",
+    "back": "Back",
+    "more": "Legal",
+    "notFound": "This page doesn't exist.",
+    "docs": {
+      "terms": {
+        "title": "Terms of Service",
+        "sections": [
+          {
+            "h": "Who we are",
+            "p": "Gatherwell is a place for teams to plan and run gatherings together. By creating an account you agree to these terms."
+          },
+          {
+            "h": "Your account",
+            "p": "You must be 18 or older to create an account. Keep your sign-in secure and tell us if you think someone else is using it."
+          },
+          {
+            "h": "What you post",
+            "p": "You own what you post. You give us permission to show it to the people you share it with. Do not post anything unlawful, hateful, or misleading."
+          },
+          {
+            "h": "Claims we don't allow",
+            "p": "Do not make health, medical, weight-loss or income claims in gatherings, messages or templates. We may remove content that does."
+          },
+          {
+            "h": "Plans and payments",
+            "p": "Paid plans renew until you cancel. Ticket sales are between the host and the guest; refunds follow the host's choices and these terms."
+          },
+          {
+            "h": "Ending your account",
+            "p": "You can delete your account from Me at any time. We may pause accounts that break these terms."
+          },
+          {
+            "h": "Contact",
+            "p": "Questions about these terms? Reach out through the support link in the app."
+          }
+        ]
+      },
+      "privacy": {
+        "title": "Privacy Policy",
+        "sections": [
+          {
+            "h": "What we collect",
+            "p": "Your name, email, optional phone, language, and the gatherings, trainings and challenges you join. We do not collect sales or income data."
+          },
+          {
+            "h": "How we use it",
+            "p": "To run your team space, send the reminders you ask for, and keep the service safe."
+          },
+          {
+            "h": "Who can see it",
+            "p": "Your team sees your name and activity. Guest contact details are visible only to the gathering's host and team leaders."
+          },
+          {
+            "h": "Your choices",
+            "p": "Change notification settings in Me, unsubscribe from any email, reply STOP to texts, or delete your account."
+          },
+          {
+            "h": "Storage",
+            "p": "Photos are stored privately and shown through short-lived links. We keep data only as long as your account is active."
+          },
+          {
+            "h": "Contact",
+            "p": "Questions about your data? Reach out through the support link in the app."
+          }
+        ]
+      },
+      "host": {
+        "title": "Host Agreement",
+        "sections": [
+          {
+            "h": "Your role",
+            "p": "As a host you plan gatherings, welcome guests and keep things safe and friendly."
+          },
+          {
+            "h": "Guest information",
+            "p": "Use guest contact details only to communicate about your gatherings. Never sell or share them."
+          },
+          {
+            "h": "Honest descriptions",
+            "p": "Describe gatherings accurately. No health, medical, weight-loss or income claims."
+          },
+          {
+            "h": "Tickets",
+            "p": "If you sell tickets, you are responsible for refunds when you cancel. Gatherwell keeps a small platform fee based on your plan."
+          },
+          {
+            "h": "Safety",
+            "p": "Choose safe locations, follow local rules, and stop a gathering if anyone is at risk."
+          }
+        ]
+      },
+      "guest": {
+        "title": "Guest Data Notice",
+        "sections": [
+          {
+            "h": "What we keep",
+            "p": "When you RSVP we keep your name, the contact details you give, and whether you checked in."
+          },
+          {
+            "h": "Who sees it",
+            "p": "Only the host and the team's leaders can see your contact details. Other guests only see initials."
+          },
+          {
+            "h": "Messages",
+            "p": "We send confirmations and reminders only if you opt in. You can stop them any time."
+          },
+          {
+            "h": "Removing your data",
+            "p": "Cancel your RSVP with your confirmation link, or ask the host to remove you."
+          }
+        ]
+      },
+      "sms": {
+        "title": "SMS Terms",
+        "sections": [
+          {
+            "h": "What you'll receive",
+            "p": "If you opt in, you'll get texts about gatherings you RSVP to: confirmations, reminders and changes. Usually 1–4 messages per gathering."
+          },
+          {
+            "h": "Costs",
+            "p": "Message and data rates may apply."
+          },
+          {
+            "h": "Stopping",
+            "p": "Reply STOP to any message to stop all texts. Reply HELP for help."
+          },
+          {
+            "h": "Consent",
+            "p": "Opting in is not required to RSVP."
+          }
+        ]
+      },
+      "cookies": {
+        "title": "Cookie Notice",
+        "sections": [
+          {
+            "h": "What we store",
+            "p": "We store your sign-in session, language and theme on your device so the app works."
+          },
+          {
+            "h": "Analytics",
+            "p": "If analytics is turned on, we count page visits and actions with an anonymous ID. No advertising cookies."
+          },
+          {
+            "h": "Your choices",
+            "p": "You can clear site data in your browser at any time; you'll be signed out."
+          }
+        ]
+      }
+    }
   }
 }
