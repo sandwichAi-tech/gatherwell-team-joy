@@ -161,3 +161,6 @@ export function pickH1Variant(): H1Variant {
 
 export const HERO_SLOTS = ['hero_card_1', 'hero_card_2', 'hero_card_3', 'hero_card_4'] as const;
 export const feedSlot = (c: Category) => `feed_default_${c === 'more' ? 'walk' : c}`;
+
+/** Tustin, CA — reference point for preview-only sample gathering distances. */
+export const SAMPLE_ORIGIN = { lat: 33.7458, lng: -117.8262 } as const;

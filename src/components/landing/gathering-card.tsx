@@ -61,8 +61,10 @@ export function GatheringCard({ g, slot, near, goingOverride, goingSlot, showRsv
   const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
   const left = spotsLeft(g);
   const weekend = !left && isThisWeekend(g.startsAt);
-  const where = near && g.lat != null && g.lng != null
-    ? t('landing.card.away', { distance: formatDistance(distanceKm(near, { lat: g.lat, lng: g.lng }), lang) })
+  // Preview samples measure from Tustin, CA until the visitor shares a location.
+  const origin = near ?? (g.isSample ? SAMPLE_ORIGIN : null);
+  const where = origin && g.lat != null && g.lng != null
+    ? `${g.locationName} · ${t('landing.card.away', { distance: formatDistance(distanceKm(origin, { lat: g.lat, lng: g.lng }), lang) })}`
     : g.isOnline ? t('landing.card.online') : g.locationName;
   const going = goingOverride ?? g.going;
   return <article className={`gw-gcard ${className ?? ''}`} style={style}>
