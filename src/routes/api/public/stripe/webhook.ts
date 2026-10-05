@@ -29,7 +29,7 @@ export const Route = createFileRoute('/api/public/stripe/webhook')({
                 const { data: rsvp } = code ? await db.from('rsvps').select('id').eq('checkin_code', code).maybeSingle() : { data: null };
                 const { data: pay } = await db.from('payments').update({ status: 'paid', stripe_payment_intent: o.payment_intent, rsvp_id: rsvp?.id ?? null }).eq('stripe_session_id', o.id).select('amount_cents').maybeSingle();
                 const { data: ev } = await db.from('events').select('title, starts_at, timezone, location_name').eq('id', m.event_id).maybeSingle();
-                await db.rpc('enqueue_message', { _channel: 'email', _recipient: m.email, _language: m.lang === 'es' ? 'es' : 'en', _template: 'payment_receipt', _kind: 'transactional',
+                await db.rpc('enqueue_message', <any>{ _channel: 'email', _recipient: m.email, _language: m.lang === 'es' ? 'es' : 'en', _template: 'payment_receipt', _kind: 'transactional',
                   _payload: { name: m.first, title: ev?.title ?? '', starts_at: ev?.starts_at, timezone: ev?.timezone, location: ev?.location_name, amount: money(pay?.amount_cents ?? o.amount_total ?? 0), code, event_id: m.event_id },
                   _send_after: new Date().toISOString(), _event: m.event_id, _rsvp: rsvp?.id ?? undefined });
               } else if (m.kind === 'challenge') {
@@ -69,7 +69,7 @@ export const Route = createFileRoute('/api/public/stripe/webhook')({
               if (failed && userId) {
                 const { data: u } = await db.auth.admin.getUserById(userId);
                 const { data: p } = await db.from('profiles').select('language').eq('id', userId).maybeSingle();
-                if (u?.user?.email) await db.rpc('enqueue_message', { _channel: 'email', _recipient: u.user.email, _language: p?.language === 'es' ? 'es' : 'en', _template: 'payment_failed', _kind: 'transactional', _payload: {}, _send_after: new Date().toISOString(), _user: userId, _team: null, _lesson: null });
+                if (u?.user?.email) await db.rpc('enqueue_message', <any>{ _channel: 'email', _recipient: u.user.email, _language: p?.language === 'es' ? 'es' : 'en', _template: 'payment_failed', _kind: 'transactional', _payload: {}, _send_after: new Date().toISOString(), _user: userId, _team: null, _lesson: null });
               }
               break;
             }
@@ -84,7 +84,7 @@ export const Route = createFileRoute('/api/public/stripe/webhook')({
               if (pay?.buyer_email) {
                 const { data: r } = pay.rsvp_id ? await db.from('rsvps').select('language').eq('id', pay.rsvp_id).maybeSingle() : { data: null };
                 const { data: ev } = pay.event_id ? await db.from('events').select('title').eq('id', pay.event_id).maybeSingle() : { data: null };
-                await db.rpc('enqueue_message', { _channel: 'email', _recipient: pay.buyer_email, _language: r?.language === 'es' ? 'es' : 'en', _template: 'payment_refunded', _kind: 'transactional', _payload: { name: (pay.buyer_name ?? '').split(' ')[0], title: ev?.title ?? '', amount: money(pay.amount_cents) }, _send_after: new Date().toISOString(), _event: pay.event_id ?? undefined, _rsvp: pay.rsvp_id ?? undefined });
+                await db.rpc('enqueue_message', <any>{ _channel: 'email', _recipient: pay.buyer_email, _language: r?.language === 'es' ? 'es' : 'en', _template: 'payment_refunded', _kind: 'transactional', _payload: { name: (pay.buyer_name ?? '').split(' ')[0], title: ev?.title ?? '', amount: money(pay.amount_cents) }, _send_after: new Date().toISOString(), _event: pay.event_id ?? undefined, _rsvp: pay.rsvp_id ?? undefined });
               }
               break;
             }
