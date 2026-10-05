@@ -1,3 +1,4 @@
+import { AssistantUsage } from '@/components/assistant/assistant-usage';
 import { isAdminQuery } from '@/lib/site-media';
 import { NotificationSettings } from '@/components/notifications';
 import { useEffect, useState, type ReactNode } from 'react';
@@ -180,6 +181,7 @@ export function MePage() {
 
     {workspace && <section className="panel recognition-panel"><div className="section-heading"><h2>{t('recognition.title')}</h2><Button variant="link" onClick={() => setPanel('badges')}>{t('profile.myBadges')}</Button></div><RecognitionSummary teamId={workspace.teamId} /></section>}
 
+    <AssistantUsage />
     <section className="panel settings-list">
       {row(CalendarDays, t('profile.myGatherings'), () => setPanel('gatherings'))}
       {row(Flag, t('profile.myChallenges'), () => setPanel('challenges'))}

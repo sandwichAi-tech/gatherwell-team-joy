@@ -1,9 +1,10 @@
+import { useTranslateFill } from '@/lib/assistant-client';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ArrowDown, ArrowLeft, ArrowUp, GripVertical, Pencil, Plus, Trash2, Upload } from '@/components/icons';
+import { Languages, ArrowDown, ArrowLeft, ArrowUp, GripVertical, Pencil, Plus, Trash2, Upload } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -21,6 +22,13 @@ function errMsg(t: (k: string) => string, e: unknown) {
   if (m.includes('too_large')) return t('learnHub.tooLarge');
   if (m.includes('not_allowed') || m.includes('row-level')) return t('teamSpace.notAllowed');
   return t('profile.saveError');
+}
+
+/** One Translate action for a form's bilingual pairs: fills each empty side from its filled partner. */
+function TranslatePair<T extends Record<string, unknown>>({ pairs, f, setF }: { pairs: [keyof T & string, keyof T & string][]; f: T; setF: React.Dispatch<React.SetStateAction<T>> }) {
+  const { t } = useTranslation(); const tr = useTranslateFill(); const [busy, setBusy] = useState(false);
+  const go = async () => { setBusy(true); for (const [en, es] of pairs) { const a = String(f[en] ?? ''), b = String(f[es] ?? ''); if (a.trim() && b.trim()) continue; if (!a.trim() && !b.trim()) continue; await tr.run(a, b, v => setF(x => ({ ...x, [en]: v })), v => setF(x => ({ ...x, [es]: v }))); } setBusy(false); };
+  return <div className="label-row"><button type="button" className="translate-button" disabled={busy} onClick={go}><Languages />{busy ? t('assistant.translating') : t('templates.translate')}</button>{tr.preview && <small className="not-connected">{t('assistant.previewTranslateNote')}</small>}</div>;
 }
 
 function Field({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
@@ -59,6 +67,7 @@ function TrackEditor({ track, teamId, onClose }: { track: Partial<Track> | null;
     <div className="edit-form">
       <div className="bilingual"><Field id="tr-en" label={`${t('templates.title')} · EN`}><Input id="tr-en" className="field-input" maxLength={120} value={f.title_en} onChange={e => setF({ ...f, title_en: e.target.value })} /></Field>
         <Field id="tr-es" label={`${t('templates.title')} · ES`}><Input id="tr-es" className="field-input" maxLength={120} value={f.title_es} onChange={e => setF({ ...f, title_es: e.target.value })} /></Field></div>
+      <TranslatePair pairs={[['title_en', 'title_es'], ['description_en', 'description_es']]} f={f} setF={setF} />
       <div className="bilingual"><Field id="trd-en" label={`${t('templates.description')} · EN`}><Textarea id="trd-en" rows={3} className="field-textarea" maxLength={1000} value={f.description_en} onChange={e => setF({ ...f, description_en: e.target.value })} /></Field>
         <Field id="trd-es" label={`${t('templates.description')} · ES`}><Textarea id="trd-es" rows={3} className="field-textarea" maxLength={1000} value={f.description_es} onChange={e => setF({ ...f, description_es: e.target.value })} /></Field></div>
       <CoverPicker teamId={teamId} path={f.cover_url} styleIdx={f.cover_style} title={f.title_en || f.title_es} onPath={p => setF(x => ({ ...x, cover_url: p }))} onStyle={n => setF(x => ({ ...x, cover_style: n }))} />
@@ -118,6 +127,7 @@ function LessonEditor({ lesson, teamId, onClose }: { lesson: (Partial<Lesson> & 
     <div className="edit-form">
       <div className="bilingual"><Field id="ls-en" label={`${t('templates.title')} · EN`}><Input id="ls-en" className="field-input" maxLength={140} value={f.title_en} onChange={set('title_en')} /></Field>
         <Field id="ls-es" label={`${t('templates.title')} · ES`}><Input id="ls-es" className="field-input" maxLength={140} value={f.title_es} onChange={set('title_es')} /></Field></div>
+      <TranslatePair pairs={[['title_en', 'title_es'], ['notes_en', 'notes_es']]} f={f} setF={setF} />
       <div className="form-field"><span className="field-label">{t('learnHub.lessonType')}</span>
         <div className="type-choices">{(['video', 'pdf', 'link', 'live'] as const).map(ty => <button type="button" key={ty} className={`choice-card ${f.type === ty ? 'is-selected' : ''}`} aria-pressed={f.type === ty} onClick={() => setF({ ...f, type: ty })}><strong>{t(`learnHub.type.${ty}`)}</strong></button>)}</div></div>
       {(f.type === 'video' || f.type === 'pdf') && <div className="form-field"><span className="field-label">{t(f.type === 'video' ? 'learnHub.uploadVideo' : 'learnHub.uploadPdf')}</span>

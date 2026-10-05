@@ -1,3 +1,4 @@
+import { takePendingAnnouncement } from '@/lib/assistant-client';
 import { useChannelStatus } from '@/components/notifications';
 import { ActiveChallengeCard, ChallengesSection } from '@/components/challenges';
 import { HostOfMonthCard, Medallion, PinnedShoutout, RecognitionTools, ShoutoutModeration, ShoutoutSheet, useHostOfMonthId } from '@/components/recognition';
@@ -84,6 +85,8 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
   const { data: team } = useQuery(teamDetailQuery(teamId));
   const { data: tree = [] } = useQuery(teamTreeQuery(teamId));
   const [sheet, setSheet] = useState<Sheet>(null);
+  const [draftBody, setDraftBody] = useState<string | null>(null);
+  useEffect(() => { const pending = takePendingAnnouncement(); if (pending) { setDraftBody(pending); if (isLeader) setSheet('announce'); else void navigator.clipboard?.writeText(pending).catch(() => {}); } }, [isLeader]);
   const navigate = useNavigate();
   const switchTeam = useSwitchTeam(userId);
   const setOpenEvent = (event: TeamEvent) => { void navigate({ to: '/event/$id', params: { id: event.id } }); };
@@ -136,7 +139,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
     <InviteSheet open={sheet === 'invite'} onOpenChange={o => !o && setSheet(null)} workspace={workspace} joinCode={team?.join_code ?? workspace.joinCode} isLeader={isLeader} />
     {isLeader && team && <EditTeamSheet open={sheet === 'edit'} onOpenChange={o => !o && setSheet(null)} team={team} userId={userId} />}
     <MembersSheet open={sheet === 'members'} onOpenChange={o => !o && setSheet(null)} teamId={teamId} userId={userId} isLeader={isLeader} directLeader={isLeader && !workspace.inherited} />
-    {isLeader && <AnnounceSheet open={sheet === 'announce'} onOpenChange={o => !o && setSheet(null)} teamId={teamId} userId={userId} />}
+    {isLeader && <AnnounceSheet open={sheet === 'announce'} onOpenChange={o => !o && setSheet(null)} teamId={teamId} userId={userId} initialBody={draftBody} />}
     {isLeader && <ResponsiveSheet open={sheet === 'subteams'} onOpenChange={o => !o && setSheet(null)} title={t('teamSpace.subteams')}><SubTeamSettings teamId={teamId} allowHosts={!!team?.allow_host_subteams} /></ResponsiveSheet>}
   </>;
 }
@@ -344,10 +347,10 @@ function MembersSheet({ open, onOpenChange, teamId, userId, isLeader, directLead
   </ResponsiveSheet>;
 }
 
-function AnnounceSheet({ open, onOpenChange, teamId, userId }: { open: boolean; onOpenChange: (o: boolean) => void; teamId: string; userId: string }) {
+function AnnounceSheet({ open, onOpenChange, teamId, userId, initialBody }: { open: boolean; onOpenChange: (o: boolean) => void; teamId: string; userId: string; initialBody?: string | null }) {
   const { t } = useTranslation(); const queryClient = useQueryClient();
   const { data: list = [] } = useQuery(announcementsQuery(teamId));
-  const [body, setBody] = useState(''); const [pin, setPin] = useState(true); const [file, setFile] = useState<File | null>(null); const [busy, setBusy] = useState(false);
+  const [body, setBody] = useState(initialBody ?? ''); useEffect(() => { if (initialBody) setBody(initialBody); }, [initialBody]); const [pin, setPin] = useState(true); const [file, setFile] = useState<File | null>(null); const [busy, setBusy] = useState(false);
   const [emailTeam, setEmailTeam] = useState(false); const [subteams, setSubteams] = useState(false);
   const { data: channels } = useChannelStatus();
   const refresh = () => queryClient.invalidateQueries({ queryKey: teamKey(teamId) });

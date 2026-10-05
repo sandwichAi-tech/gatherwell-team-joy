@@ -104,6 +104,7 @@ export const Plus = mk('Plus');
 export const Printer = mk('Printer');
 export const QrCode = mk('QrCode');
 export const Radio = mk('Radio');
+export const Microphone = mk('Microphone');
 export const RefreshCw = mk('RefreshCw');
 export const Repeat = mk('Repeat');
 export const Repeat2 = mk('Repeat2');

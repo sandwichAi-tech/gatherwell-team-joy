@@ -1,3 +1,4 @@
+import { useTranslateFill } from '@/lib/assistant-client';
 import { useEffect, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -101,7 +102,7 @@ export function TemplateEditor({ draft, teamId, userId, onClose }: { draft: Temp
   }, [draft]);
   const set = (key: keyof typeof empty) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF({ ...f, [key]: e.target.value });
   const move = (i: number, d: number) => setItems(list => { const next = [...list]; const [x] = next.splice(i, 1); next.splice(i + d, 0, x!); return next; });
-  const translate = () => toast(t('templates.translateNote'));
+  const tr = useTranslateFill();
   const save = async () => {
     if (!f.title.trim()) return; setBusy(true);
     try {
@@ -119,7 +120,7 @@ export function TemplateEditor({ draft, teamId, userId, onClose }: { draft: Temp
   const shown = preview ?? cover;
   const bilingual = (label: string, en: keyof typeof empty, es: keyof typeof empty, rows = 3) => <div className="bilingual">
     <div className="form-field"><label className="field-label" htmlFor={`tpl-${en}`}>{label} · EN</label><Textarea id={`tpl-${en}`} rows={rows} className="field-textarea" maxLength={2000} value={f[en] as string} onChange={set(en)} /></div>
-    <div className="form-field"><div className="label-row"><label className="field-label" htmlFor={`tpl-${es}`}>{label} · ES</label><button type="button" className="translate-button" onClick={translate}><Languages />{t('templates.translate')}</button></div><Textarea id={`tpl-${es}`} rows={rows} className="field-textarea" maxLength={2000} value={f[es] as string} onChange={set(es)} /></div>
+    <div className="form-field"><div className="label-row"><label className="field-label" htmlFor={`tpl-${es}`}>{label} · ES</label><button type="button" className="translate-button" disabled={tr.busy} onClick={() => tr.run(f[en] as string, f[es] as string, v => setF(x => ({ ...x, [en]: v })), v => setF(x => ({ ...x, [es]: v })))}><Languages />{tr.busy ? t('assistant.translating') : t('templates.translate')}</button></div><Textarea id={`tpl-${es}`} rows={rows} className="field-textarea" maxLength={2000} value={f[es] as string} onChange={set(es)} /></div>
   </div>;
   return <ResponsiveSheet open={!!draft} onOpenChange={o => !o && onClose()} title={draft?.id ? t('templates.editTitle') : t('templates.newTitle')}>
     <div className="edit-form">
