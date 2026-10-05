@@ -24,6 +24,7 @@ import { Route as AuthenticatedAppEventsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAppLearnRouteImport } from './routes/_authenticated/_app/learn'
 import { Route as AuthenticatedAppMeRouteImport } from './routes/_authenticated/_app/me'
 import { Route as AuthenticatedAppTeamRouteImport } from './routes/_authenticated/_app/team'
+import { Route as AuthenticatedAppAdminSiteMediaRouteImport } from './routes/_authenticated/_app/admin.site-media'
 import { Route as AuthenticatedAppChallengeIdRouteImport } from './routes/_authenticated/_app/challenge.$id'
 import { Route as AuthenticatedAppEventIdRouteImport } from './routes/_authenticated/_app/event.$id'
 import { Route as AuthenticatedAppGatheringNewRouteImport } from './routes/_authenticated/_app/gathering.new'
@@ -115,6 +116,12 @@ const AuthenticatedAppTeamRoute = AuthenticatedAppTeamRouteImport.update({
   path: '/team',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppAdminSiteMediaRoute =
+  AuthenticatedAppAdminSiteMediaRouteImport.update({
+    id: '/admin/site-media',
+    path: '/admin/site-media',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppChallengeIdRoute =
   AuthenticatedAppChallengeIdRouteImport.update({
     id: '/challenge/$id',
@@ -226,6 +233,7 @@ export interface FileRoutesByFullPath {
   '/learn': typeof AuthenticatedAppLearnRoute
   '/me': typeof AuthenticatedAppMeRoute
   '/team': typeof AuthenticatedAppTeamRoute
+  '/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/event/$id': typeof AuthenticatedAppEventIdRoute
   '/gathering/new': typeof AuthenticatedAppGatheringNewRoute
@@ -258,6 +266,7 @@ export interface FileRoutesByTo {
   '/learn': typeof AuthenticatedAppLearnRoute
   '/me': typeof AuthenticatedAppMeRoute
   '/team': typeof AuthenticatedAppTeamRoute
+  '/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/event/$id': typeof AuthenticatedAppEventIdRoute
   '/gathering/new': typeof AuthenticatedAppGatheringNewRoute
@@ -293,6 +302,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/me': typeof AuthenticatedAppMeRoute
   '/_authenticated/_app/team': typeof AuthenticatedAppTeamRoute
   '/_authenticated/_app/': typeof AuthenticatedAppIndexRoute
+  '/_authenticated/_app/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/_authenticated/_app/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/_authenticated/_app/event/$id': typeof AuthenticatedAppEventIdRoute
   '/_authenticated/_app/gathering/new': typeof AuthenticatedAppGatheringNewRoute
@@ -327,6 +337,7 @@ export interface FileRouteTypes {
     | '/learn'
     | '/me'
     | '/team'
+    | '/admin/site-media'
     | '/challenge/$id'
     | '/event/$id'
     | '/gathering/new'
@@ -359,6 +370,7 @@ export interface FileRouteTypes {
     | '/learn'
     | '/me'
     | '/team'
+    | '/admin/site-media'
     | '/challenge/$id'
     | '/event/$id'
     | '/gathering/new'
@@ -393,6 +405,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/me'
     | '/_authenticated/_app/team'
     | '/_authenticated/_app/'
+    | '/_authenticated/_app/admin/site-media'
     | '/_authenticated/_app/challenge/$id'
     | '/_authenticated/_app/event/$id'
     | '/_authenticated/_app/gathering/new'
@@ -534,6 +547,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppTeamRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/admin/site-media': {
+      id: '/_authenticated/_app/admin/site-media'
+      path: '/admin/site-media'
+      fullPath: '/admin/site-media'
+      preLoaderRoute: typeof AuthenticatedAppAdminSiteMediaRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/challenge/$id': {
       id: '/_authenticated/_app/challenge/$id'
       path: '/challenge/$id'
@@ -662,6 +682,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppMeRoute: typeof AuthenticatedAppMeRoute
   AuthenticatedAppTeamRoute: typeof AuthenticatedAppTeamRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
+  AuthenticatedAppAdminSiteMediaRoute: typeof AuthenticatedAppAdminSiteMediaRoute
   AuthenticatedAppChallengeIdRoute: typeof AuthenticatedAppChallengeIdRoute
   AuthenticatedAppEventIdRoute: typeof AuthenticatedAppEventIdRoute
   AuthenticatedAppGatheringNewRoute: typeof AuthenticatedAppGatheringNewRoute
@@ -683,6 +704,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppMeRoute: AuthenticatedAppMeRoute,
   AuthenticatedAppTeamRoute: AuthenticatedAppTeamRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
+  AuthenticatedAppAdminSiteMediaRoute: AuthenticatedAppAdminSiteMediaRoute,
   AuthenticatedAppChallengeIdRoute: AuthenticatedAppChallengeIdRoute,
   AuthenticatedAppEventIdRoute: AuthenticatedAppEventIdRoute,
   AuthenticatedAppGatheringNewRoute: AuthenticatedAppGatheringNewRoute,

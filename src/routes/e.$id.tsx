@@ -3,7 +3,7 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { GuestShell } from '@/components/guest-shell';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Ban, CalendarDays, Clock, MapPin, Video } from 'lucide-react';
+import { Ban, CalendarDays, Clock, MapPin, Video } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { GatheringCover } from '@/components/gathering-cover';
 import { CalendarButtons, Confirmation, DirectionsButton, RsvpSheet, type RsvpResult } from '@/components/guest-rsvp';

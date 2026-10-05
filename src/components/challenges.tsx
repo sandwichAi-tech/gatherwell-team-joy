@@ -3,7 +3,7 @@ import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ArrowLeft, ArrowRight, Camera, Check, Download, Flame, Lock, Megaphone, Pencil, Plus, Trash2, Upload } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Camera, Check, Download, Flame, Lock, Megaphone, Pencil, Plus, Trash2, Upload } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';

@@ -11,11 +11,11 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { QRCodeSVG } from 'qrcode.react';
-import { BarChart3, MapPinned } from 'lucide-react';
+import { BarChart3, MapPinned } from '@/components/icons';
 import {
   ArrowRight, Share2, Pin, Megaphone, ThumbsUp, PartyPopper, Heart, Copy, Check, MessageCircle, Smartphone, QrCode, RefreshCw,
   Pencil, UsersRound, Search, ChevronRight, ChevronLeft, Network, Plus, CalendarDays, List, Upload, Trash2, Printer, Crown, X,
-} from 'lucide-react';
+} from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';

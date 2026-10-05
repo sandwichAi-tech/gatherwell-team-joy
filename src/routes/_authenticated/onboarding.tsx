@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Camera, Upload, Crown, CalendarHeart, UsersRound, Check, Copy, ImagePlus } from 'lucide-react';
+import { Camera, Upload, Crown, CalendarHeart, UsersRound, Check, Copy, ImagePlus } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { LanguageToggle, pageHead, setLanguage } from '@/components/auth-frame';

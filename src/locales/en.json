@@ -1364,5 +1364,30 @@
     "doneAll": "You're unsubscribed from all Gatherwell emails.",
     "invalid": "This link isn't valid anymore.",
     "note": "Important messages about a gathering you RSVP'd to may still arrive."
+  },
+  "siteMedia": {
+    "eyebrow": "Admin",
+    "title": "Site media",
+    "subtitle": "Every photo slot in the product. Replace an image and it goes live right away.",
+    "loading": "Loading…",
+    "denied": "Admins only",
+    "deniedBody": "This area is for Gatherwell platform staff.",
+    "custom": "Your photo",
+    "temporary": "Temporary photo",
+    "editHint": "Upload or replace the photo, set the focal point and describe it in both languages.",
+    "focalHint": "Tap the photo to set the focal point. It is cropped to this slot's ratio ({{ratio}}).",
+    "upload": "Upload photo",
+    "replace": "Replace photo",
+    "dropHint": "Or drag and drop a JPG, PNG, WebP or AVIF here (up to 15 MB).",
+    "altEn": "Description (English)",
+    "altEs": "Description (Spanish)",
+    "credit": "Credit",
+    "reset": "Reset to default",
+    "resetDone": "Back to the default photo.",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Photo updated. It's live now.",
+    "error": "Couldn't save. Please try again.",
+    "menu": "Site media"
   }
 }

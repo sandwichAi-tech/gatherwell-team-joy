@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import {
   Award, CalendarCheck, UsersRound, ClipboardCheck, Layers, GraduationCap, Flag, Flame, HandHeart, Star, Medal, Trophy, Heart, Sun, Leaf,
   Footprints, Compass, Mountain, Crown, Smile, Download, Pin, EyeOff, Upload, Plus, Lock, Megaphone, type LucideIcon,
-} from 'lucide-react';
+} from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -25,16 +25,17 @@ export const BADGE_ICONS: Record<string, LucideIcon> = {
   Award, CalendarCheck, UsersRound, ClipboardCheck, Layers, GraduationCap, Flag, Flame, HandHeart, Star, Medal, Trophy, Heart, Sun, Leaf, Footprints, Compass, Mountain, Crown, Smile,
 };
 const CUSTOM_ICONS = ['Award', 'Star', 'Medal', 'Trophy', 'Heart', 'HandHeart', 'Flame', 'Sun', 'Leaf', 'Footprints', 'Compass', 'Mountain', 'Crown', 'Smile'] as const;
+import { GwIcon, hasGwIcon } from '@/components/gw-icon';
 const TIER_COLORS: Record<Tier, { ring: string; fill: string; ink: string }> = {
   bronze: { ring: '#F3C6A5', fill: '#FBEDE3', ink: '#8A4E2B' },
-  silver: { ring: '#B9A2D8', fill: '#EFEBF6', ink: '#5A4380' },
+  silver: { ring: '#7A5FA8', fill: '#EFEBF6', ink: '#5A4380' },
   gold: { ring: '#2F2340', fill: '#F3EEF8', ink: '#2F2340' },
 };
 
-export function Medallion({ badge, size = 72, locked = false }: { badge: Pick<Badge, 'icon' | 'tier'>; size?: number; locked?: boolean }) {
-  const Icon = BADGE_ICONS[badge.icon] ?? Award;
+export function Medallion({ badge, size = 64, locked = false }: { badge: Pick<Badge, 'icon' | 'tier'>; size?: number; locked?: boolean }) {
+  const name = hasGwIcon(badge.icon) && badge.icon in BADGE_ICONS ? badge.icon : 'Award';
   return <span className={`medallion tier-${badge.tier} ${locked ? 'is-locked' : ''}`} style={{ width: size, height: size }} aria-hidden="true">
-    <Icon strokeWidth={1.5} style={{ width: size * 0.4, height: size * 0.4 }} />
+    <GwIcon name={name} variant="feature" size={Math.round(size * 0.42)} />
   </span>;
 }
 
@@ -61,7 +62,7 @@ export async function downloadRecognitionCard(o: { eyebrow: string; title: strin
   x.strokeStyle = 'rgba(47,35,64,0.12)'; x.lineWidth = 2; x.beginPath(); x.arc(540, 760, 204, 0, Math.PI * 2); x.stroke();
   x.fillStyle = tc.fill; x.beginPath(); x.arc(540, 760, 200, 0, Math.PI * 2); x.fill();
   const Icon = BADGE_ICONS[o.icon] ?? Award;
-  const svg = renderToStaticMarkup(createElement(Icon, { size: 180, color: tc.ink, strokeWidth: 1.25 }));
+  const svg = renderToStaticMarkup(createElement(Icon, { size: 180, color: tc.ink, weight: 'duotone' } as never));
   const icon = await loadImage(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`);
   if (icon) x.drawImage(icon, 450, 670, 180, 180);
   // text
@@ -282,7 +283,7 @@ function CustomBadgeSheet({ open, onOpenChange, teamId }: { open: boolean; onOpe
       {text('name_en', t('recognition.nameEn'), 40)}{text('name_es', t('recognition.nameEs'), 40)}
       {text('description_en', t('recognition.descEn'), 160, true)}{text('description_es', t('recognition.descEs'), 160, true)}
       <div className="form-field"><span className="field-label">{t('recognition.icon')}</span>
-        <div className="icon-pick">{CUSTOM_ICONS.map(name => { const Icon = BADGE_ICONS[name]!; return <button type="button" key={name} aria-label={name} aria-pressed={f.icon === name} className={`icon-option ${f.icon === name ? 'is-selected' : ''}`} onClick={() => setF({ ...f, icon: name })}><Icon strokeWidth={1.5} /></button>; })}</div></div>
+        <div className="icon-pick">{CUSTOM_ICONS.map(name => { return <button type="button" key={name} aria-label={name} aria-pressed={f.icon === name} className={`icon-option ${f.icon === name ? 'is-selected' : ''}`} onClick={() => setF({ ...f, icon: name })}><GwIcon name={name} variant="feature" size={24} /></button>; })}</div></div>
       <div className="form-field"><span className="field-label">{t('recognition.tier')}</span>
         <div className="choice-pair three">{(['bronze', 'silver', 'gold'] as const).map(tier => <button type="button" key={tier} aria-pressed={f.tier === tier} className={`choice-card ${f.tier === tier ? 'is-selected' : ''}`} onClick={() => setF({ ...f, tier })}><strong>{t(`recognition.tiers.${tier}`)}</strong></button>)}</div></div>
       <Button className="onboarding-continue" disabled={busy || !valid} onClick={() => void save()}>{t('common.create')}</Button>

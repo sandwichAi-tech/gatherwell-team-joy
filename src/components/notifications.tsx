@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Bell, Mail, MessageSquare, Smartphone } from 'lucide-react';
+import { Bell, Mail, MessageSquare, Smartphone } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { ResponsiveSheet } from '@/components/responsive-sheet';

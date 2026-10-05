@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Plus, List, Map as MapIcon, ArrowRight } from 'lucide-react';
+import { Plus, List, Map as MapIcon, ArrowRight } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { EventRows } from '@/components/gatherwell-pages';
 import { GatheringCover } from '@/components/gathering-cover';

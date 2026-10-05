@@ -1284,6 +1284,60 @@ export type Database = {
           },
         ]
       }
+      site_media: {
+        Row: {
+          alt_en: string
+          alt_es: string
+          aspect: number
+          credit: string | null
+          default_alt_en: string
+          default_alt_es: string
+          default_credit: string | null
+          default_url: string | null
+          focal_x: number
+          focal_y: number
+          id: string
+          image_path: string | null
+          slot: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          alt_en?: string
+          alt_es?: string
+          aspect?: number
+          credit?: string | null
+          default_alt_en?: string
+          default_alt_es?: string
+          default_credit?: string | null
+          default_url?: string | null
+          focal_x?: number
+          focal_y?: number
+          id?: string
+          image_path?: string | null
+          slot: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          alt_en?: string
+          alt_es?: string
+          aspect?: number
+          credit?: string | null
+          default_alt_en?: string
+          default_alt_es?: string
+          default_credit?: string | null
+          default_url?: string | null
+          focal_x?: number
+          focal_y?: number
+          id?: string
+          image_path?: string | null
+          slot?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       sms_optouts: {
         Row: {
           created_at: string
@@ -1562,6 +1616,24 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1741,6 +1813,13 @@ export type Database = {
         Returns: string
       }
       has_blocked_claim: { Args: { _text: string }; Returns: boolean }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       is_team_member: {
         Args: { _roles: string[]; _team_id: string }
         Returns: boolean
@@ -1884,7 +1963,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2011,6 +2090,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+    },
   },
 } as const
