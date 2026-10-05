@@ -15,11 +15,13 @@ import { Route as CreditsRouteImport } from './routes/credits'
 import { Route as DiscoverRouteImport } from './routes/discover'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAppRouteRouteImport } from './routes/_authenticated/_app/route'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as EIdRouteImport } from './routes/e.$id'
 import { Route as JoinCodeRouteImport } from './routes/join.$code'
+import { Route as LegalDocRouteImport } from './routes/legal.$doc'
 import { Route as RCodeRouteImport } from './routes/r.$code'
 import { Route as UnsubscribeTokenRouteImport } from './routes/unsubscribe.$token'
 import { Route as AuthenticatedAppEarningsRouteImport } from './routes/_authenticated/_app/earnings'
@@ -82,6 +84,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -104,6 +111,11 @@ const EIdRoute = EIdRouteImport.update({
 const JoinCodeRoute = JoinCodeRouteImport.update({
   id: '/join/$code',
   path: '/join/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalDocRoute = LegalDocRouteImport.update({
+  id: '/legal/$doc',
+  path: '/legal/$doc',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RCodeRoute = RCodeRouteImport.update({
@@ -289,10 +301,12 @@ export interface FileRoutesByFullPath {
   '/discover': typeof DiscoverRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/e/$id': typeof EIdRoute
   '/join/$code': typeof JoinCodeRoute
+  '/legal/$doc': typeof LegalDocRoute
   '/r/$code': typeof RCodeRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/earnings': typeof AuthenticatedAppEarningsRoute
@@ -332,10 +346,12 @@ export interface FileRoutesByTo {
   '/discover': typeof DiscoverRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/e/$id': typeof EIdRoute
   '/join/$code': typeof JoinCodeRoute
+  '/legal/$doc': typeof LegalDocRoute
   '/r/$code': typeof RCodeRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/earnings': typeof AuthenticatedAppEarningsRoute
@@ -377,11 +393,13 @@ export interface FileRoutesById {
   '/discover': typeof DiscoverRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/_authenticated/_app': typeof AuthenticatedAppRouteRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/e/$id': typeof EIdRoute
   '/join/$code': typeof JoinCodeRoute
+  '/legal/$doc': typeof LegalDocRoute
   '/r/$code': typeof RCodeRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/_authenticated/_app/earnings': typeof AuthenticatedAppEarningsRoute
@@ -423,10 +441,12 @@ export interface FileRouteTypes {
     | '/discover'
     | '/login'
     | '/privacy'
+    | '/sitemap.xml'
     | '/terms'
     | '/onboarding'
     | '/e/$id'
     | '/join/$code'
+    | '/legal/$doc'
     | '/r/$code'
     | '/unsubscribe/$token'
     | '/earnings'
@@ -466,10 +486,12 @@ export interface FileRouteTypes {
     | '/discover'
     | '/login'
     | '/privacy'
+    | '/sitemap.xml'
     | '/terms'
     | '/onboarding'
     | '/e/$id'
     | '/join/$code'
+    | '/legal/$doc'
     | '/r/$code'
     | '/unsubscribe/$token'
     | '/earnings'
@@ -510,11 +532,13 @@ export interface FileRouteTypes {
     | '/discover'
     | '/login'
     | '/privacy'
+    | '/sitemap.xml'
     | '/terms'
     | '/_authenticated/_app'
     | '/_authenticated/onboarding'
     | '/e/$id'
     | '/join/$code'
+    | '/legal/$doc'
     | '/r/$code'
     | '/unsubscribe/$token'
     | '/_authenticated/_app/earnings'
@@ -556,9 +580,11 @@ export interface RootRouteChildren {
   DiscoverRoute: typeof DiscoverRoute
   LoginRoute: typeof LoginRoute
   PrivacyRoute: typeof PrivacyRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   EIdRoute: typeof EIdRoute
   JoinCodeRoute: typeof JoinCodeRoute
+  LegalDocRoute: typeof LegalDocRoute
   RCodeRoute: typeof RCodeRoute
   UnsubscribeTokenRoute: typeof UnsubscribeTokenRoute
   ApiPublicAiFollowupsRoute: typeof ApiPublicAiFollowupsRoute
@@ -613,6 +639,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -646,6 +679,13 @@ declare module '@tanstack/react-router' {
       path: '/join/$code'
       fullPath: '/join/$code'
       preLoaderRoute: typeof JoinCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/$doc': {
+      id: '/legal/$doc'
+      path: '/legal/$doc'
+      fullPath: '/legal/$doc'
+      preLoaderRoute: typeof LegalDocRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/r/$code': {
@@ -954,9 +994,11 @@ const rootRouteChildren: RootRouteChildren = {
   DiscoverRoute: DiscoverRoute,
   LoginRoute: LoginRoute,
   PrivacyRoute: PrivacyRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   EIdRoute: EIdRoute,
   JoinCodeRoute: JoinCodeRoute,
+  LegalDocRoute: LegalDocRoute,
   RCodeRoute: RCodeRoute,
   UnsubscribeTokenRoute: UnsubscribeTokenRoute,
   ApiPublicAiFollowupsRoute: ApiPublicAiFollowupsRoute,
