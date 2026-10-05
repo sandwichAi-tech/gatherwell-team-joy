@@ -22,11 +22,13 @@ import { Route as EIdRouteImport } from './routes/e.$id'
 import { Route as JoinCodeRouteImport } from './routes/join.$code'
 import { Route as RCodeRouteImport } from './routes/r.$code'
 import { Route as UnsubscribeTokenRouteImport } from './routes/unsubscribe.$token'
+import { Route as AuthenticatedAppEarningsRouteImport } from './routes/_authenticated/_app/earnings'
 import { Route as AuthenticatedAppEventsRouteImport } from './routes/_authenticated/_app/events'
 import { Route as AuthenticatedAppFollowupsRouteImport } from './routes/_authenticated/_app/followups'
 import { Route as AuthenticatedAppHomeRouteImport } from './routes/_authenticated/_app/home'
 import { Route as AuthenticatedAppLearnRouteImport } from './routes/_authenticated/_app/learn'
 import { Route as AuthenticatedAppMeRouteImport } from './routes/_authenticated/_app/me'
+import { Route as AuthenticatedAppPlanRouteImport } from './routes/_authenticated/_app/plan'
 import { Route as AuthenticatedAppTeamRouteImport } from './routes/_authenticated/_app/team'
 import { Route as AuthenticatedAppAdminSiteMediaRouteImport } from './routes/_authenticated/_app/admin.site-media'
 import { Route as AuthenticatedAppChallengeIdRouteImport } from './routes/_authenticated/_app/challenge.$id'
@@ -34,6 +36,7 @@ import { Route as AuthenticatedAppEventIdRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAppGatheringNewRouteImport } from './routes/_authenticated/_app/gathering.new'
 import { Route as AuthenticatedAppLearnManageRouteImport } from './routes/_authenticated/_app/learn_.manage'
 import { Route as AuthenticatedAppLearnRecipesRouteImport } from './routes/_authenticated/_app/learn_.recipes'
+import { Route as AuthenticatedAppPlanSeatsRouteImport } from './routes/_authenticated/_app/plan_.seats'
 import { Route as AuthenticatedAppTeamInsightsRouteImport } from './routes/_authenticated/_app/team_.insights'
 import { Route as AuthenticatedAppTeamMapRouteImport } from './routes/_authenticated/_app/team_.map'
 import { Route as ApiPublicAiFollowupsRouteImport } from './routes/api/public/ai/followups'
@@ -112,6 +115,12 @@ const UnsubscribeTokenRoute = UnsubscribeTokenRouteImport.update({
   path: '/unsubscribe/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAppEarningsRoute =
+  AuthenticatedAppEarningsRouteImport.update({
+    id: '/earnings',
+    path: '/earnings',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppEventsRoute = AuthenticatedAppEventsRouteImport.update({
   id: '/events',
   path: '/events',
@@ -136,6 +145,11 @@ const AuthenticatedAppLearnRoute = AuthenticatedAppLearnRouteImport.update({
 const AuthenticatedAppMeRoute = AuthenticatedAppMeRouteImport.update({
   id: '/me',
   path: '/me',
+  getParentRoute: () => AuthenticatedAppRouteRoute,
+} as any)
+const AuthenticatedAppPlanRoute = AuthenticatedAppPlanRouteImport.update({
+  id: '/plan',
+  path: '/plan',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
 const AuthenticatedAppTeamRoute = AuthenticatedAppTeamRouteImport.update({
@@ -176,6 +190,12 @@ const AuthenticatedAppLearnRecipesRoute =
   AuthenticatedAppLearnRecipesRouteImport.update({
     id: '/learn_/recipes',
     path: '/learn/recipes',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
+const AuthenticatedAppPlanSeatsRoute =
+  AuthenticatedAppPlanSeatsRouteImport.update({
+    id: '/plan_/seats',
+    path: '/plan/seats',
     getParentRoute: () => AuthenticatedAppRouteRoute,
   } as any)
 const AuthenticatedAppTeamInsightsRoute =
@@ -268,11 +288,13 @@ export interface FileRoutesByFullPath {
   '/join/$code': typeof JoinCodeRoute
   '/r/$code': typeof RCodeRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
+  '/earnings': typeof AuthenticatedAppEarningsRoute
   '/events': typeof AuthenticatedAppEventsRoute
   '/followups': typeof AuthenticatedAppFollowupsRoute
   '/home': typeof AuthenticatedAppHomeRoute
   '/learn': typeof AuthenticatedAppLearnRoute
   '/me': typeof AuthenticatedAppMeRoute
+  '/plan': typeof AuthenticatedAppPlanRoute
   '/team': typeof AuthenticatedAppTeamRoute
   '/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
@@ -280,6 +302,7 @@ export interface FileRoutesByFullPath {
   '/gathering/new': typeof AuthenticatedAppGatheringNewRoute
   '/learn/manage': typeof AuthenticatedAppLearnManageRoute
   '/learn/recipes': typeof AuthenticatedAppLearnRecipesRoute
+  '/plan/seats': typeof AuthenticatedAppPlanSeatsRoute
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
   '/api/public/ai/followups': typeof ApiPublicAiFollowupsRoute
@@ -307,11 +330,13 @@ export interface FileRoutesByTo {
   '/join/$code': typeof JoinCodeRoute
   '/r/$code': typeof RCodeRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
+  '/earnings': typeof AuthenticatedAppEarningsRoute
   '/events': typeof AuthenticatedAppEventsRoute
   '/followups': typeof AuthenticatedAppFollowupsRoute
   '/home': typeof AuthenticatedAppHomeRoute
   '/learn': typeof AuthenticatedAppLearnRoute
   '/me': typeof AuthenticatedAppMeRoute
+  '/plan': typeof AuthenticatedAppPlanRoute
   '/team': typeof AuthenticatedAppTeamRoute
   '/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
@@ -319,6 +344,7 @@ export interface FileRoutesByTo {
   '/gathering/new': typeof AuthenticatedAppGatheringNewRoute
   '/learn/manage': typeof AuthenticatedAppLearnManageRoute
   '/learn/recipes': typeof AuthenticatedAppLearnRecipesRoute
+  '/plan/seats': typeof AuthenticatedAppPlanSeatsRoute
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
   '/api/public/ai/followups': typeof ApiPublicAiFollowupsRoute
@@ -349,11 +375,13 @@ export interface FileRoutesById {
   '/join/$code': typeof JoinCodeRoute
   '/r/$code': typeof RCodeRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
+  '/_authenticated/_app/earnings': typeof AuthenticatedAppEarningsRoute
   '/_authenticated/_app/events': typeof AuthenticatedAppEventsRoute
   '/_authenticated/_app/followups': typeof AuthenticatedAppFollowupsRoute
   '/_authenticated/_app/home': typeof AuthenticatedAppHomeRoute
   '/_authenticated/_app/learn': typeof AuthenticatedAppLearnRoute
   '/_authenticated/_app/me': typeof AuthenticatedAppMeRoute
+  '/_authenticated/_app/plan': typeof AuthenticatedAppPlanRoute
   '/_authenticated/_app/team': typeof AuthenticatedAppTeamRoute
   '/_authenticated/_app/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/_authenticated/_app/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
@@ -361,6 +389,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/gathering/new': typeof AuthenticatedAppGatheringNewRoute
   '/_authenticated/_app/learn_/manage': typeof AuthenticatedAppLearnManageRoute
   '/_authenticated/_app/learn_/recipes': typeof AuthenticatedAppLearnRecipesRoute
+  '/_authenticated/_app/plan_/seats': typeof AuthenticatedAppPlanSeatsRoute
   '/_authenticated/_app/team_/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/_authenticated/_app/team_/map': typeof AuthenticatedAppTeamMapRoute
   '/api/public/ai/followups': typeof ApiPublicAiFollowupsRoute
@@ -390,11 +419,13 @@ export interface FileRouteTypes {
     | '/join/$code'
     | '/r/$code'
     | '/unsubscribe/$token'
+    | '/earnings'
     | '/events'
     | '/followups'
     | '/home'
     | '/learn'
     | '/me'
+    | '/plan'
     | '/team'
     | '/admin/site-media'
     | '/challenge/$id'
@@ -402,6 +433,7 @@ export interface FileRouteTypes {
     | '/gathering/new'
     | '/learn/manage'
     | '/learn/recipes'
+    | '/plan/seats'
     | '/team/insights'
     | '/team/map'
     | '/api/public/ai/followups'
@@ -429,11 +461,13 @@ export interface FileRouteTypes {
     | '/join/$code'
     | '/r/$code'
     | '/unsubscribe/$token'
+    | '/earnings'
     | '/events'
     | '/followups'
     | '/home'
     | '/learn'
     | '/me'
+    | '/plan'
     | '/team'
     | '/admin/site-media'
     | '/challenge/$id'
@@ -441,6 +475,7 @@ export interface FileRouteTypes {
     | '/gathering/new'
     | '/learn/manage'
     | '/learn/recipes'
+    | '/plan/seats'
     | '/team/insights'
     | '/team/map'
     | '/api/public/ai/followups'
@@ -470,11 +505,13 @@ export interface FileRouteTypes {
     | '/join/$code'
     | '/r/$code'
     | '/unsubscribe/$token'
+    | '/_authenticated/_app/earnings'
     | '/_authenticated/_app/events'
     | '/_authenticated/_app/followups'
     | '/_authenticated/_app/home'
     | '/_authenticated/_app/learn'
     | '/_authenticated/_app/me'
+    | '/_authenticated/_app/plan'
     | '/_authenticated/_app/team'
     | '/_authenticated/_app/admin/site-media'
     | '/_authenticated/_app/challenge/$id'
@@ -482,6 +519,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/gathering/new'
     | '/_authenticated/_app/learn_/manage'
     | '/_authenticated/_app/learn_/recipes'
+    | '/_authenticated/_app/plan_/seats'
     | '/_authenticated/_app/team_/insights'
     | '/_authenticated/_app/team_/map'
     | '/api/public/ai/followups'
@@ -611,6 +649,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UnsubscribeTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/_app/earnings': {
+      id: '/_authenticated/_app/earnings'
+      path: '/earnings'
+      fullPath: '/earnings'
+      preLoaderRoute: typeof AuthenticatedAppEarningsRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/events': {
       id: '/_authenticated/_app/events'
       path: '/events'
@@ -644,6 +689,13 @@ declare module '@tanstack/react-router' {
       path: '/me'
       fullPath: '/me'
       preLoaderRoute: typeof AuthenticatedAppMeRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/plan': {
+      id: '/_authenticated/_app/plan'
+      path: '/plan'
+      fullPath: '/plan'
+      preLoaderRoute: typeof AuthenticatedAppPlanRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
     '/_authenticated/_app/team': {
@@ -693,6 +745,13 @@ declare module '@tanstack/react-router' {
       path: '/learn/recipes'
       fullPath: '/learn/recipes'
       preLoaderRoute: typeof AuthenticatedAppLearnRecipesRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/plan_/seats': {
+      id: '/_authenticated/_app/plan_/seats'
+      path: '/plan/seats'
+      fullPath: '/plan/seats'
+      preLoaderRoute: typeof AuthenticatedAppPlanSeatsRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
     '/_authenticated/_app/team_/insights': {
@@ -797,11 +856,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAppRouteRouteChildren {
+  AuthenticatedAppEarningsRoute: typeof AuthenticatedAppEarningsRoute
   AuthenticatedAppEventsRoute: typeof AuthenticatedAppEventsRoute
   AuthenticatedAppFollowupsRoute: typeof AuthenticatedAppFollowupsRoute
   AuthenticatedAppHomeRoute: typeof AuthenticatedAppHomeRoute
   AuthenticatedAppLearnRoute: typeof AuthenticatedAppLearnRoute
   AuthenticatedAppMeRoute: typeof AuthenticatedAppMeRoute
+  AuthenticatedAppPlanRoute: typeof AuthenticatedAppPlanRoute
   AuthenticatedAppTeamRoute: typeof AuthenticatedAppTeamRoute
   AuthenticatedAppAdminSiteMediaRoute: typeof AuthenticatedAppAdminSiteMediaRoute
   AuthenticatedAppChallengeIdRoute: typeof AuthenticatedAppChallengeIdRoute
@@ -809,6 +870,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppGatheringNewRoute: typeof AuthenticatedAppGatheringNewRoute
   AuthenticatedAppLearnManageRoute: typeof AuthenticatedAppLearnManageRoute
   AuthenticatedAppLearnRecipesRoute: typeof AuthenticatedAppLearnRecipesRoute
+  AuthenticatedAppPlanSeatsRoute: typeof AuthenticatedAppPlanSeatsRoute
   AuthenticatedAppTeamInsightsRoute: typeof AuthenticatedAppTeamInsightsRoute
   AuthenticatedAppTeamMapRoute: typeof AuthenticatedAppTeamMapRoute
   AuthenticatedAppEventIdCheckinRoute: typeof AuthenticatedAppEventIdCheckinRoute
@@ -820,11 +882,13 @@ interface AuthenticatedAppRouteRouteChildren {
 }
 
 const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
+  AuthenticatedAppEarningsRoute: AuthenticatedAppEarningsRoute,
   AuthenticatedAppEventsRoute: AuthenticatedAppEventsRoute,
   AuthenticatedAppFollowupsRoute: AuthenticatedAppFollowupsRoute,
   AuthenticatedAppHomeRoute: AuthenticatedAppHomeRoute,
   AuthenticatedAppLearnRoute: AuthenticatedAppLearnRoute,
   AuthenticatedAppMeRoute: AuthenticatedAppMeRoute,
+  AuthenticatedAppPlanRoute: AuthenticatedAppPlanRoute,
   AuthenticatedAppTeamRoute: AuthenticatedAppTeamRoute,
   AuthenticatedAppAdminSiteMediaRoute: AuthenticatedAppAdminSiteMediaRoute,
   AuthenticatedAppChallengeIdRoute: AuthenticatedAppChallengeIdRoute,
@@ -832,6 +896,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppGatheringNewRoute: AuthenticatedAppGatheringNewRoute,
   AuthenticatedAppLearnManageRoute: AuthenticatedAppLearnManageRoute,
   AuthenticatedAppLearnRecipesRoute: AuthenticatedAppLearnRecipesRoute,
+  AuthenticatedAppPlanSeatsRoute: AuthenticatedAppPlanSeatsRoute,
   AuthenticatedAppTeamInsightsRoute: AuthenticatedAppTeamInsightsRoute,
   AuthenticatedAppTeamMapRoute: AuthenticatedAppTeamMapRoute,
   AuthenticatedAppEventIdCheckinRoute: AuthenticatedAppEventIdCheckinRoute,
