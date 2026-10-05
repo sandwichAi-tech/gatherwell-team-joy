@@ -16,6 +16,8 @@ import { uploadMedia, workspaceQuery } from '@/lib/account';
 import { COVER_STYLES, datePresets, isOnline, rpcError, shareLink, toLocalInput } from '@/lib/gatherings';
 import { useMapsKey, loadMaps } from '@/lib/maps-client';
 import { checklistOf, eventDetailQuery, templatesQuery } from '@/lib/templates';
+import { UpgradeSheet } from '@/components/plan-page';
+import { planStatusQuery } from '@/lib/billing';
 
 type Props = { eventId?: string | undefined; templateId?: string | undefined; fromId?: string | undefined };
 const DURATIONS = [30, 60, 90, 120] as const;
@@ -25,6 +27,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
   const editing = !!eventId;
   const { data: workspace } = useQuery(workspaceQuery(userId));
+  const { data: planStatus } = useQuery(planStatusQuery(userId));
   const { data: templates = [] } = useQuery({ ...templatesQuery(), enabled: !!templateId });
   const sourceId = eventId ?? fromId;
   const { data: source } = useQuery({ ...eventDetailQuery(sourceId ?? ''), enabled: !!sourceId });
@@ -34,6 +37,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const [start, setStart] = useState(''); const [duration, setDuration] = useState<number>(60); const [customDuration, setCustomDuration] = useState(false);
   const [place, setPlace] = useState<'person' | 'online'>('person'); const [locationName, setLocationName] = useState(''); const [address, setAddress] = useState('');
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null); const [note, setNote] = useState(''); const [url, setUrl] = useState('');
+  const [price, setPrice] = useState(''); const [limit, setLimit] = useState<null | 'gatherings' | 'storage'>(null);
   const [capacity, setCapacity] = useState(''); const [visibility, setVisibility] = useState<'public' | 'team'>('public');
   const [descEn, setDescEn] = useState(''); const [descEs, setDescEs] = useState(''); const [descTab, setDescTab] = useState<'en' | 'es'>(lang);
   const [weekly, setWeekly] = useState(false); const [wholeSeries, setWholeSeries] = useState(false); const [tpl, setTpl] = useState<{ id: string; title: string } | null>(null);
@@ -57,6 +61,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       setDuration(mins); setCustomDuration(!DURATIONS.includes(mins as 60));
       setPlace(isOnline(e) ? 'online' : 'person'); setLocationName(e.location_name ?? ''); setAddress(e.address ?? ''); setNote(e.meeting_note ?? ''); setUrl(e.online_url ?? '');
       setCoords(e.lat != null && e.lng != null ? { lat: e.lat, lng: e.lng } : null);
+      setPrice((e as { price_cents?: number | null }).price_cents ? String(((e as { price_cents: number }).price_cents / 100)) : '');
       setCapacity(e.capacity ? String(e.capacity) : ''); setVisibility(e.visibility === 'team' ? 'team' : 'public');
       if (editing) setStart(toLocalInput(new Date(e.starts_at)));
       else { const d = new Date(e.starts_at); const next = new Date(); next.setDate(next.getDate() + 7); next.setHours(d.getHours(), d.getMinutes(), 0, 0); setStart(toLocalInput(next)); }
@@ -84,11 +89,20 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   }, [mapsKey, place, ready]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!workspace) return null;
+  const canSell = planStatus?.connect_status === 'active';
+  const priceCents = price ? Math.round(Number(price) * 100) : null;
+  const savePrice = async (id: string) => {
+    if (!canSell && !priceCents) return null;
+    const { data: ev } = await supabase.from('events').select('series_id').eq('id', id).maybeSingle();
+    const q = supabase.from('events').update({ price_cents: priceCents, pass_fee: planStatus?.pass_fee ?? false });
+    const { error } = ev?.series_id ? await q.eq('series_id', ev.series_id) : await q.eq('id', id);
+    return error;
+  };
   const teamId = editing && source ? source.event.team_id : workspace.teamId;
   if (!editing && workspace.role === 'member') return <section className="panel"><h2>{t('gathering.hostsOnly')}</h2><p>{t('gathering.hostsOnlyText')}</p></section>;
 
   const urlBad = place === 'online' && url.trim() !== '' && !/^https:\/\/\S+$/i.test(url.trim());
-  const valid = title.trim() && start && !urlBad && (place === 'person' || url.trim()) && (!capacity || Number(capacity) >= 1);
+  const valid = title.trim() && start && !urlBad && (place === 'person' || url.trim()) && (!capacity || Number(capacity) >= 1) && (!priceCents || (priceCents >= 100 && priceCents <= 100000));
   const presets = datePresets();
   const startDate = start ? new Date(start) : null;
 
@@ -108,12 +122,15 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       if (!error && publish && source?.event.status === 'draft') { const r = await supabase.from('events').update({ status: 'published' }).eq('id', eventId!); if (r.error) { setBusy(false); toast.error(rpcError(t, r.error)); return; } }
       setBusy(false);
       if (error) { toast.error(rpcError(t, error)); return; }
+      await savePrice(eventId!);
       await queryClient.invalidateQueries(); toast.success(t('gathering.saved'));
       void navigate({ to: '/event/$id', params: { id: eventId! } }); return;
     }
     const { data, error } = await supabase.rpc('create_gathering_at', { _team: teamId, _p: payload(), _publish: publish, _weekly: weekly });
     setBusy(false);
+    if (error?.message?.includes('plan_limit_gatherings')) { setLimit('gatherings'); return; }
     if (error || !data) { toast.error(rpcError(t, error)); return; }
+    if (priceCents) await savePrice(data);
     await queryClient.invalidateQueries();
     if (publish) setDone({ id: data, visibility }); else { toast.success(t('gathering.draftSaved')); void navigate({ to: '/event/$id', params: { id: data } }); }
   };
@@ -121,7 +138,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const onPhoto = async (file?: File) => {
     if (!file) return; if (!file.type.startsWith('image/') || file.size > 8 * 1024 * 1024) { toast.error(t('gathering.photoTooBig')); return; }
     setUploading(true);
-    try { setCoverPath(await uploadMedia(userId, file, 'cover')); } catch { toast.error(t('profile.saveError')); } finally { setUploading(false); }
+    try { setCoverPath(await uploadMedia(userId, file, 'cover')); } catch (err) { if (err instanceof Error && err.message === 'storage_limit') setLimit('storage'); else toast.error(t('profile.saveError')); } finally { setUploading(false); }
   };
   const close = () => (window.history.length > 1 ? router.history.back() : void navigate({ to: '/events' }));
 
@@ -195,6 +212,9 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       <section className="form-section two-col">
         <div><label className="field-label" htmlFor="g-cap">{t('gathering.capacity')}</label>
           <Input id="g-cap" type="number" min={1} inputMode="numeric" className="field-input" value={capacity} onChange={e => setCapacity(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder={t('gathering.noLimit')} /></div>
+        <div><label className="field-label" htmlFor="g-price">{t('billing.price')}</label>
+          <Input id="g-price" type="text" inputMode="decimal" className="field-input" disabled={!canSell && !price} value={price} onChange={e => setPrice(e.target.value.replace(/[^\d.]/g, '').slice(0, 7))} placeholder="$0" />
+          <small className="field-hint">{canSell ? t('billing.priceHint') : t('billing.priceNeedsPayouts')}</small></div>
         <div><span className="field-label">{t('gathering.visibility')}</span>
           <div className="segmented full" role="group" aria-label={t('gathering.visibility')}>{(['public', 'team'] as const).map(v => <Button key={v} variant="ghost" className={visibility === v ? 'selected' : ''} aria-pressed={visibility === v} onClick={() => setVisibility(v)}>{t(`gathering.vis.${v}`)}</Button>)}</div></div>
       </section>
@@ -221,5 +241,6 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       {(!editing || source?.event.status === 'draft') && <Button variant="secondary" disabled={busy} onClick={() => submit(false)}>{t('gathering.saveDraft')}</Button>}
       <Button disabled={busy} onClick={() => submit(!editing || source?.event.status === 'draft')}>{busy ? t('onboarding.saving') : t(editing && source?.event.status !== 'draft' ? 'gathering.saveChanges' : 'gathering.publish')}</Button>
     </div>
+    {limit && <UpgradeSheet open onOpenChange={o => { if (!o) setLimit(null); }} reason={limit} />}
   </div>;
 }

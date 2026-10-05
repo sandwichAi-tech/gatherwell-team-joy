@@ -214,6 +214,51 @@ export type Database = {
           },
         ]
       }
+      billing_accounts: {
+        Row: {
+          billing_period: string | null
+          connect_account_id: string | null
+          connect_status: string
+          created_at: string
+          pass_fee: boolean
+          plan: string
+          renews_at: string | null
+          status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          billing_period?: string | null
+          connect_account_id?: string | null
+          connect_status?: string
+          created_at?: string
+          pass_fee?: boolean
+          plan?: string
+          renews_at?: string | null
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          billing_period?: string | null
+          connect_account_id?: string | null
+          connect_status?: string
+          created_at?: string
+          pass_fee?: boolean
+          plan?: string
+          renews_at?: string | null
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       challenge_checkins: {
         Row: {
           challenge_id: string
@@ -703,6 +748,8 @@ export type Database = {
           location_name: string | null
           meeting_note: string | null
           online_url: string | null
+          pass_fee: boolean
+          price_cents: number | null
           recurrence: string
           series_id: string | null
           starts_at: string
@@ -733,6 +780,8 @@ export type Database = {
           location_name?: string | null
           meeting_note?: string | null
           online_url?: string | null
+          pass_fee?: boolean
+          price_cents?: number | null
           recurrence?: string
           series_id?: string | null
           starts_at: string
@@ -763,6 +812,8 @@ export type Database = {
           location_name?: string | null
           meeting_note?: string | null
           online_url?: string | null
+          pass_fee?: boolean
+          price_cents?: number | null
           recurrence?: string
           series_id?: string | null
           starts_at?: string
@@ -1140,6 +1191,35 @@ export type Database = {
           },
         ]
       }
+      license_seats: {
+        Row: {
+          assigned_by: string | null
+          created_at: string
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          assigned_by?: string | null
+          created_at?: string
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          assigned_by?: string | null
+          created_at?: string
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "license_seats_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "team_licenses"
+            referencedColumns: ["team_id"]
+          },
+        ]
+      }
       member_plans: {
         Row: {
           created_at: string
@@ -1263,6 +1343,88 @@ export type Database = {
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount_cents: number
+          booking_fee_cents: number
+          buyer_email: string | null
+          buyer_name: string | null
+          challenge_id: string | null
+          created_at: string
+          currency: string
+          event_id: string | null
+          fee_cents: number
+          host_id: string
+          id: string
+          kind: string
+          rsvp_id: string | null
+          status: string
+          stripe_payment_intent: string | null
+          stripe_session_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_cents: number
+          booking_fee_cents?: number
+          buyer_email?: string | null
+          buyer_name?: string | null
+          challenge_id?: string | null
+          created_at?: string
+          currency?: string
+          event_id?: string | null
+          fee_cents?: number
+          host_id: string
+          id?: string
+          kind: string
+          rsvp_id?: string | null
+          status?: string
+          stripe_payment_intent?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_cents?: number
+          booking_fee_cents?: number
+          buyer_email?: string | null
+          buyer_name?: string | null
+          challenge_id?: string | null
+          created_at?: string
+          currency?: string
+          event_id?: string | null
+          fee_cents?: number
+          host_id?: string
+          id?: string
+          kind?: string
+          rsvp_id?: string | null
+          status?: string
+          stripe_payment_intent?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_rsvp_id_fkey"
+            columns: ["rsvp_id"]
+            isOneToOne: false
+            referencedRelation: "rsvps"
             referencedColumns: ["id"]
           },
         ]
@@ -1685,6 +1847,74 @@ export type Database = {
         }
         Relationships: []
       }
+      stripe_events: {
+        Row: {
+          created_at: string
+          id: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      team_licenses: {
+        Row: {
+          created_at: string
+          is_preview: boolean
+          leader_id: string
+          renews_at: string | null
+          seats: number
+          status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          team_id: string
+          tier: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          is_preview?: boolean
+          leader_id: string
+          renews_at?: string | null
+          seats: number
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          team_id: string
+          tier: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          is_preview?: boolean
+          leader_id?: string
+          renews_at?: string | null
+          seats?: number
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          team_id?: string
+          tier?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_licenses_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: true
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       team_members: {
         Row: {
           custom_badge: string | null
@@ -2020,7 +2250,15 @@ export type Database = {
         }
         Returns: string
       }
+      admin_grant_preview_license: {
+        Args: { _team: string; _tier: string }
+        Returns: undefined
+      }
       ai_usage_status: { Args: never; Returns: Json }
+      assign_license_seat: {
+        Args: { _on: boolean; _team: string; _user: string }
+        Returns: undefined
+      }
       award_badge: {
         Args: { _badge: string; _note: string; _team: string; _user: string }
         Returns: undefined
@@ -2126,6 +2364,7 @@ export type Database = {
       }
       delete_my_account: { Args: never; Returns: undefined }
       due_followup_events: { Args: never; Returns: string[] }
+      effective_plan: { Args: { _uid: string }; Returns: Json }
       email_token: { Args: { _email: string; _lang: string }; Returns: string }
       enqueue_message: {
         Args: {
@@ -2150,6 +2389,7 @@ export type Database = {
       }
       event_going_count: { Args: { _event_id: string }; Returns: number }
       event_payload: { Args: { _event: string; _rsvp: string }; Returns: Json }
+      event_price: { Args: { _id: string }; Returns: Json }
       event_seats_used: { Args: { _event: string }; Returns: number }
       event_summary: { Args: { _event: string }; Returns: Json }
       followups_sent: {
@@ -2157,6 +2397,7 @@ export type Database = {
         Returns: number
       }
       gathering_validate: { Args: { _p: Json }; Returns: undefined }
+      gatherings_this_month: { Args: { _uid: string }; Returns: number }
       get_email_prefs: { Args: { _token: string }; Returns: Json }
       get_member_plan: { Args: { _team: string }; Returns: Json }
       get_public_event: { Args: { _id: string }; Returns: Json }
@@ -2187,6 +2428,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      guest_cap: { Args: { _event: string }; Returns: number }
       handle_sms_inbound: {
         Args: { _body: string; _from: string }
         Returns: string
@@ -2235,6 +2477,7 @@ export type Database = {
         Args: { _action: string; _id: string }
         Returns: undefined
       }
+      my_plan_status: { Args: never; Returns: Json }
       my_poll_votes: {
         Args: { _code: string; _event: string }
         Returns: {
@@ -2259,6 +2502,7 @@ export type Database = {
         Returns: number
       }
       notify_gathering_cancelled: { Args: { _event: string }; Returns: number }
+      plan_limits: { Args: { _plan: string }; Returns: Json }
       post_challenge_encouragement: {
         Args: { _c: string; _message: string }
         Returns: undefined
@@ -2330,7 +2574,10 @@ export type Database = {
         Args: { _prefs: Json; _token: string }
         Returns: boolean
       }
+      set_pass_fee: { Args: { _on: boolean }; Returns: undefined }
       shares_team_with: { Args: { _other: string }; Returns: boolean }
+      storage_allows: { Args: { _bytes: number }; Returns: boolean }
+      storage_used_bytes: { Args: { _uid: string }; Returns: number }
       team_insights: {
         Args: { _from: string; _root: string; _scope: string; _to: string }
         Returns: Json

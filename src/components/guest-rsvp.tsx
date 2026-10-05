@@ -9,6 +9,10 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { supabase } from '@/integrations/supabase/client';
+import { useServerFn } from '@tanstack/react-start';
+import { usePaymentGate } from '@/components/plan-page';
+import { startTicketCheckout } from '@/lib/billing.functions';
+import { formatMoney } from '@/lib/billing';
 import { directionsUrl, downloadIcs, formatWhen, googleCalendarUrl, guestLink, hasPlace, rsvpErrorKey, type PublicEvent } from '@/lib/guest';
 
 type CalEvent = Pick<PublicEvent, 'id' | 'title' | 'starts_at' | 'ends_at' | 'location_name' | 'address'>;
@@ -53,6 +57,14 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
   const { t, i18n } = useTranslation();
   const [form, setForm] = useState({ first: '', last: '', phone: '', email: '', plus: 0, sms: false, mail: false });
   const [busy, setBusy] = useState(false); const [error, setError] = useState<string | null>(null);
+  const [price, setPrice] = useState<{ price_cents: number; pass_fee: boolean; fee_pct: number } | null>(null);
+  const gate = usePaymentGate(); const checkout = useServerFn(startTicketCheckout);
+  const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
+  useEffect(() => { void supabase.rpc('event_price', { _id: event.id }).then(({ data }) => setPrice((data as typeof price) ?? null)); }, [event.id]);
+  const paid = !!price && intent === 'going';
+  const qty = 1 + form.plus;
+  const fee = price?.pass_fee ? Math.round(price.price_cents * qty * price.fee_pct / 100) : 0;
+  const total = price ? price.price_cents * qty + fee : 0;
   useEffect(() => {
     if (!intent) return;
     void (async () => {
@@ -67,6 +79,11 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
     e.preventDefault(); if (!intent) return;
     if (!form.first.trim()) { setError(t('guest.errors.name_required')); return; }
     if (!form.phone.trim() && !form.email.trim()) { setError(t('guest.errors.contact_required')); return; }
+    if (paid) {
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim())) { setError(t('guest.errors.invalid_email')); return; }
+      await gate.run(() => checkout({ data: { eventId: event.id, first: form.first.trim(), last: form.last.trim(), phone: form.phone.trim(), email: form.email.trim(), plusOnes: form.plus, sms: form.sms, mail: form.mail, lang, origin: window.location.origin } }));
+      return;
+    }
     setBusy(true); setError(null);
     const { data, error: err } = await supabase.rpc('rsvp_event', { _event_id: event.id, _first: form.first.trim(), _last: form.last.trim(), _phone: form.phone.trim(), _email: form.email.trim(),
       _language: i18n.resolvedLanguage === 'es' ? 'es' : 'en', _plus_ones: form.plus, _status: intent, _sms: form.sms, _mail: form.mail });
@@ -89,9 +106,11 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
       <div className="guest-plus"><span className="field-label">{t('guest.plusOnes')}</span><Stepper value={form.plus} onChange={plus => setForm({ ...form, plus })} label={t('guest.plusOnes')} /></div>
       <label className="guest-consent"><Checkbox checked={form.sms} onCheckedChange={v => setForm({ ...form, sms: !!v })} /><span>{t('guest.smsConsent')}</span></label>
       <label className="guest-consent"><Checkbox checked={form.mail} onCheckedChange={v => setForm({ ...form, mail: !!v })} /><span>{t('guest.emailConsent')}</span></label>
+      {paid && <p className="guest-price"><strong>{formatMoney(price!.price_cents, lang)}</strong><span>{t('billing.perPerson')}{fee ? ` · ${t('billing.bookingFee', { fee: formatMoney(fee, lang) })}` : ''}</span></p>}
       {error && <p className="field-error" role="alert">{error}</p>}
-      <Button type="submit" className="guest-primary" disabled={busy}>{busy ? t('guest.saving') : intent === 'maybe' ? t('guest.confirmMaybe') : full ? t('guest.joinWaitlist') : t('guest.confirmGoing')}</Button>
+      <Button type="submit" className="guest-primary" disabled={busy || gate.busy}>{busy || gate.busy ? t('guest.saving') : paid ? t('billing.payAndRsvp', { amount: formatMoney(total, lang) }) : intent === 'maybe' ? t('guest.confirmMaybe') : full ? t('guest.joinWaitlist') : t('guest.confirmGoing')}</Button>
     </form>
+    {gate.sheet}
   </ResponsiveSheet>;
 }
 

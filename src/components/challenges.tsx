@@ -1,3 +1,7 @@
+import { useServerFn } from '@tanstack/react-start';
+import { usePaymentGate } from '@/components/plan-page';
+import { startChallengeCheckout } from '@/lib/billing.functions';
+import { planStatusQuery, formatMoney } from '@/lib/billing';
 import { ClaimGuard } from '@/components/smart';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from '@tanstack/react-router';
@@ -81,6 +85,9 @@ export function ChallengeEditor({ draft, teamId, onClose }: { draft: Partial<Cha
   const today = localDate();
   const empty = { title_en: '', title_es: '', description_en: '', description_es: '', daily_prompt_en: '', daily_prompt_es: '', starts_on: addDays(today, 1), ends_on: addDays(today, 21), cover_url: null as string | null, cover_style: 0 };
   const [f, setF] = useState(empty); const [busy, setBusy] = useState(false); const [starter, setStarter] = useState<Starter | null>(null);
+  const { data: planSt } = useQuery(planStatusQuery(userId)); const canSell = planSt?.connect_status === 'active';
+  const [paid, setPaid] = useState(false); const [price, setPrice] = useState('');
+  useEffect(() => { setPaid(!!draft?.is_paid); setPrice(draft?.price_cents ? String(draft.price_cents / 100) : ''); }, [draft]);
   useEffect(() => { if (draft) { setStarter(null); setF(draft.id ? { title_en: draft.title_en ?? '', title_es: draft.title_es ?? '', description_en: draft.description_en ?? '', description_es: draft.description_es ?? '', daily_prompt_en: draft.daily_prompt_en ?? '', daily_prompt_es: draft.daily_prompt_es ?? '', starts_on: draft.starts_on ?? empty.starts_on, ends_on: draft.ends_on ?? empty.ends_on, cover_url: draft.cover_url ?? null, cover_style: draft.cover_style ?? 0 } : empty); } }, [draft]); // eslint-disable-line react-hooks/exhaustive-deps
   const useStarter = (k: Starter) => {
     setStarter(k);
@@ -91,7 +98,7 @@ export function ChallengeEditor({ draft, teamId, onClose }: { draft: Partial<Cha
   const ok = !!(f.title_en.trim() || f.title_es.trim()) && f.starts_on && f.ends_on >= f.starts_on;
   const save = async () => {
     setBusy(true);
-    const row = { title_en: f.title_en.trim(), title_es: f.title_es.trim(), description_en: f.description_en.trim() || null, description_es: f.description_es.trim() || null, daily_prompt_en: f.daily_prompt_en.trim() || null, daily_prompt_es: f.daily_prompt_es.trim() || null, starts_on: f.starts_on, ends_on: f.ends_on, cover_url: f.cover_url, cover_style: f.cover_style };
+    const row = { title_en: f.title_en.trim(), title_es: f.title_es.trim(), description_en: f.description_en.trim() || null, description_es: f.description_es.trim() || null, daily_prompt_en: f.daily_prompt_en.trim() || null, daily_prompt_es: f.daily_prompt_es.trim() || null, starts_on: f.starts_on, ends_on: f.ends_on, cover_url: f.cover_url, cover_style: f.cover_style, ...(canSell || !paid ? { is_paid: paid && !!price, price_cents: paid && price ? Math.round(Number(price) * 100) : null } : {}) };
     const res = draft?.id ? await supabase.from('challenges').update(row).eq('id', draft.id) : await supabase.from('challenges').insert({ ...row, team_id: teamId, created_by: userId });
     setBusy(false);
     if (res.error) { toast.error(t(rpcErrorKey(res.error))); return; }
@@ -119,7 +126,8 @@ export function ChallengeEditor({ draft, teamId, onClose }: { draft: Partial<Cha
         <GatheringCover path={f.cover_url} style={f.cover_style} title={f.title_en || f.title_es || 'C'} className="cover-preview" />
         <div className="cover-styles">{COVER_STYLES.map((bg, i) => <button key={i} type="button" className={`cover-swatch ${!f.cover_url && f.cover_style === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} aria-label={`${t('onboarding.cover')} ${i + 1}`} aria-pressed={!f.cover_url && f.cover_style === i} onClick={() => setF({ ...f, cover_url: null, cover_style: i })} />)}</div>
         <label className="file-button"><Upload />{t('onboarding.uploadCover')}<input type="file" accept="image/*" hidden onChange={async e => { const x = e.target.files?.[0]; if (!x) return; try { setF({ ...f, cover_url: await uploadMedia(userId, await compressImage(x), 'cover') }); } catch { toast.error(t('profile.saveError')); } }} /></label></div>
-      <label className="switch-row is-disabled"><Switch checked={false} disabled /><span><strong>{t('challenges.paid')}</strong><small>{t('challenges.paidNote')}</small></span></label>
+      <label className={`switch-row ${canSell ? '' : 'is-disabled'}`}><Switch checked={paid} disabled={!canSell} onCheckedChange={setPaid} /><span><strong>{t('challenges.paid')}</strong><small>{canSell ? t('billing.priceHint') : t('billing.priceNeedsPayouts')}</small></span></label>
+      {paid && canSell && <div><label className="field-label" htmlFor="c-price">{t('billing.price')}</label><Input id="c-price" inputMode="decimal" className="field-input" value={price} onChange={e => setPrice(e.target.value.replace(/[^\d.]/g, '').slice(0, 7))} placeholder="$0" /></div>}
       <Button className="onboarding-continue" disabled={busy || !ok} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
       {draft?.id && <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('challenges.delete')}</Button>}
     </div>
@@ -159,7 +167,7 @@ function CheckInSheet({ open, onClose, c, date }: { open: boolean; onClose: () =
     setBusy(true);
     try {
       let photo: string | null = null;
-      if (file) { const small = await compressImage(file, 1400); photo = `${userId}/${c.id}/${crypto.randomUUID()}.jpg`; const up = await supabase.storage.from('challenge-photos').upload(photo, small, { contentType: small.type }); if (up.error) throw up.error; }
+      if (file) { const small = await compressImage(file, 1400); const { data: room } = await supabase.rpc('storage_allows', { _bytes: small.size }); if (room === false) throw new Error('storage_limit'); photo = `${userId}/${c.id}/${crypto.randomUUID()}.jpg`; const up = await supabase.storage.from('challenge-photos').upload(photo, small, { contentType: small.type }); if (up.error) throw up.error; }
       const { data, error } = await supabase.rpc('challenge_check_in', { _c: c.id, _date: date, _tz: userTz(), _note: note, ...(photo ? { _photo: photo } : {}) });
       if (error) throw error;
       const r = data as { current?: number } | null;
@@ -222,7 +230,9 @@ export function ChallengePage({ id }: { id: string }) {
   const leader = workspace?.role === 'leader';
   const meRow = board.find(r => r.user_id === userId); const top = board.slice(0, 10);
   const joined = !!joinedRow;
+  const payGate = usePaymentGate(); const payChallenge = useServerFn(startChallengeCheckout);
   const join = async () => {
+    if (c.is_paid && c.price_cents) { void payGate.run(() => payChallenge({ data: { challengeId: id, origin: window.location.origin, lang: lang === 'es' ? 'es' : 'en' } })); return; }
     setBusy(true); const { error } = await supabase.from('challenge_members').insert({ challenge_id: id, user_id: userId }); setBusy(false);
     if (error) { toast.error(t(rpcErrorKey(error))); return; }
     await Promise.all([refetchJoin(), qc.invalidateQueries({ queryKey: ['challenge-board', id] }), qc.invalidateQueries({ queryKey: ['challenges'] })]);
@@ -231,9 +241,10 @@ export function ChallengePage({ id }: { id: string }) {
   const timeOf = (iso: string) => new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', { hour: 'numeric', minute: '2-digit' }).format(new Date(iso));
   return <>
     <Link to="/team" hash="challenges" className="back-link"><ArrowLeft />{t('challenges.title')}</Link>
+    {payGate.sheet}
     <GatheringCover path={c.cover_url} style={c.cover_style} title={title} className="challenge-hero" />
     <div className="lesson-head"><span className="eyebrow">{phase === 'active' ? t('challenges.dayOf', { day: dayNumber(c, today), total: len }) : t(`challenges.phase.${phase}`)}</span>
-      <h1>{title}</h1><p className="track-facts">{fmtDate(c.starts_on, lang)} – {fmtDate(c.ends_on, lang)} · {t('challenges.joinedCount', { count: board.length })}</p>
+      <h1>{title}</h1><p className="track-facts">{fmtDate(c.starts_on, lang)} – {fmtDate(c.ends_on, lang)} · {t('challenges.joinedCount', { count: board.length })}{c.is_paid && c.price_cents ? ` · ${formatMoney(c.price_cents, lang)}` : ''}</p>
       {desc && <p className="challenge-desc">{desc}</p>}
       <div className="recipe-actions">{!joined && phase !== 'past' && <Button disabled={busy} onClick={join}>{t('challenges.joinChallenge')}</Button>}{leader && <Button variant="secondary" onClick={() => setEditing(c)}><Pencil />{t('challenges.edit')}</Button>}</div></div>
 
