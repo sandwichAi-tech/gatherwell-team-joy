@@ -108,8 +108,8 @@ export const getDailyBrief = createServerFn({ method: 'POST' })
   .inputValidator((d: unknown) => z.object({ lang, today: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), tz: z.string().max(64), name: z.string().max(80) }).parse(d))
   .handler(async ({ data, context }) => {
     const sb = context.supabase; const uid = context.userId; const es = data.lang === 'es';
-    const { data: saved } = await sb.from('daily_briefs').select('lines, preview, dismissed, language').eq('user_id', uid).eq('day', data.today).maybeSingle();
-    if (saved && (saved.dismissed || saved.language === data.lang)) return { lines: saved.dismissed ? [] : saved.lines as { key: string; text: string; link: string | null }[], preview: saved.preview, dismissed: saved.dismissed };
+    const { data: saved } = await sb.from('daily_briefs').select('lines, preview, dismissed, language, created_at').eq('user_id', uid).eq('day', data.today).maybeSingle();
+    if (saved && (saved.dismissed || (!saved.preview && saved.language === data.lang && Date.now() - new Date(saved.created_at).getTime() < 2 * 36e5))) return { lines: saved.dismissed ? [] : saved.lines as { key: string; text: string; link: string | null }[], preview: saved.preview, dismissed: saved.dismissed };
 
     const { data: prof } = await sb.from('profiles').select('active_team_id').eq('id', uid).maybeSingle();
     const team = prof?.active_team_id;
@@ -154,6 +154,6 @@ export const getDailyBrief = createServerFn({ method: 'POST' })
         await record(sb, 'daily_brief', r.input, r.output);
       } catch (e) { console.error('[brief] failed', e); }
     }
-    await sb.from('daily_briefs').upsert({ user_id: uid, day: data.today, language: data.lang, lines: out, preview, dismissed: false });
+    await sb.from('daily_briefs').upsert({ user_id: uid, day: data.today, language: data.lang, lines: out, preview, dismissed: false, created_at: new Date().toISOString() });
     return { lines: out, preview, dismissed: false };
   });
