@@ -1,3 +1,4 @@
+import { trackEvent } from '@/lib/analytics';
 import { ClaimGuard } from '@/components/smart';
 import { requestPushMoment } from '@/components/notifications';
 import { useEffect, useMemo, useState, createElement } from 'react';
@@ -99,7 +100,7 @@ export function BadgeEarnedWatcher() {
   const { data = [] } = useQuery({ ...unseenBadgesQuery(userId), enabled: !!userId });
   const current = data[0];
   const share = useShareBadge();
-  useEffect(() => { if (current) haptic(); }, [current?.id]);
+  useEffect(() => { if (current) { haptic(); trackEvent('badge_earned', { badge: current.badges.code }); } }, [current?.id]);
   const close = async () => {
     if (!current) return;
     await supabase.rpc('mark_badges_seen', { _ids: [current.id] });
