@@ -38,4 +38,4 @@
 - Icons render only through GwIcon (src/components/gw-icon.tsx, Phosphor); src/components/icons.tsx re-exports named wrappers so call sites stay simple and nothing imports an icon library directly.
 - Photos render only through BrandImage and come from site_media slots (private site-media bucket, signed URLs, anonymous read); only user_roles admins (has_role) can edit them at /admin/site-media.
 - All AI (assistant + src/lib/ai/*, smart.functions.ts) runs server-side via Claude, model in assistant/config.ts; no key → preview text, not counted. Cards act on confirm.
-- Plans/limits live in billing_accounts, team_licenses, license_seats; effective_plan()+plan_limits() are the single source, enforced by DB triggers on new rows only. Stripe runs only in billing.functions.ts + /api/public/stripe/webhook via fetch; no key → 'not connected' sheet.
+- Plans/limits live in billing_accounts, team_licenses, license_seats; effective_plan()+plan_limits() decide limits (triggers, new rows only). Stripe: billing.functions.ts + /api/public/stripe/webhook only; no key → sheet.
