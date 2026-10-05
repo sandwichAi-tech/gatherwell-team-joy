@@ -19,4 +19,4 @@ Reviewed October 2026. Every open scanner note is either fixed or listed here wi
 - Uploaded photos (media, event-photos, challenge-photos) are private and shown via signed URLs.
 - No secret keys in front-end code; all provider keys are read in server functions.
 - Admin actions are checked on the server (has_role) and audited.
-- Rate limits: RSVP (database, 10/min), assistant (monthly plan quota). Report endpoint relies on per-target de-duplication; a stricter per-minute limit is still open.
+- Rate limits: RSVP (database, 10/min), assistant (monthly plan quota), reports (custom database limit, five per rolling minute per signed-in person or guest IP; transaction advisory lock prevents concurrent requests exceeding the limit).
