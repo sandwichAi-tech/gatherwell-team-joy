@@ -27,6 +27,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
   const editing = !!eventId;
   const { data: workspace } = useQuery(workspaceQuery(userId));
+  const { data: planStatus } = useQuery(planStatusQuery(userId));
   const { data: templates = [] } = useQuery({ ...templatesQuery(), enabled: !!templateId });
   const sourceId = eventId ?? fromId;
   const { data: source } = useQuery({ ...eventDetailQuery(sourceId ?? ''), enabled: !!sourceId });
@@ -240,5 +241,6 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       {(!editing || source?.event.status === 'draft') && <Button variant="secondary" disabled={busy} onClick={() => submit(false)}>{t('gathering.saveDraft')}</Button>}
       <Button disabled={busy} onClick={() => submit(!editing || source?.event.status === 'draft')}>{busy ? t('onboarding.saving') : t(editing && source?.event.status !== 'draft' ? 'gathering.saveChanges' : 'gathering.publish')}</Button>
     </div>
+    {limit && <UpgradeSheet open onOpenChange={o => { if (!o) setLimit(null); }} reason={limit} />}
   </div>;
 }
