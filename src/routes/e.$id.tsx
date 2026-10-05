@@ -12,6 +12,9 @@ import { Polls, PhotoRoll, WeatherNote, useLiveCounts } from '@/components/event
 import { formatWhen, isUuid, publicEventQuery, rsvpByCodeQuery } from '@/lib/guest';
 import { getPublicEventMeta } from '@/lib/public-event.functions';
 import i18n from '@/lib/i18n';
+import { supabase } from '@/integrations/supabase/client';
+import { formatMoney } from '@/lib/billing';
+import { ReportButton } from '@/components/report-button';
 
 export const Route = createFileRoute('/e/$id')({
   loader: async ({ params }) => {
@@ -49,6 +52,7 @@ function PublicEventBody() {
   const { data: hostPhoto } = useQuery({ queryKey: ['media-url', event?.host?.avatar_url], queryFn: () => mediaUrl(event?.host?.avatar_url), enabled: !!event?.host?.avatar_url });
   const [intent, setIntent] = useState<'going' | 'maybe' | null>(null);
   const [result, setResult] = useState<RsvpResult | null>(null);
+  const { data: price } = useQuery({ queryKey: ['event-price', id], queryFn: async () => { const { data } = await supabase.rpc('event_price', { _id: id }); return (data as { price_cents: number; pass_fee: boolean; fee_pct: number } | null) ?? null; } });
 
   if (isLoading) return <div className="guest-skeleton" aria-busy="true"><div className="guest-cover skeleton" /><p className="guest-empty">{t('publicEvent.loading')}</p></div>;
   if (!event) return <p className="guest-empty">{t('publicEvent.notFound')}</p>;
@@ -70,7 +74,8 @@ function PublicEventBody() {
   return <>
     <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="guest-cover" />
     <article className="guest-body">
-      <h1 className="guest-title">{event.title}</h1>
+      <div className="guest-title-row"><h1 className="guest-title">{event.title}</h1><ReportButton type="event" id={id} /></div>
+      {price && <p className="guest-price-line"><strong className="tabular-nums">{formatMoney(price.price_cents, lang)}</strong><span>{t('billing.perPerson')}{price.pass_fee ? ` · ${t('billing.feeNote', { pct: price.fee_pct })}` : ''}</span></p>}
       {cancelled && <div className="guest-cancelled" role="status"><Ban /><div><strong>{t('guest.cancelledTitle')}</strong><p>{t('guest.cancelledText')}</p></div></div>}
       <ul className="guest-facts">
         <li><CalendarDays /><span>{day}</span></li>
@@ -104,7 +109,7 @@ function PublicEventBody() {
       {!cancelled && <>
         {event.my_code ? <div className="guest-actions"><p className="guest-label">{t('guest.alreadyIn')}</p><Button asChild className="guest-primary"><Link to="/r/$code" params={{ code: event.my_code }}>{t('guest.manage')}</Link></Button></div>
           : <div className="guest-actions">
-            <Button className="guest-primary" onClick={() => setIntent('going')}>{full ? t('guest.joinWaitlist') : t('guest.imIn')}</Button>
+            <Button className="guest-primary" onClick={() => setIntent('going')}>{full ? t('guest.joinWaitlist') : price ? t('billing.imInPrice', { amount: formatMoney(price.price_cents, lang) }) : t('guest.imIn')}</Button>
             <Button variant="secondary" className="guest-secondary" onClick={() => setIntent('maybe')}>{t('guest.maybe')}</Button>
           </div>}
         <CalendarButtons event={event} />

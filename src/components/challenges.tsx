@@ -94,6 +94,9 @@ export function ChallengeEditor({ draft, teamId, onClose }: { draft: Partial<Cha
     const g = (fx: typeof enT, key: string) => fx(`challenges.starter.${k}.${key}`);
     setF({ ...f, title_en: g(enT, 'title'), title_es: g(esT, 'title'), description_en: g(enT, 'description'), description_es: g(esT, 'description'), daily_prompt_en: g(enT, 'prompt'), daily_prompt_es: g(esT, 'prompt'), ends_on: addDays(f.starts_on, STARTER_DAYS[k] - 1), cover_style: STARTERS.indexOf(k) });
   };
+  const { data: types = [] } = useQuery({ queryKey: ['challenge-types'], enabled: !!draft && !draft.id, queryFn: async () => (await supabase.from('challenge_types').select('*').eq('is_published', true).order('sort_order')).data ?? [] });
+  const [typeId, setTypeId] = useState<string | null>(null);
+  const useType = (ct: (typeof types)[number]) => { setStarter(null); setTypeId(ct.id); setF({ ...f, title_en: ct.title_en, title_es: ct.title_es, description_en: ct.description_en ?? '', description_es: ct.description_es ?? '', daily_prompt_en: ct.daily_prompt_en ?? '', daily_prompt_es: ct.daily_prompt_es ?? '', ends_on: addDays(f.starts_on, ct.duration_days - 1) }); };
   const set = (k: keyof typeof empty) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
   const ok = !!(f.title_en.trim() || f.title_es.trim()) && f.starts_on && f.ends_on >= f.starts_on;
   const save = async () => {
@@ -114,7 +117,8 @@ export function ChallengeEditor({ draft, teamId, onClose }: { draft: Partial<Cha
   return <ResponsiveSheet open={!!draft} onOpenChange={o => !o && onClose()} title={draft?.id ? t('challenges.edit') : t('challenges.new')} description={t('challenges.claimRule')}>
     <div className="edit-form">
       {!draft?.id && <div className="form-field"><span className="field-label">{t('challenges.startFrom')}</span>
-        <div className="starter-grid">{STARTERS.map(k => <button type="button" key={k} className={`choice-card ${starter === k ? 'is-selected' : ''}`} aria-pressed={starter === k} onClick={() => useStarter(k)}><strong>{t(`challenges.starter.${k}.title`)}</strong><small>{t('challenges.days', { count: STARTER_DAYS[k] })}</small></button>)}</div></div>}
+        <div className="starter-grid">{STARTERS.map(k => <button type="button" key={k} className={`choice-card ${starter === k ? 'is-selected' : ''}`} aria-pressed={starter === k} onClick={() => useStarter(k)}><strong>{t(`challenges.starter.${k}.title`)}</strong><small>{t('challenges.days', { count: STARTER_DAYS[k] })}</small></button>)}
+          {types.map(ct => <button type="button" key={ct.id} className={`choice-card ${typeId === ct.id ? 'is-selected' : ''}`} aria-pressed={typeId === ct.id} onClick={() => useType(ct)}><strong>{i18n.resolvedLanguage === 'es' ? ct.title_es : ct.title_en}</strong><small>{t('challenges.days', { count: ct.duration_days })}</small></button>)}</div></div>}
       <div className="bilingual">{field('ch-ten', `${t('templates.title')} · EN`, 'title_en')}{field('ch-tes', `${t('templates.title')} · ES`, 'title_es')}</div>
       <div className="choice-pair">
         <div className="form-field"><label className="field-label" htmlFor="ch-start">{t('challenges.startsOn')}</label><Input id="ch-start" type="date" className="field-input" value={f.starts_on} onChange={e => { const len = Math.max(0, (new Date(f.ends_on).getTime() - new Date(f.starts_on).getTime()) / 86_400_000); setF({ ...f, starts_on: e.target.value, ends_on: e.target.value ? addDays(e.target.value, len) : f.ends_on }); }} /></div>

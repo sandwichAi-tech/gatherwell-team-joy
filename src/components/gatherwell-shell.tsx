@@ -1,4 +1,5 @@
 import { AssistantPanel } from '@/components/assistant/assistant-panel';
+import { PlatformNotices } from '@/components/report-button';
 import { PushPrompt } from '@/components/notifications';
 import { BadgeEarnedWatcher } from '@/components/recognition';
 import { FromYourLeader } from '@/components/templates';
@@ -60,7 +61,7 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
      <span className="desktop-header-label">{t('common.workspaceLabel')}<span>/</span><strong>{t(`nav.${current.key}`)}</strong></span>
      <div className="header-actions"><Button variant="secondary" className="member-view-button" onClick={() => { setMemberView(value => !value); setDetail({ title: t('roles.member'), description: t('common.previewNote') }); setSheet('profile'); }}>{t(memberView ? 'common.leaderView' : 'common.memberView')}</Button><span className="chip sample-badge">{t('common.sample')}</span><Button variant="ghost" size="icon" className="assistant-button" aria-label={t('common.assistant')} title={t('common.assistant')} onClick={() => openSheet('assistant')}><Sparkles /></Button><Link to="/me" className="header-avatar" aria-label={t('me.profile')}>{initials}</Link></div>
     </header>
-    <main className="page-content"><ClientOnly fallback={<div className="min-h-96" />}><div key={pathname} className="page-transition">{children}</div></ClientOnly></main>
+    <main className="page-content"><ClientOnly fallback={<div className="min-h-96" />}><PlatformNotices teamId={workspace?.teamId} /><div key={pathname} className="page-transition">{children}</div></ClientOnly></main>
    </div>
    {userId && <ClientOnly><BadgeEarnedWatcher /><PushPrompt userId={userId} /></ClientOnly>}
    <Button size="icon" className="floating-create" onClick={() => openSheet('create')} aria-label={t('common.create')} title={t('common.create')}><Plus /></Button>

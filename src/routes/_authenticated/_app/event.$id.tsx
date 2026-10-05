@@ -18,6 +18,9 @@ import { eventDetailQuery, type ChecklistItem } from '@/lib/templates';
 import { gatherwellHead } from '@/lib/gatherwell-head';
 import { storyImage } from '@/lib/guest';
 import { Switch } from '@/components/ui/switch';
+import { useServerFn } from '@tanstack/react-start';
+import { refundPayments } from '@/lib/billing.functions';
+import { usePaymentGate } from '@/components/plan-page';
 import { Polls, PhotoRoll, useLiveCounts } from '@/components/event-live';
 
 export const Route = createFileRoute('/_authenticated/_app/event/$id')({ head: () => gatherwellHead('events'), component: EventDetailPage });
@@ -39,6 +42,14 @@ function EventDetailPage() {
     queryFn: async () => (await supabase.rpc('event_summary', { _event: id })).data as null | Record<'rsvps' | 'checkins' | 'walk_ins' | 'first_timers' | 'photos', number> });
   const [draft, setDraft] = useState<TemplateDraft | null>(null);
   const [saving, setSaving] = useState(false); const [sheet, setSheet] = useState<'share' | 'cancel' | 'delete' | null>(null); const [notify, setNotify] = useState(true);
+  const [refund, setRefund] = useState(true); const gate = usePaymentGate(); const refundFn = useServerFn(refundPayments);
+  const { data: planWaiting = 0 } = useQuery({ queryKey: ['event', id, 'plan-waitlist'], enabled: manages && event?.status === 'published',
+    queryFn: async () => {
+      const { data: hit } = await supabase.from('event_plan_waitlist').select('event_id').eq('event_id', id).maybeSingle();
+      if (!hit) return 0;
+      const { count } = await supabase.from('rsvps').select('id', { count: 'exact', head: true }).eq('event_id', id).eq('status', 'waitlist');
+      return count ?? 0;
+    } });
   if (isLoading) return <div className="panel"><p className="auth-subtitle">{t('publicEvent.loading')}</p></div>;
   if (!data || !event) return <section className="panel"><h2>{t('eventDetail.notFound')}</h2><Button asChild variant="secondary" className="mt-4"><Link to="/events"><ArrowLeft />{t('gathering.backToGatherings')}</Link></Button></section>;
   const { hostName, going, teamName, checklist } = data;
@@ -55,6 +66,10 @@ function EventDetailPage() {
   const setStatus = async (status: 'published' | 'cancelled') => {
     setSaving(true); const { error } = await supabase.from('events').update({ status }).eq('id', id); setSaving(false);
     if (error) { toast.error(t('profile.saveError')); return; }
+    if (status === 'cancelled' && refund && event.price_cents) {
+      if (!gate.connected) toast.message(t('billing.refundNotConnected'));
+      else { try { const r = await refundFn({ data: { eventId: id } }); if (r.ok) toast.success(t('billing.refundedCount', { count: r.refunded })); else toast.message(t('billing.refundNotConnected')); } catch { toast.error(t('billing.error')); } }
+    }
     if (status === 'cancelled' && notify) { const { data: n } = await supabase.rpc('notify_gathering_cancelled', { _event: id }); toast.success(t('notify.cancelQueued', { count: n ?? 0 })); }
     void queryClient.invalidateQueries({ queryKey: ['outbox-summary', id] });
     toast.success(t(status === 'published' ? 'templates.launchedToast' : 'gathering.cancelled')); setSheet(null); await refresh();
@@ -84,6 +99,7 @@ function EventDetailPage() {
           <li><UsersRound />{event.capacity ? t('gathering.goingOf', { count: going, total: event.capacity }) : t('map.going', { count: going })}</li>
         </ul>
         {description && <p className="detail-description">{description}</p>}
+        {manages && planWaiting > 0 && <div className="notice-banner is-inline" role="status"><UsersRound /><div><strong>{t('billing.planWaitTitle', { count: planWaiting })}</strong><p>{t('billing.planWaitBody')}</p></div><Button asChild size="sm"><Link to="/plan">{t('billing.upgrade')}</Link></Button></div>}
         {manages ? <div className="manage-actions">
           {event.status === 'published' && <Button asChild><Link to="/event/$id/checkin" params={{ id }}><ScanLine />{t('live.startCheckin')}</Link></Button>}
           {event.status === 'draft' && <Button disabled={saving} onClick={() => setStatus('published')}><Rocket />{t('gathering.publish')}</Button>}
@@ -129,6 +145,7 @@ function EventDetailPage() {
     {manages && event.status !== 'draft' && <OutboxSummary eventId={id} />}
     <ResponsiveSheet open={sheet === 'cancel'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.cancelTitle')} description={t('gathering.cancelText')}>
       <div className="edit-form"><label className="switch-row"><Checkbox checked={notify} onCheckedChange={v => setNotify(!!v)} /><span><strong>{t('gathering.notifyGuests')}</strong><small>{t('notify.cancelNote')}</small></span></label>
+        {!!event.price_cents && <label className="switch-row"><Checkbox checked={refund} onCheckedChange={v => setRefund(!!v)} /><span><strong>{t('billing.refundEveryone')}</strong><small>{gate.connected ? t('billing.refundOnCancel') : t('billing.refundNotConnected')}</small></span></label>}
         <div className="confirm-actions"><Button variant="secondary" onClick={() => setSheet(null)}>{t('gathering.keep')}</Button><Button className="danger-button" disabled={saving} onClick={() => setStatus('cancelled')}>{t('gathering.cancel')}</Button></div></div>
     </ResponsiveSheet>
     <ResponsiveSheet open={sheet === 'delete'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.deleteTitle')} description={t('gathering.deleteText')}>

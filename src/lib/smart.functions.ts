@@ -125,6 +125,15 @@ export const getDailyBrief = createServerFn({ method: 'POST' })
     }
     const { count: waiting } = await sb.from('followup_drafts').select('id', { count: 'exact', head: true }).eq('host_id', uid).in('status', ['draft', 'approved']);
     if (waiting) lines.push({ key: 'followups', text: es ? `${waiting} ${waiting === 1 ? 'seguimiento listo' : 'seguimientos listos'} para revisar.` : `${waiting} follow-up${waiting === 1 ? '' : 's'} ready to review.`, link: '/followups' });
+    {
+      const { data: hits } = await sb.from('event_plan_waitlist').select('event_id, events!inner(host_id, starts_at, status)').eq('events.host_id', uid).eq('events.status', 'published').gte('events.starts_at', new Date().toISOString());
+      const ids = (hits ?? []).map(h => h.event_id);
+      if (ids.length) {
+        const { count } = await sb.from('rsvps').select('id', { count: 'exact', head: true }).in('event_id', ids).eq('status', 'waitlist');
+        const n = count ?? 0;
+        if (n) lines.unshift({ key: 'plan_waitlist', text: es ? `${n} ${n === 1 ? 'persona está esperando' : 'personas están esperando'}. Mejora tu plan para darles la bienvenida.` : `${n} ${n === 1 ? 'guest is' : 'guests are'} waiting. Upgrade to welcome them.`, link: '/plan' });
+      }
+    }
     if (team) {
       const { data: tracks } = await sb.from('tracks').select('id, is_start_here, sort_order, lessons(id, title_en, title_es, sort_order)').eq('team_id', team).eq('is_published', true).order('is_start_here', { ascending: false }).order('sort_order').limit(6);
       const { data: done } = await sb.from('lesson_progress').select('lesson_id').eq('user_id', uid);

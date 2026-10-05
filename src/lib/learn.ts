@@ -54,7 +54,9 @@ export const recipesQuery = (userId: string) => queryOptions({
       supabase.from('saved_recipes').select('recipe_id').eq('user_id', userId),
     ]);
     if (error) throw error;
-    return { recipes: data ?? [], saved: new Set((saved ?? []).map(s => s.recipe_id)) };
+    const rows = (data ?? []).filter(r => r.team_id !== null || r.private_owner !== null || r.is_published);
+    const recipes = [...rows.filter(r => r.team_id !== null || r.private_owner !== null), ...rows.filter(r => r.team_id === null && r.private_owner === null).sort((a, b) => a.sort_order - b.sort_order)];
+    return { recipes, saved: new Set((saved ?? []).map(s => s.recipe_id)) };
   },
 });
 
