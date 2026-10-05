@@ -1,3 +1,4 @@
+import { BadgeEarnedWatcher } from '@/components/recognition';
 import { FromYourLeader } from '@/components/templates';
 import { TeamSwitcher } from '@/components/team-switcher';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
@@ -59,6 +60,7 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
     </header>
     <main className="page-content"><ClientOnly fallback={<div className="min-h-96" />}><div key={pathname} className="page-transition">{children}</div></ClientOnly></main>
    </div>
+   {userId && <ClientOnly><BadgeEarnedWatcher /></ClientOnly>}
    <Button size="icon" className="floating-create" onClick={() => openSheet('create')} aria-label={t('common.create')} title={t('common.create')}><Plus /></Button>
    <nav className="bottom-nav" aria-label={t('nav.label')}>{tabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: true }} className={`bottom-link ${isActive(path) ? 'is-active' : ''}`}><Icon /><span>{t(`nav.${key}`)}</span></Link>)}</nav>
    <Drawer open={sheet !== null} onOpenChange={open => { if (!open) { setSheet(null); setDetail(null); } }} shouldScaleBackground={false}>

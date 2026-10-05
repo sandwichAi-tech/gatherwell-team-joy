@@ -230,7 +230,8 @@ function WinsFeed({ teamId, userId, lang, isLeader }: { teamId: string; userId: 
 function InviteSheet({ open, onOpenChange, workspace, joinCode, isLeader }: { open: boolean; onOpenChange: (o: boolean) => void; workspace: TeamMembership; joinCode: string; isLeader: boolean }) {
   const { t } = useTranslation(); const queryClient = useQueryClient();
   const [copied, setCopied] = useState(false); const [qr, setQr] = useState(false); const [confirmReset, setConfirmReset] = useState(false);
-  const link = typeof window === 'undefined' ? '' : joinLink(joinCode);
+  const { userId } = useGatherwell();
+  const link = typeof window === 'undefined' ? '' : `${joinLink(joinCode)}?by=${userId}`;
   const message = t('teamSpace.inviteMessage', { team: workspace.name, link });
   useEffect(() => { if (!open) { setCopied(false); setConfirmReset(false); } }, [open]);
   const reset = async () => {
@@ -302,6 +303,7 @@ function EditTeamSheet({ open, onOpenChange, team, userId }: { open: boolean; on
 function MembersSheet({ open, onOpenChange, teamId, userId, isLeader, directLeader }: { open: boolean; onOpenChange: (o: boolean) => void; teamId: string; userId: string; isLeader: boolean; directLeader: boolean }) {
   const { t } = useTranslation(); const queryClient = useQueryClient();
   const { data: roster = [] } = useQuery({ ...rosterQuery(teamId), enabled: open });
+  const homId = useHostOfMonthId(teamId);
   const [search, setSearch] = useState(''); const [selected, setSelected] = useState<Member | null>(null);
   const [badge, setBadge] = useState(''); const [confirm, setConfirm] = useState<'remove' | 'transfer' | null>(null);
   const filtered = roster.filter(m => (m.name ?? '').toLowerCase().includes(search.trim().toLowerCase()));
@@ -319,7 +321,7 @@ function MembersSheet({ open, onOpenChange, teamId, userId, isLeader, directLead
     {!selected ? <>
       <div className="search-field"><Search /><Input className="field-input" placeholder={t('teamSpace.searchMembers')} value={search} onChange={e => setSearch(e.target.value)} aria-label={t('teamSpace.searchMembers')} /></div>
       <div className="member-list">{filtered.map(m => <button type="button" key={m.userId} className="member-row" disabled={!isLeader} onClick={() => setSelected(m)}>
-        <span className="initial-avatar">{initialsOf(m.name)}</span><span className="member-name">{m.name ?? t('teamSpace.someone')}{m.userId === userId && <small> · {t('common.you')}</small>}</span>
+        <span className={`initial-avatar ${m.userId === homId ? 'hom-ring' : ''}`}>{initialsOf(m.name)}</span><span className="member-name">{m.name ?? t('teamSpace.someone')}{m.userId === userId && <small> · {t('common.you')}</small>}</span>
         {m.customBadge && <span className="chip warm-chip">{m.customBadge}</span>}<span className="chip">{t(`roles.${m.role}`)}</span>{isLeader && <ChevronRight className="settings-chevron" />}</button>)}
         {!filtered.length && <p className="auth-subtitle">{t('teamSpace.noMatches')}</p>}</div>
     </> : <div className="edit-form">

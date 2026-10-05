@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { LanguageToggle, pageHead, setLanguage } from '@/components/auth-frame';
 import { supabase } from '@/integrations/supabase/client';
+import { JOIN_BY_KEY } from '@/lib/recognition';
 import { JOIN_CODE_KEY, initialsOf, joinLink, parseJoinCode, profileQuery, uploadMedia, workspaceQuery } from '@/lib/account';
 
 export const Route = createFileRoute('/_authenticated/onboarding')({ head: () => pageHead('onboarding.nameTitle', 'meta.onboarding'), component: Onboarding });
@@ -46,8 +47,9 @@ function Onboarding() {
       let joinedTeam: { team: string; leader: string | null } | null = null;
       if (pending) {
         const { data: invite } = await supabase.rpc('get_team_invite', { _code: pending });
-        const { error: joinError } = await supabase.rpc('join_team_by_code', { _code: pending, _role: profile?.role_intent === 'host' ? 'host' : 'member' });
-        localStorage.removeItem(JOIN_CODE_KEY);
+        const by = localStorage.getItem(JOIN_BY_KEY);
+        const { error: joinError } = await supabase.rpc('join_team_by_code', { _code: pending, _role: profile?.role_intent === 'host' ? 'host' : 'member', ...(by ? { _by: by } : {}) });
+        localStorage.removeItem(JOIN_CODE_KEY); localStorage.removeItem(JOIN_BY_KEY);
         if (!joinError && invite?.[0]) joinedTeam = { team: invite[0].team_name, leader: invite[0].leader_name };
         await queryClient.invalidateQueries({ queryKey: ['workspace', user.id] });
       }
