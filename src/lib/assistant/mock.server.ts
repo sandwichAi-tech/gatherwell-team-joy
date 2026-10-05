@@ -68,6 +68,13 @@ export async function mockReply(input: { text: string; lang: Lang; screen: Scree
   const add = async (name: string, args: Record<string, unknown>) => { const r = await runTool(name, args, ctx); if (r.card) cards.push(r.card); return r; };
   const reply = (en: string, sp: string): AssistantReply => ({ text: es ? sp : en, cards, preview: true });
 
+  if (/how (do|should|can) we|what('s| is) our|our (script|routine|way)|c[oó]mo (hacemos|organizamos|se hace|hago)|nuestr[oa] (guion|guía|forma)|library|biblioteca/.test(low)) {
+    const r = await add('search_team_library', { query: text });
+    if (r.result.startsWith('NO_MATCH') || !cards.length) return reply("I couldn't find that in your team's library yet. Your leader is the best person to ask.", 'Todavía no encontré eso en la biblioteca de tu equipo. Tu líder es la mejor persona para preguntarle.');
+    const hits = JSON.parse(r.result) as { source: string; text: string }[];
+    const excerpt = hits[0]!.text.replace(/\s+/g, ' ').trim().slice(0, 320);
+    return reply(`From your team's library: ${excerpt}${excerpt.length >= 320 ? '…' : ''}`, `De la biblioteca de tu equipo: ${excerpt}${excerpt.length >= 320 ? '…' : ''}`);
+  }
   if (/translat|tradu/.test(low)) {
     const quoted = text.match(/["“«](.+?)["”»]/)?.[1] ?? text.split(/:\s*/).slice(1).join(': ');
     const target = /english|inglés|ingles/.test(low) ? 'en' : /portug/.test(low) ? 'pt' : 'es';
