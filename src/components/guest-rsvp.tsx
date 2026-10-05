@@ -1,3 +1,4 @@
+import { trackEvent } from '@/lib/analytics';
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
@@ -90,6 +91,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
     setBusy(false);
     const row = Array.isArray(data) ? data[0] : null;
     if (err || !row) { setError(t(rsvpErrorKey(err))); return; }
+    trackEvent('rsvp', { status: row.status });
     onDone({ code: row.code, status: row.status as RsvpResult['status'] });
   };
   const full = event.capacity != null && event.going >= event.capacity;
