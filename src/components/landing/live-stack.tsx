@@ -32,12 +32,13 @@ export default function LiveStack({ items }: { items: HeroItem[] }) {
     if (paused || items.length < 2) return;
     const id = window.setInterval(() => {
       setOrder(current => {
-        const front = current[0];
+        const front = current[0] ?? 0;
+        const next = current[1] ?? 0;
         setLeaving(front);
         cycles.current += 1;
-        const item = items[current[1]];
-        if (cycles.current % 2 === 0 && item?.kind === 'gathering') setBumps(b => ({ ...b, [current[1]]: (b[current[1]] ?? 0) + 1 }));
-        window.setTimeout(() => { setOrder(o => [...o.slice(1), o[0]]); setLeaving(null); }, 420);
+        const item = items[next];
+        if (cycles.current % 2 === 0 && item?.kind === 'gathering') setBumps(b => ({ ...b, [next]: (b[next] ?? 0) + 1 }));
+        window.setTimeout(() => { setOrder(o => [...o.slice(1), o[0] ?? 0]); setLeaving(null); }, 420);
         return current;
       });
     }, CYCLE_MS);
