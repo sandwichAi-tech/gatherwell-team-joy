@@ -621,7 +621,8 @@
       "checkins": "Check-ins",
       "hosts": "Active hosts",
       "members": "New members",
-      "templates": "Templates launched"
+      "templates": "Templates launched",
+      "followups": "Follow-ups sent"
     },
     "same": "Same as previous period",
     "up": "+{{count}} vs. previous period",
@@ -1626,5 +1627,118 @@
     "usageFull": "You've reached this month's limit. It resets on the 1st, or upgrade your plan for more.",
     "usagePreview": "The assistant is in preview mode, so replies don't count yet.",
     "greetingNoName": "Hi. What can I help you with?"
+  },
+  "smart": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "claims": {
+      "note": "This wording could read as a health or money promise. Gatherwell keeps it about the experience.",
+      "use": "Use suggested wording",
+      "thinking": "Finding gentler wording…",
+      "blocked": "Please remove health, weight or money claims before sending."
+    },
+    "brief": {
+      "eyebrow": "Today",
+      "title": "Your morning brief",
+      "dismiss": "Hide for today"
+    },
+    "followups": {
+      "eyebrow": "Follow-ups",
+      "title": "Follow-up inbox",
+      "subtitle": "Personal notes for the people who came, and the ones you missed. Review, edit and send.",
+      "ready": "{{count}} follow-ups ready from {{title}}",
+      "ready_one": "1 follow-up ready from {{title}}",
+      "ready_other": "{{count}} follow-ups ready from {{title}}",
+      "readyMany_one": "1 follow-up ready to review",
+      "readyMany_other": "{{count}} follow-ups ready to review",
+      "review": "Review",
+      "guest": "Guest",
+      "message": "Message",
+      "edit": "Edit",
+      "approve": "Approve",
+      "unapprove": "Undo approval",
+      "skip": "Skip",
+      "email": "Email",
+      "text": "Text",
+      "whatsapp": "Open in WhatsApp",
+      "sendAll_one": "Send 1 approved",
+      "sendAll_other": "Send all approved ({{count}})",
+      "progress": "Sending {{done}} of {{total}}",
+      "sentAll_one": "1 follow-up sent",
+      "sentAll_other": "{{count}} follow-ups sent",
+      "noneSendable": "Approved guests have no email or text opt-in. Use Open in WhatsApp on each card.",
+      "whatsappLeft_one": "1 approved guest needs WhatsApp — open it from their card.",
+      "whatsappLeft_other": "{{count}} approved guests need WhatsApp — open them from their cards.",
+      "empty": "No follow-ups yet. They appear here at 8:00 the morning after each gathering you host.",
+      "prepareTitle": "Recent gatherings",
+      "prepareText": "Want them sooner? Prepare follow-ups now for a gathering that already happened.",
+      "prepare": "Prepare now",
+      "prepared_one": "1 follow-up ready",
+      "prepared_other": "{{count}} follow-ups ready",
+      "noGuests": "No guests to follow up with for this gathering.",
+      "kind": {
+        "first_time": "First time",
+        "returning": "Returning",
+        "no_show": "Missed"
+      },
+      "status": {
+        "approved": "Approved",
+        "sent": "Sent",
+        "skipped": "Skipped"
+      },
+      "channel": {
+        "email": "email",
+        "sms": "text",
+        "whatsapp": "WhatsApp"
+      },
+      "sentVia": {
+        "email": "Queued by email",
+        "sms": "Queued by text",
+        "whatsapp": "Marked as sent on WhatsApp"
+      },
+      "err": {
+        "no_opt_in": "This guest hasn't opted in to that channel.",
+        "claim_blocked": "Please remove health, weight or money claims before sending.",
+        "not_allowed": "Only the host can send this.",
+        "failed": "Couldn't send. Please try again."
+      }
+    },
+    "plan": {
+      "eyebrow": "{{days}} days left",
+      "title": "Getting started",
+      "progress": "{{done}} of {{total}} done",
+      "lesson": "Watch {{title}}",
+      "rsvp": "RSVP to {{title}}",
+      "template": "Launch {{title}}",
+      "introduce": "Introduce yourself in Team wins"
+    },
+    "summary": {
+      "title": "Summary",
+      "points": "Key points",
+      "actions": "Try this",
+      "summarize": "Summarize",
+      "redo": "Summarize again",
+      "edit": "Edit summary",
+      "pasteHint": "Paste notes or a transcript. Leave it empty to use the lesson description.",
+      "notes": "Notes or transcript",
+      "notesPlaceholder": "Paste notes here…",
+      "working": "Summarizing…",
+      "review": "Review before publishing",
+      "publish": "Publish for members",
+      "saveDraft": "Save draft",
+      "published": "Summary published",
+      "saved": "Summary saved",
+      "unpublished": "Draft"
+    },
+    "library": {
+      "sources": "Sources",
+      "from": "From: {{title}} ({{type}})",
+      "types": {
+        "lesson": "lesson",
+        "template": "template",
+        "announcement": "announcement",
+        "recipe": "recipe"
+      }
+    }
   }
 }
