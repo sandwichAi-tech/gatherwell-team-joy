@@ -18,7 +18,9 @@ export type AssistantCard =
   | { type: 'announcement'; text: string }
   | { type: 'upcoming'; items: UpcomingItem[] }
   | { type: 'directions'; title: string; url: string; tip: string }
-  | { type: 'recipe'; recipe: RecipeCard };
+  | { type: 'recipe'; recipe: RecipeCard }
+  | { type: 'sources'; items: LibrarySource[] };
+export type LibrarySource = { type: 'lesson' | 'template' | 'announcement' | 'recipe'; id: string; title: string };
 
 export type ChatTurn = { role: 'user' | 'assistant'; text: string };
 export type AssistantReply = { text: string; cards: AssistantCard[]; preview: boolean; limitReached?: boolean; error?: string };

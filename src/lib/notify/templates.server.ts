@@ -34,6 +34,7 @@ function copy(template: string, lang: Lang, p: P): Copy | null {
     case 'badge_earned': return { subject: es ? `Nueva insignia: ${bi(lang, p, 'name')}` : `New badge: ${bi(lang, p, 'name')}`, heading: bi(lang, p, 'name'), body: [es ? 'Obtuviste una insignia nueva.' : 'You earned a new badge.', bi(lang, p, 'description')], cta: { label: es ? 'Ver mis insignias' : 'See my badges', url: `${APP_URL}/me` }, push: es ? `Insignia obtenida: ${bi(lang, p, 'name')}` : `Badge earned: ${bi(lang, p, 'name')}` };
     case 'live_session_reminder': case 'live_lesson_reminder': return { subject: es ? `En vivo pronto: ${bi(lang, p, 'title')}` : `Live soon: ${bi(lang, p, 'title')}`, heading: es ? 'La sesión en vivo está por empezar' : 'Your live session is starting', body: [bi(lang, p, 'title') || s(p['title'])], cta: { label: es ? 'Abrir la sesión' : 'Open the session', url: `${APP_URL}/learn/lesson/${s(p['lesson_id'])}` }, push: es ? `En vivo pronto: ${bi(lang, p, 'title')}` : `Live soon: ${bi(lang, p, 'title')}` };
     case 'team_announcement': return { subject: es ? `Aviso de ${s(p['team'])}` : `From ${s(p['team'])}`, heading: es ? `Aviso de ${s(p['author']) || s(p['team'])}` : `A note from ${s(p['author']) || s(p['team'])}`, body: [s(p['body'])], cta: { label: es ? 'Abrir el equipo' : 'Open your team', url: `${APP_URL}/team` }, push: `${s(p['team'])}: ${s(p['body']).slice(0, 120)}` };
+    case 'host_followup': return { subject: es ? `Un mensaje de ${s(p['host']) || 'tu anfitriona'}` : `A note from ${s(p['host']) || 'your host'}`, heading: s(p['title']) || (es ? 'Gracias' : 'Thank you'), body: [s(p['body'])], push: s(p['body']).slice(0, 120) };
     default: return null;
   }
 }
@@ -70,6 +71,7 @@ export function renderSms(template: string, lang: Lang, p: P) {
     waitlist_promoted: es ? `Gatherwell: ¡se liberó un lugar en ${title}! Ya es tuyo. ${link}` : `Gatherwell: a spot opened at ${title} — you're in. ${link}`,
     gathering_cancelled: es ? `Gatherwell: ${title} (${date}) se canceló. Lo sentimos.` : `Gatherwell: ${title} (${date}) is cancelled. Sorry about that.`,
   };
+  if (template === 'host_followup') return `${s(p['body'])} ${stop}`;
   const line = lines[template]; if (!line) return null;
   return `${line} ${stop}`;
 }
