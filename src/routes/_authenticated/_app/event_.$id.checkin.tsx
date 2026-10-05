@@ -51,7 +51,7 @@ function CheckInMode() {
           ? await supabase.rpc('check_in_rsvp', { _rsvp: item.rsvpId, _undo: item.undo })
           : await supabase.rpc('check_in_code', { _event: id, _code: item.code ?? '' });
         if (res.error) {
-          if (res.error.code || res.error.status) { toast.error(t('profile.saveError')); queue.current.remove(item.key); }
+          if (res.error.code) { toast.error(t('profile.saveError')); queue.current.remove(item.key); }
           else break;
         } else {
           queue.current.remove(item.key); trackEvent('checkin');
