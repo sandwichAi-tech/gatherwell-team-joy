@@ -1,3 +1,4 @@
+import { trackEvent } from '@/lib/analytics';
 import { useServerFn } from '@tanstack/react-start';
 import { usePaymentGate } from '@/components/plan-page';
 import { startChallengeCheckout } from '@/lib/billing.functions';
@@ -172,7 +173,7 @@ function CheckInSheet({ open, onClose, c, date }: { open: boolean; onClose: () =
     try {
       let photo: string | null = null;
       if (file) { const small = await compressImage(file, 1400); const { data: room } = await supabase.rpc('storage_allows', { _bytes: small.size }); if (room === false) throw new Error('storage_limit'); photo = `${userId}/${c.id}/${crypto.randomUUID()}.jpg`; const up = await supabase.storage.from('challenge-photos').upload(photo, small, { contentType: small.type }); if (up.error) throw up.error; }
-      const { data, error } = await supabase.rpc('challenge_check_in', { _c: c.id, _date: date, _tz: userTz(), _note: note, ...(photo ? { _photo: photo } : {}) });
+      const { data, error } = await supabase.rpc('challenge_check_in', { _c: c.id, _date: date, _tz: userTz(), _note: note, ...(photo ? { _photo: photo } : {}) }); if (!error) trackEvent('challenge_checkin');
       if (error) throw error;
       const r = data as { current?: number } | null;
       toast.success(t('challenges.checkedIn'), { description: t('challenges.streakShort', { count: r?.current ?? 1 }) });

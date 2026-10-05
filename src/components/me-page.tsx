@@ -200,7 +200,7 @@ export function MePage() {
       {isAdmin && <Link className="settings-row" to="/admin/site-media"><ImageDown className="settings-icon" /><span className="settings-label">{t('siteMedia.menu')}</span><ChevronRight className="settings-chevron" /></Link>}
       <a className="settings-row" href="mailto:help@gatherwell.app"><LifeBuoy className="settings-icon" /><span className="settings-label">{t('profile.help')}</span><ChevronRight className="settings-chevron" /></a>
       <Link className="settings-row" to="/terms"><FileText className="settings-icon" /><span className="settings-label">{t('auth.terms')}</span><ChevronRight className="settings-chevron" /></Link>
-      <Link className="settings-row" to="/privacy"><ShieldCheck className="settings-icon" /><span className="settings-label">{t('auth.privacy')}</span><ChevronRight className="settings-chevron" /></Link>
+      <Link className="settings-row" to="/privacy"><ShieldCheck className="settings-icon" /><span className="settings-label">{t('auth.privacy')}</span><ChevronRight className="settings-chevron" /></Link>{(['host', 'guest', 'sms', 'cookies'] as const).map(d => <Link key={d} className="settings-row" to="/legal/$doc" params={{ doc: d }}><FileText className="settings-icon" /><span className="settings-label">{t(`legalDocs.docs.${d}.title`)}</span><ChevronRight className="settings-chevron" /></Link>)}
       {row(LogOut, t('me.signOut'), signOut, <span />)}
     </section>
 

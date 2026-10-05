@@ -2159,5 +2159,160 @@
       "text_required": "Agrega el texto editado.",
       "not_editable": "Esto no se puede editar, solo aprobar o quitar."
     }
+  },
+  "legalDocs": {
+    "draft": "Borrador — pendiente de revisión legal",
+    "updated": "Última actualización: octubre de 2026",
+    "back": "Volver",
+    "more": "Legal",
+    "notFound": "Esta página no existe.",
+    "docs": {
+      "terms": {
+        "title": "Términos del servicio",
+        "sections": [
+          {
+            "h": "Quiénes somos",
+            "p": "Gatherwell es un espacio para que los equipos planeen y organicen reuniones juntos. Al crear una cuenta, aceptas estos términos."
+          },
+          {
+            "h": "Tu cuenta",
+            "p": "Debes tener 18 años o más para crear una cuenta. Mantén tu acceso seguro y avísanos si crees que alguien más la está usando."
+          },
+          {
+            "h": "Lo que publicas",
+            "p": "Lo que publicas es tuyo. Nos das permiso para mostrarlo a las personas con quienes lo compartes. No publiques nada ilegal, de odio o engañoso."
+          },
+          {
+            "h": "Afirmaciones no permitidas",
+            "p": "No hagas afirmaciones de salud, médicas, de pérdida de peso o de ingresos en reuniones, mensajes o plantillas. Podemos quitar el contenido que lo haga."
+          },
+          {
+            "h": "Planes y pagos",
+            "p": "Los planes de pago se renuevan hasta que los canceles. La venta de boletos es entre quien organiza y su invitado; los reembolsos siguen las decisiones de quien organiza y estos términos."
+          },
+          {
+            "h": "Cerrar tu cuenta",
+            "p": "Puedes eliminar tu cuenta desde Yo cuando quieras. Podemos pausar cuentas que no cumplan estos términos."
+          },
+          {
+            "h": "Contacto",
+            "p": "¿Dudas sobre estos términos? Escríbenos desde el enlace de ayuda en la app."
+          }
+        ]
+      },
+      "privacy": {
+        "title": "Aviso de privacidad",
+        "sections": [
+          {
+            "h": "Qué recopilamos",
+            "p": "Tu nombre, correo, teléfono opcional, idioma y las reuniones, capacitaciones y retos a los que te unes. No recopilamos datos de ventas ni de ingresos."
+          },
+          {
+            "h": "Para qué lo usamos",
+            "p": "Para que funcione el espacio de tu equipo, enviarte los recordatorios que pidas y mantener el servicio seguro."
+          },
+          {
+            "h": "Quién lo ve",
+            "p": "Tu equipo ve tu nombre y tu actividad. Los datos de contacto de los invitados solo los ven quien organiza la reunión y los líderes del equipo."
+          },
+          {
+            "h": "Tus opciones",
+            "p": "Cambia tus notificaciones en Yo, date de baja de cualquier correo, responde STOP a los mensajes de texto o elimina tu cuenta."
+          },
+          {
+            "h": "Almacenamiento",
+            "p": "Las fotos se guardan en privado y se muestran con enlaces temporales. Guardamos los datos solo mientras tu cuenta esté activa."
+          },
+          {
+            "h": "Contacto",
+            "p": "¿Dudas sobre tus datos? Escríbenos desde el enlace de ayuda en la app."
+          }
+        ]
+      },
+      "host": {
+        "title": "Acuerdo para anfitriones",
+        "sections": [
+          {
+            "h": "Tu papel",
+            "p": "Como anfitrión, planeas reuniones, recibes a los invitados y cuidas que todo sea seguro y amigable."
+          },
+          {
+            "h": "Datos de los invitados",
+            "p": "Usa los datos de contacto solo para hablar de tus reuniones. Nunca los vendas ni los compartas."
+          },
+          {
+            "h": "Descripciones honestas",
+            "p": "Describe tus reuniones con precisión. Sin afirmaciones de salud, médicas, de pérdida de peso o de ingresos."
+          },
+          {
+            "h": "Boletos",
+            "p": "Si vendes boletos, eres responsable de los reembolsos cuando canceles. Gatherwell cobra una pequeña comisión según tu plan."
+          },
+          {
+            "h": "Seguridad",
+            "p": "Elige lugares seguros, sigue las reglas locales y detén la reunión si alguien corre riesgo."
+          }
+        ]
+      },
+      "guest": {
+        "title": "Aviso de datos para invitados",
+        "sections": [
+          {
+            "h": "Qué guardamos",
+            "p": "Cuando confirmas asistencia guardamos tu nombre, los datos de contacto que nos des y si llegaste."
+          },
+          {
+            "h": "Quién lo ve",
+            "p": "Solo quien organiza y los líderes del equipo ven tus datos de contacto. Los demás invitados solo ven iniciales."
+          },
+          {
+            "h": "Mensajes",
+            "p": "Enviamos confirmaciones y recordatorios solo si los aceptas. Puedes detenerlos cuando quieras."
+          },
+          {
+            "h": "Borrar tus datos",
+            "p": "Cancela tu asistencia con tu enlace de confirmación o pide a quien organiza que te quite de la lista."
+          }
+        ]
+      },
+      "sms": {
+        "title": "Términos de mensajes de texto",
+        "sections": [
+          {
+            "h": "Qué recibirás",
+            "p": "Si aceptas, recibirás mensajes sobre las reuniones a las que confirmes: confirmaciones, recordatorios y cambios. Normalmente de 1 a 4 mensajes por reunión."
+          },
+          {
+            "h": "Costos",
+            "p": "Pueden aplicar cargos por mensajes y datos."
+          },
+          {
+            "h": "Cómo detenerlos",
+            "p": "Responde STOP a cualquier mensaje para dejar de recibirlos. Responde HELP para pedir ayuda."
+          },
+          {
+            "h": "Consentimiento",
+            "p": "No es necesario aceptar para confirmar tu asistencia."
+          }
+        ]
+      },
+      "cookies": {
+        "title": "Aviso de cookies",
+        "sections": [
+          {
+            "h": "Qué guardamos",
+            "p": "Guardamos tu sesión, idioma y tema en tu dispositivo para que la app funcione."
+          },
+          {
+            "h": "Analítica",
+            "p": "Si la analítica está activa, contamos visitas y acciones con un identificador anónimo. Sin cookies de publicidad."
+          },
+          {
+            "h": "Tus opciones",
+            "p": "Puedes borrar los datos del sitio en tu navegador cuando quieras; se cerrará tu sesión."
+          }
+        ]
+      }
+    }
   }
 }

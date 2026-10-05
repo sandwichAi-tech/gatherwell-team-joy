@@ -1,3 +1,4 @@
+import { trackEvent } from '@/lib/analytics';
 import { ClaimGuard } from '@/components/smart';
 import { ReportButton } from '@/components/report-button';
 import { takePendingAnnouncement } from '@/lib/assistant-client';
@@ -62,7 +63,7 @@ function NoTeam() {
       <Input className="field-input" placeholder={t('onboarding.teamNamePlaceholder')} value={name} onChange={e => setName(e.target.value)} aria-label={t('onboarding.teamName')} maxLength={80} />
       <Button disabled={busy || !name.trim()}>{t('teamSpace.createTeam')}</Button>
     </form>
-    <form className="inline-form" onSubmit={async e => { e.preventDefault(); if (!code.trim()) return; setBusy(true); const { error } = await supabase.rpc('join_team_by_code', { _code: code.trim() }); setBusy(false); if (error) toast.error(t('onboarding.invalidCode')); else await done(); }}>
+    <form className="inline-form" onSubmit={async e => { e.preventDefault(); if (!code.trim()) return; setBusy(true); const { error } = await supabase.rpc('join_team_by_code', { _code: code.trim() }); if (!error) trackEvent('team_joined'); setBusy(false); if (error) toast.error(t('onboarding.invalidCode')); else await done(); }}>
       <Input className="field-input" placeholder={t('onboarding.codePlaceholder')} value={code} onChange={e => setCode(e.target.value)} aria-label={t('onboarding.code')} />
       <Button variant="secondary" disabled={busy || !code.trim()}>{t('teamSpace.joinTeam')}</Button>
     </form>

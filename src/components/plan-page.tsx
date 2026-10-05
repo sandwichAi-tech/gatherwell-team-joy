@@ -1,3 +1,4 @@
+import { trackEvent } from '@/lib/analytics';
 import { useState, type ReactNode } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -89,7 +90,7 @@ export function PlanPage() {
     if (id === st.own_plan) return;
     if (rank[id] < rank[st.own_plan]) { setDowngrade(id); return; }
     if (id === 'free') return;
-    void gate.run(() => checkout({ data: { plan: id, period, origin, lang } }));
+    trackEvent('upgrade_clicked', { plan: id }); void gate.run(() => checkout({ data: { plan: id, period, origin, lang } }));
   };
   const togglePassFee = async (on: boolean) => {
     const { error } = await supabase.rpc('set_pass_fee', { _on: on });

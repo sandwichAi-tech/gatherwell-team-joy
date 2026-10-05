@@ -1,3 +1,4 @@
+import { trackEvent } from '@/lib/analytics';
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
@@ -90,6 +91,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
     setBusy(false);
     const row = Array.isArray(data) ? data[0] : null;
     if (err || !row) { setError(t(rsvpErrorKey(err))); return; }
+    trackEvent('rsvp', { status: row.status });
     onDone({ code: row.code, status: row.status as RsvpResult['status'] });
   };
   const full = event.capacity != null && event.going >= event.capacity;
@@ -104,7 +106,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
       <div><label className="field-label" htmlFor="g-email">{t('guest.email')}</label><Input id="g-email" type="email" autoComplete="email" maxLength={200} className="field-input" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} /></div>
       <p className="guest-hint">{t('guest.contactHint')}</p>
       <div className="guest-plus"><span className="field-label">{t('guest.plusOnes')}</span><Stepper value={form.plus} onChange={plus => setForm({ ...form, plus })} label={t('guest.plusOnes')} /></div>
-      <label className="guest-consent"><Checkbox checked={form.sms} onCheckedChange={v => setForm({ ...form, sms: !!v })} /><span>{t('guest.smsConsent')}</span></label>
+      <label className="guest-consent"><Checkbox checked={form.sms} onCheckedChange={v => setForm({ ...form, sms: !!v })} /><span>{t('guest.smsConsent')} <a href="/legal/sms" target="_blank" rel="noopener">{t('legalDocs.docs.sms.title')}</a></span></label>
       <label className="guest-consent"><Checkbox checked={form.mail} onCheckedChange={v => setForm({ ...form, mail: !!v })} /><span>{t('guest.emailConsent')}</span></label>
       {paid && <p className="guest-price"><strong>{formatMoney(price!.price_cents, lang)}</strong><span>{t('billing.perPerson')}{fee ? ` · ${t('billing.bookingFee', { fee: formatMoney(fee, lang) })}` : ''}</span></p>}
       {error && <p className="field-error" role="alert">{error}</p>}

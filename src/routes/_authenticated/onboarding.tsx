@@ -1,3 +1,4 @@
+import { trackEvent } from '@/lib/analytics';
 import { requestPushMoment } from '@/components/notifications';
 import { useEffect, useRef, useState } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
@@ -70,7 +71,7 @@ function Onboarding() {
   }, []);
 
   async function finish() {
-    await supabase.from('profiles').update({ onboarded: true }).eq('id', user.id);
+    await supabase.from('profiles').update({ onboarded: true }).eq('id', user.id); trackEvent('signup'); trackEvent('onboarding_complete');
     await queryClient.invalidateQueries();
     void navigate({ to: '/home', replace: true });
   }
