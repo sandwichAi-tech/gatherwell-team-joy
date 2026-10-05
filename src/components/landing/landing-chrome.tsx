@@ -61,7 +61,7 @@ export function LandingFooter() {
       <div><h3>{t('landing.footer.discover')}</h3><Link to="/discover">{t('landing.footer.allGatherings')}</Link><Link to="/discover" search={{ when: 'weekend' }}>{t('landing.footer.thisWeekend')}</Link></div>
       <div><h3>{t('landing.footer.host')}</h3><Link to="/login" search={{ intent: 'host' }}>{t('landing.footer.hostOne')}</Link><Link to="/login">{t('landing.footer.leaderTools')}</Link></div>
       <div><h3>{t('landing.footer.company')}</h3><a href="/#how-it-works">{t('landing.footer.howItWorks')}</a><Link to="/login">{t('landing.footer.signIn')}</Link></div>
-      <div><h3>{t('landing.footer.legal')}</h3><Link to="/terms">{t('landing.footer.terms')}</Link><Link to="/privacy">{t('landing.footer.privacy')}</Link><Link to="/credits">{t('landing.footer.credits')}</Link></div>
+      <div><h3>{t('landing.footer.legal')}</h3><Link to="/terms">{t('landing.footer.terms')}</Link><Link to="/privacy">{t('landing.footer.privacy')}</Link>{(['host', 'guest', 'sms', 'cookies'] as const).map(d => <Link key={d} to="/legal/$doc" params={{ doc: d }}>{t(`legalDocs.docs.${d}.title`)}</Link>)}<Link to="/credits">{t('landing.footer.credits')}</Link></div>
     </div>
     <div className="gw-container gw-footer-base"><span>{t('landing.footer.copyright')}</span><span><Link to="/terms">{t('landing.footer.terms')}</Link> · <Link to="/privacy">{t('landing.footer.privacy')}</Link></span></div>
   </footer>;

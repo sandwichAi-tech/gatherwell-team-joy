@@ -32,7 +32,7 @@ function AuthFrameInner({ children, footer }: { children: ReactNode; footer: boo
       <Brand />
       {children}
     </main>
-    {footer && <footer className="auth-footer"><Link to="/terms">{t('auth.terms')}</Link><span aria-hidden="true">·</span><Link to="/privacy">{t('auth.privacy')}</Link></footer>}
+    {footer && <footer className="auth-footer"><Link to="/terms">{t('auth.terms')}</Link><span aria-hidden="true">·</span><Link to="/privacy">{t('auth.privacy')}</Link><span aria-hidden="true">·</span><Link to="/legal/$doc" params={{ doc: 'cookies' }}>{t('legalDocs.docs.cookies.title')}</Link></footer>}
   </div>;
 }
 
@@ -42,11 +42,18 @@ export function pageHead(titleKey: string, descKey: string) {
   return { meta: [{ title }, { name: 'description', content: description }, { property: 'og:title', content: title }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }] };
 }
 
-export function LegalPage({ kind }: { kind: 'terms' | 'privacy' }) {
+export const LEGAL_DOCS = ['terms', 'privacy', 'host', 'guest', 'sms', 'cookies'] as const;
+export type LegalDoc = (typeof LEGAL_DOCS)[number];
+
+export function LegalPage({ kind }: { kind: LegalDoc }) {
   const { t } = useTranslation();
-  return <AuthFrame footer={false}>
-    <h1 className="auth-title">{t(kind === 'terms' ? 'legal.termsTitle' : 'legal.privacyTitle')}</h1>
-    <p className="auth-subtitle">{t('legal.placeholder')}</p>
-    <Link to="/login" className="auth-link">{t('legal.back')}</Link>
+  const sections = t(`legalDocs.docs.${kind}.sections`, { returnObjects: true }) as { h: string; p: string }[];
+  return <AuthFrame>
+    <span className="chip sample-badge">{t('legalDocs.draft')}</span>
+    <h1 className="auth-title">{t(`legalDocs.docs.${kind}.title`)}</h1>
+    <p className="auth-subtitle">{t('legalDocs.updated')}</p>
+    <div className="legal-body">{Array.isArray(sections) && sections.map(s => <section key={s.h}><h2>{s.h}</h2><p>{s.p}</p></section>)}</div>
+    <nav className="legal-links" aria-label={t('legalDocs.more')}>{LEGAL_DOCS.filter(d => d !== kind).map(d => <Link key={d} to="/legal/$doc" params={{ doc: d }}>{t(`legalDocs.docs.${d}.title`)}</Link>)}</nav>
+    <button type="button" className="auth-link" onClick={() => history.back()}>{t('legalDocs.back')}</button>
   </AuthFrame>;
 }
