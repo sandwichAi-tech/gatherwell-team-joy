@@ -3,7 +3,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { BrandImage } from '@/components/brand-image';
 import { CATEGORY_ICONS, GwIcon } from '@/components/gw-icon';
-import { distanceKm, feedSlot, formatDistance, formatWhen, isThisWeekend, spotsLeft, track, type Category, type FeedGathering } from '@/lib/landing';
+import { SAMPLE_ORIGIN, distanceKm, feedSlot, formatDistance, formatWhen, isThisWeekend, spotsLeft, track, type Category, type FeedGathering } from '@/lib/landing';
 
 export type Coords = { lat: number; lng: number };
 
