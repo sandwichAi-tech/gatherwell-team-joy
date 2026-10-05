@@ -460,7 +460,12 @@
       "shoutout": "{{name}} gave a shout-out to {{to}}",
       "guest_milestone": "{{title}} reached {{count}} guests",
       "checked_in_group": "{{name}} and {{count}} others checked in to {{title}}",
-      "track_completed": "{{name}} completed {{title}}"
+      "track_completed": "{{name}} completed {{title}}",
+      "challenge_joined": "{{name}} joined {{title}}",
+      "challenge_joined_group": "{{name}} and {{count}} more joined {{title}}",
+      "challenge_streak": "{{name}} hit a 7-day streak in {{title}}",
+      "challenge_finished": "{{name}} finished {{title}} — {{count}} days",
+      "challenge_cheer": "{{name}} cheered on {{title}}"
     },
     "react": {
       "like": "Like",
@@ -1122,6 +1127,121 @@
       "tracks": "Tracks",
       "recipes": "Recipes",
       "progress": "Progress"
+    }
+  },
+  "challenges": {
+    "title": "Challenges",
+    "new": "New challenge",
+    "edit": "Edit challenge",
+    "delete": "Delete challenge",
+    "confirmDelete": "Delete this challenge and everyone's check-ins?",
+    "activeNow": "Challenge in progress",
+    "dayOf": "Day {{day}} of {{total}}",
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days",
+    "joinedCount_one": "{{count}} joined",
+    "joinedCount_other": "{{count}} joined",
+    "joined": "Joined",
+    "streakShort_one": "{{count}}-day streak",
+    "streakShort_other": "{{count}}-day streak",
+    "bestShort_one": "best {{count}} day",
+    "bestShort_other": "best {{count}} days",
+    "join": "Join",
+    "joinChallenge": "Join challenge",
+    "checkIn": "Check in",
+    "checkInToday": "Check in for today",
+    "checkInYesterday": "Missed last night? Check in for yesterday (until noon)",
+    "doneToday": "Done for today",
+    "doneAt": "Checked in at {{time}}",
+    "phase": {
+      "active": "Active",
+      "upcoming": "Upcoming",
+      "past": "Past"
+    },
+    "none": {
+      "active": "No challenge running right now.",
+      "upcoming": "Nothing scheduled yet.",
+      "past": "No past challenges yet."
+    },
+    "sampleNote": "Sample challenge. Your team's challenges show here once a leader creates one.",
+    "claimRule": "Keep it about habits and showing up — no health, weight or income claims.",
+    "startFrom": "Start from",
+    "startsOn": "Starts",
+    "endsOn": "Ends",
+    "dailyPrompt": "Daily prompt",
+    "paid": "Paid challenge",
+    "paidNote": "Paid challenges come with payments.",
+    "starter": {
+      "consistency": {
+        "title": "21-Day Consistency",
+        "description": "Pick one small daily action and show up for it 21 days in a row, together.",
+        "prompt": "Did you do your one thing today? Check in and tell the team how it went."
+      },
+      "walk": {
+        "title": "Daily Walk",
+        "description": "A walk every day for 14 days — any distance, any pace, on your own or with friends.",
+        "prompt": "Take your walk today, then check in. Where did you go?"
+      },
+      "hydration": {
+        "title": "Hydration Habit",
+        "description": "Seven days of keeping a water bottle close and refilling it through the day.",
+        "prompt": "Keep your bottle nearby today. Check in when you've refilled it."
+      },
+      "morning": {
+        "title": "Morning Routine",
+        "description": "Start each morning with a short routine you choose — stretch, journal or a quiet coffee.",
+        "prompt": "How did your morning routine go? Check in before noon."
+      }
+    },
+    "todaysPrompt": "Today's prompt",
+    "defaultPrompt": "Show up for today and check in.",
+    "currentStreak": "Current streak",
+    "bestStreak": "Best streak",
+    "checkIns": "Check-ins",
+    "calendar": "Challenge days",
+    "checkedIn": "Checked in",
+    "checkInFor": "Check in for {{date}}",
+    "today": "today",
+    "yesterday": "yesterday",
+    "noteOptional": "Short note (optional)",
+    "photoOptional": "Progress photo (optional)",
+    "addPhoto": "Add a photo",
+    "photoPrivate": "Only you can see your photos.",
+    "leaderboard": "Leaderboard",
+    "leaderboardNote": "Ranked by check-ins, then streak.",
+    "yourRank": "You're #{{rank}}",
+    "youreRank": "You're #{{rank}} — keep going.",
+    "boardEmpty": "No one has joined yet.",
+    "myPhotos": "My progress photos",
+    "photosPrivate": "Private — only you can see these.",
+    "noPhotos": "Photos you add with a check-in appear here.",
+    "progressPhoto": "Progress photo",
+    "finishedEyebrow": "Challenge complete",
+    "finishedTitle": "You finished {{title}}",
+    "finishedText_one": "You checked in all {{count}} day.",
+    "finishedText_other": "You checked in all {{count}} days.",
+    "downloadCard": "Download story card",
+    "storyLine": "Challenge complete",
+    "storyDays_one": "day checked in",
+    "storyDays_other": "days checked in",
+    "leaderView": "Leader view",
+    "stat": {
+      "members": "Members joined",
+      "today": "Check-ins today",
+      "completion": "Completion rate",
+      "finishers": "Finishers"
+    },
+    "sendCheer": "Send encouragement",
+    "cheerText": "Posts to Team wins for everyone to see.",
+    "cheerDefault": "You're showing up every day — proud of this team. Keep going!",
+    "postToWins": "Post to Team wins",
+    "cheerSent": "Posted to Team wins",
+    "err": {
+      "not_joined": "Join the challenge first.",
+      "date_closed": "That day is closed for check-ins.",
+      "out_of_range": "That day isn't part of this challenge.",
+      "invalid_message": "Write up to 280 characters.",
+      "not_allowed": "You don't have access to this challenge."
     }
   }
 }

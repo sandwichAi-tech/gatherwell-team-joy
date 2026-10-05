@@ -1,3 +1,4 @@
+import { ActiveChallengeCard, ChallengesSection } from '@/components/challenges';
 import i18n from '@/lib/i18n';
 import { useEffect, useMemo, useState } from 'react';
 import type { TFunction } from 'i18next';
@@ -103,8 +104,10 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
     </section>
 
     <PinnedAnnouncement teamId={teamId} />
+    <ActiveChallengeCard />
     <ComingUp teamId={teamId} lang={lang} onOpen={setOpenEvent} />
     <FromYourLeader teamId={teamId} role={workspace.role} />
+    <ChallengesSection />
 
     {isLeader && <section className="panel leader-tools"><div className="section-heading"><h2>{t('teamSpace.leaderTools')}</h2><span className="chip">{t('roles.leader')}</span></div>
       <div className="leader-links">
@@ -171,6 +174,10 @@ function winText(t: TFunction, win: Win) {
     case 'shoutout': return `${t('teamSpace.win.shoutout', { name, to: String(win.payload['to_name'] ?? '') })}: “${String(win.payload['body'] ?? '')}”`;
     case 'guest_milestone': return t('teamSpace.win.guest_milestone', { title, count: Number(win.payload['guests'] ?? 0) });
     case 'track_completed': return t('teamSpace.win.track_completed', { name, title: (i18n.resolvedLanguage === 'es' && typeof win.payload['title_es'] === 'string' && win.payload['title_es']) || title });
+    case 'challenge_joined': { const n = Number(win.payload['count'] ?? 1); return n > 1 ? t('teamSpace.win.challenge_joined_group', { name, title: (i18n.resolvedLanguage === 'es' && typeof win.payload['title_es'] === 'string' && win.payload['title_es']) || title, count: n - 1 }) : t('teamSpace.win.challenge_joined', { name, title: (i18n.resolvedLanguage === 'es' && typeof win.payload['title_es'] === 'string' && win.payload['title_es']) || title }); }
+    case 'challenge_streak': return t('teamSpace.win.challenge_streak', { name, title: (i18n.resolvedLanguage === 'es' && typeof win.payload['title_es'] === 'string' && win.payload['title_es']) || title });
+    case 'challenge_finished': return t('teamSpace.win.challenge_finished', { name, title: (i18n.resolvedLanguage === 'es' && typeof win.payload['title_es'] === 'string' && win.payload['title_es']) || title, count: Number(win.payload['days'] ?? 0) });
+    case 'challenge_cheer': return `${t('teamSpace.win.challenge_cheer', { name, title: (i18n.resolvedLanguage === 'es' && typeof win.payload['title_es'] === 'string' && win.payload['title_es']) || title })}: “${String(win.payload['body'] ?? '')}”`;
     case 'subteam_created': return t('teamSpace.win.subteam_created', { name, title });
     default: return t('teamSpace.win.default');
   }

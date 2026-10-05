@@ -1,3 +1,4 @@
+import { ActiveChallengeCard } from '@/components/challenges';
 import { FromYourLeader } from '@/components/templates';
 import { TeamSwitcher } from '@/components/team-switcher';
 import { Link } from '@tanstack/react-router';
@@ -63,6 +64,7 @@ export function HomePage() {
   return <>
     <MobileTeamSwitcher />
     <NextCard />
+    <ActiveChallengeCard />
     <HomeTemplates />
     <LeaderInsightsLink />
     <div className="greeting page-heading"><div><span className="eyebrow">{t('home.eyebrow')}</span><h1>{t('home.greeting', { name: firstName(profile?.full_name) || t('common.name') })}</h1><p>{t('home.subtitle')}</p><span className="chip sample-badge mobile-sample">{t('common.sample')}</span></div><Button className="page-create" onClick={openCreate}><Plus />{t('common.create')}</Button></div>
