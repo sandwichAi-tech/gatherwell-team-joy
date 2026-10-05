@@ -52,7 +52,7 @@ function Hero({ gatherings }: { gatherings: FeedGathering[] }) {
     const pool = real.length ? real : samples;
     return HERO_SLOTS.map((slot, i) => pool[i]
       ? { key: `g-${pool[i].id}`, slot, kind: 'gathering' as const, g: pool[i] }
-      : { key: `p-${slot}`, slot, kind: 'photo' as const, category: PHOTO_CATEGORIES[i] });
+      : { key: `p-${slot}`, slot, kind: 'photo' as const, category: PHOTO_CATEGORIES[i] ?? 'more' });
   }, [gatherings]);
   const initials = gatherings.filter(g => !g.isSample).flatMap(g => g.initials).slice(0, 4);
 

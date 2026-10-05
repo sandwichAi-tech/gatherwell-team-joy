@@ -8,7 +8,7 @@ import { CategoryRow } from '@/components/landing/landing-page';
 import { LocationFilter, sortForFeed } from '@/components/landing/location-filter';
 import { distanceKm, inNextDays, isThisWeekend, isToday, publicGatheringsQuery, type Category } from '@/lib/landing';
 
-export type DiscoverSearch = { cat?: Category; when?: 'today' | 'weekend' | 'week'; near?: 1 };
+export type DiscoverSearch = { cat?: Category | undefined; when?: 'today' | 'weekend' | 'week' | undefined; near?: 1 | undefined };
 
 export function DiscoverPage({ search }: { search: DiscoverSearch }) {
   const { t, i18n } = useTranslation();

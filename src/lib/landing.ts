@@ -36,7 +36,7 @@ export function isPreviewHost() {
 }
 
 function nextOccurrence(dow: number, time: string) {
-  const [hh, mm] = time.split(':').map(Number);
+  const [hh = 0, mm = 0] = time.split(':').map(Number);
   const d = new Date();
   d.setHours(hh, mm, 0, 0);
   let add = (dow - d.getDay() + 7) % 7;
@@ -60,7 +60,7 @@ export const publicGatheringsQuery = (lang: 'en' | 'es') => queryOptions({
     const samples = payload.samples.map((s): FeedGathering => ({
       id: s.id, isSample: true, hero: s.hero, title: lang === 'es' ? s.title_es : s.title_en, startsAt: nextOccurrence(s.dow, s.local_time),
       category: isCategory(s.category) ? s.category : 'more', locationName: s.location_name, isOnline: false,
-      lat: s.lat, lng: s.lng, capacity: s.capacity, going: s.going, goingNames: s.going_names, initials: s.going_names.map(n => n[0]), hostName: s.host_name,
+      lat: s.lat, lng: s.lng, capacity: s.capacity, going: s.going, goingNames: s.going_names, initials: s.going_names.map(n => n[0] ?? ''), hostName: s.host_name,
     }));
     return [...real, ...samples];
   },

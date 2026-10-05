@@ -28,7 +28,7 @@ export function GoingLine({ g, going }: { g: FeedGathering; going: number }) {
 }
 
 /** Morphs to "Going" with a drawn check and a single lavender ring. Real gatherings continue to the guest page. */
-export function RsvpButton({ g, compact }: { g: FeedGathering; compact?: boolean }) {
+export function RsvpButton({ g, compact }: { g: FeedGathering; compact?: boolean | undefined }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [going, setGoing] = useState(false);
@@ -46,14 +46,14 @@ export function RsvpButton({ g, compact }: { g: FeedGathering; compact?: boolean
 
 type CardProps = {
   g: FeedGathering;
-  slot?: string;
-  near?: Coords | null;
-  goingOverride?: number;
-  goingSlot?: ReactNode;
-  showRsvp?: boolean;
-  style?: CSSProperties;
-  className?: string;
-  priority?: boolean;
+  slot?: string | undefined;
+  near?: Coords | null | undefined;
+  goingOverride?: number | undefined;
+  goingSlot?: ReactNode | undefined;
+  showRsvp?: boolean | undefined;
+  style?: CSSProperties | undefined;
+  className?: string | undefined;
+  priority?: boolean | undefined;
 };
 
 export function GatheringCard({ g, slot, near, goingOverride, goingSlot, showRsvp, style, className, priority }: CardProps) {
@@ -87,7 +87,7 @@ export function GatheringCard({ g, slot, near, goingOverride, goingSlot, showRsv
 }
 
 /** Photo-only card for the hero when there aren't enough real gatherings yet. No invented details. */
-export function PhotoCard({ slot, category, style, className, priority }: { slot: string; category: Category; style?: CSSProperties; className?: string; priority?: boolean }) {
+export function PhotoCard({ slot, category, style, className, priority }: { slot: string; category: Category; style?: CSSProperties | undefined; className?: string | undefined; priority?: boolean | undefined }) {
   const { t } = useTranslation();
   return <article className={`gw-gcard ${className ?? ''}`} style={style}>
     <div className="gw-gcard-media">

@@ -13,7 +13,7 @@ export const POSES = [
   { rotate: 3, y: 38, scale: 0.895 },
 ] as const;
 
-export function HeroCardView({ item, goingOverride, goingSlot, priority, style }: { item: HeroItem; goingOverride?: number; goingSlot?: React.ReactNode; priority?: boolean; style?: CSSProperties }) {
+export function HeroCardView({ item, goingOverride, goingSlot, priority, style }: { item: HeroItem; goingOverride?: number | undefined; goingSlot?: React.ReactNode; priority?: boolean | undefined; style?: CSSProperties | undefined }) {
   return item.kind === 'gathering'
     ? <GatheringCard g={item.g} slot={item.slot} goingOverride={goingOverride} goingSlot={goingSlot} priority={priority} className="gw-hero-card" style={style} />
     : <PhotoCard slot={item.slot} category={item.category} priority={priority} className="gw-hero-card" style={style} />;
