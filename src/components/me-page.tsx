@@ -1,3 +1,4 @@
+import { planStatusQuery } from '@/lib/billing';
 import { AssistantUsage } from '@/components/assistant/assistant-usage';
 import { isAdminQuery } from '@/lib/site-media';
 import { NotificationSettings } from '@/components/notifications';
@@ -128,6 +129,7 @@ export function MePage() {
   const { data: profile } = useQuery(profileQuery(userId));
   const { data: workspace } = useQuery(workspaceQuery(userId));
   const { data: teams = [] } = useQuery(teamsQuery(userId));
+  const { data: planStatus } = useQuery(planStatusQuery(userId));
   const homId = useHostOfMonthId(workspace?.teamId);
   const switchTeam = useSwitchTeam(userId);
   const saveLanguage = useLanguageSaver(userId);
@@ -181,6 +183,7 @@ export function MePage() {
 
     {workspace && <section className="panel recognition-panel"><div className="section-heading"><h2>{t('recognition.title')}</h2><Button variant="link" onClick={() => setPanel('badges')}>{t('profile.myBadges')}</Button></div><RecognitionSummary teamId={workspace.teamId} /></section>}
 
+    {planStatus?.status === 'past_due' && <Link to="/plan" className="plan-banner" role="alert">{t('billing.pastDue')}</Link>}
     <AssistantUsage />
     <section className="panel settings-list">
       {row(CalendarDays, t('profile.myGatherings'), () => setPanel('gatherings'))}
@@ -188,7 +191,7 @@ export function MePage() {
       {row(Award, t('profile.myBadges'), () => setPanel('badges'))}
       {row(UsersRound, t('profile.myTeams'), () => setPanel('teams'), <span className="settings-value">{workspace?.name}<ChevronRight className="settings-chevron" /></span>)}
       {row(Bell, t('profile.notifications'), () => setPanel('notifications'))}
-      {row(CreditCard, t('profile.plan'), () => setPanel('plan'), <span className="settings-value">{t(`plans.${workspace?.plan ?? 'free'}`)}<ChevronRight className="settings-chevron" /></span>)}
+      <Link className="settings-row" to="/plan"><CreditCard className="settings-icon" /><span className="settings-label">{t('profile.plan')}</span><span className="settings-value">{t(`billing.plan_${planStatus?.plan ?? 'free'}`)}<ChevronRight className="settings-chevron" /></span></Link>
       <div className="settings-row is-static"><Globe2 className="settings-icon" /><span className="settings-label">{t('me.language')}</span>
         <div className="segmented" role="group" aria-label={t('me.language')}>{(['en', 'es'] as const).map(lang => <Button key={lang} variant="ghost" aria-pressed={i18n.resolvedLanguage === lang} className={i18n.resolvedLanguage === lang ? 'selected' : ''} onClick={() => saveLanguage(lang)}>{lang === 'en' ? 'EN' : 'ES'}</Button>)}</div></div>
       <div className="settings-row is-static"><Sun className="settings-icon" /><span className="settings-label">{t('me.appearance')}</span>
