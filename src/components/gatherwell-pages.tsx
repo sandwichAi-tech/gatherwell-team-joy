@@ -1,3 +1,4 @@
+import { DailyBriefCard, FollowupsHomeCard, MemberPlanCard } from '@/components/smart';
 import { ActiveChallengeCard } from '@/components/challenges';
 import { FromYourLeader } from '@/components/templates';
 import { TeamSwitcher } from '@/components/team-switcher';
@@ -63,6 +64,9 @@ export function HomePage() {
   const stats = [{ key: 'members', Icon: UsersRound }, { key: 'events', Icon: CalendarDays }, { key: 'attendance', Icon: Repeat2 }, { key: 'checkins', Icon: CircleCheck }] as const;
   return <>
     <MobileTeamSwitcher />
+    <DailyBriefCard />
+    <FollowupsHomeCard />
+    <MemberPlanCard />
     <NextCard />
     <ActiveChallengeCard />
     <HomeTemplates />

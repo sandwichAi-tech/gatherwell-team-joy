@@ -1,3 +1,4 @@
+import { LessonSummary } from '@/components/smart';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -211,7 +212,7 @@ function LinkCard({ url }: { url: string }) {
 
 export function LessonPage({ id }: { id: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en'; const qc = useQueryClient(); const navigate = useNavigate();
-  const { data, isLoading, userId } = useLearn();
+  const { data, isLoading, userId, leader } = useLearn();
   const [busy, setBusy] = useState(false); const [justDone, setJustDone] = useState(false);
   if (isLoading || !data) return <div className="min-h-96" />;
   const lesson = data.lessons.find(l => l.id === id);
@@ -236,6 +237,7 @@ export function LessonPage({ id }: { id: string }) {
       {lesson.duration_minutes ? <p className="track-facts">{minutesLabel(t, lesson.duration_minutes)}</p> : null}</div>
     {upcomingLive ? <LiveCard lesson={lesson} track={track} /> : <Player lesson={lesson} />}
     {notes && <section className="panel lesson-notes"><h2>{t('learnHub.notes')}</h2><p>{notes}</p></section>}
+    <LessonSummary lessonId={id} leader={leader} />
     {!upcomingLive && <div className="lesson-complete">
       <Button className={`complete-button ${justDone ? 'is-celebrating' : ''}`} variant={done ? 'secondary' : 'default'} disabled={busy} onClick={toggle} aria-pressed={done}><Check />{t(done ? 'learnHub.completed' : 'learnHub.markComplete')}</Button>
       {done && <span className="completed-note">{t('learnHub.savedProgress')}</span>}</div>}

@@ -23,6 +23,7 @@ import { Route as JoinCodeRouteImport } from './routes/join.$code'
 import { Route as RCodeRouteImport } from './routes/r.$code'
 import { Route as UnsubscribeTokenRouteImport } from './routes/unsubscribe.$token'
 import { Route as AuthenticatedAppEventsRouteImport } from './routes/_authenticated/_app/events'
+import { Route as AuthenticatedAppFollowupsRouteImport } from './routes/_authenticated/_app/followups'
 import { Route as AuthenticatedAppHomeRouteImport } from './routes/_authenticated/_app/home'
 import { Route as AuthenticatedAppLearnRouteImport } from './routes/_authenticated/_app/learn'
 import { Route as AuthenticatedAppMeRouteImport } from './routes/_authenticated/_app/me'
@@ -115,6 +116,12 @@ const AuthenticatedAppEventsRoute = AuthenticatedAppEventsRouteImport.update({
   path: '/events',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppFollowupsRoute =
+  AuthenticatedAppFollowupsRouteImport.update({
+    id: '/followups',
+    path: '/followups',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppHomeRoute = AuthenticatedAppHomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -256,6 +263,7 @@ export interface FileRoutesByFullPath {
   '/r/$code': typeof RCodeRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/events': typeof AuthenticatedAppEventsRoute
+  '/followups': typeof AuthenticatedAppFollowupsRoute
   '/home': typeof AuthenticatedAppHomeRoute
   '/learn': typeof AuthenticatedAppLearnRoute
   '/me': typeof AuthenticatedAppMeRoute
@@ -293,6 +301,7 @@ export interface FileRoutesByTo {
   '/r/$code': typeof RCodeRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/events': typeof AuthenticatedAppEventsRoute
+  '/followups': typeof AuthenticatedAppFollowupsRoute
   '/home': typeof AuthenticatedAppHomeRoute
   '/learn': typeof AuthenticatedAppLearnRoute
   '/me': typeof AuthenticatedAppMeRoute
@@ -333,6 +342,7 @@ export interface FileRoutesById {
   '/r/$code': typeof RCodeRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/_authenticated/_app/events': typeof AuthenticatedAppEventsRoute
+  '/_authenticated/_app/followups': typeof AuthenticatedAppFollowupsRoute
   '/_authenticated/_app/home': typeof AuthenticatedAppHomeRoute
   '/_authenticated/_app/learn': typeof AuthenticatedAppLearnRoute
   '/_authenticated/_app/me': typeof AuthenticatedAppMeRoute
@@ -372,6 +382,7 @@ export interface FileRouteTypes {
     | '/r/$code'
     | '/unsubscribe/$token'
     | '/events'
+    | '/followups'
     | '/home'
     | '/learn'
     | '/me'
@@ -409,6 +420,7 @@ export interface FileRouteTypes {
     | '/r/$code'
     | '/unsubscribe/$token'
     | '/events'
+    | '/followups'
     | '/home'
     | '/learn'
     | '/me'
@@ -448,6 +460,7 @@ export interface FileRouteTypes {
     | '/r/$code'
     | '/unsubscribe/$token'
     | '/_authenticated/_app/events'
+    | '/_authenticated/_app/followups'
     | '/_authenticated/_app/home'
     | '/_authenticated/_app/learn'
     | '/_authenticated/_app/me'
@@ -590,6 +603,13 @@ declare module '@tanstack/react-router' {
       path: '/events'
       fullPath: '/events'
       preLoaderRoute: typeof AuthenticatedAppEventsRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/followups': {
+      id: '/_authenticated/_app/followups'
+      path: '/followups'
+      fullPath: '/followups'
+      preLoaderRoute: typeof AuthenticatedAppFollowupsRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
     '/_authenticated/_app/home': {
@@ -758,6 +778,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppEventsRoute: typeof AuthenticatedAppEventsRoute
+  AuthenticatedAppFollowupsRoute: typeof AuthenticatedAppFollowupsRoute
   AuthenticatedAppHomeRoute: typeof AuthenticatedAppHomeRoute
   AuthenticatedAppLearnRoute: typeof AuthenticatedAppLearnRoute
   AuthenticatedAppMeRoute: typeof AuthenticatedAppMeRoute
@@ -780,6 +801,7 @@ interface AuthenticatedAppRouteRouteChildren {
 
 const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppEventsRoute: AuthenticatedAppEventsRoute,
+  AuthenticatedAppFollowupsRoute: AuthenticatedAppFollowupsRoute,
   AuthenticatedAppHomeRoute: AuthenticatedAppHomeRoute,
   AuthenticatedAppLearnRoute: AuthenticatedAppLearnRoute,
   AuthenticatedAppMeRoute: AuthenticatedAppMeRoute,
