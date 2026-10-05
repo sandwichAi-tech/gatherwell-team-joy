@@ -35,6 +35,7 @@ import { Route as AuthenticatedAppLearnManageRouteImport } from './routes/_authe
 import { Route as AuthenticatedAppLearnRecipesRouteImport } from './routes/_authenticated/_app/learn_.recipes'
 import { Route as AuthenticatedAppTeamInsightsRouteImport } from './routes/_authenticated/_app/team_.insights'
 import { Route as AuthenticatedAppTeamMapRouteImport } from './routes/_authenticated/_app/team_.map'
+import { Route as ApiPublicAiFollowupsRouteImport } from './routes/api/public/ai/followups'
 import { Route as ApiPublicEmailMailgunRouteImport } from './routes/api/public/email/mailgun'
 import { Route as ApiPublicEmailResendRouteImport } from './routes/api/public/email/resend'
 import { Route as ApiPublicOutboxProcessRouteImport } from './routes/api/public/outbox/process'
@@ -180,6 +181,11 @@ const AuthenticatedAppTeamMapRoute = AuthenticatedAppTeamMapRouteImport.update({
   path: '/team/map',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const ApiPublicAiFollowupsRoute = ApiPublicAiFollowupsRouteImport.update({
+  id: '/api/public/ai/followups',
+  path: '/api/public/ai/followups',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicEmailMailgunRoute = ApiPublicEmailMailgunRouteImport.update({
   id: '/api/public/email/mailgun',
   path: '/api/public/email/mailgun',
@@ -262,6 +268,7 @@ export interface FileRoutesByFullPath {
   '/learn/recipes': typeof AuthenticatedAppLearnRecipesRoute
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
+  '/api/public/ai/followups': typeof ApiPublicAiFollowupsRoute
   '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
   '/api/public/email/resend': typeof ApiPublicEmailResendRoute
   '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
@@ -298,6 +305,7 @@ export interface FileRoutesByTo {
   '/learn/recipes': typeof AuthenticatedAppLearnRecipesRoute
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
+  '/api/public/ai/followups': typeof ApiPublicAiFollowupsRoute
   '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
   '/api/public/email/resend': typeof ApiPublicEmailResendRoute
   '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
@@ -337,6 +345,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/learn_/recipes': typeof AuthenticatedAppLearnRecipesRoute
   '/_authenticated/_app/team_/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/_authenticated/_app/team_/map': typeof AuthenticatedAppTeamMapRoute
+  '/api/public/ai/followups': typeof ApiPublicAiFollowupsRoute
   '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
   '/api/public/email/resend': typeof ApiPublicEmailResendRoute
   '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
@@ -375,6 +384,7 @@ export interface FileRouteTypes {
     | '/learn/recipes'
     | '/team/insights'
     | '/team/map'
+    | '/api/public/ai/followups'
     | '/api/public/email/mailgun'
     | '/api/public/email/resend'
     | '/api/public/outbox/process'
@@ -411,6 +421,7 @@ export interface FileRouteTypes {
     | '/learn/recipes'
     | '/team/insights'
     | '/team/map'
+    | '/api/public/ai/followups'
     | '/api/public/email/mailgun'
     | '/api/public/email/resend'
     | '/api/public/outbox/process'
@@ -449,6 +460,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/learn_/recipes'
     | '/_authenticated/_app/team_/insights'
     | '/_authenticated/_app/team_/map'
+    | '/api/public/ai/followups'
     | '/api/public/email/mailgun'
     | '/api/public/email/resend'
     | '/api/public/outbox/process'
@@ -473,6 +485,7 @@ export interface RootRouteChildren {
   JoinCodeRoute: typeof JoinCodeRoute
   RCodeRoute: typeof RCodeRoute
   UnsubscribeTokenRoute: typeof UnsubscribeTokenRoute
+  ApiPublicAiFollowupsRoute: typeof ApiPublicAiFollowupsRoute
   ApiPublicEmailMailgunRoute: typeof ApiPublicEmailMailgunRoute
   ApiPublicEmailResendRoute: typeof ApiPublicEmailResendRoute
   ApiPublicOutboxProcessRoute: typeof ApiPublicOutboxProcessRoute
@@ -663,6 +676,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppTeamMapRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/api/public/ai/followups': {
+      id: '/api/public/ai/followups'
+      path: '/api/public/ai/followups'
+      fullPath: '/api/public/ai/followups'
+      preLoaderRoute: typeof ApiPublicAiFollowupsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/email/mailgun': {
       id: '/api/public/email/mailgun'
       path: '/api/public/email/mailgun'
@@ -810,6 +830,7 @@ const rootRouteChildren: RootRouteChildren = {
   JoinCodeRoute: JoinCodeRoute,
   RCodeRoute: RCodeRoute,
   UnsubscribeTokenRoute: UnsubscribeTokenRoute,
+  ApiPublicAiFollowupsRoute: ApiPublicAiFollowupsRoute,
   ApiPublicEmailMailgunRoute: ApiPublicEmailMailgunRoute,
   ApiPublicEmailResendRoute: ApiPublicEmailResendRoute,
   ApiPublicOutboxProcessRoute: ApiPublicOutboxProcessRoute,
