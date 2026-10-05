@@ -1389,5 +1389,178 @@
     "saved": "Photo updated. It's live now.",
     "error": "Couldn't save. Please try again.",
     "menu": "Site media"
+  },
+  "landing": {
+    "nav": {
+      "find": "Find a gathering",
+      "host": "Host one",
+      "signIn": "Sign in",
+      "getStarted": "Get started",
+      "menu": "Open menu",
+      "close": "Close menu",
+      "main": "Main"
+    },
+    "hero": {
+      "label": "Wellness, in real life",
+      "h1A_before": "Plans that are ",
+      "h1A_accent": "good",
+      "h1A_after": " for you.",
+      "h1B": "Your next workout has a guest list.",
+      "h1C": "Less scrolling. More showing up.",
+      "h1D": "Find your people. Get well together.",
+      "sub": "Run clubs, fit camps, sunrise yoga, sound baths and walks near you. RSVP in a tap and just show up.",
+      "find": "Find a gathering",
+      "host": "Host one",
+      "proof": "{{count}} people showed up this month.",
+      "pause": "Pause card animation",
+      "play": "Play card animation",
+      "stackLabel": "Gatherings happening soon",
+      "photoTitle_run": "Run clubs near you",
+      "photoTitle_fitcamp": "Fit camps near you",
+      "photoTitle_yoga": "Yoga near you",
+      "photoTitle_soundbath": "Sound baths near you",
+      "photoTitle_hike": "Hikes near you",
+      "photoTitle_walk": "Walks near you",
+      "photoTitle_pickleball": "Pickleball near you",
+      "photoTitle_more": "Gatherings near you",
+      "photoMeta": "New gatherings every week"
+    },
+    "card": {
+      "spotsLeft_one": "{{count}} spot left",
+      "spotsLeft_other": "{{count}} spots left",
+      "thisWeekend": "This weekend",
+      "hostedBy": "Hosted by {{name}}",
+      "goingNames": "{{names}} +{{count}} going",
+      "goingCount_one": "{{count}} going",
+      "goingCount_other": "{{count}} going",
+      "beFirst": "Be the first to go",
+      "away": "{{distance}} away",
+      "online": "Online",
+      "rsvp": "RSVP",
+      "going": "Going",
+      "sample": "Sample",
+      "rsvpFor": "RSVP for {{title}}"
+    },
+    "cat": {
+      "run": "Run clubs",
+      "fitcamp": "Fit camps",
+      "yoga": "Yoga",
+      "soundbath": "Sound baths",
+      "hike": "Hikes",
+      "walk": "Walks",
+      "pickleball": "Pickleball",
+      "more": "More",
+      "rowLabel": "Browse by kind of gathering"
+    },
+    "catOne": {
+      "run": "Run club",
+      "fitcamp": "Fit camp",
+      "yoga": "Yoga",
+      "soundbath": "Sound bath",
+      "hike": "Hike",
+      "walk": "Walk",
+      "pickleball": "Pickleball",
+      "more": "Gathering"
+    },
+    "feed": {
+      "label": "This week",
+      "title": "This week near you",
+      "popular": "Popular this week",
+      "seeAll": "See all gatherings",
+      "useLocation": "Use my location",
+      "locationWhy": "We use your location once to sort gatherings by distance. It is never saved.",
+      "allow": "Share location",
+      "notNow": "Not now",
+      "zipLabel": "ZIP code or city",
+      "zipPlaceholder": "e.g. 78704 or Austin",
+      "zipApply": "Show nearby",
+      "zipNote": "Not connected yet: place search turns on once maps are connected. Showing popular gatherings for now.",
+      "nearYou": "Sorted by distance from you",
+      "clear": "Clear location",
+      "empty": "No gatherings posted here yet.",
+      "emptyCat": "Nothing in this category this week.",
+      "hostFirst": "Host the first one",
+      "sampleNote": "Sample gatherings appear on preview only."
+    },
+    "how": {
+      "label": "How it works",
+      "title": "Three taps from your couch to your people.",
+      "s1t": "Find it",
+      "s1b": "Browse what's happening near you.",
+      "s2t": "RSVP",
+      "s2b": "One tap. See who's going.",
+      "s3t": "Show up",
+      "s3b": "Meet your people. Come back next week.",
+      "checkedIn": "You're checked in",
+      "checkedInSub": "Sunrise run club · 7:02 am"
+    },
+    "hostBand": {
+      "label": "For hosts",
+      "title": "Got a crew? Host it on Gatherwell.",
+      "body": "Run club, fit camp or Sunday walk. Create a page, share the link, see who's coming.",
+      "cta": "Host one",
+      "phoneTitle": "Guest list",
+      "going": "Going",
+      "checkedIn": "Checked in",
+      "waitlist": "Waitlist",
+      "justJoined": "just RSVP'd"
+    },
+    "leaders": {
+      "label": "For leaders",
+      "title": "Leading a bigger team?",
+      "body": "Templates, a team calendar and insights so every host on your team can launch great gatherings.",
+      "cta": "See leader tools"
+    },
+    "testimonials": {
+      "label": "From the community",
+      "title": "People who showed up."
+    },
+    "footer": {
+      "tagline": "Wellness is better together.",
+      "discover": "Discover",
+      "host": "Host",
+      "company": "Company",
+      "legal": "Legal",
+      "allGatherings": "All gatherings",
+      "thisWeekend": "This weekend",
+      "hostOne": "Host one",
+      "leaderTools": "Leader tools",
+      "howItWorks": "How it works",
+      "signIn": "Sign in",
+      "terms": "Terms",
+      "privacy": "Privacy",
+      "credits": "Photography credits",
+      "copyright": "© 2026 Gatherwell"
+    },
+    "sticky": {
+      "find": "Find a gathering"
+    },
+    "discover": {
+      "label": "Discover",
+      "title": "Gatherings near you",
+      "sub": "Upcoming public gatherings. RSVP in a tap.",
+      "today": "Today",
+      "weekend": "This weekend",
+      "week": "This week",
+      "dateLabel": "When",
+      "count_one": "{{count}} gathering",
+      "count_other": "{{count}} gatherings",
+      "back": "Back to Gatherwell"
+    },
+    "credits": {
+      "title": "Photography credits",
+      "sub": "Photos used across Gatherwell and the people who took them.",
+      "slot": "Placement",
+      "credit": "Credit",
+      "none": "Not credited"
+    },
+    "meta": {
+      "homeTitle": "Gatherwell · Wellness gatherings near you",
+      "home": "Find run clubs, fit camps, yoga, sound baths, hikes and walks near you. RSVP in a tap and just show up.",
+      "discoverTitle": "Discover gatherings · Gatherwell",
+      "discover": "Browse upcoming run clubs, fit camps, yoga, sound baths and walks near you, and RSVP in a tap.",
+      "creditsTitle": "Photography credits · Gatherwell",
+      "credits": "The photographers behind the images on Gatherwell."
+    }
   }
 }

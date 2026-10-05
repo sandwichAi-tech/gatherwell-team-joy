@@ -1389,5 +1389,178 @@
     "saved": "Foto actualizada. Ya está publicada.",
     "error": "No se pudo guardar. Inténtalo de nuevo.",
     "menu": "Fotos del sitio"
+  },
+  "landing": {
+    "nav": {
+      "find": "Encontrar una reunión",
+      "host": "Organizar una",
+      "signIn": "Iniciar sesión",
+      "getStarted": "Comenzar",
+      "menu": "Abrir menú",
+      "close": "Cerrar menú",
+      "main": "Principal"
+    },
+    "hero": {
+      "label": "Bienestar, en la vida real",
+      "h1A_before": "Planes que te hacen ",
+      "h1A_accent": "bien",
+      "h1A_after": ".",
+      "h1B": "Tu próximo entrenamiento tiene lista de invitados.",
+      "h1C": "Menos scroll. Más presencia.",
+      "h1D": "Encuentra a tu gente. Siéntete bien en compañía.",
+      "sub": "Clubes de corredores, fit camps, yoga al amanecer, baños de sonido y caminatas cerca de ti. Confirma con un toque y solo llega.",
+      "find": "Encontrar una reunión",
+      "host": "Organizar una",
+      "proof": "{{count}} personas llegaron este mes.",
+      "pause": "Pausar la animación de tarjetas",
+      "play": "Reproducir la animación de tarjetas",
+      "stackLabel": "Reuniones próximas",
+      "photoTitle_run": "Clubes de corredores cerca de ti",
+      "photoTitle_fitcamp": "Fit camps cerca de ti",
+      "photoTitle_yoga": "Yoga cerca de ti",
+      "photoTitle_soundbath": "Baños de sonido cerca de ti",
+      "photoTitle_hike": "Caminatas de montaña cerca de ti",
+      "photoTitle_walk": "Caminatas cerca de ti",
+      "photoTitle_pickleball": "Pickleball cerca de ti",
+      "photoTitle_more": "Reuniones cerca de ti",
+      "photoMeta": "Nuevas reuniones cada semana"
+    },
+    "card": {
+      "spotsLeft_one": "Queda {{count}} lugar",
+      "spotsLeft_other": "Quedan {{count}} lugares",
+      "thisWeekend": "Este fin de semana",
+      "hostedBy": "Organiza {{name}}",
+      "goingNames": "{{names}} +{{count}} van",
+      "goingCount_one": "{{count}} va",
+      "goingCount_other": "{{count}} van",
+      "beFirst": "Sé la primera persona en ir",
+      "away": "a {{distance}}",
+      "online": "En línea",
+      "rsvp": "Confirmar",
+      "going": "Voy",
+      "sample": "Ejemplo",
+      "rsvpFor": "Confirmar asistencia a {{title}}"
+    },
+    "cat": {
+      "run": "Correr",
+      "fitcamp": "Fit camps",
+      "yoga": "Yoga",
+      "soundbath": "Baños de sonido",
+      "hike": "Montaña",
+      "walk": "Caminatas",
+      "pickleball": "Pickleball",
+      "more": "Más",
+      "rowLabel": "Explorar por tipo de reunión"
+    },
+    "catOne": {
+      "run": "Club de corredores",
+      "fitcamp": "Fit camp",
+      "yoga": "Yoga",
+      "soundbath": "Baño de sonido",
+      "hike": "Montaña",
+      "walk": "Caminata",
+      "pickleball": "Pickleball",
+      "more": "Reunión"
+    },
+    "feed": {
+      "label": "Esta semana",
+      "title": "Esta semana cerca de ti",
+      "popular": "Populares esta semana",
+      "seeAll": "Ver todas las reuniones",
+      "useLocation": "Usar mi ubicación",
+      "locationWhy": "Usamos tu ubicación una sola vez para ordenar las reuniones por distancia. Nunca se guarda.",
+      "allow": "Compartir ubicación",
+      "notNow": "Ahora no",
+      "zipLabel": "Código postal o ciudad",
+      "zipPlaceholder": "p. ej. 06700 o Guadalajara",
+      "zipApply": "Ver cercanas",
+      "zipNote": "Aún no conectado: la búsqueda por lugar se activa cuando se conecten los mapas. Por ahora mostramos las reuniones populares.",
+      "nearYou": "Ordenadas por distancia",
+      "clear": "Quitar ubicación",
+      "empty": "Aún no hay reuniones publicadas aquí.",
+      "emptyCat": "No hay nada de esta categoría esta semana.",
+      "hostFirst": "Organiza la primera",
+      "sampleNote": "Las reuniones de ejemplo solo aparecen en la vista previa."
+    },
+    "how": {
+      "label": "Cómo funciona",
+      "title": "Tres toques del sillón a tu gente.",
+      "s1t": "Encuéntrala",
+      "s1b": "Mira lo que pasa cerca de ti.",
+      "s2t": "Confirma",
+      "s2b": "Un toque. Mira quién va.",
+      "s3t": "Llega",
+      "s3b": "Conoce a tu gente. Vuelve la próxima semana.",
+      "checkedIn": "Ya registraste tu llegada",
+      "checkedInSub": "Club de corredores al amanecer · 7:02 a. m."
+    },
+    "hostBand": {
+      "label": "Para quienes organizan",
+      "title": "¿Tienes un grupo? Organízalo en Gatherwell.",
+      "body": "Club de corredores, fit camp o caminata dominical. Crea una página, comparte el enlace y mira quién viene.",
+      "cta": "Organizar una",
+      "phoneTitle": "Lista de invitados",
+      "going": "Van",
+      "checkedIn": "Llegaron",
+      "waitlist": "En espera",
+      "justJoined": "acaba de confirmar"
+    },
+    "leaders": {
+      "label": "Para líderes",
+      "title": "¿Lideras un equipo más grande?",
+      "body": "Plantillas, un calendario de equipo y estadísticas para que cada anfitrión de tu equipo lance grandes reuniones.",
+      "cta": "Ver herramientas para líderes"
+    },
+    "testimonials": {
+      "label": "De la comunidad",
+      "title": "Gente que llegó."
+    },
+    "footer": {
+      "tagline": "El bienestar es mejor en compañía.",
+      "discover": "Descubrir",
+      "host": "Organizar",
+      "company": "Compañía",
+      "legal": "Legal",
+      "allGatherings": "Todas las reuniones",
+      "thisWeekend": "Este fin de semana",
+      "hostOne": "Organizar una",
+      "leaderTools": "Herramientas para líderes",
+      "howItWorks": "Cómo funciona",
+      "signIn": "Iniciar sesión",
+      "terms": "Términos",
+      "privacy": "Privacidad",
+      "credits": "Créditos fotográficos",
+      "copyright": "© 2026 Gatherwell"
+    },
+    "sticky": {
+      "find": "Encontrar una reunión"
+    },
+    "discover": {
+      "label": "Descubrir",
+      "title": "Reuniones cerca de ti",
+      "sub": "Próximas reuniones públicas. Confirma con un toque.",
+      "today": "Hoy",
+      "weekend": "Este fin de semana",
+      "week": "Esta semana",
+      "dateLabel": "Cuándo",
+      "count_one": "{{count}} reunión",
+      "count_other": "{{count}} reuniones",
+      "back": "Volver a Gatherwell"
+    },
+    "credits": {
+      "title": "Créditos fotográficos",
+      "sub": "Las fotos que usamos en Gatherwell y quienes las tomaron.",
+      "slot": "Ubicación",
+      "credit": "Crédito",
+      "none": "Sin crédito"
+    },
+    "meta": {
+      "homeTitle": "Gatherwell · Reuniones de bienestar cerca de ti",
+      "home": "Encuentra clubes de corredores, fit camps, yoga, baños de sonido y caminatas cerca de ti. Confirma con un toque y solo llega.",
+      "discoverTitle": "Descubrir reuniones · Gatherwell",
+      "discover": "Explora próximos clubes de corredores, fit camps, yoga, baños de sonido y caminatas cerca de ti, y confirma con un toque.",
+      "creditsTitle": "Créditos fotográficos · Gatherwell",
+      "credits": "Quienes tomaron las fotos de Gatherwell."
+    }
   }
 }

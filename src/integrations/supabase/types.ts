@@ -630,6 +630,7 @@ export type Database = {
         Row: {
           address: string | null
           capacity: number | null
+          category: string | null
           completed_at: string | null
           cover_style: number
           cover_url: string | null
@@ -659,6 +660,7 @@ export type Database = {
         Insert: {
           address?: string | null
           capacity?: number | null
+          category?: string | null
           completed_at?: string | null
           cover_style?: number
           cover_url?: string | null
@@ -688,6 +690,7 @@ export type Database = {
         Update: {
           address?: string | null
           capacity?: number | null
+          category?: string | null
           completed_at?: string | null
           cover_style?: number
           cover_url?: string | null
@@ -1211,6 +1214,63 @@ export type Database = {
           },
         ]
       }
+      sample_gatherings: {
+        Row: {
+          capacity: number | null
+          category: string
+          dow: number
+          going: number
+          going_names: string[]
+          hero: boolean
+          host_name: string
+          id: string
+          is_sample: boolean
+          lat: number | null
+          lng: number | null
+          local_time: string
+          location_name: string
+          slot_order: number
+          title_en: string
+          title_es: string
+        }
+        Insert: {
+          capacity?: number | null
+          category: string
+          dow: number
+          going: number
+          going_names?: string[]
+          hero?: boolean
+          host_name: string
+          id?: string
+          is_sample?: boolean
+          lat?: number | null
+          lng?: number | null
+          local_time: string
+          location_name: string
+          slot_order: number
+          title_en: string
+          title_es: string
+        }
+        Update: {
+          capacity?: number | null
+          category?: string
+          dow?: number
+          going?: number
+          going_names?: string[]
+          hero?: boolean
+          host_name?: string
+          id?: string
+          is_sample?: boolean
+          lat?: number | null
+          lng?: number | null
+          local_time?: string
+          location_name?: string
+          slot_order?: number
+          title_en?: string
+          title_es?: string
+        }
+        Relationships: []
+      }
       saved_recipes: {
         Row: {
           created_at: string
@@ -1514,6 +1574,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      testimonials: {
+        Row: {
+          approved: boolean
+          avatar_url: string | null
+          city: string | null
+          created_at: string
+          id: string
+          name: string
+          photo_url: string | null
+          quote_en: string
+          quote_es: string | null
+          sort_order: number
+        }
+        Insert: {
+          approved?: boolean
+          avatar_url?: string | null
+          city?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          photo_url?: string | null
+          quote_en: string
+          quote_es?: string | null
+          sort_order?: number
+        }
+        Update: {
+          approved?: boolean
+          avatar_url?: string | null
+          city?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          photo_url?: string | null
+          quote_en?: string
+          quote_es?: string | null
+          sort_order?: number
+        }
+        Relationships: []
       }
       tracks: {
         Row: {
@@ -1820,6 +1919,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      infer_gathering_category: {
+        Args: { _category: string; _title: string }
+        Returns: string
+      }
       is_team_member: {
         Args: { _roles: string[]; _team_id: string }
         Returns: boolean
@@ -1828,6 +1931,7 @@ export type Database = {
         Args: { _by?: string; _code: string; _role?: string }
         Returns: string
       }
+      landing_social_proof: { Args: never; Returns: Json }
       launch_template: {
         Args: {
           _location_name: string
@@ -1839,6 +1943,10 @@ export type Database = {
           _timezone: string
         }
         Returns: string
+      }
+      list_public_gatherings: {
+        Args: { _days?: number; _include_samples?: boolean; _limit?: number }
+        Returns: Json
       }
       live_lesson_link: { Args: { _lesson: string }; Returns: string }
       local_today: { Args: { _tz: string }; Returns: string }

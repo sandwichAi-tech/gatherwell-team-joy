@@ -44,7 +44,7 @@ function Onboarding() {
       const profile = await queryClient.fetchQuery(profileQuery(user.id));
       const workspace = await queryClient.fetchQuery(workspaceQuery(user.id));
       const pending = localStorage.getItem(JOIN_CODE_KEY);
-      if (profile?.onboarded && !pending) { void navigate({ to: '/', replace: true }); return; }
+      if (profile?.onboarded && !pending) { void navigate({ to: '/home', replace: true }); return; }
       let joinedTeam: { team: string; leader: string | null } | null = null;
       if (pending) {
         const { data: invite } = await supabase.rpc('get_team_invite', { _code: pending });
@@ -72,7 +72,7 @@ function Onboarding() {
   async function finish() {
     await supabase.from('profiles').update({ onboarded: true }).eq('id', user.id);
     await queryClient.invalidateQueries();
-    void navigate({ to: '/', replace: true });
+    void navigate({ to: '/home', replace: true });
   }
 
   const pickPhoto = (file?: File) => {

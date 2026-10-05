@@ -5,15 +5,15 @@ import { responsiveSrc, siteMediaQuery } from '@/lib/site-media';
 
 type Props = {
   /** A site_media slot key, or pass src directly. */
-  slot?: string;
-  src?: string | null;
-  alt?: string;
-  resizable?: boolean;
-  focal?: { x: number; y: number };
-  aspect?: number;
-  sizes?: string;
-  className?: string;
-  priority?: boolean;
+  slot?: string | undefined;
+  src?: string | null | undefined;
+  alt?: string | undefined;
+  resizable?: boolean | undefined;
+  focal?: { x: number | undefined; y: number };
+  aspect?: number | undefined;
+  sizes?: string | undefined;
+  className?: string | undefined;
+  priority?: boolean | undefined;
 };
 
 /** Every photo renders here so all imagery shares one brand grade (warm overlay, vignette, grain) and a tonal fallback. */

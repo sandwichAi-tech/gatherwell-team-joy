@@ -15,7 +15,7 @@ type Theme = 'system' | 'light' | 'dark';
 type Creation = 'event' | 'announcement' | 'challenge' | 'training' | 'profile' | 'team' | 'learn';
 const AppContext = createContext<{ openCreate: () => void; openPlaceholder: (kind: Creation) => void; openDetail: (title: string, description: string) => void; theme: Theme; setTheme: (theme: Theme) => void; userId: string }>({ userId: '', openCreate: () => {}, openPlaceholder: () => {}, openDetail: () => {}, theme: 'system', setTheme: () => {} });
 export const useGatherwell = () => useContext(AppContext);
-const tabs = [{ key: 'home', path: '/', icon: Home }, { key: 'events', path: '/events', icon: CalendarDays }, { key: 'team', path: '/team', icon: UsersRound }, { key: 'learn', path: '/learn', icon: BookOpen }, { key: 'me', path: '/me', icon: UserRound }] as const;
+const tabs = [{ key: 'home', path: '/home', icon: Home }, { key: 'events', path: '/events', icon: CalendarDays }, { key: 'team', path: '/team', icon: UsersRound }, { key: 'learn', path: '/learn', icon: BookOpen }, { key: 'me', path: '/me', icon: UserRound }] as const;
 const creations = [{ key: 'event', icon: CalendarDays }, { key: 'announcement', icon: Megaphone }, { key: 'challenge', icon: Flag }, { key: 'training', icon: BookOpen }] as const;
 export function GatherwellShell({ children, userId }: { children: ReactNode; userId: string }) {
  const { t } = useTranslation();
@@ -29,7 +29,7 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
  const navigate = useNavigate();
  const [theme, updateTheme] = useState<Theme>('system');
  const [ready, setReady] = useState(false);
- const isActive = (path: string) => pathname === path || (path !== '/' && pathname.startsWith(`${path}/`));
+ const isActive = (path: string) => pathname === path || (pathname.startsWith(`${path}/`));
  const current = tabs.find(tab => isActive(tab.path)) ?? tabs[0];
  useEffect(() => {
   const stored = localStorage.getItem('gatherwell-theme');
@@ -47,7 +47,7 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
  return <AppContext.Provider value={{ openCreate: () => openSheet('create'), openPlaceholder: openSheet, openDetail: (title, description) => { setDetail({ title, description }); setSheet('profile'); }, theme, setTheme, userId }}>
   <div className="min-h-dvh bg-background text-foreground">
    <aside className="desktop-sidebar">
-    <Link to="/" className="brand" aria-label={t('brand')}><span className="brand-mark" aria-hidden="true">g</span><span>{t('brand')}</span></Link>
+    <Link to="/home" className="brand" aria-label={t('brand')}><span className="brand-mark" aria-hidden="true">g</span><span>{t('brand')}</span></Link>
     <div className="workspace-card"><span className="initial-avatar">{initials}</span><div><strong>{workspace?.name ?? t('workspace.none')}</strong><p>{workspace ? t(`plans.${workspace.plan}`) : profile?.full_name}</p></div></div>
     <TeamSwitcher userId={userId} className="sidebar-switcher" />
     <nav className="sidebar-nav" aria-label={t('nav.label')}>{tabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: true }} className={`sidebar-link ${isActive(path) ? 'is-active' : ''}`}><Icon /><span>{t(`nav.${key}`)}</span></Link>)}</nav>
@@ -55,7 +55,7 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
    </aside>
    <div className="app-main">
     <header className="app-header">
-     <Link to="/" className="brand mobile-brand"><span className="brand-mark" aria-hidden="true">g</span><span>{t('brand')}</span></Link>
+     <Link to="/home" className="brand mobile-brand"><span className="brand-mark" aria-hidden="true">g</span><span>{t('brand')}</span></Link>
      <span className="desktop-header-label">{t('common.workspaceLabel')}<span>/</span><strong>{t(`nav.${current.key}`)}</strong></span>
      <div className="header-actions"><Button variant="secondary" className="member-view-button" onClick={() => { setMemberView(value => !value); setDetail({ title: t('roles.member'), description: t('common.previewNote') }); setSheet('profile'); }}>{t(memberView ? 'common.leaderView' : 'common.memberView')}</Button><span className="chip sample-badge">{t('common.sample')}</span><Button variant="ghost" size="icon" className="assistant-button" aria-label={t('common.assistant')} title={t('common.assistant')} onClick={() => openSheet('assistant')}><Sparkles /></Button><Link to="/me" className="header-avatar" aria-label={t('me.profile')}>{initials}</Link></div>
     </header>
