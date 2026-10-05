@@ -44,7 +44,7 @@ async function loadImage(src: string) {
   return new Promise<HTMLImageElement | null>(resolve => { const img = new Image(); img.crossOrigin = 'anonymous'; img.onload = () => resolve(img); img.onerror = () => resolve(null); img.src = src; });
 }
 
-export async function downloadRecognitionCard(o: { eyebrow: string; title: string; subtitle?: string; name: string; photo?: string | null; icon: string; tier: Tier; team: string; file: string }) {
+export async function downloadRecognitionCard(o: { eyebrow: string; title: string; subtitle?: string; name: string; photo?: string | null | undefined; icon: string; tier: Tier; team: string; file: string }) {
   await document.fonts?.ready;
   const c = document.createElement('canvas'); c.width = 1080; c.height = 1920; const x = c.getContext('2d')!;
   x.fillStyle = '#F7F7F9'; x.fillRect(0, 0, 1080, 1920);
@@ -183,7 +183,7 @@ export function ShoutoutSheet({ open, onOpenChange, teamId }: { open: boolean; o
     setBusy(true);
     try {
       const photo = file ? await uploadMedia(userId, file, 'announcement') : null;
-      const { error } = await supabase.rpc('give_shoutout', { _team: teamId, _to: to, _message: msg.trim(), _photo: photo ?? undefined });
+      const { error } = await supabase.rpc('give_shoutout', { _team: teamId, _to: to, _message: msg.trim(), _photo: photo as string });
       if (error) { if (error.message.includes('claim_blocked')) setClaim(true); else toast.error(t(recognitionError(error))); setBusy(false); return; }
       toast.success(t('recognition.shoutoutSent')); await queryClient.invalidateQueries({ queryKey: teamKey(teamId) }); onOpenChange(false);
     } catch (error) { toast.error(t(recognitionError(error))); }
