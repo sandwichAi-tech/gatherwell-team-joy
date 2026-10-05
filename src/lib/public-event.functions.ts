@@ -8,7 +8,9 @@ export const getPublicEventMeta = createServerFn({ method: 'GET' })
     const { createClient } = await import('@supabase/supabase-js');
     const url = process.env['SUPABASE_URL']; const key = process.env['SUPABASE_PUBLISHABLE_KEY'];
     if (!url || !key) return null;
-    const sb = createClient(url, key, { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } });
+    const sb = createClient(url, key, { auth: { storage: undefined, persistSession: false, autoRefreshToken: false }, global: { fetch: (input, init) => {
+      const h = new Headers(init?.headers); if (key.startsWith('sb_') && h.get('Authorization') === `Bearer ${key}`) h.delete('Authorization'); h.set('apikey', key); return fetch(input, { ...init, headers: h });
+    } } });
     const { data: ev } = await sb.rpc('get_public_event', { _id: data.id });
     const e = ev as null | { title: string; starts_at: string; timezone: string; cover_url: string | null; location_name: string | null; address: string | null; lat: number | null; lng: number | null; status: string };
     if (!e) return null;
