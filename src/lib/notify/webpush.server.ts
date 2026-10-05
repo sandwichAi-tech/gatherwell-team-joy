@@ -1,10 +1,11 @@
 // Minimal Web Push (VAPID + aes128gcm, RFC 8291/8292) on Web Crypto, so it runs in the edge runtime.
 const enc = new TextEncoder();
+type B = Uint8Array<ArrayBuffer>;
 const b64u = {
   encode(buf: ArrayBuffer | Uint8Array) { const b = buf instanceof Uint8Array ? buf : new Uint8Array(buf); let s = ''; for (const x of b) s += String.fromCharCode(x); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); },
-  decode(s: string) { const p = s.replace(/-/g, '+').replace(/_/g, '/'); const bin = atob(p + '='.repeat((4 - (p.length % 4)) % 4)); return Uint8Array.from(bin, c => c.charCodeAt(0)); },
+  decode(s: string) { const p = s.replace(/-/g, '+').replace(/_/g, '/'); const bin = atob(p + '='.repeat((4 - (p.length % 4)) % 4)); return Uint8Array.from(bin, c => c.charCodeAt(0)) as B; },
 };
-const concat = (...parts: Uint8Array[]) => { const out = new Uint8Array(parts.reduce((n, p) => n + p.length, 0)); let o = 0; for (const p of parts) { out.set(p, o); o += p.length; } return out; };
+const concat = (...parts: Uint8Array[]): B => { const out = new Uint8Array(parts.reduce((n, p) => n + p.length, 0)); let o = 0; for (const p of parts) { out.set(p, o); o += p.length; } return out; };
 
 async function vapidHeader(endpoint: string, publicKey: string, privateKey: string) {
   const pub = b64u.decode(publicKey);
@@ -16,7 +17,7 @@ async function vapidHeader(endpoint: string, publicKey: string, privateKey: stri
   return `vapid t=${header}.${claims}.${b64u.encode(sig)}, k=${publicKey}`;
 }
 
-async function hkdf(salt: Uint8Array, ikm: Uint8Array, info: Uint8Array, bits: number) {
+async function hkdf(salt: B, ikm: B, info: B, bits: number) {
   const key = await crypto.subtle.importKey('raw', ikm, 'HKDF', false, ['deriveBits']);
   return new Uint8Array(await crypto.subtle.deriveBits({ name: 'HKDF', hash: 'SHA-256', salt, info }, key, bits));
 }
