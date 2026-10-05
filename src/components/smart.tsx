@@ -191,7 +191,7 @@ export function FollowupInbox() {
     {groups.map(g => <section key={g[0]!.event_id} className="followup-group"><h2>{g[0]!.events?.title}<small>{g[0]!.events ? fmt(g[0]!.events.starts_at) : ''}</small></h2>
       {g.map(d => <DraftCard key={d.id} d={d} onChanged={refresh} />)}</section>)}
     {past.filter(e => !withDrafts.has(e.id)).length > 0 && <section className="panel"><h2>{t('smart.followups.prepareTitle')}</h2><p className="auth-subtitle">{t('smart.followups.prepareText')}</p>
-      {past.filter(e => !withDrafts.has(e.id)).map(e => <div key={e.id} className="person-row"><div className="person-info"><h3>{e.title}</h3><p>{fmt(e.starts_at)}</p></div>
+      {past.filter(e => !withDrafts.has(e.id)).map(e => <div key={e.id} className="person-row prepare-row"><div className="person-info"><h3>{e.title}</h3><p>{fmt(e.starts_at)}</p></div>
         <Button size="sm" variant="secondary" onClick={async () => { const r = await prepare({ data: { eventId: e.id } }); if (!r.ok) { toast.error(t('profile.saveError')); return; } toast.success(r.created ? t('smart.followups.prepared', { count: r.created }) : t('smart.followups.noGuests')); await refresh(); }}>{t('smart.followups.prepare')}</Button></div>)}</section>}
   </>;
 }

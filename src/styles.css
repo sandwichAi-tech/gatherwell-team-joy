@@ -992,3 +992,4 @@ ul.as-list{list-style:disc}ol.as-list{list-style:decimal}
 .as-sources { display: flex; flex-wrap: wrap; gap: .5rem; }
 .as-source-chip { display: inline-flex; align-items: center; gap: .375rem; min-height: 36px; padding: .25rem .75rem; border: 1px solid var(--border); border-radius: 999px; font-size: .8125rem; color: var(--foreground); text-decoration: none; background: var(--card); }
 .as-source-chip svg { width: 14px; height: 14px; color: var(--primary); }
+.prepare-row .person-info { flex: 1; min-width: 0; } .prepare-row > button { flex: none; width: auto; }
