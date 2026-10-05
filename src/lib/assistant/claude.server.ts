@@ -17,7 +17,7 @@ export function systemPrompt(o: { lang: Lang; name: string; screen: Screen; toda
   ].join('\n');
 }
 
-async function call(key: string, body: unknown) {
+export async function call(key: string, body: unknown) {
   const res = await fetch(ANTHROPIC_URL, { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': ANTHROPIC_VERSION }, body: JSON.stringify(body) });
   if (!res.ok) {
     const text = await res.text().catch(() => '');
