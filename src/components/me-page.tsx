@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import {
   CalendarDays, Flag, Award, UsersRound, Bell, CreditCard, Globe2, Sun, Moon, Monitor, LifeBuoy, FileText, ShieldCheck,
   LogOut, ChevronRight, Camera, Upload, Check, ExternalLink, Pencil,
+  ImageDown,
 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
