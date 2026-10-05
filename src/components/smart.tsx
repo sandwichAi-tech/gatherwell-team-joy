@@ -1,3 +1,4 @@
+import { trackEvent } from '@/lib/analytics';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -107,7 +108,7 @@ type Draft = { id: string; event_id: string; guest_name: string; language: strin
 const waLink = (phone: string, text: string) => `https://wa.me/${phone.replace(/[^\d]/g, '')}?text=${encodeURIComponent(text)}`;
 
 function DraftCard({ d, onChanged }: { d: Draft; onChanged: () => void }) {
-  const { t } = useTranslation(); const send = useServerFn(sendFollowup);
+  const { t } = useTranslation(); const sendRaw = useServerFn(sendFollowup); const send: typeof sendRaw = async a => { const r = await sendRaw(a); trackEvent('followup_sent'); return r; };
   const [edit, setEdit] = useState(false); const [msg, setMsg] = useState(d.message); const [busy, setBusy] = useState(false);
   useEffect(() => setMsg(d.message), [d.message]);
   const r = d.rsvps; const canEmail = !!(r?.email_opt_in && r.guest_email); const canSms = !!(r?.sms_opt_in && r.guest_phone);
@@ -147,7 +148,7 @@ function DraftCard({ d, onChanged }: { d: Draft; onChanged: () => void }) {
 
 export function FollowupInbox() {
   const { t, i18n } = useTranslation(); const { userId } = useGatherwell(); const qc = useQueryClient();
-  const send = useServerFn(sendFollowup); const prepare = useServerFn(prepareFollowupsNow);
+  const sendRaw = useServerFn(sendFollowup); const send: typeof sendRaw = async a => { const r = await sendRaw(a); trackEvent('followup_sent'); return r; }; const prepare = useServerFn(prepareFollowupsNow);
   const key = ['followups', userId];
   const { data: drafts = [], isLoading } = useQuery({
     queryKey: [...key, 'list'], queryFn: async () => {

@@ -1,3 +1,4 @@
+import { trackEvent } from '@/lib/analytics';
 import { useEffect, useRef, useState } from 'react';
 import { useServerFn } from '@tanstack/react-start';
 import { useQueryClient } from '@tanstack/react-query';
@@ -32,6 +33,7 @@ function Conversation({ screen, name, close, chat }: { screen: Screen; name: str
   useEffect(() => () => recRef.current?.stop(), []);
 
   const send = async (raw: string) => {
+    trackEvent('assistant_used', { screen });
     const value = raw.trim(); if (!value || busy) return;
     const next: Msg[] = [...msgs, { id: ++idRef.current, role: 'user', text: value }];
     setMsgs(next); setText(''); setBusy(true);

@@ -71,7 +71,7 @@ function Onboarding() {
   }, []);
 
   async function finish() {
-    await supabase.from('profiles').update({ onboarded: true }).eq('id', user.id); trackEvent('onboarding_complete');
+    await supabase.from('profiles').update({ onboarded: true }).eq('id', user.id); trackEvent('signup'); trackEvent('onboarding_complete');
     await queryClient.invalidateQueries();
     void navigate({ to: '/home', replace: true });
   }
