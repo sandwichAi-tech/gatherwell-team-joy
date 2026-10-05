@@ -116,6 +116,135 @@ export type Database = {
           },
         ]
       }
+      challenge_checkins: {
+        Row: {
+          challenge_id: string
+          checkin_date: string
+          created_at: string
+          id: string
+          note: string | null
+          photo_path: string | null
+          user_id: string
+        }
+        Insert: {
+          challenge_id: string
+          checkin_date: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          photo_path?: string | null
+          user_id: string
+        }
+        Update: {
+          challenge_id?: string
+          checkin_date?: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          photo_path?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_checkins_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      challenge_members: {
+        Row: {
+          challenge_id: string
+          joined_at: string
+          user_id: string
+        }
+        Insert: {
+          challenge_id: string
+          joined_at?: string
+          user_id?: string
+        }
+        Update: {
+          challenge_id?: string
+          joined_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_members_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      challenges: {
+        Row: {
+          cover_style: number
+          cover_url: string | null
+          created_at: string
+          created_by: string
+          daily_prompt_en: string | null
+          daily_prompt_es: string | null
+          description_en: string | null
+          description_es: string | null
+          ends_on: string
+          id: string
+          is_paid: boolean
+          price_cents: number | null
+          starts_on: string
+          team_id: string
+          title_en: string
+          title_es: string
+        }
+        Insert: {
+          cover_style?: number
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string
+          daily_prompt_en?: string | null
+          daily_prompt_es?: string | null
+          description_en?: string | null
+          description_es?: string | null
+          ends_on: string
+          id?: string
+          is_paid?: boolean
+          price_cents?: number | null
+          starts_on: string
+          team_id: string
+          title_en?: string
+          title_es?: string
+        }
+        Update: {
+          cover_style?: number
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string
+          daily_prompt_en?: string | null
+          daily_prompt_es?: string | null
+          description_en?: string | null
+          description_es?: string | null
+          ends_on?: string
+          id?: string
+          is_paid?: boolean
+          price_cents?: number | null
+          starts_on?: string
+          team_id?: string
+          title_en?: string
+          title_es?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenges_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_checklists: {
         Row: {
           event_id: string
@@ -1083,11 +1212,50 @@ export type Database = {
       }
       can_edit_track: { Args: { _track: string }; Returns: boolean }
       can_manage_event: { Args: { _event_id: string }; Returns: boolean }
+      can_read_challenge: { Args: { _c: string }; Returns: boolean }
       can_read_track: { Args: { _track: string }; Returns: boolean }
       can_rsvp_event: { Args: { _event_id: string }; Returns: boolean }
       can_use_team_templates: { Args: { _team: string }; Returns: boolean }
       can_view_event: { Args: { _event_id: string }; Returns: boolean }
       cancel_rsvp_by_code: { Args: { _code: string }; Returns: boolean }
+      challenge_check_in: {
+        Args: {
+          _c: string
+          _date: string
+          _note?: string
+          _photo?: string
+          _tz: string
+        }
+        Returns: Json
+      }
+      challenge_counts: {
+        Args: { _ids: string[] }
+        Returns: {
+          challenge_id: string
+          members: number
+        }[]
+      }
+      challenge_leaderboard: {
+        Args: { _c: string; _tz?: string }
+        Returns: {
+          best_streak: number
+          checkins: number
+          current_streak: number
+          full_name: string
+          rank: number
+          user_id: string
+        }[]
+      }
+      challenge_stats: { Args: { _c: string; _tz?: string }; Returns: Json }
+      challenge_streaks: {
+        Args: { _c: string; _today?: string; _u: string }
+        Returns: {
+          best_streak: number
+          checkins: number
+          current_streak: number
+          last_date: string
+        }[]
+      }
       check_in_code: { Args: { _code: string; _event: string }; Returns: Json }
       check_in_rsvp: {
         Args: { _rsvp: string; _undo?: boolean }
@@ -1157,6 +1325,7 @@ export type Database = {
         Returns: string
       }
       live_lesson_link: { Args: { _lesson: string }; Returns: string }
+      local_today: { Args: { _tz: string }; Returns: string }
       my_poll_votes: {
         Args: { _code: string; _event: string }
         Returns: {
@@ -1170,6 +1339,10 @@ export type Database = {
           team_id: string
           team_name: string
         }[]
+      }
+      post_challenge_encouragement: {
+        Args: { _c: string; _message: string }
+        Returns: undefined
       }
       post_shoutout: {
         Args: { _message: string; _team: string; _to: string }

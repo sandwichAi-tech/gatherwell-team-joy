@@ -460,7 +460,12 @@
       "shoutout": "{{name}} reconoció a {{to}}",
       "guest_milestone": "{{title}} llegó a {{count}} invitados",
       "checked_in_group": "{{name}} y {{count}} personas más se registraron en {{title}}",
-      "track_completed": "{{name}} completó {{title}}"
+      "track_completed": "{{name}} completó {{title}}",
+      "challenge_joined": "{{name}} se unió a {{title}}",
+      "challenge_joined_group": "{{name}} y {{count}} más se unieron a {{title}}",
+      "challenge_streak": "{{name}} logró una racha de 7 días en {{title}}",
+      "challenge_finished": "{{name}} terminó {{title}}: {{count}} días",
+      "challenge_cheer": "{{name}} dio ánimo en {{title}}"
     },
     "react": {
       "like": "Me gusta",
@@ -1122,6 +1127,121 @@
       "tracks": "Rutas",
       "recipes": "Recetas",
       "progress": "Avance"
+    }
+  },
+  "challenges": {
+    "title": "Retos",
+    "new": "Nuevo reto",
+    "edit": "Editar reto",
+    "delete": "Eliminar reto",
+    "confirmDelete": "¿Eliminar este reto y los registros de todos?",
+    "activeNow": "Reto en curso",
+    "dayOf": "Día {{day}} de {{total}}",
+    "days_one": "{{count}} día",
+    "days_other": "{{count}} días",
+    "joinedCount_one": "{{count}} se unió",
+    "joinedCount_other": "{{count}} se unieron",
+    "joined": "Unida",
+    "streakShort_one": "racha de {{count}} día",
+    "streakShort_other": "racha de {{count}} días",
+    "bestShort_one": "mejor: {{count}} día",
+    "bestShort_other": "mejor: {{count}} días",
+    "join": "Unirme",
+    "joinChallenge": "Unirme al reto",
+    "checkIn": "Registrar",
+    "checkInToday": "Registrar mi día de hoy",
+    "checkInYesterday": "¿Se te pasó anoche? Registra ayer (hasta el mediodía)",
+    "doneToday": "Listo por hoy",
+    "doneAt": "Registrado a las {{time}}",
+    "phase": {
+      "active": "Activos",
+      "upcoming": "Próximos",
+      "past": "Pasados"
+    },
+    "none": {
+      "active": "No hay retos activos ahora.",
+      "upcoming": "Aún no hay nada programado.",
+      "past": "Aún no hay retos pasados."
+    },
+    "sampleNote": "Reto de ejemplo. Los retos de tu equipo aparecerán aquí cuando un líder cree uno.",
+    "claimRule": "Que se trate de hábitos y constancia: sin afirmaciones de salud, peso ni ingresos.",
+    "startFrom": "Empieza desde",
+    "startsOn": "Empieza",
+    "endsOn": "Termina",
+    "dailyPrompt": "Mensaje del día",
+    "paid": "Reto de pago",
+    "paidNote": "Los retos de pago llegarán con los pagos.",
+    "starter": {
+      "consistency": {
+        "title": "Constancia de 21 días",
+        "description": "Elige una pequeña acción diaria y cúmplela 21 días seguidos, en equipo.",
+        "prompt": "¿Hiciste tu acción de hoy? Registra tu día y cuéntale al equipo cómo te fue."
+      },
+      "walk": {
+        "title": "Caminata diaria",
+        "description": "Una caminata cada día durante 14 días: la distancia y el ritmo que quieras, sola o acompañada.",
+        "prompt": "Sal a caminar hoy y luego registra tu día. ¿A dónde fuiste?"
+      },
+      "hydration": {
+        "title": "Hábito de hidratación",
+        "description": "Siete días con tu botella de agua cerca y rellenándola durante el día.",
+        "prompt": "Ten tu botella a la mano hoy. Registra tu día cuando la rellenes."
+      },
+      "morning": {
+        "title": "Rutina matutina",
+        "description": "Empieza cada mañana con una rutina corta que tú elijas: estirarte, escribir o un café tranquilo.",
+        "prompt": "¿Cómo te fue con tu rutina de la mañana? Registra tu día antes del mediodía."
+      }
+    },
+    "todaysPrompt": "Mensaje de hoy",
+    "defaultPrompt": "Cumple con tu día y regístralo.",
+    "currentStreak": "Racha actual",
+    "bestStreak": "Mejor racha",
+    "checkIns": "Registros",
+    "calendar": "Días del reto",
+    "checkedIn": "Registrado",
+    "checkInFor": "Registrar {{date}}",
+    "today": "hoy",
+    "yesterday": "ayer",
+    "noteOptional": "Nota corta (opcional)",
+    "photoOptional": "Foto de progreso (opcional)",
+    "addPhoto": "Agregar foto",
+    "photoPrivate": "Solo tú puedes ver tus fotos.",
+    "leaderboard": "Tabla de posiciones",
+    "leaderboardNote": "Según registros y luego racha.",
+    "yourRank": "Vas en el #{{rank}}",
+    "youreRank": "Vas en el #{{rank}}. ¡Sigue así!",
+    "boardEmpty": "Nadie se ha unido todavía.",
+    "myPhotos": "Mis fotos de progreso",
+    "photosPrivate": "Privadas: solo tú puedes verlas.",
+    "noPhotos": "Las fotos que agregues al registrar tu día aparecerán aquí.",
+    "progressPhoto": "Foto de progreso",
+    "finishedEyebrow": "Reto completado",
+    "finishedTitle": "Terminaste {{title}}",
+    "finishedText_one": "Registraste tu día {{count}} vez, sin fallar.",
+    "finishedText_other": "Registraste los {{count}} días, sin fallar.",
+    "downloadCard": "Descargar tarjeta para historia",
+    "storyLine": "Reto completado",
+    "storyDays_one": "día registrado",
+    "storyDays_other": "días registrados",
+    "leaderView": "Vista de líder",
+    "stat": {
+      "members": "Se unieron",
+      "today": "Registros hoy",
+      "completion": "Tasa de cumplimiento",
+      "finishers": "Terminaron"
+    },
+    "sendCheer": "Enviar ánimo",
+    "cheerText": "Se publica en Logros del equipo para que todos lo vean.",
+    "cheerDefault": "Están cumpliendo cada día. ¡Qué orgullo este equipo! Sigan así.",
+    "postToWins": "Publicar en Logros del equipo",
+    "cheerSent": "Publicado en Logros del equipo",
+    "err": {
+      "not_joined": "Primero únete al reto.",
+      "date_closed": "Ese día ya no acepta registros.",
+      "out_of_range": "Ese día no es parte del reto.",
+      "invalid_message": "Escribe hasta 280 caracteres.",
+      "not_allowed": "No tienes acceso a este reto."
     }
   }
 }

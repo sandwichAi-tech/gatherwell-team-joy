@@ -23,6 +23,7 @@ import { Route as AuthenticatedAppEventsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAppLearnRouteImport } from './routes/_authenticated/_app/learn'
 import { Route as AuthenticatedAppMeRouteImport } from './routes/_authenticated/_app/me'
 import { Route as AuthenticatedAppTeamRouteImport } from './routes/_authenticated/_app/team'
+import { Route as AuthenticatedAppChallengeIdRouteImport } from './routes/_authenticated/_app/challenge.$id'
 import { Route as AuthenticatedAppEventIdRouteImport } from './routes/_authenticated/_app/event.$id'
 import { Route as AuthenticatedAppGatheringNewRouteImport } from './routes/_authenticated/_app/gathering.new'
 import { Route as AuthenticatedAppLearnManageRouteImport } from './routes/_authenticated/_app/learn_.manage'
@@ -104,6 +105,12 @@ const AuthenticatedAppTeamRoute = AuthenticatedAppTeamRouteImport.update({
   path: '/team',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppChallengeIdRoute =
+  AuthenticatedAppChallengeIdRouteImport.update({
+    id: '/challenge/$id',
+    path: '/challenge/$id',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppEventIdRoute = AuthenticatedAppEventIdRouteImport.update({
   id: '/event/$id',
   path: '/event/$id',
@@ -188,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/learn': typeof AuthenticatedAppLearnRoute
   '/me': typeof AuthenticatedAppMeRoute
   '/team': typeof AuthenticatedAppTeamRoute
+  '/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/event/$id': typeof AuthenticatedAppEventIdRoute
   '/gathering/new': typeof AuthenticatedAppGatheringNewRoute
   '/learn/manage': typeof AuthenticatedAppLearnManageRoute
@@ -214,6 +222,7 @@ export interface FileRoutesByTo {
   '/learn': typeof AuthenticatedAppLearnRoute
   '/me': typeof AuthenticatedAppMeRoute
   '/team': typeof AuthenticatedAppTeamRoute
+  '/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/event/$id': typeof AuthenticatedAppEventIdRoute
   '/gathering/new': typeof AuthenticatedAppGatheringNewRoute
   '/learn/manage': typeof AuthenticatedAppLearnManageRoute
@@ -243,6 +252,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/me': typeof AuthenticatedAppMeRoute
   '/_authenticated/_app/team': typeof AuthenticatedAppTeamRoute
   '/_authenticated/_app/': typeof AuthenticatedAppIndexRoute
+  '/_authenticated/_app/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/_authenticated/_app/event/$id': typeof AuthenticatedAppEventIdRoute
   '/_authenticated/_app/gathering/new': typeof AuthenticatedAppGatheringNewRoute
   '/_authenticated/_app/learn_/manage': typeof AuthenticatedAppLearnManageRoute
@@ -271,6 +281,7 @@ export interface FileRouteTypes {
     | '/learn'
     | '/me'
     | '/team'
+    | '/challenge/$id'
     | '/event/$id'
     | '/gathering/new'
     | '/learn/manage'
@@ -297,6 +308,7 @@ export interface FileRouteTypes {
     | '/learn'
     | '/me'
     | '/team'
+    | '/challenge/$id'
     | '/event/$id'
     | '/gathering/new'
     | '/learn/manage'
@@ -325,6 +337,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/me'
     | '/_authenticated/_app/team'
     | '/_authenticated/_app/'
+    | '/_authenticated/_app/challenge/$id'
     | '/_authenticated/_app/event/$id'
     | '/_authenticated/_app/gathering/new'
     | '/_authenticated/_app/learn_/manage'
@@ -449,6 +462,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppTeamRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/challenge/$id': {
+      id: '/_authenticated/_app/challenge/$id'
+      path: '/challenge/$id'
+      fullPath: '/challenge/$id'
+      preLoaderRoute: typeof AuthenticatedAppChallengeIdRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/event/$id': {
       id: '/_authenticated/_app/event/$id'
       path: '/event/$id'
@@ -542,6 +562,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppMeRoute: typeof AuthenticatedAppMeRoute
   AuthenticatedAppTeamRoute: typeof AuthenticatedAppTeamRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
+  AuthenticatedAppChallengeIdRoute: typeof AuthenticatedAppChallengeIdRoute
   AuthenticatedAppEventIdRoute: typeof AuthenticatedAppEventIdRoute
   AuthenticatedAppGatheringNewRoute: typeof AuthenticatedAppGatheringNewRoute
   AuthenticatedAppLearnManageRoute: typeof AuthenticatedAppLearnManageRoute
@@ -562,6 +583,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppMeRoute: AuthenticatedAppMeRoute,
   AuthenticatedAppTeamRoute: AuthenticatedAppTeamRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
+  AuthenticatedAppChallengeIdRoute: AuthenticatedAppChallengeIdRoute,
   AuthenticatedAppEventIdRoute: AuthenticatedAppEventIdRoute,
   AuthenticatedAppGatheringNewRoute: AuthenticatedAppGatheringNewRoute,
   AuthenticatedAppLearnManageRoute: AuthenticatedAppLearnManageRoute,
