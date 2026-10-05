@@ -39,7 +39,7 @@ export const siteMediaQuery = () => queryOptions({
 /** Responsive source attributes; uploaded photos are already sized to 2400px WebP on upload. */
 export function responsiveSrc(url: string, resizable: boolean) {
   if (!resizable) return { src: url };
-  const at = (w: number) => `${url}?w=${w}&q=80&auto=format&fit=crop`;
+  const at = (w: number) => { const u = new URL(url); u.searchParams.set('w', String(w)); u.searchParams.set('q', '80'); u.searchParams.set('auto', 'format'); u.searchParams.set('fit', 'crop'); return u.href; };
   return { src: at(1600), srcSet: SRCSET_WIDTHS.map(w => `${at(w)} ${w}w`).join(', ') };
 }
 
@@ -48,7 +48,8 @@ export const isAdminQuery = (userId: string | undefined) => queryOptions({
   enabled: !!userId,
   staleTime: 10 * 60_000,
   queryFn: async () => {
-    const { data, error } = await supabase.rpc('has_role', { _user_id: userId!, _role: 'admin' });
+    if (!userId) return false;
+    const { data, error } = await supabase.rpc('has_role', { _user_id: userId, _role: 'admin' });
     if (error) return false;
     return !!data;
   },
@@ -66,7 +67,9 @@ export async function cropToAspect(file: File, aspect: number, focalX: number, f
   const outH = Math.round(outW / aspect);
   const canvas = document.createElement('canvas');
   canvas.width = outW; canvas.height = outH;
-  canvas.getContext('2d')!.drawImage(bitmap, sx, sy, cw, ch, 0, 0, outW, outH);
+  const ctx = canvas.getContext('2d');
+  if (!ctx) { bitmap.close(); throw new Error('canvas_unavailable'); }
+  ctx.drawImage(bitmap, sx, sy, cw, ch, 0, 0, outW, outH);
   bitmap.close();
   return new Promise((resolve, reject) => canvas.toBlob(b => (b ? resolve(b) : reject(new Error('encode'))), 'image/webp', 0.8));
 }

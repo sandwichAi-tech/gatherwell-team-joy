@@ -32,7 +32,7 @@ export function BrandImage({ slot, src, alt, resizable, focal, aspect, sizes = '
   const style: CSSProperties = ratio ? { aspectRatio: String(ratio) } : {};
   return (
     <figure className={`brand-image ${broken ? 'is-fallback' : ''} ${className ?? ''}`.trim()} style={style} role={broken && label ? 'img' : undefined} aria-label={broken && label ? label : undefined}>
-      {!broken && <img {...responsiveSrc(url, canResize)} sizes={sizes} alt={label} loading={priority ? 'eager' : 'lazy'} decoding="async" style={{ objectPosition: `${fx * 100}% ${fy * 100}%` }} onError={() => setFailed(url)} />}
+      {!broken && <img {...responsiveSrc(url, canResize)} sizes={sizes} alt={label} loading={priority ? 'eager' : 'lazy'} fetchPriority={priority ? 'high' : 'auto'} decoding="async" style={{ objectPosition: `${fx * 100}% ${fy * 100}%` }} onError={() => setFailed(url)} />}
       <span className="brand-image-grade" aria-hidden="true" />
       <span className="brand-image-grain" aria-hidden="true" />
     </figure>

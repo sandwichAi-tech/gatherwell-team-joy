@@ -17,24 +17,21 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import i18n from "@/lib/i18n";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { ListSkeleton } from '@/components/launch-states';
 
 function NotFoundComponent() {
   const { t } = useTranslation();
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
+    <div className="missing-page">
+      <div className="missing-inner">
+        <span className="brand"><span className="brand-mark" aria-hidden="true">g</span>{t('brand')}</span>
+        <h1 className="missing-number">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">{t("error.notFound")}</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           {t("error.missing")}
         </p>
         <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            {t("error.home")}
-          </Link>
+          <Button asChild><Link to="/">{t("error.home")}</Link></Button>
         </div>
       </div>
     </div>
@@ -84,7 +81,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { title: i18n.t("brand") },
       { name: "description", content: i18n.t("meta.home") },
       { name: "theme-color", content: "#F7F7F9" },
@@ -111,6 +108,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
+  pendingComponent: ListSkeleton,
 });
 
 function RootShell({ children }: { children: ReactNode }) {
@@ -147,6 +145,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <a className="skip-link" href="#main-content">{i18n.t('launch.skip')}</a>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <Toaster position="top-center" />
