@@ -465,7 +465,10 @@
       "challenge_joined_group": "{{name}} and {{count}} more joined {{title}}",
       "challenge_streak": "{{name}} hit a 7-day streak in {{title}}",
       "challenge_finished": "{{name}} finished {{title}} — {{count}} days",
-      "challenge_cheer": "{{name}} cheered on {{title}}"
+      "challenge_cheer": "{{name}} cheered on {{title}}",
+      "badge_earned": "{{name}} earned the {{badge}} badge",
+      "badge_awarded": "{{name}} received the {{badge}} badge from {{by}}",
+      "host_of_month": "{{name}} is Host of the Month for {{month}}"
     },
     "react": {
       "like": "Like",
@@ -1242,6 +1245,66 @@
       "out_of_range": "That day isn't part of this challenge.",
       "invalid_message": "Write up to 280 characters.",
       "not_allowed": "You don't have access to this challenge."
+    }
+  },
+  "recognition": {
+    "title": "Recognition",
+    "giveShoutout": "Give a shout-out",
+    "shoutoutText": "Thank a teammate for something they did.",
+    "who": "Who",
+    "person": "Choose a person",
+    "noPeople": "No teammates yet.",
+    "shoutoutPlaceholder": "Thank you for welcoming every new guest on Saturday.",
+    "send": "Post shout-out",
+    "shoutoutSent": "Shout-out posted to Team wins",
+    "shoutoutLine": "{{from}} to {{to}}:",
+    "pinnedShoutout": "Pinned shout-out",
+    "pinned": "Pinned to Team home",
+    "hidden": "Shout-out hidden",
+    "hide": "Hide",
+    "nameHost": "Host of the Month",
+    "nameHostText": "Feature one person at the top of Team home for this month.",
+    "nameHostCta": "Name Host of the Month",
+    "homSaved": "Host of the Month named",
+    "homEyebrow": "Host of the Month · {{month}}",
+    "homTitle": "Host of the Month",
+    "homPlaceholder": "For bringing the walking club together every week.",
+    "noteOptional": "Note (optional)",
+    "awardBadge": "Award a badge",
+    "whichBadge": "Badge",
+    "awardCta": "Award badge",
+    "awarded": "Badge awarded",
+    "newBadge": "New team badge",
+    "badgeCreated": "Team badge created",
+    "nameEn": "Name in English",
+    "nameEs": "Name in Spanish",
+    "descEn": "Description in English",
+    "descEs": "Description in Spanish",
+    "icon": "Icon",
+    "tier": "Tier",
+    "tiers": {
+      "bronze": "Bronze",
+      "silver": "Silver",
+      "gold": "Gold"
+    },
+    "earnedTitle": "Badge earned",
+    "lovely": "Lovely",
+    "downloadCard": "Download story card",
+    "card": "Card",
+    "cardBadge": "Badge earned",
+    "earnedOn": "Earned {{date}}",
+    "leaderAwarded": "Awarded by your leader.",
+    "noneYet": "No badges yet — your first is close",
+    "sumBadges": "Badges",
+    "sumShoutouts": "Shout-outs",
+    "sumHom": "Host of the Month",
+    "err": {
+      "claim_blocked": "Let's keep it about the moment — please rephrase without health, weight or income claims.",
+      "already_awarded": "They already have this badge.",
+      "invalid_person": "Choose someone on this team.",
+      "not_leader": "Only leaders can do this.",
+      "not_allowed": "You can't do that here.",
+      "invalid_message": "Keep it to 280 characters."
     }
   }
 }
