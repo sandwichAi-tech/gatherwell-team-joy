@@ -15,7 +15,7 @@
 - Keep shared navigation, settings, and sheets in GatherwellShell around the root Outlet; use separate leaf routes for the five tabs so deep links work.
 - Accounts, profiles and teams are real (Lovable Cloud); creation actions for events, announcements, challenges and trainings still open coming-soon sheets until they are built.
 - localStorage holds only language, theme and a pending invite code (cleared once the join completes); all user data lives in Lovable Cloud with team-scoped RLS.
-- Home-screen installation is manifest-only, without app-shell service workers, because offline use was not requested.
+- Home-screen installation is manifest-only; the only service worker is public/push-sw.js (push display + click, no caching), registered only after the person turns push on, because offline use was not requested.
 - DESIGN_RULES.md is authoritative for visuals and tone over PROJECT_RULES.md, so the permanent premium reset supersedes the initial shell design.
 - Keep bilingual sample dashboard content and detail sheets frontend-only, with session state rather than stored user data, so previews never imply connected services.
 - Team access checks go through the security-definer SQL function is_team_member(team, roles), which also grants leaders of ancestor teams access, so RLS stays non-recursive and sub-team rules live in one place.
@@ -28,8 +28,10 @@
 - Event detail lives at /event/$id inside the app shell; the public guest page stays at /e/$id.
 - Guests RSVP only through rsvp_event() / update_rsvp_by_code() / cancel_rsvp_by_code() and read the public page through get_public_event() (initials only, never contact details), so capacity, waitlist and the online link stay enforced server-side.
 - Shared public guest chrome lives in GuestShell (client-only); /e/$id link previews come from the public getPublicEventMeta server function.
-- Signed-out visitors may call only the guest RPCs (get_public_event, rsvp_event, get/update/cancel_rsvp_by_code, vote_poll, my_poll_votes, can_view_event, get_team_invite); everything else requires sign-in and checks team role inside, because the guest page is the only anonymous surface.
+- Signed-out visitors may call only the guest RPCs (get_public_event, rsvp_event, get/update/cancel_rsvp_by_code, vote_poll, my_poll_votes, can_view_event, get_team_invite, get/set_email_prefs by unsubscribe token); everything else requires sign-in and checks team role inside, because the guest page is the only anonymous surface.
 - Live counts come from event_live_counts (trigger-maintained, no names) over realtime so anonymous pages never read rsvps; hosts subscribe to rsvps directly through RLS.
 - Event photos live in the private event-photos bucket and are uploaded/listed only through event-day server functions (host via bearer, guests via checked-in checkin_code), with signed URLs.
 - Learn screens are leaf routes under /learn (track, lesson, recipes, recipe, manage?tab=) and lesson files live in the private learn-media bucket under <team_id>/, uploaded by leaders with signed-URL playback.
 - Challenge pages live at /challenge/$id inside the app shell; the Team tab lists them and Home/Team show the running one.
+- All outbound messages go through notification_outbox and are sent only by src/lib/notify/process.server.ts via /api/public/outbox/process (token from app_config, every 5 min); a missing provider secret marks rows 'simulated', so turning a channel on needs only its secrets.
+- Provider webhooks live under /api/public/{sms/inbound,email/resend,email/mailgun}, verify signatures, and return 503 until their secrets exist.
