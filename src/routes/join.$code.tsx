@@ -7,7 +7,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { JOIN_CODE_KEY, initialsOf, parseJoinCode } from '@/lib/account';
 import { JOIN_BY_KEY } from '@/lib/recognition';
 import { publicShareImage } from '@/lib/public-media.functions';
-import { BrandImage } from '@/components/brand-image';
 import { RetryState } from '@/components/launch-states';
 import i18n from '@/lib/i18n';
 
@@ -43,7 +42,6 @@ function JoinPage() {
     {state === 'loading' && <p className="auth-subtitle">{t('join.loading')}</p>}
     {state === 'invalid' && <><h1 className="auth-title">{t('error.notFound')}</h1><p className="auth-subtitle">{t('join.invalid')}</p></>}
     {typeof state === 'object' && <>
-      <BrandImage slot="og_share_image" aspect={1.91} priority />
       <span className="eyebrow">{t('join.eyebrow')}</span>
       <h1 className="auth-title">{t('join.title', { team: state.team })}</h1>
       {state.leader && <div className="leader-line"><span className="initial-avatar">{initialsOf(state.leader)}</span><span>{t('join.led', { name: state.leader })}</span></div>}

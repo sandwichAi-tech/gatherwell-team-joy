@@ -1,6 +1,7 @@
 import { useIsFetching, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import { useEffect, useReducer } from 'react';
 
 export function ListSkeleton() {
   const { t } = useTranslation();
@@ -15,6 +16,8 @@ export function RetryState({ retry }: { retry: () => void }) {
 /** Covers initial list fetches and failed queries, without blocking cached content. */
 export function QueryFeedback() {
   const qc = useQueryClient();
+  const [, update] = useReducer(n => n + 1, 0);
+  useEffect(() => qc.getQueryCache().subscribe(update), [qc]);
   const fetching = useIsFetching();
   const failed = qc.getQueryCache().getAll().filter(q => q.getObserversCount() > 0 && q.state.status === 'error');
   const initial = qc.getQueryCache().getAll().some(q => q.getObserversCount() > 0 && q.state.fetchStatus === 'fetching' && q.state.data === undefined);

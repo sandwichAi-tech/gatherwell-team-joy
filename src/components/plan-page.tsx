@@ -156,7 +156,7 @@ export function PlanPage() {
       <div className="section-heading"><h2>{t('billing.getPaid')}</h2><span className={`chip connect-${st.connect_status}`}>{t(`billing.connect_${st.connect_status}`)}</span></div>
       <p className="auth-subtitle">{t('billing.getPaidText', { n: lim.fee_pct })}</p>
       {st.connect_status !== 'active' && <Button disabled={gate.busy} onClick={() => void gate.run(() => connect({ data: { origin } }))}>{st.connect_status === 'pending' ? t('billing.connectContinue') : t('billing.connectStart')}</Button>}
-      <label className="settings-row is-static"><span className="settings-label">{t('billing.passFee')}<small className="field-hint">{t('billing.passFeeHint')}</small></span><Switch checked={st.pass_fee} onCheckedChange={v => void togglePassFee(v)} /></label>
+      <label className="settings-row is-static"><span className="settings-label">{t('billing.passFee')}<small className="field-hint">{t('billing.passFeeHint')}</small></span><Switch aria-label={t('billing.passFee')} checked={st.pass_fee} onCheckedChange={v => void togglePassFee(v)} /></label>
     </section>
 
     <ResponsiveSheet open={downgrade !== null} onOpenChange={o => { if (!o) setDowngrade(null); }} title={t('billing.downgradeTitle', { plan: downgrade ? t(`billing.name_${downgrade}`) : '' })}>

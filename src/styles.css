@@ -1101,6 +1101,8 @@ button { white-space:normal; }
  button:not([role="switch"]):not([role="checkbox"]), .auth-footer a, .legal-links a { min-height:48px; }
  .page-content { padding-bottom:calc(128px + env(safe-area-inset-bottom)); padding-left:max(16px,env(safe-area-inset-left)); padding-right:max(16px,env(safe-area-inset-right)); }
  .settings-value { flex-wrap:wrap; justify-content:flex-end; }
+ .settings-label { flex:1 0 96px; overflow-wrap:normal; }
+ .settings-value { max-width:60%; }
  .checkin-list li { gap:8px; }
  .checkin-button { max-width:136px; }
  .segmented { flex-wrap:wrap; }

@@ -7,7 +7,7 @@ import { publicShareImage } from '@/lib/public-media.functions';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
 
 export const Route = createFileRoute('/')({
-  loader: () => publicShareImage({ data: { slot: 'hero_card_1' } }).catch(() => null),
+  loader: () => publicShareImage({ data: { slot: 'og_share_image' } }).catch(() => null),
   head: ({ loaderData }) => {
     const title = i18n.t('landing.meta.homeTitle');
     const description = i18n.t('landing.meta.home');

@@ -1,4 +1,7 @@
 export type PendingCheckin = { key: string; eventId: string; rsvpId?: string; code?: string; undo: boolean };
+export function isRetryableCheckinError(error: { code?: string; message?: string }, status?: number) {
+  return !error.code || (status !== undefined && (status === 0 || status === 408 || status === 429 || status >= 500));
+}
 /** Memory only: never persist guest names, codes, or attendance in browser storage. */
 export function createCheckinQueue() {
   let pending: PendingCheckin[] = [];

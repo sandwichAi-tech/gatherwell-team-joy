@@ -6,7 +6,7 @@ import { publicShareImage } from '@/lib/public-media.functions';
 import { RetryState } from '@/components/launch-states';
 
 export const Route = createFileRoute('/discover')({
-  loader: () => publicShareImage({ data: { slot: 'hero_card_1' } }).catch(() => null),
+  loader: () => publicShareImage({ data: { slot: 'og_share_image' } }).catch(() => null),
   validateSearch: (s: Record<string, unknown>): DiscoverSearch => ({
     ...(isCategory(s['cat']) ? { cat: s['cat'] } : {}),
     ...(s['when'] === 'today' || s['when'] === 'weekend' || s['when'] === 'week' ? { when: s['when'] } : {}),

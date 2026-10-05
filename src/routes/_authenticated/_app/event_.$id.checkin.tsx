@@ -14,7 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { initialsOf } from '@/lib/account';
 import { rsvpErrorKey } from '@/lib/guest';
 import { gatherwellHead } from '@/lib/gatherwell-head';
-import { createCheckinQueue, type PendingCheckin } from '@/lib/checkin-queue';
+import { createCheckinQueue, isRetryableCheckinError, type PendingCheckin } from '@/lib/checkin-queue';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
 
 export const Route = createFileRoute('/_authenticated/_app/event_/$id/checkin')({ head: () => gatherwellHead('events'), component: CheckInMode });
@@ -51,8 +51,8 @@ function CheckInMode() {
           ? await supabase.rpc('check_in_rsvp', { _rsvp: item.rsvpId, _undo: item.undo })
           : await supabase.rpc('check_in_code', { _event: id, _code: item.code ?? '' });
         if (res.error) {
-          if (res.error.code) { toast.error(t('profile.saveError')); queue.current.remove(item.key); }
-          else break;
+          if (isRetryableCheckinError(res.error, res.status)) break;
+          toast.error(t('profile.saveError')); queue.current.remove(item.key);
         } else {
           queue.current.remove(item.key); trackEvent('checkin');
           if (item.code) setScan((res.data ?? { result: 'error' }) as Scan);
@@ -60,7 +60,7 @@ function CheckInMode() {
       }
       setPending(queue.current.items());
       await queryClient.invalidateQueries({ queryKey: listKey });
-    } finally { syncing.current = false; }
+    } catch { setPending(queue.current.items()); } finally { syncing.current = false; }
   };
   useEffect(() => {
     const onOnline = () => { setOnline(true); void sync(); };
@@ -77,16 +77,16 @@ function CheckInMode() {
   const done = rows.filter(r => r.checked_in_at && match(r.guest_name)).sort((a, b) => (b.checked_in_at ?? '').localeCompare(a.checked_in_at ?? ''));
   const checkIn = async (rid: string, undo = false) => {
     if (!navigator.onLine) { enqueue({ key: rid, eventId: id, rsvpId: rid, undo }); return; }
-    const { error } = await supabase.rpc('check_in_rsvp', { _rsvp: rid, _undo: undo });
-    if (error) { if (!error.code) enqueue({ key: rid, eventId: id, rsvpId: rid, undo }); else toast.error(t('profile.saveError')); return; }
+    const { error, status } = await supabase.rpc('check_in_rsvp', { _rsvp: rid, _undo: undo });
+    if (error) { if (isRetryableCheckinError(error, status)) enqueue({ key: rid, eventId: id, rsvpId: rid, undo }); else toast.error(t('profile.saveError')); return; }
     trackEvent('checkin');
     if (navigator.vibrate) navigator.vibrate(30);
     await queryClient.invalidateQueries({ queryKey: listKey });
   };
   const onCode = async (code: string) => {
     if (!navigator.onLine) { enqueue({ key: code, eventId: id, code, undo: false }); setScan({ result: 'pending' }); return; }
-    const { data, error } = await supabase.rpc('check_in_code', { _event: id, _code: code }); if (!error) trackEvent('checkin');
-    if (error && !error.code) { enqueue({ key: code, eventId: id, code, undo: false }); setScan({ result: 'pending' }); return; }
+    const { data, error, status } = await supabase.rpc('check_in_code', { _event: id, _code: code }); if (!error) trackEvent('checkin');
+    if (error && isRetryableCheckinError(error, status)) { enqueue({ key: code, eventId: id, code, undo: false }); setScan({ result: 'pending' }); return; }
     const res = (data ?? null) as Scan | null;
     setScan(error || !res ? { result: 'error' } : res);
     if (res?.result === 'ok' && navigator.vibrate) navigator.vibrate([40, 40, 40]);
