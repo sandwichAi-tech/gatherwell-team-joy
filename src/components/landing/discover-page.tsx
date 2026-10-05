@@ -7,6 +7,7 @@ import { LandingFrame } from '@/components/landing/landing-chrome';
 import { CategoryRow } from '@/components/landing/landing-page';
 import { LocationFilter, sortForFeed } from '@/components/landing/location-filter';
 import { distanceKm, inNextDays, isThisWeekend, isToday, publicGatheringsQuery, type Category } from '@/lib/landing';
+import { ListSkeleton, RetryState } from '@/components/launch-states';
 
 export type DiscoverSearch = { cat?: Category | undefined; when?: 'today' | 'weekend' | 'week' | undefined; near?: 1 | undefined };
 
@@ -14,7 +15,7 @@ export function DiscoverPage({ search }: { search: DiscoverSearch }) {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate({ from: '/discover' });
   const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
-  const { data = [], isLoading } = useQuery(publicGatheringsQuery(lang));
+  const { data = [], isLoading, error, refetch } = useQuery(publicGatheringsQuery(lang));
   const [near, setNear] = useState<Coords | null>(null);
   const when = search.when;
   const set = (patch: Partial<DiscoverSearch>) => void navigate({ search: prev => ({ ...prev, ...patch }), replace: true });
@@ -38,6 +39,7 @@ export function DiscoverPage({ search }: { search: DiscoverSearch }) {
         <LocationFilter near={near} onNear={setNear} autoAsk={search.near === 1} />
       </section>
       <section className="gw-container gw-section-tight">
+        {isLoading && <ListSkeleton />}{error && <RetryState retry={() => void refetch()} />}
         {!isLoading && <p className="gw-fine" role="status">{t('landing.discover.count', { count: list.length })}</p>}
         {list.length ? <div className="gw-grid">{list.map(g => <GatheringCard key={g.id} g={g} near={near} showRsvp />)}</div>
           : !isLoading && <div className="gw-empty"><p>{search.cat ? t('landing.feed.emptyCat') : t('landing.feed.empty')}</p></div>}

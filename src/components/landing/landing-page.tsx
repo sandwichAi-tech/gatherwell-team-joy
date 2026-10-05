@@ -9,6 +9,7 @@ import { StaticHeroStack, type HeroItem } from '@/components/landing/hero-stack'
 import { LandingFrame, StickyFindBar } from '@/components/landing/landing-chrome';
 import { LocationFilter, sortForFeed } from '@/components/landing/location-filter';
 import { CATEGORIES, distanceKm, HERO_SLOTS, inNextDays, pickH1Variant, featureFlagsQuery, publicGatheringsQuery, socialProofQuery, testimonialsQuery, track, type Category, type FeedGathering, type H1Variant } from '@/lib/landing';
+import { QueryFeedback } from '@/components/launch-states';
 
 const LiveStack = lazy(() => import('@/components/landing/live-stack'));
 const PHOTO_CATEGORIES: Category[] = ['run', 'fitcamp', 'soundbath', 'pickleball'];
@@ -19,8 +20,9 @@ export function LandingPage() {
   const { data: gatherings = [] } = useQuery(publicGatheringsQuery(lang));
   const [category, setCategory] = useState<Category | null>(null);
   return <LandingFrame>
-    <main>
+    <main id="main-content">
       <Hero gatherings={gatherings} />
+      <QueryFeedback />
       <CategoryRow selected={category} onSelect={setCategory} />
       <ThisWeek gatherings={gatherings} category={category} />
       <HowItWorks />
