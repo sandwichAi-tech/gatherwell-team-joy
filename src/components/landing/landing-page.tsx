@@ -44,7 +44,7 @@ function Hero({ gatherings }: { gatherings: FeedGathering[] }) {
   const [picked] = useState(pickH1Variant);
   const { data: flags } = useQuery(featureFlagsQuery());
   const forced = flags?.['landing_headline'];
-  const variant: H1Variant = forced?.enabled && ['A', 'B', 'C'].includes(forced.value ?? '') ? forced.value as H1Variant : picked;
+  const variant: H1Variant = forced?.enabled && ['A', 'B', 'C', 'D'].includes(forced.value ?? '') ? forced.value as H1Variant : picked;
   const { data: showedUp = 0 } = useQuery(socialProofQuery());
   const [animate, setAnimate] = useState(false);
   useEffect(() => { const id = window.requestAnimationFrame(() => setAnimate(true)); return () => window.cancelAnimationFrame(id); }, []);
