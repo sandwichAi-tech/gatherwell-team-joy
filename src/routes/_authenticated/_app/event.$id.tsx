@@ -4,7 +4,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ArrowLeft, ArrowRight, CalendarDays, MapPin, UserRound, UsersRound, Check, Save, Rocket, Pencil, CopyPlus, Share2, Ban, Trash2, Copy, MessageCircle, MessageSquareText, Repeat, ImageDown, EyeOff, ScanLine, PartyPopper } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CalendarDays, MapPin, UserRound, UsersRound, Check, Save, Rocket, Pencil, CopyPlus, Share2, Ban, Trash2, Copy, MessageCircle, MessageSquareText, Repeat, ImageDown, EyeOff, ScanLine, PartyPopper } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ResponsiveSheet } from '@/components/responsive-sheet';

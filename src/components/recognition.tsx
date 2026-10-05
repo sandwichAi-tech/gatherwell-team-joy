@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import {
   Award, CalendarCheck, UsersRound, ClipboardCheck, Layers, GraduationCap, Flag, Flame, HandHeart, Star, Medal, Trophy, Heart, Sun, Leaf,
   Footprints, Compass, Mountain, Crown, Smile, Download, Pin, EyeOff, Upload, Plus, Lock, Megaphone, type LucideIcon,
-} from 'lucide-react';
+} from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';

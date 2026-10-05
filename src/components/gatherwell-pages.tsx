@@ -3,14 +3,14 @@ import { FromYourLeader } from '@/components/templates';
 import { TeamSwitcher } from '@/components/team-switcher';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, Plus, UsersRound, CalendarDays, Repeat2, CircleCheck, Globe2, Sun, Moon, Monitor, BookOpen, ChevronRight } from 'lucide-react';
+import { ArrowRight, Plus, UsersRound, CalendarDays, Repeat2, CircleCheck, Globe2, Sun, Moon, Monitor, BookOpen, ChevronRight } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { useGatherwell } from './gatherwell-shell';
 import i18n from '@/lib/i18n';
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Check, Copy, LogOut } from 'lucide-react';
+import { Check, Copy, LogOut } from '@/components/icons';
 import { supabase } from '@/integrations/supabase/client';
 import { firstName, initialsOf, joinLink, profileQuery, workspaceQuery } from '@/lib/account';
 

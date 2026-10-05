@@ -3,7 +3,7 @@ import { Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ArrowLeft, ArrowRight, LocateFixed, MapPin, Globe2, CalendarDays, UserRound, UsersRound } from 'lucide-react';
+import { ArrowLeft, ArrowRight, LocateFixed, MapPin, Globe2, CalendarDays, UserRound, UsersRound } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ResponsiveSheet } from '@/components/responsive-sheet';

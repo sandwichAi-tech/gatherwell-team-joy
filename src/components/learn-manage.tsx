@@ -3,7 +3,7 @@ import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ArrowDown, ArrowLeft, ArrowUp, GripVertical, Pencil, Plus, Trash2, Upload } from 'lucide-react';
+import { ArrowDown, ArrowLeft, ArrowUp, GripVertical, Pencil, Plus, Trash2, Upload } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';

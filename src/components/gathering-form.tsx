@@ -3,7 +3,7 @@ import { useNavigate, useRouter } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { X, Camera, Check, Languages, Copy, MessageCircle, MessageSquareText, MapPin, Globe2, Repeat } from 'lucide-react';
+import { X, Camera, Check, Languages, Copy, MessageCircle, MessageSquareText, MapPin, Globe2, Repeat } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
