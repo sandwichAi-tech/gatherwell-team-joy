@@ -250,13 +250,13 @@ export function EarningsPage() {
     const r = await refund({ data: c ?? {} });
     if (r.ok) { toast.success(t('billing.refunded', { count: r.refunded })); void qc.invalidateQueries({ queryKey: ['earnings'] }); } else toast.error(t('billing.error'));
   };
-  const stat = (label: string, value: ReactNode) => <div className="stat-card"><span className="stat-label">{label}</span><strong className="stat-value">{value}</strong></div>;
+  const stat = (label: string, value: ReactNode) => <div className="stat-card"><div className="stat-heading"><span>{label}</span></div><strong className="stat-value">{value}</strong></div>;
 
   return <>
     <Back to="/plan" />
     <div className="page-heading"><div><span className="eyebrow">{t('billing.eyebrow')}</span><h1>{t('billing.earnings')}</h1></div></div>
     <p className="auth-subtitle">{t('billing.earningsText')}</p>
-    <div className="stat-grid">{stat(t('billing.ticketSales'), formatMoney(sales, lang))}{stat(t('billing.platformFees'), formatMoney(fees, lang))}{stat(t('billing.payouts'), formatMoney(sales - fees, lang))}{stat(t('billing.ticketsSold'), paid.length)}</div>
+    <div className="stats-grid">{stat(t('billing.ticketSales'), formatMoney(sales, lang))}{stat(t('billing.platformFees'), formatMoney(fees, lang))}{stat(t('billing.payouts'), formatMoney(sales - fees, lang))}{stat(t('billing.ticketsSold'), paid.length)}</div>
     {!pays.length ? <section className="panel"><p className="auth-subtitle">{t('billing.noSales')}</p></section> : [...groups.entries()].map(([eid, list]) => {
       const ev = data?.events.get(eid);
       return <section key={eid} className="panel">
