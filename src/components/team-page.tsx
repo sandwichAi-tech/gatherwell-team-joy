@@ -1,4 +1,5 @@
 import { ClaimGuard } from '@/components/smart';
+import { ReportButton } from '@/components/report-button';
 import { takePendingAnnouncement } from '@/lib/assistant-client';
 import { useChannelStatus } from '@/components/notifications';
 import { ActiveChallengeCard, ChallengesSection } from '@/components/challenges';
@@ -225,7 +226,8 @@ function WinsFeed({ teamId, userId, lang, isLeader }: { teamId: string; userId: 
         {win.type === 'shoutout' && typeof win.payload['photo_path'] === 'string' && <WinPhoto path={win.payload['photo_path']} />}
         <div className="win-meta"><time dateTime={win.created_at}>{relativeTime(win.created_at, lang)}</time>
           <div className="reactions">{REACTIONS.map(({ kind, Icon }) => <button type="button" key={kind} className={`reaction ${win.reactions[kind].mine ? 'is-mine' : ''}`} aria-pressed={win.reactions[kind].mine} aria-label={t(`teamSpace.react.${kind}`)} onClick={() => toggle(win, kind)}><Icon />{win.reactions[kind].count > 0 && <span>{win.reactions[kind].count}</span>}</button>)}
-            {isLeader && win.type === 'shoutout' && typeof win.payload['shoutout_id'] === 'string' && <ShoutoutModeration teamId={teamId} shoutoutId={win.payload['shoutout_id']} />}</div>
+            {isLeader && win.type === 'shoutout' && typeof win.payload['shoutout_id'] === 'string' && <ShoutoutModeration teamId={teamId} shoutoutId={win.payload['shoutout_id']} />}
+            {win.actorId !== userId && (win.type === 'shoutout' && typeof win.payload['shoutout_id'] === 'string' ? <ReportButton type="shoutout" id={win.payload['shoutout_id']} /> : <ReportButton type="activity" id={win.id} />)}</div>
         </div></div></li>)}</ol>
       : <div className="pulse-list">{(['sofia', 'challenge', 'maria'] as const).map(key => <div className="pulse-item" key={key}><span className="pulse-dot" /><div><h3>{t(`pulse.${key}.title`)}</h3><p>{t(`pulse.${key}.time`)}</p></div></div>)}</div>}
     <ShoutoutSheet open={shouting} onOpenChange={setShouting} teamId={teamId} />

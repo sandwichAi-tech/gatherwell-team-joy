@@ -164,3 +164,13 @@ export const feedSlot = (c: Category) => `feed_default_${c === 'more' ? 'walk' :
 
 /** Tustin, CA — reference point for preview-only sample gathering distances. */
 export const SAMPLE_ORIGIN = { lat: 33.7458, lng: -117.8262 } as const;
+
+/** Platform feature flags (public read). */
+export const featureFlagsQuery = () => queryOptions({
+  queryKey: ['feature-flags'],
+  queryFn: async () => {
+    const { data } = await supabase.from('feature_flags').select('key, enabled, value');
+    return Object.fromEntries((data ?? []).map(f => [f.key, { enabled: f.enabled, value: f.value }])) as Record<string, { enabled: boolean; value: string | null } | undefined>;
+  },
+  staleTime: 5 * 60_000,
+});

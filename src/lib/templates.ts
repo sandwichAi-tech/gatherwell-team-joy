@@ -10,7 +10,8 @@ export const templatesQuery = () => queryOptions({
   queryFn: async (): Promise<Template[]> => {
     const { data, error } = await supabase.from('templates').select('*').order('created_at', { ascending: false });
     if (error) throw error;
-    return data ?? [];
+    const rows = (data ?? []).filter(t => t.team_id !== null || t.is_published);
+    return [...rows.filter(t => t.team_id !== null), ...rows.filter(t => t.team_id === null).sort((a, b) => a.sort_order - b.sort_order)];
   },
 });
 

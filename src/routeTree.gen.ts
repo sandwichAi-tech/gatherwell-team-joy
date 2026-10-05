@@ -30,6 +30,7 @@ import { Route as AuthenticatedAppLearnRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppMeRouteImport } from './routes/_authenticated/_app/me'
 import { Route as AuthenticatedAppPlanRouteImport } from './routes/_authenticated/_app/plan'
 import { Route as AuthenticatedAppTeamRouteImport } from './routes/_authenticated/_app/team'
+import { Route as AuthenticatedAppAdminIndexRouteImport } from './routes/_authenticated/_app/admin.index'
 import { Route as AuthenticatedAppAdminSiteMediaRouteImport } from './routes/_authenticated/_app/admin.site-media'
 import { Route as AuthenticatedAppChallengeIdRouteImport } from './routes/_authenticated/_app/challenge.$id'
 import { Route as AuthenticatedAppEventIdRouteImport } from './routes/_authenticated/_app/event.$id'
@@ -157,6 +158,12 @@ const AuthenticatedAppTeamRoute = AuthenticatedAppTeamRouteImport.update({
   path: '/team',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppAdminIndexRoute =
+  AuthenticatedAppAdminIndexRouteImport.update({
+    id: '/admin/',
+    path: '/admin/',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppAdminSiteMediaRoute =
   AuthenticatedAppAdminSiteMediaRouteImport.update({
     id: '/admin/site-media',
@@ -311,6 +318,7 @@ export interface FileRoutesByFullPath {
   '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
   '/api/public/sms/inbound': typeof ApiPublicSmsInboundRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
+  '/admin/': typeof AuthenticatedAppAdminIndexRoute
   '/event/$id/checkin': typeof AuthenticatedAppEventIdCheckinRoute
   '/event/$id/guests': typeof AuthenticatedAppEventIdGuestsRoute
   '/gathering/$id/edit': typeof AuthenticatedAppGatheringIdEditRoute
@@ -353,6 +361,7 @@ export interface FileRoutesByTo {
   '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
   '/api/public/sms/inbound': typeof ApiPublicSmsInboundRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
+  '/admin': typeof AuthenticatedAppAdminIndexRoute
   '/event/$id/checkin': typeof AuthenticatedAppEventIdCheckinRoute
   '/event/$id/guests': typeof AuthenticatedAppEventIdGuestsRoute
   '/gathering/$id/edit': typeof AuthenticatedAppGatheringIdEditRoute
@@ -398,6 +407,7 @@ export interface FileRoutesById {
   '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
   '/api/public/sms/inbound': typeof ApiPublicSmsInboundRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
+  '/_authenticated/_app/admin/': typeof AuthenticatedAppAdminIndexRoute
   '/_authenticated/_app/event_/$id/checkin': typeof AuthenticatedAppEventIdCheckinRoute
   '/_authenticated/_app/event_/$id/guests': typeof AuthenticatedAppEventIdGuestsRoute
   '/_authenticated/_app/gathering/$id/edit': typeof AuthenticatedAppGatheringIdEditRoute
@@ -442,6 +452,7 @@ export interface FileRouteTypes {
     | '/api/public/outbox/process'
     | '/api/public/sms/inbound'
     | '/api/public/stripe/webhook'
+    | '/admin/'
     | '/event/$id/checkin'
     | '/event/$id/guests'
     | '/gathering/$id/edit'
@@ -484,6 +495,7 @@ export interface FileRouteTypes {
     | '/api/public/outbox/process'
     | '/api/public/sms/inbound'
     | '/api/public/stripe/webhook'
+    | '/admin'
     | '/event/$id/checkin'
     | '/event/$id/guests'
     | '/gathering/$id/edit'
@@ -528,6 +540,7 @@ export interface FileRouteTypes {
     | '/api/public/outbox/process'
     | '/api/public/sms/inbound'
     | '/api/public/stripe/webhook'
+    | '/_authenticated/_app/admin/'
     | '/_authenticated/_app/event_/$id/checkin'
     | '/_authenticated/_app/event_/$id/guests'
     | '/_authenticated/_app/gathering/$id/edit'
@@ -705,6 +718,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppTeamRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/admin/': {
+      id: '/_authenticated/_app/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAppAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/admin/site-media': {
       id: '/_authenticated/_app/admin/site-media'
       path: '/admin/site-media'
@@ -873,6 +893,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppPlanSeatsRoute: typeof AuthenticatedAppPlanSeatsRoute
   AuthenticatedAppTeamInsightsRoute: typeof AuthenticatedAppTeamInsightsRoute
   AuthenticatedAppTeamMapRoute: typeof AuthenticatedAppTeamMapRoute
+  AuthenticatedAppAdminIndexRoute: typeof AuthenticatedAppAdminIndexRoute
   AuthenticatedAppEventIdCheckinRoute: typeof AuthenticatedAppEventIdCheckinRoute
   AuthenticatedAppEventIdGuestsRoute: typeof AuthenticatedAppEventIdGuestsRoute
   AuthenticatedAppGatheringIdEditRoute: typeof AuthenticatedAppGatheringIdEditRoute
@@ -899,6 +920,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppPlanSeatsRoute: AuthenticatedAppPlanSeatsRoute,
   AuthenticatedAppTeamInsightsRoute: AuthenticatedAppTeamInsightsRoute,
   AuthenticatedAppTeamMapRoute: AuthenticatedAppTeamMapRoute,
+  AuthenticatedAppAdminIndexRoute: AuthenticatedAppAdminIndexRoute,
   AuthenticatedAppEventIdCheckinRoute: AuthenticatedAppEventIdCheckinRoute,
   AuthenticatedAppEventIdGuestsRoute: AuthenticatedAppEventIdGuestsRoute,
   AuthenticatedAppGatheringIdEditRoute: AuthenticatedAppGatheringIdEditRoute,

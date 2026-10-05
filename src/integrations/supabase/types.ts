@@ -78,6 +78,42 @@ export type Database = {
           },
         ]
       }
+      admin_audit: {
+        Row: {
+          action: string
+          actor_id: string | null
+          after: Json | null
+          before: Json | null
+          created_at: string
+          id: string
+          note: string | null
+          target_id: string | null
+          target_type: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          after?: Json | null
+          before?: Json | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          target_id?: string | null
+          target_type: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          after?: Json | null
+          before?: Json | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          target_id?: string | null
+          target_type?: string
+        }
+        Relationships: []
+      }
       ai_usage: {
         Row: {
           created_at: string
@@ -259,6 +295,74 @@ export type Database = {
         }
         Relationships: []
       }
+      broadcast_reads: {
+        Row: {
+          broadcast_id: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          broadcast_id: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          broadcast_id?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "broadcast_reads_broadcast_id_fkey"
+            columns: ["broadcast_id"]
+            isOneToOne: false
+            referencedRelation: "broadcasts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      broadcasts: {
+        Row: {
+          active: boolean
+          audience: string
+          body_en: string
+          body_es: string
+          created_at: string
+          created_by: string | null
+          id: string
+          is_test: boolean
+          recipients: number
+          title_en: string
+          title_es: string
+        }
+        Insert: {
+          active?: boolean
+          audience: string
+          body_en: string
+          body_es: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_test?: boolean
+          recipients?: number
+          title_en: string
+          title_es: string
+        }
+        Update: {
+          active?: boolean
+          audience?: string
+          body_en?: string
+          body_es?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_test?: boolean
+          recipients?: number
+          title_en?: string
+          title_es?: string
+        }
+        Relationships: []
+      }
       challenge_checkins: {
         Row: {
           challenge_id: string
@@ -322,6 +426,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      challenge_types: {
+        Row: {
+          created_at: string
+          daily_prompt_en: string | null
+          daily_prompt_es: string | null
+          description_en: string | null
+          description_es: string | null
+          duration_days: number
+          id: string
+          is_published: boolean
+          sort_order: number
+          title_en: string
+          title_es: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          daily_prompt_en?: string | null
+          daily_prompt_es?: string | null
+          description_en?: string | null
+          description_es?: string | null
+          duration_days?: number
+          id?: string
+          is_published?: boolean
+          sort_order?: number
+          title_en: string
+          title_es: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          daily_prompt_en?: string | null
+          daily_prompt_es?: string | null
+          description_en?: string | null
+          description_es?: string | null
+          duration_days?: number
+          id?: string
+          is_published?: boolean
+          sort_order?: number
+          title_en?: string
+          title_es?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       challenges: {
         Row: {
@@ -608,6 +757,32 @@ export type Database = {
           },
         ]
       }
+      event_plan_waitlist: {
+        Row: {
+          event_id: string
+          last_hit_at: string
+          notified_at: string | null
+        }
+        Insert: {
+          event_id: string
+          last_hit_at?: string
+          notified_at?: string | null
+        }
+        Update: {
+          event_id?: string
+          last_hit_at?: string
+          notified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_plan_waitlist_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: true
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_poll_options: {
         Row: {
           event_id: string
@@ -841,6 +1016,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      feature_flags: {
+        Row: {
+          description_en: string
+          description_es: string
+          enabled: boolean
+          key: string
+          updated_at: string
+          value: string | null
+        }
+        Insert: {
+          description_en?: string
+          description_es?: string
+          enabled?: boolean
+          key: string
+          updated_at?: string
+          value?: string | null
+        }
+        Update: {
+          description_en?: string
+          description_es?: string
+          enabled?: boolean
+          key?: string
+          updated_at?: string
+          value?: string | null
+        }
+        Relationships: []
       }
       followup_drafts: {
         Row: {
@@ -1520,8 +1722,10 @@ export type Database = {
           created_by: string | null
           id: string
           ingredients: Json
+          is_published: boolean
           prep_minutes: number | null
           private_owner: string | null
+          sort_order: number
           steps: Json
           tags: string[]
           team_id: string | null
@@ -1535,8 +1739,10 @@ export type Database = {
           created_by?: string | null
           id?: string
           ingredients?: Json
+          is_published?: boolean
           prep_minutes?: number | null
           private_owner?: string | null
+          sort_order?: number
           steps?: Json
           tags?: string[]
           team_id?: string | null
@@ -1550,8 +1756,10 @@ export type Database = {
           created_by?: string | null
           id?: string
           ingredients?: Json
+          is_published?: boolean
           prep_minutes?: number | null
           private_owner?: string | null
+          sort_order?: number
           steps?: Json
           tags?: string[]
           team_id?: string | null
@@ -1561,6 +1769,65 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "recipes_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reports: {
+        Row: {
+          author_id: string | null
+          created_at: string
+          id: string
+          note: string | null
+          reason: string
+          reporter_id: string | null
+          resolution_note: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          source: string
+          status: string
+          target_id: string
+          target_type: string
+          team_id: string | null
+        }
+        Insert: {
+          author_id?: string | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          reason: string
+          reporter_id?: string | null
+          resolution_note?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          source?: string
+          status?: string
+          target_id: string
+          target_type: string
+          team_id?: string | null
+        }
+        Update: {
+          author_id?: string | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          reason?: string
+          reporter_id?: string | null
+          resolution_note?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          source?: string
+          status?: string
+          target_id?: string
+          target_type?: string
+          team_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
@@ -1950,6 +2217,35 @@ export type Database = {
           },
         ]
       }
+      team_suspensions: {
+        Row: {
+          created_at: string
+          reason: string
+          suspended_by: string | null
+          team_id: string
+        }
+        Insert: {
+          created_at?: string
+          reason: string
+          suspended_by?: string | null
+          team_id: string
+        }
+        Update: {
+          created_at?: string
+          reason?: string
+          suspended_by?: string | null
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_suspensions_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: true
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       teams: {
         Row: {
           allow_host_subteams: boolean
@@ -2017,6 +2313,7 @@ export type Database = {
           invite_script_es: string | null
           is_published: boolean
           launches_count: number
+          sort_order: number
           team_id: string | null
           theme: string | null
           title: string
@@ -2038,6 +2335,7 @@ export type Database = {
           invite_script_es?: string | null
           is_published?: boolean
           launches_count?: number
+          sort_order?: number
           team_id?: string | null
           theme?: string | null
           title: string
@@ -2059,6 +2357,7 @@ export type Database = {
           invite_script_es?: string | null
           is_published?: boolean
           launches_count?: number
+          sort_order?: number
           team_id?: string | null
           theme?: string | null
           title?: string
@@ -2232,6 +2531,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_suspensions: {
+        Row: {
+          created_at: string
+          reason: string
+          suspended_by: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          reason: string
+          suspended_by?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          reason?: string
+          suspended_by?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -2250,10 +2570,17 @@ export type Database = {
         }
         Returns: string
       }
+      admin_broadcasts: { Args: never; Returns: Json }
       admin_grant_preview_license: {
         Args: { _team: string; _tier: string }
         Returns: undefined
       }
+      admin_overview: { Args: { _since: string }; Returns: Json }
+      admin_reports: { Args: { _status: string }; Returns: Json }
+      admin_team_detail: { Args: { _id: string }; Returns: Json }
+      admin_teams: { Args: { _q: string }; Returns: Json }
+      admin_user_detail: { Args: { _id: string }; Returns: Json }
+      admin_users: { Args: { _q: string }; Returns: Json }
       ai_usage_status: { Args: never; Returns: Json }
       assign_license_seat: {
         Args: { _on: boolean; _team: string; _user: string }
@@ -2477,6 +2804,17 @@ export type Database = {
         Args: { _action: string; _id: string }
         Returns: undefined
       }
+      my_broadcasts: {
+        Args: never
+        Returns: {
+          body_en: string
+          body_es: string
+          created_at: string
+          id: string
+          title_en: string
+          title_es: string
+        }[]
+      }
       my_plan_status: { Args: never; Returns: Json }
       my_poll_votes: {
         Args: { _code: string; _event: string }
@@ -2497,6 +2835,7 @@ export type Database = {
         Returns: undefined
       }
       normalize_phone: { Args: { _p: string }; Returns: string }
+      note_plan_waitlist: { Args: { _event: string }; Returns: undefined }
       notify_announcement: {
         Args: { _announcement: string; _email: boolean; _subteams: boolean }
         Returns: number
@@ -2512,6 +2851,7 @@ export type Database = {
         Returns: undefined
       }
       promote_waitlist: { Args: { _event: string }; Returns: undefined }
+      queue_broadcast: { Args: { _id: string }; Returns: number }
       queue_rsvp_notices: {
         Args: { _rsvp: string; _template: string }
         Returns: undefined
@@ -2530,6 +2870,10 @@ export type Database = {
           _provider: string
         }
         Returns: undefined
+      }
+      report_content: {
+        Args: { _id: string; _note: string; _reason: string; _type: string }
+        Returns: boolean
       }
       reset_join_code: { Args: { _team: string }; Returns: string }
       rsvp_event: {

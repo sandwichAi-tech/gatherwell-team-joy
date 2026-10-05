@@ -8,7 +8,7 @@ import { AvatarStack, GatheringCard, RsvpButton, type Coords } from '@/component
 import { StaticHeroStack, type HeroItem } from '@/components/landing/hero-stack';
 import { LandingFrame, StickyFindBar } from '@/components/landing/landing-chrome';
 import { LocationFilter, sortForFeed } from '@/components/landing/location-filter';
-import { CATEGORIES, distanceKm, HERO_SLOTS, inNextDays, pickH1Variant, publicGatheringsQuery, socialProofQuery, testimonialsQuery, track, type Category, type FeedGathering, type H1Variant } from '@/lib/landing';
+import { CATEGORIES, distanceKm, HERO_SLOTS, inNextDays, pickH1Variant, featureFlagsQuery, publicGatheringsQuery, socialProofQuery, testimonialsQuery, track, type Category, type FeedGathering, type H1Variant } from '@/lib/landing';
 
 const LiveStack = lazy(() => import('@/components/landing/live-stack'));
 const PHOTO_CATEGORIES: Category[] = ['run', 'fitcamp', 'soundbath', 'pickleball'];
@@ -41,7 +41,10 @@ function Headline({ variant }: { variant: H1Variant }) {
 function Hero({ gatherings }: { gatherings: FeedGathering[] }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [variant] = useState(pickH1Variant);
+  const [picked] = useState(pickH1Variant);
+  const { data: flags } = useQuery(featureFlagsQuery());
+  const forced = flags?.['landing_headline'];
+  const variant: H1Variant = forced?.enabled && ['A', 'B', 'C'].includes(forced.value ?? '') ? forced.value as H1Variant : picked;
   const { data: showedUp = 0 } = useQuery(socialProofQuery());
   const [animate, setAnimate] = useState(false);
   useEffect(() => { const id = window.requestAnimationFrame(() => setAnimate(true)); return () => window.cancelAnimationFrame(id); }, []);
@@ -173,7 +176,8 @@ function LeadersBand() {
 function Testimonials() {
   const { t, i18n } = useTranslation();
   const { data = [] } = useQuery(testimonialsQuery());
-  if (data.length < 3) return null;
+  const { data: flags } = useQuery(featureFlagsQuery());
+  if (data.length < 3 || flags?.['landing_testimonials']?.enabled === false) return null;
   const es = i18n.resolvedLanguage === 'es';
   return <section className="gw-section gw-container" aria-labelledby="testimonials-title">
     <span className="gw-label">{t('landing.testimonials.label')}</span>

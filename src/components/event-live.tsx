@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { ReportButton } from '@/components/report-button';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { useTranslation } from 'react-i18next';
@@ -151,6 +152,7 @@ export function PhotoRoll({ eventId, code, canAdd }: { eventId: string; code?: s
     {data.open && !data.photos.length && <p className="muted">{t('live.noPhotos')}</p>}
     {data.photos.length > 0 && <ul className="photo-grid">{data.photos.map(p => <li key={p.id} className={p.hidden ? 'is-hidden' : ''}>
       <img src={p.url!} alt={t('live.photoAlt')} loading="lazy" />
+      {!data.manage && <ReportButton type="photo" id={p.id} className="photo-report" />}
       {data.manage && <button type="button" className="photo-hide" aria-label={p.hidden ? t('live.show') : t('live.hide')} onClick={() => toggleHidden(p.id, !p.hidden)}>{p.hidden ? <Eye /> : <EyeOff />}</button>}
     </li>)}</ul>}
   </section>;
