@@ -76,7 +76,7 @@ export function FollowButton({ kind, target, following, slug }: { kind: 'host' |
   const refresh = () => qc.invalidateQueries({ queryKey: ['public-follow-page', kind, slug] });
   const follow = async (withEmail?: string) => {
     setBusy(true);
-    const { error } = await supabase.rpc('follow_target', { _kind: kind, _target: target, _email: withEmail ?? undefined, _lang: i18n.resolvedLanguage === 'es' ? 'es' : 'en' });
+    const { error } = await supabase.rpc('follow_target', { _kind: kind, _target: target, ...(withEmail ? { _email: withEmail } : {}), _lang: i18n.resolvedLanguage === 'es' ? 'es' : 'en' });
     setBusy(false);
     if (error) { toast.error(t(/invalid_email/.test(error.message) ? 'follow.badEmail' : /self_follow/.test(error.message) ? 'follow.self' : /rate_limited/.test(error.message) ? 'follow.slowDown' : 'error.message')); return; }
     setSheet(false); toast.success(t(withEmail ? 'follow.emailDone' : 'follow.done')); void refresh();
