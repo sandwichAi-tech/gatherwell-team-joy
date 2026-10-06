@@ -20,7 +20,7 @@
 - [x] 1. Network: connections, sharing, featuring, guest referral thank-yous
 - [x] 2. Host offers: memberships, courses, downloads, Me > Purchases
 - [x] 3. Guest referral rewards (Welcome points)
-- [ ] 4. Playbook engine
+- [x] 4. Playbook engine
 
 # Prompt 21B (after 21A; one area at a time)
 - [ ] 1. Liability waivers

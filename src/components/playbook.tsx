@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Sparkles } from '@/components/icons';
 import { supabase } from '@/integrations/supabase/client';
 
-type Card = { kind: 'slot' | 'length' | 'followup'; category: string | null; params: Record<string, number>; sample: boolean };
+type Card = { kind: 'slot' | 'length' | 'followup'; category: string | null; params: { dow: number; hour: number; ratio: number; min: number; max: number; fast: number; slow: number }; sample: boolean };
 type Side = { gatherings: number; avg_checkins: number; showup: number };
 type Bench = { team: Side; network: Side; sample: boolean };
 
