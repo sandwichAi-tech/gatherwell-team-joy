@@ -135,7 +135,7 @@ export function CalendarFeedPanel({ userId }: { userId: string }) {
     </div>;
   };
   return <div className="feed-panel">
-    <p className="sheet-description">{t('follow.feedIntro')}</p>
+    <p className="follow-meta">{t("follow.feedIntro")}</p>
     {row(t('follow.myFeed'), t('follow.myFeedHint'), feeds.data.me)}
     {feeds.data.team && row(t('follow.teamFeed'), t('follow.teamFeedHint'), feeds.data.team)}
     <Button variant="ghost" onClick={() => void reset()}><GwIcon name="RefreshCw" />{t('follow.reset')}</Button>
