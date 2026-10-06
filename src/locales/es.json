@@ -2683,5 +2683,11 @@
       "not_allowed": "No puedes publicar aquí.",
       "invalid_title": "Ponle un título al tema."
     }
+  },
+  "confirm": {
+    "cancel": "Cancelar",
+    "ok": "Confirmar",
+    "delete": "Eliminar",
+    "yesCancel": "Sí, cancelar"
   }
 }

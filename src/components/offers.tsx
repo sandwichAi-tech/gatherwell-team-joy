@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { confirmAction } from '@/components/confirm-dialog';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
@@ -93,7 +94,7 @@ function OfferEditor({ offer, teamId, onClose }: { offer: Partial<Offer> | null;
     onClose();
   };
   const remove = async () => {
-    if (!offer?.id || !window.confirm(t('offers.confirmDelete'))) return;
+    if (!offer?.id || !(await confirmAction({ title: t('offers.confirmDelete'), destructive: true }))) return;
     const res = await deleteOffer(offer.id);
     if (res.error) { toast.error(t('offers.deleteError')); return; }
     await qc.invalidateQueries({ queryKey: ['offers'] }); onClose();
@@ -219,7 +220,7 @@ export function PurchasesPanel() {
   const memberships = q.data.filter(p => p.offer && p.offer.kind !== 'download');
   const downloads = q.data.filter(p => p.offer?.kind === 'download');
   const doCancel = async (offerId: string) => {
-    if (!window.confirm(t('offers.confirmCancel'))) return;
+    if (!(await confirmAction({ title: t('offers.confirmCancel'), destructive: true, confirmLabel: t('confirm.yesCancel') }))) return;
     setBusy(offerId);
     const r = await cancel({ data: { offerId } });
     setBusy(null);

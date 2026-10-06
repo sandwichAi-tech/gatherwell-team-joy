@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ClientOnly, Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { LanguageToggle } from '@/components/auth-frame';
@@ -14,7 +14,16 @@ export function LandingLogo() {
 export function LandingNav() {
   const { t } = useTranslation();
   const [solid, setSolid] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [open, setOpenRaw] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const setOpen = (v: boolean) => {
+    if (v) { setOpenRaw(true); return; }
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setClosing(true);
+    window.setTimeout(() => { setOpenRaw(false); setClosing(false); triggerRef.current?.focus(); }, reduce ? 0 : 160);
+  };
   useEffect(() => {
     const onScroll = () => setSolid(window.scrollY > 24);
     onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
@@ -22,7 +31,15 @@ export function LandingNav() {
   }, []);
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { setOpen(false); return; }
+      if (e.key !== 'Tab' || !sheetRef.current) return;
+      const f = sheetRef.current.querySelectorAll<HTMLElement>('a[href],button:not([disabled])');
+      if (!f.length) return;
+      const first = f[0]!, last = f[f.length - 1]!;
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
     document.body.style.overflow = 'hidden'; window.addEventListener('keydown', onKey);
     return () => { document.body.style.overflow = ''; window.removeEventListener('keydown', onKey); };
   }, [open]);
@@ -38,10 +55,10 @@ export function LandingNav() {
       </nav>
       <div className="gw-nav-mobile">
         <LanguageToggle />
-        <button type="button" className="gw-icon-btn" aria-label={t('landing.nav.menu')} aria-expanded={open} onClick={() => setOpen(true)}><GwIcon name="List" size={24} /></button>
+        <button ref={triggerRef} type="button" className="gw-icon-btn" aria-label={t('landing.nav.menu')} aria-expanded={open} onClick={() => setOpen(true)}><GwIcon name="List" size={24} /></button>
       </div>
     </div>
-    {open && <div className="gw-menu-sheet" role="dialog" aria-modal="true" aria-label={t('landing.nav.main')}>
+    {open && <div ref={sheetRef} className={`gw-menu-sheet ${closing ? 'is-closing' : ''}`} role="dialog" aria-modal="true" aria-label={t('landing.nav.main')}>
       <div className="gw-menu-top"><LandingLogo /><button type="button" className="gw-icon-btn" aria-label={t('landing.nav.close')} onClick={() => setOpen(false)} autoFocus><GwIcon name="X" size={24} /></button></div>
       <nav className="gw-menu-links">
         <Link to="/discover" onClick={() => setOpen(false)}>{t('landing.nav.find')}</Link>
