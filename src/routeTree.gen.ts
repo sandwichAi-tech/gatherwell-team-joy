@@ -30,6 +30,7 @@ import { Route as AuthenticatedAppFollowupsRouteImport } from './routes/_authent
 import { Route as AuthenticatedAppHomeRouteImport } from './routes/_authenticated/_app/home'
 import { Route as AuthenticatedAppLearnRouteImport } from './routes/_authenticated/_app/learn'
 import { Route as AuthenticatedAppMeRouteImport } from './routes/_authenticated/_app/me'
+import { Route as AuthenticatedAppNetworkRouteImport } from './routes/_authenticated/_app/network'
 import { Route as AuthenticatedAppPlanRouteImport } from './routes/_authenticated/_app/plan'
 import { Route as AuthenticatedAppTeamRouteImport } from './routes/_authenticated/_app/team'
 import { Route as AuthenticatedAppAdminIndexRouteImport } from './routes/_authenticated/_app/admin.index'
@@ -158,6 +159,11 @@ const AuthenticatedAppLearnRoute = AuthenticatedAppLearnRouteImport.update({
 const AuthenticatedAppMeRoute = AuthenticatedAppMeRouteImport.update({
   id: '/me',
   path: '/me',
+  getParentRoute: () => AuthenticatedAppRouteRoute,
+} as any)
+const AuthenticatedAppNetworkRoute = AuthenticatedAppNetworkRouteImport.update({
+  id: '/network',
+  path: '/network',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
 const AuthenticatedAppPlanRoute = AuthenticatedAppPlanRouteImport.update({
@@ -315,6 +321,7 @@ export interface FileRoutesByFullPath {
   '/home': typeof AuthenticatedAppHomeRoute
   '/learn': typeof AuthenticatedAppLearnRoute
   '/me': typeof AuthenticatedAppMeRoute
+  '/network': typeof AuthenticatedAppNetworkRoute
   '/plan': typeof AuthenticatedAppPlanRoute
   '/team': typeof AuthenticatedAppTeamRoute
   '/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
@@ -360,6 +367,7 @@ export interface FileRoutesByTo {
   '/home': typeof AuthenticatedAppHomeRoute
   '/learn': typeof AuthenticatedAppLearnRoute
   '/me': typeof AuthenticatedAppMeRoute
+  '/network': typeof AuthenticatedAppNetworkRoute
   '/plan': typeof AuthenticatedAppPlanRoute
   '/team': typeof AuthenticatedAppTeamRoute
   '/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
@@ -408,6 +416,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/home': typeof AuthenticatedAppHomeRoute
   '/_authenticated/_app/learn': typeof AuthenticatedAppLearnRoute
   '/_authenticated/_app/me': typeof AuthenticatedAppMeRoute
+  '/_authenticated/_app/network': typeof AuthenticatedAppNetworkRoute
   '/_authenticated/_app/plan': typeof AuthenticatedAppPlanRoute
   '/_authenticated/_app/team': typeof AuthenticatedAppTeamRoute
   '/_authenticated/_app/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
@@ -455,6 +464,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/learn'
     | '/me'
+    | '/network'
     | '/plan'
     | '/team'
     | '/admin/site-media'
@@ -500,6 +510,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/learn'
     | '/me'
+    | '/network'
     | '/plan'
     | '/team'
     | '/admin/site-media'
@@ -547,6 +558,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/home'
     | '/_authenticated/_app/learn'
     | '/_authenticated/_app/me'
+    | '/_authenticated/_app/network'
     | '/_authenticated/_app/plan'
     | '/_authenticated/_app/team'
     | '/_authenticated/_app/admin/site-media'
@@ -744,6 +756,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppMeRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/network': {
+      id: '/_authenticated/_app/network'
+      path: '/network'
+      fullPath: '/network'
+      preLoaderRoute: typeof AuthenticatedAppNetworkRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/plan': {
       id: '/_authenticated/_app/plan'
       path: '/plan'
@@ -922,6 +941,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppHomeRoute: typeof AuthenticatedAppHomeRoute
   AuthenticatedAppLearnRoute: typeof AuthenticatedAppLearnRoute
   AuthenticatedAppMeRoute: typeof AuthenticatedAppMeRoute
+  AuthenticatedAppNetworkRoute: typeof AuthenticatedAppNetworkRoute
   AuthenticatedAppPlanRoute: typeof AuthenticatedAppPlanRoute
   AuthenticatedAppTeamRoute: typeof AuthenticatedAppTeamRoute
   AuthenticatedAppAdminSiteMediaRoute: typeof AuthenticatedAppAdminSiteMediaRoute
@@ -949,6 +969,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppHomeRoute: AuthenticatedAppHomeRoute,
   AuthenticatedAppLearnRoute: AuthenticatedAppLearnRoute,
   AuthenticatedAppMeRoute: AuthenticatedAppMeRoute,
+  AuthenticatedAppNetworkRoute: AuthenticatedAppNetworkRoute,
   AuthenticatedAppPlanRoute: AuthenticatedAppPlanRoute,
   AuthenticatedAppTeamRoute: AuthenticatedAppTeamRoute,
   AuthenticatedAppAdminSiteMediaRoute: AuthenticatedAppAdminSiteMediaRoute,
