@@ -947,6 +947,7 @@ export type Database = {
           hide_guest_list: boolean
           host_id: string
           id: string
+          invite_token: string
           lat: number | null
           lng: number | null
           location_name: string | null
@@ -956,7 +957,9 @@ export type Database = {
           pass_fee: boolean
           price_cents: number | null
           recurrence: string
+          require_approval: boolean
           requires_waiver: boolean
+          rsvp_questions: Json
           series_id: string | null
           starts_at: string
           status: string
@@ -981,6 +984,7 @@ export type Database = {
           hide_guest_list?: boolean
           host_id?: string
           id?: string
+          invite_token?: string
           lat?: number | null
           lng?: number | null
           location_name?: string | null
@@ -990,7 +994,9 @@ export type Database = {
           pass_fee?: boolean
           price_cents?: number | null
           recurrence?: string
+          require_approval?: boolean
           requires_waiver?: boolean
+          rsvp_questions?: Json
           series_id?: string | null
           starts_at: string
           status?: string
@@ -1015,6 +1021,7 @@ export type Database = {
           hide_guest_list?: boolean
           host_id?: string
           id?: string
+          invite_token?: string
           lat?: number | null
           lng?: number | null
           location_name?: string | null
@@ -1024,7 +1031,9 @@ export type Database = {
           pass_fee?: boolean
           price_cents?: number | null
           recurrence?: string
+          require_approval?: boolean
           requires_waiver?: boolean
+          rsvp_questions?: Json
           series_id?: string | null
           starts_at?: string
           status?: string
@@ -2187,6 +2196,45 @@ export type Database = {
           },
         ]
       }
+      rsvp_answers: {
+        Row: {
+          answers: Json
+          created_at: string
+          event_id: string
+          rsvp_id: string
+          updated_at: string
+        }
+        Insert: {
+          answers?: Json
+          created_at?: string
+          event_id: string
+          rsvp_id: string
+          updated_at?: string
+        }
+        Update: {
+          answers?: Json
+          created_at?: string
+          event_id?: string
+          rsvp_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rsvp_answers_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rsvp_answers_rsvp_id_fkey"
+            columns: ["rsvp_id"]
+            isOneToOne: true
+            referencedRelation: "rsvps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rsvp_attempts: {
         Row: {
           created_at: string
@@ -3310,6 +3358,10 @@ export type Database = {
           slug: string
         }[]
       }
+      decide_rsvp: {
+        Args: { _approve: boolean; _rsvp: string }
+        Returns: string
+      }
       default_waiver: { Args: { _team: string }; Returns: undefined }
       delete_my_account: { Args: never; Returns: undefined }
       due_followup_events: { Args: never; Returns: string[] }
@@ -3342,6 +3394,10 @@ export type Database = {
       event_seats_used: { Args: { _event: string }; Returns: number }
       event_summary: { Args: { _event: string }; Returns: Json }
       event_waiver: { Args: { _event: string }; Returns: Json }
+      event_waiver_k: {
+        Args: { _event: string; _token: string }
+        Returns: Json
+      }
       followups_sent: {
         Args: { _from: string; _root: string; _scope: string; _to: string }
         Returns: number
@@ -3351,6 +3407,10 @@ export type Database = {
       get_email_prefs: { Args: { _token: string }; Returns: Json }
       get_member_plan: { Args: { _team: string }; Returns: Json }
       get_public_event: { Args: { _id: string }; Returns: Json }
+      get_public_event_k: {
+        Args: { _id: string; _token: string }
+        Returns: Json
+      }
       get_rsvp_by_code: { Args: { _code: string }; Returns: Json }
       get_team_invite: {
         Args: { _code: string }
@@ -3510,6 +3570,7 @@ export type Database = {
         Returns: number
       }
       notify_gathering_cancelled: { Args: { _event: string }; Returns: number }
+      notify_rsvp_request: { Args: { _rsvp: string }; Returns: undefined }
       plan_limits: { Args: { _plan: string }; Returns: Json }
       playbook_cards: {
         Args: { _category?: string; _context: string }
@@ -3575,6 +3636,7 @@ export type Database = {
         Returns: boolean
       }
       request_ip: { Args: never; Returns: string }
+      reset_invite_link: { Args: { _event: string }; Returns: string }
       reset_join_code: { Args: { _team: string }; Returns: string }
       rsvp_event: {
         Args: {
@@ -3588,6 +3650,27 @@ export type Database = {
           _plus_ones: number
           _sms: boolean
           _status: string
+        }
+        Returns: {
+          code: string
+          status: string
+        }[]
+      }
+      rsvp_event_full: {
+        Args: {
+          _answers: Json
+          _email: string
+          _event_id: string
+          _first: string
+          _language: string
+          _last: string
+          _mail: boolean
+          _phone: string
+          _plus_ones: number
+          _sms: boolean
+          _status: string
+          _token: string
+          _waiver_name: string
         }
         Returns: {
           code: string
@@ -3678,6 +3761,10 @@ export type Database = {
       }
       transfer_leadership: {
         Args: { _team: string; _to: string }
+        Returns: undefined
+      }
+      unlock_invite: {
+        Args: { _event: string; _token: string }
         Returns: undefined
       }
       update_gathering: {
