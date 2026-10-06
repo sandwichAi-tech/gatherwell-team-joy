@@ -22,6 +22,7 @@ import { useServerFn } from '@tanstack/react-start';
 import { refundPayments } from '@/lib/billing.functions';
 import { usePaymentGate } from '@/components/plan-page';
 import { NetworkShareToggle } from '@/components/network-share';
+import { MembersOnlyPicker } from '@/components/offers';
 import { Polls, PhotoRoll, useLiveCounts } from '@/components/event-live';
 
 export const Route = createFileRoute('/_authenticated/_app/event/$id')({ head: () => gatherwellHead('events'), component: EventDetailPage });
@@ -143,6 +144,7 @@ function EventDetailPage() {
         <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(invite)}`}><MessageSquareText />{t('gathering.text')}</a></Button>
         {event.visibility === 'public' && <Button variant="secondary" onClick={async () => { toast(t('guest.storyMaking')); await storyImage({ title: event.title, date: when, link, coverUrl: await mediaUrl(event.cover_url), coverStyle: event.cover_style, brand: t('brand') }); }}><ImageDown />{t('guest.story')}</Button>}</div>
       {isHost && event.visibility === 'public' && event.status === 'published' && <NetworkShareToggle eventId={event.id} />}
+      {isHost && <MembersOnlyPicker table="events" id={event.id} teamId={event.team_id} />}
     </ResponsiveSheet>
     {manages && event.status !== 'draft' && <OutboxSummary eventId={id} />}
     <ResponsiveSheet open={sheet === 'cancel'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.cancelTitle')} description={t('gathering.cancelText')}>

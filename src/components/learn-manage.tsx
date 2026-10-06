@@ -1,4 +1,5 @@
 import { useTranslateFill } from '@/lib/assistant-client';
+import { MembersOnlyPicker } from '@/components/offers';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -73,6 +74,7 @@ function TrackEditor({ track, teamId, onClose }: { track: Partial<Track> | null;
       <CoverPicker teamId={teamId} path={f.cover_url} styleIdx={f.cover_style} title={f.title_en || f.title_es} onPath={p => setF(x => ({ ...x, cover_url: p }))} onStyle={n => setF(x => ({ ...x, cover_style: n }))} />
       <label className="switch-row"><Switch checked={f.is_start_here} onCheckedChange={v => setF({ ...f, is_start_here: v })} /><span><strong>{t('learnHub.markStartHere')}</strong><small>{t('learnHub.markStartHereText')}</small></span></label>
       <label className="switch-row"><Switch checked={f.is_published} onCheckedChange={v => setF({ ...f, is_published: v })} /><span><strong>{t('learnHub.publishTrack')}</strong><small>{t('learnHub.publishTrackText')}</small></span></label>
+      {track?.id && <MembersOnlyPicker table="tracks" id={track.id} teamId={teamId} />}
       <Button className="onboarding-continue" disabled={busy || !ok} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
       {track?.id && <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('learnHub.deleteTrack')}</Button>}
     </div>
