@@ -25,6 +25,6 @@
 # Prompt 21B (after 21A; one area at a time)
 - [x] 1. Liability waivers
 - [x] 2. Co-hosts
-- [ ] 3. Custom RSVP questions, approval, invite-only
+- [ ] 3. Custom RSVP questions, approval, invite-only ✓
 - [ ] 4. Conversation: comments, team discussions, WhatsApp link, reply notifications
 - [ ] 5. Follow pages (/h, /t) and private calendar feeds
