@@ -93,7 +93,7 @@ export const startTicketCheckout = createServerFn({ method: 'POST' })
   .handler(async ({ data }): Promise<Result> => {
     const { stripe, stripeKey, FEE_PCT } = await import('./billing/stripe.server');
     const { getRequestHeader } = await import('@tanstack/react-start/server');
-    const waiverIp = (getRequestHeader('cf-connecting-ip') ?? getRequestHeader('x-forwarded-for') ?? '').split(',')[0].trim().slice(0, 64);
+    const waiverIp = (getRequestHeader('cf-connecting-ip') ?? getRequestHeader('x-forwarded-for') ?? '').split(',')[0]!.trim().slice(0, 64);
     if (!stripeKey()) return notConnected;
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
     const { data: ev } = await supabaseAdmin.from('events').select('id, title, host_id, price_cents, pass_fee, status, visibility, requires_waiver').eq('id', data.eventId).maybeSingle();
