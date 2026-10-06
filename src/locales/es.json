@@ -2526,5 +2526,22 @@
     "inviteTitle": "Te invitaron",
     "inviteMeta": "Alguien te invitó a una reunión en Gatherwell.",
     "inviteLoading": "Buscando reuniones cerca de ti..."
+  },
+  "playbook": {
+    "title": "Playbook",
+    "slot": "Las reuniones de {{cat}} los {{day}} cerca de las {{time}} tienen en promedio {{ratio}} veces más llegadas que en otros horarios.",
+    "length": "Las reuniones de {{cat}} con mejores resultados duran entre {{min}} y {{max}} minutos.",
+    "followup": "Los equipos que dan seguimiento en las primeras 24 horas conservan más personas nuevas: regresa el {{fast}}%, frente al {{slow}}%.",
+    "sampleNote": "Consejo de ejemplo. Los patrones reales aparecen cuando la red tenga al menos 20 reuniones de 5 equipos.",
+    "realNote": "Basado en actividad anónima de los equipos de Gatherwell. Nunca con nombres.",
+    "benchTitle": "Tu equipo y la red",
+    "benchText": "Últimos 90 días, solo actividad.",
+    "bench": {
+      "avg": "Llegadas por reunión",
+      "showup": "Asistencia confirmada"
+    },
+    "yourTeam": "Tu equipo",
+    "network": "Red",
+    "benchFoot": "Tu equipo organizó {{count}} reuniones en este periodo."
   }
 }

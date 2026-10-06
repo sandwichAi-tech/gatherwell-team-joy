@@ -1164,3 +1164,18 @@ button { white-space:normal; }
 .welcome-rewards li > span, .welcome-codes li > span, .welcome-friends li > span:first-child { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .welcome-codes code { font-weight: 600; letter-spacing: 0.04em; }
 .welcome-host-card { display: grid; gap: 0.75rem; }
+
+/* Playbook */
+.playbook-card { display: grid; gap: .6rem; }
+.playbook-head { display: flex; align-items: center; gap: .5rem; }
+.playbook-icon { display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: 999px; background: var(--accent); color: var(--accent-foreground); }
+.playbook-icon svg { width: 1rem; height: 1rem; }
+.playbook-list { display: grid; gap: .5rem; margin: 0; padding: 0; list-style: none; font-size: 1rem; line-height: 1.45; }
+.playbook-card.is-compact .playbook-list { font-size: .95rem; }
+.playbook-note { margin: 0; font-size: .85rem; color: var(--muted-foreground); }
+.bench-list { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.bench-label { display: block; font-weight: 600; margin-bottom: .35rem; }
+.bench-bar { display: grid; grid-template-columns: 6.5rem 1fr 3.5rem; align-items: center; gap: .6rem; font-size: .9rem; }
+.bench-bar strong { text-align: right; font-variant-numeric: tabular-nums; }
+.bench-bar meter { width: 100%; height: .6rem; }
+.bench-bar.is-net { color: var(--muted-foreground); }

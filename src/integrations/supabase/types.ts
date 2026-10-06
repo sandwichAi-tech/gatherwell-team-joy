@@ -1855,6 +1855,36 @@ export type Database = {
           },
         ]
       }
+      playbook_patterns: {
+        Row: {
+          category: string | null
+          computed_at: string
+          context: string
+          gatherings: number
+          key: string
+          params: Json
+          teams: number
+        }
+        Insert: {
+          category?: string | null
+          computed_at?: string
+          context: string
+          gatherings: number
+          key: string
+          params?: Json
+          teams: number
+        }
+        Update: {
+          category?: string | null
+          computed_at?: string
+          context?: string
+          gatherings?: number
+          key?: string
+          params?: Json
+          teams?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           active_team_id: string | null
@@ -3127,6 +3157,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      compute_playbook: { Args: never; Returns: number }
       copy_starter_template: {
         Args: { _team: string; _template: string }
         Returns: string
@@ -3353,6 +3384,23 @@ export type Database = {
       }
       notify_gathering_cancelled: { Args: { _event: string }; Returns: number }
       plan_limits: { Args: { _plan: string }; Returns: Json }
+      playbook_cards: {
+        Args: { _category?: string; _context: string }
+        Returns: Json
+      }
+      playbook_event_metrics: {
+        Args: { _since: string }
+        Returns: {
+          category: string
+          checkins: number
+          dow: number
+          event_id: string
+          going: number
+          hr: number
+          minutes: number
+          team_id: string
+        }[]
+      }
       post_challenge_encouragement: {
         Args: { _c: string; _message: string }
         Returns: undefined
@@ -3446,6 +3494,7 @@ export type Database = {
       shares_team_with: { Args: { _other: string }; Returns: boolean }
       storage_allows: { Args: { _bytes: number }; Returns: boolean }
       storage_used_bytes: { Args: { _uid: string }; Returns: number }
+      team_benchmark: { Args: { _root: string }; Returns: Json }
       team_featured_gatherings: { Args: { _team: string }; Returns: Json }
       team_insights: {
         Args: { _from: string; _root: string; _scope: string; _to: string }

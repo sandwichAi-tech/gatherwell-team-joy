@@ -12,6 +12,7 @@ import { useGatherwell } from '@/components/gatherwell-shell';
 import { supabase } from '@/integrations/supabase/client';
 import { firstName, initialsOf, workspaceQuery } from '@/lib/account';
 import { teamKey, teamTreeQuery } from '@/lib/team';
+import { PlaybookCard, BenchmarkPanel } from '@/components/playbook';
 
 type Period = 'week' | 'month' | 'quarter';
 type Stats = Record<'g' | 'g_prev' | 'r' | 'r_prev' | 'c' | 'c_prev' | 'h' | 'h_prev' | 'm' | 'm_prev' | 't' | 't_prev', number>;
@@ -99,6 +100,8 @@ export function InsightsPage() {
     {error && <p className="field-error">{t('profile.saveError')}</p>}
     <section className="stats-grid insights-stats">{cards.map(({ key, Icon, v, p }) => <article className="stat-card" key={key}><div className="stat-heading"><span>{t(`insights.stats.${key}`)}</span><Icon /></div><strong className="stat-value">{v}</strong><p className="muted-change">{change(v, p)}</p></article>)}</section>
     <section className="panel"><div className="section-heading"><h2>{t('insights.chart')}</h2>{sample && <span className="chip sample-badge">{t('common.sample')}</span>}</div><Chart data={view.weekly} lang={lang} /></section>
+    {rootId && <BenchmarkPanel teamId={rootId} />}
+    <PlaybookCard context="insights" />
     <div className="dashboard-columns insights-columns">
       <section className="panel"><div className="section-heading"><h2>{t('insights.topHosts')}</h2></div>
         {view.top_hosts.length ? <ol className="rank-list">{view.top_hosts.map((h, i) => <li key={h.user_id} className="person-row"><span className="rank">{i + 1}</span><span className="initial-avatar">{initialsOf(h.name)}</span>

@@ -1,3 +1,4 @@
+import { PlaybookCard } from '@/components/playbook';
 import { DailyBriefCard, FollowupsHomeCard, MemberPlanCard } from '@/components/smart';
 import { ActiveChallengeCard } from '@/components/challenges';
 import { FromYourLeader } from '@/components/templates';
@@ -69,6 +70,7 @@ export function HomePage() {
   return <>
     <MobileTeamSwitcher />
     <DailyBriefCard />
+    <PlaybookCard context="brief" compact />
     <FollowupsHomeCard />
     <MemberPlanCard />
     <NextCard />

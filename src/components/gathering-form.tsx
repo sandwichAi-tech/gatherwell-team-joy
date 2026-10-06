@@ -1,3 +1,4 @@
+import { PlaybookCard } from '@/components/playbook';
 import { trackEvent } from '@/lib/analytics';
 import { ClaimGuard } from '@/components/smart';
 import { useTranslateFill } from '@/lib/assistant-client';
@@ -194,6 +195,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         <div className="chip-row">{DURATIONS.map(d => <button key={d} type="button" className={`preset-chip ${!customDuration && duration === d ? 'is-selected' : ''}`} aria-pressed={!customDuration && duration === d} onClick={() => { setCustomDuration(false); setDuration(d); }}>{t(`gathering.durations.${d}`)}</button>)}
           <button type="button" className={`preset-chip ${customDuration ? 'is-selected' : ''}`} aria-pressed={customDuration} onClick={() => setCustomDuration(true)}>{t('gathering.customDuration')}</button></div>
         {customDuration && <div className="inline-field"><Input type="number" min={5} max={1440} className="field-input" value={duration} onChange={e => setDuration(Math.max(5, Math.min(1440, Number(e.target.value) || 5)))} aria-label={t('gathering.minutes')} /><span>{t('gathering.minutes')}</span></div>}
+        {!editing && <PlaybookCard context="create" compact />}
       </section>
 
       <section className="form-section">
