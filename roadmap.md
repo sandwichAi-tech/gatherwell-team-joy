@@ -5,7 +5,7 @@
 
 # D1 Step 2 — Design System 2.0 (report after each phase)
 - [x] Phase 1 Foundation
-- [ ] Phase 2 Shared overlays (ConfirmDialog, toasts, menus, mobile menu)
+- [x] Phase 2 Shared overlays (ConfirmDialog, toasts, menus, mobile menu)
 - [ ] Phase 3 Me and member profile
 - [ ] Phase 4 States
 - [ ] Phase 5 Screen drift
