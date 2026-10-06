@@ -40,4 +40,4 @@
 - [x] 2. Co-hosts
 - [x] 3. Custom RSVP questions, approval, invite-only
 - [x] 4. Conversation: comments, team discussions, WhatsApp link, reply notifications
-- [ ] 5. Follow pages (/h, /t) and private calendar feeds
+- [x] 5. Follow pages (/h, /t) and private calendar feeds
