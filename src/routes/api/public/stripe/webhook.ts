@@ -27,6 +27,7 @@ export const Route = createFileRoute('/api/public/stripe/webhook')({
                 if (error) throw error;
                 const code = (r as { code: string }[] | null)?.[0]?.code;
                 const { data: rsvp } = code ? await db.from('rsvps').select('id').eq('checkin_code', code).maybeSingle() : { data: null };
+                if (rsvp?.id && m.waiver) await db.rpc('record_waiver' as never, { _rsvp: rsvp.id, _name: m.waiver, _ip: m.waiver_ip || null, _source: 'rsvp' } as never);
                 const { data: pay } = await db.from('payments').update({ status: 'paid', stripe_payment_intent: o.payment_intent, rsvp_id: rsvp?.id ?? null }).eq('stripe_session_id', o.id).select('amount_cents').maybeSingle();
                 const { data: ev } = await db.from('events').select('title, starts_at, timezone, location_name').eq('id', m.event_id).maybeSingle();
                 await db.rpc('enqueue_message', <any>{ _channel: 'email', _recipient: m.email, _language: m.lang === 'es' ? 'es' : 'en', _template: 'payment_receipt', _kind: 'transactional',

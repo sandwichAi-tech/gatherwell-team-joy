@@ -870,7 +870,8 @@
       "too_long": "Uno de los campos es demasiado largo.",
       "generic": "Algo salió mal. Inténtalo de nuevo.",
       "rate_limited": "Demasiadas confirmaciones en poco tiempo. Espera un minuto.",
-      "members_only": "Esta reunión es solo para miembros."
+      "members_only": "Esta reunión es solo para miembros.",
+      "waiver_required": "Escribe tu nombre completo y marca la casilla para aceptar la exención."
     }
   },
   "guestList": {
@@ -2543,5 +2544,27 @@
     "yourTeam": "Tu equipo",
     "network": "Red",
     "benchFoot": "Tu equipo organizó {{count}} reuniones en este periodo."
+  },
+  "waiver": {
+    "draft": "Borrador — pendiente de revisión legal",
+    "typeName": "Escribe tu nombre completo para firmar",
+    "agree": "Leí y acepto esta exención.",
+    "require": "Pedir la exención",
+    "requireHelp": "Las personas invitadas leen y firman la exención del equipo al confirmar. Quienes llegan sin registro firman al hacer check-in.",
+    "edit": "Editar exención del equipo",
+    "editTitle": "Exención del equipo",
+    "editHelp": "Las palabras sencillas funcionan mejor. Escríbela en ambos idiomas.",
+    "titleEn": "Título (inglés)",
+    "bodyEn": "Texto de la exención (inglés)",
+    "titleEs": "Título (español)",
+    "bodyEs": "Texto de la exención (español)",
+    "version": "Versión {{n}}",
+    "versionHelp": "Al guardar cambios se crea una versión nueva. Las firmas anteriores conservan la versión que aceptaron.",
+    "save": "Guardar exención",
+    "saved": "Exención guardada",
+    "signed": "Exención firmada",
+    "signedOn": "Firmada por {{name}}, versión {{version}}",
+    "missing": "Exención sin firmar",
+    "recordError": "Se agregó a la persona, pero no se pudo guardar la exención. Inténtalo de nuevo desde la lista."
   }
 }

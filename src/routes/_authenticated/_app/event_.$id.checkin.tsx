@@ -1,3 +1,4 @@
+import { WaiverAccept, useEventWaiver, waiverReady, waiverRpc } from '@/components/waiver';
 import { trackEvent } from '@/lib/analytics';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
@@ -163,15 +164,19 @@ function Scanner({ onClose, onCode, scan, onNext }: { onClose: () => void; onCod
 function WalkInSheet({ open, eventId, onClose, onSaved }: { open: boolean; eventId: string; onClose: () => void; onSaved: () => void }) {
   const { t, i18n } = useTranslation();
   const blank = { first: '', last: '', phone: '', email: '', sms: false, mail: false };
+  const { data: waiver } = useEventWaiver(open ? eventId : undefined); const [wName, setWName] = useState(''); const [wOk, setWOk] = useState(false);
   const [f, setF] = useState(blank); const [busy, setBusy] = useState(false); const [err, setErr] = useState<string | null>(null);
   const submit = async (e: FormEvent) => {
     e.preventDefault(); setErr(null);
     if (!f.first.trim()) { setErr(t('guest.errors.name_required')); return; }
     if (!f.phone.trim() && !f.email.trim()) { setErr(t('guest.errors.contact_required')); return; }
+    if (!waiverReady(waiver, wName, wOk)) { setErr(t('guest.errors.waiver_required')); return; }
     setBusy(true);
-    const { error } = await supabase.rpc('add_walk_in', { _event: eventId, _first: f.first.trim(), _last: f.last.trim(), _phone: f.phone.trim(), _email: f.email.trim(), _sms: f.sms, _mail: f.mail, _language: i18n.resolvedLanguage === 'es' ? 'es' : 'en' });
+    const { data: rid, error } = await supabase.rpc('add_walk_in', { _event: eventId, _first: f.first.trim(), _last: f.last.trim(), _phone: f.phone.trim(), _email: f.email.trim(), _sms: f.sms, _mail: f.mail, _language: i18n.resolvedLanguage === 'es' ? 'es' : 'en' });
+    if (!error && rid && waiver?.required) { const { error: we } = await waiverRpc('walk_in_waiver', { _rsvp: rid, _name: wName.trim() }); if (we) toast.error(t('waiver.recordError')); }
     setBusy(false);
     if (error) { setErr(t(rsvpErrorKey(error))); return; }
+    setWName(''); setWOk(false);
     toast.success(t('checkin.walkInAdded', { name: f.first.trim() })); setF(blank); onSaved(); onClose();
   };
   return <ResponsiveSheet open={open} onOpenChange={o => !o && onClose()} title={t('checkin.walkIn')}>
@@ -184,6 +189,7 @@ function WalkInSheet({ open, eventId, onClose, onSaved }: { open: boolean; event
       <div><label className="field-label" htmlFor="w-email">{t('guest.email')}</label><Input id="w-email" type="email" maxLength={200} className="field-input" value={f.email} onChange={e => setF({ ...f, email: e.target.value })} /></div>
       <label className="guest-consent"><Checkbox checked={f.sms} onCheckedChange={v => setF({ ...f, sms: !!v })} /><span>{t('guest.smsConsent')}</span></label>
       <label className="guest-consent"><Checkbox checked={f.mail} onCheckedChange={v => setF({ ...f, mail: !!v })} /><span>{t('guest.emailConsent')}</span></label>
+      {waiver && <WaiverAccept waiver={waiver} name={wName} accepted={wOk} onName={setWName} onAccepted={setWOk} idPrefix="wwv" />}
       {err && <p className="field-error" role="alert">{err}</p>}
       <Button type="submit" className="guest-primary" disabled={busy}>{t('checkin.addAndCheckIn')}</Button>
     </form>
