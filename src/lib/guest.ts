@@ -8,10 +8,16 @@ export type PublicEvent = {
   is_online: boolean; has_online: boolean; capacity: number | null; status: 'published' | 'cancelled';
   hide_guest_list: boolean; going: number; initials: string[] | null;
   host: { name: string | null; avatar_url: string | null } | null; cohosts?: { name: string | null; avatar_url: string | null }[]; team_name: string | null; my_code: string | null;
+  questions?: RsvpQuestion[]; require_approval?: boolean; visibility?: 'public' | 'team' | 'invite';
 };
 
+export type RsvpQuestion = { id: string; kind: 'text' | 'choice' | 'yesno'; label: string; options?: string[] | undefined; required?: boolean };
+
+/** Private invite key from the current link (?k=), used for invite-only gatherings. */
+export const inviteToken = () => (typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('k'));
+
 export type GuestRsvp = {
-  id: string; event_id: string; guest_name: string | null; plus_ones: number; status: 'going' | 'maybe' | 'waitlist' | 'cancelled';
+  id: string; event_id: string; guest_name: string | null; plus_ones: number; status: 'going' | 'maybe' | 'waitlist' | 'cancelled' | 'requested' | 'declined';
   checkin_code: string; checked_in_at: string | null; language: string;
   event: Pick<PublicEvent, 'id' | 'title' | 'starts_at' | 'ends_at' | 'timezone' | 'location_name' | 'address' | 'meeting_note' | 'lat' | 'lng' | 'cover_url' | 'cover_style' | 'status' | 'capacity' | 'description_en' | 'description_es'> & { online_url: string | null };
 };
@@ -22,7 +28,7 @@ export const publicEventQuery = (id: string) => ({
   queryKey: ['public-event', id],
   queryFn: async (): Promise<PublicEvent | null> => {
     if (!isUuid(id)) return null;
-    const { data, error } = await supabase.rpc('get_public_event', { _id: id });
+    const { data, error } = await (supabase as any).rpc('get_public_event_k', { _id: id, _token: inviteToken() });
     if (error) throw error;
     return (data as unknown as PublicEvent) ?? null;
   },
@@ -69,7 +75,7 @@ export function formatWhen(iso: string, lang: string, opts: Intl.DateTimeFormatO
   return new Intl.DateTimeFormat(lang === 'es' ? 'es-419' : 'en-US', opts).format(new Date(iso));
 }
 
-export const guestLink = (id: string) => `${window.location.origin}/e/${id}`;
+export const guestLink = (id: string, token: string | null = inviteToken()) => `${window.location.origin}/e/${id}${token ? `?k=${encodeURIComponent(token)}` : ''}`;
 
 /** 1080x1920 story image in the premium plum style. */
 export async function storyImage(opts: { title: string; date: string; link: string; coverUrl: string | null; coverStyle: number | null; brand: string }) {
@@ -114,6 +120,6 @@ export async function storyImage(opts: { title: string; date: string; link: stri
 
 export function rsvpErrorKey(error: unknown) {
   const m = typeof error === 'object' && error && 'message' in error ? String((error as { message: unknown }).message) : '';
-  for (const k of ['name_required', 'contact_required', 'invalid_email', 'not_open', 'too_long', 'rate_limited', 'members_only', 'waiver_required']) if (m.includes(k)) return `guest.errors.${k}`;
+  for (const k of ['name_required', 'contact_required', 'invalid_email', 'not_open', 'too_long', 'rate_limited', 'members_only', 'waiver_required', 'answers_required']) if (m.includes(k)) return `guest.errors.${k}`;
   return 'guest.errors.generic';
 }

@@ -14,8 +14,9 @@ import { useServerFn } from '@tanstack/react-start';
 import { usePaymentGate } from '@/components/plan-page';
 import { startTicketCheckout } from '@/lib/billing.functions';
 import { formatMoney } from '@/lib/billing';
+import { RsvpQuestionsFields, answersReady } from '@/components/rsvp-questions';
 import { WaiverAccept, useEventWaiver, waiverReady, waiverRpc } from '@/components/waiver';
-import { directionsUrl, downloadIcs, formatWhen, googleCalendarUrl, guestLink, hasPlace, rsvpErrorKey, type PublicEvent } from '@/lib/guest';
+import { directionsUrl, downloadIcs, formatWhen, googleCalendarUrl, guestLink, hasPlace, inviteToken, rsvpErrorKey, type PublicEvent } from '@/lib/guest';
 
 type CalEvent = Pick<PublicEvent, 'id' | 'title' | 'starts_at' | 'ends_at' | 'location_name' | 'address'>;
 
@@ -53,7 +54,7 @@ export function Stepper({ value, onChange, max = 3, label }: { value: number; on
   </div>;
 }
 
-export type RsvpResult = { code: string; status: 'going' | 'maybe' | 'waitlist' };
+export type RsvpResult = { code: string; status: 'going' | 'maybe' | 'waitlist' | 'requested' };
 
 export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEvent; intent: 'going' | 'maybe' | null; onClose: () => void; onDone: (r: RsvpResult) => void }) {
   const { t, i18n } = useTranslation();
@@ -61,6 +62,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
   const [busy, setBusy] = useState(false); const [error, setError] = useState<string | null>(null);
   const [price, setPrice] = useState<{ price_cents: number; pass_fee: boolean; fee_pct: number } | null>(null);
   const { data: waiver } = useEventWaiver(intent ? event.id : undefined); const [wName, setWName] = useState(''); const [wOk, setWOk] = useState(false);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   const gate = usePaymentGate(); const checkout = useServerFn(startTicketCheckout);
   const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
   useEffect(() => { void supabase.rpc('event_price', { _id: event.id }).then(({ data }) => setPrice((data as typeof price) ?? null)); }, [event.id]);
@@ -83,6 +85,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
     if (!form.first.trim()) { setError(t('guest.errors.name_required')); return; }
     if (!form.phone.trim() && !form.email.trim()) { setError(t('guest.errors.contact_required')); return; }
     if (!waiverReady(waiver, wName, wOk)) { setError(t('guest.errors.waiver_required')); return; }
+    if (intent === 'going' && !answersReady(event.questions, answers)) { setError(t('guest.errors.answers_required')); return; }
     const waiverName = waiver?.required ? wName.trim() : '';
     if (paid) {
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim())) { setError(t('guest.errors.invalid_email')); return; }
@@ -90,7 +93,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
       return;
     }
     setBusy(true); setError(null);
-    const { data, error: err } = await waiverRpc('rsvp_event_waiver', { _waiver_name: waiverName, _event_id: event.id, _first: form.first.trim(), _last: form.last.trim(), _phone: form.phone.trim(), _email: form.email.trim(),
+    const { data, error: err } = await waiverRpc('rsvp_event_full', { _answers: answers, _token: inviteToken(), _waiver_name: waiverName, _event_id: event.id, _first: form.first.trim(), _last: form.last.trim(), _phone: form.phone.trim(), _email: form.email.trim(),
       _language: i18n.resolvedLanguage === 'es' ? 'es' : 'en', _plus_ones: form.plus, _status: intent, _sms: form.sms, _mail: form.mail });
     setBusy(false);
     const row = (Array.isArray(data) ? data[0] : null) as { code: string; status: string } | null;
@@ -112,6 +115,8 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
       <div className="guest-plus"><span className="field-label">{t('guest.plusOnes')}</span><Stepper value={form.plus} onChange={plus => setForm({ ...form, plus })} label={t('guest.plusOnes')} /></div>
       <label className="guest-consent"><Checkbox checked={form.sms} onCheckedChange={v => setForm({ ...form, sms: !!v })} /><span>{t('guest.smsConsent')} <a href="/legal/sms" target="_blank" rel="noopener">{t('legalDocs.docs.sms.title')}</a></span></label>
       <label className="guest-consent"><Checkbox checked={form.mail} onCheckedChange={v => setForm({ ...form, mail: !!v })} /><span>{t('guest.emailConsent')}</span></label>
+      {!!event.questions?.length && <RsvpQuestionsFields questions={event.questions} value={answers} onChange={setAnswers} />}
+      {event.require_approval && intent === 'going' && <p className="guest-hint">{t('rsvpq.approvalHint')}</p>}
       {waiver && <WaiverAccept waiver={waiver} name={wName} accepted={wOk} onName={setWName} onAccepted={setWOk} />}
       {paid && price && <p className="guest-price"><strong>{formatMoney(price.price_cents, lang)}</strong><span>{t('billing.perPerson')}{fee ? ` · ${t('billing.bookingFee', { fee: formatMoney(fee, lang) })}` : ''}</span></p>}
       {error && <p className="field-error" role="alert">{error}</p>}
@@ -123,7 +128,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
 
 type ConfirmEvent = Pick<PublicEvent, 'id' | 'title' | 'starts_at' | 'ends_at' | 'location_name' | 'address' | 'meeting_note' | 'lat' | 'lng'> & { online_url?: string | null };
 
-export function Confirmation({ event, code, status }: { event: ConfirmEvent; code: string; status: 'going' | 'maybe' | 'waitlist' | 'cancelled' }) {
+export function Confirmation({ event, code, status }: { event: ConfirmEvent; code: string; status: 'going' | 'maybe' | 'waitlist' | 'cancelled' | 'requested' | 'declined' }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
   const qr = useRef<HTMLDivElement>(null);
   const saveQr = () => {
@@ -140,9 +145,9 @@ export function Confirmation({ event, code, status }: { event: ConfirmEvent; cod
       {(event.location_name || event.address) && <span>{[event.location_name, event.address].filter(Boolean).join(' · ')}</span>}
       {event.meeting_note && <span className="muted">{event.meeting_note}</span>}
     </div>
-    {event.online_url && status !== 'cancelled' && <Button asChild className="guest-primary"><a href={event.online_url} target="_blank" rel="noopener noreferrer"><Video />{t('guest.joinOnline')}</a></Button>}
+    {event.online_url && (status === 'going' || status === 'maybe') && <Button asChild className="guest-primary"><a href={event.online_url} target="_blank" rel="noopener noreferrer"><Video />{t('guest.joinOnline')}</a></Button>}
     {status === 'going' && <div className="guest-qr" ref={qr}><QRCodeSVG value={code} size={176} bgColor="var(--qr-background)" fgColor="var(--qr-foreground)" level="M" marginSize={4} title={t('guest.qrHelp')} /><span>{t('guest.qrHelp')}</span><Button variant="secondary" onClick={saveQr}>{t('launch.saveQr')}</Button></div>}
-    {status !== 'cancelled' && <><CalendarButtons event={event} /><DirectionsButton event={event} /></>}
+    {!['cancelled', 'declined'].includes(status) && <><CalendarButtons event={event} /><DirectionsButton event={event} /></>}
     <h3 className="guest-subhead">{t('guest.inviteFriend')}</h3>
     <InviteShare eventId={event.id} title={event.title} when={when} />
     <Link to="/r/$code" params={{ code }} className="guest-manage-link">{t('guest.manage')}</Link>

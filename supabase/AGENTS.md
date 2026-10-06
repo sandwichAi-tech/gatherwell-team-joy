@@ -18,3 +18,4 @@
 - Playbook: nightly compute_playbook() writes anonymized patterns (>=20 gatherings, >=5 teams) to playbook_patterns; UI reads only playbook_cards()/team_benchmark(), which return labeled samples until data suffices.
 - Waivers: one per team (default seeded by trigger, version bumps on edit); signatures only via rsvp_event_waiver(), walk_in_waiver() or record_waiver() from the Stripe webhook, storing name, version, time and IP; host/leader-only reads.
 - Co-hosts (max 3, same team) are set only via set_event_cohosts(); can_manage_event() includes them, so every host-checked RPC and RLS rule covers co-hosts; guard_cohost_edit blocks owner/team/price changes.
+- RSVP questions (max 5), approval and invite-only: guests RSVP via rsvp_event_full() and read via get_public_event_k()/event_waiver_k() with the private ?k= token; approvals only through decide_rsvp(); answers are host/co-host/leader-only in rsvp_answers; approval is blocked on paid gatherings.

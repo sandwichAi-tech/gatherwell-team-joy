@@ -40,7 +40,7 @@ function ManageRsvp() {
     if (error) { toast.error(t('guest.errors.generic')); return; }
     toast.success(t('guest.toastCancelled')); await refresh();
   };
-  const open = data.status !== 'cancelled' && data.event.status === 'published';
+  const open = !['cancelled', 'requested', 'declined'].includes(data.status) && data.event.status === 'published';
   return <>
     <GatheringCover path={data.event.cover_url} style={data.event.cover_style} title={data.event.title} className="guest-cover" />
     <article className="guest-body">

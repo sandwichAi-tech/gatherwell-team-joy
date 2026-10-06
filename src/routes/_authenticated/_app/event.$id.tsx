@@ -24,6 +24,7 @@ import { usePaymentGate } from '@/components/plan-page';
 import { NetworkShareToggle } from '@/components/network-share';
 import { MembersOnlyPicker } from '@/components/offers';
 import { WaiverEventToggle } from '@/components/waiver';
+import { RsvpSettingsPanel } from '@/components/rsvp-questions';
 import { CohostsPanel, cohostsQuery } from '@/components/cohosts';
 import { Polls, PhotoRoll, useLiveCounts } from '@/components/event-live';
 
@@ -95,7 +96,7 @@ function EventDetailPage() {
     <section className="panel manage-header">
       <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="manage-cover" />
       <div className="manage-body">
-        <div className="profile-chips">{statusChip}<span className="chip">{t(`gathering.vis.${event.visibility === 'public' ? 'public' : 'team'}`)}</span>{event.series_id && <span className="chip"><Repeat className="inline-icon" />{t('gathering.weekly')}</span>}</div>
+        <div className="profile-chips">{statusChip}<span className="chip">{t(`gathering.vis.${event.visibility === 'public' ? 'public' : event.visibility === 'invite' ? 'invite' : 'team'}`)}</span>{event.series_id && <span className="chip"><Repeat className="inline-icon" />{t('gathering.weekly')}</span>}</div>
         <h1 className="manage-title">{event.title}</h1>
         <ul className="detail-facts">
           <li><CalendarDays />{when}</li>
@@ -150,6 +151,7 @@ function EventDetailPage() {
         <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(invite)}`}><MessageSquareText />{t('gathering.text')}</a></Button>
         {event.visibility === 'public' && <Button variant="secondary" onClick={async () => { toast(t('guest.storyMaking')); await storyImage({ title: event.title, date: when, link, coverUrl: await mediaUrl(event.cover_url), coverStyle: event.cover_style, brand: t('brand') }); }}><ImageDown />{t('guest.story')}</Button>}</div>
       {isHost && event.visibility === 'public' && event.status === 'published' && <NetworkShareToggle eventId={event.id} />}
+      {manages && <RsvpSettingsPanel eventId={event.id} initial={{ questions: ((event as any).rsvp_questions ?? []), require_approval: !!(event as any).require_approval, visibility: event.visibility, invite_token: (event as any).invite_token ?? '', price_cents: (event as any).price_cents ?? null }} />}
       {isHost && <WaiverEventToggle eventId={event.id} teamId={event.team_id} value={!!(event as { requires_waiver?: boolean }).requires_waiver} />}
       {isHost && <MembersOnlyPicker table="events" id={event.id} teamId={event.team_id} />}
     </ResponsiveSheet>

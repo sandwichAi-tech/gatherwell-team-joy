@@ -724,7 +724,8 @@
     "visibility": "Quién puede verla",
     "vis": {
       "public": "Cualquiera con el enlace",
-      "team": "Solo mi equipo"
+      "team": "Solo mi equipo",
+      "invite": "Solo con invitación"
     },
     "description": "Descripción",
     "descPlaceholder": "Qué esperar y qué llevar.",
@@ -837,13 +838,17 @@
       "going": "¡Estás dentro!",
       "maybe": "Marcaste tal vez.",
       "waitlist": "Estás en la lista de espera.",
-      "cancelled": "Tu confirmación está cancelada."
+      "cancelled": "Tu confirmación está cancelada.",
+      "requested": "Solicitud enviada",
+      "declined": "Esta vez no"
     },
     "confirmSub": {
       "going": "Muestra este código al llegar.",
       "maybe": "Cámbialo a “Voy” cuando quieras.",
       "waitlist": "Si se libera un lugar, entrarás automáticamente.",
-      "cancelled": "¿Cambiaste de opinión? Abre el enlace de la reunión para confirmar de nuevo."
+      "cancelled": "¿Cambiaste de opinión? Abre el enlace de la reunión para confirmar de nuevo.",
+      "requested": "El anfitrión revisará tu confirmación pronto. Te avisamos.",
+      "declined": "Esta vez el anfitrión no tuvo lugar. Esperamos verte en otra reunión."
     },
     "joinOnline": "Entrar en línea",
     "qrHelp": "Tu código de registro",
@@ -871,7 +876,8 @@
       "generic": "Algo salió mal. Inténtalo de nuevo.",
       "rate_limited": "Demasiadas confirmaciones en poco tiempo. Espera un minuto.",
       "members_only": "Esta reunión es solo para miembros.",
-      "waiver_required": "Escribe tu nombre completo y marca la casilla para aceptar la exención."
+      "waiver_required": "Escribe tu nombre completo y marca la casilla para aceptar la exención.",
+      "answers_required": "Responde las preguntas obligatorias."
     }
   },
   "guestList": {
@@ -881,7 +887,9 @@
       "going": "Van",
       "maybe": "Tal vez",
       "waitlist": "En espera",
-      "cancelled": "Cancelados"
+      "cancelled": "Cancelados",
+      "requested": "Solicitudes",
+      "declined": "Rechazados"
     },
     "search": "Buscar invitados",
     "add": "Agregar invitado",
@@ -2581,5 +2589,43 @@
     "saved": "Coanfitriones guardados",
     "tooMany": "Puedes agregar hasta 3 coanfitriones.",
     "withCohosts": "Con la coorganización de"
+  },
+  "rsvpq": {
+    "guestHeading": "Unas preguntas del anfitrión",
+    "requiredMark": "(obligatoria)",
+    "yes": "Sí",
+    "no": "No",
+    "approvalHint": "El anfitrión aprueba cada confirmación. Te avisamos en cuanto lo haga.",
+    "heading": "Opciones de confirmación",
+    "approval": "Aprobar invitados primero",
+    "approvalHelp": "Las nuevas confirmaciones esperan a que las apruebes o rechaces.",
+    "approvalPaid": "La aprobación no está disponible en reuniones de pago.",
+    "inviteOnly": "Solo con invitación",
+    "inviteOnlyHelp": "No aparece en Descubrir. Solo quien tenga el enlace privado puede abrirla.",
+    "resetLink": "Crear un enlace nuevo",
+    "linkReset": "Enlace nuevo listo. El anterior ya no funciona.",
+    "questions": "Preguntas ({{count}} de {{max}})",
+    "questionLabel": "Pregunta {{n}}",
+    "placeholder": "p. ej., ¿Alguna lesión que debamos saber?",
+    "kind": "Tipo de respuesta",
+    "kinds": {
+      "text": "Respuesta corta",
+      "choice": "Opciones",
+      "yesno": "Sí / No"
+    },
+    "option": "Opción {{n}}",
+    "removeOption": "Quitar opción",
+    "addOption": "Agregar opción",
+    "required": "Obligatoria",
+    "remove": "Quitar pregunta",
+    "add": "Agregar una pregunta",
+    "save": "Guardar preguntas",
+    "saved": "Preguntas guardadas",
+    "incomplete": "Completa cada pregunta y da al menos dos opciones en las de opción.",
+    "approve": "Aprobar",
+    "decline": "Rechazar",
+    "approved": "Aprobado. Recibirá una confirmación.",
+    "approvedWaitlist": "Aprobado y en lista de espera, porque está lleno.",
+    "declined": "Rechazado. Recibirá un mensaje amable."
   }
 }

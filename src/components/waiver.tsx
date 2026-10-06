@@ -18,7 +18,7 @@ export const waiverRpc = db.rpc;
 
 export function useEventWaiver(eventId: string | undefined) {
   return useQuery({ queryKey: ['event-waiver', eventId], enabled: !!eventId, staleTime: 5 * 60_000,
-    queryFn: async () => { const { data } = await db.rpc('event_waiver', { _event: eventId }); return (data ?? { required: false }) as EventWaiver; } });
+    queryFn: async () => { const { data } = await db.rpc('event_waiver_k', { _event: eventId, _token: new URLSearchParams(window.location.search).get('k') }); return (data ?? { required: false }) as EventWaiver; } });
 }
 
 /** Read-and-accept block used in the RSVP step and at walk-in check-in. */

@@ -51,7 +51,8 @@ export const seriesQuery = (seriesId: string | null) => queryOptions({
   },
 });
 
-export function shareLink(e: Pick<Gathering, 'id' | 'visibility'>) {
+export function shareLink(e: Pick<Gathering, 'id' | 'visibility'> & { invite_token?: string | null }) {
+  if (e.visibility === 'invite' && e.invite_token) return `${window.location.origin}/e/${e.id}?k=${e.invite_token}`;
   return `${window.location.origin}${e.visibility === 'public' ? '/e/' : '/event/'}${e.id}`;
 }
 
