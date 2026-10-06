@@ -38,3 +38,4 @@
 
 - Platform admin: /admin data and actions go only through src/lib/admin.functions.ts and every action writes admin_audit; reports come from report_content() or the claims trigger.
 - Network: host connections, shares, team features and guest referrals go only through network_* RPCs and record_referral(); referral credit is for guests attending gatherings, never team recruiting.
+- Offer purchases come only from join_free_offer() or the Stripe webhook; members-only access is checked in the database.
