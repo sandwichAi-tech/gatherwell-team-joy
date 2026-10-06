@@ -11,7 +11,7 @@ export type PublicEvent = {
   questions?: RsvpQuestion[]; require_approval?: boolean; visibility?: 'public' | 'team' | 'invite';
 };
 
-export type RsvpQuestion = { id: string; kind: 'text' | 'choice' | 'yesno'; label: string; options?: string[]; required?: boolean };
+export type RsvpQuestion = { id: string; kind: 'text' | 'choice' | 'yesno'; label: string; options?: string[] | undefined; required?: boolean };
 
 /** Private invite key from the current link (?k=), used for invite-only gatherings. */
 export const inviteToken = () => (typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('k'));
