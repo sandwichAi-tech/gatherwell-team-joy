@@ -13,7 +13,6 @@
 - Keep enduring product requirements in PROJECT_RULES.md; apply them to all future work.
 - Use react-i18next with matched English and Latin American Spanish JSON resources for all visible and accessible copy, so language changes stay instant and complete.
 - Keep shared navigation, settings, and sheets in GatherwellShell around the root Outlet; use separate leaf routes for the five tabs so deep links work.
-- Accounts, profiles and teams are real (Lovable Cloud); creation actions for events, announcements, challenges and trainings still open coming-soon sheets until they are built.
 - localStorage holds only language, theme and a pending invite code (cleared once the join completes); all user data lives in Lovable Cloud with team-scoped RLS.
 - Home-screen installation is manifest-only; the only service worker is public/push-sw.js (push display + click, no caching), registered only after the person turns push on, because offline use was not requested.
 - DESIGN_RULES.md is authoritative for visuals and tone over PROJECT_RULES.md, so the permanent premium reset supersedes the initial shell design.
@@ -35,9 +34,4 @@
 - Photos render only through BrandImage and come from site_media slots (private site-media bucket, signed URLs, anonymous read); only user_roles admins (has_role) can edit them at /admin/site-media.
 - All AI (assistant + src/lib/ai/*, smart.functions.ts) runs server-side via Claude, model in assistant/config.ts; no key → preview text, not counted. Cards act on confirm.
 - Plans/limits live in billing_accounts, team_licenses, license_seats; effective_plan()+plan_limits() decide limits (triggers, new rows only). Stripe: billing.functions.ts + /api/public/stripe/webhook only; no key → sheet.
-
 - Platform admin: /admin data and actions go only through src/lib/admin.functions.ts and every action writes admin_audit; reports come from report_content() or the claims trigger.
-- Network: host connections, shares, team features and guest referrals go only through network_* RPCs and record_referral(); referral credit is for guests attending gatherings, never team recruiting.
-- Offer purchases come only from join_free_offer() or the Stripe webhook; members-only access is checked in the database.
-- Welcome points: earned only by the first-check-in trigger, redeemed only via redeem RPCs; guests act through their RSVP code.
-- Playbook: nightly compute_playbook() writes anonymized patterns (>=20 gatherings, >=5 teams) to playbook_patterns; UI reads only playbook_cards()/team_benchmark(), which return labeled samples until data suffices.
