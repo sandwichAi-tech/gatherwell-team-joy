@@ -23,6 +23,10 @@ import { BadgeWall, RecognitionSummary, useHostOfMonthId } from '@/components/re
 import { supabase } from '@/integrations/supabase/client';
 import { PurchasesPanel } from '@/components/offers';
 import { InviteFriendsPanel } from '@/components/welcome';
+import { MyChallengesList, MyGatheringsList, ProfileHero, RecentBadges, SettingsGroup, StatsStrip } from '@/components/profile-hero';
+import { GwFeatureTile, type GwIconName } from '@/components/gw-icon';
+import { QRCodeSVG } from 'qrcode.react';
+import { Share2, QrCode, Trash2 } from '@/components/icons';
 import { initialsOf, mediaUrl, profileQuery, teamsQuery, uploadMedia, workspaceQuery } from '@/lib/account';
 
 const HTTPS_URL = /^https:\/\/[^\s/]+\.[^\s]+$/i;
@@ -94,33 +98,40 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
     {errors[key] && <p className="field-error">{errors[key]}</p>}
   </div>;
 
-  return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={t('profile.editTitle')}>
+  return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={t('profile.editTitle')} icon="Pencil"
+    footer={<Button className="sheet-primary" disabled={busy} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>}>
     <div className="edit-form">
-      <div className="photo-row">
-        <Avatar path={removePhoto ? null : profile?.avatar_url} name={form.full_name} preview={preview} />
-        <label className="file-button"><Upload />{t('onboarding.upload')}<input type="file" accept="image/*" hidden onChange={e => pick(e.target.files?.[0])} /></label>
-        <label className="file-button"><Camera />{t('onboarding.camera')}<input type="file" accept="image/*" capture="user" hidden onChange={e => pick(e.target.files?.[0])} /></label>
-        {(preview || (profile?.avatar_url && !removePhoto)) && <button type="button" className="auth-link" onClick={() => { setFile(null); setPreview(null); setRemovePhoto(true); }}>{t('onboarding.removePhoto')}</button>}
+      <div className="edit-preview">
+        <div className="gw-hero-cover" aria-hidden="true" />
+        <div className="edit-preview-avatar"><Avatar path={removePhoto ? null : profile?.avatar_url} name={form.full_name} preview={preview} size={88} /></div>
+        <div className="photo-row">
+          <label className="file-button"><Upload />{t('onboarding.upload')}<input type="file" accept="image/*" hidden onChange={e => pick(e.target.files?.[0])} /></label>
+          <label className="file-button"><Camera />{t('onboarding.camera')}<input type="file" accept="image/*" capture="user" hidden onChange={e => pick(e.target.files?.[0])} /></label>
+          {(preview || (profile?.avatar_url && !removePhoto)) && <button type="button" className="auth-link" onClick={() => { setFile(null); setPreview(null); setRemovePhoto(true); }}>{t('onboarding.removePhoto')}</button>}
+        </div>
+        {errors.photo && <p className="field-error">{errors.photo}</p>}
       </div>
-      {errors.photo && <p className="field-error">{errors.photo}</p>}
-      {field('full_name', t('onboarding.nameLabel'), { autoComplete: 'name', maxLength: 80 })}
-      <div className="form-field">
-        <div className="label-row"><label className="field-label" htmlFor="edit-bio">{t('profile.bio')}</label><span className={`char-count ${form.bio.length > 160 ? 'is-over' : ''}`}>{form.bio.length}/160</span></div>
-        <Textarea id="edit-bio" rows={3} className="field-textarea" value={form.bio} onChange={e => setForm({ ...form, bio: e.target.value.slice(0, 200) })} placeholder={t('profile.bioPlaceholder')} />
-        {errors.bio && <p className="field-error">{errors.bio}</p>}
-      </div>
-      {field('city', t('onboarding.city'), { autoComplete: 'address-level2', maxLength: 80 })}
-      {field('phone', t('profile.phone'), { type: 'tel', autoComplete: 'tel', maxLength: 30 })}
-      <div className="form-field"><span className="field-label">{t('me.language')}</span>
+      <fieldset className="edit-section"><legend>{t('profile.sectionAbout')}</legend>
+        {field('full_name', t('onboarding.nameLabel'), { autoComplete: 'name', maxLength: 80 })}
+        <div className="form-field">
+          <div className="label-row"><label className="field-label" htmlFor="edit-bio">{t('profile.bio')}</label><span className={`char-count ${form.bio.length > 160 ? 'is-over' : ''}`}>{form.bio.length}/160</span></div>
+          <Textarea id="edit-bio" rows={3} className="field-textarea" value={form.bio} onChange={e => setForm({ ...form, bio: e.target.value.slice(0, 200) })} placeholder={t('profile.bioPlaceholder')} />
+          {errors.bio && <p className="field-error">{errors.bio}</p>}
+        </div>
+        {field('city', t('onboarding.city'), { autoComplete: 'address-level2', maxLength: 80 })}
+      </fieldset>
+      <fieldset className="edit-section"><legend>{t('profile.sectionContact')}</legend>
+        {field('phone', t('profile.phone'), { type: 'tel', autoComplete: 'tel', maxLength: 30 })}
+        {field('shop_url', t('profile.shop'), { type: 'url', inputMode: 'url', placeholder: 'https://', maxLength: 300 })}
+      </fieldset>
+      <fieldset className="edit-section"><legend>{t('me.language')}</legend>
         <div className="choice-pair">{(['en', 'es'] as const).map(lang => <button key={lang} type="button" className={`choice-card ${form.language === lang ? 'is-selected' : ''}`} aria-pressed={form.language === lang} onClick={() => setForm({ ...form, language: lang })}><strong>{t(lang === 'en' ? 'me.english' : 'me.spanish')}</strong></button>)}</div>
-      </div>
-      {field('shop_url', t('profile.shop'), { type: 'url', inputMode: 'url', placeholder: 'https://', maxLength: 300 })}
-      <Button className="onboarding-continue" disabled={busy} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
+      </fieldset>
     </div>
   </ResponsiveSheet>;
 }
 
-type Panel = 'gatherings' | 'challenges' | 'badges' | 'teams' | 'notifications' | 'plan' | 'purchases' | 'invite' | null;
+type Panel = 'qr' | 'gatherings' | 'challenges' | 'badges' | 'teams' | 'notifications' | 'plan' | 'purchases' | 'invite' | null;
 
 export function MePage() {
   const { t, i18n } = useTranslation();
@@ -141,6 +152,7 @@ export function MePage() {
   const [confirmText, setConfirmText] = useState('');
   const [soleTeams, setSoleTeams] = useState<string[] | null>(null);
   const [deleteBusy, setDeleteBusy] = useState(false);
+  const { data: inviteUrl } = useQuery({ queryKey: ['my-invite-url', userId], enabled: panel === 'qr', queryFn: async () => { const { data } = await supabase.rpc('my_invite_code'); return data ? `${window.location.origin}/i/${data}` : null; } });
 
   const signOut = async () => { await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut(); void navigate({ to: '/login', replace: true }); };
 
@@ -157,65 +169,79 @@ export function MePage() {
     await signOut();
   };
 
-  const row = (Icon: typeof CalendarDays, label: string, onClick?: () => void, trailing?: ReactNode, extra = '') => <button type="button" className={`settings-row ${extra}`} onClick={onClick}><Icon className="settings-icon" /><span className="settings-label">{label}</span>{trailing ?? <ChevronRight className="settings-chevron" />}</button>;
+  const row = (icon: GwIconName, label: string, onClick?: () => void, trailing?: ReactNode, extra = '') => <button type="button" className={`settings-row ${extra}`} onClick={onClick}><GwFeatureTile name={icon} size={20} className="settings-tile" /><span className="settings-label">{label}</span>{trailing ?? <ChevronRight className="settings-chevron" />}</button>;
+  const linkRow = (icon: GwIconName, label: string, to: string, trailing?: ReactNode, search?: Record<string, string>) => <Link className="settings-row" to={to} search={search as never}><GwFeatureTile name={icon} size={20} className="settings-tile" /><span className="settings-label">{label}</span>{trailing ?? <ChevronRight className="settings-chevron" />}</Link>;
+  const staticRow = (icon: GwIconName, label: string, control: ReactNode) => <div className="settings-row is-static"><GwFeatureTile name={icon} size={20} className="settings-tile" /><span className="settings-label">{label}</span>{control}</div>;
 
   const panels: Record<Exclude<Panel, null>, { title: string; body: ReactNode }> = {
-    gatherings: { title: t('profile.myGatherings'), body: <p className="auth-subtitle">{t('profile.gatheringsEmpty')}</p> },
-    challenges: { title: t('profile.myChallenges'), body: <p className="auth-subtitle">{t('profile.challengesEmpty')}</p> },
+    gatherings: { title: t('profile.myGatherings'), body: <MyGatheringsList userId={userId} /> },
+    challenges: { title: t('profile.myChallenges'), body: <MyChallengesList userId={userId} /> },
     badges: { title: t('profile.myBadges'), body: workspace ? <BadgeWall teamId={workspace.teamId} /> : <p className="auth-subtitle">{t('workspace.none')}</p> },
     teams: { title: t('profile.myTeams'), body: teams.length ? <div className="team-list">{teams.map(team => <button type="button" key={team.teamId} className={`choice-card ${workspace?.teamId === team.teamId ? 'is-selected' : ''}`} aria-pressed={workspace?.teamId === team.teamId} onClick={() => switchTeam(team.teamId)}><span className="initial-avatar">{initialsOf(team.name)}</span><span><strong>{team.name}</strong><small>{t(`roles.${team.role}`)}{team.customBadge ? ` · ${team.customBadge}` : ''}</small></span>{workspace?.teamId === team.teamId && <Check className="choice-check" />}</button>)}</div> : <p className="auth-subtitle">{t('workspace.none')}</p> },
     notifications: { title: t('profile.notifications'), body: <NotificationSettings userId={userId} /> },
     invite: { title: t('welcome.title'), body: <InviteFriendsPanel /> },
     purchases: { title: t('offers.purchases'), body: <PurchasesPanel /> },
+    qr: { title: t('profile.qrTitle'), body: <div className="qr-panel">{inviteUrl ? <div className="qr-code"><QRCodeSVG value={inviteUrl} size={280} level="M" marginSize={2} /></div> : <p className="auth-subtitle">{t('publicEvent.loading')}</p>}<p className="auth-subtitle">{t('profile.qrText')}</p></div> },
     plan: { title: t('profile.plan'), body: <><p className="plan-name">{t(`plans.${workspace?.plan ?? 'free'}`)}</p><p className="auth-subtitle">{workspace?.name ?? t('workspace.none')}</p></> },
   };
 
+  const isHost = !!workspace && workspace.role !== 'member';
   return <>
-    <div className="page-heading"><div><span className="eyebrow">{t('me.eyebrow')}</span><h1>{t('me.title')}</h1></div></div>
-
-    <section className="panel profile-header">
-      <span className={homId === userId ? 'hom-ring hom-wrap' : 'hom-wrap'}><Avatar path={profile?.avatar_url} name={profile?.full_name} size={72} /></span>
-      <div className="profile-meta">
-        <h2>{profile?.full_name}</h2>
-        {profile?.city && <p>{profile.city}</p>}
-        {workspace && <div className="profile-chips"><span className="profile-team">{workspace.name}</span><span className="chip">{t(`roles.${workspace.role}`)}</span>{workspace.customBadge && <span className="chip warm-chip">{workspace.customBadge}</span>}</div>}
-        {profile?.bio && <p className="profile-bio">{profile.bio}</p>}
-        {profile?.shop_url && <a className="auth-link shop-link" href={profile.shop_url} target="_blank" rel="noopener noreferrer">{t('profile.shop')}<ExternalLink /></a>}
-      </div>
-      <Button variant="secondary" className="profile-edit" onClick={() => setEditing(true)}><Pencil />{t('profile.edit')}</Button>
-    </section>
-
-    {workspace && <section className="panel recognition-panel"><div className="section-heading"><h2>{t('recognition.title')}</h2><Button variant="link" onClick={() => setPanel('badges')}>{t('profile.myBadges')}</Button></div><RecognitionSummary teamId={workspace.teamId} /></section>}
+    <h1 className="sr-only">{t('me.title')}</h1>
+    <ProfileHero
+      avatar={<span className={homId === userId ? 'hom-ring hom-wrap' : 'hom-wrap'}><Avatar path={profile?.avatar_url} name={profile?.full_name} size={96} /></span>}
+      name={profile?.full_name} city={profile?.city} team={workspace?.name} role={workspace ? t(`roles.${workspace.role}`) : null} badge={workspace?.customBadge} bio={profile?.bio}
+      actions={<>
+        <Button variant="secondary" className="gw-hero-edit" onClick={() => setEditing(true)}><Pencil />{t('profile.edit')}</Button>
+        <Button variant="secondary" size="icon" className="gw-hero-icon" aria-label={t('profile.share')} title={t('profile.share')} onClick={() => setPanel('invite')}><Share2 /></Button>
+        <Button variant="secondary" size="icon" className="gw-hero-icon" aria-label={t('profile.qrTitle')} title={t('profile.qrTitle')} onClick={() => setPanel('qr')}><QrCode /></Button>
+      </>}
+    />
+    {profile?.shop_url && <a className="auth-link shop-link" href={profile.shop_url} target="_blank" rel="noopener noreferrer">{t('profile.shop')}<ExternalLink /></a>}
+    <StatsStrip userId={userId} teamId={workspace?.teamId} />
+    <RecentBadges userId={userId} teamId={workspace?.teamId} onAll={workspace ? () => setPanel('badges') : undefined} />
+    {workspace && <section className="panel recognition-panel"><div className="section-heading"><h2>{t('recognition.title')}</h2></div><RecognitionSummary teamId={workspace.teamId} /></section>}
 
     {planStatus?.status === 'past_due' && <Link to="/plan" className="plan-banner" role="alert">{t('billing.pastDue')}</Link>}
     <AssistantUsage />
-    <section className="panel settings-list">
-      {row(CalendarDays, t('profile.myGatherings'), () => setPanel('gatherings'))}
-      {row(Flag, t('profile.myChallenges'), () => setPanel('challenges'))}
-      {row(Award, t('profile.myBadges'), () => setPanel('badges'))}
-      {row(UsersRound, t('profile.myTeams'), () => setPanel('teams'), <span className="settings-value">{workspace?.name}<ChevronRight className="settings-chevron" /></span>)}
-      {row(Bell, t('profile.notifications'), () => setPanel('notifications'))}
-      {row(UserPlus, t('welcome.title'), () => setPanel('invite'))}
-      {row(CreditCard, t('offers.purchases'), () => setPanel('purchases'))}
-      {workspace && workspace.role !== 'member' && <Link className="settings-row" to="/offers"><FileText className="settings-icon" /><span className="settings-label">{t('offers.title')}</span><ChevronRight className="settings-chevron" /></Link>}
-      <Link className="settings-row" to="/plan"><CreditCard className="settings-icon" /><span className="settings-label">{t('profile.plan')}</span><span className="settings-value">{t(`billing.plan_${planStatus?.plan ?? 'free'}`)}<ChevronRight className="settings-chevron" /></span></Link>
-      <div className="settings-row is-static"><Globe2 className="settings-icon" /><span className="settings-label">{t('me.language')}</span>
-        <div className="segmented" role="group" aria-label={t('me.language')}>{(['en', 'es'] as const).map(lang => <Button key={lang} variant="ghost" aria-pressed={i18n.resolvedLanguage === lang} className={i18n.resolvedLanguage === lang ? 'selected' : ''} onClick={() => saveLanguage(lang)}>{lang === 'en' ? 'EN' : 'ES'}</Button>)}</div></div>
-      <div className="settings-row is-static"><Sun className="settings-icon" /><span className="settings-label">{t('me.appearance')}</span>
-        <div className="segmented" role="group" aria-label={t('me.appearance')}>{([{ value: 'light', Icon: Sun }, { value: 'dark', Icon: Moon }, { value: 'system', Icon: Monitor }] as const).map(({ value, Icon }) => <Button key={value} variant="ghost" size="icon" className={theme === value ? 'selected' : ''} aria-pressed={theme === value} aria-label={t(`me.${value}`)} title={t(`me.${value}`)} onClick={() => setTheme(value)}><Icon /></Button>)}</div></div>
-      {isAdmin && <Link className="settings-row" to="/admin" search={{ tab: 'overview' }}><ShieldCheck className="settings-icon" /><span className="settings-label">{t('admin.menu')}</span><ChevronRight className="settings-chevron" /></Link>}
-      {isAdmin && <Link className="settings-row" to="/admin/site-media"><ImageDown className="settings-icon" /><span className="settings-label">{t('siteMedia.menu')}</span><ChevronRight className="settings-chevron" /></Link>}
-      <a className="settings-row" href="mailto:help@gatherwell.app"><LifeBuoy className="settings-icon" /><span className="settings-label">{t('profile.help')}</span><ChevronRight className="settings-chevron" /></a>
-      <Link className="settings-row" to="/terms"><FileText className="settings-icon" /><span className="settings-label">{t('auth.terms')}</span><ChevronRight className="settings-chevron" /></Link>
-      <Link className="settings-row" to="/privacy"><ShieldCheck className="settings-icon" /><span className="settings-label">{t('auth.privacy')}</span><ChevronRight className="settings-chevron" /></Link>{(['host', 'guest', 'sms', 'cookies'] as const).map(d => <Link key={d} className="settings-row" to="/legal/$doc" params={{ doc: d }}><FileText className="settings-icon" /><span className="settings-label">{t(`legalDocs.docs.${d}.title`)}</span><ChevronRight className="settings-chevron" /></Link>)}
-      {row(LogOut, t('me.signOut'), signOut, <span />)}
-    </section>
 
-    <button type="button" className="delete-account" onClick={openDelete}>{t('profile.delete')}</button>
+    <SettingsGroup title={t('profile.groupAccount')}>
+      {row('UsersRound', t('profile.myTeams'), () => setPanel('teams'), <span className="settings-value">{workspace?.name}<ChevronRight className="settings-chevron" /></span>)}
+      {linkRow('CreditCard', t('profile.plan'), '/plan', <span className="settings-value">{t(`billing.plan_${planStatus?.plan ?? 'free'}`)}<ChevronRight className="settings-chevron" /></span>)}
+      {row('CreditCard', t('offers.purchases'), () => setPanel('purchases'))}
+    </SettingsGroup>
+    <SettingsGroup title={t('profile.groupActivity')}>
+      {row('CalendarDays', t('profile.myGatherings'), () => setPanel('gatherings'))}
+      {row('Flag', t('profile.myChallenges'), () => setPanel('challenges'))}
+      {row('Award', t('profile.myBadges'), () => setPanel('badges'))}
+      {row('UserPlus', t('welcome.title'), () => setPanel('invite'))}
+    </SettingsGroup>
+    <SettingsGroup title={t('profile.groupPreferences')}>
+      {row('Bell', t('profile.notifications'), () => setPanel('notifications'))}
+      {staticRow('Globe2', t('me.language'), <div className="segmented" role="group" aria-label={t('me.language')}>{(['en', 'es'] as const).map(lang => <Button key={lang} variant="ghost" aria-pressed={i18n.resolvedLanguage === lang} className={i18n.resolvedLanguage === lang ? 'selected' : ''} onClick={() => saveLanguage(lang)}>{lang === 'en' ? 'EN' : 'ES'}</Button>)}</div>)}
+      {staticRow('Sun', t('me.appearance'), <div className="segmented" role="group" aria-label={t('me.appearance')}>{([{ value: 'light', Icon: Sun }, { value: 'dark', Icon: Moon }, { value: 'system', Icon: Monitor }] as const).map(({ value, Icon }) => <Button key={value} variant="ghost" size="icon" className={theme === value ? 'selected' : ''} aria-pressed={theme === value} aria-label={t(`me.${value}`)} title={t(`me.${value}`)} onClick={() => setTheme(value)}><Icon /></Button>)}</div>)}
+    </SettingsGroup>
+    {(isHost || isAdmin) && <SettingsGroup title={t('profile.groupHost')}>
+      {isHost && linkRow('FileText', t('offers.title'), '/offers')}
+      {isAdmin && linkRow('ShieldCheck', t('admin.menu'), '/admin', undefined, { tab: 'overview' })}
+      {isAdmin && linkRow('ImageDown', t('siteMedia.menu'), '/admin/site-media')}
+    </SettingsGroup>}
+    <SettingsGroup title={t('profile.groupSupport')}>
+      <a className="settings-row" href="mailto:help@gatherwell.app"><GwFeatureTile name="LifeBuoy" size={20} className="settings-tile" /><span className="settings-label">{t('profile.help')}</span><ChevronRight className="settings-chevron" /></a>
+      {row('LogOut', t('me.signOut'), signOut, <span />)}
+    </SettingsGroup>
+    <SettingsGroup title={t('profile.groupLegal')}>
+      {linkRow('FileText', t('auth.terms'), '/terms')}
+      {linkRow('ShieldCheck', t('auth.privacy'), '/privacy')}
+      {(['host', 'guest', 'sms', 'cookies'] as const).map(d => <Link key={d} className="settings-row" to="/legal/$doc" params={{ doc: d }}><GwFeatureTile name="FileText" size={20} className="settings-tile" /><span className="settings-label">{t(`legalDocs.docs.${d}.title`)}</span><ChevronRight className="settings-chevron" /></Link>)}
+    </SettingsGroup>
+    <SettingsGroup danger>
+      <button type="button" className="settings-row is-danger" onClick={openDelete}><span className="gw-feature-tile settings-tile is-danger"><Trash2 /></span><span className="settings-label">{t('profile.delete')}</span></button>
+    </SettingsGroup>
 
     <EditProfile open={editing} onOpenChange={setEditing} userId={userId} />
     <ResponsiveSheet open={panel !== null} onOpenChange={open => { if (!open) setPanel(null); }} title={panel ? panels[panel].title : ''}>{panel && panels[panel].body}</ResponsiveSheet>
-    <ResponsiveSheet open={deleting} onOpenChange={setDeleting} title={t('profile.deleteTitle')}>
+    <ResponsiveSheet open={deleting} onOpenChange={setDeleting} title={t('profile.deleteTitle')} icon="Trash2">
       {soleTeams === null ? <p className="auth-subtitle">{t('publicEvent.loading')}</p> : soleTeams.length ? <>
         <p className="auth-subtitle">{t('profile.deleteBlockedText', { teams: soleTeams.join(', ') })}</p>
         <Button variant="secondary" onClick={() => setDeleting(false)}>{t('common.close')}</Button>

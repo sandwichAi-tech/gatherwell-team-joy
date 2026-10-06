@@ -27,6 +27,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
+import { ProfileHero, RecentBadges, StatsStrip } from '@/components/profile-hero';
+import { confirmAction } from '@/components/confirm-dialog';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { TeamSwitcher, useSwitchTeam } from '@/components/team-switcher';
 import { EventRows } from '@/components/gatherwell-pages';
@@ -332,25 +334,27 @@ function MembersSheet({ open, onOpenChange, teamId, userId, isLeader, directLead
   return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={selected ? (selected.name ?? t('teamSpace.someone')) : t('teamSpace.members')}>
     {!selected ? <>
       <div className="search-field"><Search /><Input className="field-input" placeholder={t('teamSpace.searchMembers')} value={search} onChange={e => setSearch(e.target.value)} aria-label={t('teamSpace.searchMembers')} /></div>
-      <div className="member-list">{filtered.map(m => <button type="button" key={m.userId} className="member-row" disabled={!isLeader} onClick={() => setSelected(m)}>
+      <div className="member-list">{filtered.map(m => <button type="button" key={m.userId} className="member-row" onClick={() => setSelected(m)}>
         <span className={`initial-avatar ${m.userId === homId ? 'hom-ring' : ''}`}>{initialsOf(m.name)}</span><span className="member-name">{m.name ?? t('teamSpace.someone')}{m.userId === userId && <small> · {t('common.you')}</small>}</span>
-        {m.customBadge && <span className="chip warm-chip">{m.customBadge}</span>}<span className="chip">{t(`roles.${m.role}`)}</span>{isLeader && <ChevronRight className="settings-chevron" />}</button>)}
+        {m.customBadge && <span className="chip warm-chip">{m.customBadge}</span>}<span className="chip">{t(`roles.${m.role}`)}</span><ChevronRight className="settings-chevron" /></button>)}
         {!filtered.length && <p className="auth-subtitle">{t('teamSpace.noMatches')}</p>}</div>
     </> : <div className="edit-form">
       <button type="button" className="auth-link back-link" onClick={() => setSelected(null)}><ChevronLeft />{t('common.back')}</button>
-      <div className="member-summary"><span className="initial-avatar">{initialsOf(selected.name)}</span><span className="chip">{t(`roles.${selected.role}`)}</span></div>
+      <ProfileHero compact avatar={<span className={`initial-avatar profile-avatar ${selected.userId === homId ? 'hom-ring' : ''}`} style={{ width: 88, height: 88, fontSize: 28 }}>{initialsOf(selected.name)}</span>}
+        name={selected.name ?? t('teamSpace.someone')} role={t(`roles.${selected.role}`)} badge={selected.customBadge}
+        team={t('profile.memberSince', { date: new Date(selected.joinedAt).toLocaleDateString(i18n.resolvedLanguage, { month: 'short', year: 'numeric' }) })} />
+      <StatsStrip userId={selected.userId} teamId={teamId} />
+      <RecentBadges userId={selected.userId} teamId={teamId} />
+      {isLeader && <section className="gw-manage"><h3 className="gw-group-title">{t('profile.manage')}</h3>
       {selected.role !== 'leader' && <div className="form-field"><span className="field-label">{t('teamSpace.role')}</span>
         <div className="choice-pair">{(['host', 'member'] as const).map(role => <button type="button" key={role} className={`choice-card ${selected.role === role ? 'is-selected' : ''}`} aria-pressed={selected.role === role} onClick={() => update({ role })}><strong>{t(`roles.${role}`)}</strong></button>)}</div></div>}
       <div className="form-field"><label className="field-label" htmlFor="member-badge">{t('teamSpace.badge')}</label>
         <div className="inline-form"><Input id="member-badge" className="field-input" maxLength={24} placeholder={t('teamSpace.badgePlaceholder')} value={badge} onChange={e => setBadge(e.target.value)} /><Button variant="secondary" onClick={() => update({ custom_badge: badge.trim() || null })}>{t('profile.save')}</Button></div></div>
       {selected.role !== 'leader' && <Button variant="secondary" onClick={() => update({ role: 'leader' })}><Crown />{t('teamSpace.makeLeader')}</Button>}
       {selected.role === 'leader' && selected.userId !== userId && <Button variant="secondary" onClick={() => update({ role: 'host' })}>{t('teamSpace.makeHost')}</Button>}
-      {directLeader && selected.userId !== userId && (confirm === 'transfer'
-        ? <div className="confirm-box"><p>{t('teamSpace.transferConfirm', { name: selected.name ?? t('teamSpace.someone') })}</p><div className="confirm-actions"><Button variant="secondary" onClick={() => setConfirm(null)}>{t('common.back')}</Button><Button onClick={() => run(() => supabase.rpc('transfer_leadership', { _team: teamId, _to: selected.userId }), t('teamSpace.transferred'))}>{t('teamSpace.transfer')}</Button></div></div>
-        : <Button variant="secondary" onClick={() => setConfirm('transfer')}>{t('teamSpace.transfer')}</Button>)}
-      {selected.userId !== userId && (confirm === 'remove'
-        ? <div className="confirm-box"><p>{t('teamSpace.removeConfirm', { name: selected.name ?? t('teamSpace.someone') })}</p><div className="confirm-actions"><Button variant="secondary" onClick={() => setConfirm(null)}>{t('common.back')}</Button><Button variant="destructive" onClick={() => run(() => supabase.from('team_members').delete().match({ team_id: teamId, user_id: selected.userId }), t('teamSpace.removed'))}>{t('teamSpace.remove')}</Button></div></div>
-        : <button type="button" className="delete-account" onClick={() => setConfirm('remove')}><Trash2 className="inline-icon" />{t('teamSpace.remove')}</button>)}
+      {directLeader && selected.userId !== userId && <Button variant="secondary" onClick={async () => { if (await confirmAction({ title: t('teamSpace.transfer'), body: t('teamSpace.transferConfirm', { name: selected.name ?? t('teamSpace.someone') }), confirmLabel: t('teamSpace.transfer') })) void run(() => supabase.rpc('transfer_leadership', { _team: teamId, _to: selected.userId }), t('teamSpace.transferred')); }}>{t('teamSpace.transfer')}</Button>}
+      {selected.userId !== userId && <button type="button" className="delete-account" onClick={async () => { if (await confirmAction({ title: t('teamSpace.remove'), body: t('teamSpace.removeConfirm', { name: selected.name ?? t('teamSpace.someone') }), destructive: true, confirmLabel: t('teamSpace.remove') })) void run(() => supabase.from('team_members').delete().match({ team_id: teamId, user_id: selected.userId }), t('teamSpace.removed')); }}><Trash2 className="inline-icon" />{t('teamSpace.remove')}</button>}
+      </section>}
     </div>}
   </ResponsiveSheet>;
 }
