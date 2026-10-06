@@ -20,6 +20,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAppRouteRouteImport } from './routes/_authenticated/_app/route'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as EIdRouteImport } from './routes/e.$id'
+import { Route as ICodeRouteImport } from './routes/i.$code'
 import { Route as JoinCodeRouteImport } from './routes/join.$code'
 import { Route as LegalDocRouteImport } from './routes/legal.$doc'
 import { Route as RCodeRouteImport } from './routes/r.$code'
@@ -109,6 +110,11 @@ const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
 const EIdRoute = EIdRouteImport.update({
   id: '/e/$id',
   path: '/e/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ICodeRoute = ICodeRouteImport.update({
+  id: '/i/$code',
+  path: '/i/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JoinCodeRoute = JoinCodeRouteImport.update({
@@ -323,6 +329,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/e/$id': typeof EIdRoute
+  '/i/$code': typeof ICodeRoute
   '/join/$code': typeof JoinCodeRoute
   '/legal/$doc': typeof LegalDocRoute
   '/r/$code': typeof RCodeRoute
@@ -371,6 +378,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/e/$id': typeof EIdRoute
+  '/i/$code': typeof ICodeRoute
   '/join/$code': typeof JoinCodeRoute
   '/legal/$doc': typeof LegalDocRoute
   '/r/$code': typeof RCodeRoute
@@ -422,6 +430,7 @@ export interface FileRoutesById {
   '/_authenticated/_app': typeof AuthenticatedAppRouteRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/e/$id': typeof EIdRoute
+  '/i/$code': typeof ICodeRoute
   '/join/$code': typeof JoinCodeRoute
   '/legal/$doc': typeof LegalDocRoute
   '/r/$code': typeof RCodeRoute
@@ -472,6 +481,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/onboarding'
     | '/e/$id'
+    | '/i/$code'
     | '/join/$code'
     | '/legal/$doc'
     | '/r/$code'
@@ -520,6 +530,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/onboarding'
     | '/e/$id'
+    | '/i/$code'
     | '/join/$code'
     | '/legal/$doc'
     | '/r/$code'
@@ -570,6 +581,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app'
     | '/_authenticated/onboarding'
     | '/e/$id'
+    | '/i/$code'
     | '/join/$code'
     | '/legal/$doc'
     | '/r/$code'
@@ -619,6 +631,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   EIdRoute: typeof EIdRoute
+  ICodeRoute: typeof ICodeRoute
   JoinCodeRoute: typeof JoinCodeRoute
   LegalDocRoute: typeof LegalDocRoute
   RCodeRoute: typeof RCodeRoute
@@ -708,6 +721,13 @@ declare module '@tanstack/react-router' {
       path: '/e/$id'
       fullPath: '/e/$id'
       preLoaderRoute: typeof EIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/i/$code': {
+      id: '/i/$code'
+      path: '/i/$code'
+      fullPath: '/i/$code'
+      preLoaderRoute: typeof ICodeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/join/$code': {
@@ -1060,6 +1080,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   EIdRoute: EIdRoute,
+  ICodeRoute: ICodeRoute,
   JoinCodeRoute: JoinCodeRoute,
   LegalDocRoute: LegalDocRoute,
   RCodeRoute: RCodeRoute,
