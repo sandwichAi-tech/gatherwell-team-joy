@@ -1352,3 +1352,5 @@ button { white-space:normal; }
 .gw-hero-avatar .profile-avatar{display:grid;place-items:center}
 .gw-group .settings-value{display:flex;align-items:center;gap:8px;max-width:50vw;min-width:0;color:var(--muted-foreground);font-size:14px;white-space:nowrap}
 .gw-group .settings-value{overflow:hidden;text-overflow:ellipsis}
+.edit-preview-avatar{position:relative;z-index:1}.edit-preview-avatar .profile-avatar{display:grid;place-items:center;border-radius:50%}
+.gw-group .settings-value{max-width:42%}.gw-group .settings-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
