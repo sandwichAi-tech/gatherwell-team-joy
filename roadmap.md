@@ -3,6 +3,14 @@
 - [x] Save source-backed findings and browser evidence to DESIGN_AUDIT.md before visual fixes
 - Step 1 delivered: 40 route entries, 72 named overlays, individual toast call sites, menus and state register; source-only and unverified states explicitly distinguished. No visual fixes made.
 
+# D1 Step 2 — Design System 2.0 (report after each phase)
+- [x] Phase 1 Foundation
+- [ ] Phase 2 Shared overlays (ConfirmDialog, toasts, menus, mobile menu)
+- [ ] Phase 3 Me and member profile
+- [ ] Phase 4 States
+- [ ] Phase 5 Screen drift
+- [ ] Phase 6 Verification + audit rescoring
+
 # Gatherwell design reset
 - [x] Save permanent replacement design rules
 - [x] Replace shell, theme, typography and app icons
