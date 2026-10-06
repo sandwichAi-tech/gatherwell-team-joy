@@ -724,7 +724,8 @@
     "visibility": "Who can see it",
     "vis": {
       "public": "Anyone with the link",
-      "team": "My team only"
+      "team": "My team only",
+      "invite": "Invite only"
     },
     "description": "Description",
     "descPlaceholder": "What to expect and what to bring.",
@@ -837,13 +838,17 @@
       "going": "You're in.",
       "maybe": "Marked as maybe.",
       "waitlist": "You're on the waitlist.",
-      "cancelled": "Your RSVP is cancelled."
+      "cancelled": "Your RSVP is cancelled.",
+      "requested": "Request sent",
+      "declined": "Not this time"
     },
     "confirmSub": {
       "going": "Show this code when you arrive.",
       "maybe": "Change to “I'm in” any time.",
       "waitlist": "If a spot opens up, you'll move in automatically.",
-      "cancelled": "Changed your mind? Open the gathering link to RSVP again."
+      "cancelled": "Changed your mind? Open the gathering link to RSVP again.",
+      "requested": "The host will review your RSVP soon. We'll let you know.",
+      "declined": "The host couldn't fit you in this time. We hope to see you at another gathering."
     },
     "joinOnline": "Join online",
     "qrHelp": "Your check-in code",
@@ -871,7 +876,8 @@
       "generic": "Something went wrong. Please try again.",
       "rate_limited": "Too many RSVPs in a short time. Please wait a minute.",
       "members_only": "This gathering is for members only.",
-      "waiver_required": "Please type your full name and check the box to accept the waiver."
+      "waiver_required": "Please type your full name and check the box to accept the waiver.",
+      "answers_required": "Please answer the required questions."
     }
   },
   "guestList": {
@@ -881,7 +887,9 @@
       "going": "Going",
       "maybe": "Maybe",
       "waitlist": "Waitlist",
-      "cancelled": "Cancelled"
+      "cancelled": "Cancelled",
+      "requested": "Requests",
+      "declined": "Declined"
     },
     "search": "Search guests",
     "add": "Add a guest",
@@ -2581,5 +2589,43 @@
     "saved": "Co-hosts saved",
     "tooMany": "You can add up to 3 co-hosts.",
     "withCohosts": "Co-hosted by"
+  },
+  "rsvpq": {
+    "guestHeading": "A few questions from the host",
+    "requiredMark": "(required)",
+    "yes": "Yes",
+    "no": "No",
+    "approvalHint": "The host approves each RSVP. We'll let you know once they do.",
+    "heading": "RSVP options",
+    "approval": "Approve guests first",
+    "approvalHelp": "New RSVPs wait for you to approve or decline.",
+    "approvalPaid": "Approval isn't available for paid gatherings.",
+    "inviteOnly": "Invite only",
+    "inviteOnlyHelp": "Hidden from Discover. Only people with the private link can open it.",
+    "resetLink": "Make a new link",
+    "linkReset": "New link ready. The old one no longer works.",
+    "questions": "Questions ({{count}} of {{max}})",
+    "questionLabel": "Question {{n}}",
+    "placeholder": "e.g. Any injuries we should know about?",
+    "kind": "Answer type",
+    "kinds": {
+      "text": "Short answer",
+      "choice": "Choice",
+      "yesno": "Yes / No"
+    },
+    "option": "Option {{n}}",
+    "removeOption": "Remove option",
+    "addOption": "Add option",
+    "required": "Required",
+    "remove": "Remove question",
+    "add": "Add a question",
+    "save": "Save questions",
+    "saved": "Questions saved",
+    "incomplete": "Fill in every question, and give choices at least two options.",
+    "approve": "Approve",
+    "decline": "Decline",
+    "approved": "Approved. They'll get a confirmation.",
+    "approvedWaitlist": "Approved and added to the waitlist, since it's full.",
+    "declined": "Declined. They'll get a kind note."
   }
 }

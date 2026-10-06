@@ -1201,3 +1201,17 @@ button { white-space:normal; }
 .cohost-pick .guest-consent { align-items: center; min-height: 48px; }
 .cohost-pick .is-disabled { opacity: .55; }
 .guest-cohosts { display: grid; gap: .4rem; margin-top: .75rem; }
+.rsvpq-fields { display: grid; gap: 0.875rem; border: 0; padding: 0; margin: 0; }
+.rsvpq-req { color: var(--muted-foreground); font-weight: 400; }
+.rsvpq-choices { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.rsvpq-choices > button { min-height: 44px; }
+.rsvpq-choices > button.selected, .rsvpq-choices > button[aria-checked="true"] { background: var(--primary); color: var(--primary-foreground); }
+.rsvpq-panel { display: grid; gap: 0.875rem; }
+.rsvpq-edit { display: grid; gap: 0.625rem; padding: 0.875rem; border: 1px solid var(--border); border-radius: var(--radius); }
+.rsvpq-options { display: grid; gap: 0.5rem; }
+.rsvpq-option { display: flex; gap: 0.5rem; align-items: center; }
+.rsvpq-link { display: grid; gap: 0.5rem; }
+.rsvpq-link code { font-size: 0.8125rem; overflow-wrap: anywhere; padding: 0.625rem; border-radius: calc(var(--radius) - 4px); background: var(--muted); }
+.rsvpq-answers { display: grid; gap: 0.25rem; margin: 0.25rem 0; font-size: 0.875rem; }
+.rsvpq-answers dt { color: var(--muted-foreground); }
+.rsvpq-answers dd { margin: 0 0 0.25rem; overflow-wrap: anywhere; }
