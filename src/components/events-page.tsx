@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ListSkeleton } from '@/components/launch-states';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -52,7 +53,7 @@ export function EventsPage({ tab }: { tab: EventsTab }) {
         <Button variant="ghost" size="icon" aria-pressed={view === 'map'} className={view === 'map' ? 'selected' : ''} onClick={() => setView('map')} aria-label={t('events.map')} title={t('events.map')}><MapIcon /></Button></div>
     </div>
     {view === 'map' && <section className="panel map-panel">{mapsKey ? <RealMap apiKey={mapsKey} events={data} onPick={e => navigate({ to: '/event/$id', params: { id: e.id } })} /> : <MapPlaceholder />}</section>}
-    {isLoading ? <div className="panel min-h-40" /> : data.length ? <div className="gathering-grid">{data.map(e => <GatheringCard key={e.id} e={e} lang={lang} />)}</div> : <>
+    {isLoading ? <ListSkeleton /> : data.length ? <div className="gathering-grid">{data.map(e => <GatheringCard key={e.id} e={e} lang={lang} />)}</div> : <>
       <section className="panel empty-gatherings"><h2>{t(`events.empty.${tab}`)}</h2><p>{t('events.emptyText')}</p>
         {canCreate && <Button asChild><Link to="/gathering/new"><Plus />{t('gathering.createFirst')}<ArrowRight /></Link></Button>}</section>
       {tab !== 'past' && <section className="panel tab-panel"><div className="section-heading"><h2>{t('events.heading')}</h2><span className="chip sample-badge">{t('common.sample')}</span></div><EventRows /></section>}

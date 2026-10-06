@@ -125,9 +125,10 @@ export function formatWhen(d: Date, lang: string) {
 }
 
 export function formatDistance(km: number, lang: string) {
-  if (lang === 'es') return `${km < 10 ? km.toFixed(1) : Math.round(km)} km`;
+  const number = (n: number) => new Intl.NumberFormat(lang === 'es' ? 'es-419' : 'en-US', { maximumFractionDigits: n < 10 ? 1 : 0 }).format(n);
+  if (lang === 'es') return `${number(km)} km`;
   const mi = km * 0.621371;
-  return `${mi < 10 ? mi.toFixed(1).replace(/\.0$/, '') : Math.round(mi)} mi`;
+  return `${number(mi)} mi`;
 }
 
 export type AnalyticsEvent = 'hero_find_click' | 'hero_host_click' | 'category_click' | 'feed_rsvp_click' | 'sticky_cta_click' | 'location_prompt_accept' | 'location_prompt_decline';

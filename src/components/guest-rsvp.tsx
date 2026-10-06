@@ -1,5 +1,5 @@
 import { trackEvent } from '@/lib/analytics';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { QRCodeSVG } from 'qrcode.react';
@@ -108,7 +108,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
       <div className="guest-plus"><span className="field-label">{t('guest.plusOnes')}</span><Stepper value={form.plus} onChange={plus => setForm({ ...form, plus })} label={t('guest.plusOnes')} /></div>
       <label className="guest-consent"><Checkbox checked={form.sms} onCheckedChange={v => setForm({ ...form, sms: !!v })} /><span>{t('guest.smsConsent')} <a href="/legal/sms" target="_blank" rel="noopener">{t('legalDocs.docs.sms.title')}</a></span></label>
       <label className="guest-consent"><Checkbox checked={form.mail} onCheckedChange={v => setForm({ ...form, mail: !!v })} /><span>{t('guest.emailConsent')}</span></label>
-      {paid && <p className="guest-price"><strong>{formatMoney(price!.price_cents, lang)}</strong><span>{t('billing.perPerson')}{fee ? ` · ${t('billing.bookingFee', { fee: formatMoney(fee, lang) })}` : ''}</span></p>}
+      {paid && price && <p className="guest-price"><strong>{formatMoney(price.price_cents, lang)}</strong><span>{t('billing.perPerson')}{fee ? ` · ${t('billing.bookingFee', { fee: formatMoney(fee, lang) })}` : ''}</span></p>}
       {error && <p className="field-error" role="alert">{error}</p>}
       <Button type="submit" className="guest-primary" disabled={busy || gate.busy}>{busy || gate.busy ? t('guest.saving') : paid ? t('billing.payAndRsvp', { amount: formatMoney(total, lang) }) : intent === 'maybe' ? t('guest.confirmMaybe') : full ? t('guest.joinWaitlist') : t('guest.confirmGoing')}</Button>
     </form>
@@ -120,6 +120,12 @@ type ConfirmEvent = Pick<PublicEvent, 'id' | 'title' | 'starts_at' | 'ends_at' |
 
 export function Confirmation({ event, code, status }: { event: ConfirmEvent; code: string; status: 'going' | 'maybe' | 'waitlist' | 'cancelled' }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
+  const qr = useRef<HTMLDivElement>(null);
+  const saveQr = () => {
+    const svg = qr.current?.querySelector('svg'); if (!svg) return;
+    const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(svg)], { type: 'image/svg+xml' }));
+    const a = document.createElement('a'); a.href = url; a.download = 'gatherwell-qr.svg'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
   const when = formatWhen(event.starts_at, lang);
   return <section className="guest-confirm" aria-live="polite">
     <h2 className="guest-confirm-title">{t(`guest.confirm.${status}`)}</h2>
@@ -130,7 +136,7 @@ export function Confirmation({ event, code, status }: { event: ConfirmEvent; cod
       {event.meeting_note && <span className="muted">{event.meeting_note}</span>}
     </div>
     {event.online_url && status !== 'cancelled' && <Button asChild className="guest-primary"><a href={event.online_url} target="_blank" rel="noopener noreferrer"><Video />{t('guest.joinOnline')}</a></Button>}
-    {status === 'going' && <div className="guest-qr"><QRCodeSVG value={code} size={176} bgColor="transparent" fgColor="currentColor" level="M" /><span>{t('guest.qrHelp')}</span></div>}
+    {status === 'going' && <div className="guest-qr" ref={qr}><QRCodeSVG value={code} size={176} bgColor="var(--qr-background)" fgColor="var(--qr-foreground)" level="M" marginSize={4} title={t('guest.qrHelp')} /><span>{t('guest.qrHelp')}</span><Button variant="secondary" onClick={saveQr}>{t('launch.saveQr')}</Button></div>}
     {status !== 'cancelled' && <><CalendarButtons event={event} /><DirectionsButton event={event} /></>}
     <h3 className="guest-subhead">{t('guest.inviteFriend')}</h3>
     <InviteShare eventId={event.id} title={event.title} when={when} />

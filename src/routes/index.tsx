@@ -1,18 +1,22 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { ClientOnly, createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { LandingPage } from '@/components/landing/landing-page';
 import i18n from '@/lib/i18n';
+import { publicShareImage } from '@/lib/public-media.functions';
+import { ListSkeleton, RetryState } from '@/components/launch-states';
 
 export const Route = createFileRoute('/')({
-  ssr: false,
-  beforeLoad: async () => {
-    const { data } = await supabase.auth.getSession();
-    if (data.session) throw redirect({ to: '/home', replace: true });
-  },
-  head: () => {
+  loader: () => publicShareImage({ data: { slot: 'og_share_image' } }).catch(() => null),
+  head: ({ loaderData }) => {
     const title = i18n.t('landing.meta.homeTitle');
     const description = i18n.t('landing.meta.home');
-    return { meta: [{ title }, { name: 'description', content: description }, { property: 'og:title', content: title }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' }] };
+    return { meta: [{ title }, { name: 'description', content: description }, { property: 'og:title', content: title }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' }, ...(loaderData ? [{ property: 'og:image', content: loaderData }, { name: 'twitter:image', content: loaderData }] : [])] };
   },
-  component: LandingPage,
+  errorComponent: ({ reset }) => <RetryState retry={reset} />,
+  component: function PublicHome() {
+    const navigate = useNavigate();
+    useEffect(() => { void supabase.auth.getUser().then(({ data }) => { if (data.user) void navigate({ to: '/home', replace: true }); }); }, [navigate]);
+    return <ClientOnly fallback={<ListSkeleton />}><LandingPage /></ClientOnly>;
+  },
 });

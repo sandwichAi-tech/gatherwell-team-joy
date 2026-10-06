@@ -1,4 +1,5 @@
 import { trackEvent } from '@/lib/analytics';
+import { ListSkeleton, RetryState } from '@/components/launch-states';
 import { useServerFn } from '@tanstack/react-start';
 import { usePaymentGate } from '@/components/plan-page';
 import { startChallengeCheckout } from '@/lib/billing.functions';
@@ -67,7 +68,7 @@ export function ChallengesSection() {
   const { list, leader, teamId, isLoading } = useChallenges();
   const [tab, setTab] = useState<Phase>('active'); const [editing, setEditing] = useState<Partial<Challenge> | null>(null);
   const groups = useMemo(() => ({ active: list.filter(c => phaseOf(c) === 'active'), upcoming: list.filter(c => phaseOf(c) === 'upcoming').reverse(), past: list.filter(c => phaseOf(c) === 'past') }), [list]);
-  if (isLoading) return null;
+  if (isLoading) return <ListSkeleton />;
   return <section className="panel" id="challenges">
     <div className="section-heading"><h2>{t('challenges.title')}</h2>{leader ? <Button onClick={() => setEditing({})}><Plus />{t('challenges.new')}</Button> : !list.length && <span className="chip sample-badge">{t('common.sample')}</span>}</div>
     {list.length ? <>
@@ -221,12 +222,18 @@ function PhotoGallery({ paths }: { paths: string[] }) {
 export function ChallengePage({ id }: { id: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en'; const qc = useQueryClient();
   const { userId } = useGatherwell(); const { data: workspace } = useQuery(workspaceQuery(userId));
-  const { data: c, isLoading } = useQuery({ queryKey: ['challenge', id], queryFn: async () => (await supabase.from('challenges').select('*').eq('id', id).maybeSingle()).data });
+  const { data: c, isLoading, isError, refetch } = useQuery({ queryKey: ['challenge', id], queryFn: async () => {
+    const { data, error } = await supabase.from('challenges').select('*').eq('id', id).maybeSingle();
+    if (error) throw error;
+    return data;
+  } });
   const { data: joinedRow, refetch: refetchJoin } = useQuery({ queryKey: ['challenge-joined', id, userId], queryFn: async () => !!(await supabase.from('challenge_members').select('challenge_id').eq('challenge_id', id).eq('user_id', userId).maybeSingle()).data });
   const { data: mine = [] } = useQuery(myCheckinsQuery(userId, id));
   const { data: board = [] } = useQuery(leaderboardQuery(id));
   const [sheetDate, setSheetDate] = useState<string | null>(null); const [editing, setEditing] = useState<Partial<Challenge> | null>(null); const [busy, setBusy] = useState(false);
-  if (isLoading) return <div className="min-h-96" />;
+  const payGate = usePaymentGate(); const payChallenge = useServerFn(startChallengeCheckout);
+  if (isError) return <RetryState retry={() => void refetch()} />;
+  if (isLoading) return <ListSkeleton />;
   if (!c) return <section className="panel"><Link to="/team" className="back-link"><ArrowLeft />{t('nav.team')}</Link><p className="auth-subtitle">{t('learnHub.notFound')}</p></section>;
   const today = localDate(); const yesterday = addDays(today, -1); const phase = phaseOf(c, today); const len = lengthOf(c);
   const dates = new Set(mine.map(m => m.checkin_date)); const s = streaksOf([...dates], today);
@@ -235,7 +242,6 @@ export function ChallengePage({ id }: { id: string }) {
   const leader = workspace?.role === 'leader';
   const meRow = board.find(r => r.user_id === userId); const top = board.slice(0, 10);
   const joined = !!joinedRow;
-  const payGate = usePaymentGate(); const payChallenge = useServerFn(startChallengeCheckout);
   const join = async () => {
     if (c.is_paid && c.price_cents) { void payGate.run(() => payChallenge({ data: { challengeId: id, origin: window.location.origin, lang: lang === 'es' ? 'es' : 'en' } })); return; }
     setBusy(true); const { error } = await supabase.from('challenge_members').insert({ challenge_id: id, user_id: userId }); setBusy(false);

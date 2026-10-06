@@ -6,8 +6,17 @@ import { AuthFrame, pageHead } from '@/components/auth-frame';
 import { supabase } from '@/integrations/supabase/client';
 import { JOIN_CODE_KEY, initialsOf, parseJoinCode } from '@/lib/account';
 import { JOIN_BY_KEY } from '@/lib/recognition';
+import { publicShareImage } from '@/lib/public-media.functions';
+import { RetryState } from '@/components/launch-states';
+import i18n from '@/lib/i18n';
 
-export const Route = createFileRoute('/join/$code')({ head: () => pageHead('join.cta', 'meta.join'), component: JoinPage });
+export const Route = createFileRoute('/join/$code')({
+  loader: () => publicShareImage({ data: { slot: 'og_share_image' } }).catch(() => null),
+  head: ({ loaderData }) => { const h = pageHead('join.cta', 'meta.join'); return { meta: [...h.meta, ...(loaderData ? [{ property: 'og:image', content: loaderData }, { name: 'twitter:image', content: loaderData }] : [])] }; },
+  errorComponent: ({ reset }) => <AuthFrame><RetryState retry={reset} /></AuthFrame>,
+  notFoundComponent: () => <AuthFrame>{i18n.t('join.invalid')}</AuthFrame>,
+  component: JoinPage,
+});
 
 function JoinPage() {
   const { t } = useTranslation();

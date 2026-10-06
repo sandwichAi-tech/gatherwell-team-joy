@@ -1,4 +1,5 @@
 import { LessonSummary } from '@/components/smart';
+import { ListSkeleton, RetryState } from '@/components/launch-states';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -22,10 +23,10 @@ export function useLearn() {
   const { data: workspace } = useQuery(workspaceQuery(userId));
   const teamId = workspace?.teamId ?? '';
   const { data: ancestors = [] } = useQuery({ ...ancestorsQuery(teamId), enabled: !!teamId });
-  const { data, isLoading } = useQuery(learnQuery(userId));
+  const { data, isLoading, isError, refetch } = useQuery(learnQuery(userId));
   const leader = workspace?.role === 'leader';
   const tracks = useMemo(() => (data?.tracks ?? []).filter(t => (ancestors.length ? ancestors.includes(t.team_id) : t.team_id === teamId) && (t.is_published || (leader && t.team_id === teamId))), [data, ancestors, teamId, leader]);
-  return { userId, workspace, teamId, leader, data, tracks, isLoading, lang: i18n.resolvedLanguage ?? 'en' };
+  return { userId, workspace, teamId, leader, data, tracks, isLoading, isError, refetch, lang: i18n.resolvedLanguage ?? 'en' };
 }
 
 export function useNow(ms = 30_000) {
@@ -127,9 +128,10 @@ export function RecipeCard({ recipe, saved }: { recipe: Recipe; saved?: boolean 
 
 export function LearnHome() {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
-  const { data, tracks, leader, isLoading, userId } = useLearn();
+  const { data, tracks, leader, isLoading, isError, refetch, userId } = useLearn();
   const { data: rec } = useQuery(recipesQuery(userId));
-  if (isLoading || !data) return <div className="min-h-96" />;
+  if (isError) return <RetryState retry={() => void refetch()} />;
+  if (isLoading || !data) return <ListSkeleton />;
   const startHere = tracks.find(tr => tr.is_start_here && tr.is_published) ?? null;
   const rest = tracks.filter(tr => tr.id !== startHere?.id);
   const ids = new Set(tracks.filter(tr => tr.is_published).map(tr => tr.id));
@@ -157,8 +159,9 @@ function BackLink({ to, params, label }: { to: string; params?: Record<string, s
 
 export function TrackPage({ id }: { id: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
-  const { data, isLoading } = useLearn();
-  if (isLoading || !data) return <div className="min-h-96" />;
+  const { data, isLoading, isError, refetch } = useLearn();
+  if (isError) return <RetryState retry={() => void refetch()} />;
+  if (isLoading || !data) return <ListSkeleton />;
   const track = data.tracks.find(tr => tr.id === id);
   if (!track) return <section className="panel"><BackLink to="/learn" label={t('learn.title')} /><p className="auth-subtitle">{t('learnHub.notFound')}</p></section>;
   const s = trackStats(data, id); const title = trackTitle(track, lang);
@@ -212,9 +215,10 @@ function LinkCard({ url }: { url: string }) {
 
 export function LessonPage({ id }: { id: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en'; const qc = useQueryClient(); const navigate = useNavigate();
-  const { data, isLoading, userId, leader } = useLearn();
+  const { data, isLoading, isError, refetch, userId, leader } = useLearn();
   const [busy, setBusy] = useState(false); const [justDone, setJustDone] = useState(false);
-  if (isLoading || !data) return <div className="min-h-96" />;
+  if (isError) return <RetryState retry={() => void refetch()} />;
+  if (isLoading || !data) return <ListSkeleton />;
   const lesson = data.lessons.find(l => l.id === id);
   if (!lesson) return <section className="panel"><BackLink to="/learn" label={t('learn.title')} /><p className="auth-subtitle">{t('learnHub.notFound')}</p></section>;
   const track = data.tracks.find(tr => tr.id === lesson.track_id)!;

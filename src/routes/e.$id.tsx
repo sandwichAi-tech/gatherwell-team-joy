@@ -15,6 +15,7 @@ import i18n from '@/lib/i18n';
 import { supabase } from '@/integrations/supabase/client';
 import { formatMoney } from '@/lib/billing';
 import { ReportButton } from '@/components/report-button';
+import { RetryState } from '@/components/launch-states';
 
 export const Route = createFileRoute('/e/$id')({
   loader: async ({ params }) => {
@@ -27,14 +28,14 @@ export const Route = createFileRoute('/e/$id')({
       const title = `${i18n.t('guest.metaFallback')} · ${brand}`;
       return { meta: [{ title }, { name: 'description', content: i18n.t('meta.event') }, { property: 'og:title', content: title }, { property: 'og:description', content: i18n.t('meta.event') }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }] };
     }
-    const date = new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: loaderData.timezone || 'UTC', timeZoneName: 'short' }).format(new Date(loaderData.startsAt));
+    const date = new Intl.DateTimeFormat(i18n.resolvedLanguage === 'es' ? 'es-419' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: loaderData.timezone || 'UTC', timeZoneName: 'short' }).format(new Date(loaderData.startsAt));
     const title = `${loaderData.title} · ${date}`;
     const description = loaderData.cancelled ? i18n.t('guest.cancelledTitle') : `${date} — ${i18n.t('guest.metaInvite')}`;
     const meta: Array<Record<string, string>> = [{ title }, { name: 'description', content: description }, { property: 'og:title', content: title }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: loaderData.image ? 'summary_large_image' : 'summary' }, { name: 'twitter:title', content: title }, { name: 'twitter:description', content: description }];
     if (loaderData.image) meta.push({ property: 'og:image', content: loaderData.image }, { name: 'twitter:image', content: loaderData.image });
     return { meta };
   },
-  errorComponent: () => <GuestShell><p className="guest-empty">{i18n.t('guest.errors.generic')}</p></GuestShell>,
+  errorComponent: ({ reset }) => <GuestShell><RetryState retry={reset} /></GuestShell>,
   notFoundComponent: () => <GuestShell><p className="guest-empty">{i18n.t('publicEvent.notFound')}</p></GuestShell>,
   component: PublicEventPage,
 });
@@ -47,7 +48,7 @@ function PublicEventBody() {
   const { t, i18n: inst } = useTranslation(); const lang = inst.resolvedLanguage === 'es' ? 'es' : 'en';
   const { id } = Route.useParams(); const meta = Route.useLoaderData();
   const queryClient = useQueryClient();
-  const { data: event, isLoading } = useQuery(publicEventQuery(id));
+  const { data: event, isLoading, error, refetch } = useQuery(publicEventQuery(id));
   useLiveCounts(id, () => void queryClient.invalidateQueries({ queryKey: ['public-event', id] }));
   const { data: hostPhoto } = useQuery({ queryKey: ['media-url', event?.host?.avatar_url], queryFn: () => mediaUrl(event?.host?.avatar_url), enabled: !!event?.host?.avatar_url });
   const [intent, setIntent] = useState<'going' | 'maybe' | null>(null);
@@ -55,6 +56,7 @@ function PublicEventBody() {
   const { data: price } = useQuery({ queryKey: ['event-price', id], queryFn: async () => { const { data } = await supabase.rpc('event_price', { _id: id }); return (data as { price_cents: number; pass_fee: boolean; fee_pct: number } | null) ?? null; } });
 
   if (isLoading) return <div className="guest-skeleton" aria-busy="true"><div className="guest-cover skeleton" /><p className="guest-empty">{t('publicEvent.loading')}</p></div>;
+  if (error) return <RetryState retry={() => void refetch()} />;
   if (!event) return <p className="guest-empty">{t('publicEvent.notFound')}</p>;
 
   const tzOpts: Intl.DateTimeFormatOptions = { weekday: 'long', month: 'long', day: 'numeric' };

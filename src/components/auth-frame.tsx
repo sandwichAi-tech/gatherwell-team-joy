@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { ClientOnly, Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import i18n from '@/lib/i18n';
+import { ListSkeleton } from '@/components/launch-states';
 
 export function setLanguage(language: 'en' | 'es') {
   void i18n.changeLanguage(language);
@@ -21,14 +22,14 @@ export function Brand() {
 }
 
 export function AuthFrame({ children, footer = true }: { children: ReactNode; footer?: boolean }) {
-  return <ClientOnly fallback={<div className="auth-screen" />}><AuthFrameInner footer={footer}>{children}</AuthFrameInner></ClientOnly>;
+  return <ClientOnly fallback={<div className="auth-screen"><ListSkeleton /></div>}><AuthFrameInner footer={footer}>{children}</AuthFrameInner></ClientOnly>;
 }
 
 function AuthFrameInner({ children, footer }: { children: ReactNode; footer: boolean }) {
   const { t } = useTranslation();
   return <div className="auth-screen">
     <div className="auth-topbar"><LanguageToggle /></div>
-    <main className="auth-card">
+    <main id="main-content" className="auth-card">
       <Brand />
       {children}
     </main>

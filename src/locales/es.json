@@ -2314,5 +2314,14 @@
         ]
       }
     }
+  },
+  "launch": {
+    "skip": "Ir al contenido",
+    "offline": "No tienes conexión. Mantén esta página abierta hasta que vuelva.",
+    "pending_one": "Hay 1 registro de asistencia pendiente. Mantén esta página abierta.",
+    "pending_other": "Hay {{count}} registros de asistencia pendientes. Mantén esta página abierta.",
+    "waiting": "Pendiente de sincronizar",
+    "scanPending": "Guardado durante esta sesión. En espera de conexión.",
+    "saveQr": "Guardar código QR"
   }
 }

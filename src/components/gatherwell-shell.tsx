@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
 import { useQuery } from '@tanstack/react-query';
 import { profileQuery, workspaceQuery, initialsOf, firstName } from '@/lib/account';
+import { ListSkeleton, QueryFeedback } from '@/components/launch-states';
 
 type Theme = 'system' | 'light' | 'dark';
 type Creation = 'event' | 'announcement' | 'challenge' | 'training' | 'profile' | 'team' | 'learn';
@@ -50,7 +51,7 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
   <div className="min-h-dvh bg-background text-foreground">
    <aside className="desktop-sidebar">
     <Link to="/home" className="brand" aria-label={t('brand')}><span className="brand-mark" aria-hidden="true">g</span><span>{t('brand')}</span></Link>
-    <div className="workspace-card"><span className="initial-avatar">{initials}</span><div><strong>{workspace?.name ?? t('workspace.none')}</strong><p>{workspace ? t(`plans.${workspace.plan}`) : profile?.full_name}</p></div></div>
+    <div className="workspace-card"><span className="initial-avatar" aria-label={profile?.full_name ?? t('common.you')}>{initials}</span><div><strong>{workspace?.name ?? t('workspace.none')}</strong><p>{workspace ? t(`plans.${workspace.plan}`) : profile?.full_name}</p></div></div>
     <TeamSwitcher userId={userId} className="sidebar-switcher" />
     <nav className="sidebar-nav" aria-label={t('nav.label')}>{tabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: true }} className={`sidebar-link ${isActive(path) ? 'is-active' : ''}`}><Icon /><span>{t(`nav.${key}`)}</span></Link>)}</nav>
     <div className="sidebar-bottom"><CircleHelp /><p>{t('common.sampleNote')}</p></div>
@@ -61,7 +62,7 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
      <span className="desktop-header-label">{t('common.workspaceLabel')}<span>/</span><strong>{t(`nav.${current.key}`)}</strong></span>
      <div className="header-actions"><Button variant="secondary" className="member-view-button" onClick={() => { setMemberView(value => !value); setDetail({ title: t('roles.member'), description: t('common.previewNote') }); setSheet('profile'); }}>{t(memberView ? 'common.leaderView' : 'common.memberView')}</Button><span className="chip sample-badge">{t('common.sample')}</span><Button variant="ghost" size="icon" className="assistant-button" aria-label={t('common.assistant')} title={t('common.assistant')} onClick={() => openSheet('assistant')}><Sparkles /></Button><Link to="/me" className="header-avatar" aria-label={t('me.profile')}>{initials}</Link></div>
     </header>
-    <main className="page-content"><ClientOnly fallback={<div className="min-h-96" />}><PlatformNotices teamId={workspace?.teamId} /><div key={pathname} className="page-transition">{children}</div></ClientOnly></main>
+    <main id="main-content" className="page-content"><ClientOnly fallback={<ListSkeleton />}><PlatformNotices teamId={workspace?.teamId} /><QueryFeedback /><div key={pathname} className="page-transition">{children}</div></ClientOnly></main>
    </div>
    {userId && <ClientOnly><BadgeEarnedWatcher /><PushPrompt userId={userId} /></ClientOnly>}
    <Button size="icon" className="floating-create" onClick={() => openSheet('create')} aria-label={t('common.create')} title={t('common.create')}><Plus /></Button>

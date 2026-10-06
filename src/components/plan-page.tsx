@@ -108,7 +108,7 @@ export function PlanPage() {
       <div className="plan-meters">
         <Meter label={lim.gatherings === null ? t('billing.meterGatheringsUnlimited', { used: st.usage.gatherings }) : t('billing.meterGatherings', { used: st.usage.gatherings, max: lim.gatherings })} used={st.usage.gatherings} max={lim.gatherings} />
         <Meter label={lim.guests === null ? t('billing.meterGuestsUnlimited', { used: st.usage.largest_guests }) : t('billing.meterGuests', { used: st.usage.largest_guests, max: lim.guests })} used={st.usage.largest_guests} max={lim.guests} />
-        <Meter label={t('billing.meterStorage', { used: formatStorage(usedMb), max: formatStorage(lim.storage_mb) })} used={usedMb} max={lim.storage_mb} />
+        <Meter label={t('billing.meterStorage', { used: formatStorage(usedMb, lang), max: formatStorage(lim.storage_mb, lang) })} used={usedMb} max={lim.storage_mb} />
         <Meter label={t('billing.meterAssistant', { used: st.usage.assistant, max: lim.assistant })} used={st.usage.assistant} max={lim.assistant} />
       </div>
       {st.has_customer && <Button variant="secondary" disabled={gate.busy} onClick={() => void gate.run(() => portal({ data: { origin } }))}><CreditCard />{t('billing.manage')}</Button>}
@@ -130,7 +130,7 @@ export function PlanPage() {
           <ul className="plan-features">
             <li><Check />{p.limits.gatherings === null ? t('billing.fGatheringsUnlimited') : t('billing.fGatherings', { n: p.limits.gatherings })}</li>
             <li><Check />{p.limits.guests === null ? t('billing.fGuestsUnlimited') : t('billing.fGuests', { n: p.limits.guests })}</li>
-            <li><Check />{t('billing.fStorage', { size: formatStorage(p.limits.storage_mb) })}</li>
+            <li><Check />{t('billing.fStorage', { size: formatStorage(p.limits.storage_mb, lang) })}</li>
             <li><Check />{t('billing.fAssistant', { n: p.limits.assistant.toLocaleString(lang) })}</li>
             <li><Check />{t('billing.fFee', { n: p.limits.fee_pct })}</li>
           </ul>
@@ -156,7 +156,7 @@ export function PlanPage() {
       <div className="section-heading"><h2>{t('billing.getPaid')}</h2><span className={`chip connect-${st.connect_status}`}>{t(`billing.connect_${st.connect_status}`)}</span></div>
       <p className="auth-subtitle">{t('billing.getPaidText', { n: lim.fee_pct })}</p>
       {st.connect_status !== 'active' && <Button disabled={gate.busy} onClick={() => void gate.run(() => connect({ data: { origin } }))}>{st.connect_status === 'pending' ? t('billing.connectContinue') : t('billing.connectStart')}</Button>}
-      <label className="settings-row is-static"><span className="settings-label">{t('billing.passFee')}<small className="field-hint">{t('billing.passFeeHint')}</small></span><Switch checked={st.pass_fee} onCheckedChange={v => void togglePassFee(v)} /></label>
+      <label className="settings-row is-static"><span className="settings-label">{t('billing.passFee')}<small className="field-hint">{t('billing.passFeeHint')}</small></span><Switch aria-label={t('billing.passFee')} checked={st.pass_fee} onCheckedChange={v => void togglePassFee(v)} /></label>
     </section>
 
     <ResponsiveSheet open={downgrade !== null} onOpenChange={o => { if (!o) setDowngrade(null); }} title={t('billing.downgradeTitle', { plan: downgrade ? t(`billing.name_${downgrade}`) : '' })}>
@@ -166,7 +166,7 @@ export function PlanPage() {
           {(() => { const l = PLANS.find(p => p.id === downgrade)!.limits; return <>
             <li>{l.gatherings === null ? t('billing.fGatheringsUnlimited') : t('billing.downGatherings', { n: l.gatherings })}</li>
             <li>{l.guests === null ? t('billing.fGuestsUnlimited') : t('billing.downGuests', { n: l.guests })}</li>
-            <li>{t('billing.downStorage', { size: formatStorage(l.storage_mb) })}</li>
+            <li>{t('billing.downStorage', { size: formatStorage(l.storage_mb, lang) })}</li>
             <li>{t('billing.fAssistant', { n: l.assistant })}</li>
             <li>{t('billing.fFee', { n: l.fee_pct })}</li></>; })()}
         </ul>
@@ -216,7 +216,7 @@ export function SeatsPage() {
       <Meter label={t('billing.seatsUsed', { used, total })} used={used} max={total} />
       <div className="seat-list">{roster.map(m => {
         const on = lic!.seats.has(m.userId);
-        return <div key={m.userId} className="seat-row"><span><strong>{m.name ?? t('team.member')}</strong><small>{t(`roles.${m.role}`)}{on ? ` · ${t('billing.name_growth')}` : ''}</small></span>
+        return <div key={m.userId} className="seat-row"><span><strong>{m.name ?? t('roles.member')}</strong><small>{t(`roles.${m.role}`)}{on ? ` · ${t('billing.name_growth')}` : ''}</small></span>
           <Button variant={on ? 'secondary' : 'default'} disabled={busy === m.userId || (!on && used >= total)} onClick={() => void toggle(m.userId, !on)}>{on ? t('billing.removeSeat') : t('billing.assignSeat')}</Button></div>;
       })}</div>
     </section> : <section className="panel">

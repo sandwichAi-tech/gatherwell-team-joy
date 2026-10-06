@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react';
+import { ListSkeleton } from '@/components/launch-states';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
@@ -29,7 +30,7 @@ export function AdminConsole({ tab }: { tab: AdminTab }) {
   const { t } = useTranslation(); const navigate = useNavigate();
   const access = useServerFn(getAdminAccess);
   const { data, isLoading } = useQuery({ queryKey: ['admin-access'], queryFn: () => access() });
-  if (isLoading) return <p className="muted-copy">{t('admin.loading')}</p>;
+  if (isLoading) return <ListSkeleton />;
   if (!data?.admin) return <section className="panel empty-panel admin-denied"><GwFeatureTile name="Lock" /><h1 className="section-title">{t('admin.deniedTitle')}</h1><p className="muted-copy">{t('admin.deniedBody')}</p><Button asChild variant="secondary"><Link to="/home">{t('admin.backHome')}</Link></Button></section>;
   return <div className="admin-console">
     <header className="page-heading"><div><p className="eyebrow">{t('admin.eyebrow')}</p><h1>{t('admin.title')}</h1><p>{t('admin.subtitle')}</p></div></header>
