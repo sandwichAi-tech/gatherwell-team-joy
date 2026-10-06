@@ -62,8 +62,6 @@ export const purchasesQuery = (userId: string) => queryOptions({
     const ids = ((rows ?? []) as Purchase[]).map(r => r.offer_id);
     const { data: offers } = ids.length ? await db.from('offers').select(COLS).in('id', ids) : { data: [] };
     const map = new Map<string, Offer>(((offers ?? []) as Offer[]).map(o => [o.id, o]));
-    const { data: pays } = await supabase.from('payments').select('id, amount_cents, status, created_at, kind').eq('status', 'paid').limit(0);
-    void pays;
     return ((rows ?? []) as Purchase[]).map(p => ({ ...p, offer: map.get(p.offer_id) ?? null }));
   },
 });
