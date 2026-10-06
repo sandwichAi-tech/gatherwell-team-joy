@@ -2852,6 +2852,172 @@ export type Database = {
         }
         Relationships: []
       }
+      welcome_invites: {
+        Row: {
+          code: string
+          created_at: string
+          guest_key: string | null
+          user_id: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          guest_key?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          guest_key?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      welcome_redemptions: {
+        Row: {
+          code: string
+          created_at: string
+          honored_at: string | null
+          host_id: string
+          id: string
+          invite_code: string
+          points: number
+          reward_id: string | null
+          status: string
+          title: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          honored_at?: string | null
+          host_id: string
+          id?: string
+          invite_code: string
+          points: number
+          reward_id?: string | null
+          status?: string
+          title: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          honored_at?: string | null
+          host_id?: string
+          id?: string
+          invite_code?: string
+          points?: number
+          reward_id?: string | null
+          status?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "welcome_redemptions_invite_code_fkey"
+            columns: ["invite_code"]
+            isOneToOne: false
+            referencedRelation: "welcome_invites"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "welcome_redemptions_reward_id_fkey"
+            columns: ["reward_id"]
+            isOneToOne: false
+            referencedRelation: "welcome_rewards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      welcome_referrals: {
+        Row: {
+          code: string
+          created_at: string
+          earned_at: string | null
+          event_id: string
+          friend_name: string
+          host_id: string
+          id: string
+          points: number
+          rsvp_id: string
+          status: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          earned_at?: string | null
+          event_id: string
+          friend_name?: string
+          host_id: string
+          id?: string
+          points?: number
+          rsvp_id: string
+          status?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          earned_at?: string | null
+          event_id?: string
+          friend_name?: string
+          host_id?: string
+          id?: string
+          points?: number
+          rsvp_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "welcome_referrals_code_fkey"
+            columns: ["code"]
+            isOneToOne: false
+            referencedRelation: "welcome_invites"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "welcome_referrals_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "welcome_referrals_rsvp_id_fkey"
+            columns: ["rsvp_id"]
+            isOneToOne: true
+            referencedRelation: "rsvps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      welcome_rewards: {
+        Row: {
+          active: boolean
+          created_at: string
+          host_id: string
+          id: string
+          points_cost: number
+          title_en: string
+          title_es: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          host_id?: string
+          id?: string
+          points_cost: number
+          title_en?: string
+          title_es?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          host_id?: string
+          id?: string
+          points_cost?: number
+          title_en?: string
+          title_es?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -3056,6 +3222,16 @@ export type Database = {
         Returns: boolean
       }
       guest_cap: { Args: { _event: string }; Returns: number }
+      guest_invite_code_for: { Args: { _checkin: string }; Returns: string }
+      guest_key_of: {
+        Args: { _email: string; _phone: string }
+        Returns: string
+      }
+      guest_redeem_welcome: {
+        Args: { _checkin: string; _reward: string }
+        Returns: string
+      }
+      guest_welcome: { Args: { _checkin: string }; Returns: Json }
       handle_sms_inbound: {
         Args: { _body: string; _from: string }
         Returns: string
@@ -3072,6 +3248,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      honor_welcome_code: { Args: { _code: string }; Returns: Json }
       infer_gathering_category: {
         Args: { _category: string; _title: string }
         Returns: string
@@ -3123,6 +3300,7 @@ export type Database = {
           title_es: string
         }[]
       }
+      my_invite_code: { Args: never; Returns: string }
       my_offer_stats: {
         Args: never
         Returns: {
@@ -3147,6 +3325,7 @@ export type Database = {
           team_name: string
         }[]
       }
+      my_welcome: { Args: never; Returns: Json }
       name_host_of_month: {
         Args: { _note: string; _team: string; _user: string }
         Returns: undefined
@@ -3207,6 +3386,11 @@ export type Database = {
         Args: { _code: string; _ref: string }
         Returns: undefined
       }
+      record_welcome_invite: {
+        Args: { _invite: string; _rsvp_code: string }
+        Returns: undefined
+      }
+      redeem_welcome_reward: { Args: { _reward: string }; Returns: string }
       report_content: {
         Args: { _id: string; _note: string; _reason: string; _type: string }
         Returns: boolean
@@ -3305,6 +3489,12 @@ export type Database = {
         Args: { _code: string; _option: string }
         Returns: undefined
       }
+      welcome_new_code: { Args: never; Returns: string }
+      welcome_redeem_for: {
+        Args: { _code: string; _reward: string }
+        Returns: string
+      }
+      welcome_summary: { Args: { _code: string }; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
