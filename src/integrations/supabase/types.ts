@@ -537,6 +537,96 @@ export type Database = {
           },
         ]
       }
+      comment_reactions: {
+        Row: {
+          comment_id: string
+          created_at: string
+          kind: string
+          user_id: string
+        }
+        Insert: {
+          comment_id: string
+          created_at?: string
+          kind: string
+          user_id: string
+        }
+        Update: {
+          comment_id?: string
+          created_at?: string
+          kind?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_reactions_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          event_id: string | null
+          hidden: boolean
+          id: string
+          parent_id: string | null
+          pinned: boolean
+          team_id: string
+          topic_id: string | null
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          event_id?: string | null
+          hidden?: boolean
+          id?: string
+          parent_id?: string | null
+          pinned?: boolean
+          team_id: string
+          topic_id?: string | null
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          event_id?: string | null
+          hidden?: boolean
+          id?: string
+          parent_id?: string | null
+          pinned?: boolean
+          team_id?: string
+          topic_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "discussion_topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       daily_briefs: {
         Row: {
           created_at: string
@@ -596,6 +686,44 @@ export type Database = {
           provider_message_id?: string | null
         }
         Relationships: []
+      }
+      discussion_topics: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          last_post_at: string
+          pinned: boolean
+          team_id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          last_post_at?: string
+          pinned?: boolean
+          team_id: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          last_post_at?: string
+          pinned?: boolean
+          team_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discussion_topics_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_prefs: {
         Row: {
@@ -969,6 +1097,7 @@ export type Database = {
           timezone: string
           title: string
           visibility: string
+          whatsapp_url: string | null
         }
         Insert: {
           address?: string | null
@@ -1006,6 +1135,7 @@ export type Database = {
           timezone?: string
           title: string
           visibility?: string
+          whatsapp_url?: string | null
         }
         Update: {
           address?: string | null
@@ -1043,6 +1173,7 @@ export type Database = {
           timezone?: string
           title?: string
           visibility?: string
+          whatsapp_url?: string | null
         }
         Relationships: [
           {
@@ -2659,6 +2790,7 @@ export type Database = {
           parent_team_id: string | null
           plan: string
           slug: string
+          whatsapp_url: string | null
         }
         Insert: {
           allow_host_subteams?: boolean
@@ -2672,6 +2804,7 @@ export type Database = {
           parent_team_id?: string | null
           plan?: string
           slug: string
+          whatsapp_url?: string | null
         }
         Update: {
           allow_host_subteams?: boolean
@@ -2685,6 +2818,7 @@ export type Database = {
           parent_team_id?: string | null
           plan?: string
           slug?: string
+          whatsapp_url?: string | null
         }
         Relationships: [
           {
@@ -2811,6 +2945,32 @@ export type Database = {
           sort_order?: number
         }
         Relationships: []
+      }
+      topic_reads: {
+        Row: {
+          last_read_at: string
+          topic_id: string
+          user_id: string
+        }
+        Insert: {
+          last_read_at?: string
+          topic_id: string
+          user_id: string
+        }
+        Update: {
+          last_read_at?: string
+          topic_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topic_reads_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "discussion_topics"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tracks: {
         Row: {
@@ -3263,8 +3423,11 @@ export type Database = {
         Returns: undefined
       }
       can_edit_track: { Args: { _track: string }; Returns: boolean }
+      can_join_conversation: { Args: { _event: string }; Returns: boolean }
       can_manage_event: { Args: { _event_id: string }; Returns: boolean }
+      can_moderate_comment: { Args: { _c: string }; Returns: boolean }
       can_read_challenge: { Args: { _c: string }; Returns: boolean }
+      can_read_comment: { Args: { _c: string }; Returns: boolean }
       can_read_track: { Args: { _track: string }; Returns: boolean }
       can_rsvp_event: { Args: { _event_id: string }; Returns: boolean }
       can_use_team_templates: { Args: { _team: string }; Returns: boolean }
@@ -3358,11 +3521,16 @@ export type Database = {
           slug: string
         }[]
       }
+      create_topic: {
+        Args: { _body: string; _team: string; _title: string }
+        Returns: string
+      }
       decide_rsvp: {
         Args: { _approve: boolean; _rsvp: string }
         Returns: string
       }
       default_waiver: { Args: { _team: string }; Returns: undefined }
+      delete_comment: { Args: { _id: string }; Returns: undefined }
       delete_my_account: { Args: never; Returns: undefined }
       due_followup_events: { Args: never; Returns: string[] }
       effective_plan: { Args: { _uid: string }; Returns: Json }
@@ -3473,6 +3641,7 @@ export type Database = {
       is_connected: { Args: { _a: string; _b: string }; Returns: boolean }
       is_event_cohost: { Args: { _event: string }; Returns: boolean }
       is_host_anywhere: { Args: { _u: string }; Returns: boolean }
+      is_member_of: { Args: { _team: string; _user: string }; Returns: boolean }
       is_team_member: {
         Args: { _roles: string[]; _team_id: string }
         Returns: boolean
@@ -3502,7 +3671,16 @@ export type Database = {
       }
       live_lesson_link: { Args: { _lesson: string }; Returns: string }
       local_today: { Args: { _tz: string }; Returns: string }
+      manage_topic: {
+        Args: { _delete: boolean; _id: string; _pinned: boolean }
+        Returns: undefined
+      }
       mark_badges_seen: { Args: { _ids: string[] }; Returns: undefined }
+      mark_topic_read: { Args: { _id: string }; Returns: undefined }
+      moderate_comment: {
+        Args: { _hidden: boolean; _id: string; _pinned: boolean }
+        Returns: undefined
+      }
       moderate_shoutout: {
         Args: { _action: string; _id: string }
         Returns: undefined
@@ -3592,6 +3770,16 @@ export type Database = {
       post_challenge_encouragement: {
         Args: { _c: string; _message: string }
         Returns: undefined
+      }
+      post_comment: {
+        Args: {
+          _body: string
+          _event: string
+          _mentions: string[]
+          _parent: string
+          _topic: string
+        }
+        Returns: string
       }
       post_shoutout: {
         Args: { _message: string; _team: string; _to: string }
@@ -3749,6 +3937,10 @@ export type Database = {
           name: string
           parent_team_id: string
         }[]
+      }
+      toggle_comment_reaction: {
+        Args: { _id: string; _kind: string }
+        Returns: boolean
       }
       track_progress: {
         Args: { _team: string }
