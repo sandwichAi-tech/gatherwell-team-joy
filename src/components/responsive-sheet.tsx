@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/compone
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from '@/components/ui/drawer';
 import { GwFeatureTile, type GwIconName } from '@/components/gw-icon';
 
-type Props = { open: boolean; onOpenChange: (open: boolean) => void; title: string; description?: string; icon?: GwIconName; footer?: ReactNode; children: ReactNode };
+type Props = { open: boolean; onOpenChange: (open: boolean) => void; title: string; description?: string | undefined; icon?: GwIconName | undefined; footer?: ReactNode; children: ReactNode };
 
 /** Bottom sheet on phones (grab handle, drag to dismiss), centered dialog on desktop. Optional icon tile and sticky footer. */
 export function ResponsiveSheet({ open, onOpenChange, title, description, icon, footer, children }: Props) {

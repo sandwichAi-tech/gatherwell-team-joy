@@ -8,7 +8,7 @@ import { myChallengesQuery, myGatheringsQuery, profileStatsQuery, recentBadgesQu
 
 /** Identity-led hero shared by Me and member detail. */
 export function ProfileHero({ avatar, name, city, team, role, badge, bio, actions, compact }: {
-  avatar: ReactNode; name?: string | null; city?: string | null; team?: string | null; role?: string | null; badge?: string | null; bio?: string | null; actions?: ReactNode; compact?: boolean;
+  avatar: ReactNode; name?: string | null | undefined; city?: string | null | undefined; team?: string | null | undefined; role?: string | null | undefined; badge?: string | null | undefined; bio?: string | null | undefined; actions?: ReactNode; compact?: boolean | undefined;
 }) {
   return <section className={`gw-hero-card ${compact ? 'is-compact' : ''}`}>
     <div className="gw-hero-cover" aria-hidden="true" />
@@ -23,7 +23,7 @@ export function ProfileHero({ avatar, name, city, team, role, badge, bio, action
   </section>;
 }
 
-export function StatsStrip({ userId, teamId }: { userId: string; teamId?: string | null }) {
+export function StatsStrip({ userId, teamId }: { userId: string; teamId?: string | null | undefined }) {
   const { t, i18n } = useTranslation();
   const { data } = useQuery(profileStatsQuery(userId, teamId));
   const fmt = new Intl.NumberFormat(i18n.resolvedLanguage);
@@ -33,7 +33,7 @@ export function StatsStrip({ userId, teamId }: { userId: string; teamId?: string
   </div>;
 }
 
-export function RecentBadges({ userId, teamId, onAll }: { userId: string; teamId?: string | null; onAll?: () => void }) {
+export function RecentBadges({ userId, teamId, onAll }: { userId: string; teamId?: string | null | undefined; onAll?: (() => void) | undefined }) {
   const { t, i18n } = useTranslation();
   const { data = [] } = useQuery(recentBadgesQuery(userId, teamId));
   return <section className="panel gw-recent-badges">
