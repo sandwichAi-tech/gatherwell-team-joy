@@ -25,6 +25,7 @@ import { NetworkShareToggle } from '@/components/network-share';
 import { MembersOnlyPicker } from '@/components/offers';
 import { WaiverEventToggle } from '@/components/waiver';
 import { RsvpSettingsPanel } from '@/components/rsvp-questions';
+import { EventComments, GroupChatLink } from '@/components/conversation';
 import { CohostsPanel, cohostsQuery } from '@/components/cohosts';
 import { Polls, PhotoRoll, useLiveCounts } from '@/components/event-live';
 
@@ -143,6 +144,8 @@ function EventDetailPage() {
       {event.status !== 'cancelled' && <Button asChild variant="secondary"><Link to="/gathering/$id/edit" params={{ id }}><Pencil />{t('gathering.editSeries')}</Link></Button>}
     </section>}
 
+    <GroupChatLink table="events" id={event.id} url={(event as any).whatsapp_url ?? null} canEdit={manages} />
+    {event.status !== 'draft' && <EventComments eventId={event.id} teamId={event.team_id} me={userId} />}
     {(manages || cohostIds.length > 0) && <CohostsPanel eventId={event.id} teamId={event.team_id} hostId={event.host_id} canEdit={event.host_id === userId || leadsTeam} />}
 
     <ResponsiveSheet open={sheet === 'share'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.share')} description={event.title}>
