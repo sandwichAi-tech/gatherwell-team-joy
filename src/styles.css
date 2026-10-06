@@ -1269,3 +1269,8 @@ button { white-space:normal; }
 [role=dialog][data-state=open],[role=alertdialog][data-state=open]{animation-duration:var(--dur-open)!important;animation-timing-function:var(--ease-out)!important}
 .icon-compact svg,svg.icon-compact{width:var(--icon-compact);height:var(--icon-compact)}
 @media (prefers-reduced-motion:reduce){[role=dialog],[role=alertdialog],[data-state]{animation-duration:1ms!important;transition-duration:1ms!important}}
+.gw-toast-tile{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:var(--secondary);color:var(--lavender)}
+.gw-toast-tile svg{width:18px;height:18px}
+.gw-toast-tile.is-success{background:color-mix(in srgb,var(--success) 14%,transparent);color:var(--success)}
+.gw-toast-tile.is-error{background:color-mix(in srgb,var(--destructive) 14%,transparent);color:var(--destructive)}
+[data-sonner-toast] [data-icon]{width:32px;height:32px;margin-right:4px}

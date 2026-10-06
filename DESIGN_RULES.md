@@ -15,7 +15,10 @@ These rules permanently replace all earlier visual and tone instructions in PROJ
 - Inter from Google Fonts; tabular numbers for stats.
 - Page titles 40px/700; requested tracking -0.03em. Section titles 20px/600; requested tracking -0.01em. Project authoring constraint takes precedence: render heading tracking at 0.
 - Body 15px/400, line-height 1.55. Labels 12px/600 uppercase, 0.12em tracking, lavender.
-- White cards: 16px radius, 1px border, 24–32px padding; shadow at most 0 1px 2px rgba(28,23,38,0.04).
+- White cards: 16px radius, 1px border, 24–32px padding.
+- Elevation (Design System 2.0): e0 flat canvas; e1 cards; e2 raised cards and toasts; e3 menus, dialogs and sheets. Use the tokens --e0..--e3 only; dialogs and desktop sheets sit on the card surface, never the canvas color.
+- Motion: open 220ms, close 160ms, success 200ms; reduced-motion respected.
+- Icon sizes by role: UI 20px; feature icons 24–28px inside 48–56px tiles; 16px compact only where documented. Minimum app text 13px.
 - Primary buttons plum/white; secondary white/bordered; radius 12px; height 44px (48px on mobile).
 - 8px spacing grid, consistent radii, crisp hairlines, high contrast.
 - Motion only 150–200ms ease-out fades/lifts; honor reduced motion.
@@ -60,3 +63,7 @@ These rules permanently replace all earlier visual and tone instructions in PROJ
 - Every photo renders through the shared BrandImage component: peach #F3C6A5 overlay at 6% soft-light, gentle bottom vignette, 2% film grain. Failed or missing photos fall back to a plum-lavender-peach tonal gradient with grain, never a grey box.
 - Responsive sizes 640/1080/1600/2400, auto WebP/AVIF, quality 80. Uploads are cropped to the slot ratio around the focal point and saved as 2400px WebP.
 - Photos live in site_media slots, swappable by platform admins in Me > Site media with no code changes: hero_card_1-4, feed_default_run, feed_default_fitcamp, feed_default_yoga, feed_default_soundbath, feed_default_hike, feed_default_walk, feed_default_pickleball, host_band, leaders_band, og_share_image. Credits are stored per slot.
+
+
+## Marketing pages exception
+Public marketing pages (landing, Discover marketing sections) may use Inter Tight headings with a single Instrument Serif accent word per headline. The signed-in app stays on Inter. Landing category circles may stay circular but use the same duotone feature-icon style.

@@ -16,7 +16,7 @@ RULES (never break these):
 2. Every user-facing word goes through i18n with English and Spanish. Spanish is natural Latin American Spanish, never stiff.
 3. Three taps to anything. No screen should need instructions.
 4. No physical product catalog. Hosts may sell their own services (gathering tickets, challenges, memberships, courses, digital downloads) through Gatherwell; a host can also add an external "Shop" link that opens in a new tab.
-5. Never show sales, volume, commission or income data anywhere. Only activity: events, RSVPs, check-ins, trainings, challenges, badges.
+5. Never show product sales, team volume, commissions or income claims. Exception: hosts may see their own revenue from gathering tickets, offers and network thank-yous on Earnings and Plan. Everything else is activity only: events, RSVPs, check-ins, trainings, challenges, badges.
 6. No health, medical, weight-loss or income claims in templates, sample content or AI output.
 7. Never mention any outside company or brand in the app.
 8. API KEYS COME LATER. No outside service keys are set up yet (Claude, Resend, Mailgun, Twilio, Stripe, Google Maps). Whenever a feature needs one, build it behind a small backend function that reads the key from Lovable Cloud secrets, and if the secret is missing, use a clear mock: log the action, return realistic sample data, and show a small "Not connected yet" note in the UI. Never block the build, never hard-code a key, and never put keys in front-end code. We will add every secret at the end and switch the mocks off.
@@ -65,7 +65,7 @@ Smooth page transitions. Keep the bundle light.
 ADDENDUM (Oct 2026, confirmed rules — additive, nothing above removed):
 - Mobile-first with 44–48px tap targets. Every user-facing word in English and Latin American Spanish via i18n.
 - No physical product catalog; host services (tickets, memberships, courses, downloads) are allowed; external "Shop" link optional.
-- Never show sales, volume, commission or income data. Activity only: events, RSVPs, check-ins, trainings, challenges, badges.
+- Never show product sales, team volume, commissions or income claims (hosts' own ticket/offer/thank-you revenue on Earnings and Plan is allowed). Otherwise activity only: events, RSVPs, check-ins, trainings, challenges, badges.
 - No health, medical, weight-loss or income claims anywhere.
 - Never mention any outside company or brand in the app.
 - API keys come later: any feature needing an outside service (Claude, Resend, Mailgun, Twilio, Stripe, Google Maps) goes in a backend function that reads the key from Lovable Cloud secrets; if the key is missing, use a realistic mock and a small "Not connected yet" note. Never hard-code keys or put them in front-end code.
