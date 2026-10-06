@@ -1,3 +1,4 @@
+import { CalendarFeedPanel } from '@/components/follow';
 import { EmptyState } from '@/components/launch-states';
 import { planStatusQuery } from '@/lib/billing';
 import { AssistantUsage } from '@/components/assistant/assistant-usage';
@@ -132,7 +133,7 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
   </ResponsiveSheet>;
 }
 
-type Panel = 'qr' | 'gatherings' | 'challenges' | 'badges' | 'teams' | 'notifications' | 'plan' | 'purchases' | 'invite' | null;
+type Panel = 'qr' | 'gatherings' | 'challenges' | 'badges' | 'teams' | 'notifications' | 'plan' | 'purchases' | 'invite' | 'calendar' | null;
 
 export function MePage() {
   const { t, i18n } = useTranslation();
@@ -181,6 +182,7 @@ export function MePage() {
     teams: { title: t('profile.myTeams'), body: teams.length ? <div className="team-list">{teams.map(team => <button type="button" key={team.teamId} className={`choice-card ${workspace?.teamId === team.teamId ? 'is-selected' : ''}`} aria-pressed={workspace?.teamId === team.teamId} onClick={() => switchTeam(team.teamId)}><span className="initial-avatar">{initialsOf(team.name)}</span><span><strong>{team.name}</strong><small>{t(`roles.${team.role}`)}{team.customBadge ? ` · ${team.customBadge}` : ''}</small></span>{workspace?.teamId === team.teamId && <Check className="choice-check" />}</button>)}</div> : <EmptyState compact icon="UsersRound" text={t('workspace.none')} /> },
     notifications: { title: t('profile.notifications'), body: <NotificationSettings userId={userId} /> },
     invite: { title: t('welcome.title'), body: <InviteFriendsPanel /> },
+    calendar: { title: t('follow.feedTitle'), body: <CalendarFeedPanel userId={userId} /> },
     purchases: { title: t('offers.purchases'), body: <PurchasesPanel /> },
     qr: { title: t('profile.qrTitle'), body: <div className="qr-panel">{inviteUrl ? <div className="qr-code"><QRCodeSVG value={inviteUrl} size={280} level="M" marginSize={2} /></div> : <p className="auth-subtitle">{t('publicEvent.loading')}</p>}<p className="auth-subtitle">{t('profile.qrText')}</p></div> },
     plan: { title: t('profile.plan'), body: <><p className="plan-name">{t(`plans.${workspace?.plan ?? 'free'}`)}</p><p className="auth-subtitle">{workspace?.name ?? t('workspace.none')}</p></> },
@@ -216,6 +218,7 @@ export function MePage() {
       {row('Flag', t('profile.myChallenges'), () => setPanel('challenges'))}
       {row('Award', t('profile.myBadges'), () => setPanel('badges'))}
       {row('UserPlus', t('welcome.title'), () => setPanel('invite'))}
+      {row('CalendarPlus', t('follow.feedTitle'), () => setPanel('calendar'))}
     </SettingsGroup>
     <SettingsGroup title={t('profile.groupPreferences')}>
       {row('Bell', t('profile.notifications'), () => setPanel('notifications'))}
