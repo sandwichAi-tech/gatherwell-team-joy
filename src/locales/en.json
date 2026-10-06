@@ -2526,5 +2526,22 @@
     "inviteTitle": "You're invited",
     "inviteMeta": "A friend invited you to a gathering on Gatherwell.",
     "inviteLoading": "Finding gatherings near you..."
+  },
+  "playbook": {
+    "title": "Playbook",
+    "slot": "{{cat}} gatherings on {{day}} around {{time}} average {{ratio}}x more check-ins than other times.",
+    "length": "Most successful {{cat}} gatherings run {{min}}–{{max}} minutes.",
+    "followup": "Teams that send follow-ups within 24 hours keep more first-timers: {{fast}}% come back, compared with {{slow}}%.",
+    "sampleNote": "Sample tip. Real patterns appear once the network has at least 20 gatherings from 5 teams.",
+    "realNote": "Based on anonymous activity across Gatherwell teams. No names, ever.",
+    "benchTitle": "Your team and the network",
+    "benchText": "Last 90 days, activity only.",
+    "bench": {
+      "avg": "Check-ins per gathering",
+      "showup": "Show-up rate"
+    },
+    "yourTeam": "Your team",
+    "network": "Network",
+    "benchFoot": "Your team hosted {{count}} gatherings in this period."
   }
 }
