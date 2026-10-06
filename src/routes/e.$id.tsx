@@ -92,6 +92,7 @@ function PublicEventBody() {
         {hostPhoto ? <img src={hostPhoto} alt="" className="guest-host-photo" /> : <span className="initial-avatar">{initialsOf(event.host?.name ?? null)}</span>}
         <div><span className="guest-label">{t('guest.hostedBy')}</span><strong>{event.host?.name ?? t('teamSpace.someone')}</strong>{event.team_name && <span className="muted">{event.team_name}</span>}</div>
       </div>
+      {!!event.cohosts?.length && <div className="guest-cohosts"><span className="guest-label">{t('cohosts.withCohosts')}</span><ul>{event.cohosts.map((c, i) => <li key={i}><span className="initial-avatar">{initialsOf(c.name)}</span><span>{c.name ?? t('teamSpace.someone')}</span></li>)}</ul></div>}
 
       {event.is_online ? <section className="guest-card"><div className="guest-place"><Video /><div><strong>{t('publicEvent.online')}</strong><p>{t('guest.onlineHidden')}</p></div></div></section>
         : (event.location_name || event.address) && <section className="guest-card">

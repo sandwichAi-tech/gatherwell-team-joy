@@ -2566,5 +2566,20 @@
     "signedOn": "Firmada por {{name}}, versión {{version}}",
     "missing": "Exención sin firmar",
     "recordError": "Se agregó a la persona, pero no se pudo guardar la exención. Inténtalo de nuevo desde la lista."
+  },
+  "cohosts": {
+    "title": "Coanfitriones",
+    "help": "Quienes coorganizan pueden editar esta reunión, registrar llegadas, ver la lista de invitados y recibir borradores de seguimiento.",
+    "add": "Agregar coanfitriones",
+    "change": "Cambiar",
+    "none": "Todavía no hay coanfitriones.",
+    "pickTitle": "Elige coanfitriones",
+    "pickHelp": "Elige hasta {{max}} personas de tu equipo.",
+    "noCandidates": "Primero invita personas a tu equipo y luego agrégalas aquí.",
+    "count": "{{n}} de {{max}} elegidas",
+    "save": "Guardar coanfitriones",
+    "saved": "Coanfitriones guardados",
+    "tooMany": "Puedes agregar hasta 3 coanfitriones.",
+    "withCohosts": "Con la coorganización de"
   }
 }
