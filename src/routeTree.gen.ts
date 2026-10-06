@@ -47,6 +47,7 @@ import { Route as AuthenticatedAppPlanSeatsRouteImport } from './routes/_authent
 import { Route as AuthenticatedAppTeamInsightsRouteImport } from './routes/_authenticated/_app/team_.insights'
 import { Route as AuthenticatedAppTeamMapRouteImport } from './routes/_authenticated/_app/team_.map'
 import { Route as ApiPublicAiFollowupsRouteImport } from './routes/api/public/ai/followups'
+import { Route as ApiPublicCalendarTokenRouteImport } from './routes/api/public/calendar/$token'
 import { Route as ApiPublicEmailMailgunRouteImport } from './routes/api/public/email/mailgun'
 import { Route as ApiPublicEmailResendRouteImport } from './routes/api/public/email/resend'
 import { Route as ApiPublicOutboxProcessRouteImport } from './routes/api/public/outbox/process'
@@ -257,6 +258,11 @@ const ApiPublicAiFollowupsRoute = ApiPublicAiFollowupsRouteImport.update({
   path: '/api/public/ai/followups',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCalendarTokenRoute = ApiPublicCalendarTokenRouteImport.update({
+  id: '/api/public/calendar/$token',
+  path: '/api/public/calendar/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicEmailMailgunRoute = ApiPublicEmailMailgunRouteImport.update({
   id: '/api/public/email/mailgun',
   path: '/api/public/email/mailgun',
@@ -355,6 +361,7 @@ export interface FileRoutesByFullPath {
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
   '/api/public/ai/followups': typeof ApiPublicAiFollowupsRoute
+  '/api/public/calendar/$token': typeof ApiPublicCalendarTokenRoute
   '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
   '/api/public/email/resend': typeof ApiPublicEmailResendRoute
   '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
@@ -404,6 +411,7 @@ export interface FileRoutesByTo {
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
   '/api/public/ai/followups': typeof ApiPublicAiFollowupsRoute
+  '/api/public/calendar/$token': typeof ApiPublicCalendarTokenRoute
   '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
   '/api/public/email/resend': typeof ApiPublicEmailResendRoute
   '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
@@ -456,6 +464,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/team_/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/_authenticated/_app/team_/map': typeof AuthenticatedAppTeamMapRoute
   '/api/public/ai/followups': typeof ApiPublicAiFollowupsRoute
+  '/api/public/calendar/$token': typeof ApiPublicCalendarTokenRoute
   '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
   '/api/public/email/resend': typeof ApiPublicEmailResendRoute
   '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
@@ -507,6 +516,7 @@ export interface FileRouteTypes {
     | '/team/insights'
     | '/team/map'
     | '/api/public/ai/followups'
+    | '/api/public/calendar/$token'
     | '/api/public/email/mailgun'
     | '/api/public/email/resend'
     | '/api/public/outbox/process'
@@ -556,6 +566,7 @@ export interface FileRouteTypes {
     | '/team/insights'
     | '/team/map'
     | '/api/public/ai/followups'
+    | '/api/public/calendar/$token'
     | '/api/public/email/mailgun'
     | '/api/public/email/resend'
     | '/api/public/outbox/process'
@@ -607,6 +618,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/team_/insights'
     | '/_authenticated/_app/team_/map'
     | '/api/public/ai/followups'
+    | '/api/public/calendar/$token'
     | '/api/public/email/mailgun'
     | '/api/public/email/resend'
     | '/api/public/outbox/process'
@@ -637,6 +649,7 @@ export interface RootRouteChildren {
   RCodeRoute: typeof RCodeRoute
   UnsubscribeTokenRoute: typeof UnsubscribeTokenRoute
   ApiPublicAiFollowupsRoute: typeof ApiPublicAiFollowupsRoute
+  ApiPublicCalendarTokenRoute: typeof ApiPublicCalendarTokenRoute
   ApiPublicEmailMailgunRoute: typeof ApiPublicEmailMailgunRoute
   ApiPublicEmailResendRoute: typeof ApiPublicEmailResendRoute
   ApiPublicOutboxProcessRoute: typeof ApiPublicOutboxProcessRoute
@@ -912,6 +925,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicAiFollowupsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/calendar/$token': {
+      id: '/api/public/calendar/$token'
+      path: '/api/public/calendar/$token'
+      fullPath: '/api/public/calendar/$token'
+      preLoaderRoute: typeof ApiPublicCalendarTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/email/mailgun': {
       id: '/api/public/email/mailgun'
       path: '/api/public/email/mailgun'
@@ -1086,6 +1106,7 @@ const rootRouteChildren: RootRouteChildren = {
   RCodeRoute: RCodeRoute,
   UnsubscribeTokenRoute: UnsubscribeTokenRoute,
   ApiPublicAiFollowupsRoute: ApiPublicAiFollowupsRoute,
+  ApiPublicCalendarTokenRoute: ApiPublicCalendarTokenRoute,
   ApiPublicEmailMailgunRoute: ApiPublicEmailMailgunRoute,
   ApiPublicEmailResendRoute: ApiPublicEmailResendRoute,
   ApiPublicOutboxProcessRoute: ApiPublicOutboxProcessRoute,
