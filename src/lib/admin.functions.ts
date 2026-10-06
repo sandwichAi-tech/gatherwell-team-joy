@@ -175,7 +175,7 @@ export const adminUserAction = createServerFn({ method: 'POST' }).middleware([re
   });
 
 export type AdminReport = {
-  id: string; target_type: 'event' | 'shoutout' | 'photo' | 'activity' | 'announcement'; target_id: string; reason: string; note: string | null; source: string; status: string;
+  id: string; target_type: 'event' | 'shoutout' | 'photo' | 'activity' | 'announcement' | 'comment'; target_id: string; reason: string; note: string | null; source: string; status: string;
   resolution_note: string | null; created_at: string; team_name: string | null; author_name: string | null; open_count: number;
   preview: { title?: string; text?: string | null; text_es?: string | null; photo?: string | null } | null; photo_url?: string | null;
 };
@@ -210,6 +210,7 @@ export const moderateReport = createServerFn({ method: 'POST' }).middleware([req
         await db.from('shoutouts').update({ hidden: true }).eq('id', id);
         if (s?.activity_id) { await db.from('activity_reactions').delete().eq('activity_id', s.activity_id); await db.from('activity').delete().eq('id', s.activity_id); }
         after = { hidden: true };
+      } else if (rep.target_type === 'comment') { before = { hidden: false }; await db.from('comments').update({ hidden: true }).eq('id', id); after = { hidden: true };
       } else if (rep.target_type === 'photo') { before = { hidden: false }; await db.from('event_photos').update({ hidden: true }).eq('id', id); after = { hidden: true }; }
       else if (rep.target_type === 'activity') { const { data: a } = await db.from('activity').select('type, payload').eq('id', id).maybeSingle(); before = a; await db.from('activity_reactions').delete().eq('activity_id', id); await db.from('activity').delete().eq('id', id); }
       else { const { data: a } = await db.from('announcements').select('body').eq('id', id).maybeSingle(); before = a; await db.from('announcements').delete().eq('id', id); }

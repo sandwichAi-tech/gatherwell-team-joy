@@ -71,6 +71,7 @@ function NoTeam() {
   </section>;
 }
 
+import { DiscussionsPanel, GroupChatLink } from '@/components/conversation';
 export function TeamPage() {
   const { t } = useTranslation(); const { userId } = useGatherwell();
   const { data: workspace, isLoading } = useQuery(workspaceQuery(userId));
@@ -117,6 +118,8 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
     <PinnedAnnouncement teamId={teamId} />
     <PinnedShoutout teamId={teamId} isLeader={isLeader} />
     <ActiveChallengeCard />
+    <GroupChatLink table="teams" id={teamId} url={(team as any)?.whatsapp_url ?? null} canEdit={isLeader} />
+    <DiscussionsPanel teamId={teamId} isLeader={isLeader} me={userId} />
     <ComingUp teamId={teamId} lang={lang} onOpen={setOpenEvent} />
     <FromYourLeader teamId={teamId} role={workspace.role} />
     <ChallengesSection />

@@ -1215,3 +1215,24 @@ button { white-space:normal; }
 .rsvpq-answers { display: grid; gap: 0.25rem; margin: 0.25rem 0; font-size: 0.875rem; }
 .rsvpq-answers dt { color: var(--muted-foreground); }
 .rsvpq-answers dd { margin: 0 0 0.25rem; overflow-wrap: anywhere; }
+.convo { display: grid; gap: 1rem; }
+.convo-list, .convo-replies, .convo-mention-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.875rem; }
+.convo-replies { margin-left: 2.75rem; margin-top: 0.625rem; }
+.convo-item { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); gap: 0.625rem; }
+.convo-item .initial-avatar { width: 2.25rem; height: 2.25rem; font-size: 0.75rem; }
+.convo-item.is-hidden { opacity: 0.6; }
+.convo-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; font-size: 0.875rem; }
+.convo-meta time { color: var(--muted-foreground); font-size: 0.8125rem; }
+.convo-body { margin: 0.25rem 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.convo-actions { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.25rem; }
+.convo-react { display: inline-flex; align-items: center; gap: 0.25rem; min-height: 44px; min-width: 44px; justify-content: center; padding: 0 0.5rem; border-radius: 999px; color: var(--muted-foreground); font-size: 0.8125rem; background: transparent; border: 0; cursor: pointer; }
+.convo-react:hover { background: var(--muted); color: var(--foreground); }
+.convo-react.is-mine { color: var(--primary); background: color-mix(in oklab, var(--primary) 12%, transparent); }
+.convo-react:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.convo-composer { display: grid; gap: 0.5rem; }
+.convo-composer-actions { display: flex; justify-content: space-between; align-items: center; }
+.topic-row { gap: 0.75rem; }
+.topic-row .settings-label { display: grid; gap: 0.125rem; text-align: left; }
+.unread-dot { width: 0.625rem; height: 0.625rem; border-radius: 999px; background: var(--primary); flex: none; }
+.unread-dot.is-read { background: transparent; }
+.group-chat { display: grid; gap: 0.5rem; }

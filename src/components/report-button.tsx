@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { GwIcon } from '@/components/gw-icon';
 
-export type ReportTarget = 'event' | 'shoutout' | 'photo' | 'activity' | 'announcement';
+export type ReportTarget = 'event' | 'shoutout' | 'photo' | 'activity' | 'announcement' | 'comment';
 const REASONS = ['inappropriate', 'spam', 'claim', 'other'] as const;
 
 /** Small flag button that lets anyone report content to platform staff. */

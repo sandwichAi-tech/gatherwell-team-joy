@@ -11,8 +11,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { profileQuery } from '@/lib/account';
 import { getChannelStatus } from '@/lib/notify.functions';
 
-type Prefs = { email: boolean; sms: boolean; push: boolean; reminders: boolean; announcements: boolean; badges: boolean; followups: boolean };
-const DEFAULTS: Prefs = { email: true, sms: true, push: true, reminders: true, announcements: true, badges: true, followups: true };
+type Prefs = { email: boolean; sms: boolean; push: boolean; reminders: boolean; announcements: boolean; badges: boolean; followups: boolean; conversation: boolean };
+const DEFAULTS: Prefs = { email: true, sms: true, push: true, reminders: true, announcements: true, badges: true, followups: true, conversation: true };
 
 export function useChannelStatus() {
   const fn = useServerFn(getChannelStatus);
@@ -97,7 +97,7 @@ export function NotificationSettings({ userId }: { userId: string }) {
         : <Button variant="secondary" onClick={async () => { try { const r = await enablePush(status.pushKey!, userId); if (r === 'enabled') { setDevice('on'); toast.success(t('notify.pushOn')); } else if (r === 'denied') setDevice('blocked'); } catch { toast.error(t('profile.saveError')); } }}><Bell />{t('notify.enableDevice')}</Button>}
     </div>}
     <span className="field-label">{t('notify.types')}</span>
-    <div className="settings-list">{(['reminders', 'announcements', 'badges', 'followups'] as const).map(key => <label className="switch-row notify-row" key={key}>
+    <div className="settings-list">{(['reminders', 'announcements', 'badges', 'followups', 'conversation'] as const).map(key => <label className="switch-row notify-row" key={key}>
       <span><strong>{t(`notify.type.${key}`)}</strong><small>{t(`notify.type.${key}Text`)}</small></span>
       <Switch checked={prefs[key]} onCheckedChange={v => void save({ [key]: v })} aria-label={t(`notify.type.${key}`)} /></label>)}</div>
   </div>;

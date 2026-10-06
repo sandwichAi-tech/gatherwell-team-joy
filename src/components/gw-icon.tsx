@@ -1,11 +1,14 @@
 import type { ComponentType, CSSProperties } from 'react';
 import {
-  ArrowCounterClockwise, Microphone, ArrowDown, ArrowLeft, ArrowRight, ArrowSquareOut, ArrowUUpLeft, ArrowUp, ArrowUpRight, ArrowsClockwise, ArrowsCounterClockwise, Barbell, Bell, BellRinging, BookOpen, BookmarkSimple, Broadcast, CalendarCheck, CalendarDots, CalendarHeart, CalendarPlus, Camera, CaretDown, CaretLeft, CaretRight, CaretUp, ChartBar, ChatCircle, ChatTeardrop, ChatText, Check, CheckCircle, Circle, ClipboardText, Clock, CloudSun, Compass, Confetti, Copy, CopySimple, CreditCard, Crop, Crosshair, Crown, DeviceMobile, DotsSixVertical, DotsThree, DownloadSimple, EnvelopeSimple, Eye, EyeSlash, FileText, Fire, Flag, FloppyDisk, FlowerLotus, Gift, Footprints, Globe, GraduationCap, HandHeart, Heart, House, Image, ImageSquare, Leaf, Lifebuoy, Link, List, Lock, MagnifyingGlass, MapPin, MapPinArea, MapTrifold, Medal, Megaphone, Minus, Monitor, Moon, Mountains, Pause, NavigationArrow, PencilSimple, PersonSimpleRun, PersonSimpleWalk, Phone, Play, Plus, Printer, Prohibit, PushPin, QrCode, Question, Repeat, RocketLaunch, Scan, ShareNetwork, ShieldCheck, Sidebar, SignOut, SlidersHorizontal, Smiley, Sparkle, SquaresFour, Stack, Star, Sun, TennisBall, ThumbsUp, Translate, Trash, TreeStructure, Trophy, UploadSimple, User, UserPlus, UsersThree, VideoCamera, WarningCircle, Waveform, X,
+  At, PaperPlaneRight, ArrowCounterClockwise, Microphone, ArrowDown, ArrowLeft, ArrowRight, ArrowSquareOut, ArrowUUpLeft, ArrowUp, ArrowUpRight, ArrowsClockwise, ArrowsCounterClockwise, Barbell, Bell, BellRinging, BookOpen, BookmarkSimple, Broadcast, CalendarCheck, CalendarDots, CalendarHeart, CalendarPlus, Camera, CaretDown, CaretLeft, CaretRight, CaretUp, ChartBar, ChatCircle, ChatTeardrop, ChatText, Check, CheckCircle, Circle, ClipboardText, Clock, CloudSun, Compass, Confetti, Copy, CopySimple, CreditCard, Crop, Crosshair, Crown, DeviceMobile, DotsSixVertical, DotsThree, DownloadSimple, EnvelopeSimple, Eye, EyeSlash, FileText, Fire, Flag, FloppyDisk, FlowerLotus, Gift, Footprints, Globe, GraduationCap, HandHeart, Heart, House, Image, ImageSquare, Leaf, Lifebuoy, Link, List, Lock, MagnifyingGlass, MapPin, MapPinArea, MapTrifold, Medal, Megaphone, Minus, Monitor, Moon, Mountains, Pause, NavigationArrow, PencilSimple, PersonSimpleRun, PersonSimpleWalk, Phone, Play, Plus, Printer, Prohibit, PushPin, QrCode, Question, Repeat, RocketLaunch, Scan, ShareNetwork, ShieldCheck, Sidebar, SignOut, SlidersHorizontal, Smiley, Sparkle, SquaresFour, Stack, Star, Sun, TennisBall, ThumbsUp, Translate, Trash, TreeStructure, Trophy, UploadSimple, User, UserPlus, UsersThree, VideoCamera, WarningCircle, Waveform, X,
   type IconProps as PhIconProps,
 } from '@phosphor-icons/react';
 
 /** Every icon in Gatherwell renders through GwIcon so weight, size and color stay consistent. */
 const REGISTRY = {
+  AtSign: At,
+  Reply: ArrowUUpLeft,
+  Send: PaperPlaneRight,
   AlertCircle: WarningCircle,
   ArrowDown: ArrowDown,
   ArrowLeft: ArrowLeft,
