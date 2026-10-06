@@ -1451,6 +1451,95 @@ export type Database = {
           },
         ]
       }
+      network_features: {
+        Row: {
+          created_at: string
+          event_id: string
+          featured_by: string
+          team_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          featured_by: string
+          team_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          featured_by?: string
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "network_features_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "network_features_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      network_links: {
+        Row: {
+          created_at: string
+          id: string
+          recipient: string
+          requester: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          recipient: string
+          requester: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          recipient?: string
+          requester?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      network_shares: {
+        Row: {
+          created_at: string
+          event_id: string
+          host_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          host_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          host_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "network_shares_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: true
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_outbox: {
         Row: {
           attempts: number
@@ -1772,6 +1861,72 @@ export type Database = {
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      referral_thanks: {
+        Row: {
+          amount: number
+          host_id: string
+          kind: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          host_id: string
+          kind?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          host_id?: string
+          kind?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          created_at: string
+          gathering_id: string
+          id: string
+          partner_host: string
+          referring_host: string
+          rsvp_id: string
+          thanks_cents: number
+        }
+        Insert: {
+          created_at?: string
+          gathering_id: string
+          id?: string
+          partner_host: string
+          referring_host: string
+          rsvp_id: string
+          thanks_cents?: number
+        }
+        Update: {
+          created_at?: string
+          gathering_id?: string
+          id?: string
+          partner_host?: string
+          referring_host?: string
+          rsvp_id?: string
+          thanks_cents?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referrals_gathering_id_fkey"
+            columns: ["gathering_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referrals_rsvp_id_fkey"
+            columns: ["rsvp_id"]
+            isOneToOne: true
+            referencedRelation: "rsvps"
             referencedColumns: ["id"]
           },
         ]
@@ -2772,6 +2927,8 @@ export type Database = {
         Args: { _category: string; _title: string }
         Returns: string
       }
+      is_connected: { Args: { _a: string; _b: string }; Returns: boolean }
+      is_host_anywhere: { Args: { _u: string }; Returns: boolean }
       is_team_member: {
         Args: { _roles: string[]; _team_id: string }
         Returns: boolean
@@ -2823,6 +2980,7 @@ export type Database = {
           poll_id: string
         }[]
       }
+      my_referrals: { Args: never; Returns: Json }
       my_sole_leader_teams: {
         Args: never
         Returns: {
@@ -2832,6 +2990,21 @@ export type Database = {
       }
       name_host_of_month: {
         Args: { _note: string; _team: string; _user: string }
+        Returns: undefined
+      }
+      network_feature: {
+        Args: { _event: string; _on: boolean; _team: string }
+        Returns: undefined
+      }
+      network_overview: { Args: never; Returns: Json }
+      network_remove: { Args: { _link: string }; Returns: undefined }
+      network_request: { Args: { _to: string }; Returns: undefined }
+      network_respond: {
+        Args: { _accept: boolean; _link: string }
+        Returns: undefined
+      }
+      network_share: {
+        Args: { _event: string; _on: boolean }
         Returns: undefined
       }
       normalize_phone: { Args: { _p: string }; Returns: string }
@@ -2869,6 +3042,10 @@ export type Database = {
           _payload: Json
           _provider: string
         }
+        Returns: undefined
+      }
+      record_referral: {
+        Args: { _code: string; _ref: string }
         Returns: undefined
       }
       report_content: {
@@ -2919,9 +3096,14 @@ export type Database = {
         Returns: boolean
       }
       set_pass_fee: { Args: { _on: boolean }; Returns: undefined }
+      set_referral_thanks: {
+        Args: { _amount: number; _kind: string }
+        Returns: undefined
+      }
       shares_team_with: { Args: { _other: string }; Returns: boolean }
       storage_allows: { Args: { _bytes: number }; Returns: boolean }
       storage_used_bytes: { Args: { _uid: string }; Returns: number }
+      team_featured_gatherings: { Args: { _team: string }; Returns: Json }
       team_insights: {
         Args: { _from: string; _root: string; _scope: string; _to: string }
         Returns: Json

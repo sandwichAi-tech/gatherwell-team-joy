@@ -15,7 +15,7 @@ RULES (never break these):
 1. Mobile-first. Design every screen for a phone held in one hand first. Minimum 48px tap targets. Desktop is secondary.
 2. Every user-facing word goes through i18n with English and Spanish. Spanish is natural Latin American Spanish, never stiff.
 3. Three taps to anything. No screen should need instructions.
-4. No product catalog or product checkout. A host can add an external "Shop" link to their profile; it opens in a new tab.
+4. No physical product catalog. Hosts may sell their own services (gathering tickets, challenges, memberships, courses, digital downloads) through Gatherwell; a host can also add an external "Shop" link that opens in a new tab.
 5. Never show sales, volume, commission or income data anywhere. Only activity: events, RSVPs, check-ins, trainings, challenges, badges.
 6. No health, medical, weight-loss or income claims in templates, sample content or AI output.
 7. Never mention any outside company or brand in the app.
@@ -64,7 +64,7 @@ Build the Gatherwell app shell using the rules and design above. Front end only,
 Smooth page transitions. Keep the bundle light.
 ADDENDUM (Oct 2026, confirmed rules — additive, nothing above removed):
 - Mobile-first with 44–48px tap targets. Every user-facing word in English and Latin American Spanish via i18n.
-- No product catalog or product checkout; hosts can add an external "Shop" link only.
+- No physical product catalog; host services (tickets, memberships, courses, downloads) are allowed; external "Shop" link optional.
 - Never show sales, volume, commission or income data. Activity only: events, RSVPs, check-ins, trainings, challenges, badges.
 - No health, medical, weight-loss or income claims anywhere.
 - Never mention any outside company or brand in the app.

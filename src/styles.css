@@ -1112,3 +1112,15 @@ button { white-space:normal; }
  .segmented { flex-wrap:wrap; }
 }
 @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto!important; } *,*::before,*::after { animation-iteration-count:1!important; scroll-behavior:auto!important; } }
+
+/* Network */
+.network-person, .network-gathering { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid var(--border); flex-wrap: wrap; }
+.network-person:first-of-type, .network-gathering:first-of-type { border-top: 0; }
+.network-gathering .person-info, .network-person .person-info { flex: 1 1 200px; min-width: 0; }
+.network-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.network-actions > * { min-height: 44px; }
+.network-title { font-weight: 600; color: var(--foreground); text-decoration: none; }
+.network-gathering.is-link { color: inherit; text-decoration: none; min-height: 48px; }
+.network-share { margin-top: 16px; }
+.inline-icon { width: 14px; height: 14px; display: inline; vertical-align: -2px; margin-right: 4px; }
+.muted-small { font-size: 13px; color: var(--muted-foreground); }
