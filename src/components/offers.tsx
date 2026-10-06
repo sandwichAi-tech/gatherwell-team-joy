@@ -29,7 +29,7 @@ function OfferCover({ offer, wide }: { offer: Pick<Offer, 'cover_style' | 'kind'
   return <div className={`offer-cover ${wide ? 'is-wide' : ''}`} style={{ backgroundImage: COVER_STYLES[offer.cover_style % COVER_STYLES.length] }}><span className="chip offer-kind">{t(`offers.kind.${offer.kind}`)}</span></div>;
 }
 
-function priceLabel(t: (k: string, o?: Record<string, unknown>) => string, o: Pick<Offer, 'price_cents' | 'kind'>, lang: string) {
+function priceLabel(t: import('i18next').TFunction, o: Pick<Offer, 'price_cents' | 'kind'>, lang: string) {
   if (!o.price_cents) return t('offers.free');
   const m = formatMoney(o.price_cents, lang);
   return o.kind === 'download' ? m : t('offers.perMonth', { price: m });
