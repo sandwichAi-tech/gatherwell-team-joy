@@ -1124,3 +1124,27 @@ button { white-space:normal; }
 .network-share { margin-top: 16px; }
 .inline-icon { width: 14px; height: 14px; display: inline; vertical-align: -2px; margin-right: 4px; }
 .muted-small { font-size: 13px; color: var(--muted-foreground); }
+
+/* Offers */
+.offer-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
+.offer-row { display: flex; align-items: center; gap: 0.875rem; min-height: 64px; }
+.offer-row.is-link { color: inherit; text-decoration: none; padding: 0.25rem 0; }
+.offer-row-main { flex: 1; min-width: 0; display: grid; gap: 0.125rem; }
+.offer-row-main strong { overflow-wrap: anywhere; }
+.offer-row-main small { color: var(--muted-foreground); }
+.offer-row-actions { display: flex; gap: 0.5rem; }
+.offer-cover { flex: none; width: 64px; height: 64px; border-radius: var(--radius); background-size: cover; position: relative; overflow: hidden; }
+.offer-cover .offer-kind { display: none; }
+.offer-cover.is-wide { width: 100%; height: 180px; border-radius: calc(var(--radius) * 1.5); }
+.offer-cover.is-wide .offer-kind { display: inline-flex; position: absolute; left: 1rem; bottom: 1rem; }
+.offer-page { display: grid; gap: 1rem; max-width: 640px; }
+.offer-body { display: grid; gap: 0.75rem; }
+.offer-price { font-size: 1.25rem; font-weight: 600; }
+.offer-description { white-space: pre-line; }
+.offer-includes { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
+.offer-includes li { display: flex; gap: 0.5rem; align-items: flex-start; }
+.offer-includes svg { flex: none; width: 20px; height: 20px; color: var(--primary); }
+.offer-owned { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+.offer-kinds { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.purchases { display: grid; gap: 0.75rem; }
+.members-only select { min-height: 48px; }

@@ -70,6 +70,7 @@ export const Route = createFileRoute('/api/public/stripe/webhook')({
               const end = ts(o.lines?.data?.[0]?.period?.end);
               const { data: b } = await db.from('billing_accounts').update({ status: failed ? 'past_due' : 'active', ...(end && !failed ? { renews_at: end } : {}) }).eq('stripe_subscription_id', sub).select('user_id').maybeSingle();
               const { data: l } = await db.from('team_licenses').update({ status: failed ? 'past_due' : 'active', ...(end && !failed ? { renews_at: end } : {}) }).eq('stripe_subscription_id', sub).select('leader_id').maybeSingle();
+              await db.from('offer_purchases' as any).update({ status: failed ? 'past_due' : 'active', ...(end && !failed ? { renews_at: end } : {}) }).eq('stripe_subscription_id', sub);
               const userId = b?.user_id ?? l?.leader_id;
               if (failed && userId) {
                 const { data: u } = await db.auth.admin.getUserById(userId);
