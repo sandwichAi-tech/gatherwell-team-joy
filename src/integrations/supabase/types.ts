@@ -363,6 +363,38 @@ export type Database = {
         }
         Relationships: []
       }
+      calendar_feeds: {
+        Row: {
+          created_at: string
+          scope: string
+          team_id: string | null
+          token: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          scope: string
+          team_id?: string | null
+          token?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          scope?: string
+          team_id?: string | null
+          token?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_feeds_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       challenge_checkins: {
         Row: {
           challenge_id: string
@@ -1226,6 +1258,36 @@ export type Database = {
         }
         Relationships: []
       }
+      follows: {
+        Row: {
+          created_at: string
+          email: string | null
+          follower_id: string | null
+          id: string
+          language: string
+          target_id: string
+          target_kind: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          follower_id?: string | null
+          id?: string
+          language?: string
+          target_id: string
+          target_kind: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          follower_id?: string | null
+          id?: string
+          language?: string
+          target_id?: string
+          target_kind?: string
+        }
+        Relationships: []
+      }
       followup_drafts: {
         Row: {
           channel: string | null
@@ -2072,6 +2134,7 @@ export type Database = {
           phone: string | null
           role_intent: string | null
           shop_url: string | null
+          slug: string | null
         }
         Insert: {
           active_team_id?: string | null
@@ -2087,6 +2150,7 @@ export type Database = {
           phone?: string | null
           role_intent?: string | null
           shop_url?: string | null
+          slug?: string | null
         }
         Update: {
           active_team_id?: string | null
@@ -2102,6 +2166,7 @@ export type Database = {
           phone?: string | null
           role_intent?: string | null
           shop_url?: string | null
+          slug?: string | null
         }
         Relationships: [
           {
@@ -3422,6 +3487,20 @@ export type Database = {
         Args: { _team: string; _user: string }
         Returns: undefined
       }
+      calendar_feed: {
+        Args: { _token: string }
+        Returns: {
+          ends_at: string
+          id: string
+          location: string
+          online: boolean
+          role: string
+          starts_at: string
+          status: string
+          title: string
+          updated: string
+        }[]
+      }
       can_edit_track: { Args: { _track: string }; Returns: boolean }
       can_join_conversation: { Args: { _event: string }; Returns: boolean }
       can_manage_event: { Args: { _event_id: string }; Returns: boolean }
@@ -3567,6 +3646,15 @@ export type Database = {
         Args: { _event: string; _token: string }
         Returns: Json
       }
+      follow_target: {
+        Args: {
+          _email?: string
+          _kind: string
+          _lang?: string
+          _target: string
+        }
+        Returns: undefined
+      }
       followups_sent: {
         Args: { _from: string; _root: string; _scope: string; _to: string }
         Returns: number
@@ -3580,6 +3668,8 @@ export type Database = {
         Args: { _id: string; _token: string }
         Returns: Json
       }
+      get_public_host: { Args: { _slug: string }; Returns: Json }
+      get_public_team: { Args: { _slug: string }; Returns: Json }
       get_rsvp_by_code: { Args: { _code: string }; Returns: Json }
       get_team_invite: {
         Args: { _code: string }
@@ -3672,6 +3762,7 @@ export type Database = {
       }
       live_lesson_link: { Args: { _lesson: string }; Returns: string }
       local_today: { Args: { _tz: string }; Returns: string }
+      make_profile_slug: { Args: { _name: string }; Returns: string }
       manage_topic: {
         Args: { _delete: boolean; _id: string; _pinned: boolean }
         Returns: undefined
@@ -3697,6 +3788,7 @@ export type Database = {
           title_es: string
         }[]
       }
+      my_calendar_feeds: { Args: never; Returns: Json }
       my_invite_code: { Args: never; Returns: string }
       my_offer_stats: {
         Args: never
@@ -3787,6 +3879,7 @@ export type Database = {
         Returns: undefined
       }
       promote_waitlist: { Args: { _event: string }; Returns: undefined }
+      public_upcoming: { Args: { _host: string; _team: string }; Returns: Json }
       queue_broadcast: { Args: { _id: string }; Returns: number }
       queue_rsvp_notices: {
         Args: { _rsvp: string; _template: string }
@@ -3825,6 +3918,7 @@ export type Database = {
         Returns: boolean
       }
       request_ip: { Args: never; Returns: string }
+      reset_calendar_feeds: { Args: never; Returns: Json }
       reset_invite_link: { Args: { _event: string }; Returns: string }
       reset_join_code: { Args: { _team: string }; Returns: string }
       rsvp_event: {
