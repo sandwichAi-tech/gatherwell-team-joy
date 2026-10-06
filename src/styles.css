@@ -1148,3 +1148,19 @@ button { white-space:normal; }
 .offer-kinds { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
 .purchases { display: grid; gap: 0.75rem; }
 .members-only select { min-height: 48px; }
+
+/* Welcome points */
+.welcome { display: grid; gap: 0.875rem; }
+.welcome-link { display: flex; gap: 0.5rem; align-items: center; }
+.welcome-link input { flex: 1; min-width: 0; }
+.stat-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.stat-pair > div { border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem; display: grid; }
+.stat-pair strong { font-size: 1.5rem; }
+.stat-pair small, .welcome li small { color: var(--muted-foreground); display: block; }
+.welcome-host { border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem; display: grid; gap: 0.5rem; }
+.welcome-host-head { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+.welcome-rewards, .welcome-codes, .welcome-friends { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.welcome-rewards li, .welcome-codes li, .welcome-friends li { display: flex; align-items: center; gap: 0.625rem; min-height: 48px; }
+.welcome-rewards li > span, .welcome-codes li > span, .welcome-friends li > span:first-child { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.welcome-codes code { font-weight: 600; letter-spacing: 0.04em; }
+.welcome-host-card { display: grid; gap: 0.75rem; }

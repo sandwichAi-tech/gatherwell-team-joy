@@ -1,4 +1,5 @@
 import { recordReferral, rememberRef } from '@/lib/network';
+import { recordInvite, rememberInvite } from '@/lib/welcome';
 import { useEffect, useState } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { GuestShell } from '@/components/guest-shell';
@@ -52,7 +53,7 @@ function PublicEventBody() {
   const { data: event, isLoading, error, refetch } = useQuery(publicEventQuery(id));
   useLiveCounts(id, () => void queryClient.invalidateQueries({ queryKey: ['public-event', id] }));
   const { data: hostPhoto } = useQuery({ queryKey: ['media-url', event?.host?.avatar_url], queryFn: () => mediaUrl(event?.host?.avatar_url), enabled: !!event?.host?.avatar_url });
-  useEffect(() => { rememberRef(id, new URLSearchParams(window.location.search).get('ref')); }, [id]);
+  useEffect(() => { rememberRef(id, new URLSearchParams(window.location.search).get('ref')); rememberInvite(new URLSearchParams(window.location.search).get('inv')); }, [id]);
   const [intent, setIntent] = useState<'going' | 'maybe' | null>(null);
   const [result, setResult] = useState<RsvpResult | null>(null);
   const { data: price } = useQuery({ queryKey: ['event-price', id], queryFn: async () => { const { data } = await supabase.rpc('event_price', { _id: id }); return (data as { price_cents: number; pass_fee: boolean; fee_pct: number } | null) ?? null; } });
@@ -121,7 +122,7 @@ function PublicEventBody() {
       <Polls eventId={id} code={event.my_code} />
       <PhotoRoll eventId={id} code={event.my_code} canAdd={!!event.my_code} />
     </article>
-    <RsvpSheet event={event} intent={intent} onClose={() => setIntent(null)} onDone={r => { void recordReferral(id, r.code); setIntent(null); setResult(r); void queryClient.invalidateQueries({ queryKey: ['public-event', id] }); window.scrollTo({ top: 0 }); }} />
+    <RsvpSheet event={event} intent={intent} onClose={() => setIntent(null)} onDone={r => { void recordReferral(id, r.code); void recordInvite(r.code); setIntent(null); setResult(r); void queryClient.invalidateQueries({ queryKey: ['public-event', id] }); window.scrollTo({ top: 0 }); }} />
   </>;
 }
 

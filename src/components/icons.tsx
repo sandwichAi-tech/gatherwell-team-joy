@@ -54,6 +54,7 @@ export const Eye = mk('Eye');
 export const EyeOff = mk('EyeOff');
 export const FileText = mk('FileText');
 export const Flag = mk('Flag');
+export const Gift = mk('Gift');
 export const Flame = mk('Flame');
 export const FlowerLotus = mk('FlowerLotus');
 export const Footprints = mk('Footprints');
