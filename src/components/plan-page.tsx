@@ -1,3 +1,4 @@
+import { ReferralCard } from '@/components/network-share';
 import { trackEvent } from '@/lib/analytics';
 import { useState, type ReactNode } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
@@ -258,6 +259,7 @@ export function EarningsPage() {
     <div className="page-heading"><div><span className="eyebrow">{t('billing.eyebrow')}</span><h1>{t('billing.earnings')}</h1></div></div>
     <p className="auth-subtitle">{t('billing.earningsText')}</p>
     <div className="stats-grid">{stat(t('billing.ticketSales'), formatMoney(sales, lang))}{stat(t('billing.platformFees'), formatMoney(fees, lang))}{stat(t('billing.payouts'), formatMoney(sales - fees, lang))}{stat(t('billing.ticketsSold'), paid.length)}</div>
+    <ReferralCard format={c => formatMoney(c, lang)} />
     {!pays.length ? <section className="panel"><p className="auth-subtitle">{t('billing.noSales')}</p></section> : [...groups.entries()].map(([eid, list]) => {
       const ev = data?.events.get(eid);
       return <section key={eid} className="panel">

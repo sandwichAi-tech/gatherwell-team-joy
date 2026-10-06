@@ -37,3 +37,4 @@
 - Plans/limits live in billing_accounts, team_licenses, license_seats; effective_plan()+plan_limits() decide limits (triggers, new rows only). Stripe: billing.functions.ts + /api/public/stripe/webhook only; no key → sheet.
 
 - Platform admin: /admin data and actions go only through src/lib/admin.functions.ts and every action writes admin_audit; reports come from report_content() or the claims trigger.
+- Network: host connections, shares, team features and guest referrals go only through network_* RPCs and record_referral(); referral credit is for guests attending gatherings, never team recruiting.

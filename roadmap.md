@@ -15,3 +15,9 @@
 - [x] Public-page share fallback and leaf metadata (live gathering shares still need production verification)
 - [x] RSVP SMS terms, Me/footer legal links and analytics no-op checks
 - [x] Deliver an itemized change list and honest remaining blockers; skip two-account journey
+
+# Prompt 21A (one area at a time)
+- [x] 1. Network: connections, sharing, featuring, guest referral thank-yous
+- [ ] 2. Host offers: memberships, courses, downloads, Me > Purchases (waits on approval to start)
+- [ ] 3. Guest referral rewards (Welcome points)
+- [ ] 4. Playbook engine
