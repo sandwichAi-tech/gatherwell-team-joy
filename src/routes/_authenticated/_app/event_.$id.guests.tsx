@@ -3,6 +3,7 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { FileText, ShieldCheck } from '@/components/icons';
 import { ArrowLeft, ArrowUp, Download, Mail, MessageSquareText, Phone, Search, UserPlus, X } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,6 +30,11 @@ function GuestListPage() {
       if (error) throw error; return data ?? [];
     },
   });
+  const { data: waivers = new Map<string, { version: number; full_name: string; accepted_at: string; ip: string | null; source: string }>() } = useQuery({ queryKey: ['event', id, 'waivers'], queryFn: async () => {
+    const { data } = await (supabase as any).from('waiver_acceptances').select('rsvp_id,version,full_name,accepted_at,ip,source').eq('event_id', id);
+    return new Map(((data ?? []) as { rsvp_id: string; version: number; full_name: string; accepted_at: string; ip: string | null; source: string }[]).map(w => [w.rsvp_id, w]));
+  } });
+  const { data: needsWaiver = false } = useQuery({ queryKey: ['event', id, 'needs-waiver'], queryFn: async () => !!((await (supabase as any).from('events').select('requires_waiver').eq('id', id).maybeSingle()).data?.requires_waiver) });
   useRsvpChanges(id, () => void queryClient.invalidateQueries({ queryKey: ['event', id, 'guest-list'] }));
   const [tab, setTab] = useState<Tab>('going'); const [q, setQ] = useState(''); const [adding, setAdding] = useState(false);
   const counts = useMemo(() => Object.fromEntries(TABS.map(k => [k, rows.filter(r => r.status === k).length])) as Record<Tab, number>, [rows]);
@@ -41,8 +47,8 @@ function GuestListPage() {
   };
   const exportCsv = () => {
     const cell = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-    const head = ['name', 'status', 'plus_ones', 'phone', 'email', 'sms_reminders', 'email_reminders', 'rsvp_time', 'checked_in'];
-    const body = rows.map(r => [r.guest_name, r.status, r.plus_ones, r.guest_phone, r.guest_email, r.sms_opt_in ? 'yes' : 'no', r.email_opt_in ? 'yes' : 'no', r.created_at, r.checked_in_at ?? ''].map(cell).join(','));
+    const head = ['name', 'status', 'plus_ones', 'phone', 'email', 'sms_reminders', 'email_reminders', 'rsvp_time', 'checked_in', 'waiver_signed', 'waiver_name', 'waiver_version', 'waiver_time', 'waiver_ip', 'waiver_source'];
+    const body = rows.map(r => { const w = waivers.get(r.id); return [r.guest_name, r.status, r.plus_ones, r.guest_phone, r.guest_email, r.sms_opt_in ? 'yes' : 'no', r.email_opt_in ? 'yes' : 'no', r.created_at, r.checked_in_at ?? '', w ? 'yes' : 'no', w?.full_name ?? '', w?.version ?? '', w?.accepted_at ?? '', w?.ip ?? '', w?.source ?? ''].map(cell).join(','); });
     const url = URL.createObjectURL(new Blob([[head.join(','), ...body].join('\n')], { type: 'text/csv;charset=utf-8' }));
     const a = document.createElement('a'); a.href = url; a.download = `guests-${(event?.title ?? 'gathering').replace(/[^\w-]+/g, '-').toLowerCase()}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
@@ -61,7 +67,7 @@ function GuestListPage() {
         <ul className="guest-list">{list.map(r => <li key={r.id} className="guest-row">
           <span className="initial-avatar">{initialsOf(r.guest_name)}</span>
           <div className="guest-row-info">
-            <strong>{r.guest_name ?? t('teamSpace.someone')}{r.plus_ones > 0 && <span className="chip">+{r.plus_ones}</span>}{r.checked_in_at && <span className="chip published-chip">{t('guestList.checkedIn')}</span>}</strong>
+            <strong>{r.guest_name ?? t('teamSpace.someone')}{r.plus_ones > 0 && <span className="chip">+{r.plus_ones}</span>}{r.checked_in_at && <span className="chip published-chip">{t('guestList.checkedIn')}</span>}{(needsWaiver || waivers.has(r.id)) && (waivers.has(r.id) ? <span className="waiver-status is-signed" title={t('waiver.signedOn', { name: waivers.get(r.id)!.full_name, version: waivers.get(r.id)!.version })}><ShieldCheck /><span className="sr-only">{t('waiver.signed')}</span></span> : <span className="waiver-status is-missing" title={t('waiver.missing')}><FileText /><span className="sr-only">{t('waiver.missing')}</span></span>)}</strong>
             <span className="guest-contact">{r.guest_phone && <a href={`tel:${r.guest_phone}`}><Phone />{r.guest_phone}</a>}{r.guest_email && <a href={`mailto:${r.guest_email}`}><Mail />{r.guest_email}</a>}</span>
             <span className="muted guest-meta">{r.sms_opt_in && <><MessageSquareText />{t('guestList.textReminders')}</>}{r.email_opt_in && <><Mail />{t('guestList.emailReminders')}</>}<span>{new Date(r.created_at).toLocaleString(lang, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</span></span>
           </div>

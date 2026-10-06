@@ -88,14 +88,17 @@ export const startConnectOnboarding = createServerFn({ method: 'POST' })
 export const startTicketCheckout = createServerFn({ method: 'POST' })
   .inputValidator((d: unknown) => z.object({
     eventId: z.string().uuid(), first: z.string().trim().min(1).max(60), last: z.string().trim().max(60), phone: z.string().trim().max(30), email: z.string().trim().email().max(200),
-    plusOnes: z.number().int().min(0).max(3), sms: z.boolean(), mail: z.boolean(), lang: z.enum(['en', 'es']), origin,
+    plusOnes: z.number().int().min(0).max(3), sms: z.boolean(), mail: z.boolean(), lang: z.enum(['en', 'es']), origin, waiverName: z.string().trim().max(120).optional().default(''),
   }).parse(d))
   .handler(async ({ data }): Promise<Result> => {
     const { stripe, stripeKey, FEE_PCT } = await import('./billing/stripe.server');
+    const { getRequestHeader } = await import('@tanstack/react-start/server');
+    const waiverIp = (getRequestHeader('cf-connecting-ip') ?? getRequestHeader('x-forwarded-for') ?? '').split(',')[0]!.trim().slice(0, 64);
     if (!stripeKey()) return notConnected;
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
-    const { data: ev } = await supabaseAdmin.from('events').select('id, title, host_id, price_cents, pass_fee, status, visibility').eq('id', data.eventId).maybeSingle();
+    const { data: ev } = await supabaseAdmin.from('events').select('id, title, host_id, price_cents, pass_fee, status, visibility, requires_waiver').eq('id', data.eventId).maybeSingle();
     if (!ev || ev.status !== 'published' || ev.visibility !== 'public' || !ev.price_cents) return { ok: false, error: 'not_open' };
+    if (ev.requires_waiver && data.waiverName.length < 2) return { ok: false, error: 'waiver_required' };
     const { data: b } = await supabaseAdmin.from('billing_accounts').select('connect_account_id, connect_status').eq('user_id', ev.host_id).maybeSingle();
     if (!b?.connect_account_id || b.connect_status !== 'active') return { ok: false, error: 'host_not_ready' };
     const { data: ep } = await supabaseAdmin.rpc('effective_plan', { _uid: ev.host_id });
@@ -105,7 +108,7 @@ export const startTicketCheckout = createServerFn({ method: 'POST' })
     const booking = ev.pass_fee ? fee : 0;
     const items: Record<string, unknown>[] = [{ quantity: qty, price_data: { currency: 'usd', unit_amount: ev.price_cents, product_data: { name: ev.title } } }];
     if (booking) items.push({ quantity: 1, price_data: { currency: 'usd', unit_amount: booking, product_data: { name: data.lang === 'es' ? 'Cargo por reservación' : 'Booking fee' } } });
-    const meta = { kind: 'gathering', event_id: ev.id, first: data.first, last: data.last, phone: data.phone, email: data.email, plus: String(data.plusOnes), sms: String(data.sms), mail: String(data.mail), lang: data.lang };
+    const meta = { kind: 'gathering', event_id: ev.id, first: data.first, last: data.last, phone: data.phone, email: data.email, plus: String(data.plusOnes), sms: String(data.sms), mail: String(data.mail), lang: data.lang, waiver: ev.requires_waiver ? data.waiverName : '', waiver_ip: ev.requires_waiver ? waiverIp : '' };
     const s = await stripe<{ id: string; url: string }>('checkout/sessions', {
       mode: 'payment', customer_email: data.email, locale: data.lang === 'es' ? 'es-419' : 'en', line_items: items, metadata: meta,
       payment_intent_data: { application_fee_amount: fee, transfer_data: { destination: b.connect_account_id }, metadata: meta },

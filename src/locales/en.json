@@ -870,7 +870,8 @@
       "too_long": "One of the fields is too long.",
       "generic": "Something went wrong. Please try again.",
       "rate_limited": "Too many RSVPs in a short time. Please wait a minute.",
-      "members_only": "This gathering is for members only."
+      "members_only": "This gathering is for members only.",
+      "waiver_required": "Please type your full name and check the box to accept the waiver."
     }
   },
   "guestList": {
@@ -2543,5 +2544,27 @@
     "yourTeam": "Your team",
     "network": "Network",
     "benchFoot": "Your team hosted {{count}} gatherings in this period."
+  },
+  "waiver": {
+    "draft": "Draft — pending legal review",
+    "typeName": "Type your full name to sign",
+    "agree": "I have read and agree to this waiver.",
+    "require": "Require the waiver",
+    "requireHelp": "Guests read and sign the team waiver when they RSVP. Walk-ins sign at check-in.",
+    "edit": "Edit team waiver",
+    "editTitle": "Team waiver",
+    "editHelp": "Plain words work best. Write it in both languages.",
+    "titleEn": "Title (English)",
+    "bodyEn": "Waiver text (English)",
+    "titleEs": "Title (Spanish)",
+    "bodyEs": "Waiver text (Spanish)",
+    "version": "Version {{n}}",
+    "versionHelp": "Saving changes creates a new version. Past signatures keep the version they agreed to.",
+    "save": "Save waiver",
+    "saved": "Waiver saved",
+    "signed": "Waiver signed",
+    "signedOn": "Signed by {{name}}, version {{version}}",
+    "missing": "Waiver not signed",
+    "recordError": "Guest added, but the waiver could not be saved. Try again from the guest list."
   }
 }

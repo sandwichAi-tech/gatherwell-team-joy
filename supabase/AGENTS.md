@@ -16,3 +16,4 @@
 - Offer purchases come only from join_free_offer() or the Stripe webhook; members-only access is checked in the database.
 - Welcome points: earned only by the first-check-in trigger, redeemed only via redeem RPCs; guests act through their RSVP code.
 - Playbook: nightly compute_playbook() writes anonymized patterns (>=20 gatherings, >=5 teams) to playbook_patterns; UI reads only playbook_cards()/team_benchmark(), which return labeled samples until data suffices.
+- Waivers: one per team (default seeded by trigger, version bumps on edit); signatures only via rsvp_event_waiver(), walk_in_waiver() or record_waiver() from the Stripe webhook, storing name, version, time and IP; host/leader-only reads.
