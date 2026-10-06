@@ -6,11 +6,12 @@
 
 # Launch checklist
 - [x] Custom report limit: five per rolling minute per person or guest IP
-- [ ] Screen review at 375, 414 and 1440 pixels; contrast and safe areas
-- [ ] Spanish coverage and locale formatting
-- [ ] Loading states, image delivery, public caching and speed measurement
-- [ ] Weak-connection check-in/QR, retry states and 404
-- [ ] Accessibility and reduced motion
-- [ ] Public-page share images and leaf metadata
-- [ ] RSVP SMS terms, Me/footer legal links and analytics no-op checks
-- [ ] Deliver an itemized change list and honest remaining blockers; skip two-account journey
+- [x] Main-screen review at 375, 414 and 1440 pixels; contrast and safe-area refinements (not every populated detail state)
+- [x] Spanish/English resource parity and locale-formatting checks (not a complete editorial audit)
+- [ ] Production first meaningful screen under two seconds on 4G; development measurement failed this target
+- [x] Shared loading/retry states, image-delivery reuse and public cache headers
+- [x] Open-page weak-connection check-in/QR, retry states and premium 404; fixture-tested
+- [x] Main-screen automated accessibility checks in both themes and keyboard dialog check
+- [x] Public-page share fallback and leaf metadata (live gathering shares still need production verification)
+- [x] RSVP SMS terms, Me/footer legal links and analytics no-op checks
+- [x] Deliver an itemized change list and honest remaining blockers; skip two-account journey
