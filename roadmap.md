@@ -9,7 +9,7 @@
 - [x] Phase 3 Me and member profile
 - [x] Phase 4 States
 - [x] Phase 5 Screen drift
-- [ ] Phase 6 Verification + audit rescoring
+- [x] Phase 6 Verification + audit rescoring
 
 # Gatherwell design reset
 - [x] Save permanent replacement design rules

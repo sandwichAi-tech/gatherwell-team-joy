@@ -583,3 +583,12 @@ The following manifest preserves every literal overlay, dialog-role, Select/nati
 | `src/routes/_authenticated/_app/event_.$id.checkin.tsx:182` | `return <ResponsiveSheet open={open} onOpenChange={o => !o && onClose()} title={t('checkin.walkIn')}>` | Needs work — shared surface / state findings above |
 | `src/routes/_authenticated/_app/event_.$id.guests.tsx:110` | `return <ResponsiveSheet open={open} onOpenChange={o => !o && onClose()} title={t('guestList.add')}>` | Needs work — shared surface / state findings above |
 | `src/routes/r.$code.tsx:61` | `<ResponsiveSheet open={confirmCancel} onOpenChange={setConfirmCancel} title={t('guest.cancelRsvpTitle')} description={t('guest.cancelRsvpText')}>` | Needs work — shared surface / state findings above |
+
+## Phase 6 — Verification and rescoring (Oct 6 2026)
+Checked Home, Events, Team, Learn, Me and Network at 375px (Spanish, dark) and 1440px (English, light): no page errors, no sideways overflow.
+- P0 missing tokens: Pass (defined in Phase 1).
+- Popups (D, M): Pass — card surface, e3 elevation, 220/160ms motion, branded confirm replaces every native confirm.
+- Me and member profile (H, C): Pass — identity hero, stats, grouped settings.
+- Empty/loading/error (C, M): Pass — shared EmptyState tiles, shimmer skeletons, titled retry state; full-page loading blocks replaced by a thin top bar after verification showed them pushing loaded content down.
+- Spacing (S): Pass — 88 off-grid values snapped to the 8px grid.
+- Still open: member profiles of other people, popup drag-to-dismiss and admin dropdown labels not verified on screen; populated states need real gatherings.
