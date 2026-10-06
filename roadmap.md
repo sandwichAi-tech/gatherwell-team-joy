@@ -1,3 +1,7 @@
+# D1 — Premium design audit (current priority)
+- [ ] Inventory every screen, popup, menu, toast and empty state against the ten design criteria
+- [ ] Save source-backed findings and browser evidence to DESIGN_AUDIT.md before visual fixes
+
 # Gatherwell design reset
 - [x] Save permanent replacement design rules
 - [x] Replace shell, theme, typography and app icons
