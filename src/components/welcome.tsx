@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Copy, MessageCircle, MessageSquareText, Share, Gift, Check, Trash } from '@/components/icons';
+import { Copy, MessageCircle, MessageSquareText, Share2, Gift, Check, Trash2 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -41,7 +41,7 @@ function WelcomeBody({ data, onRedeem }: { data: WelcomeSummary; onRedeem: (rewa
       <Button variant="secondary" onClick={async () => { await navigator.clipboard.writeText(link); toast.success(t('onboarding.copied')); }}><Copy />{t('gathering.copyLink')}</Button>
       <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(msg)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button>
       <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(msg)}`}><MessageSquareText />{t('gathering.text')}</a></Button>
-      <Button variant="secondary" onClick={share}><Share />{t('welcome.share')}</Button>
+      <Button variant="secondary" onClick={share}><Share2 />{t('welcome.share')}</Button>
     </div>
     <div className="stat-pair"><div><strong>{came}</strong><small>{t('welcome.friendsCame')}</small></div><div><strong>{data.hosts.reduce((s, h) => s + h.points, 0)}</strong><small>{t('welcome.points')}</small></div></div>
     <p className="muted-small">{t('welcome.howItWorks')}</p>
@@ -109,7 +109,7 @@ export function WelcomeRewardsCard() {
     {q.isPending ? <ListSkeleton /> : q.isError ? <RetryState retry={() => void q.refetch()} /> : <>
       {q.data.rewards.length > 0 && <ul className="welcome-rewards">{q.data.rewards.map(r => <li key={r.id}><Gift className="inline-icon" /><span>{rewardTitle(r, lang)}<small>{t('welcome.pointsCount', { count: r.points_cost })}</small></span>
         <Switch checked={r.active} aria-label={t('welcome.active')} onCheckedChange={async v => { await toggleReward(r.id, v); await refresh(); }} />
-        <Button size="icon" variant="ghost" aria-label={t('welcome.removeReward')} onClick={async () => { await removeReward(r.id); await refresh(); }}><Trash /></Button></li>)}</ul>}
+        <Button size="icon" variant="ghost" aria-label={t('welcome.removeReward')} onClick={async () => { await removeReward(r.id); await refresh(); }}><Trash2 /></Button></li>)}</ul>}
       <div className="bilingual">
         <div className="form-field"><label className="field-label" htmlFor="wr-en">{t('welcome.rewardName')} · EN</label><Input id="wr-en" className="field-input" maxLength={80} placeholder={t('welcome.rewardPlaceholder')} value={f.en} onChange={e => setF({ ...f, en: e.target.value })} /></div>
         <div className="form-field"><label className="field-label" htmlFor="wr-es">{t('welcome.rewardName')} · ES</label><Input id="wr-es" className="field-input" maxLength={80} value={f.es} onChange={e => setF({ ...f, es: e.target.value })} /></div>
