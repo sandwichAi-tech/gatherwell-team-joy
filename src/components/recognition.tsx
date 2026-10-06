@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/launch-states';
 import { trackEvent } from '@/lib/analytics';
 import { ClaimGuard } from '@/components/smart';
 import { requestPushMoment } from '@/components/notifications';
@@ -175,7 +176,7 @@ function PersonPicker({ teamId, value, onChange, excludeSelf }: { teamId: string
   return <div className="person-picker" role="radiogroup" aria-label={t('recognition.person')}>
     {people.map(m => <button type="button" role="radio" aria-checked={value === m.userId} key={m.userId} className={`person-chip ${value === m.userId ? 'is-selected' : ''}`} onClick={() => onChange(m.userId)}>
       <span className="initial-avatar">{initialsOf(m.name)}</span><span>{m.name ?? t('teamSpace.someone')}</span></button>)}
-    {!people.length && <p className="auth-subtitle">{t('recognition.noPeople')}</p>}
+    {!people.length && <EmptyState compact icon="Award" text={t('recognition.noPeople')} />}
   </div>;
 }
 

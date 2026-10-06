@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/launch-states';
 import { ReferralCard } from '@/components/network-share';
 import { WelcomeRewardsCard } from '@/components/welcome';
 import { trackEvent } from '@/lib/analytics';
@@ -222,7 +223,7 @@ export function SeatsPage() {
           <Button variant={on ? 'secondary' : 'default'} disabled={busy === m.userId || (!on && used >= total)} onClick={() => void toggle(m.userId, !on)}>{on ? t('billing.removeSeat') : t('billing.assignSeat')}</Button></div>;
       })}</div>
     </section> : <section className="panel">
-      <p className="auth-subtitle">{t('billing.noLicense')}</p>
+      <EmptyState compact icon="CreditCard" text={t('billing.noLicense')} />
       {LICENSES.map(l => <div key={l.id} className="plan-license-row"><span><strong>{t(`billing.${l.id}`)}</strong><small>{t('billing.seatsGrowth', { n: l.seats })}</small></span><span className="plan-license-price">{formatMoney(l.cents, lang)}{t('billing.perMonth')}</span>
         <Button disabled={gate.busy} onClick={() => void gate.run(() => license({ data: { teamId, tier: l.id, origin: window.location.origin, lang } }))}>{t('billing.buy')}</Button></div>)}
       {isAdmin && <Button variant="secondary" onClick={() => void grantPreview()}>{t('billing.grantPreview')}</Button>}
@@ -262,7 +263,7 @@ export function EarningsPage() {
     <div className="stats-grid">{stat(t('billing.ticketSales'), formatMoney(sales, lang))}{stat(t('billing.platformFees'), formatMoney(fees, lang))}{stat(t('billing.payouts'), formatMoney(sales - fees, lang))}{stat(t('billing.ticketsSold'), paid.length)}</div>
     <ReferralCard format={c => formatMoney(c, lang)} />
     <WelcomeRewardsCard />
-    {!pays.length ? <section className="panel"><p className="auth-subtitle">{t('billing.noSales')}</p></section> : [...groups.entries()].map(([eid, list]) => {
+    {!pays.length ? <section className="panel"><EmptyState compact icon="CreditCard" text={t('billing.noSales')} /></section> : [...groups.entries()].map(([eid, list]) => {
       const ev = data?.events.get(eid);
       return <section key={eid} className="panel">
         <div className="section-heading"><h2>{ev?.title ?? t('billing.otherSales')}</h2>{eid !== 'other' && list.some(p => p.status === 'paid') && <Button variant="link" onClick={() => setConfirm({ eventId: eid })}>{t('billing.refundAll')}</Button>}</div>

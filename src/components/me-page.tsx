@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/launch-states';
 import { planStatusQuery } from '@/lib/billing';
 import { AssistantUsage } from '@/components/assistant/assistant-usage';
 import { isAdminQuery } from '@/lib/site-media';
@@ -176,8 +177,8 @@ export function MePage() {
   const panels: Record<Exclude<Panel, null>, { title: string; body: ReactNode }> = {
     gatherings: { title: t('profile.myGatherings'), body: <MyGatheringsList userId={userId} /> },
     challenges: { title: t('profile.myChallenges'), body: <MyChallengesList userId={userId} /> },
-    badges: { title: t('profile.myBadges'), body: workspace ? <BadgeWall teamId={workspace.teamId} /> : <p className="auth-subtitle">{t('workspace.none')}</p> },
-    teams: { title: t('profile.myTeams'), body: teams.length ? <div className="team-list">{teams.map(team => <button type="button" key={team.teamId} className={`choice-card ${workspace?.teamId === team.teamId ? 'is-selected' : ''}`} aria-pressed={workspace?.teamId === team.teamId} onClick={() => switchTeam(team.teamId)}><span className="initial-avatar">{initialsOf(team.name)}</span><span><strong>{team.name}</strong><small>{t(`roles.${team.role}`)}{team.customBadge ? ` · ${team.customBadge}` : ''}</small></span>{workspace?.teamId === team.teamId && <Check className="choice-check" />}</button>)}</div> : <p className="auth-subtitle">{t('workspace.none')}</p> },
+    badges: { title: t('profile.myBadges'), body: workspace ? <BadgeWall teamId={workspace.teamId} /> : <EmptyState compact icon="UsersRound" text={t('workspace.none')} /> },
+    teams: { title: t('profile.myTeams'), body: teams.length ? <div className="team-list">{teams.map(team => <button type="button" key={team.teamId} className={`choice-card ${workspace?.teamId === team.teamId ? 'is-selected' : ''}`} aria-pressed={workspace?.teamId === team.teamId} onClick={() => switchTeam(team.teamId)}><span className="initial-avatar">{initialsOf(team.name)}</span><span><strong>{team.name}</strong><small>{t(`roles.${team.role}`)}{team.customBadge ? ` · ${team.customBadge}` : ''}</small></span>{workspace?.teamId === team.teamId && <Check className="choice-check" />}</button>)}</div> : <EmptyState compact icon="UsersRound" text={t('workspace.none')} /> },
     notifications: { title: t('profile.notifications'), body: <NotificationSettings userId={userId} /> },
     invite: { title: t('welcome.title'), body: <InviteFriendsPanel /> },
     purchases: { title: t('offers.purchases'), body: <PurchasesPanel /> },

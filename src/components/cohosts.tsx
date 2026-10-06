@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/launch-states';
 import { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -43,13 +44,13 @@ export function CohostsPanel({ eventId, teamId, hostId, canEdit }: { eventId: st
     <div className="section-heading"><div><h2>{t('cohosts.title')}</h2><p>{t('cohosts.help')}</p></div>
       {canEdit && <Button variant="secondary" size="sm" onClick={() => setOpen(true)}><UsersRound />{ids.length ? t('cohosts.change') : t('cohosts.add')}</Button>}</div>
     {names.length ? <ul className="cohost-list">{names.map(m => <li key={m!.userId}><span className="initial-avatar">{initialsOf(m!.name)}</span><span>{m!.name ?? t('teamSpace.someone')}</span></li>)}</ul>
-      : <p className="auth-subtitle">{t('cohosts.none')}</p>}
+      : <EmptyState compact icon="UsersRound" text={t('cohosts.none')} />}
     <ResponsiveSheet open={open} onOpenChange={setOpen} title={t('cohosts.pickTitle')} description={t('cohosts.pickHelp', { max: MAX_COHOSTS })}>
       <div className="edit-form">
         {candidates.length ? <ul className="cohost-pick">{candidates.map(m => { const on = pick.includes(m.userId); const disabled = !on && pick.length >= MAX_COHOSTS;
           return <li key={m.userId}><label className={`guest-consent${disabled ? ' is-disabled' : ''}`}><Checkbox checked={on} disabled={disabled} onCheckedChange={v => setPick(p => v ? [...p, m.userId] : p.filter(x => x !== m.userId))} />
             <span className="initial-avatar">{initialsOf(m.name)}</span><span>{m.name ?? t('teamSpace.someone')}</span></label></li>; })}</ul>
-          : <p className="auth-subtitle">{t('cohosts.noCandidates')}</p>}
+          : <EmptyState compact icon="UsersRound" text={t('cohosts.noCandidates')} />}
         <p className="auth-subtitle" aria-live="polite">{t('cohosts.count', { n: pick.length, max: MAX_COHOSTS })}</p>
         <Button className="onboarding-continue" disabled={busy} onClick={save}>{t('cohosts.save')}</Button>
       </div>

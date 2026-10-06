@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/launch-states';
 import { trackEvent } from '@/lib/analytics';
 import { confirmAction } from '@/components/confirm-dialog';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
@@ -217,7 +218,7 @@ function PhotoGallery({ paths }: { paths: string[] }) {
   const { t } = useTranslation();
   const { data: urls = [] } = useQuery({ queryKey: ['challenge-photos', paths.join(',')], queryFn: () => challengePhotoUrls(paths), enabled: paths.length > 0, staleTime: 50 * 60_000 });
   return <section className="panel"><div className="section-heading"><div><h2>{t('challenges.myPhotos')}</h2><p><Lock className="inline-icon" />{t('challenges.photosPrivate')}</p></div></div>
-    {urls.length ? <div className="photo-grid">{urls.map(u => <a key={u} href={u} target="_blank" rel="noopener noreferrer"><img src={u} alt={t('challenges.progressPhoto')} loading="lazy" /></a>)}</div> : <p className="auth-subtitle">{t('challenges.noPhotos')}</p>}</section>;
+    {urls.length ? <div className="photo-grid">{urls.map(u => <a key={u} href={u} target="_blank" rel="noopener noreferrer"><img src={u} alt={t('challenges.progressPhoto')} loading="lazy" /></a>)}</div> : <EmptyState compact icon="Camera" text={t('challenges.noPhotos')} />}</section>;
 }
 
 export function ChallengePage({ id }: { id: string }) {
@@ -274,7 +275,7 @@ export function ChallengePage({ id }: { id: string }) {
       <div className="day-grid" role="list" aria-label={t('challenges.calendar')}>{Array.from({ length: len }, (_, i) => { const d = addDays(c.starts_on, i); const on = dates.has(d); return <span role="listitem" key={d} className={`day-cell ${on ? 'is-on' : ''} ${d === today ? 'is-today' : ''} ${d > today ? 'is-future' : ''}`} aria-label={`${fmtDate(d, lang)}${on ? ` · ${t('challenges.checkedIn')}` : ''}`}>{on ? <Check /> : i + 1}</span>; })}</div></section>}
 
     <section className="panel"><div className="section-heading"><div><h2>{t('challenges.leaderboard')}</h2><p>{t('challenges.leaderboardNote')}</p></div>{meRow && <span className="chip">{t('challenges.yourRank', { rank: meRow.rank })}</span>}</div>
-      {top.length ? <ol className="board">{top.map(r => <li key={r.user_id} className={r.user_id === userId ? 'is-me' : ''}><span className="board-rank">{r.rank}</span><span className="initial-avatar">{initialsOf(r.full_name)}</span><span className="lesson-info"><strong>{r.full_name || t('teamSpace.someone')}</strong><small>{t('challenges.streakShort', { count: r.current_streak })} · {t('challenges.bestShort', { count: r.best_streak })}</small></span><strong className="board-count">{r.checkins}</strong></li>)}</ol> : <p className="auth-subtitle">{t('challenges.boardEmpty')}</p>}
+      {top.length ? <ol className="board">{top.map(r => <li key={r.user_id} className={r.user_id === userId ? 'is-me' : ''}><span className="board-rank">{r.rank}</span><span className="initial-avatar">{initialsOf(r.full_name)}</span><span className="lesson-info"><strong>{r.full_name || t('teamSpace.someone')}</strong><small>{t('challenges.streakShort', { count: r.current_streak })} · {t('challenges.bestShort', { count: r.best_streak })}</small></span><strong className="board-count">{r.checkins}</strong></li>)}</ol> : <EmptyState compact icon="Camera" text={t('challenges.boardEmpty')} />}
       {meRow && meRow.rank > 10 && <p className="board-me">{t('challenges.youreRank', { rank: meRow.rank })}</p>}</section>
 
     {joined && <PhotoGallery paths={mine.map(m => m.photo_path).filter((p): p is string => !!p)} />}

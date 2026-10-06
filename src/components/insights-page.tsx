@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/launch-states';
 import { useMemo, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -107,10 +108,10 @@ export function InsightsPage() {
         {view.top_hosts.length ? <ol className="rank-list">{view.top_hosts.map((h, i) => <li key={h.user_id} className="person-row"><span className="rank">{i + 1}</span><span className="initial-avatar">{initialsOf(h.name)}</span>
           <div className="person-info"><h3>{h.name ?? t('teamSpace.someone')}</h3><p>{h.team} · {t('insights.hostLine', { gatherings: h.gatherings, checkins: h.checkins })}</p></div>
           <Button variant="secondary" size="sm" onClick={() => { setShout({ userId: h.user_id, name: h.name ?? '' }); setMessage(t('insights.shoutDefault', { name: firstName(h.name) })); }}><Megaphone />{t('insights.shout')}</Button></li>)}</ol>
-          : <p className="auth-subtitle">{t('insights.noHosts')}</p>}</section>
+          : <EmptyState compact icon="BarChart3" text={t('insights.noHosts')} />}</section>
       <section className="panel"><div className="section-heading"><h2>{t('insights.templatePerf')}</h2></div>
         {view.templates.length ? <ul className="perf-list">{view.templates.map(tp => <li key={tp.id}><span className="perf-title">{tp.title}</span><span className="perf-num">{t('insights.launches', { count: tp.launches })}</span><span className="perf-num">{t('insights.checkinsCount', { count: tp.checkins })}</span></li>)}</ul>
-          : <p className="auth-subtitle">{t('insights.noTemplates')}</p>}</section>
+          : <EmptyState compact icon="BarChart3" text={t('insights.noTemplates')} />}</section>
     </div>
     <section className="panel"><div className="section-heading"><div><h2>{t('insights.nudge')}</h2><p>{t('insights.nudgeText')}</p></div></div>
       {view.nudge.length ? <div>{view.nudge.map(n => <div className="person-row" key={n.user_id}><span className="initial-avatar">{initialsOf(n.name)}</span><div className="person-info"><h3>{n.name ?? t('teamSpace.someone')}</h3>

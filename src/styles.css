@@ -1354,3 +1354,13 @@ button { white-space:normal; }
 .gw-group .settings-value{overflow:hidden;text-overflow:ellipsis}
 .edit-preview-avatar{position:relative;z-index:1}.edit-preview-avatar .profile-avatar{display:grid;place-items:center;border-radius:50%}
 .gw-group .settings-value{max-width:42%}.gw-group .settings-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Phase 4 states */
+.gw-empty-state{display:flex;align-items:center;gap:16px;padding:24px;border:1px solid var(--border);border-radius:16px;background:var(--card);box-shadow:var(--e1);color:var(--muted-foreground);font-size:15px;line-height:1.55;animation:gw-state-in var(--dur-open) ease-out}
+.gw-empty-state.is-compact{padding:16px;box-shadow:none;background:color-mix(in oklab,var(--secondary) 45%,var(--card))}
+.gw-empty-state h3{font-size:18px;font-weight:600;color:var(--foreground);margin-bottom:4px}
+.retry-state{background:var(--card)!important;border-radius:16px!important;box-shadow:var(--e1);padding:16px 24px!important;animation:gw-state-in var(--dur-open) ease-out}
+.retry-copy{flex:1;min-width:180px}.retry-copy strong{display:block;color:var(--foreground)}.retry-copy p{color:var(--muted-foreground);margin:0}
+.skeleton{background:linear-gradient(90deg,var(--secondary) 0%,color-mix(in oklab,var(--secondary) 55%,var(--card)) 50%,var(--secondary) 100%);background-size:200% 100%;animation:skeleton-sheen 1.4s ease-in-out infinite}
+@keyframes skeleton-sheen{from{background-position:100% 0}to{background-position:-100% 0}}
+@keyframes gw-state-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.skeleton,.gw-empty-state,.retry-state{animation:none}}

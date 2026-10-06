@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/launch-states';
 import { ClaimGuard } from '@/components/smart';
 import { useTranslateFill } from '@/lib/assistant-client';
 import { useEffect, useState } from 'react';
@@ -170,7 +171,7 @@ export function TemplatesSection({ teamId, userId }: { teamId: string; userId: s
   return <section className="panel">
     <div className="section-heading"><h2>{t('templates.heading')}</h2><Button onClick={() => setEditing({ checklist: [], default_duration_minutes: 60, visibility_default: 'team' })}><Plus />{t('templates.new')}</Button></div>
     {own.length ? <div className="template-grid">{own.map(tpl => <TemplateCard key={tpl.id} template={tpl}><Button size="sm" variant="secondary" onClick={() => setEditing(toDraft(tpl))}><Pencil />{t('templates.edit')}</Button></TemplateCard>)}</div>
-      : <p className="auth-subtitle">{t('templates.empty')}</p>}
+      : <EmptyState compact icon="Layers" text={t('templates.empty')} />}
     {starters.length > 0 && <><h3 className="subsection-title">{t('templates.starters')}</h3>
       <div className="template-grid">{starters.map(tpl => <TemplateCard key={tpl.id} template={tpl}><Button size="sm" variant="secondary" onClick={() => copy(tpl)}><Copy />{t('templates.useThis')}</Button></TemplateCard>)}</div></>}
     <TemplateEditor draft={editing} teamId={teamId} userId={userId} onClose={() => setEditing(null)} />

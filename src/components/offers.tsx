@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/launch-states';
 import { useEffect, useState } from 'react';
 import { confirmAction } from '@/components/confirm-dialog';
 import { Link } from '@tanstack/react-router';
@@ -216,7 +217,7 @@ export function PurchasesPanel() {
   const [busy, setBusy] = useState<string | null>(null);
   if (q.isPending) return <ListSkeleton />;
   if (q.isError) return <RetryState retry={() => void q.refetch()} />;
-  if (!q.data.length) return <div className="empty-state"><p className="auth-subtitle">{t('offers.noPurchases')}</p></div>;
+  if (!q.data.length) return <div><EmptyState compact icon="Gift" text={t('offers.noPurchases')} /></div>;
   const memberships = q.data.filter(p => p.offer && p.offer.kind !== 'download');
   const downloads = q.data.filter(p => p.offer?.kind === 'download');
   const doCancel = async (offerId: string) => {

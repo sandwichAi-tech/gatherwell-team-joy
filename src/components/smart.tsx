@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/launch-states';
 import { trackEvent } from '@/lib/analytics';
 import { ListSkeleton } from '@/components/launch-states';
 import { useEffect, useMemo, useState } from 'react';
@@ -193,7 +194,7 @@ export function FollowupInbox() {
       {anyPreview && <span className="chip quiet-chip">{t('assistant.previewMode')}</span>}</div>
     {approved.length > 0 && <div className="followup-sendall"><Button disabled={!!progress} onClick={sendAll}><Check />{t('smart.followups.sendAll', { count: approved.length })}</Button>
       {progress && <><progress className="attendance-progress" value={progress.done} max={progress.total} /><small>{t('smart.followups.progress', progress)}</small></>}</div>}
-    {isLoading ? <ListSkeleton /> : groups.length === 0 && <section className="panel"><p className="auth-subtitle">{t('smart.followups.empty')}</p></section>}
+    {isLoading ? <ListSkeleton /> : groups.length === 0 && <section className="panel"><EmptyState compact icon="MessageSquareText" text={t('smart.followups.empty')} /></section>}
     {groups.map(g => <section key={g[0]!.event_id} className="followup-group"><h2>{g[0]!.events?.title}<small>{g[0]!.events ? fmt(g[0]!.events.starts_at) : ''}</small></h2>
       {g.map(d => <DraftCard key={d.id} d={d} onChanged={refresh} />)}</section>)}
     {past.filter(e => !withDrafts.has(e.id)).length > 0 && <section className="panel"><h2>{t('smart.followups.prepareTitle')}</h2><p className="auth-subtitle">{t('smart.followups.prepareText')}</p>
