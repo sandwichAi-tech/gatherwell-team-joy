@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { FileText, ShieldCheck } from '@/components/icons';
+import { Check } from '@/components/icons';
 import { ArrowLeft, ArrowUp, Download, Mail, MessageSquareText, Phone, Search, UserPlus, X } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,8 +17,8 @@ import { gatherwellHead } from '@/lib/gatherwell-head';
 
 export const Route = createFileRoute('/_authenticated/_app/event_/$id/guests')({ head: () => gatherwellHead('events'), component: GuestListPage });
 
-type Tab = 'going' | 'maybe' | 'waitlist' | 'cancelled';
-const TABS: Tab[] = ['going', 'maybe', 'waitlist', 'cancelled'];
+type Tab = 'requested' | 'going' | 'maybe' | 'waitlist' | 'cancelled' | 'declined';
+const ALL_TABS: Tab[] = ['requested', 'going', 'maybe', 'waitlist', 'cancelled', 'declined'];
 
 function GuestListPage() {
   const { id } = Route.useParams(); const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage === 'es' ? 'es-419' : 'en-US';
@@ -35,9 +36,21 @@ function GuestListPage() {
     return new Map(((data ?? []) as { rsvp_id: string; version: number; full_name: string; accepted_at: string; ip: string | null; source: string }[]).map(w => [w.rsvp_id, w]));
   } });
   const { data: needsWaiver = false } = useQuery({ queryKey: ['event', id, 'needs-waiver'], queryFn: async () => !!((await (supabase as any).from('events').select('requires_waiver').eq('id', id).maybeSingle()).data?.requires_waiver) });
+  const { data: qinfo } = useQuery({ queryKey: ['event', id, 'questions'], queryFn: async () => {
+    const [{ data: ev }, { data: ans }] = await Promise.all([(supabase as any).from('events').select('rsvp_questions,require_approval').eq('id', id).maybeSingle(), (supabase as any).from('rsvp_answers').select('rsvp_id,answers').eq('event_id', id)]);
+    return { questions: (ev?.rsvp_questions ?? []) as { id: string; kind: string; label: string }[], approval: !!ev?.require_approval, answers: new Map<string, Record<string, string>>(((ans ?? []) as { rsvp_id: string; answers: Record<string, string> }[]).map(a => [a.rsvp_id, a.answers])) };
+  } });
+  const questions = qinfo?.questions ?? []; const answers = qinfo?.answers ?? new Map<string, Record<string, string>>();
+  const ansText = (q: { kind: string }, v: string | undefined) => !v ? '' : q.kind === 'yesno' ? t(`rsvpq.${v === 'yes' ? 'yes' : 'no'}`) : v;
+  const decide = async (rid: string, ok: boolean) => {
+    const { data: st, error } = await (supabase as any).rpc('decide_rsvp', { _rsvp: rid, _approve: ok });
+    if (error) { toast.error(t('profile.saveError')); return; }
+    toast.success(t(ok ? (st === 'waitlist' ? 'rsvpq.approvedWaitlist' : 'rsvpq.approved') : 'rsvpq.declined')); await refresh();
+  };
   useRsvpChanges(id, () => void queryClient.invalidateQueries({ queryKey: ['event', id, 'guest-list'] }));
-  const [tab, setTab] = useState<Tab>('going'); const [q, setQ] = useState(''); const [adding, setAdding] = useState(false);
-  const counts = useMemo(() => Object.fromEntries(TABS.map(k => [k, rows.filter(r => r.status === k).length])) as Record<Tab, number>, [rows]);
+  const [tab, setTab] = useState<Tab>('going');
+  const TABS = ALL_TABS.filter(k => !['requested', 'declined'].includes(k) || qinfo?.approval || rows.some(r => r.status === k)); const [q, setQ] = useState(''); const [adding, setAdding] = useState(false);
+  const counts = useMemo(() => Object.fromEntries(ALL_TABS.map(k => [k, rows.filter(r => r.status === k).length])) as Record<Tab, number>, [rows]);
   const list = rows.filter(r => r.status === tab && (!q || [r.guest_name, r.guest_phone, r.guest_email].some(v => v?.toLowerCase().includes(q.toLowerCase()))));
   const refresh = () => queryClient.invalidateQueries({ queryKey: ['event', id] });
   const setStatus = async (rid: string, status: Tab) => {
@@ -47,8 +60,8 @@ function GuestListPage() {
   };
   const exportCsv = () => {
     const cell = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-    const head = ['name', 'status', 'plus_ones', 'phone', 'email', 'sms_reminders', 'email_reminders', 'rsvp_time', 'checked_in', 'waiver_signed', 'waiver_name', 'waiver_version', 'waiver_time', 'waiver_ip', 'waiver_source'];
-    const body = rows.map(r => { const w = waivers.get(r.id); return [r.guest_name, r.status, r.plus_ones, r.guest_phone, r.guest_email, r.sms_opt_in ? 'yes' : 'no', r.email_opt_in ? 'yes' : 'no', r.created_at, r.checked_in_at ?? '', w ? 'yes' : 'no', w?.full_name ?? '', w?.version ?? '', w?.accepted_at ?? '', w?.ip ?? '', w?.source ?? ''].map(cell).join(','); });
+    const head = ['name', 'status', 'plus_ones', 'phone', 'email', 'sms_reminders', 'email_reminders', 'rsvp_time', 'checked_in', 'waiver_signed', 'waiver_name', 'waiver_version', 'waiver_time', 'waiver_ip', 'waiver_source', ...questions.map(q => q.label)];
+    const body = rows.map(r => { const w = waivers.get(r.id); return [r.guest_name, r.status, r.plus_ones, r.guest_phone, r.guest_email, r.sms_opt_in ? 'yes' : 'no', r.email_opt_in ? 'yes' : 'no', r.created_at, r.checked_in_at ?? '', w ? 'yes' : 'no', w?.full_name ?? '', w?.version ?? '', w?.accepted_at ?? '', w?.ip ?? '', w?.source ?? '', ...questions.map(q => ansText(q, answers.get(r.id)?.[q.id]))].map(cell).join(','); });
     const url = URL.createObjectURL(new Blob([[head.join(','), ...body].join('\n')], { type: 'text/csv;charset=utf-8' }));
     const a = document.createElement('a'); a.href = url; a.download = `guests-${(event?.title ?? 'gathering').replace(/[^\w-]+/g, '-').toLowerCase()}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
@@ -69,11 +82,13 @@ function GuestListPage() {
           <div className="guest-row-info">
             <strong>{r.guest_name ?? t('teamSpace.someone')}{r.plus_ones > 0 && <span className="chip">+{r.plus_ones}</span>}{r.checked_in_at && <span className="chip published-chip">{t('guestList.checkedIn')}</span>}{(needsWaiver || waivers.has(r.id)) && (waivers.has(r.id) ? <span className="waiver-status is-signed" title={t('waiver.signedOn', { name: waivers.get(r.id)!.full_name, version: waivers.get(r.id)!.version })}><ShieldCheck /><span className="sr-only">{t('waiver.signed')}</span></span> : <span className="waiver-status is-missing" title={t('waiver.missing')}><FileText /><span className="sr-only">{t('waiver.missing')}</span></span>)}</strong>
             <span className="guest-contact">{r.guest_phone && <a href={`tel:${r.guest_phone}`}><Phone />{r.guest_phone}</a>}{r.guest_email && <a href={`mailto:${r.guest_email}`}><Mail />{r.guest_email}</a>}</span>
+            {answers.has(r.id) && <dl className="rsvpq-answers">{questions.filter(q => answers.get(r.id)?.[q.id]).map(q => <div key={q.id}><dt>{q.label}</dt><dd>{ansText(q, answers.get(r.id)?.[q.id])}</dd></div>)}</dl>}
             <span className="muted guest-meta">{r.sms_opt_in && <><MessageSquareText />{t('guestList.textReminders')}</>}{r.email_opt_in && <><Mail />{t('guestList.emailReminders')}</>}<span>{new Date(r.created_at).toLocaleString(lang, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</span></span>
           </div>
           <div className="guest-row-actions">
+            {r.status === 'requested' && <><Button size="sm" onClick={() => decide(r.id, true)}><Check />{t('rsvpq.approve')}</Button><Button size="sm" variant="ghost" className="danger-text" onClick={() => decide(r.id, false)}><X />{t('rsvpq.decline')}</Button></>}
             {r.status === 'waitlist' && <Button size="sm" onClick={() => setStatus(r.id, 'going')}><ArrowUp />{t('guestList.promote')}</Button>}
-            {r.status !== 'cancelled' && <Button size="sm" variant="ghost" className="danger-text" aria-label={t('guestList.moveCancelled')} onClick={() => setStatus(r.id, 'cancelled')}><X />{t('guestList.moveCancelled')}</Button>}
+            {!['cancelled', 'requested', 'declined'].includes(r.status) && <Button size="sm" variant="ghost" className="danger-text" aria-label={t('guestList.moveCancelled')} onClick={() => setStatus(r.id, 'cancelled')}><X />{t('guestList.moveCancelled')}</Button>}
           </div>
         </li>)}</ul>}
     </section>

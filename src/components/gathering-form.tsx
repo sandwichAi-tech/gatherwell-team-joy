@@ -40,7 +40,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const [place, setPlace] = useState<'person' | 'online'>('person'); const [locationName, setLocationName] = useState(''); const [address, setAddress] = useState('');
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null); const [note, setNote] = useState(''); const [url, setUrl] = useState('');
   const [price, setPrice] = useState(''); const [limit, setLimit] = useState<null | 'gatherings' | 'storage'>(null);
-  const [capacity, setCapacity] = useState(''); const [visibility, setVisibility] = useState<'public' | 'team'>('public');
+  const [capacity, setCapacity] = useState(''); const [visibility, setVisibility] = useState<'public' | 'team' | 'invite'>('public');
   const [descEn, setDescEn] = useState(''); const [descEs, setDescEs] = useState(''); const [descTab, setDescTab] = useState<'en' | 'es'>(lang);
   const [weekly, setWeekly] = useState(false); const [wholeSeries, setWholeSeries] = useState(false); const [tpl, setTpl] = useState<{ id: string; title: string } | null>(null);
   const tr = useTranslateFill(); const [busy, setBusy] = useState(false); const [uploading, setUploading] = useState(false);
@@ -64,7 +64,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       setPlace(isOnline(e) ? 'online' : 'person'); setLocationName(e.location_name ?? ''); setAddress(e.address ?? ''); setNote(e.meeting_note ?? ''); setUrl(e.online_url ?? '');
       setCoords(e.lat != null && e.lng != null ? { lat: e.lat, lng: e.lng } : null);
       setPrice((e as { price_cents?: number | null }).price_cents ? String(((e as { price_cents: number }).price_cents / 100)) : '');
-      setCapacity(e.capacity ? String(e.capacity) : ''); setVisibility(e.visibility === 'team' ? 'team' : 'public');
+      setCapacity(e.capacity ? String(e.capacity) : ''); setVisibility(e.visibility === 'team' ? 'team' : e.visibility === 'invite' ? 'invite' : 'public');
       if (editing) setStart(toLocalInput(new Date(e.starts_at)));
       else { const d = new Date(e.starts_at); const next = new Date(); next.setDate(next.getDate() + 7); next.setHours(d.getHours(), d.getMinutes(), 0, 0); setStart(toLocalInput(next)); }
       if (fromId && e.template_id) setTpl(null);
@@ -219,7 +219,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
           <Input id="g-price" type="text" inputMode="decimal" className="field-input" disabled={!canSell && !price} value={price} onChange={e => setPrice(e.target.value.replace(/[^\d.]/g, '').slice(0, 7))} placeholder="$0" />
           <small className="field-hint">{canSell ? t('billing.priceHint') : t('billing.priceNeedsPayouts')}</small></div>
         <div><span className="field-label">{t('gathering.visibility')}</span>
-          <div className="segmented full" role="group" aria-label={t('gathering.visibility')}>{(['public', 'team'] as const).map(v => <Button key={v} variant="ghost" className={visibility === v ? 'selected' : ''} aria-pressed={visibility === v} onClick={() => setVisibility(v)}>{t(`gathering.vis.${v}`)}</Button>)}</div></div>
+          <div className="segmented full" role="group" aria-label={t('gathering.visibility')}>{(['public', 'invite', 'team'] as const).map(v => <Button key={v} variant="ghost" className={visibility === v ? 'selected' : ''} aria-pressed={visibility === v} onClick={() => setVisibility(v)}>{t(`gathering.vis.${v}`)}</Button>)}</div></div>
       </section>
 
       <section className="form-section">
