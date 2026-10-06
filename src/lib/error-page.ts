@@ -15,12 +15,12 @@ export function renderErrorPage(language = 'en'): string {
       body { font: 15px/1.55 Inter, system-ui, sans-serif; background: #F7F7F9; color: #1C1726; display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 1.5rem; }
       .card { max-width: 28rem; width: 100%; text-align: center; padding: 2rem; }
       h1 { font-size: 1.25rem; margin: 0 0 0.5rem; }
-      p { color: #4b5563; margin: 0 0 1.5rem; }
+      p { color: #4A4458; margin: 0 0 1.5rem; }
       .actions { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
       a, button { min-height:48px; box-sizing:border-box; display:inline-flex; align-items:center; padding: 0.5rem 1rem; border-radius: 12px; font: inherit; cursor: pointer; text-decoration: none; border: 1px solid transparent; }
-      :focus-visible { outline:2px solid #71569C; outline-offset:3px; }
+      :focus-visible { outline:2px solid #7A5FA8; outline-offset:3px; }
       .primary { background: #2F2340; color: #fff; }
-      .secondary { background: #fff; color: #111; border-color: #d1d5db; }
+      .secondary { background: #fff; color: #1C1726; border-color: #E8E6EE; }
     </style>
   </head>
   <body>

@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/launch-states';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
@@ -94,7 +95,7 @@ export function MapPage() {
         <div className="date-tile"><span>{new Date(e.starts_at).toLocaleDateString(lang, { month: 'short' })}</span><strong>{new Date(e.starts_at).getDate()}</strong></div>
         <div className="event-info"><h3>{e.title}</h3><p>{e.location_name || e.address ? <><MapPin className="inline-icon" />{[cityOf(e.address), e.address ?? e.location_name].filter(Boolean).join(' · ')}</> : <><Globe2 className="inline-icon" />{t('teamSpace.online')}</>}</p>
           <p>{teamName(e.team_id)}{me && e.lat != null && e.lng != null ? ` · ${t('map.distance', { km: km(me, { lat: e.lat, lng: e.lng }).toFixed(1) })}` : ''}</p></div></button>)}</div>
-        : <p className="auth-subtitle">{t('map.empty')}</p>}</section>
+        : <EmptyState compact icon="MapPin" text={t('map.empty')} />}</section>
     <ResponsiveSheet open={!!picked} onOpenChange={o => !o && setPicked(null)} title={picked?.title ?? ''}>
       {picked && <div className="edit-form"><ul className="detail-facts">
         <li><CalendarDays />{new Date(picked.starts_at).toLocaleString(lang, { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</li>

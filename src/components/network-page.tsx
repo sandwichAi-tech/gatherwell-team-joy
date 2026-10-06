@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/launch-states';
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -62,16 +63,16 @@ export function NetworkPage() {
       </section>}
 
       <section className="panel"><div className="section-heading"><h2>{t('network.fromNetwork')}</h2></div>
-        {q.data.gatherings.length ? q.data.gatherings.map(gathering) : <p className="auth-subtitle">{t('network.noGatherings')}</p>}
+        {q.data.gatherings.length ? q.data.gatherings.map(gathering) : <EmptyState compact icon="UsersRound" text={t('network.noGatherings')} />}
       </section>
 
       <section className="panel"><div className="section-heading"><h2>{t('network.connections')}</h2><span className="chip">{q.data.connections.length}</span></div>
-        {q.data.connections.length ? q.data.connections.map(p => person(p, <Button variant="ghost" disabled={busy === p.link_id} onClick={() => act(p.link_id!, 'network_remove', { _link: p.link_id }, 'network.removed')}>{t('network.remove')}</Button>)) : <p className="auth-subtitle">{t('network.noConnections')}</p>}
+        {q.data.connections.length ? q.data.connections.map(p => person(p, <Button variant="ghost" disabled={busy === p.link_id} onClick={() => act(p.link_id!, 'network_remove', { _link: p.link_id }, 'network.removed')}>{t('network.remove')}</Button>)) : <EmptyState compact icon="UsersRound" text={t('network.noConnections')} />}
         {q.data.outgoing.map(p => person(p, <span className="chip">{t('network.pending')}</span>))}
       </section>
 
       <section className="panel"><div className="section-heading"><h2>{t('network.suggested')}</h2></div>
-        {q.data.suggested.length ? q.data.suggested.map(p => person(p, <Button variant="secondary" disabled={busy === p.user_id} onClick={() => act(p.user_id, 'network_request', { _to: p.user_id }, 'network.requested')}><UserPlus />{t('network.add')}</Button>)) : <p className="auth-subtitle">{t('network.noSuggested')}</p>}
+        {q.data.suggested.length ? q.data.suggested.map(p => person(p, <Button variant="secondary" disabled={busy === p.user_id} onClick={() => act(p.user_id, 'network_request', { _to: p.user_id }, 'network.requested')}><UserPlus />{t('network.add')}</Button>)) : <EmptyState compact icon="UsersRound" text={t('network.noSuggested')} />}
       </section>
     </>}
   </>;

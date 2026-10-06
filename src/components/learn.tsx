@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/launch-states';
 import { LessonSummary } from '@/components/smart';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
 import { useEffect, useMemo, useState } from 'react';
@@ -146,7 +147,7 @@ export function LearnHome() {
     <section className="learn-section"><div className="section-heading"><h2>{t('learnHub.yourTracks')}</h2>{!tracks.length && <span className="chip sample-badge">{t('common.sample')}</span>}</div>
       {tracks.length ? rest.length ? <div className="track-grid">{rest.map(tr => <TrackCard key={tr.id} track={tr} data={data} />)}</div> : <p className="auth-subtitle">{t('learnHub.allShown')}</p> : <SampleTracks />}</section>
     <section className="learn-section"><div className="section-heading"><h2>{t('learnHub.live')}</h2></div>
-      {upcoming.length ? <div className="live-grid">{upcoming.map(l => <LiveCard key={l.id} lesson={l} track={byId.get(l.track_id)} />)}</div> : <p className="auth-subtitle">{t('learnHub.noLive')}</p>}
+      {upcoming.length ? <div className="live-grid">{upcoming.map(l => <LiveCard key={l.id} lesson={l} track={byId.get(l.track_id)} />)}</div> : <EmptyState compact icon="GraduationCap" text={t('learnHub.noLive')} />}
       {replays.length > 0 && <ul className="replay-list">{replays.map(l => <li key={l.id}><Radio /><div><strong>{lessonTitle(l, lang)}</strong><small>{fmtWhen(l.live_starts_at!, lang)}</small></div><Button asChild variant="secondary" size="sm"><Link to="/learn/lesson/$id" params={{ id: l.id }}><Play />{t('learnHub.replay')}</Link></Button></li>)}</ul>}</section>
     <section className="learn-section"><div className="section-heading"><h2>{t('learnHub.recipes')}</h2><Button asChild variant="link"><Link to="/learn/recipes">{t('home.viewAll')}<ArrowRight /></Link></Button></div>
       <div className="recipe-row">{(rec?.recipes ?? []).slice(0, 6).map(r => <RecipeCard key={r.id} recipe={r} saved={rec?.saved.has(r.id)} />)}</div></section>
@@ -264,7 +265,7 @@ export function RecipesPage() {
       {RECIPE_TAGS.map(tag => <button type="button" key={tag} className={`filter-chip ${filter === tag ? 'is-active' : ''}`} aria-pressed={filter === tag} onClick={() => setFilter(filter === tag ? null : tag)}>{t(`learnHub.tags.${tag}`)}</button>)}
       <button type="button" className={`filter-chip ${savedOnly ? 'is-active' : ''}`} aria-pressed={savedOnly} onClick={() => setSavedOnly(!savedOnly)}><Bookmark />{t('learnHub.saved')}</button>
     </div>
-    {list.length ? <div className="recipe-grid">{list.map(r => <RecipeCard key={r.id} recipe={r} saved={data?.saved.has(r.id)} />)}</div> : <p className="auth-subtitle">{t('learnHub.noRecipes')}</p>}
+    {list.length ? <div className="recipe-grid">{list.map(r => <RecipeCard key={r.id} recipe={r} saved={data?.saved.has(r.id)} />)}</div> : <EmptyState compact icon="GraduationCap" text={t('learnHub.noRecipes')} />}
   </>;
 }
 

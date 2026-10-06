@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/launch-states';
 import { useTranslateFill } from '@/lib/assistant-client';
 import { confirmAction } from '@/components/confirm-dialog';
 import { MembersOnlyPicker } from '@/components/offers';
@@ -187,7 +188,7 @@ function TracksTab({ teamId }: { teamId: string }) {
         <div className="order-title"><strong>{trackTitle(tr, i18n.resolvedLanguage)}</strong><small>{[tr.is_start_here ? t('learnHub.startHere') : null, t(tr.is_published ? 'templates.published' : 'templates.draft')].filter(Boolean).join(' · ')}</small></div>
         <Button variant="secondary" size="sm" onClick={() => setEditing(tr)}><Pencil />{t('templates.edit')}</Button></div>
       {data && <LessonOrder track={tr} lessons={lessonsOf(data, tr.id)} onEdit={setLesson} />}
-    </article>)}</div> : <p className="auth-subtitle">{t('learnHub.noTracksYet')}</p>}
+    </article>)}</div> : <EmptyState compact icon="BookOpen" text={t('learnHub.noTracksYet')} />}
     <TrackEditor track={editing} teamId={teamId} onClose={() => setEditing(null)} />
     <LessonEditor lesson={lesson} teamId={teamId} onClose={() => setLesson(null)} />
   </section>;
@@ -240,7 +241,7 @@ function RecipesTab({ teamId }: { teamId: string }) {
   return <section className="panel">
     <div className="section-heading"><h2>{t('learnHub.teamRecipes')}</h2><Button onClick={() => setEditing({ tags: [], cover_style: own.length % COVER_STYLES.length })}><Plus />{t('learnHub.addRecipe')}</Button></div>
     {own.length ? <ul className="order-list">{own.map(r => <li key={r.id}><span className="order-title"><strong>{i18n.resolvedLanguage === 'es' ? r.title_es || r.title_en : r.title_en || r.title_es}</strong><small>{r.prep_minutes ? t('learnHub.prep', { count: r.prep_minutes }) : ''}</small></span>
-      <Button variant="ghost" size="icon" aria-label={t('templates.edit')} onClick={() => setEditing(r)}><Pencil /></Button></li>)}</ul> : <p className="auth-subtitle">{t('learnHub.noTeamRecipes')}</p>}
+      <Button variant="ghost" size="icon" aria-label={t('templates.edit')} onClick={() => setEditing(r)}><Pencil /></Button></li>)}</ul> : <EmptyState compact icon="BookOpen" text={t('learnHub.noTeamRecipes')} />}
     <RecipeEditor recipe={editing} teamId={teamId} onClose={() => setEditing(null)} />
   </section>;
 }
@@ -252,7 +253,7 @@ function ProgressTab({ teamId }: { teamId: string }) {
   return <section className="panel"><div className="section-heading"><div><h2>{t('learnHub.trackProgress')}</h2><p>{t('learnHub.trackProgressText')}</p></div></div>
     {error ? <p className="auth-subtitle">{t('teamSpace.notAllowed')}</p> : data.length ? <table className="progress-table"><thead><tr><th>{t('learnHub.track')}</th><th>{t('learnHub.started')}</th><th>{t('learnHub.finished')}</th></tr></thead>
       <tbody>{data.map(row => { const tr = byId.get(row.track_id); return <tr key={row.track_id}><td>{tr ? trackTitle(tr, i18n.resolvedLanguage) : '—'}<small>{t('learnHub.lessonCount', { count: row.lessons })}</small></td><td>{row.started}</td><td>{row.completed}</td></tr>; })}</tbody></table>
-      : <p className="auth-subtitle">{t('learnHub.noTracksYet')}</p>}
+      : <EmptyState compact icon="BookOpen" text={t('learnHub.noTracksYet')} />}
   </section>;
 }
 

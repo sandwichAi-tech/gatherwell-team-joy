@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/launch-states';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { confirmAction } from '@/components/confirm-dialog';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -109,7 +110,7 @@ export function CommentThread({ teamId, eventId = null, topicId = null, me, titl
   if (!feed) return eventId ? <p className="auth-subtitle">{t('conversation.rsvpToJoin')}</p> : null;
   return <div className="convo">
     {title && <h2>{title}</h2>}
-    {roots.length === 0 ? <p className="auth-subtitle">{t('conversation.empty')}</p> :
+    {roots.length === 0 ? <EmptyState compact icon="MessageCircle" text={t('conversation.empty')} /> :
       <ul className="convo-list">{roots.map(c => <CommentRow key={c.id} c={c} replies={byParent.get(c.id) ?? []} feed={feed} me={me} teamId={teamId} eventId={eventId} topicId={topicId} lang={lang} />)}</ul>}
     <Composer teamId={teamId} eventId={eventId} topicId={topicId} />
   </div>;

@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/launch-states';
 import { trackEvent } from '@/lib/analytics';
 import { ListSkeleton } from '@/components/launch-states';
 import { ClaimGuard } from '@/components/smart';
@@ -61,7 +62,7 @@ function NoTeam() {
   const { t } = useTranslation(); const { userId } = useGatherwell(); const queryClient = useQueryClient();
   const [name, setName] = useState(''); const [code, setCode] = useState(''); const [busy, setBusy] = useState(false);
   const done = async () => { await queryClient.invalidateQueries({ queryKey: ['teams', userId] }); await queryClient.invalidateQueries({ queryKey: ['workspace', userId] }); };
-  return <section className="panel no-team"><h2>{t('teamSpace.noTeamTitle')}</h2><p className="auth-subtitle">{t('teamSpace.noTeamText')}</p>
+  return <section className="panel no-team"><h2>{t('teamSpace.noTeamTitle')}</h2><EmptyState compact icon="UsersRound" text={t('teamSpace.noTeamText')} />
     <form className="inline-form" onSubmit={async e => { e.preventDefault(); if (!name.trim()) return; setBusy(true); const { error } = await supabase.rpc('create_team', { _name: name.trim() }); setBusy(false); if (error) toast.error(errorText(t, error)); else await done(); }}>
       <Input className="field-input" placeholder={t('onboarding.teamNamePlaceholder')} value={name} onChange={e => setName(e.target.value)} aria-label={t('onboarding.teamName')} maxLength={80} />
       <Button disabled={busy || !name.trim()}>{t('teamSpace.createTeam')}</Button>
@@ -337,7 +338,7 @@ function MembersSheet({ open, onOpenChange, teamId, userId, isLeader, directLead
       <div className="member-list">{filtered.map(m => <button type="button" key={m.userId} className="member-row" onClick={() => setSelected(m)}>
         <span className={`initial-avatar ${m.userId === homId ? 'hom-ring' : ''}`}>{initialsOf(m.name)}</span><span className="member-name">{m.name ?? t('teamSpace.someone')}{m.userId === userId && <small> · {t('common.you')}</small>}</span>
         {m.customBadge && <span className="chip warm-chip">{m.customBadge}</span>}<span className="chip">{t(`roles.${m.role}`)}</span><ChevronRight className="settings-chevron" /></button>)}
-        {!filtered.length && <p className="auth-subtitle">{t('teamSpace.noMatches')}</p>}</div>
+        {!filtered.length && <EmptyState compact icon="UsersRound" text={t('teamSpace.noMatches')} />}</div>
     </> : <div className="edit-form">
       <button type="button" className="auth-link back-link" onClick={() => setSelected(null)}><ChevronLeft />{t('common.back')}</button>
       <ProfileHero compact avatar={<span className={`initial-avatar profile-avatar ${selected.userId === homId ? 'hom-ring' : ''}`} style={{ width: 88, height: 88, fontSize: 28 }}>{initialsOf(selected.name)}</span>}
@@ -456,7 +457,7 @@ function TeamCalendar({ teamId, lang, onOpen }: { teamId: string; lang: string; 
           {list.length > 3 && <span className="day-more">+{list.length - 3}</span>}</div>; })}</div>
     </> : upcoming.length ? <div className="event-list">{upcoming.slice(0, 20).map(e => <button type="button" key={e.id} className="event-row event-button" onClick={() => onOpen(e)}>
       <DateTile iso={e.starts_at} lang={lang} /><div className="event-info"><h3>{e.title}</h3><p><span className="tree-swatch" style={{ background: colorOf.get(e.team_id) }} />{tree.find(n => n.id === e.team_id)?.name} · {new Date(e.starts_at).toLocaleTimeString(lang, { hour: '2-digit', minute: '2-digit' })}</p></div><ChevronRight className="settings-chevron" /></button>)}</div>
-      : <p className="auth-subtitle">{t('teamSpace.noEvents')}</p>}
+      : <EmptyState compact icon="UsersRound" text={t('teamSpace.noEvents')} />}
   </section>;
 }
 
