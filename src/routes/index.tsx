@@ -14,7 +14,6 @@ export const Route = createFileRoute('/')({
     return { meta: [{ title }, { name: 'description', content: description }, { property: 'og:title', content: title }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' }, ...(loaderData ? [{ property: 'og:image', content: loaderData }, { name: 'twitter:image', content: loaderData }] : [])] };
   },
   errorComponent: ({ reset }) => <RetryState retry={reset} />,
-  notFoundComponent: () => <LandingPage />,
   component: function PublicHome() {
     const navigate = useNavigate();
     useEffect(() => { void supabase.auth.getUser().then(({ data }) => { if (data.user) void navigate({ to: '/home', replace: true }); }); }, [navigate]);

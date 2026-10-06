@@ -216,7 +216,7 @@ export function SeatsPage() {
       <Meter label={t('billing.seatsUsed', { used, total })} used={used} max={total} />
       <div className="seat-list">{roster.map(m => {
         const on = lic!.seats.has(m.userId);
-        return <div key={m.userId} className="seat-row"><span><strong>{m.name ?? t('team.member')}</strong><small>{t(`roles.${m.role}`)}{on ? ` · ${t('billing.name_growth')}` : ''}</small></span>
+        return <div key={m.userId} className="seat-row"><span><strong>{m.name ?? t('roles.member')}</strong><small>{t(`roles.${m.role}`)}{on ? ` · ${t('billing.name_growth')}` : ''}</small></span>
           <Button variant={on ? 'secondary' : 'default'} disabled={busy === m.userId || (!on && used >= total)} onClick={() => void toggle(m.userId, !on)}>{on ? t('billing.removeSeat') : t('billing.assignSeat')}</Button></div>;
       })}</div>
     </section> : <section className="panel">
