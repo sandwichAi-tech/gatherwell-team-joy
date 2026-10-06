@@ -26,5 +26,5 @@
 - [x] 1. Liability waivers
 - [x] 2. Co-hosts
 - [x] 3. Custom RSVP questions, approval, invite-only
-- [ ] 4. Conversation: comments, team discussions, WhatsApp link, reply notifications
+- [x] 4. Conversation: comments, team discussions, WhatsApp link, reply notifications
 - [ ] 5. Follow pages (/h, /t) and private calendar feeds
