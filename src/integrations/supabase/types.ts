@@ -922,6 +922,7 @@ export type Database = {
           lng: number | null
           location_name: string | null
           meeting_note: string | null
+          offer_id: string | null
           online_url: string | null
           pass_fee: boolean
           price_cents: number | null
@@ -954,6 +955,7 @@ export type Database = {
           lng?: number | null
           location_name?: string | null
           meeting_note?: string | null
+          offer_id?: string | null
           online_url?: string | null
           pass_fee?: boolean
           price_cents?: number | null
@@ -986,6 +988,7 @@ export type Database = {
           lng?: number | null
           location_name?: string | null
           meeting_note?: string | null
+          offer_id?: string | null
           online_url?: string | null
           pass_fee?: boolean
           price_cents?: number | null
@@ -1001,6 +1004,13 @@ export type Database = {
           visibility?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "events_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "events_team_id_fkey"
             columns: ["team_id"]
@@ -1638,6 +1648,121 @@ export type Database = {
           },
         ]
       }
+      offer_purchases: {
+        Row: {
+          amount_cents: number
+          cancel_at_period_end: boolean
+          created_at: string
+          id: string
+          offer_id: string
+          renews_at: string | null
+          status: string
+          stripe_subscription_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents?: number
+          cancel_at_period_end?: boolean
+          created_at?: string
+          id?: string
+          offer_id: string
+          renews_at?: string | null
+          status?: string
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          cancel_at_period_end?: boolean
+          created_at?: string
+          id?: string
+          offer_id?: string
+          renews_at?: string | null
+          status?: string
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_purchases_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offers: {
+        Row: {
+          cover_style: number
+          created_at: string
+          description_en: string | null
+          description_es: string | null
+          drip_days: number
+          file_path: string | null
+          host_id: string
+          id: string
+          includes_en: Json
+          includes_es: Json
+          kind: string
+          price_cents: number
+          status: string
+          team_id: string
+          title_en: string
+          title_es: string
+          updated_at: string
+        }
+        Insert: {
+          cover_style?: number
+          created_at?: string
+          description_en?: string | null
+          description_es?: string | null
+          drip_days?: number
+          file_path?: string | null
+          host_id?: string
+          id?: string
+          includes_en?: Json
+          includes_es?: Json
+          kind: string
+          price_cents?: number
+          status?: string
+          team_id: string
+          title_en?: string
+          title_es?: string
+          updated_at?: string
+        }
+        Update: {
+          cover_style?: number
+          created_at?: string
+          description_en?: string | null
+          description_es?: string | null
+          drip_days?: number
+          file_path?: string | null
+          host_id?: string
+          id?: string
+          includes_en?: Json
+          includes_es?: Json
+          kind?: string
+          price_cents?: number
+          status?: string
+          team_id?: string
+          title_en?: string
+          title_es?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offers_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount_cents: number
@@ -1652,6 +1777,7 @@ export type Database = {
           host_id: string
           id: string
           kind: string
+          offer_id: string | null
           rsvp_id: string | null
           status: string
           stripe_payment_intent: string | null
@@ -1671,6 +1797,7 @@ export type Database = {
           host_id: string
           id?: string
           kind: string
+          offer_id?: string | null
           rsvp_id?: string | null
           status?: string
           stripe_payment_intent?: string | null
@@ -1690,6 +1817,7 @@ export type Database = {
           host_id?: string
           id?: string
           kind?: string
+          offer_id?: string | null
           rsvp_id?: string | null
           status?: string
           stripe_payment_intent?: string | null
@@ -1709,6 +1837,13 @@ export type Database = {
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
             referencedColumns: ["id"]
           },
           {
@@ -2577,6 +2712,7 @@ export type Database = {
           id: string
           is_published: boolean
           is_start_here: boolean
+          offer_id: string | null
           sort_order: number
           team_id: string
           title_en: string
@@ -2591,6 +2727,7 @@ export type Database = {
           id?: string
           is_published?: boolean
           is_start_here?: boolean
+          offer_id?: string | null
           sort_order?: number
           team_id: string
           title_en?: string
@@ -2605,12 +2742,20 @@ export type Database = {
           id?: string
           is_published?: boolean
           is_start_here?: boolean
+          offer_id?: string | null
           sort_order?: number
           team_id?: string
           title_en?: string
           title_es?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "tracks_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "tracks_team_id_fkey"
             columns: ["team_id"]
@@ -2916,6 +3061,10 @@ export type Database = {
         Returns: string
       }
       has_blocked_claim: { Args: { _text: string }; Returns: boolean }
+      has_offer_access: {
+        Args: { _offer: string; _uid: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -2933,6 +3082,7 @@ export type Database = {
         Args: { _roles: string[]; _team_id: string }
         Returns: boolean
       }
+      join_free_offer: { Args: { _offer: string }; Returns: undefined }
       join_team_by_code: {
         Args: { _by?: string; _code: string; _role?: string }
         Returns: string
@@ -2950,6 +3100,7 @@ export type Database = {
         }
         Returns: string
       }
+      leave_free_offer: { Args: { _offer: string }; Returns: undefined }
       list_public_gatherings: {
         Args: { _days?: number; _include_samples?: boolean; _limit?: number }
         Returns: Json
@@ -2970,6 +3121,14 @@ export type Database = {
           id: string
           title_en: string
           title_es: string
+        }[]
+      }
+      my_offer_stats: {
+        Args: never
+        Returns: {
+          active: number
+          offer_id: string
+          total: number
         }[]
       }
       my_plan_status: { Args: never; Returns: Json }
