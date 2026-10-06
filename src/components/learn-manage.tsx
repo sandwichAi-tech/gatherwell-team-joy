@@ -1,4 +1,5 @@
 import { useTranslateFill } from '@/lib/assistant-client';
+import { confirmAction } from '@/components/confirm-dialog';
 import { MembersOnlyPicker } from '@/components/offers';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
@@ -59,7 +60,7 @@ function TrackEditor({ track, teamId, onClose }: { track: Partial<Track> | null;
     toast.success(t('templates.saved')); await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose();
   };
   const remove = async () => {
-    if (!track?.id || !window.confirm(t('learnHub.confirmDeleteTrack'))) return;
+    if (!track?.id || !(await confirmAction({ title: t('learnHub.confirmDeleteTrack'), destructive: true }))) return;
     const res = await supabase.from('tracks').delete().eq('id', track.id);
     if (res.error) { toast.error(errMsg(t, res.error)); return; }
     await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose();
@@ -119,7 +120,7 @@ function LessonEditor({ lesson, teamId, onClose }: { lesson: (Partial<Lesson> & 
     setBusy(false);
   };
   const remove = async () => {
-    if (!lesson?.id || !window.confirm(t('learnHub.confirmDeleteLesson'))) return;
+    if (!lesson?.id || !(await confirmAction({ title: t('learnHub.confirmDeleteLesson'), destructive: true }))) return;
     const r = await supabase.from('lessons').delete().eq('id', lesson.id);
     if (r.error) { toast.error(errMsg(t, r.error)); return; }
     await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose();
@@ -209,7 +210,7 @@ function RecipeEditor({ recipe, teamId, onClose }: { recipe: Partial<Recipe> | n
     toast.success(t('templates.saved')); await qc.invalidateQueries({ queryKey: ['recipes', userId] }); onClose();
   };
   const remove = async () => {
-    if (!recipe?.id || !window.confirm(t('learnHub.confirmDeleteRecipe'))) return;
+    if (!recipe?.id || !(await confirmAction({ title: t('learnHub.confirmDeleteRecipe'), destructive: true }))) return;
     const res = await supabase.from('recipes').delete().eq('id', recipe.id);
     if (res.error) { toast.error(errMsg(t, res.error)); return; }
     await qc.invalidateQueries({ queryKey: ['recipes', userId] }); onClose();

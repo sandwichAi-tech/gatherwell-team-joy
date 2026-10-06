@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { confirmAction } from '@/components/confirm-dialog';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -83,7 +84,7 @@ function CommentRow({ c, replies, feed, me, teamId, eventId, topicId, lang }: { 
         {!child && <button type="button" className="convo-react" onClick={() => setReplying(r => !r)}><Reply />{t('conversation.reply')}</button>}
         {feed.can_moderate && !child && <button type="button" className="convo-react" aria-label={x.pinned ? t('conversation.unpin') : t('conversation.pin')} onClick={() => act('moderate_comment', { _id: x.id, _pinned: !x.pinned, _hidden: null })}><Pin /></button>}
         {feed.can_moderate && <button type="button" className="convo-react" aria-label={x.hidden ? t('conversation.unhide') : t('conversation.hide')} onClick={() => act('moderate_comment', { _id: x.id, _pinned: null, _hidden: !x.hidden }, x.hidden ? 'conversation.shown' : 'conversation.hidden')}>{x.hidden ? <Eye /> : <EyeOff />}</button>}
-        {(x.author_id === me || feed.can_moderate) && <button type="button" className="convo-react" aria-label={t('conversation.delete')} onClick={() => { if (window.confirm(t('conversation.deleteConfirm'))) void act('delete_comment', { _id: x.id }, 'conversation.deleted'); }}><Trash2 /></button>}
+        {(x.author_id === me || feed.can_moderate) && <button type="button" className="convo-react" aria-label={t('conversation.delete')} onClick={async () => { if (await confirmAction({ title: t('conversation.deleteConfirm'), destructive: true })) void act('delete_comment', { _id: x.id }, 'conversation.deleted'); }}><Trash2 /></button>}
         {x.author_id !== me && <ReportButton type="comment" id={x.id} className="convo-react" />}
       </div>
     </div>
@@ -162,7 +163,7 @@ export function DiscussionsPanel({ teamId, isLeader, me }: { teamId: string; isL
     </ResponsiveSheet>
     <ResponsiveSheet open={!!open} onOpenChange={o => !o && setOpen(null)} title={current?.title ?? t('conversation.discussions')}>
       {isLeader && current && <div className="guest-button-row"><Button variant="secondary" onClick={() => manage({ _pinned: !current.pinned })}><Pin />{current.pinned ? t('conversation.unpin') : t('conversation.pin')}</Button>
-        <Button variant="ghost" className="danger-text" onClick={() => { if (window.confirm(t('conversation.deleteTopicConfirm'))) void manage({ _delete: true }); }}><Trash2 />{t('conversation.deleteTopic')}</Button></div>}
+        <Button variant="ghost" className="danger-text" onClick={async () => { if (await confirmAction({ title: t('conversation.deleteTopicConfirm'), destructive: true })) void manage({ _delete: true }); }}><Trash2 />{t('conversation.deleteTopic')}</Button></div>}
       {open && <CommentThread teamId={teamId} topicId={open} me={me} />}
     </ResponsiveSheet>
   </section>;

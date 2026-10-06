@@ -1,4 +1,5 @@
 import { trackEvent } from '@/lib/analytics';
+import { confirmAction } from '@/components/confirm-dialog';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
 import { useServerFn } from '@tanstack/react-start';
 import { usePaymentGate } from '@/components/plan-page';
@@ -110,7 +111,7 @@ export function ChallengeEditor({ draft, teamId, onClose }: { draft: Partial<Cha
     toast.success(t('templates.saved')); await qc.invalidateQueries({ queryKey: ['challenges'] }); onClose();
   };
   const remove = async () => {
-    if (!draft?.id || !window.confirm(t('challenges.confirmDelete'))) return;
+    if (!draft?.id || !(await confirmAction({ title: t('challenges.confirmDelete'), destructive: true }))) return;
     const res = await supabase.from('challenges').delete().eq('id', draft.id);
     if (res.error) { toast.error(t(rpcErrorKey(res.error))); return; }
     await qc.invalidateQueries({ queryKey: ['challenges'] }); onClose();

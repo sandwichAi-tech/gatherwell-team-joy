@@ -2683,5 +2683,11 @@
       "not_allowed": "You can't post here.",
       "invalid_title": "Give the topic a title."
     }
+  },
+  "confirm": {
+    "cancel": "Cancel",
+    "ok": "Confirm",
+    "delete": "Delete",
+    "yesCancel": "Yes, cancel"
   }
 }

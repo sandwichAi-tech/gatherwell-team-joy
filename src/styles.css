@@ -1274,3 +1274,20 @@ button { white-space:normal; }
 .gw-toast-tile.is-success{background:color-mix(in srgb,var(--success) 14%,transparent);color:var(--success)}
 .gw-toast-tile.is-error{background:color-mix(in srgb,var(--destructive) 14%,transparent);color:var(--destructive)}
 [data-sonner-toast] [data-icon]{width:32px;height:32px;margin-right:4px}
+/* DS2 overlays */
+[data-vaul-overlay],[data-radix-dialog-overlay],.fixed.inset-0.z-50.bg-overlay\/40{backdrop-filter:blur(6px)}
+.gw-confirm{max-width:400px;border-radius:24px;padding:24px;background:var(--surface-modal);box-shadow:var(--e3)}
+.gw-confirm-head{display:grid;justify-items:center;text-align:center;gap:8px}
+.gw-confirm-head h2{font-size:20px}.gw-confirm-head p{color:var(--body);font-size:15px}
+.gw-confirm-tile{display:grid;place-items:center;width:56px;height:56px;border-radius:16px;background:var(--secondary);color:var(--lavender);margin-bottom:8px}
+.gw-confirm-tile.is-danger{background:color-mix(in srgb,var(--destructive) 12%,transparent);color:var(--destructive)}
+.gw-confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.gw-confirm-actions>button{min-height:48px;margin:0}
+.gw-confirm-danger{background:var(--destructive);color:var(--destructive-foreground)}.gw-confirm-danger:hover{background:var(--destructive);opacity:.92}
+.gw-toaster{--offset:calc(96px + env(safe-area-inset-bottom))}
+@media (min-width:1024px){.gw-toaster{--offset:24px}}
+.responsive-sheet{box-shadow:var(--e3)}.responsive-sheet .sheet-body{max-height:min(72vh,720px);overflow-y:auto;overscroll-behavior:contain}
+.responsive-dialog{background:var(--surface-modal);border-radius:24px;box-shadow:var(--e3)}
+.gw-menu-sheet{animation:gw-menu-in var(--dur-open) var(--ease-out)}.gw-menu-sheet.is-closing{animation:gw-menu-out var(--dur-close) var(--ease-in) forwards}
+@keyframes gw-menu-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+@keyframes gw-menu-out{to{opacity:0;transform:translateY(-8px)}}

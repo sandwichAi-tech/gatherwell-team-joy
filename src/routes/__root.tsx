@@ -1,4 +1,5 @@
 import { Toaster } from '@/components/ui/sonner';
+import { ConfirmHost } from '@/components/confirm-dialog';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -148,7 +149,8 @@ function RootComponent() {
       <a className="skip-link" href="#main-content">{i18n.t('launch.skip')}</a>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
-      <Toaster position="top-center" />
+      <Toaster position="bottom-center" swipeDirections={["bottom","left","right"]} className="gw-toaster" />
+      <ConfirmHost />
     </QueryClientProvider>
   );
 }
