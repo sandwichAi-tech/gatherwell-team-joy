@@ -108,7 +108,7 @@ export function PlanPage() {
       <div className="plan-meters">
         <Meter label={lim.gatherings === null ? t('billing.meterGatheringsUnlimited', { used: st.usage.gatherings }) : t('billing.meterGatherings', { used: st.usage.gatherings, max: lim.gatherings })} used={st.usage.gatherings} max={lim.gatherings} />
         <Meter label={lim.guests === null ? t('billing.meterGuestsUnlimited', { used: st.usage.largest_guests }) : t('billing.meterGuests', { used: st.usage.largest_guests, max: lim.guests })} used={st.usage.largest_guests} max={lim.guests} />
-        <Meter label={t('billing.meterStorage', { used: formatStorage(usedMb), max: formatStorage(lim.storage_mb) })} used={usedMb} max={lim.storage_mb} />
+        <Meter label={t('billing.meterStorage', { used: formatStorage(usedMb, lang), max: formatStorage(lim.storage_mb, lang) })} used={usedMb} max={lim.storage_mb} />
         <Meter label={t('billing.meterAssistant', { used: st.usage.assistant, max: lim.assistant })} used={st.usage.assistant} max={lim.assistant} />
       </div>
       {st.has_customer && <Button variant="secondary" disabled={gate.busy} onClick={() => void gate.run(() => portal({ data: { origin } }))}><CreditCard />{t('billing.manage')}</Button>}
@@ -130,7 +130,7 @@ export function PlanPage() {
           <ul className="plan-features">
             <li><Check />{p.limits.gatherings === null ? t('billing.fGatheringsUnlimited') : t('billing.fGatherings', { n: p.limits.gatherings })}</li>
             <li><Check />{p.limits.guests === null ? t('billing.fGuestsUnlimited') : t('billing.fGuests', { n: p.limits.guests })}</li>
-            <li><Check />{t('billing.fStorage', { size: formatStorage(p.limits.storage_mb) })}</li>
+            <li><Check />{t('billing.fStorage', { size: formatStorage(p.limits.storage_mb, lang) })}</li>
             <li><Check />{t('billing.fAssistant', { n: p.limits.assistant.toLocaleString(lang) })}</li>
             <li><Check />{t('billing.fFee', { n: p.limits.fee_pct })}</li>
           </ul>
@@ -166,7 +166,7 @@ export function PlanPage() {
           {(() => { const l = PLANS.find(p => p.id === downgrade)!.limits; return <>
             <li>{l.gatherings === null ? t('billing.fGatheringsUnlimited') : t('billing.downGatherings', { n: l.gatherings })}</li>
             <li>{l.guests === null ? t('billing.fGuestsUnlimited') : t('billing.downGuests', { n: l.guests })}</li>
-            <li>{t('billing.downStorage', { size: formatStorage(l.storage_mb) })}</li>
+            <li>{t('billing.downStorage', { size: formatStorage(l.storage_mb, lang) })}</li>
             <li>{t('billing.fAssistant', { n: l.assistant })}</li>
             <li>{t('billing.fFee', { n: l.fee_pct })}</li></>; })()}
         </ul>

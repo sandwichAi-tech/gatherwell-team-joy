@@ -1,4 +1,5 @@
 import { trackEvent } from '@/lib/analytics';
+import { ListSkeleton } from '@/components/launch-states';
 import { useServerFn } from '@tanstack/react-start';
 import { usePaymentGate } from '@/components/plan-page';
 import { startChallengeCheckout } from '@/lib/billing.functions';
@@ -67,7 +68,7 @@ export function ChallengesSection() {
   const { list, leader, teamId, isLoading } = useChallenges();
   const [tab, setTab] = useState<Phase>('active'); const [editing, setEditing] = useState<Partial<Challenge> | null>(null);
   const groups = useMemo(() => ({ active: list.filter(c => phaseOf(c) === 'active'), upcoming: list.filter(c => phaseOf(c) === 'upcoming').reverse(), past: list.filter(c => phaseOf(c) === 'past') }), [list]);
-  if (isLoading) return null;
+  if (isLoading) return <ListSkeleton />;
   return <section className="panel" id="challenges">
     <div className="section-heading"><h2>{t('challenges.title')}</h2>{leader ? <Button onClick={() => setEditing({})}><Plus />{t('challenges.new')}</Button> : !list.length && <span className="chip sample-badge">{t('common.sample')}</span>}</div>
     {list.length ? <>
@@ -226,7 +227,7 @@ export function ChallengePage({ id }: { id: string }) {
   const { data: mine = [] } = useQuery(myCheckinsQuery(userId, id));
   const { data: board = [] } = useQuery(leaderboardQuery(id));
   const [sheetDate, setSheetDate] = useState<string | null>(null); const [editing, setEditing] = useState<Partial<Challenge> | null>(null); const [busy, setBusy] = useState(false);
-  if (isLoading) return <div className="min-h-96" />;
+  if (isLoading) return <ListSkeleton />;
   if (!c) return <section className="panel"><Link to="/team" className="back-link"><ArrowLeft />{t('nav.team')}</Link><p className="auth-subtitle">{t('learnHub.notFound')}</p></section>;
   const today = localDate(); const yesterday = addDays(today, -1); const phase = phaseOf(c, today); const len = lengthOf(c);
   const dates = new Set(mine.map(m => m.checkin_date)); const s = streaksOf([...dates], today);

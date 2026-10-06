@@ -253,7 +253,7 @@
 .weekday { text-align: center; font-size: 12px; font-weight: 600; color: var(--muted-foreground); padding: 8px 0; border-inline-end: 1px solid var(--border); border-bottom: 1px solid var(--border); text-transform: uppercase; }
 .day-cell { min-height: 84px; padding: 4px; border-inline-end: 1px solid var(--border); border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .day-cell.is-outside { background: var(--background); }
-.day-cell.is-outside .day-number { opacity: .45; }
+.day-cell.is-outside .day-number { opacity: 1; color: var(--muted-foreground); }
 .day-number { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--muted-foreground); padding: 2px 4px; }
 .day-cell.is-today .day-number { background: var(--primary); color: var(--primary-foreground); border-radius: 9999px; align-self: flex-start; min-width: 22px; text-align: center; }
 .day-event { font-size: 11px; text-align: left; padding: 2px 6px; border-radius: 4px; background: var(--secondary); border-inline-start: 3px solid var(--primary); color: var(--foreground); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 22px; }
@@ -1067,7 +1067,7 @@ button.admin-row{grid-template-columns:minmax(0,1fr) auto 20px}button.admin-row>
 .guest-consent a { text-decoration: underline; }
 
 /* Launch refinements: readable secondary text, stable lists, safe areas and touch targets. */
-:root { --muted-foreground:#706879; --success:#23794F; --qr-background:#FFFFFF; --qr-foreground:#1C1726; }
+:root { --muted-foreground:#706879; --lavender:#71569C; --success:#23794F; --qr-background:#FFFFFF; --qr-foreground:#1C1726; }
 .dark { --muted-foreground:#BBB2C5; --destructive:#EF99A6; --success:#72CDA2; }
 html { scroll-padding-top:96px; }
 body { overflow-wrap:break-word; }
