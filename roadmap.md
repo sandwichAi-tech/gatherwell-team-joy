@@ -23,7 +23,7 @@
 - [x] 4. Playbook engine
 
 # Prompt 21B (after 21A; one area at a time)
-- [ ] 1. Liability waivers
+- [x] 1. Liability waivers
 - [ ] 2. Co-hosts
 - [ ] 3. Custom RSVP questions, approval, invite-only
 - [ ] 4. Conversation: comments, team discussions, WhatsApp link, reply notifications
