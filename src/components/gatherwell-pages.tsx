@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { ArrowRight, Plus, UsersRound, CalendarDays, Repeat2, CircleCheck, Globe2, Sun, Moon, Monitor, BookOpen, ChevronRight } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { useGatherwell } from './gatherwell-shell';
+import { FeaturedFromNetwork } from '@/components/network-page';
 import i18n from '@/lib/i18n';
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
@@ -59,6 +60,8 @@ function PeopleRows({ follow = false }: { follow?: boolean }) {
 }
 function HomeTemplates() { const { workspace } = useAccount(); return workspace ? <FromYourLeader teamId={workspace.teamId} role={workspace.role} /> : null; }
 function MobileTeamSwitcher() { const { userId } = useGatherwell(); return <TeamSwitcher userId={userId} className="mobile-switcher" />; }
+function HomeFeatured() { const { workspace } = useAccount(); return workspace ? <FeaturedFromNetwork teamId={workspace.teamId} /> : null; }
+
 export function HomePage() {
   const { t } = useTranslation(); const { openCreate, openDetail, openPlaceholder } = useGatherwell(); const { profile } = useAccount();
   const stats = [{ key: 'members', Icon: UsersRound }, { key: 'events', Icon: CalendarDays }, { key: 'attendance', Icon: Repeat2 }, { key: 'checkins', Icon: CircleCheck }] as const;
@@ -69,6 +72,7 @@ export function HomePage() {
     <MemberPlanCard />
     <NextCard />
     <ActiveChallengeCard />
+    <HomeFeatured />
     <HomeTemplates />
     <LeaderInsightsLink />
     <div className="greeting page-heading"><div><span className="eyebrow">{t('home.eyebrow')}</span><h1>{t('home.greeting', { name: firstName(profile?.full_name) || t('common.name') })}</h1><p>{t('home.subtitle')}</p><span className="chip sample-badge mobile-sample">{t('common.sample')}</span></div><Button className="page-create" onClick={openCreate}><Plus />{t('common.create')}</Button></div>
@@ -77,7 +81,7 @@ export function HomePage() {
     </section>
     <div className="dashboard-columns">
       <section className="panel upcoming-panel"><div className="section-heading"><h2>{t('home.upcoming')}</h2><Button asChild variant="link"><Link to="/events">{t('home.viewAll')}<ArrowRight /></Link></Button></div><EventRows /></section>
-      <div className="dashboard-right"><section className="network-panel"><div className="circle-lines" aria-hidden="true" /><span className="eyebrow">{t('home.networkLabel')}</span><h2>{t('home.networkTitle')}</h2><p>{t('home.networkText')}</p><Button className="peach-button" onClick={() => openPlaceholder('team')}>{t('home.networkAction')}<ArrowRight /></Button></section>
+      <div className="dashboard-right"><section className="network-panel"><div className="circle-lines" aria-hidden="true" /><span className="eyebrow">{t('home.networkLabel')}</span><h2>{t('home.networkTitle')}</h2><p>{t('home.networkText')}</p><Button asChild className="peach-button"><Link to="/network">{t('home.networkAction')}<ArrowRight /></Link></Button></section>
       <section className="panel pulse-panel"><h2>{t('home.pulse')}</h2><div className="pulse-list">{(['sofia', 'challenge', 'maria'] as const).map(key => <div className="pulse-item" key={key}><span className="pulse-dot" /><div><h3>{t(`pulse.${key}.title`)}</h3><p>{t(`pulse.${key}.time`)}</p></div></div>)}</div></section></div>
     </div>
     <section className="panel follow-panel"><div className="section-heading"><div><h2>{t('home.followTitle')}</h2><p>{t('home.followSubtitle')}</p></div><span className="chip warm-chip">{t('home.followChip')}</span></div><PeopleRows follow /></section>
