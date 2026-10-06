@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.guard_members_only_rsvp(), public.guard_offer_link() FROM PUBLIC, anon, authenticated;

@@ -35,6 +35,9 @@ export const Route = createFileRoute('/api/public/stripe/webhook')({
               } else if (m.kind === 'challenge') {
                 await db.from('challenge_members').upsert({ challenge_id: m.challenge_id, user_id: m.user_id }, { onConflict: 'challenge_id,user_id', ignoreDuplicates: true });
                 await db.from('payments').update({ status: 'paid', stripe_payment_intent: o.payment_intent }).eq('stripe_session_id', o.id);
+              } else if (m.kind === 'offer') {
+                const { data: pay } = await db.from('payments').update({ status: 'paid', stripe_payment_intent: o.payment_intent ?? null }).eq('stripe_session_id', o.id).select('amount_cents').maybeSingle();
+                await db.from('offer_purchases' as any).upsert({ offer_id: m.offer_id, user_id: m.user_id, status: o.subscription ? 'active' : 'paid', stripe_subscription_id: o.subscription ?? null, amount_cents: pay?.amount_cents ?? o.amount_total ?? 0, cancel_at_period_end: false }, { onConflict: 'offer_id,user_id' });
               } else if (m.kind === 'plan') {
                 await db.from('billing_accounts').upsert({ user_id: m.user_id, stripe_customer_id: o.customer, stripe_subscription_id: o.subscription, plan: m.plan, billing_period: m.period, status: 'active' }, { onConflict: 'user_id' });
               } else if (m.kind === 'license') {
@@ -52,6 +55,8 @@ export const Route = createFileRoute('/api/public/stripe/webhook')({
               const renews = ts(o.current_period_end ?? o.items?.data?.[0]?.current_period_end);
               if (m.kind === 'plan') {
                 await db.from('billing_accounts').upsert({ user_id: m.user_id, stripe_customer_id: o.customer, stripe_subscription_id: o.id, plan: gone ? 'free' : m.plan, billing_period: gone ? null : m.period, status: gone ? 'active' : status, renews_at: gone ? null : renews }, { onConflict: 'user_id' });
+              } else if (m.kind === 'offer') {
+                await db.from('offer_purchases' as any).update({ status, renews_at: renews, cancel_at_period_end: !!o.cancel_at_period_end, stripe_subscription_id: o.id }).eq('offer_id', m.offer_id).eq('user_id', m.user_id);
               } else if (m.kind === 'license') {
                 await db.from('team_licenses').update({ status, renews_at: renews }).eq('team_id', m.team_id);
               }
@@ -65,6 +70,7 @@ export const Route = createFileRoute('/api/public/stripe/webhook')({
               const end = ts(o.lines?.data?.[0]?.period?.end);
               const { data: b } = await db.from('billing_accounts').update({ status: failed ? 'past_due' : 'active', ...(end && !failed ? { renews_at: end } : {}) }).eq('stripe_subscription_id', sub).select('user_id').maybeSingle();
               const { data: l } = await db.from('team_licenses').update({ status: failed ? 'past_due' : 'active', ...(end && !failed ? { renews_at: end } : {}) }).eq('stripe_subscription_id', sub).select('leader_id').maybeSingle();
+              await db.from('offer_purchases' as any).update({ status: failed ? 'past_due' : 'active', ...(end && !failed ? { renews_at: end } : {}) }).eq('stripe_subscription_id', sub);
               const userId = b?.user_id ?? l?.leader_id;
               if (failed && userId) {
                 const { data: u } = await db.auth.admin.getUserById(userId);

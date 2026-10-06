@@ -8,6 +8,7 @@ import { ArrowRight, Plus, UsersRound, CalendarDays, Repeat2, CircleCheck, Globe
 import { Button } from '@/components/ui/button';
 import { useGatherwell } from './gatherwell-shell';
 import { FeaturedFromNetwork } from '@/components/network-page';
+import { TeamOffersStrip } from '@/components/offers';
 import i18n from '@/lib/i18n';
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
@@ -60,7 +61,7 @@ function PeopleRows({ follow = false }: { follow?: boolean }) {
 }
 function HomeTemplates() { const { workspace } = useAccount(); return workspace ? <FromYourLeader teamId={workspace.teamId} role={workspace.role} /> : null; }
 function MobileTeamSwitcher() { const { userId } = useGatherwell(); return <TeamSwitcher userId={userId} className="mobile-switcher" />; }
-function HomeFeatured() { const { workspace } = useAccount(); return workspace ? <FeaturedFromNetwork teamId={workspace.teamId} /> : null; }
+function HomeFeatured() { const { workspace } = useAccount(); return workspace ? <><FeaturedFromNetwork teamId={workspace.teamId} /><TeamOffersStrip teamId={workspace.teamId} /></> : null; }
 
 export function HomePage() {
   const { t } = useTranslation(); const { openCreate, openDetail, openPlaceholder } = useGatherwell(); const { profile } = useAccount();

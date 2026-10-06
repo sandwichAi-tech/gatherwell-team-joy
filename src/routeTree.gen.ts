@@ -31,6 +31,7 @@ import { Route as AuthenticatedAppHomeRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedAppLearnRouteImport } from './routes/_authenticated/_app/learn'
 import { Route as AuthenticatedAppMeRouteImport } from './routes/_authenticated/_app/me'
 import { Route as AuthenticatedAppNetworkRouteImport } from './routes/_authenticated/_app/network'
+import { Route as AuthenticatedAppOffersRouteImport } from './routes/_authenticated/_app/offers'
 import { Route as AuthenticatedAppPlanRouteImport } from './routes/_authenticated/_app/plan'
 import { Route as AuthenticatedAppTeamRouteImport } from './routes/_authenticated/_app/team'
 import { Route as AuthenticatedAppAdminIndexRouteImport } from './routes/_authenticated/_app/admin.index'
@@ -40,6 +41,7 @@ import { Route as AuthenticatedAppEventIdRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAppGatheringNewRouteImport } from './routes/_authenticated/_app/gathering.new'
 import { Route as AuthenticatedAppLearnManageRouteImport } from './routes/_authenticated/_app/learn_.manage'
 import { Route as AuthenticatedAppLearnRecipesRouteImport } from './routes/_authenticated/_app/learn_.recipes'
+import { Route as AuthenticatedAppOfferIdRouteImport } from './routes/_authenticated/_app/offer.$id'
 import { Route as AuthenticatedAppPlanSeatsRouteImport } from './routes/_authenticated/_app/plan_.seats'
 import { Route as AuthenticatedAppTeamInsightsRouteImport } from './routes/_authenticated/_app/team_.insights'
 import { Route as AuthenticatedAppTeamMapRouteImport } from './routes/_authenticated/_app/team_.map'
@@ -166,6 +168,11 @@ const AuthenticatedAppNetworkRoute = AuthenticatedAppNetworkRouteImport.update({
   path: '/network',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppOffersRoute = AuthenticatedAppOffersRouteImport.update({
+  id: '/offers',
+  path: '/offers',
+  getParentRoute: () => AuthenticatedAppRouteRoute,
+} as any)
 const AuthenticatedAppPlanRoute = AuthenticatedAppPlanRouteImport.update({
   id: '/plan',
   path: '/plan',
@@ -217,6 +224,11 @@ const AuthenticatedAppLearnRecipesRoute =
     path: '/learn/recipes',
     getParentRoute: () => AuthenticatedAppRouteRoute,
   } as any)
+const AuthenticatedAppOfferIdRoute = AuthenticatedAppOfferIdRouteImport.update({
+  id: '/offer/$id',
+  path: '/offer/$id',
+  getParentRoute: () => AuthenticatedAppRouteRoute,
+} as any)
 const AuthenticatedAppPlanSeatsRoute =
   AuthenticatedAppPlanSeatsRouteImport.update({
     id: '/plan_/seats',
@@ -322,6 +334,7 @@ export interface FileRoutesByFullPath {
   '/learn': typeof AuthenticatedAppLearnRoute
   '/me': typeof AuthenticatedAppMeRoute
   '/network': typeof AuthenticatedAppNetworkRoute
+  '/offers': typeof AuthenticatedAppOffersRoute
   '/plan': typeof AuthenticatedAppPlanRoute
   '/team': typeof AuthenticatedAppTeamRoute
   '/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
@@ -330,6 +343,7 @@ export interface FileRoutesByFullPath {
   '/gathering/new': typeof AuthenticatedAppGatheringNewRoute
   '/learn/manage': typeof AuthenticatedAppLearnManageRoute
   '/learn/recipes': typeof AuthenticatedAppLearnRecipesRoute
+  '/offer/$id': typeof AuthenticatedAppOfferIdRoute
   '/plan/seats': typeof AuthenticatedAppPlanSeatsRoute
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
@@ -368,6 +382,7 @@ export interface FileRoutesByTo {
   '/learn': typeof AuthenticatedAppLearnRoute
   '/me': typeof AuthenticatedAppMeRoute
   '/network': typeof AuthenticatedAppNetworkRoute
+  '/offers': typeof AuthenticatedAppOffersRoute
   '/plan': typeof AuthenticatedAppPlanRoute
   '/team': typeof AuthenticatedAppTeamRoute
   '/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
@@ -376,6 +391,7 @@ export interface FileRoutesByTo {
   '/gathering/new': typeof AuthenticatedAppGatheringNewRoute
   '/learn/manage': typeof AuthenticatedAppLearnManageRoute
   '/learn/recipes': typeof AuthenticatedAppLearnRecipesRoute
+  '/offer/$id': typeof AuthenticatedAppOfferIdRoute
   '/plan/seats': typeof AuthenticatedAppPlanSeatsRoute
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
@@ -417,6 +433,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/learn': typeof AuthenticatedAppLearnRoute
   '/_authenticated/_app/me': typeof AuthenticatedAppMeRoute
   '/_authenticated/_app/network': typeof AuthenticatedAppNetworkRoute
+  '/_authenticated/_app/offers': typeof AuthenticatedAppOffersRoute
   '/_authenticated/_app/plan': typeof AuthenticatedAppPlanRoute
   '/_authenticated/_app/team': typeof AuthenticatedAppTeamRoute
   '/_authenticated/_app/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
@@ -425,6 +442,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/gathering/new': typeof AuthenticatedAppGatheringNewRoute
   '/_authenticated/_app/learn_/manage': typeof AuthenticatedAppLearnManageRoute
   '/_authenticated/_app/learn_/recipes': typeof AuthenticatedAppLearnRecipesRoute
+  '/_authenticated/_app/offer/$id': typeof AuthenticatedAppOfferIdRoute
   '/_authenticated/_app/plan_/seats': typeof AuthenticatedAppPlanSeatsRoute
   '/_authenticated/_app/team_/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/_authenticated/_app/team_/map': typeof AuthenticatedAppTeamMapRoute
@@ -465,6 +483,7 @@ export interface FileRouteTypes {
     | '/learn'
     | '/me'
     | '/network'
+    | '/offers'
     | '/plan'
     | '/team'
     | '/admin/site-media'
@@ -473,6 +492,7 @@ export interface FileRouteTypes {
     | '/gathering/new'
     | '/learn/manage'
     | '/learn/recipes'
+    | '/offer/$id'
     | '/plan/seats'
     | '/team/insights'
     | '/team/map'
@@ -511,6 +531,7 @@ export interface FileRouteTypes {
     | '/learn'
     | '/me'
     | '/network'
+    | '/offers'
     | '/plan'
     | '/team'
     | '/admin/site-media'
@@ -519,6 +540,7 @@ export interface FileRouteTypes {
     | '/gathering/new'
     | '/learn/manage'
     | '/learn/recipes'
+    | '/offer/$id'
     | '/plan/seats'
     | '/team/insights'
     | '/team/map'
@@ -559,6 +581,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/learn'
     | '/_authenticated/_app/me'
     | '/_authenticated/_app/network'
+    | '/_authenticated/_app/offers'
     | '/_authenticated/_app/plan'
     | '/_authenticated/_app/team'
     | '/_authenticated/_app/admin/site-media'
@@ -567,6 +590,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/gathering/new'
     | '/_authenticated/_app/learn_/manage'
     | '/_authenticated/_app/learn_/recipes'
+    | '/_authenticated/_app/offer/$id'
     | '/_authenticated/_app/plan_/seats'
     | '/_authenticated/_app/team_/insights'
     | '/_authenticated/_app/team_/map'
@@ -763,6 +787,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppNetworkRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/offers': {
+      id: '/_authenticated/_app/offers'
+      path: '/offers'
+      fullPath: '/offers'
+      preLoaderRoute: typeof AuthenticatedAppOffersRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/plan': {
       id: '/_authenticated/_app/plan'
       path: '/plan'
@@ -824,6 +855,13 @@ declare module '@tanstack/react-router' {
       path: '/learn/recipes'
       fullPath: '/learn/recipes'
       preLoaderRoute: typeof AuthenticatedAppLearnRecipesRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/offer/$id': {
+      id: '/_authenticated/_app/offer/$id'
+      path: '/offer/$id'
+      fullPath: '/offer/$id'
+      preLoaderRoute: typeof AuthenticatedAppOfferIdRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
     '/_authenticated/_app/plan_/seats': {
@@ -942,6 +980,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppLearnRoute: typeof AuthenticatedAppLearnRoute
   AuthenticatedAppMeRoute: typeof AuthenticatedAppMeRoute
   AuthenticatedAppNetworkRoute: typeof AuthenticatedAppNetworkRoute
+  AuthenticatedAppOffersRoute: typeof AuthenticatedAppOffersRoute
   AuthenticatedAppPlanRoute: typeof AuthenticatedAppPlanRoute
   AuthenticatedAppTeamRoute: typeof AuthenticatedAppTeamRoute
   AuthenticatedAppAdminSiteMediaRoute: typeof AuthenticatedAppAdminSiteMediaRoute
@@ -950,6 +989,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppGatheringNewRoute: typeof AuthenticatedAppGatheringNewRoute
   AuthenticatedAppLearnManageRoute: typeof AuthenticatedAppLearnManageRoute
   AuthenticatedAppLearnRecipesRoute: typeof AuthenticatedAppLearnRecipesRoute
+  AuthenticatedAppOfferIdRoute: typeof AuthenticatedAppOfferIdRoute
   AuthenticatedAppPlanSeatsRoute: typeof AuthenticatedAppPlanSeatsRoute
   AuthenticatedAppTeamInsightsRoute: typeof AuthenticatedAppTeamInsightsRoute
   AuthenticatedAppTeamMapRoute: typeof AuthenticatedAppTeamMapRoute
@@ -970,6 +1010,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppLearnRoute: AuthenticatedAppLearnRoute,
   AuthenticatedAppMeRoute: AuthenticatedAppMeRoute,
   AuthenticatedAppNetworkRoute: AuthenticatedAppNetworkRoute,
+  AuthenticatedAppOffersRoute: AuthenticatedAppOffersRoute,
   AuthenticatedAppPlanRoute: AuthenticatedAppPlanRoute,
   AuthenticatedAppTeamRoute: AuthenticatedAppTeamRoute,
   AuthenticatedAppAdminSiteMediaRoute: AuthenticatedAppAdminSiteMediaRoute,
@@ -978,6 +1019,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppGatheringNewRoute: AuthenticatedAppGatheringNewRoute,
   AuthenticatedAppLearnManageRoute: AuthenticatedAppLearnManageRoute,
   AuthenticatedAppLearnRecipesRoute: AuthenticatedAppLearnRecipesRoute,
+  AuthenticatedAppOfferIdRoute: AuthenticatedAppOfferIdRoute,
   AuthenticatedAppPlanSeatsRoute: AuthenticatedAppPlanSeatsRoute,
   AuthenticatedAppTeamInsightsRoute: AuthenticatedAppTeamInsightsRoute,
   AuthenticatedAppTeamMapRoute: AuthenticatedAppTeamMapRoute,
