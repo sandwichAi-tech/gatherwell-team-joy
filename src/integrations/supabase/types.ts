@@ -3492,6 +3492,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      comment_feed: { Args: { _event: string; _topic: string }; Returns: Json }
       compute_playbook: { Args: never; Returns: number }
       copy_starter_template: {
         Args: { _team: string; _template: string }
@@ -3926,6 +3927,7 @@ export type Database = {
         Args: { _from: string; _root: string; _scope: string; _to: string }
         Returns: Json
       }
+      team_topics: { Args: { _team: string }; Returns: Json }
       team_tree: {
         Args: { _root: string }
         Returns: {
