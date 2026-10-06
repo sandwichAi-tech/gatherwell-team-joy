@@ -2566,5 +2566,20 @@
     "signedOn": "Signed by {{name}}, version {{version}}",
     "missing": "Waiver not signed",
     "recordError": "Guest added, but the waiver could not be saved. Try again from the guest list."
+  },
+  "cohosts": {
+    "title": "Co-hosts",
+    "help": "Co-hosts can edit this gathering, check guests in, see the guest list and get follow-up drafts.",
+    "add": "Add co-hosts",
+    "change": "Change",
+    "none": "No co-hosts yet.",
+    "pickTitle": "Choose co-hosts",
+    "pickHelp": "Pick up to {{max}} people from your team.",
+    "noCandidates": "Invite people to your team first, then add them here.",
+    "count": "{{n}} of {{max}} chosen",
+    "save": "Save co-hosts",
+    "saved": "Co-hosts saved",
+    "tooMany": "You can add up to 3 co-hosts.",
+    "withCohosts": "Co-hosted by"
   }
 }

@@ -677,6 +677,35 @@ export type Database = {
           },
         ]
       }
+      event_cohosts: {
+        Row: {
+          added_by: string | null
+          created_at: string
+          event_id: string
+          user_id: string
+        }
+        Insert: {
+          added_by?: string | null
+          created_at?: string
+          event_id: string
+          user_id: string
+        }
+        Update: {
+          added_by?: string | null
+          created_at?: string
+          event_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_cohosts_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_live_counts: {
         Row: {
           checked_in: number
@@ -3382,6 +3411,7 @@ export type Database = {
         Returns: string
       }
       is_connected: { Args: { _a: string; _b: string }; Returns: boolean }
+      is_event_cohost: { Args: { _event: string }; Returns: boolean }
       is_host_anywhere: { Args: { _u: string }; Returns: boolean }
       is_team_member: {
         Args: { _roles: string[]; _team_id: string }
@@ -3606,6 +3636,10 @@ export type Database = {
       set_email_prefs: {
         Args: { _prefs: Json; _token: string }
         Returns: boolean
+      }
+      set_event_cohosts: {
+        Args: { _event: string; _users: string[] }
+        Returns: undefined
       }
       set_pass_fee: { Args: { _on: boolean }; Returns: undefined }
       set_referral_thanks: {

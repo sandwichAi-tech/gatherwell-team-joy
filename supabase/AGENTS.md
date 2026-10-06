@@ -17,3 +17,4 @@
 - Welcome points: earned only by the first-check-in trigger, redeemed only via redeem RPCs; guests act through their RSVP code.
 - Playbook: nightly compute_playbook() writes anonymized patterns (>=20 gatherings, >=5 teams) to playbook_patterns; UI reads only playbook_cards()/team_benchmark(), which return labeled samples until data suffices.
 - Waivers: one per team (default seeded by trigger, version bumps on edit); signatures only via rsvp_event_waiver(), walk_in_waiver() or record_waiver() from the Stripe webhook, storing name, version, time and IP; host/leader-only reads.
+- Co-hosts (max 3, same team) are set only via set_event_cohosts(); can_manage_event() includes them, so every host-checked RPC and RLS rule covers co-hosts; guard_cohost_edit blocks owner/team/price changes.

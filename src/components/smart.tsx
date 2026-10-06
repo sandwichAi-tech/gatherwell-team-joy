@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { useGatherwell } from '@/components/gatherwell-shell';
+import { myCohostedEventIds } from '@/components/cohosts';
 import { supabase } from '@/integrations/supabase/client';
 import { firstName, profileQuery, workspaceQuery } from '@/lib/account';
 import { hasBlockedClaim } from '@/lib/recognition';
@@ -64,11 +65,14 @@ export function DailyBriefCard() {
 
 /* ---------------- Home: follow-ups waiting ---------------- */
 
+async function scopeFilter(userId: string) { const ids = await myCohostedEventIds(userId); return ids.length ? `host_id.eq.${userId},event_id.in.(${ids.join(',')})` : `host_id.eq.${userId}`; }
+
 export function FollowupsHomeCard() {
   const { t } = useTranslation(); const { userId } = useGatherwell();
   const { data } = useQuery({
     queryKey: ['followups', userId, 'summary'], queryFn: async () => {
-      const { data } = await supabase.from('followup_drafts').select('event_id, events(title)').eq('host_id', userId).in('status', ['draft', 'approved']);
+      const { data } = await supabase.from('followup_drafts')
+        .select('event_id, events(title)').or(await scopeFilter(userId)).in('status', ['draft', 'approved']);
       const rows = (data ?? []) as unknown as { event_id: string; events: { title: string } | null }[];
       return { count: rows.length, title: rows[0]?.events?.title ?? '', events: new Set(rows.map(r => r.event_id)).size };
     },
@@ -153,7 +157,7 @@ export function FollowupInbox() {
   const key = ['followups', userId];
   const { data: drafts = [], isLoading } = useQuery({
     queryKey: [...key, 'list'], queryFn: async () => {
-      const { data, error } = await supabase.from('followup_drafts').select('id, event_id, guest_name, language, kind, message, status, channel, preview, events(title, starts_at), rsvps(guest_phone, guest_email, email_opt_in, sms_opt_in)').eq('host_id', userId).order('created_at', { ascending: false }).limit(200);
+      const { data, error } = await supabase.from('followup_drafts').select('id, event_id, guest_name, language, kind, message, status, channel, preview, events(title, starts_at), rsvps(guest_phone, guest_email, email_opt_in, sms_opt_in)').or(await scopeFilter(userId)).order('created_at', { ascending: false }).limit(200);
       if (error) throw error; return data as unknown as Draft[];
     },
   });

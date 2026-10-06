@@ -24,6 +24,7 @@ import { usePaymentGate } from '@/components/plan-page';
 import { NetworkShareToggle } from '@/components/network-share';
 import { MembersOnlyPicker } from '@/components/offers';
 import { WaiverEventToggle } from '@/components/waiver';
+import { CohostsPanel, cohostsQuery } from '@/components/cohosts';
 import { Polls, PhotoRoll, useLiveCounts } from '@/components/event-live';
 
 export const Route = createFileRoute('/_authenticated/_app/event/$id')({ head: () => gatherwellHead('events'), component: EventDetailPage });
@@ -36,7 +37,9 @@ function EventDetailPage() {
   const { data: teams = [] } = useQuery(teamsQuery(userId));
   const event = data?.event;
   const leadsTeam = !!event && teams.some(team => team.teamId === event.team_id && team.role === 'leader');
-  const manages = !!event && (event.host_id === userId || leadsTeam);
+  const { data: cohostIds = [] } = useQuery({ ...cohostsQuery(id) });
+  const isCohost = cohostIds.includes(userId);
+  const manages = !!event && (event.host_id === userId || leadsTeam || isCohost);
   const { data: guests } = useQuery({ ...guestSummaryQuery(id), enabled: manages });
   const { data: series = [] } = useQuery({ ...seriesQuery(event?.series_id ?? null), enabled: manages && !!event?.series_id });
   const live = useLiveCounts(id, () => void queryClient.invalidateQueries({ queryKey: ['event', id, 'guests'] }));
@@ -138,6 +141,8 @@ function EventDetailPage() {
         <span className="chip">{t(`teamSpace.status.${s.status}`)}</span></Link></li>)}</ul>
       {event.status !== 'cancelled' && <Button asChild variant="secondary"><Link to="/gathering/$id/edit" params={{ id }}><Pencil />{t('gathering.editSeries')}</Link></Button>}
     </section>}
+
+    {(manages || cohostIds.length > 0) && <CohostsPanel eventId={event.id} teamId={event.team_id} hostId={event.host_id} canEdit={event.host_id === userId || leadsTeam} />}
 
     <ResponsiveSheet open={sheet === 'share'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.share')} description={event.title}>
       <div className="share-grid"><Button variant="secondary" onClick={async () => { await navigator.clipboard.writeText(link); toast.success(t('onboarding.copied')); }}><Copy />{t('gathering.copyLink')}</Button>

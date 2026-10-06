@@ -20,7 +20,8 @@ export const prepareFollowupsNow = createServerFn({ method: 'POST' })
   .inputValidator((d: unknown) => z.object({ eventId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: ev } = await context.supabase.from('events').select('host_id, starts_at').eq('id', data.eventId).maybeSingle();
-    if (!ev || ev.host_id !== context.userId) return { ok: false, error: 'not_allowed' as const };
+    const coPrep = ev && ev.host_id !== context.userId ? (await context.supabase.rpc('is_event_cohost' as never, { _event: data.eventId } as never)).data : false;
+    if (!ev || (ev.host_id !== context.userId && !coPrep)) return { ok: false, error: 'not_allowed' as const };
     if (new Date(ev.starts_at).getTime() > Date.now()) return { ok: false, error: 'not_finished' as const };
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
     const { draftFollowupsForEvent } = await import('@/lib/ai/followups.server');
@@ -35,7 +36,8 @@ export const sendFollowup = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     const sb = context.supabase;
     const { data: draft } = await sb.from('followup_drafts').select('id, host_id, event_id, rsvp_id, team_id, language, status').eq('id', data.draftId).maybeSingle();
-    if (!draft || draft.host_id !== context.userId) return { ok: false, error: 'not_allowed' };
+    const coSend = draft && draft.host_id !== context.userId ? (await sb.rpc('is_event_cohost' as never, { _event: draft.event_id } as never)).data : false;
+    if (!draft || (draft.host_id !== context.userId && !coSend)) return { ok: false, error: 'not_allowed' };
     if (draft.status === 'sent') return { ok: true };
     const { hasClaim } = await import('@/lib/ai/smart.server');
     if (hasClaim(data.message)) return { ok: false, error: 'claim_blocked' };
