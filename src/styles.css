@@ -1074,6 +1074,8 @@ body { overflow-wrap:break-word; }
 button, input, select, textarea { max-width:100%; }
 button:not([role="switch"]):not([role="checkbox"]), .report-button, .reaction, .lib-order button { min-height:44px; }
 .report-button, .notice-close { min-width:44px; }
+button[role="switch"], button[role="checkbox"] { position:relative; overflow:visible; }
+button[role="switch"]::before, button[role="checkbox"]::before { content:''; position:absolute; width:max(100%,48px); height:48px; left:50%; top:50%; transform:translate(-50%,-50%); }
 button { white-space:normal; }
 .app-header, .auth-topbar, .onboarding-top, .guest-topbar { padding-top:max(16px, env(safe-area-inset-top)); }
 .responsive-sheet .sheet-body { min-height:0; padding-bottom:calc(24px + env(safe-area-inset-bottom)); }
