@@ -1349,3 +1349,6 @@ button { white-space:normal; }
 .edit-preview .photo-row{padding:8px 16px 0}
 .edit-section{border:0;padding:0;margin:8px 0 0;display:grid;gap:16px}
 .edit-section legend{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-foreground);margin-bottom:8px}
+.gw-hero-avatar .profile-avatar{display:grid;place-items:center}
+.gw-group .settings-value{display:flex;align-items:center;gap:8px;max-width:50vw;min-width:0;color:var(--muted-foreground);font-size:14px;white-space:nowrap}
+.gw-group .settings-value{overflow:hidden;text-overflow:ellipsis}
