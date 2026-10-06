@@ -1336,7 +1336,9 @@
       "badges": "Insignias y logros",
       "badgesText": "Cuando obtienes una insignia.",
       "followups": "Seguimiento",
-      "followupsText": "Notas de agradecimiento después de una reunión."
+      "followupsText": "Notas de agradecimiento después de una reunión.",
+      "conversation": "Respuestas y menciones",
+      "conversationText": "Cuando alguien te responde o te menciona."
     },
     "enableDevice": "Activar notificaciones en este teléfono",
     "deviceOn": "Las notificaciones están activas en este teléfono.",

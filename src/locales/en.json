@@ -1336,7 +1336,9 @@
       "badges": "Badges and wins",
       "badgesText": "When you earn a badge.",
       "followups": "Follow-ups",
-      "followupsText": "Thank-you notes after a gathering."
+      "followupsText": "Thank-you notes after a gathering.",
+      "conversation": "Replies and mentions",
+      "conversationText": "When someone replies to you or mentions you."
     },
     "enableDevice": "Turn on push for this phone",
     "deviceOn": "Push is on for this phone.",
