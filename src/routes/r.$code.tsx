@@ -11,6 +11,7 @@ import { Polls, PhotoRoll } from '@/components/event-live';
 import { supabase } from '@/integrations/supabase/client';
 import { rsvpByCodeQuery } from '@/lib/guest';
 import { GuestShell } from '@/components/guest-shell';
+import { GuestWelcomeCard } from '@/components/welcome';
 import i18n from '@/lib/i18n';
 
 export const Route = createFileRoute('/r/$code')({
@@ -55,6 +56,7 @@ function ManageRsvp() {
         <Button variant="ghost" className="danger-text" disabled={busy} onClick={() => setConfirmCancel(true)}>{t('guest.cancelRsvp')}</Button>
       </section>}
       {data.status !== 'cancelled' && <><Polls eventId={data.event_id} code={code} /><PhotoRoll eventId={data.event_id} code={code} canAdd={!!data.checked_in_at} /></>}
+      <GuestWelcomeCard checkin={code} />
     </article>
     <ResponsiveSheet open={confirmCancel} onOpenChange={setConfirmCancel} title={t('guest.cancelRsvpTitle')} description={t('guest.cancelRsvpText')}>
       <div className="confirm-actions"><Button variant="secondary" onClick={() => setConfirmCancel(false)}>{t('gathering.keep')}</Button><Button className="danger-button" disabled={busy} onClick={cancel}>{t('guest.cancelRsvp')}</Button></div>

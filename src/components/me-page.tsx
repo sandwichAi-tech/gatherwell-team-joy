@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   CalendarDays, Flag, Award, UsersRound, Bell, CreditCard, Globe2, Sun, Moon, Monitor, LifeBuoy, FileText, ShieldCheck,
-  LogOut, ChevronRight, Camera, Upload, Check, ExternalLink, Pencil,
+  LogOut, ChevronRight, UserPlus, Camera, Upload, Check, ExternalLink, Pencil,
   ImageDown,
 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -22,6 +22,7 @@ import { setLanguage } from '@/components/auth-frame';
 import { BadgeWall, RecognitionSummary, useHostOfMonthId } from '@/components/recognition';
 import { supabase } from '@/integrations/supabase/client';
 import { PurchasesPanel } from '@/components/offers';
+import { InviteFriendsPanel } from '@/components/welcome';
 import { initialsOf, mediaUrl, profileQuery, teamsQuery, uploadMedia, workspaceQuery } from '@/lib/account';
 
 const HTTPS_URL = /^https:\/\/[^\s/]+\.[^\s]+$/i;
@@ -119,7 +120,7 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
   </ResponsiveSheet>;
 }
 
-type Panel = 'gatherings' | 'challenges' | 'badges' | 'teams' | 'notifications' | 'plan' | 'purchases' | null;
+type Panel = 'gatherings' | 'challenges' | 'badges' | 'teams' | 'notifications' | 'plan' | 'purchases' | 'invite' | null;
 
 export function MePage() {
   const { t, i18n } = useTranslation();
@@ -164,6 +165,7 @@ export function MePage() {
     badges: { title: t('profile.myBadges'), body: workspace ? <BadgeWall teamId={workspace.teamId} /> : <p className="auth-subtitle">{t('workspace.none')}</p> },
     teams: { title: t('profile.myTeams'), body: teams.length ? <div className="team-list">{teams.map(team => <button type="button" key={team.teamId} className={`choice-card ${workspace?.teamId === team.teamId ? 'is-selected' : ''}`} aria-pressed={workspace?.teamId === team.teamId} onClick={() => switchTeam(team.teamId)}><span className="initial-avatar">{initialsOf(team.name)}</span><span><strong>{team.name}</strong><small>{t(`roles.${team.role}`)}{team.customBadge ? ` · ${team.customBadge}` : ''}</small></span>{workspace?.teamId === team.teamId && <Check className="choice-check" />}</button>)}</div> : <p className="auth-subtitle">{t('workspace.none')}</p> },
     notifications: { title: t('profile.notifications'), body: <NotificationSettings userId={userId} /> },
+    invite: { title: t('welcome.title'), body: <InviteFriendsPanel /> },
     purchases: { title: t('offers.purchases'), body: <PurchasesPanel /> },
     plan: { title: t('profile.plan'), body: <><p className="plan-name">{t(`plans.${workspace?.plan ?? 'free'}`)}</p><p className="auth-subtitle">{workspace?.name ?? t('workspace.none')}</p></> },
   };
@@ -193,6 +195,7 @@ export function MePage() {
       {row(Award, t('profile.myBadges'), () => setPanel('badges'))}
       {row(UsersRound, t('profile.myTeams'), () => setPanel('teams'), <span className="settings-value">{workspace?.name}<ChevronRight className="settings-chevron" /></span>)}
       {row(Bell, t('profile.notifications'), () => setPanel('notifications'))}
+      {row(UserPlus, t('welcome.title'), () => setPanel('invite'))}
       {row(CreditCard, t('offers.purchases'), () => setPanel('purchases'))}
       {workspace && workspace.role !== 'member' && <Link className="settings-row" to="/offers"><FileText className="settings-icon" /><span className="settings-label">{t('offers.title')}</span><ChevronRight className="settings-chevron" /></Link>}
       <Link className="settings-row" to="/plan"><CreditCard className="settings-icon" /><span className="settings-label">{t('profile.plan')}</span><span className="settings-value">{t(`billing.plan_${planStatus?.plan ?? 'free'}`)}<ChevronRight className="settings-chevron" /></span></Link>
