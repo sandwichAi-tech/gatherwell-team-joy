@@ -8,7 +8,7 @@
 - [x] Phase 2 Shared overlays (ConfirmDialog, toasts, menus, mobile menu)
 - [x] Phase 3 Me and member profile
 - [x] Phase 4 States
-- [ ] Phase 5 Screen drift
+- [x] Phase 5 Screen drift
 - [ ] Phase 6 Verification + audit rescoring
 
 # Gatherwell design reset
