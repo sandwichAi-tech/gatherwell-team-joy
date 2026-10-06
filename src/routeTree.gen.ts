@@ -20,10 +20,12 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAppRouteRouteImport } from './routes/_authenticated/_app/route'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as EIdRouteImport } from './routes/e.$id'
+import { Route as HSlugRouteImport } from './routes/h.$slug'
 import { Route as ICodeRouteImport } from './routes/i.$code'
 import { Route as JoinCodeRouteImport } from './routes/join.$code'
 import { Route as LegalDocRouteImport } from './routes/legal.$doc'
 import { Route as RCodeRouteImport } from './routes/r.$code'
+import { Route as TSlugRouteImport } from './routes/t.$slug'
 import { Route as UnsubscribeTokenRouteImport } from './routes/unsubscribe.$token'
 import { Route as AuthenticatedAppEarningsRouteImport } from './routes/_authenticated/_app/earnings'
 import { Route as AuthenticatedAppEventsRouteImport } from './routes/_authenticated/_app/events'
@@ -47,6 +49,7 @@ import { Route as AuthenticatedAppPlanSeatsRouteImport } from './routes/_authent
 import { Route as AuthenticatedAppTeamInsightsRouteImport } from './routes/_authenticated/_app/team_.insights'
 import { Route as AuthenticatedAppTeamMapRouteImport } from './routes/_authenticated/_app/team_.map'
 import { Route as ApiPublicAiFollowupsRouteImport } from './routes/api/public/ai/followups'
+import { Route as ApiPublicCalendarTokenRouteImport } from './routes/api/public/calendar/$token'
 import { Route as ApiPublicEmailMailgunRouteImport } from './routes/api/public/email/mailgun'
 import { Route as ApiPublicEmailResendRouteImport } from './routes/api/public/email/resend'
 import { Route as ApiPublicOutboxProcessRouteImport } from './routes/api/public/outbox/process'
@@ -112,6 +115,11 @@ const EIdRoute = EIdRouteImport.update({
   path: '/e/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HSlugRoute = HSlugRouteImport.update({
+  id: '/h/$slug',
+  path: '/h/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ICodeRoute = ICodeRouteImport.update({
   id: '/i/$code',
   path: '/i/$code',
@@ -130,6 +138,11 @@ const LegalDocRoute = LegalDocRouteImport.update({
 const RCodeRoute = RCodeRouteImport.update({
   id: '/r/$code',
   path: '/r/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TSlugRoute = TSlugRouteImport.update({
+  id: '/t/$slug',
+  path: '/t/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UnsubscribeTokenRoute = UnsubscribeTokenRouteImport.update({
@@ -257,6 +270,11 @@ const ApiPublicAiFollowupsRoute = ApiPublicAiFollowupsRouteImport.update({
   path: '/api/public/ai/followups',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCalendarTokenRoute = ApiPublicCalendarTokenRouteImport.update({
+  id: '/api/public/calendar/$token',
+  path: '/api/public/calendar/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicEmailMailgunRoute = ApiPublicEmailMailgunRouteImport.update({
   id: '/api/public/email/mailgun',
   path: '/api/public/email/mailgun',
@@ -329,10 +347,12 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/e/$id': typeof EIdRoute
+  '/h/$slug': typeof HSlugRoute
   '/i/$code': typeof ICodeRoute
   '/join/$code': typeof JoinCodeRoute
   '/legal/$doc': typeof LegalDocRoute
   '/r/$code': typeof RCodeRoute
+  '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/earnings': typeof AuthenticatedAppEarningsRoute
   '/events': typeof AuthenticatedAppEventsRoute
@@ -355,6 +375,7 @@ export interface FileRoutesByFullPath {
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
   '/api/public/ai/followups': typeof ApiPublicAiFollowupsRoute
+  '/api/public/calendar/$token': typeof ApiPublicCalendarTokenRoute
   '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
   '/api/public/email/resend': typeof ApiPublicEmailResendRoute
   '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
@@ -378,10 +399,12 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/e/$id': typeof EIdRoute
+  '/h/$slug': typeof HSlugRoute
   '/i/$code': typeof ICodeRoute
   '/join/$code': typeof JoinCodeRoute
   '/legal/$doc': typeof LegalDocRoute
   '/r/$code': typeof RCodeRoute
+  '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/earnings': typeof AuthenticatedAppEarningsRoute
   '/events': typeof AuthenticatedAppEventsRoute
@@ -404,6 +427,7 @@ export interface FileRoutesByTo {
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
   '/api/public/ai/followups': typeof ApiPublicAiFollowupsRoute
+  '/api/public/calendar/$token': typeof ApiPublicCalendarTokenRoute
   '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
   '/api/public/email/resend': typeof ApiPublicEmailResendRoute
   '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
@@ -430,10 +454,12 @@ export interface FileRoutesById {
   '/_authenticated/_app': typeof AuthenticatedAppRouteRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/e/$id': typeof EIdRoute
+  '/h/$slug': typeof HSlugRoute
   '/i/$code': typeof ICodeRoute
   '/join/$code': typeof JoinCodeRoute
   '/legal/$doc': typeof LegalDocRoute
   '/r/$code': typeof RCodeRoute
+  '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/_authenticated/_app/earnings': typeof AuthenticatedAppEarningsRoute
   '/_authenticated/_app/events': typeof AuthenticatedAppEventsRoute
@@ -456,6 +482,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/team_/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/_authenticated/_app/team_/map': typeof AuthenticatedAppTeamMapRoute
   '/api/public/ai/followups': typeof ApiPublicAiFollowupsRoute
+  '/api/public/calendar/$token': typeof ApiPublicCalendarTokenRoute
   '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
   '/api/public/email/resend': typeof ApiPublicEmailResendRoute
   '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
@@ -481,10 +508,12 @@ export interface FileRouteTypes {
     | '/terms'
     | '/onboarding'
     | '/e/$id'
+    | '/h/$slug'
     | '/i/$code'
     | '/join/$code'
     | '/legal/$doc'
     | '/r/$code'
+    | '/t/$slug'
     | '/unsubscribe/$token'
     | '/earnings'
     | '/events'
@@ -507,6 +536,7 @@ export interface FileRouteTypes {
     | '/team/insights'
     | '/team/map'
     | '/api/public/ai/followups'
+    | '/api/public/calendar/$token'
     | '/api/public/email/mailgun'
     | '/api/public/email/resend'
     | '/api/public/outbox/process'
@@ -530,10 +560,12 @@ export interface FileRouteTypes {
     | '/terms'
     | '/onboarding'
     | '/e/$id'
+    | '/h/$slug'
     | '/i/$code'
     | '/join/$code'
     | '/legal/$doc'
     | '/r/$code'
+    | '/t/$slug'
     | '/unsubscribe/$token'
     | '/earnings'
     | '/events'
@@ -556,6 +588,7 @@ export interface FileRouteTypes {
     | '/team/insights'
     | '/team/map'
     | '/api/public/ai/followups'
+    | '/api/public/calendar/$token'
     | '/api/public/email/mailgun'
     | '/api/public/email/resend'
     | '/api/public/outbox/process'
@@ -581,10 +614,12 @@ export interface FileRouteTypes {
     | '/_authenticated/_app'
     | '/_authenticated/onboarding'
     | '/e/$id'
+    | '/h/$slug'
     | '/i/$code'
     | '/join/$code'
     | '/legal/$doc'
     | '/r/$code'
+    | '/t/$slug'
     | '/unsubscribe/$token'
     | '/_authenticated/_app/earnings'
     | '/_authenticated/_app/events'
@@ -607,6 +642,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/team_/insights'
     | '/_authenticated/_app/team_/map'
     | '/api/public/ai/followups'
+    | '/api/public/calendar/$token'
     | '/api/public/email/mailgun'
     | '/api/public/email/resend'
     | '/api/public/outbox/process'
@@ -631,12 +667,15 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   EIdRoute: typeof EIdRoute
+  HSlugRoute: typeof HSlugRoute
   ICodeRoute: typeof ICodeRoute
   JoinCodeRoute: typeof JoinCodeRoute
   LegalDocRoute: typeof LegalDocRoute
   RCodeRoute: typeof RCodeRoute
+  TSlugRoute: typeof TSlugRoute
   UnsubscribeTokenRoute: typeof UnsubscribeTokenRoute
   ApiPublicAiFollowupsRoute: typeof ApiPublicAiFollowupsRoute
+  ApiPublicCalendarTokenRoute: typeof ApiPublicCalendarTokenRoute
   ApiPublicEmailMailgunRoute: typeof ApiPublicEmailMailgunRoute
   ApiPublicEmailResendRoute: typeof ApiPublicEmailResendRoute
   ApiPublicOutboxProcessRoute: typeof ApiPublicOutboxProcessRoute
@@ -723,6 +762,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/h/$slug': {
+      id: '/h/$slug'
+      path: '/h/$slug'
+      fullPath: '/h/$slug'
+      preLoaderRoute: typeof HSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/i/$code': {
       id: '/i/$code'
       path: '/i/$code'
@@ -749,6 +795,13 @@ declare module '@tanstack/react-router' {
       path: '/r/$code'
       fullPath: '/r/$code'
       preLoaderRoute: typeof RCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/t/$slug': {
+      id: '/t/$slug'
+      path: '/t/$slug'
+      fullPath: '/t/$slug'
+      preLoaderRoute: typeof TSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/unsubscribe/$token': {
@@ -910,6 +963,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/ai/followups'
       fullPath: '/api/public/ai/followups'
       preLoaderRoute: typeof ApiPublicAiFollowupsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/calendar/$token': {
+      id: '/api/public/calendar/$token'
+      path: '/api/public/calendar/$token'
+      fullPath: '/api/public/calendar/$token'
+      preLoaderRoute: typeof ApiPublicCalendarTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/email/mailgun': {
@@ -1080,12 +1140,15 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   EIdRoute: EIdRoute,
+  HSlugRoute: HSlugRoute,
   ICodeRoute: ICodeRoute,
   JoinCodeRoute: JoinCodeRoute,
   LegalDocRoute: LegalDocRoute,
   RCodeRoute: RCodeRoute,
+  TSlugRoute: TSlugRoute,
   UnsubscribeTokenRoute: UnsubscribeTokenRoute,
   ApiPublicAiFollowupsRoute: ApiPublicAiFollowupsRoute,
+  ApiPublicCalendarTokenRoute: ApiPublicCalendarTokenRoute,
   ApiPublicEmailMailgunRoute: ApiPublicEmailMailgunRoute,
   ApiPublicEmailResendRoute: ApiPublicEmailResendRoute,
   ApiPublicOutboxProcessRoute: ApiPublicOutboxProcessRoute,

@@ -1368,3 +1368,22 @@ button { white-space:normal; }
 .gw-progress::after{content:"";position:absolute;inset:0;width:40%;background:var(--lavender);border-radius:2px;animation:gw-progress 1.1s ease-in-out infinite}
 @keyframes gw-progress{from{transform:translateX(-100%)}to{transform:translateX(250%)}}
 @media (prefers-reduced-motion:reduce){.gw-progress::after{animation:none;width:100%;opacity:.5}}
+/* Follow pages + calendar feeds */
+.follow-page{display:grid;gap:24px;max-width:720px;margin:0 auto}
+.follow-hero{overflow:hidden;padding:0}
+.follow-hero-body{padding:0 24px 32px;margin-top:-48px;position:relative;display:grid;justify-items:start;gap:8px}
+.follow-avatar{border-radius:999px;object-fit:cover;border:4px solid var(--card);box-shadow:var(--e2);display:grid;place-items:center;background:var(--secondary);color:var(--primary);font-weight:700;font-size:32px}
+.follow-name{font-size:32px;font-weight:700;line-height:1.15;color:var(--foreground)}
+.follow-meta{color:var(--muted-foreground);font-size:14px}.follow-meta a{color:var(--lavender)}
+.follow-bio{color:var(--body);max-width:56ch}
+.follow-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.follow-list{display:grid;gap:8px;margin-top:16px}
+.follow-event{display:grid;grid-template-columns:64px minmax(0,1fr) 20px;gap:16px;align-items:center;padding:12px;border-radius:12px;min-height:88px;color:var(--foreground)}
+.follow-event:hover{background:var(--secondary)}
+.follow-event-cover{width:64px;height:64px;border-radius:12px;overflow:hidden}
+.follow-event strong{display:block}.follow-event small{display:block;color:var(--muted-foreground);font-size:13px}
+.follow-fine{font-size:13px;color:var(--muted-foreground);margin-top:16px}.follow-fine a{color:var(--lavender)}
+.feed-panel{display:grid;gap:16px}
+.feed-row{display:grid;gap:4px;padding:16px;border:1px solid var(--border);border-radius:16px;background:var(--card)}
+.feed-row small{color:var(--muted-foreground);font-size:13px}
+.feed-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
