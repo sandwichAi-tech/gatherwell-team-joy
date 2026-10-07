@@ -119,7 +119,7 @@ function ThisWeek({ gatherings, category }: { gatherings: FeedGathering[]; categ
 }
 
 function HowItWorks() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const demo: FeedGathering = { id: 'demo', isSample: true, hero: false, title: t('landing.hero.photoTitle_run'), startsAt: new Date(), category: 'run', locationName: null, isOnline: false, lat: null, lng: null, capacity: null, going: 14, goingNames: [], initials: ['M', 'J', 'S'], hostName: 'Nick C.' };
   const [rsvpKey, setRsvpKey] = useState(0);
   return <section className="gw-section gw-container gw-band gw-band-white" id="how-it-works" aria-labelledby="how-title">
