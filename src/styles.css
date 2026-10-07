@@ -1481,3 +1481,8 @@ button { white-space:normal; }
 }
 @media (max-width:1023px){.gw-landing .gw-hero-visual{margin-top:8px}}
 @media (prefers-reduced-motion:reduce){.gw-blob{animation:none}}
+.gw-landing .gw-cat-circle svg.gw-icon{width:32px;height:32px}
+.gw-landing .gw-cat.is-on .gw-cat-circle svg.gw-icon{color:#fff}
+.gw-landing .gw-cat.is-on .gw-icon-feature [opacity="0.2"]{fill:#fff;opacity:.25}
+.gw-landing .gw-icon-feature [opacity="0.2"]{opacity:.25}
+.gw-landing .gw-stack-toggle svg{width:16px;height:16px}
