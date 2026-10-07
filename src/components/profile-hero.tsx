@@ -13,7 +13,7 @@ export function ProfileHero({ avatar, name, city, team, role, badge, bio, action
   avatar: ReactNode; name?: string | null | undefined; city?: string | null | undefined; team?: string | null | undefined; role?: string | null | undefined; badge?: string | null | undefined; bio?: string | null | undefined; actions?: ReactNode; compact?: boolean | undefined;
 }) {
   return <section className={`gw-hero-card ${compact ? 'is-compact' : ''}`}>
-    <GatheringCover path={cover} title={name ?? ''} className="gw-hero-cover profile-photo-cover" />
+    <GatheringCover path={cover ?? null} title={name ?? ''} className="gw-hero-cover profile-photo-cover" />
     <div className="gw-hero-body">
       <div className="gw-hero-avatar">{avatar}</div>
       {actions && <div className="gw-hero-actions">{actions}</div>}

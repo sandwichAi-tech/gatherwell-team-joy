@@ -116,7 +116,7 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
     footer={<Button className="sheet-primary" disabled={busy} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>}>
     <div className="edit-form">
       <div className="edit-preview">
-        <GatheringCover path={coverPreview ?? (removeCover ? null : profile?.cover_url)} title={form.full_name} className="gw-hero-cover profile-photo-cover" />
+        <GatheringCover path={coverPreview ?? (removeCover ? null : profile?.cover_url) ?? null} title={form.full_name} className="gw-hero-cover profile-photo-cover" />
         <div className="edit-preview-avatar"><Avatar path={removePhoto ? null : profile?.avatar_url} name={form.full_name} preview={preview} size={88} /></div>
         <div className="photo-row flex-wrap">
           <label className="file-button"><Upload />{t('onboarding.upload')}<CropFileInput kind="avatar" className="hidden" onCropped={r => pick(r.file)} /></label>
