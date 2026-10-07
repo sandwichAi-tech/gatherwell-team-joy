@@ -64,9 +64,9 @@
 - [x] Team invite link explainer card with QR and 3 steps
 
 # N2 — Home, hosts, pricing and menu
-- [ ] Public navigation to Discover, hosts and pricing; signed-in Discover access
-- [ ] Guest-focused landing, Pilates, all categories and custom Other labels
-- [ ] Bilingual hosts page, vignettes, hosting steps, leader band, FAQ and sticky action
-- [ ] Public pricing using existing plan limits and monthly/annual prices
-- [ ] Landing sticky CTA experiment flag and analytics
-- [ ] Verify English and Spanish at 390px and 1440px
+- [x] Public navigation to Discover, hosts and pricing; signed-in Discover access
+- [x] Guest-focused landing, Pilates, all categories and custom Other labels
+- [x] Bilingual hosts page, vignettes, hosting steps, leader band, FAQ and sticky action
+- [x] Public pricing using existing plan limits and monthly/annual prices
+- [x] Landing sticky CTA experiment flag and analytics
+- [x] Verify English and Spanish at 390px and 1440px
