@@ -1426,7 +1426,7 @@ button { white-space:normal; }
 /* ===== Landing hero 2.0 (scoped to marketing pages) ===== */
 .gw-landing .gw-lede{font-size:18px;line-height:1.55;color:var(--body);max-width:520px;margin-top:32px}
 .gw-landing .gw-hero{position:relative;overflow:hidden;isolation:isolate;padding:64px 0 72px;background:var(--background)}
-.gw-landing .gw-hero-grid{display:grid;gap:56px;align-items:center;min-height:0;padding:0}
+.gw-landing .gw-hero-grid{display:grid;gap:56px;align-items:center;min-height:0;padding-top:0;padding-bottom:0}
 .gw-landing .gw-hero-h1{margin-top:24px;line-height:1.02;padding-bottom:.08em}
 .gw-landing .gw-hero-ctas{margin-top:40px}
 .gw-landing .gw-proof{margin-top:32px}
@@ -1486,3 +1486,4 @@ button { white-space:normal; }
 .gw-landing .gw-cat.is-on .gw-icon-feature [opacity="0.2"]{fill:#fff;opacity:.25}
 .gw-landing .gw-icon-feature [opacity="0.2"]{opacity:.25}
 .gw-landing .gw-stack-toggle svg{width:16px;height:16px}
+.gw-landing .gw-cat-chip,.gw-landing .gw-status-chip{white-space:nowrap}
