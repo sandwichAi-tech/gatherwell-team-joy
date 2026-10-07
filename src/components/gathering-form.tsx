@@ -1,3 +1,4 @@
+import { CopyButton } from '@/components/copy-button';
 import { PlaybookCard } from '@/components/playbook';
 import { trackEvent } from '@/lib/analytics';
 import { ClaimGuard } from '@/components/smart';
@@ -154,7 +155,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       <h1>{t('gathering.live')}</h1>
       <p className="success-title">{title}</p><p className="auth-subtitle">{when}{weekly ? ` · ${t('gathering.weeklyNote')}` : ''}</p>
       <div className="share-grid success-share">
-        <Button variant="secondary" onClick={async () => { await navigator.clipboard.writeText(link); toast.success(t('onboarding.copied')); }}><Copy />{t('gathering.copyLink')}</Button>
+        <CopyButton text={link} />
         <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(invite)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button>
         <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(invite)}`}><MessageSquareText />{t('gathering.text')}</a></Button>
       </div>

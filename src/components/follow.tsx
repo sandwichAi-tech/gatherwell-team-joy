@@ -1,3 +1,4 @@
+import { CopyButton } from '@/components/copy-button';
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -130,7 +131,7 @@ export function CalendarFeedPanel({ userId }: { userId: string }) {
     return <div className="feed-row">
       <GwFeatureTile name="CalendarDays" size={24} /><div className="feed-row-main"><strong>{label}</strong><small>{hint}</small>
       <div className="feed-actions">
-        <Button variant="secondary" onClick={() => void copy(url)}><GwIcon name="Copy" />{t('follow.copyLink')}</Button>
+        <CopyButton text={url} label={t('follow.copyLink')} />
         <Button asChild variant="secondary"><a href={`https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcal)}`} target="_blank" rel="noopener noreferrer"><GwIcon name="ExternalLink" />{t("follow.googleCalendar")}</a></Button>
         <Button asChild variant="secondary"><a href={webcal}><GwIcon name="CalendarPlus" />{t('follow.appleOutlook')}</a></Button>
       </div></div>
@@ -142,8 +143,8 @@ export function CalendarFeedPanel({ userId }: { userId: string }) {
     {feeds.data.team && row(t('follow.teamFeed'), t('follow.teamFeedHint'), feeds.data.team)}
     <Button className="feed-reset" variant="ghost" onClick={() => void reset()}><GwIcon name="RefreshCw" />{t('follow.reset')}</Button>
     {(slugs.data?.host || slugs.data?.team) && <div className="feed-row"><GwFeatureTile name="Link2" size={24} /><div className="feed-row-main"><strong>{t('follow.publicPages')}</strong><small>{t('follow.publicPagesHint')}</small><div className="feed-actions">
-      {slugs.data.host && <Button variant="secondary" onClick={() => void copy(`${window.location.origin}/h/${slugs.data?.host ?? ''}`)}><GwIcon name="Link2" />{t('follow.myPage')}</Button>}
-      {slugs.data.team && <Button variant="secondary" onClick={() => void copy(`${window.location.origin}/t/${slugs.data?.team ?? ''}`)}><GwIcon name="Link2" />{t('follow.teamPage')}</Button>}
+      {slugs.data.host && <CopyButton text={`${window.location.origin}/h/${slugs.data.host}`} icon={<GwIcon name="Link2" />} label={t('follow.myPage')} />}
+      {slugs.data.team && <CopyButton text={`${window.location.origin}/t/${slugs.data.team}`} icon={<GwIcon name="Link2" />} label={t('follow.teamPage')} />}
     </div></div></div>}
   </div>;
 }

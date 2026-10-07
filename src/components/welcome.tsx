@@ -1,3 +1,4 @@
+import { CopyButton } from '@/components/copy-button';
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -38,7 +39,7 @@ function WelcomeBody({ data, onRedeem }: { data: WelcomeSummary; onRedeem: (rewa
     <p className="auth-subtitle">{t('welcome.intro')}</p>
     <div className="welcome-link"><Input readOnly value={link} aria-label={t('welcome.yourLink')} className="field-input" onFocus={e => e.currentTarget.select()} /></div>
     <div className="share-grid">
-      <Button variant="secondary" onClick={async () => { await navigator.clipboard.writeText(link); toast.success(t('onboarding.copied')); }}><Copy />{t('gathering.copyLink')}</Button>
+      <CopyButton text={link} />
       <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(msg)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button>
       <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(msg)}`}><MessageSquareText />{t('gathering.text')}</a></Button>
       <Button variant="secondary" onClick={share}><Share2 />{t('welcome.share')}</Button>

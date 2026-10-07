@@ -1,3 +1,4 @@
+import { CopyButton } from '@/components/copy-button';
 import { trackEvent } from '@/lib/analytics';
 import { EmptyState, ListSkeleton } from "@/components/launch-states";
 import { ClaimGuard } from '@/components/smart';
@@ -259,7 +260,7 @@ function InviteSheet({ open, onOpenChange, workspace, joinCode, isLeader }: { op
     <ResponsiveSheet open={open && !qr} onOpenChange={onOpenChange} title={t('teamSpace.invite')} description={t('teamSpace.inviteText', { team: workspace.name })}>
       <div className="copy-field"><span>{link}</span></div>
       <div className="share-grid">
-        <Button onClick={async () => { await navigator.clipboard.writeText(link); setCopied(true); }}>{copied ? <Check /> : <Copy />}{copied ? t('onboarding.copied') : t('onboarding.copy')}</Button>
+        <CopyButton variant="default" text={link} label={t('onboarding.copy')} />
         <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(message)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button>
         <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(message)}`}><Smartphone />{t('teamSpace.sms')}</a></Button>
         <Button variant="secondary" onClick={() => setQr(true)}><QrCode />{t('teamSpace.qr')}</Button>

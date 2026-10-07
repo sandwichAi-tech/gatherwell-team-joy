@@ -32,7 +32,7 @@ function NextCard() {
   const item = (title: string, text: string, action: React.ReactNode, done = false) => <div className={`next-item ${done ? 'is-done' : ''}`}><span className="next-status">{done ? <Check /> : null}</span><div className="person-info"><h3>{title}</h3><p>{text}</p></div>{action}</div>;
   return <section className="panel next-panel"><span className="eyebrow">{t('next.label')}</span>
     {role === 'leader' && <>
-      {item(t('next.inviteTitle'), t('next.inviteText'), <Button variant={copied ? 'secondary' : 'default'} disabled={!workspace} onClick={async () => { if (!workspace) return; await navigator.clipboard.writeText(joinLink(workspace.joinCode)); setCopied(true); }}>{copied ? <Check /> : <Copy />}{copied ? t('next.copied') : t('next.inviteAction')}</Button>, copied)}
+      {item(t('next.inviteTitle'), t('next.inviteText'), <Button variant={copied ? 'secondary' : 'default'} disabled={!workspace} onClick={async () => { if (!workspace) return; await navigator.clipboard.writeText(joinLink(workspace.joinCode)); setCopied(true); window.setTimeout(() => setCopied(false), 2000); }}>{copied ? <Check /> : <Copy />}{copied ? t('next.copied') : t('next.inviteAction')}</Button>, copied)}
       {item(t('next.templateTitle'), t('next.templateText'), <Button variant={copied ? 'default' : 'secondary'} onClick={() => openPlaceholder('event')}>{t('next.templateAction')}</Button>)}
     </>}
     {role === 'host' && item(t('next.hostTitle'), t('next.hostText'), <Button onClick={() => openPlaceholder('event')}><Plus />{t('next.hostAction')}</Button>)}

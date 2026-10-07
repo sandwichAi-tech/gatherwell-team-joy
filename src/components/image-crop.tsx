@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type PointerEvent as RPointerEvent, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type PointerEvent as RPointerEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
@@ -120,4 +120,3 @@ export function CropFileInput({ kind, withSquare, capture, onCropped, onRejected
   </>;
 }
 
-export function CropSlot({ children }: { children: ReactNode }) { return <>{children}</>; }
