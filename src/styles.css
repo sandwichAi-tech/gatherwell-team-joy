@@ -1491,6 +1491,7 @@ button { white-space:normal; }
 /* Marketing duotone uses the regular silhouette with reinforced contours. */
 .gw-landing{--gw-marketing-fill-opacity:.3;--gw-marketing-contour:3px}
 .gw-landing svg.gw-icon-marketing{color:var(--plum)}
+.gw-landing .gw-cat-chip svg.gw-icon-marketing{width:16px;height:16px}
 .gw-landing .gw-icon-marketing [opacity="0.2"]{fill:var(--lavender);opacity:var(--gw-marketing-fill-opacity)}
 .gw-landing .gw-icon-marketing path:not([opacity]){stroke:currentColor;stroke-width:var(--gw-marketing-contour);stroke-linejoin:round}
 .dark .gw-landing svg.gw-icon-marketing{color:var(--primary)}
