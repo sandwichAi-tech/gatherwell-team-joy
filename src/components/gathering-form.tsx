@@ -50,6 +50,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const tr = useTranslateFill(); const [busy, setBusy] = useState(false); const [uploading, setUploading] = useState(false);
   const [done, setDone] = useState<{ id: string; visibility: string } | null>(null); const [tried, setTried] = useState(false); const [ready, setReady] = useState(false);
   const addressRef = useRef<HTMLInputElement>(null);
+  // Quick create is the default for brand-new gatherings; templates, duplicates and edits open the full form.
+  const [full, setFull] = useState(editing || !!templateId || !!fromId);
 
   // Prefill once from template, the gathering being edited, or the one being duplicated.
   useEffect(() => {
