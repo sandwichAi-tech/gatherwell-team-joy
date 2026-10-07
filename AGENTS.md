@@ -39,3 +39,4 @@
 - Follows/calendar: public pages read only via get_public_host/get_public_team; iCal via /api/public/calendar/$token (token is the only credential).
 
 - ResponsiveSheet owns the fixed header/footer and scrollable body; callers pass primary actions via footer to keep them reachable.
+- Profile and offer covers use uploader-owned private media paths and the shared crop input; public host covers are signed server-side only after resolving the host slug, never from caller-supplied paths.

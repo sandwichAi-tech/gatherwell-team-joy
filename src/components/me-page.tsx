@@ -1,4 +1,5 @@
 import { CropFileInput } from '@/components/image-crop';
+import { GatheringCover } from '@/components/gathering-cover';
 import { CalendarFeedPanel } from '@/components/follow';
 import { EmptyState } from '@/components/launch-states';
 import { planStatusQuery } from '@/lib/billing';
@@ -58,6 +59,10 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [removePhoto, setRemovePhoto] = useState(false);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [removeCover, setRemoveCover] = useState(false);
+  useEffect(() => () => { if (coverPreview) URL.revokeObjectURL(coverPreview); }, [coverPreview]);
   const [busy, setBusy] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<'full_name' | 'bio' | 'city' | 'phone' | 'shop_url' | 'photo', string>>>({});
 
@@ -65,6 +70,7 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
     if (!open || !profile) return;
     setForm({ full_name: profile.full_name ?? '', bio: profile.bio ?? '', city: profile.city ?? '', phone: profile.phone ?? '', language: profile.language === 'es' ? 'es' : 'en', shop_url: profile.shop_url ?? '' });
     setFile(null); setPreview(null); setRemovePhoto(false); setErrors({});
+    setCoverFile(null); setCoverPreview(null); setRemoveCover(false);
   }, [open, profile]);
 
   const pick = (f?: File) => { if (!f) return; if (f.size > 5 * 1024 * 1024) { setErrors({ photo: t('profile.photoTooLarge') }); return; } setFile(f); setPreview(URL.createObjectURL(f)); setRemovePhoto(false); };
@@ -82,13 +88,18 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
       let avatar_url = profile?.avatar_url ?? null;
       if (file) avatar_url = await uploadMedia(userId, file, 'avatar');
       else if (removePhoto) avatar_url = null;
+      let cover_url = profile?.cover_url ?? null;
+      if (coverFile) cover_url = await uploadMedia(userId, coverFile, 'cover');
+      else if (removeCover) cover_url = null;
       const { error } = await supabase.from('profiles').update({
+        cover_url,
         full_name: form.full_name.trim(), bio: form.bio.trim() || null, city: form.city.trim() || null,
         phone: form.phone.trim() || null, language: form.language, shop_url: form.shop_url.trim() || null, avatar_url,
       }).eq('id', userId);
       if (error) throw error;
       if (form.language !== profile?.language) await saveLanguage(form.language);
       await queryClient.invalidateQueries({ queryKey: ['profile', userId] });
+      await queryClient.invalidateQueries({ queryKey: ['public-follow-page', 'host'] });
       toast.success(t('profile.saved'));
       onOpenChange(false);
     } catch { toast.error(t('profile.saveError')); }
@@ -105,7 +116,7 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
     footer={<Button className="sheet-primary" disabled={busy} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>}>
     <div className="edit-form">
       <div className="edit-preview">
-        <div className="gw-hero-cover" aria-hidden="true" />
+        <GatheringCover path={coverPreview ?? (removeCover ? null : profile?.cover_url) ?? null} title={form.full_name} className="gw-hero-cover profile-photo-cover" />
         <div className="edit-preview-avatar"><Avatar path={removePhoto ? null : profile?.avatar_url} name={form.full_name} preview={preview} size={88} /></div>
         <div className="photo-row flex-wrap">
           <label className="file-button"><Upload />{t('onboarding.upload')}<CropFileInput kind="avatar" className="hidden" onCropped={r => pick(r.file)} /></label>
@@ -113,6 +124,13 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
           {(preview || (profile?.avatar_url && !removePhoto)) && <button type="button" className="auth-link" onClick={() => { setFile(null); setPreview(null); setRemovePhoto(true); }}>{t('onboarding.removePhoto')}</button>}
         </div>
         {errors.photo && <p className="field-error">{errors.photo}</p>}
+      </div>
+      <div className="form-field">
+        <span className="field-label">{t('onboarding.cover')}</span>
+        <div className="photo-row flex-wrap">
+          <Button asChild variant="secondary"><label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" onCropped={r => { setCoverFile(r.file); setCoverPreview(r.previewUrl); setRemoveCover(false); }} onRejected={() => toast.error(t('profile.photoTooLarge'))} /></label></Button>
+          {(coverPreview || (profile?.cover_url && !removeCover)) && <Button variant="ghost" onClick={() => { setCoverFile(null); setCoverPreview(null); setRemoveCover(true); }}>{t('onboarding.removePhoto')}</Button>}
+        </div>
       </div>
       <fieldset className="edit-section"><legend>{t('profile.sectionAbout')}</legend>
         {field('full_name', t('onboarding.nameLabel'), { autoComplete: 'name', maxLength: 80 })}
@@ -194,6 +212,7 @@ export function MePage() {
   return <>
     <h1 className="sr-only">{t('me.title')}</h1>
     <ProfileHero
+      cover={profile?.cover_url}
       avatar={<span className={homId === userId ? 'hom-ring hom-wrap' : 'hom-wrap'}><Avatar path={profile?.avatar_url} name={profile?.full_name} size={96} /></span>}
       name={profile?.full_name} city={profile?.city} team={workspace?.name} role={workspace ? t(`roles.${workspace.role}`) : null} badge={workspace?.customBadge} bio={profile?.bio}
       actions={<>

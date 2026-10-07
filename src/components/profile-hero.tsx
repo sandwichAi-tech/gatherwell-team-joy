@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { GatheringCover } from '@/components/gathering-cover';
 import { Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -7,11 +8,12 @@ import { ListSkeleton, RetryState } from '@/components/launch-states';
 import { myChallengesQuery, myGatheringsQuery, profileStatsQuery, recentBadgesQuery, type MyGathering } from '@/lib/profile-stats';
 
 /** Identity-led hero shared by Me and member detail. */
-export function ProfileHero({ avatar, name, city, team, role, badge, bio, actions, compact }: {
+export function ProfileHero({ avatar, name, city, team, role, badge, bio, actions, compact, cover }: {
+  cover?: string | null | undefined;
   avatar: ReactNode; name?: string | null | undefined; city?: string | null | undefined; team?: string | null | undefined; role?: string | null | undefined; badge?: string | null | undefined; bio?: string | null | undefined; actions?: ReactNode; compact?: boolean | undefined;
 }) {
   return <section className={`gw-hero-card ${compact ? 'is-compact' : ''}`}>
-    <div className="gw-hero-cover" aria-hidden="true" />
+    <GatheringCover path={cover ?? null} title={name ?? ''} className="gw-hero-cover profile-photo-cover" />
     <div className="gw-hero-body">
       <div className="gw-hero-avatar">{avatar}</div>
       {actions && <div className="gw-hero-actions">{actions}</div>}
