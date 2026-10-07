@@ -1932,6 +1932,7 @@ export type Database = {
       offers: {
         Row: {
           cover_style: number
+          cover_url: string | null
           created_at: string
           description_en: string | null
           description_es: string | null
@@ -1951,6 +1952,7 @@ export type Database = {
         }
         Insert: {
           cover_style?: number
+          cover_url?: string | null
           created_at?: string
           description_en?: string | null
           description_es?: string | null
@@ -1970,6 +1972,7 @@ export type Database = {
         }
         Update: {
           cover_style?: number
+          cover_url?: string | null
           created_at?: string
           description_en?: string | null
           description_es?: string | null
@@ -2125,6 +2128,7 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           city: string | null
+          cover_url: string | null
           created_at: string
           full_name: string | null
           id: string
@@ -2141,6 +2145,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           city?: string | null
+          cover_url?: string | null
           created_at?: string
           full_name?: string | null
           id: string
@@ -2157,6 +2162,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           city?: string | null
+          cover_url?: string | null
           created_at?: string
           full_name?: string | null
           id?: string

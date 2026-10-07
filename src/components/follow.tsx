@@ -1,4 +1,5 @@
 import { CopyButton } from '@/components/copy-button';
+import { publicHostCover } from '@/lib/host-cover.functions';
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -18,7 +19,7 @@ import { formatWhen } from '@/lib/guest';
 import { initialsOf, mediaUrl } from '@/lib/account';
 
 type Upcoming = { id: string; title: string; starts_at: string; timezone: string; location_name: string | null; online: boolean; cover_style: number | null };
-type HostPage = { id: string; name: string | null; avatar_url: string | null; city: string | null; bio: string | null; shop_url: string | null; followers: number; following: boolean; upcoming: Upcoming[] };
+type HostPage = { id: string; name: string | null; avatar_url: string | null; cover_url: string | null; coverSrc?: string | null; city: string | null; bio: string | null; shop_url: string | null; followers: number; following: boolean; upcoming: Upcoming[] };
 type TeamPage = { id: string; name: string; cover_url: string | null; leader: { name: string | null; slug: string | null; avatar_url: string | null } | null; members: number; followers: number; following: boolean; upcoming: Upcoming[] };
 
 const pageQuery = (kind: 'host' | 'team', slug: string) => ({
@@ -26,6 +27,7 @@ const pageQuery = (kind: 'host' | 'team', slug: string) => ({
   queryFn: async () => {
     const { data, error } = kind === 'host' ? await supabase.rpc('get_public_host', { _slug: slug }) : await supabase.rpc('get_public_team', { _slug: slug });
     if (error) throw error;
+    if (kind === 'host' && data) return { ...(data as unknown as HostPage), coverSrc: await publicHostCover({ data: { slug } }) };
     return data as unknown as HostPage | TeamPage | null;
   },
 });
@@ -47,7 +49,7 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
   const avatarPath = host?.avatar_url ?? team?.leader?.avatar_url ?? null;
   return <div className="follow-page">
     <section className="gw-hero-card follow-hero">
-      <BrandImage slot="host_band" alt="" className="gw-hero-cover" />
+      {host ? <BrandImage src={host.coverSrc} alt={name} className="gw-hero-cover profile-photo-cover" priority /> : <BrandImage slot="host_band" alt="" className="gw-hero-cover" />}
       <div className="follow-hero-body">
         <Avatar path={avatarPath} name={name} />
         <p className="eyebrow">{t(kind === 'host' ? 'follow.hostLabel' : 'follow.teamLabel')}</p>
