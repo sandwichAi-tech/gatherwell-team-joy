@@ -18,7 +18,7 @@ import { GatheringCover } from '@/components/gathering-cover';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { supabase } from '@/integrations/supabase/client';
 import { uploadMedia, workspaceQuery } from '@/lib/account';
-import { COVER_STYLES, datePresets, isOnline, rpcError, shareLink, toLocalInput, usualSlot } from '@/lib/gatherings';
+import { COVER_STYLES, datePresets, isOnline, rpcError, shareLink, toLocalInput, usualSlot, expandRepeat, REPEATS, type Repeat, type RepeatRule } from '@/lib/gatherings';
 import { useMapsKey, loadMaps } from '@/lib/maps-client';
 import { checklistOf, eventDetailQuery, templatesQuery } from '@/lib/templates';
 import { UpgradeSheet } from '@/components/plan-page';
@@ -48,11 +48,12 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const [price, setPrice] = useState(''); const [limit, setLimit] = useState<null | 'gatherings' | 'storage'>(null);
   const [capacity, setCapacity] = useState(''); const [visibility, setVisibility] = useState<'public' | 'team' | 'invite'>('public');
   const [descEn, setDescEn] = useState(''); const [descEs, setDescEs] = useState(''); const [descTab, setDescTab] = useState<'en' | 'es'>(lang);
-  const [weekly, setWeekly] = useState(false); const [wholeSeries, setWholeSeries] = useState(false); const [tpl, setTpl] = useState<{ id: string; title: string } | null>(null);
+  const [wholeSeries, setWholeSeries] = useState(false); const [tpl, setTpl] = useState<{ id: string; title: string } | null>(null);
   const tr = useTranslateFill(); const [busy, setBusy] = useState(false); const [uploading, setUploading] = useState(false);
   const [done, setDone] = useState<{ id: string; visibility: string } | null>(null); const [tried, setTried] = useState(false); const [ready, setReady] = useState(false);
   const addressRef = useRef<HTMLInputElement>(null);
   // Quick create is the default for brand-new gatherings; templates, duplicates and edits open the full form.
+  const [rule, setRule] = useState<RepeatRule>({ kind: 'none', monthly: 'date', days: [], endMode: 'count', count: 8, until: '' });
   const [full, setFull] = useState(editing || !!templateId || !!fromId);
 
   // Prefill once from template, the gathering being edited, or the one being duplicated.
@@ -115,12 +116,15 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const valid = title.trim() && start && !urlBad && (place === 'person' || url.trim()) && (!capacity || Number(capacity) >= 1) && (!priceCents || (priceCents >= 100 && priceCents <= 100000));
   const presets = datePresets(); const usual = editing ? null : usualSlot(history);
   const startDate = start ? new Date(start) : null;
+  const dates = startDate && !editing ? expandRepeat(startDate, rule) : [];
+  const weekly = dates.length > 1;
 
   const payload = () => ({
     category, category_label: category === 'more' ? categoryLabel.trim() : '', title: title.trim(), cover_url: coverPath ?? '', cover_style: coverStyle, starts_at: new Date(start).toISOString(), duration_minutes: duration,
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, location_name: place === 'person' ? locationName : '', address: place === 'person' ? address : '',
     meeting_note: place === 'person' ? note : '', online_url: place === 'online' ? url.trim() : '', capacity: capacity ? Number(capacity) : '',
     visibility, description_en: descEn.trim(), description_es: descEs.trim(), template_id: tpl?.id ?? '',
+    ...(weekly ? { recurrence: rule.kind, occurrences: dates.map(d => d.toISOString()) } : {}),
     lat: place === 'person' && coords ? coords.lat : '', lng: place === 'person' && coords ? coords.lng : '',
   });
 
@@ -136,7 +140,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       await queryClient.invalidateQueries(); toast.success(t('gathering.saved'));
       void navigate({ to: '/event/$id', params: { id: eventId! } }); return;
     }
-    const { data, error } = await supabase.rpc('create_gathering_at', { _team: teamId, _p: payload(), _publish: publish, _weekly: weekly }); if (!error) { trackEvent('gathering_created', { weekly }); if (publish) trackEvent('gathering_published'); if (templateId) trackEvent('template_launched'); }
+    const { data, error } = await supabase.rpc('create_gathering_at', { _team: teamId, _p: payload(), _publish: publish, _weekly: false }); if (!error) { trackEvent('gathering_created', { weekly }); if (publish) trackEvent('gathering_published'); if (templateId) trackEvent('template_launched'); }
     setBusy(false);
     if (error?.message?.includes('plan_limit_gatherings')) { setLimit('gatherings'); return; }
     if (error || !data) { toast.error(rpcError(t, error)); return; }
@@ -164,7 +168,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       <GatheringCover path={coverPath} style={coverStyle} title={title} className="success-cover" />
       <span className="success-check"><Check /></span>
       <h1>{t('gathering.live')}</h1>
-      <p className="success-title">{title}</p><p className="auth-subtitle">{when}{weekly ? ` · ${t('gathering.weeklyNote')}` : ''}</p>
+      <p className="success-title">{title}</p><p className="auth-subtitle">{when}{weekly ? ` · ${t(`gathering.repeats.${rule.kind}`)}` : ''}</p>
       <div className="share-grid success-share">
         <CopyButton text={link} />
         <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(invite)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button>
@@ -254,9 +258,19 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       </section>
 
       {!editing ? <section className="form-section">
-        <span className="field-label">{t('gathering.repeat')}</span>
-        <div className="segmented full" role="group" aria-label={t('gathering.repeat')}>{([false, true] as const).map(w => <Button key={String(w)} variant="ghost" className={weekly === w ? 'selected' : ''} aria-pressed={weekly === w} onClick={() => setWeekly(w)}>{w && <Repeat />}{t(w ? 'gathering.weekly' : 'gathering.noRepeat')}</Button>)}</div>
-        {weekly && <p className="auth-subtitle">{t('gathering.weeklyHelp')}</p>}
+        <label className="field-label" htmlFor="g-repeat">{t('gathering.repeat')}</label>
+        <select id="g-repeat" className="field-input" value={rule.kind} onChange={e => setRule(r => ({ ...r, kind: e.target.value as Repeat }))}>
+          {REPEATS.map(k => <option key={k} value={k}>{t(`gathering.repeats.${k}`)}</option>)}
+        </select>
+        {rule.kind === 'monthly' && startDate && <div className="segmented full" role="group" aria-label={t('gathering.repeats.monthly')}>{(['date', 'nth', 'last'] as const).map(m => <Button key={m} variant="ghost" className={rule.monthly === m ? 'selected' : ''} aria-pressed={rule.monthly === m} onClick={() => setRule(r => ({ ...r, monthly: m }))}>{t(`gathering.monthly.${m}`, { date: startDate.getDate(), nth: t(`gathering.nth.${Math.min(4, Math.floor((startDate.getDate() - 1) / 7))}`), day: startDate.toLocaleDateString(lang, { weekday: 'long' }) })}</Button>)}</div>}
+        {rule.kind === 'custom' && <div className="chip-row" role="group" aria-label={t('gathering.pickDays')}>{[0, 1, 2, 3, 4, 5, 6].map(d => { const on = rule.days.includes(d); return <button key={d} type="button" className={`preset-chip ${on ? 'is-selected' : ''}`} aria-pressed={on} onClick={() => setRule(r => ({ ...r, days: on ? r.days.filter(x => x !== d) : [...r.days, d] }))}>{new Date(2024, 0, 7 + d).toLocaleDateString(lang, { weekday: 'short' })}</button>; })}</div>}
+        {rule.kind !== 'none' && <>
+          <div className="segmented full" role="group" aria-label={t('gathering.ends')}>{(['count', 'until'] as const).map(m => <Button key={m} variant="ghost" className={rule.endMode === m ? 'selected' : ''} aria-pressed={rule.endMode === m} onClick={() => setRule(r => ({ ...r, endMode: m }))}>{t(`gathering.end.${m}`)}</Button>)}</div>
+          {rule.endMode === 'count'
+            ? <div className="inline-field"><Input type="number" min={2} max={52} className="field-input" value={rule.count} onChange={e => setRule(r => ({ ...r, count: Math.max(2, Math.min(52, Number(e.target.value) || 2)) }))} aria-label={t('gathering.end.times')} /><span>{t('gathering.end.times')}</span></div>
+            : <Input type="date" className="field-input" value={rule.until} onChange={e => setRule(r => ({ ...r, until: e.target.value }))} aria-label={t('gathering.end.until')} />}
+          <p className="auth-subtitle">{t('gathering.repeatSummary', { count: dates.length, last: dates[dates.length - 1]!.toLocaleDateString(lang, { month: 'short', day: 'numeric' }) })}</p>
+        </>}
       </section> : source?.event.series_id ? <section className="form-section">
         <span className="field-label">{t('gathering.applyTo')}</span>
         <div className="segmented full" role="group" aria-label={t('gathering.applyTo')}>{([false, true] as const).map(w => <Button key={String(w)} variant="ghost" className={wholeSeries === w ? 'selected' : ''} aria-pressed={wholeSeries === w} onClick={() => setWholeSeries(w)}>{t(w ? 'gathering.thisAndLater' : 'gathering.thisDate')}</Button>)}</div>
