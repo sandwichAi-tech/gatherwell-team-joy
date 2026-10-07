@@ -29,7 +29,7 @@ export function DiscoverPage({ search }: { search: DiscoverSearch }) {
       <section className="gw-container gw-discover-head">
         <span className="gw-label">{t('landing.discover.label')}</span>
         <h1 className="gw-display gw-h1">{t('landing.discover.title')}</h1>
-        <p className="gw-hero-sub">{t('landing.discover.sub')}</p>
+        <p className="gw-lede">{t('landing.discover.sub')}</p>
       </section>
       <CategoryRow selected={search.cat ?? null} onSelect={c => set({ cat: c ?? undefined })} />
       <section className="gw-container gw-discover-filters">

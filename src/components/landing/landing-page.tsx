@@ -62,12 +62,12 @@ function Hero({ gatherings }: { gatherings: FeedGathering[] }) {
   const initials = gatherings.filter(g => !g.isSample).flatMap(g => g.initials).slice(0, 4);
 
   return <section className="gw-hero" id="hero">
-    <div className="gw-aurora" aria-hidden="true" />
+    <div className="gw-aurora" aria-hidden="true"><span className="gw-blob gw-blob-lav" /><span className="gw-blob gw-blob-peach" /><span className="gw-glow" /></div>
     <div className="gw-container gw-hero-grid">
       <div className="gw-hero-copy">
         <span className="gw-label">{t('landing.hero.label')}</span>
         <Headline variant={variant} />
-        <p className="gw-hero-sub">{t('landing.hero.sub')}</p>
+        <p className="gw-lede">{t('landing.hero.sub')}</p>
         <div className="gw-hero-ctas">
           <button type="button" className="gw-btn gw-btn-primary gw-btn-lg" onClick={() => { track('hero_find_click', { variant }); void navigate({ to: '/discover', search: { near: 1 } }); }}>{t('landing.hero.find')}<GwIcon name="ArrowRight" size={18} /></button>
           <Link to="/login" search={{ intent: 'host' }} className="gw-btn gw-btn-secondary gw-btn-lg" onClick={() => track('hero_host_click', { variant })}>{t('landing.hero.host')}</Link>
@@ -83,17 +83,17 @@ function Hero({ gatherings }: { gatherings: FeedGathering[] }) {
 
 export function CategoryRow({ selected, onSelect }: { selected: Category | null; onSelect: (c: Category | null) => void }) {
   const { t } = useTranslation();
-  return <section className="gw-container gw-cat-section">
+  return <section className="gw-band gw-band-white gw-cat-section"><div className="gw-container">
     <div className="gw-cat-row" role="group" aria-label={t('landing.cat.rowLabel')}>
       {CATEGORIES.map(c => {
         const on = selected === c;
         return <button key={c} type="button" className={`gw-cat ${on ? 'is-on' : ''}`} aria-pressed={on} onClick={() => { track('category_click', { category: c }); onSelect(on ? null : c); }}>
-          <span className="gw-cat-circle"><GwIcon name={CATEGORY_ICONS[c]} variant="feature" size={28} /></span>
+          <span className="gw-cat-circle"><GwIcon name={CATEGORY_ICONS[c]} variant="feature" size={32} /></span>
           <span className="gw-cat-label">{t(`landing.cat.${c}`)}</span>
         </button>;
       })}
     </div>
-  </section>;
+  </div></section>;
 }
 
 function ThisWeek({ gatherings, category }: { gatherings: FeedGathering[]; category: Category | null }) {
@@ -102,7 +102,7 @@ function ThisWeek({ gatherings, category }: { gatherings: FeedGathering[]; categ
   const week = gatherings.filter(g => inNextDays(g.startsAt, 7) && (!category || g.category === category));
   const list = sortForFeed(week, near, distanceKm).slice(0, 8);
   const hasSamples = list.some(g => g.isSample);
-  return <section className="gw-section gw-container" aria-labelledby="this-week-title">
+  return <section className="gw-section gw-container gw-band gw-band-canvas" aria-labelledby="this-week-title">
     <div className="gw-section-head">
       <div><span className="gw-label">{near ? t('landing.feed.label') : t('landing.feed.popular')}</span><h2 id="this-week-title" className="gw-display gw-h2">{t('landing.feed.title')}</h2></div>
       <Link to="/discover" search={category ? { cat: category } : {}} className="gw-see-all">{t('landing.feed.seeAll')}<GwIcon name="ArrowRight" size={16} /></Link>
@@ -118,7 +118,7 @@ function HowItWorks() {
   const { t } = useTranslation();
   const demo: FeedGathering = { id: 'demo', isSample: true, hero: false, title: t('landing.hero.photoTitle_run'), startsAt: new Date(), category: 'run', locationName: null, isOnline: false, lat: null, lng: null, capacity: null, going: 14, goingNames: [], initials: ['M', 'J', 'S'], hostName: 'Nick C.' };
   const [rsvpKey, setRsvpKey] = useState(0);
-  return <section className="gw-section gw-container" id="how-it-works" aria-labelledby="how-title">
+  return <section className="gw-section gw-container gw-band gw-band-white" id="how-it-works" aria-labelledby="how-title">
     <span className="gw-label">{t('landing.how.label')}</span>
     <h2 id="how-title" className="gw-display gw-h2">{t('landing.how.title')}</h2>
     <ol className="gw-how">

@@ -80,7 +80,7 @@ export default function LiveStack({ items }: { items: HeroItem[] }) {
       })}
     </motion.div>
     <button type="button" className="gw-stack-toggle" onClick={() => setUserPaused(v => !v)} aria-pressed={userPaused} aria-label={userPaused ? t('landing.hero.play') : t('landing.hero.pause')}>
-      <GwIcon name={userPaused ? 'Play' : 'Pause'} size={14} />
+      <GwIcon name={userPaused ? 'Play' : 'Pause'} size={16} />
     </button>
   </div>;
 }
