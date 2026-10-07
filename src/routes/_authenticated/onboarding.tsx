@@ -4,7 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Camera, Upload, Crown, CalendarHeart, UsersRound, Check, Copy, ImagePlus } from '@/components/icons';
+import { Camera, Upload, Crown, CalendarHeart, UsersRound, Check, ImagePlus } from '@/components/icons';
+import { QRCodeSVG } from 'qrcode.react';
+import { CopyButton } from '@/components/copy-button';
+import { CropFileInput } from '@/components/image-crop';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { LanguageToggle, pageHead, setLanguage } from '@/components/auth-frame';
@@ -36,7 +39,7 @@ function Onboarding() {
   const [cover, setCover] = useState<File | null>(null);
   const [joined, setJoined] = useState<{ team: string; leader: string | null } | null>(null);
   const [created, setCreated] = useState<{ team: string; joinCode: string } | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [finishing, setFinishing] = useState(false);
   const started = useRef(false);
 
   useEffect(() => {
@@ -71,16 +74,17 @@ function Onboarding() {
   }, []);
 
   async function finish() {
-    await supabase.from('profiles').update({ onboarded: true }).eq('id', user.id); trackEvent('signup'); trackEvent('onboarding_complete');
-    await queryClient.invalidateQueries();
-    void navigate({ to: '/home', replace: true });
+    if (finishing) return; setFinishing(true); setError(null);
+    const { error: e } = await supabase.from('profiles').update({ onboarded: true }).eq('id', user.id);
+    if (e) { setFinishing(false); setError(t('onboarding.error')); return; }
+    trackEvent('signup'); trackEvent('onboarding_complete');
+    localStorage.removeItem(JOIN_CODE_KEY);
+    // Mark the cached profile onboarded so the app gate lets Home through immediately.
+    queryClient.setQueryData(profileQuery(user.id).queryKey, p => (p ? { ...p, onboarded: true } : p));
+    await queryClient.invalidateQueries({ queryKey: ['workspace', user.id] }).catch(() => null);
+    try { await navigate({ to: '/home', replace: true }); } catch { window.location.assign('/home'); }
+    void queryClient.invalidateQueries();
   }
-
-  const pickPhoto = (file?: File) => {
-    if (!file) return;
-    setPhoto(file);
-    setPhotoPreview(URL.createObjectURL(file));
-  };
 
   const step = steps?.[index];
   const total = steps?.length ?? 0;
@@ -124,8 +128,6 @@ function Onboarding() {
     setBusy(false);
   };
 
-  const copy = async (link: string) => { await navigator.clipboard.writeText(link); setCopied(true); };
-
   const shell = (content: React.ReactNode, showBar = true) => <div className="onboarding-screen">
     {showBar && total > 0 && <div className="onboarding-progress" role="progressbar" aria-valuemin={0} aria-valuemax={total} aria-valuenow={Math.min(index + 1, total)} aria-label={t('onboarding.step', { current: Math.min(index + 1, total), total })}><span style={{ width: `${(Math.min(index + 1, total) / total) * 100}%` }} /></div>}
     <div className="onboarding-top">{index > 0 && !atEnd ? <button type="button" className="auth-link" onClick={() => { setError(null); setIndex(index - 1); }}>{t('onboarding.back')}</button> : <span />}<LanguageToggle /></div>
@@ -137,16 +139,25 @@ function Onboarding() {
   if (atEnd && created) return shell(<>
     <div className="auth-icon"><Check /></div>
     <h1 className="onboarding-title">{t('onboarding.createdTitle')}</h1>
-    <p className="auth-subtitle">{t('onboarding.createdText', { team: created.team })}</p>
-    <div className="copy-field"><code>{joinLink(created.joinCode)}</code><Button variant="secondary" onClick={() => copy(joinLink(created.joinCode))}>{copied ? <Check /> : <Copy />}{copied ? t('onboarding.copied') : t('onboarding.copy')}</Button></div>
-    <Button className="onboarding-continue" onClick={finish}>{t('onboarding.goHome')}</Button>
+    <section className="invite-card" aria-labelledby="invite-card-title">
+      <h2 id="invite-card-title">{t('onboarding.inviteCardTitle')}</h2>
+      <p>{t('onboarding.inviteExplain', { team: created.team })}</p>
+      <div className="copy-field"><code>{joinLink(created.joinCode)}</code><CopyButton text={joinLink(created.joinCode)} label={t('onboarding.copy')} /></div>
+      <div className="invite-qr"><QRCodeSVG value={joinLink(created.joinCode)} size={152} level="M" marginSize={2} title={t('onboarding.inviteQr')} /></div>
+      <details className="invite-how"><summary>{t('onboarding.inviteHow')}</summary>
+        <ol><li>{t('onboarding.inviteStep1', { team: created.team })}</li><li>{t('onboarding.inviteStep2')}</li><li>{t('onboarding.inviteStep3', { team: created.team })}</li></ol>
+      </details>
+    </section>
+    {error && <p className="field-error" role="alert">{error}</p>}
+    <Button className="onboarding-continue" disabled={finishing} onClick={() => void finish()}>{finishing ? t('onboarding.saving') : t('onboarding.goHome')}</Button>
   </>, false);
 
   if (atEnd && joined) return shell(<>
     <span className="eyebrow">{joined.team}</span>
     <h1 className="onboarding-title">{t('onboarding.welcomeTitle', { team: joined.team })}</h1>
     {joined.leader && <div className="leader-line"><span className="initial-avatar">{initialsOf(joined.leader)}</span><span>{t('onboarding.welcomeLed', { name: joined.leader })}</span></div>}
-    <Button className="onboarding-continue" onClick={finish}>{t('onboarding.goHome')}</Button>
+    {error && <p className="field-error" role="alert">{error}</p>}
+    <Button className="onboarding-continue" disabled={finishing} onClick={() => void finish()}>{finishing ? t('onboarding.saving') : t('onboarding.goHome')}</Button>
   </>, false);
 
   if (atEnd) return shell(<p className="auth-subtitle">{t('onboarding.saving')}</p>, false);
@@ -161,8 +172,8 @@ function Onboarding() {
       <span className="field-label">{t('onboarding.photo')}</span>
       <div className="photo-row">
         {photoPreview ? <img src={photoPreview} alt="" className="photo-preview" /> : <span className="initial-avatar photo-preview">{initialsOf(name)}</span>}
-        <label className="file-button"><Upload />{t('onboarding.upload')}<input type="file" accept="image/*" hidden onChange={e => pickPhoto(e.target.files?.[0])} /></label>
-        <label className="file-button"><Camera />{t('onboarding.camera')}<input type="file" accept="image/*" capture="user" hidden onChange={e => pickPhoto(e.target.files?.[0])} /></label>
+        <label className="file-button"><Upload />{t('onboarding.upload')}<CropFileInput kind="avatar" className="hidden" onCropped={r => { setPhoto(r.file); setPhotoPreview(r.previewUrl); }} /></label>
+        <label className="file-button"><Camera />{t('onboarding.camera')}<CropFileInput kind="avatar" capture="user" className="hidden" onCropped={r => { setPhoto(r.file); setPhotoPreview(r.previewUrl); }} /></label>
         {photo && <button type="button" className="auth-link" onClick={() => { setPhoto(null); setPhotoPreview(null); }}>{t('onboarding.removePhoto')}</button>}
       </div>
     </>}
@@ -183,7 +194,7 @@ function Onboarding() {
       <label className="field-label" htmlFor="team-name">{t('onboarding.teamName')}</label>
       <Input id="team-name" maxLength={80} className="field-input" placeholder={t('onboarding.teamNamePlaceholder')} value={teamName} onChange={e => setTeamName(e.target.value)} />
       <span className="field-label">{t('onboarding.cover')}</span>
-      <label className="file-button"><ImagePlus />{cover ? cover.name : t('onboarding.uploadCover')}<input type="file" accept="image/*" hidden onChange={e => setCover(e.target.files?.[0] ?? null)} /></label>
+      <label className="file-button"><ImagePlus />{cover ? t('gathering.changePhoto') : t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={r => setCover(r.file)} /></label>
     </> : <>
       <h1 className="onboarding-title">{t('onboarding.joinTitle')}</h1>
       <p className="auth-subtitle">{t('onboarding.joinText')}</p>

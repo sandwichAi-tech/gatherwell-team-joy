@@ -80,9 +80,9 @@ export function parseJoinCode(input: string) {
   return ((match ? match[1] : value) ?? '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
 }
 
-export async function uploadMedia(userId: string, file: File, kind: 'avatar' | 'cover' | 'announcement') {
+export async function uploadMedia(userId: string, file: File, kind: 'avatar' | 'cover' | 'announcement', at?: string) {
   const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
-  const path = `${userId}/${kind}-${Date.now()}.${ext}`;
+  const path = at ?? `${userId}/${kind}-${Date.now()}.${ext}`;
   const { data: room } = await supabase.rpc('storage_allows', { _bytes: file.size });
   if (room === false) throw new Error('storage_limit');
   const { error } = await supabase.storage.from('media').upload(path, file, { upsert: true, contentType: file.type });

@@ -1,3 +1,4 @@
+import { CropFileInput } from '@/components/image-crop';
 import { CalendarFeedPanel } from '@/components/follow';
 import { EmptyState } from '@/components/launch-states';
 import { planStatusQuery } from '@/lib/billing';
@@ -107,8 +108,8 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
         <div className="gw-hero-cover" aria-hidden="true" />
         <div className="edit-preview-avatar"><Avatar path={removePhoto ? null : profile?.avatar_url} name={form.full_name} preview={preview} size={88} /></div>
         <div className="photo-row flex-wrap">
-          <label className="file-button"><Upload />{t('onboarding.upload')}<input type="file" accept="image/*" hidden onChange={e => pick(e.target.files?.[0])} /></label>
-          <label className="file-button"><Camera />{t('onboarding.camera')}<input type="file" accept="image/*" capture="user" hidden onChange={e => pick(e.target.files?.[0])} /></label>
+          <label className="file-button"><Upload />{t('onboarding.upload')}<CropFileInput kind="avatar" className="hidden" onCropped={r => pick(r.file)} /></label>
+          <label className="file-button"><Camera />{t('onboarding.camera')}<CropFileInput kind="avatar" capture="user" className="hidden" onCropped={r => pick(r.file)} /></label>
           {(preview || (profile?.avatar_url && !removePhoto)) && <button type="button" className="auth-link" onClick={() => { setFile(null); setPreview(null); setRemovePhoto(true); }}>{t('onboarding.removePhoto')}</button>}
         </div>
         {errors.photo && <p className="field-error">{errors.photo}</p>}

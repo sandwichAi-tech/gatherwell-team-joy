@@ -324,7 +324,14 @@
     "welcomeTitle": "You're in. Welcome to {{team}}.",
     "welcomeLed": "Led by {{name}}",
     "goHome": "Go to my home",
-    "error": "We couldn't save that. Please try again."
+    "error": "We couldn't save that. Please try again.",
+    "inviteCardTitle": "Your team invite link",
+    "inviteExplain": "This is your team's invite link. Anyone who opens it can create an account and join {{team}} as a member. Send it in WhatsApp, text, or show the QR code at your next gathering.",
+    "inviteHow": "What happens when they tap it?",
+    "inviteStep1": "The link opens a short welcome page for {{team}}.",
+    "inviteStep2": "They create a free account with their email or Google.",
+    "inviteStep3": "They land in {{team}} as a member and see your upcoming gatherings.",
+    "inviteQr": "QR code for your team invite link"
   },
   "join": {
     "eyebrow": "TEAM INVITE",
@@ -2609,7 +2616,9 @@
     },
     "yourTeam": "Your team",
     "network": "Network",
-    "benchFoot": "Your team hosted {{count}} gatherings in this period."
+    "benchFoot": "Your team hosted {{count}} gatherings in this period.",
+    "slotAny": "Gatherings on {{day}} around {{time}} average {{ratio}}x more check-ins than other times.",
+    "lengthAny": "Most successful gatherings run {{min}}–{{max}} minutes."
   },
   "waiver": {
     "draft": "Draft — pending legal review",
@@ -2799,5 +2808,19 @@
     "myPage": "My host page",
     "teamPage": "Team page",
     "googleCalendar": "Google Calendar"
+  },
+  "crop": {
+    "title": "Crop your cover",
+    "titleAvatar": "Crop your photo",
+    "hint": "Drag to position, then zoom to frame it.",
+    "shape": "Shape",
+    "wide": "Wide 16:9",
+    "square": "Square 1:1",
+    "story": "Story 9:16",
+    "zoom": "Zoom",
+    "position": "Photo position. Use arrow keys to move.",
+    "preview": "Preview",
+    "apply": "Use photo",
+    "cancel": "Cancel"
   }
 }

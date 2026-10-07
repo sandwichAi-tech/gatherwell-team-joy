@@ -324,7 +324,14 @@
     "welcomeTitle": "Ya estás dentro. Bienvenido a {{team}}.",
     "welcomeLed": "Lo lidera {{name}}",
     "goHome": "Ir a mi inicio",
-    "error": "No pudimos guardarlo. Inténtalo de nuevo."
+    "error": "No pudimos guardarlo. Inténtalo de nuevo.",
+    "inviteCardTitle": "El enlace de invitación de tu equipo",
+    "inviteExplain": "Este es el enlace de invitación de tu equipo. Cualquier persona que lo abra puede crear una cuenta y unirse a {{team}} como integrante. Envíalo por WhatsApp o mensaje de texto, o muestra el código QR en tu próxima reunión.",
+    "inviteHow": "¿Qué pasa cuando lo abren?",
+    "inviteStep1": "El enlace abre una breve página de bienvenida de {{team}}.",
+    "inviteStep2": "Crean una cuenta gratis con su correo o con Google.",
+    "inviteStep3": "Entran a {{team}} como integrantes y ven tus próximas reuniones.",
+    "inviteQr": "Código QR del enlace de invitación de tu equipo"
   },
   "join": {
     "eyebrow": "INVITACIÓN AL EQUIPO",
@@ -2609,7 +2616,9 @@
     },
     "yourTeam": "Tu equipo",
     "network": "Red",
-    "benchFoot": "Tu equipo organizó {{count}} reuniones en este periodo."
+    "benchFoot": "Tu equipo organizó {{count}} reuniones en este periodo.",
+    "slotAny": "Las reuniones los {{day}} cerca de las {{time}} tienen en promedio {{ratio}} veces más llegadas que en otros horarios.",
+    "lengthAny": "Las reuniones con mejores resultados duran entre {{min}} y {{max}} minutos."
   },
   "waiver": {
     "draft": "Borrador — pendiente de revisión legal",
@@ -2799,5 +2808,19 @@
     "myPage": "Mi página de anfitrión",
     "teamPage": "Página del equipo",
     "googleCalendar": "Calendario de Google"
+  },
+  "crop": {
+    "title": "Recorta tu portada",
+    "titleAvatar": "Recorta tu foto",
+    "hint": "Arrastra para acomodarla y usa el zoom para encuadrarla.",
+    "shape": "Formato",
+    "wide": "Panorámica 16:9",
+    "square": "Cuadrada 1:1",
+    "story": "Historia 9:16",
+    "zoom": "Zoom",
+    "position": "Posición de la foto. Usa las flechas para moverla.",
+    "preview": "Vista previa",
+    "apply": "Usar foto",
+    "cancel": "Cancelar"
   }
 }

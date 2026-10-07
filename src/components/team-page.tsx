@@ -1,3 +1,5 @@
+import { CropFileInput } from '@/components/image-crop';
+import { CopyButton } from '@/components/copy-button';
 import { trackEvent } from '@/lib/analytics';
 import { EmptyState, ListSkeleton } from "@/components/launch-states";
 import { ClaimGuard } from '@/components/smart';
@@ -259,7 +261,7 @@ function InviteSheet({ open, onOpenChange, workspace, joinCode, isLeader }: { op
     <ResponsiveSheet open={open && !qr} onOpenChange={onOpenChange} title={t('teamSpace.invite')} description={t('teamSpace.inviteText', { team: workspace.name })}>
       <div className="copy-field"><span>{link}</span></div>
       <div className="share-grid">
-        <Button onClick={async () => { await navigator.clipboard.writeText(link); setCopied(true); }}>{copied ? <Check /> : <Copy />}{copied ? t('onboarding.copied') : t('onboarding.copy')}</Button>
+        <CopyButton variant="default" text={link} label={t('onboarding.copy')} />
         <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(message)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button>
         <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(message)}`}><Smartphone />{t('teamSpace.sms')}</a></Button>
         <Button variant="secondary" onClick={() => setQr(true)}><QrCode />{t('teamSpace.qr')}</Button>
@@ -303,7 +305,7 @@ function EditTeamSheet({ open, onOpenChange, team, userId }: { open: boolean; on
       <div className="form-field"><label className="field-label" htmlFor="team-name">{t('onboarding.teamName')}</label><Input id="team-name" className="field-input" value={name} maxLength={80} onChange={e => setName(e.target.value)} /></div>
       <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
         <div className="cover-edit" style={shown ? { backgroundImage: `url(${shown})` } : color ? { background: `linear-gradient(135deg, ${color}, var(--lavender))` } : undefined}>{!shown && <span className="team-cover-initial">{(name.trim()[0] ?? 'G').toUpperCase()}</span>}</div>
-        <div className="photo-row"><label className="file-button"><Upload />{t('onboarding.uploadCover')}<input type="file" accept="image/*" hidden onChange={e => { const f = e.target.files?.[0]; if (f) { setFile(f); setPreview(URL.createObjectURL(f)); setRemoveCover(false); } }} /></label>
+        <div className="photo-row"><label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={r => { setFile(r.file); setPreview(r.previewUrl); setRemoveCover(false); }} /></label>
           {shown && <button type="button" className="auth-link" onClick={() => { setFile(null); setPreview(null); setRemoveCover(true); }}>{t('onboarding.removePhoto')}</button>}</div></div>
       <div className="form-field"><span className="field-label">{t('teamSpace.brandColor')}</span>
         <div className="swatches">{TEAM_COLORS.map(value => <button type="button" key={value} className={`swatch ${color === value ? 'is-selected' : ''}`} style={{ background: value }} aria-label={value} aria-pressed={color === value} onClick={() => setColor(value)}>{color === value && <Check />}</button>)}

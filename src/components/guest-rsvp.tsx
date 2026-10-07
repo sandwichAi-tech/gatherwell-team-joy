@@ -1,3 +1,4 @@
+import { CopyButton } from '@/components/copy-button';
 import { trackEvent } from '@/lib/analytics';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link } from '@tanstack/react-router';
@@ -39,7 +40,7 @@ export function InviteShare({ eventId, title, when }: { eventId: string; title: 
   const { t } = useTranslation();
   const link = guestLink(eventId); const text = t('guest.inviteText', { title, date: when, link });
   return <div className="share-grid">
-    <Button variant="secondary" onClick={async () => { await navigator.clipboard.writeText(link); toast.success(t('onboarding.copied')); }}><Copy />{t('gathering.copyLink')}</Button>
+    <CopyButton text={link} />
     <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(text)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button>
     <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(text)}`}><MessageSquareText />{t('gathering.text')}</a></Button>
   </div>;

@@ -1,3 +1,4 @@
+import { CopyButton } from '@/components/copy-button';
 import { EmptyState } from '@/components/launch-states';
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
@@ -46,7 +47,7 @@ export function NetworkPage() {
       <p className="muted-small">{g.mine ? t('network.yours') : t('network.hostedBy', { name: g.host_name ?? '' })}</p>
     </div>
     {!g.mine && <div className="network-actions">
-      <Button variant="secondary" onClick={async () => { await navigator.clipboard.writeText(partnerLink(g.id, userId)); toast.success(t('onboarding.copied')); }}><Copy />{t('network.copyGuestLink')}</Button>
+      <CopyButton text={partnerLink(g.id, userId)} label={t('network.copyGuestLink')} />
       {myHostTeams.map(team => { const on = g.featured_teams.includes(team.teamId); return <Button key={team.teamId} variant={on ? 'default' : 'secondary'} aria-pressed={on} disabled={busy === g.id + team.teamId}
         onClick={() => act(g.id + team.teamId, 'network_feature', { _event: g.id, _team: team.teamId, _on: !on }, on ? 'network.unfeatured' : 'network.featured')}>
         {on ? <Check /> : <Share2 />}{myHostTeams.length > 1 ? t(on ? 'network.featuredFor' : 'network.featureFor', { team: team.name }) : t(on ? 'network.featuredShort' : 'network.feature')}</Button>; })}

@@ -1,3 +1,4 @@
+import { CropFileInput } from '@/components/image-crop';
 import { EmptyState } from '@/components/launch-states';
 import { ClaimGuard } from '@/components/smart';
 import { useTranslateFill } from '@/lib/assistant-client';
@@ -129,7 +130,7 @@ export function TemplateEditor({ draft, teamId, userId, onClose }: { draft: Temp
       <div className="form-field"><label className="field-label" htmlFor="tpl-title">{t('templates.title')}</label><Input id="tpl-title" className="field-input" maxLength={120} value={f.title} onChange={set('title')} /></div>
       <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
         <div className="cover-edit" style={shown ? { backgroundImage: `url(${shown})` } : undefined}>{!shown && <span className="team-cover-initial">{(f.title.trim()[0] ?? 'T').toUpperCase()}</span>}</div>
-        <label className="file-button"><Upload />{t('onboarding.uploadCover')}<input type="file" accept="image/*" hidden onChange={e => { const x = e.target.files?.[0]; if (x) { setFile(x); setPreview(URL.createObjectURL(x)); } }} /></label></div>
+        <label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={r => { setFile(r.file); setPreview(r.previewUrl); }} /></label></div>
       {bilingual(t('templates.description'), 'description_en', 'description_es')}
       <div className="choice-pair">
         <div className="form-field"><label className="field-label" htmlFor="tpl-duration">{t('templates.duration')}</label><Input id="tpl-duration" type="number" min={5} max={1440} className="field-input" value={f.duration} onChange={set('duration')} /></div>

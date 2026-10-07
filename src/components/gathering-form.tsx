@@ -1,3 +1,5 @@
+import { CropFileInput, type CropResult } from '@/components/image-crop';
+import { CopyButton } from '@/components/copy-button';
 import { PlaybookCard } from '@/components/playbook';
 import { trackEvent } from '@/lib/analytics';
 import { ClaimGuard } from '@/components/smart';
@@ -137,10 +139,14 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (publish) setDone({ id: data, visibility }); else { toast.success(t('gathering.draftSaved')); void navigate({ to: '/event/$id', params: { id: data } }); }
   };
 
-  const onPhoto = async (file?: File) => {
-    if (!file) return; if (!file.type.startsWith('image/') || file.size > 8 * 1024 * 1024) { toast.error(t('gathering.photoTooBig')); return; }
+  const onPhoto = async ({ file, square }: CropResult) => {
     setUploading(true);
-    try { setCoverPath(await uploadMedia(userId, file, 'cover')); } catch (err) { if (err instanceof Error && err.message === 'storage_limit') setLimit('storage'); else toast.error(t('profile.saveError')); } finally { setUploading(false); }
+    try {
+      const path = await uploadMedia(userId, file, 'cover');
+      // Square twin for social sharing lives next to the wide cover: <name>-square.webp
+      if (square) await uploadMedia(userId, square, 'cover', path.replace(/\.webp$/, '-square.webp')).catch(() => null);
+      setCoverPath(path);
+    } catch (err) { if (err instanceof Error && err.message === 'storage_limit') setLimit('storage'); else toast.error(t('profile.saveError')); } finally { setUploading(false); }
   };
   const close = () => (window.history.length > 1 ? router.history.back() : void navigate({ to: '/events' }));
 
@@ -154,7 +160,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       <h1>{t('gathering.live')}</h1>
       <p className="success-title">{title}</p><p className="auth-subtitle">{when}{weekly ? ` · ${t('gathering.weeklyNote')}` : ''}</p>
       <div className="share-grid success-share">
-        <Button variant="secondary" onClick={async () => { await navigator.clipboard.writeText(link); toast.success(t('onboarding.copied')); }}><Copy />{t('gathering.copyLink')}</Button>
+        <CopyButton text={link} />
         <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(invite)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button>
         <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(invite)}`}><MessageSquareText />{t('gathering.text')}</a></Button>
       </div>
@@ -174,7 +180,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         <GatheringCover path={coverPath} style={coverStyle} title={title || 'G'} className="form-cover" />
         <div className="cover-actions">
           <label className="file-button"><Camera /><span>{uploading ? t('onboarding.saving') : t(coverPath ? 'gathering.changePhoto' : 'gathering.addPhoto')}</span>
-            <input type="file" accept="image/*" className="sr-only" onChange={e => onPhoto(e.target.files?.[0])} /></label>
+            <CropFileInput kind="cover" withSquare onCropped={r => void onPhoto(r)} onRejected={() => toast.error(t('gathering.photoTooBig'))} /></label>
           {coverPath && <Button variant="ghost" onClick={() => setCoverPath(null)}>{t('gathering.useDefault')}</Button>}
         </div>
         {!coverPath && <div className="style-picker" role="radiogroup" aria-label={t('gathering.coverStyle')}>{COVER_STYLES.map((bg, i) =>

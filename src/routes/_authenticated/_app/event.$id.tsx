@@ -1,3 +1,4 @@
+import { CopyButton } from '@/components/copy-button';
 import { OutboxSummary } from '@/components/notifications';
 import { useState } from 'react';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
@@ -149,7 +150,7 @@ function EventDetailPage() {
     {(manages || cohostIds.length > 0) && <CohostsPanel eventId={event.id} teamId={event.team_id} hostId={event.host_id} canEdit={event.host_id === userId || leadsTeam} />}
 
     <ResponsiveSheet open={sheet === 'share'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.share')} description={event.title}>
-      <div className="share-grid"><Button variant="secondary" onClick={async () => { await navigator.clipboard.writeText(link); toast.success(t('onboarding.copied')); }}><Copy />{t('gathering.copyLink')}</Button>
+      <div className="share-grid"><CopyButton text={link} />
         <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(invite)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button>
         <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(invite)}`}><MessageSquareText />{t('gathering.text')}</a></Button>
         {event.visibility === 'public' && <Button variant="secondary" onClick={async () => { toast(t('guest.storyMaking')); await storyImage({ title: event.title, date: when, link, coverUrl: await mediaUrl(event.cover_url), coverStyle: event.cover_style, brand: t('brand') }); }}><ImageDown />{t('guest.story')}</Button>}</div>
