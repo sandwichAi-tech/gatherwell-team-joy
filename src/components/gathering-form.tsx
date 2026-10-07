@@ -1,3 +1,4 @@
+import { CATEGORIES, isCategory, type Category } from '@/lib/landing';
 import { CropFileInput, type CropResult } from '@/components/image-crop';
 import { CopyButton } from '@/components/copy-button';
 import { PlaybookCard } from '@/components/playbook';
@@ -37,6 +38,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const { data: source } = useQuery({ ...eventDetailQuery(sourceId ?? ''), enabled: !!sourceId });
   const mapsKey = useMapsKey();
 
+  const [category, setCategory] = useState<Category>('more'); const [categoryLabel, setCategoryLabel] = useState('');
   const [title, setTitle] = useState(''); const [coverPath, setCoverPath] = useState<string | null>(null); const [coverStyle, setCoverStyle] = useState(0);
   const [start, setStart] = useState(''); const [duration, setDuration] = useState<number>(60); const [customDuration, setCustomDuration] = useState(false);
   const [place, setPlace] = useState<'person' | 'online'>('person'); const [locationName, setLocationName] = useState(''); const [address, setAddress] = useState('');
@@ -60,7 +62,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     }
     if (sourceId) {
       if (!source) return; const e = source.event;
-      setTitle(e.title); setCoverPath(e.cover_url); setCoverStyle(e.cover_style ?? 0); setDescEn(e.description_en ?? ''); setDescEs(e.description_es ?? '');
+      setCategory(isCategory(e.category) ? e.category : 'more'); setCategoryLabel(e.category_label ?? ''); setTitle(e.title); setCoverPath(e.cover_url); setCoverStyle(e.cover_style ?? 0); setDescEn(e.description_en ?? ''); setDescEs(e.description_es ?? '');
       const mins = e.ends_at ? Math.max(5, Math.round((new Date(e.ends_at).getTime() - new Date(e.starts_at).getTime()) / 60000)) : 60;
       setDuration(mins); setCustomDuration(!DURATIONS.includes(mins as 60));
       setPlace(isOnline(e) ? 'online' : 'person'); setLocationName(e.location_name ?? ''); setAddress(e.address ?? ''); setNote(e.meeting_note ?? ''); setUrl(e.online_url ?? '');
@@ -111,7 +113,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const startDate = start ? new Date(start) : null;
 
   const payload = () => ({
-    title: title.trim(), cover_url: coverPath ?? '', cover_style: coverStyle, starts_at: new Date(start).toISOString(), duration_minutes: duration,
+    category, category_label: category === 'more' ? categoryLabel.trim() : '', title: title.trim(), cover_url: coverPath ?? '', cover_style: coverStyle, starts_at: new Date(start).toISOString(), duration_minutes: duration,
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, location_name: place === 'person' ? locationName : '', address: place === 'person' ? address : '',
     meeting_note: place === 'person' ? note : '', online_url: place === 'online' ? url.trim() : '', capacity: capacity ? Number(capacity) : '',
     visibility, description_en: descEn.trim(), description_es: descEs.trim(), template_id: tpl?.id ?? '',
@@ -216,6 +218,14 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
           <Input type="url" inputMode="url" className="field-input" maxLength={500} value={url} onChange={e => setUrl(e.target.value)} placeholder="https://" aria-label={t('gathering.link')} aria-invalid={urlBad || (tried && !url.trim())} />
           {(urlBad || (tried && !url.trim())) && <p className="field-error">{t('gathering.errors.invalid_url')}</p>}
         </>}
+      </section>
+
+      <section className="form-section">
+        <label className="field-label" htmlFor="g-category">{t('marketing.category')}</label>
+        <select id="g-category" className="field-input" value={category} onChange={e => { if (isCategory(e.target.value)) setCategory(e.target.value); }}>
+          {CATEGORIES.map(c => <option key={c} value={c}>{t(c === 'more' ? 'marketing.other' : `landing.cat.${c}`)}</option>)}
+        </select>
+        {category === 'more' && <><label className="field-label" htmlFor="g-category-label">{t('marketing.customCategory')}</label><Input id="g-category-label" className="field-input" maxLength={60} value={categoryLabel} onChange={e => setCategoryLabel(e.target.value)} aria-describedby="g-category-hint"/><small id="g-category-hint" className="field-hint">{t('marketing.customCategoryHint')}</small></>}
       </section>
 
       <section className="form-section two-col">

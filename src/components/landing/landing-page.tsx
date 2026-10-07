@@ -1,3 +1,4 @@
+import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
@@ -13,7 +14,7 @@ import { QueryFeedback } from '@/components/launch-states';
 import { Button } from '@/components/ui/button';
 
 const LiveStack = lazy(() => import('@/components/landing/live-stack'));
-const PHOTO_CATEGORIES: Category[] = ['run', 'fitcamp', 'soundbath', 'pickleball'];
+const PHOTO_CATEGORIES: Category[] = ['run', 'fitcamp', 'pilates', 'pickleball'];
 
 export function LandingPage() {
   const { i18n } = useTranslation();
@@ -71,7 +72,7 @@ function Hero({ gatherings }: { gatherings: FeedGathering[] }) {
         <p className="gw-lede">{t('landing.hero.sub')}</p>
         <div className="gw-hero-ctas">
           <button type="button" className="gw-btn gw-btn-primary gw-btn-lg" onClick={() => { track('hero_find_click', { variant }); void navigate({ to: '/discover', search: { near: 1 } }); }}>{t('landing.hero.find')}<GwIcon name="ArrowRight" size={18} /></button>
-          <Link to="/login" search={{ intent: 'host' }} className="gw-btn gw-btn-secondary gw-btn-lg" onClick={() => track('hero_host_click', { variant })}>{t('landing.hero.host')}</Link>
+          <Link to="/hosts" className="gw-btn gw-btn-secondary gw-btn-lg" onClick={() => track('hero_host_click', { variant })}>{t('landing.hero.host')}</Link>
         </div>
         {showedUp >= 50 && <p className="gw-proof">{initials.length > 0 && <AvatarStack letters={initials} size={32} />}<span>{t('landing.hero.proof', { count: showedUp })}</span></p>}
       </div>
@@ -84,16 +85,21 @@ function Hero({ gatherings }: { gatherings: FeedGathering[] }) {
 
 export function CategoryRow({ selected, onSelect }: { selected: Category | null; onSelect: (c: Category | null) => void }) {
   const { t } = useTranslation();
+  const [allOpen, setAllOpen] = useState(false);
+  const display: Category[] = ['run', 'fitcamp', 'yoga', 'pilates', 'hike', 'walk', 'pickleball', 'more'];
   return <section className="gw-band gw-band-white gw-cat-section"><div className="gw-container">
     <div className="gw-cat-row" role="group" aria-label={t('landing.cat.rowLabel')}>
-      {CATEGORIES.map(c => {
+      {display.map(c => {
         const on = selected === c;
-        return <button key={c} type="button" className={`gw-cat ${on ? 'is-on' : ''}`} aria-pressed={on} onClick={() => { track('category_click', { category: c }); onSelect(on ? null : c); }}>
+        return <button key={c} type="button" className={`gw-cat ${on ? 'is-on' : ''}`} aria-pressed={on} onClick={() => { track('category_click', { category: c }); if (c === 'more') setAllOpen(true); else onSelect(on ? null : c); }}>
           <span className="gw-cat-circle"><GwIcon name={CATEGORY_ICONS[c]} variant="marketing" size={32} /></span>
           <span className="gw-cat-label">{t(`landing.cat.${c}`)}</span>
         </button>;
       })}
     </div>
+    <ResponsiveSheet open={allOpen} onOpenChange={setAllOpen} title={t('marketing.allCategories')} icon="SquaresFour">
+      <div className="gw-category-options">{CATEGORIES.map(c => <Button key={c} variant="secondary" onClick={() => { onSelect(c); setAllOpen(false); track('category_click', { category: c }); }}><GwIcon name={CATEGORY_ICONS[c]} variant="marketing" size={24}/>{t(c === 'more' ? 'marketing.other' : `landing.cat.${c}`)}</Button>)}</div>
+    </ResponsiveSheet>
   </div></section>;
 }
 
@@ -148,7 +154,7 @@ function HostBand() {
         <span className="gw-label on-dark">{t('landing.hostBand.label')}</span>
         <h2 id="host-title" className="gw-display gw-h2">{t('landing.hostBand.title')}</h2>
         <p>{t('landing.hostBand.body')}</p>
-        <Link to="/login" search={{ intent: 'host' }} className="gw-btn gw-btn-peach gw-btn-lg">{t('landing.hostBand.cta')}</Link>
+        <Link to="/hosts" className="gw-btn gw-btn-peach gw-btn-lg">{t('marketing.hostLink')}<GwIcon name="ArrowRight" size={20}/></Link>
       </div>
       <div className="gw-host-visual">
         <BrandImage slot="host_band" className="gw-host-bg" sizes="(min-width: 1024px) 560px, 100vw" />
