@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { GwIcon } from '@/components/gw-icon';
@@ -28,11 +28,12 @@ export function confirmAction(opts: ConfirmOptions): Promise<boolean> {
 export function ConfirmHost() {
   const { t } = useTranslation();
   const [p, setP] = useState<Pending | null>(null);
+  const current = useRef<Pending | null>(null);
   useEffect(() => {
-    push = setP;
-    return () => { push = null; active = false; queue.splice(0).forEach(item => item.resolve(false)); };
+    push = next => { current.current = next; setP(next); };
+    return () => { current.current?.resolve(false); current.current = null; push = null; active = false; queue.splice(0).forEach(item => item.resolve(false)); };
   }, []);
-  const done = (ok: boolean) => { p?.resolve(ok); setP(null); active = false; queueMicrotask(advance); };
+  const done = (ok: boolean) => { if (!current.current) return; current.current.resolve(ok); current.current = null; setP(null); active = false; setTimeout(advance, 160); };
   return <AlertDialog open={!!p} onOpenChange={o => { if (!o) done(false); }}>
     <AlertDialogContent className="gw-confirm">
       {p && <>
