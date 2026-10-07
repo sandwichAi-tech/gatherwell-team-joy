@@ -59,5 +59,6 @@
 - [x] Copy buttons reset after 2 seconds and work every time
 - [x] Playbook "gathering gatherings" wording (EN/ES)
 - [x] Crop step for avatars and team/gathering/template/challenge/track covers; gatherings save a square twin
-- [ ] Profile cover and offer cover uploads do not exist yet (offers use color styles only) — awaiting decision
+- [ ] Add profile covers to Me and public host pages, plus cropped offer covers
+- [ ] Verify cover saving, removal and gradient fallback in English and Spanish
 - [x] Team invite link explainer card with QR and 3 steps
