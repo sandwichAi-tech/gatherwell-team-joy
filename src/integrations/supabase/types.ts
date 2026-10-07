@@ -1097,6 +1097,7 @@ export type Database = {
           address: string | null
           capacity: number | null
           category: string | null
+          category_label: string | null
           completed_at: string | null
           cover_style: number
           cover_url: string | null
@@ -1135,6 +1136,7 @@ export type Database = {
           address?: string | null
           capacity?: number | null
           category?: string | null
+          category_label?: string | null
           completed_at?: string | null
           cover_style?: number
           cover_url?: string | null
@@ -1173,6 +1175,7 @@ export type Database = {
           address?: string | null
           capacity?: number | null
           category?: string | null
+          category_label?: string | null
           completed_at?: string | null
           cover_style?: number
           cover_url?: string | null
