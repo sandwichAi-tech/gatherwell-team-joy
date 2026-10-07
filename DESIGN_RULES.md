@@ -67,3 +67,5 @@ These rules permanently replace all earlier visual and tone instructions in PROJ
 
 ## Marketing pages exception
 Public marketing pages (landing, Discover marketing sections) may use Inter Tight headings with a single Instrument Serif accent word per headline. The signed-in app stays on Inter. Landing category circles may stay circular but use the same duotone feature-icon style.
+- Marketing category icons use reinforced regular-style duotone contours, plum ink and 30% lavender fill: 32px inside 88px category circles, 16px in gathering chips, matching vignette icons.
+- On phones, the weekly gathering heading is 32px/800 (tracking remains 0 under the authoring constraint), with 12px after its label and 16px before location; the full-width secondary discovery action sits below the cards. Desktop stays unchanged.

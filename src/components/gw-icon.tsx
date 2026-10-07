@@ -150,7 +150,7 @@ export function hasGwIcon(name: string): name is GwIconName { return name in REG
 
 export type GwIconProps = {
   name: GwIconName;
-  variant?: 'ui' | 'feature';
+  variant?: 'ui' | 'feature' | 'marketing';
   size?: number | string;
   className?: string;
   style?: CSSProperties;
@@ -164,12 +164,12 @@ export type GwIconProps = {
 
 export function GwIcon({ name, variant = 'ui', size, className, strokeWidth: _sw, title, ...rest }: GwIconProps) {
   const Cmp = REGISTRY[name] ?? REGISTRY.SquaresFour;
-  const feature = variant === 'feature';
+  const feature = variant !== 'ui';
   return (
     <Cmp
       weight={feature ? 'duotone' : 'light'}
       size={size ?? (feature ? 26 : 20)}
-      className={`gw-icon ${feature ? 'gw-icon-feature' : 'gw-icon-ui'} ${className ?? ''}`.trim()}
+      className={`gw-icon ${feature ? 'gw-icon-feature' : 'gw-icon-ui'} ${variant === 'marketing' ? 'gw-icon-marketing' : ''} ${className ?? ''}`.trim()}
       aria-hidden={rest['aria-label'] ? undefined : true}
       {...(title ? { alt: title } : {})}
       {...rest}

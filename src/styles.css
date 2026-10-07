@@ -1487,3 +1487,21 @@ button { white-space:normal; }
 .gw-landing .gw-icon-feature [opacity="0.2"]{opacity:.25}
 .gw-landing .gw-stack-toggle svg{width:16px;height:16px}
 .gw-landing .gw-cat-chip,.gw-landing .gw-status-chip{white-space:nowrap}
+
+/* Marketing duotone uses the regular silhouette with reinforced contours. */
+.gw-landing{--gw-marketing-fill-opacity:.3;--gw-marketing-contour:3px}
+.gw-landing svg.gw-icon-marketing{color:var(--plum)}
+.gw-landing .gw-icon-marketing [opacity="0.2"]{fill:var(--lavender);opacity:var(--gw-marketing-fill-opacity)}
+.gw-landing .gw-icon-marketing path:not([opacity]){stroke:currentColor;stroke-width:var(--gw-marketing-contour);stroke-linejoin:round}
+.dark .gw-landing svg.gw-icon-marketing{color:var(--primary)}
+.gw-landing .gw-cat.is-on svg.gw-icon-marketing{color:var(--primary-foreground)}
+.gw-weekly-mobile-link{display:none}
+@media(max-width:767px){
+  .gw-weekly .gw-section-head{display:grid;grid-template-columns:minmax(0,1fr);margin-bottom:16px}
+  .gw-weekly .gw-section-head>div{min-width:0}
+  .gw-weekly .gw-label{display:block;line-height:1.55}
+  .gw-weekly #this-week-title{font-size:32px;font-weight:800;letter-spacing:0;line-height:1.12;margin-top:12px}
+  .gw-weekly .gw-loc-trigger{margin-top:0}
+  .gw-weekly .gw-weekly-desktop-link{display:none}
+  .gw-weekly-mobile-link{display:flex;width:100%;min-height:48px;margin-top:24px;white-space:normal;text-align:center}
+}

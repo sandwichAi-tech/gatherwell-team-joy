@@ -9,7 +9,7 @@ export type Coords = { lat: number; lng: number };
 
 export function CategoryChip({ category }: { category: Category }) {
   const { t } = useTranslation();
-  return <span className="gw-cat-chip"><GwIcon name={CATEGORY_ICONS[category]} size={16} />{t(`landing.catOne.${category}`)}</span>;
+  return <span className="gw-cat-chip"><GwIcon name={CATEGORY_ICONS[category]} variant="marketing" size={16} />{t(`landing.catOne.${category}`)}</span>;
 }
 
 export function AvatarStack({ letters, size = 24 }: { letters: string[]; size?: number }) {

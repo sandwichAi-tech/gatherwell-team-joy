@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Gatherwell architecture
+- Marketing icons use the shared GwIcon marketing variant: duotone silhouettes with scoped contour reinforcement, preserving signed-in icon weights.
 - Keep enduring product requirements in PROJECT_RULES.md; apply them to all future work.
 - Use react-i18next with matched English and Latin American Spanish JSON resources for all visible and accessible copy, so language changes stay instant and complete.
 - Keep shared navigation, settings, and sheets in GatherwellShell around the root Outlet; use separate leaf routes for the five tabs so deep links work.
