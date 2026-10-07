@@ -1482,7 +1482,13 @@
       "rsvp": "RSVP",
       "going": "Going",
       "sample": "Sample",
-      "rsvpFor": "RSVP for {{title}}"
+      "rsvpFor": "RSVP for {{title}}",
+      "open": "Open {{title}}",
+      "sampleTitle": "Sample gathering",
+      "sampleBody": "This is a preview of what gatherings look like. Real gatherings near you will open their own page where you can RSVP.",
+      "sampleRsvp": "Sample gathering — this RSVP is just a preview.",
+      "filterCat": "Show all {{category}} gatherings",
+      "browseReal": "See all gatherings"
     },
     "cat": {
       "run": "Run clubs",

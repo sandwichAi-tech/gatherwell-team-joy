@@ -1482,7 +1482,13 @@
       "rsvp": "Confirmar",
       "going": "Voy",
       "sample": "Ejemplo",
-      "rsvpFor": "Confirmar asistencia a {{title}}"
+      "rsvpFor": "Confirmar asistencia a {{title}}",
+      "open": "Abrir {{title}}",
+      "sampleTitle": "Reunión de ejemplo",
+      "sampleBody": "Así se ven las reuniones. Las reuniones reales cerca de ti abren su propia página donde puedes confirmar tu asistencia.",
+      "sampleRsvp": "Reunión de ejemplo: esta confirmación es solo una vista previa.",
+      "filterCat": "Ver todas las reuniones de {{category}}",
+      "browseReal": "Ver todas las reuniones"
     },
     "cat": {
       "run": "Correr",
