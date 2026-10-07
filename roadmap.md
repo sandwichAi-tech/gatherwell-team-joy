@@ -53,3 +53,11 @@
 - [x] 3. Custom RSVP questions, approval, invite-only
 - [x] 4. Conversation: comments, team discussions, WhatsApp link, reply notifications
 - [x] 5. Follow pages (/h, /t) and private calendar feeds
+
+# N1 — Bug fixes and onboarding polish
+- [x] Go to Home reliably marks onboarding complete and navigates
+- [x] Copy buttons reset after 2 seconds and work every time
+- [x] Playbook "gathering gatherings" wording (EN/ES)
+- [x] Crop step for avatars and team/gathering/template/challenge/track covers; gatherings save a square twin
+- [ ] Profile cover and offer cover uploads do not exist yet (offers use color styles only) — awaiting decision
+- [x] Team invite link explainer card with QR and 3 steps

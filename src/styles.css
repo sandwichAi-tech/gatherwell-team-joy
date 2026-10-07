@@ -1536,3 +1536,8 @@ a.gw-cat-chip:hover{background:#fff}
 .invite-qr{display:flex;justify-content:center;padding:12px;background:#fff;border-radius:16px;align-self:center}
 .invite-how summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:600;color:var(--plum)}
 .invite-how ol{margin:8px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:8px;color:var(--body)}
+.crop-body{min-width:0;overflow:hidden;box-sizing:border-box}
+.crop-zoom input{box-sizing:border-box}
+.crop-frame,.crop-preview,.crop-presets,.crop-zoom{flex-shrink:0}
+.crop-presets{flex-wrap:nowrap}.crop-presets button{flex:1 1 0;min-width:0;padding:0 6px;font-size:13px;white-space:nowrap}
+.segmented.crop-presets{display:flex;flex-wrap:nowrap}.segmented.crop-presets button{flex:1 1 0;min-width:0;padding:0 6px;font-size:13px;white-space:nowrap}
