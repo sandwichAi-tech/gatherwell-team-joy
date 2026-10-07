@@ -168,3 +168,22 @@ export const getDailyBrief = createServerFn({ method: 'POST' })
     await sb.from('daily_briefs').upsert({ user_id: uid, day: data.today, language: data.lang, lines: out, preview, dismissed: false, created_at: new Date().toISOString() });
     return { lines: out, preview, dismissed: false };
   });
+
+/** Bilingual share caption (English then Spanish). Claude when the key exists, otherwise a warm preview caption. */
+export const shareCaption = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ title: z.string().min(1).max(200), whenEn: z.string().max(120), whenEs: z.string().max(120), place: z.string().max(200), link: z.string().url().max(500) }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { claude, parseJson, hasClaim } = await import('@/lib/ai/smart.server');
+    const sample = { en: `Join me for ${data.title}, ${data.whenEn}${data.place ? ` at ${data.place}` : ''}. Come as you are and bring a friend. Save your spot: ${data.link}`, es: `Acompáñame a ${data.title}, ${data.whenEs}${data.place ? ` en ${data.place}` : ''}. Ven tal como eres y trae a alguien. Aparta tu lugar: ${data.link}` };
+    const key = process.env['ANTHROPIC_API_KEY'];
+    if (key && await underLimit(context.supabase)) {
+      try {
+        const r = await claude(key, 'Write a short social caption inviting people to a community gathering. Return JSON {"en":"...","es":"..."}; es is natural Latin American Spanish. Max 240 characters each. Each must end with the link exactly as given.', JSON.stringify(data), 600);
+        await record(context.supabase, 'share_caption', r.input, r.output);
+        const j = parseJson<{ en: string; es: string }>(r.text);
+        if (j?.en && j?.es && !hasClaim(j.en + j.es)) return { ...j, preview: false };
+      } catch (e) { console.error('[caption] failed', e); }
+    }
+    return { ...sample, preview: !key };
+  });
