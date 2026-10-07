@@ -7,12 +7,20 @@ type ConfirmOptions = { title: string; body?: string; confirmLabel?: string; des
 type Pending = ConfirmOptions & { resolve: (ok: boolean) => void };
 
 let push: ((p: Pending) => void) | null = null;
+const queue: Pending[] = [];
+let active = false;
+const advance = () => {
+  if (!push || active) return;
+  const next = queue.shift();
+  if (next) { active = true; push(next); }
+};
 
 /** Premium replacement for window.confirm. Resolves true when confirmed. */
 export function confirmAction(opts: ConfirmOptions): Promise<boolean> {
   return new Promise(resolve => {
     if (!push) { resolve(false); return; }
-    push({ ...opts, resolve });
+    queue.push({ ...opts, resolve });
+    advance();
   });
 }
 
@@ -20,8 +28,11 @@ export function confirmAction(opts: ConfirmOptions): Promise<boolean> {
 export function ConfirmHost() {
   const { t } = useTranslation();
   const [p, setP] = useState<Pending | null>(null);
-  useEffect(() => { push = setP; return () => { push = null; }; }, []);
-  const done = (ok: boolean) => { p?.resolve(ok); setP(null); };
+  useEffect(() => {
+    push = setP;
+    return () => { push = null; active = false; queue.splice(0).forEach(item => item.resolve(false)); };
+  }, []);
+  const done = (ok: boolean) => { p?.resolve(ok); setP(null); active = false; queueMicrotask(advance); };
   return <AlertDialog open={!!p} onOpenChange={o => { if (!o) done(false); }}>
     <AlertDialogContent className="gw-confirm">
       {p && <>
