@@ -18,7 +18,7 @@ import { GatheringCover } from '@/components/gathering-cover';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { supabase } from '@/integrations/supabase/client';
 import { uploadMedia, workspaceQuery } from '@/lib/account';
-import { COVER_STYLES, datePresets, isOnline, rpcError, shareLink, toLocalInput, usualSlot, expandRepeat, REPEATS, type Repeat, type RepeatRule } from '@/lib/gatherings';
+import { COVER_STYLES, datePresets, isOnline, rpcError, shareLink, toLocalInput, usualSlot, expandRepeat, REPEATS, type Repeat as RepeatKind, type RepeatRule } from '@/lib/gatherings';
 import { useMapsKey, loadMaps } from '@/lib/maps-client';
 import { checklistOf, eventDetailQuery, templatesQuery } from '@/lib/templates';
 import { UpgradeSheet } from '@/components/plan-page';
@@ -259,7 +259,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
 
       {!editing ? <section className="form-section">
         <label className="field-label" htmlFor="g-repeat">{t('gathering.repeat')}</label>
-        <select id="g-repeat" className="field-input" value={rule.kind} onChange={e => setRule(r => ({ ...r, kind: e.target.value as Repeat }))}>
+        <select id="g-repeat" className="field-input" value={rule.kind} onChange={e => setRule(r => ({ ...r, kind: e.target.value as RepeatKind }))}>
           {REPEATS.map(k => <option key={k} value={k}>{t(`gathering.repeats.${k}`)}</option>)}
         </select>
         {rule.kind === 'monthly' && startDate && <div className="segmented full" role="group" aria-label={t('gathering.repeats.monthly')}>{(['date', 'nth', 'last'] as const).map(m => <Button key={m} variant="ghost" className={rule.monthly === m ? 'selected' : ''} aria-pressed={rule.monthly === m} onClick={() => setRule(r => ({ ...r, monthly: m }))}>{t(`gathering.monthly.${m}`, { date: startDate.getDate(), nth: t(`gathering.nth.${Math.min(4, Math.floor((startDate.getDate() - 1) / 7))}`), day: startDate.toLocaleDateString(lang, { weekday: 'long' }) })}</Button>)}</div>}
