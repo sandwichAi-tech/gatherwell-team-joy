@@ -1,3 +1,4 @@
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Toaster as Sonner } from "sonner";
 import { AlertCircle, CheckCircle2 } from "@/components/icons";
 
@@ -8,6 +9,7 @@ const tile = (tone: string, icon: React.ReactNode) => (
 );
 
 const Toaster = ({ ...props }: ToasterProps) => {
+  const mobile = useIsMobile();
   return (
     <Sonner
       className="toaster group"
@@ -27,6 +29,10 @@ const Toaster = ({ ...props }: ToasterProps) => {
         },
       }}
       {...props}
+      position={mobile ? "bottom-center" : "bottom-right"}
+      swipeDirections={["bottom", "left", "right"]}
+      offset={24}
+      mobileOffset={{ bottom: "calc(96px + env(safe-area-inset-bottom))", left: 16, right: 16 }}
     />
   );
 };

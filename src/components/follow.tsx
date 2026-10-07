@@ -7,7 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { GwIcon } from '@/components/gw-icon';
+import { GwFeatureTile, GwIcon } from '@/components/gw-icon';
 import { GatheringCover } from '@/components/gathering-cover';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { EmptyState, ListSkeleton, RetryState } from '@/components/launch-states';
@@ -30,7 +30,7 @@ const pageQuery = (kind: 'host' | 'team', slug: string) => ({
 
 function Avatar({ path, name, size = 96 }: { path: string | null; name: string | null; size?: number }) {
   const { data: url } = useQuery({ queryKey: ['media-url', path], queryFn: () => mediaUrl(path), enabled: !!path, staleTime: 50 * 60 * 1000 });
-  return url ? <img src={url} alt={name ?? ''} className="follow-avatar" style={{ width: size, height: size }} /> : <span className="follow-avatar is-initials" style={{ width: size, height: size }} aria-hidden="true">{initialsOf(name)}</span>;
+  return url ? <img src={url} alt={name ?? ''} className="follow-avatar" width={size} height={size} loading="lazy" decoding="async" /> : <span className="follow-avatar is-initials" aria-hidden="true">{initialsOf(name)}</span>;
 }
 
 export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string }) {
@@ -41,12 +41,13 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
   const d = q.data;
   if (!d) return <EmptyState icon="Compass" title={t('follow.notFoundTitle')} text={t('follow.notFound')} action={<Button asChild variant="secondary"><Link to="/discover">{t('follow.discover')}</Link></Button>} />;
   const host = kind === 'host' ? d as HostPage : null; const team = kind === 'team' ? d as TeamPage : null;
-  const name = host ? host.name : team!.name;
+  const name = host?.name ?? team?.name ?? '';
+  const avatarPath = host?.avatar_url ?? team?.leader?.avatar_url ?? null;
   return <div className="follow-page">
     <section className="gw-hero-card follow-hero">
       <div className="gw-hero-cover" aria-hidden="true" />
       <div className="follow-hero-body">
-        <Avatar path={host ? host.avatar_url : team!.leader?.avatar_url ?? null} name={name} />
+        <Avatar path={avatarPath} name={name} />
         <p className="eyebrow">{t(kind === 'host' ? 'follow.hostLabel' : 'follow.teamLabel')}</p>
         <h1 className="follow-name">{name}</h1>
         <p className="follow-meta">{[host?.city, team ? t('follow.members', { count: team.members }) : null, t('follow.followers', { count: d.followers })].filter(Boolean).join(' · ')}</p>
@@ -56,7 +57,7 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
           {host?.shop_url && <Button asChild variant="secondary"><a href={host.shop_url} target="_blank" rel="noopener noreferrer"><GwIcon name="ExternalLink" />{t('follow.shop')}</a></Button>}</div>
       </div>
     </section>
-    <section className="panel">
+    <section className="follow-upcoming">
       <h2>{t('follow.upcoming')}</h2>
       {d.upcoming.length ? <ul className="follow-list">{d.upcoming.map(e => <li key={e.id}><Link to="/e/$id" params={{ id: e.id }} className="follow-event">
         <GatheringCover style={e.cover_style} title={e.title} className="follow-event-cover" />
@@ -95,8 +96,8 @@ export function FollowButton({ kind, target, following, slug }: { kind: 'host' |
   return <>
     <Button variant={following ? 'secondary' : 'default'} disabled={busy} aria-pressed={following} onClick={() => void click()}><GwIcon name={following ? 'Check' : 'BellRing'} />{t(following ? 'follow.following' : 'follow.follow')}</Button>
     <ResponsiveSheet open={sheet} onOpenChange={setSheet} icon="BellRing" title={t('follow.emailTitle')} description={t('follow.emailText')}
-      footer={<Button className="w-full" disabled={busy || !email.includes('@')} onClick={() => void follow(email.trim())}>{t('follow.follow')}</Button>}>
-      <div className="field"><Label htmlFor="follow-email">{t('follow.email')}</Label><Input id="follow-email" type="email" autoComplete="email" inputMode="email" value={email} onChange={e => setEmail(e.target.value)} /></div>
+      footer={<Button className="w-full" type="submit" form="follow-email-form" disabled={busy || !email.includes('@')}>{t('follow.follow')}</Button>}>
+      <form id="follow-email-form" onSubmit={event => { event.preventDefault(); if (!busy) void follow(email.trim()); }}><div className="field"><Label htmlFor="follow-email">{t('follow.email')}</Label><Input id="follow-email" type="email" required autoComplete="email" inputMode="email" value={email} onChange={e => setEmail(e.target.value)} /></div></form>
       <p className="follow-fine">{t('follow.emailFine')} <Link to="/login">{t('follow.signIn')}</Link></p>
     </ResponsiveSheet>
   </>;
@@ -126,22 +127,22 @@ export function CalendarFeedPanel({ userId }: { userId: string }) {
     const url = feedUrl(token);
     const webcal = url.replace(/^https?:/, 'webcal:');
     return <div className="feed-row">
-      <strong>{label}</strong><small>{hint}</small>
+      <GwFeatureTile name="CalendarDays" size={24} /><div className="feed-row-main"><strong>{label}</strong><small>{hint}</small>
       <div className="feed-actions">
         <Button variant="secondary" onClick={() => void copy(url)}><GwIcon name="Copy" />{t('follow.copyLink')}</Button>
-        <Button asChild variant="secondary"><a href={`https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcal)}`} target="_blank" rel="noopener noreferrer">Google</a></Button>
-        <Button asChild variant="secondary"><a href={webcal}>{t('follow.appleOutlook')}</a></Button>
-      </div>
+        <Button asChild variant="secondary"><a href={`https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcal)}`} target="_blank" rel="noopener noreferrer"><GwIcon name="ExternalLink" />{t("follow.googleCalendar")}</a></Button>
+        <Button asChild variant="secondary"><a href={webcal}><GwIcon name="CalendarPlus" />{t('follow.appleOutlook')}</a></Button>
+      </div></div>
     </div>;
   };
   return <div className="feed-panel">
-    <p className="follow-meta">{t("follow.feedIntro")}</p>
+    <p className="feed-privacy"><GwIcon name="Lock" />{t("follow.feedIntro")}</p>
     {row(t('follow.myFeed'), t('follow.myFeedHint'), feeds.data.me)}
     {feeds.data.team && row(t('follow.teamFeed'), t('follow.teamFeedHint'), feeds.data.team)}
-    <Button variant="ghost" onClick={() => void reset()}><GwIcon name="RefreshCw" />{t('follow.reset')}</Button>
-    {(slugs.data?.host || slugs.data?.team) && <div className="feed-row"><strong>{t('follow.publicPages')}</strong><small>{t('follow.publicPagesHint')}</small><div className="feed-actions">
-      {slugs.data.host && <Button variant="secondary" onClick={() => void copy(`${window.location.origin}/h/${slugs.data!.host}`)}><GwIcon name="Link2" />{t('follow.myPage')}</Button>}
-      {slugs.data.team && <Button variant="secondary" onClick={() => void copy(`${window.location.origin}/t/${slugs.data!.team}`)}><GwIcon name="Link2" />{t('follow.teamPage')}</Button>}
-    </div></div>}
+    <Button className="feed-reset" variant="ghost" onClick={() => void reset()}><GwIcon name="RefreshCw" />{t('follow.reset')}</Button>
+    {(slugs.data?.host || slugs.data?.team) && <div className="feed-row"><GwFeatureTile name="Link2" size={24} /><div className="feed-row-main"><strong>{t('follow.publicPages')}</strong><small>{t('follow.publicPagesHint')}</small><div className="feed-actions">
+      {slugs.data.host && <Button variant="secondary" onClick={() => void copy(`${window.location.origin}/h/${slugs.data?.host ?? ''}`)}><GwIcon name="Link2" />{t('follow.myPage')}</Button>}
+      {slugs.data.team && <Button variant="secondary" onClick={() => void copy(`${window.location.origin}/t/${slugs.data?.team ?? ''}`)}><GwIcon name="Link2" />{t('follow.teamPage')}</Button>}
+    </div></div></div>}
   </div>;
 }
