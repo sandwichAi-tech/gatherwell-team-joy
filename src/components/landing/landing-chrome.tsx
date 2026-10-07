@@ -36,8 +36,10 @@ export function LandingNav() {
       if (e.key !== 'Tab' || !sheetRef.current) return;
       const f = sheetRef.current.querySelectorAll<HTMLElement>('a[href],button:not([disabled])');
       if (!f.length) return;
-      const first = f[0]!, last = f[f.length - 1]!;
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      const first = f[0], last = f[f.length - 1];
+      if (!first || !last) return;
+      if (!sheetRef.current.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+      else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
       else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     };
     document.body.style.overflow = 'hidden'; window.addEventListener('keydown', onKey);

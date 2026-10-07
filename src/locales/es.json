@@ -2105,6 +2105,22 @@
         "tier": "Nivel",
         "prompt": "Pregunta del día",
         "days": "Duración (días)"
+      },
+      "icons": {
+        "Award": "Reconocimiento",
+        "Medal": "Medalla",
+        "Trophy": "Trofeo",
+        "Star": "Estrella",
+        "Heart": "Corazón",
+        "HandHeart": "Apoyo",
+        "Flame": "Llama",
+        "Crown": "Corona",
+        "CalendarHeart": "Reunión",
+        "UsersRound": "Personas",
+        "Footprints": "Pasos",
+        "Leaf": "Hoja",
+        "Rocket": "Cohete",
+        "Megaphone": "Anuncio"
       }
     },
     "bc": {
@@ -2200,6 +2216,10 @@
       "claim": "Primero quita las promesas de salud, médicas, de peso o de ingresos.",
       "text_required": "Agrega el texto editado.",
       "not_editable": "Esto no se puede editar, solo aprobar o quitar."
+    },
+    "languages": {
+      "en": "Inglés",
+      "es": "Español"
     }
   },
   "legalDocs": {
@@ -2771,6 +2791,7 @@
     "publicPages": "Páginas públicas",
     "publicPagesHint": "Compártelas para que la gente te siga.",
     "myPage": "Mi página de anfitrión",
-    "teamPage": "Página del equipo"
+    "teamPage": "Página del equipo",
+    "googleCalendar": "Calendario de Google"
   }
 }

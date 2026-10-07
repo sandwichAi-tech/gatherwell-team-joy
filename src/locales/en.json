@@ -2105,6 +2105,22 @@
         "tier": "Tier",
         "prompt": "Daily prompt",
         "days": "Length (days)"
+      },
+      "icons": {
+        "Award": "Award",
+        "Medal": "Medal",
+        "Trophy": "Trophy",
+        "Star": "Star",
+        "Heart": "Heart",
+        "HandHeart": "Care",
+        "Flame": "Flame",
+        "Crown": "Crown",
+        "CalendarHeart": "Gathering",
+        "UsersRound": "People",
+        "Footprints": "Steps",
+        "Leaf": "Leaf",
+        "Rocket": "Rocket",
+        "Megaphone": "Announcement"
       }
     },
     "bc": {
@@ -2200,6 +2216,10 @@
       "claim": "Remove health, medical, weight or income claims first.",
       "text_required": "Add the edited text.",
       "not_editable": "This item can't be edited, only approved or removed."
+    },
+    "languages": {
+      "en": "English",
+      "es": "Spanish"
     }
   },
   "legalDocs": {
@@ -2771,6 +2791,7 @@
     "publicPages": "Public pages",
     "publicPagesHint": "Share these so people can follow you.",
     "myPage": "My host page",
-    "teamPage": "Team page"
+    "teamPage": "Team page",
+    "googleCalendar": "Google Calendar"
   }
 }

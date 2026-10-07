@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { confirmAction } from '@/components/confirm-dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { GwFeatureTile, GwIcon, type GwIconProps } from '@/components/gw-icon';
 import { formatMoney } from '@/lib/billing';
@@ -125,6 +127,7 @@ function TeamSheet({ id, onClose }: { id: string; onClose: () => void }) {
   const [plan, setPlan] = useState<'free' | 'growth' | 'pro'>('growth'); const [until, setUntil] = useState(''); const [tier, setTier] = useState<'team25' | 'team100'>('team25');
   const [note, setNote] = useState(''); const [busy, setBusy] = useState(false);
   const run = async (action: 'plan' | 'extend' | 'license' | 'suspend' | 'restore') => {
+    if (action === 'suspend' && !(await confirmAction({ title: t('admin.teams.suspend'), body: note, destructive: true, confirmLabel: t('admin.teams.suspend') }))) return;
     setBusy(true);
     try {
       const r = await act({ data: { teamId: id, action, plan, until: until || undefined, tier, reason: note || undefined } });
@@ -143,7 +146,7 @@ function TeamSheet({ id, onClose }: { id: string; onClose: () => void }) {
       <section className="admin-actions"><h3 className="admin-sub">{t('admin.actions')}</h3>
         <div className="admin-action-row"><label className="field-label" htmlFor="adm-plan">{t('admin.teams.plan')}</label><select id="adm-plan" className="field-input" value={plan} onChange={e => setPlan(e.target.value as typeof plan)}>{(['free', 'growth', 'pro'] as const).map(p => <option key={p} value={p}>{t(`admin.plan.${p}`)}</option>)}</select><Button variant="secondary" disabled={busy} onClick={() => run('plan')}>{t('admin.teams.changePlan')}</Button></div>
         <div className="admin-action-row"><label className="field-label" htmlFor="adm-until">{t('admin.teams.extendUntil')}</label><Input id="adm-until" type="date" className="field-input" value={until} onChange={e => setUntil(e.target.value)} /><Button variant="secondary" disabled={busy || !until} onClick={() => run('extend')}>{t('admin.teams.extend')}</Button></div>
-        <div className="admin-action-row"><label className="field-label" htmlFor="adm-tier">{t('admin.teams.licenseTier')}</label><select id="adm-tier" className="field-input" value={tier} onChange={e => setTier(e.target.value as typeof tier)}><option value="team25">Team 25</option><option value="team100">Team 100</option></select><Button variant="secondary" disabled={busy} onClick={() => run('license')}>{t('admin.teams.grantLicense')}</Button></div>
+        <div className="admin-action-row"><label className="field-label" htmlFor="adm-tier">{t('admin.teams.licenseTier')}</label><select id="adm-tier" className="field-input" value={tier} onChange={e => setTier(e.target.value as typeof tier)}><option value="team25">{t("billing.team25")}</option><option value="team100">{t("billing.team100")}</option></select><Button variant="secondary" disabled={busy} onClick={() => run('license')}>{t('admin.teams.grantLicense')}</Button></div>
         <NoteField value={note} onChange={setNote} label={t('admin.reason')} />
         {team.suspension ? <Button variant="secondary" disabled={busy} onClick={() => run('restore')}>{t('admin.restore')}</Button> : <Button className="danger-button" disabled={busy || !note.trim()} onClick={() => run('suspend')}>{t('admin.teams.suspend')}</Button>}
       </section>
@@ -171,8 +174,9 @@ function UserSheet({ id, onClose }: { id: string; onClose: () => void }) {
   const { t } = useTranslation(); const lang = useLang(); const qc = useQueryClient();
   const fn = useServerFn(getAdminUser); const act = useServerFn(adminUserAction);
   const { data: u } = useQuery({ queryKey: ['admin', 'user', id], queryFn: () => fn({ data: { id } }) });
-  const [note, setNote] = useState(''); const [busy, setBusy] = useState(false); const [confirmDelete, setConfirmDelete] = useState(false);
+  const [note, setNote] = useState(''); const [busy, setBusy] = useState(false);
   const run = async (action: 'resend' | 'suspend' | 'restore' | 'delete') => {
+    if ((action === 'delete' || action === 'suspend') && !(await confirmAction({ title: t(action === 'delete' ? 'admin.users.delete' : 'admin.users.suspend'), body: t('admin.users.deleteConfirm'), destructive: true, confirmLabel: t(action === 'delete' ? 'admin.users.deleteNow' : 'admin.users.suspend') }))) return;
     setBusy(true);
     try {
       const r = await act({ data: { userId: id, action, reason: note || undefined, origin: window.location.origin } });
@@ -195,8 +199,7 @@ function UserSheet({ id, onClose }: { id: string; onClose: () => void }) {
         <Button variant="secondary" disabled={busy} onClick={() => run('resend')}><GwIcon name="Mail" />{t('admin.users.resend')}</Button>
         <NoteField value={note} onChange={setNote} label={t('admin.reason')} />
         {u.suspension ? <Button variant="secondary" disabled={busy} onClick={() => run('restore')}>{t('admin.restore')}</Button> : <Button variant="secondary" disabled={busy || !note.trim()} onClick={() => run('suspend')}>{t('admin.users.suspend')}</Button>}
-        {!confirmDelete ? <Button className="danger-button" disabled={busy || !note.trim()} onClick={() => setConfirmDelete(true)}>{t('admin.users.delete')}</Button>
-          : <div className="admin-confirm"><p>{t('admin.users.deleteConfirm')}</p><div className="confirm-actions"><Button variant="secondary" onClick={() => setConfirmDelete(false)}>{t('admin.keep')}</Button><Button className="danger-button" disabled={busy} onClick={() => run('delete')}>{t('admin.users.deleteNow')}</Button></div></div>}
+        <Button variant="destructive" disabled={busy || !note.trim()} onClick={() => void run('delete')}><GwIcon name="Trash2" />{t('admin.users.delete')}</Button>
       </section>
     </div>}
   </ResponsiveSheet>;
@@ -297,10 +300,10 @@ function LibraryEditor({ kind, item, onClose }: { kind: LibKind; item: LibItem |
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setF({ ...f, [k]: e.target.value });
   const nOrNull = (s: string) => (s.trim() ? Number(s) : null); const sOrNull = (s: string) => s.trim() || null;
   const fields = () => {
-    if (kind === 'template') return { title: f['title']!, description_en: sOrNull(f['description_en']!), description_es: sOrNull(f['description_es']!), default_duration_minutes: Number(f['duration']), default_capacity: nOrNull(f['capacity']!), checklist: toLines(f['checklist']!) };
-    if (kind === 'recipe') return { title_en: f['title_en']!, title_es: f['title_es']!, prep_minutes: nOrNull(f['prep']!), tags: f['tags']!.split(',').map(x => x.trim()).filter(Boolean).slice(0, 10), ingredients: { en: toLines(f['ing_en']!), es: toLines(f['ing_es']!) }, steps: { en: toLines(f['steps_en']!), es: toLines(f['steps_es']!) } };
-    if (kind === 'badge') return { name_en: f['name_en']!, name_es: f['name_es']!, description_en: sOrNull(f['description_en']!), description_es: sOrNull(f['description_es']!), icon: f['icon']!, tier: f['tier']! };
-    return { title_en: f['title_en']!, title_es: f['title_es']!, description_en: sOrNull(f['description_en']!), description_es: sOrNull(f['description_es']!), daily_prompt_en: sOrNull(f['daily_prompt_en']!), daily_prompt_es: sOrNull(f['daily_prompt_es']!), duration_days: Number(f['days']) };
+    if (kind === 'template') return { title: (f['title'] ?? ''), description_en: sOrNull((f['description_en'] ?? '')), description_es: sOrNull((f['description_es'] ?? '')), default_duration_minutes: Number(f['duration']), default_capacity: nOrNull((f['capacity'] ?? '')), checklist: toLines((f['checklist'] ?? '')) };
+    if (kind === 'recipe') return { title_en: (f['title_en'] ?? ''), title_es: (f['title_es'] ?? ''), prep_minutes: nOrNull((f['prep'] ?? '')), tags: (f['tags'] ?? '').split(',').map(x => x.trim()).filter(Boolean).slice(0, 10), ingredients: { en: toLines((f['ing_en'] ?? '')), es: toLines((f['ing_es'] ?? '')) }, steps: { en: toLines((f['steps_en'] ?? '')), es: toLines((f['steps_es'] ?? '')) } };
+    if (kind === 'badge') return { name_en: (f['name_en'] ?? ''), name_es: (f['name_es'] ?? ''), description_en: sOrNull((f['description_en'] ?? '')), description_es: sOrNull((f['description_es'] ?? '')), icon: (f['icon'] ?? ''), tier: (f['tier'] ?? '') };
+    return { title_en: (f['title_en'] ?? ''), title_es: (f['title_es'] ?? ''), description_en: sOrNull((f['description_en'] ?? '')), description_es: sOrNull((f['description_es'] ?? '')), daily_prompt_en: sOrNull((f['daily_prompt_en'] ?? '')), daily_prompt_es: sOrNull((f['daily_prompt_es'] ?? '')), duration_days: Number(f['days']) };
   };
   const submit = async () => {
     setBusy(true);
@@ -320,7 +323,7 @@ function LibraryEditor({ kind, item, onClose }: { kind: LibKind; item: LibItem |
       {kind === 'recipe' && <>{pair(input('title_en', `${t('admin.lib.f.title')} · EN`), input('title_es', `${t('admin.lib.f.title')} · ES`))}{pair(input('prep', t('admin.lib.f.prep'), 'number'), input('tags', t('admin.lib.f.tags')))}
         {pair(area('ing_en', `${t('admin.lib.f.ingredients')} · EN`, 5), area('ing_es', `${t('admin.lib.f.ingredients')} · ES`, 5))}{pair(area('steps_en', `${t('admin.lib.f.steps')} · EN`, 5), area('steps_es', `${t('admin.lib.f.steps')} · ES`, 5))}</>}
       {kind === 'badge' && <>{pair(input('name_en', `${t('admin.lib.f.name')} · EN`), input('name_es', `${t('admin.lib.f.name')} · ES`))}{pair(area('description_en', `${t('admin.lib.f.description')} · EN`), area('description_es', `${t('admin.lib.f.description')} · ES`))}
-        <div className="bilingual"><div className="form-field"><label className="field-label" htmlFor="lib-icon">{t('admin.lib.f.icon')}</label><select id="lib-icon" className="field-input" value={f['icon']} onChange={set('icon')}>{['Award', 'Medal', 'Trophy', 'Star', 'Heart', 'HandHeart', 'Flame', 'Crown', 'CalendarHeart', 'UsersRound', 'Footprints', 'Leaf', 'Rocket', 'Megaphone'].map(i => <option key={i} value={i}>{i}</option>)}</select></div>
+        <div className="bilingual"><div className="form-field"><label className="field-label" htmlFor="lib-icon">{t('admin.lib.f.icon')}</label><Select value={f['icon']} onValueChange={icon => setF(current => ({ ...current, icon }))}><SelectTrigger id="lib-icon"><SelectValue /></SelectTrigger><SelectContent>{(['Award', 'Medal', 'Trophy', 'Star', 'Heart', 'HandHeart', 'Flame', 'Crown', 'CalendarHeart', 'UsersRound', 'Footprints', 'Leaf', 'Rocket', 'Megaphone'] as const).map(icon => <SelectItem key={icon} value={icon}><span className="flex items-center gap-2"><GwIcon name={icon} />{t(`admin.lib.icons.${icon}`)}</span></SelectItem>)}</SelectContent></Select></div>
           <div className="form-field"><label className="field-label" htmlFor="lib-tier">{t('admin.lib.f.tier')}</label><select id="lib-tier" className="field-input" value={f['tier']} onChange={set('tier')}>{['bronze', 'silver', 'gold'].map(x => <option key={x} value={x}>{t(`admin.lib.tier.${x}`)}</option>)}</select></div></div></>}
       {kind === 'challenge_type' && <>{pair(input('title_en', `${t('admin.lib.f.title')} · EN`), input('title_es', `${t('admin.lib.f.title')} · ES`))}{pair(area('description_en', `${t('admin.lib.f.description')} · EN`), area('description_es', `${t('admin.lib.f.description')} · ES`))}
         {pair(input('daily_prompt_en', `${t('admin.lib.f.prompt')} · EN`), input('daily_prompt_es', `${t('admin.lib.f.prompt')} · ES`))}{input('days', t('admin.lib.f.days'), 'number')}</>}
@@ -335,13 +338,14 @@ function Broadcasts() {
   const fn = useServerFn(getBroadcasts); const send = useServerFn(sendBroadcast); const end = useServerFn(endBroadcast);
   const { data } = useQuery({ queryKey: ['admin', 'broadcasts'], queryFn: () => fn() });
   const [f, setF] = useState({ audience: 'leaders' as 'leaders' | 'members', title_en: '', title_es: '', body_en: '', body_es: '' });
-  const [previewLang, setPreviewLang] = useState<'en' | 'es'>(lang); const [busy, setBusy] = useState(false); const [confirm, setConfirm] = useState(false);
+  const [previewLang, setPreviewLang] = useState<'en' | 'es'>(lang); const [busy, setBusy] = useState(false);
   const ok = !!(f.title_en.trim() && f.title_es.trim() && f.body_en.trim() && f.body_es.trim());
   const go = async (test: boolean) => {
+    if (!test && !(await confirmAction({ title: t('admin.bc.send'), body: t('admin.bc.confirm', { audience: t(`admin.bc.${f.audience}`) }), confirmLabel: t('admin.bc.sendNow') }))) return;
     setBusy(true);
     try {
       const r = await send({ data: { ...f, test } });
-      if (!r.ok) toast.error(errText(t, r.error)); else { toast.success(t(test ? 'admin.bc.testSent' : 'admin.bc.sent', { count: r.recipients })); setConfirm(false); if (!test) setF({ ...f, title_en: '', title_es: '', body_en: '', body_es: '' }); await qc.invalidateQueries({ queryKey: ['admin', 'broadcasts'] }); await qc.invalidateQueries({ queryKey: ['my-broadcast'] }); }
+      if (!r.ok) toast.error(errText(t, r.error)); else { toast.success(t(test ? 'admin.bc.testSent' : 'admin.bc.sent', { count: r.recipients })); if (!test) setF({ ...f, title_en: '', title_es: '', body_en: '', body_es: '' }); await qc.invalidateQueries({ queryKey: ['admin', 'broadcasts'] }); await qc.invalidateQueries({ queryKey: ['my-broadcast'] }); }
     } catch { toast.error(t('admin.errors.failed')); }
     setBusy(false);
   };
@@ -353,10 +357,9 @@ function Broadcasts() {
         <div className="form-field"><label className="field-label" htmlFor="bc-aud">{t('admin.bc.audience')}</label><select id="bc-aud" className="field-input" value={f.audience} onChange={set('audience')}><option value="leaders">{t('admin.bc.leaders')}</option><option value="members">{t('admin.bc.members')}</option></select></div>
         <div className="bilingual"><div className="form-field"><label className="field-label" htmlFor="bc-ten">{t('admin.bc.titleField')} · EN</label><Input id="bc-ten" maxLength={120} className="field-input" value={f.title_en} onChange={set('title_en')} /></div><div className="form-field"><label className="field-label" htmlFor="bc-tes">{t('admin.bc.titleField')} · ES</label><Input id="bc-tes" maxLength={120} className="field-input" value={f.title_es} onChange={set('title_es')} /></div></div>
         <div className="bilingual"><div className="form-field"><label className="field-label" htmlFor="bc-ben">{t('admin.bc.body')} · EN</label><Textarea id="bc-ben" rows={4} maxLength={2000} className="field-textarea" value={f.body_en} onChange={set('body_en')} /></div><div className="form-field"><label className="field-label" htmlFor="bc-bes">{t('admin.bc.body')} · ES</label><Textarea id="bc-bes" rows={4} maxLength={2000} className="field-textarea" value={f.body_es} onChange={set('body_es')} /></div></div>
-        <div className="form-field"><span className="field-label">{t('admin.bc.preview')}</span><Segmented value={previewLang} options={['en', 'es'] as const} onChange={setPreviewLang} label={v => (v === 'en' ? 'English' : 'Español')} />
+        <div className="form-field"><span className="field-label">{t('admin.bc.preview')}</span><Segmented value={previewLang} options={['en', 'es'] as const} onChange={setPreviewLang} label={v => t(`admin.languages.${v}`)} />
           <div className="notice-banner"><GwIcon name="Megaphone" /><div><strong>{(previewLang === 'es' ? f.title_es : f.title_en) || t('admin.bc.titleField')}</strong><p>{(previewLang === 'es' ? f.body_es : f.body_en) || t('admin.bc.body')}</p></div></div></div>
-        {!confirm ? <div className="confirm-actions"><Button variant="secondary" disabled={!ok || busy} onClick={() => go(true)}>{t('admin.bc.sendTest')}</Button><Button disabled={!ok || busy} onClick={() => setConfirm(true)}>{t('admin.bc.send')}</Button></div>
-          : <div className="admin-confirm"><p>{t('admin.bc.confirm', { audience: t(`admin.bc.${f.audience}`) })}</p><div className="confirm-actions"><Button variant="secondary" onClick={() => setConfirm(false)}>{t('admin.keep')}</Button><Button disabled={busy} onClick={() => go(false)}>{t('admin.bc.sendNow')}</Button></div></div>}
+        <div className="confirm-actions"><Button variant="secondary" disabled={!ok || busy} onClick={() => void go(true)}>{t('admin.bc.sendTest')}</Button><Button disabled={!ok || busy} onClick={() => void go(false)}>{t('admin.bc.send')}</Button></div>
       </div>
     </section>
     <section className="panel"><h2 className="section-title">{t('admin.bc.history')}</h2>
