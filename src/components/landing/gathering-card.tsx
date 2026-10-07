@@ -74,7 +74,7 @@ export function GatheringCard({ g, slot, near, goingOverride, goingSlot, showRsv
   const going = goingOverride ?? g.going;
   const meta = [formatWhen(g.startsAt, lang), where].filter(Boolean).join(' · ');
   const open = () => {
-    track('feed_card_open', { id: g.id, sample: g.isSample });
+    track('feed_rsvp_click', { id: g.id, sample: g.isSample });
     if (g.isSample) setPreview(true); else void navigate({ to: '/e/$id', params: { id: g.id } });
   };
   const catName = t(`landing.catOne.${g.category}`);
