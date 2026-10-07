@@ -3053,5 +3053,25 @@
       "payment_required": "Paid team sign-ups open once payments are connected.",
       "captain_contact": "Add a phone or email for the team captain."
     }
+  },
+  "shareKit": {
+    "size": "Image size",
+    "formats": {
+      "square": "Square",
+      "story": "Story",
+      "wide": "Wide"
+    },
+    "previewAlt": "Share image for {{title}}",
+    "making": "Preparing your images",
+    "share": "Share",
+    "download": "Download",
+    "caption": "Caption",
+    "copyCaption": "Copy caption",
+    "writing": "Writing caption…",
+    "captionCopied": "Caption copied in English and Spanish",
+    "previewCaption": "Sample",
+    "telegram": "Telegram",
+    "fallbackCaption": "Join me for {{title}}, {{date}}. Save your spot: {{link}}",
+    "open": "Share kit"
   }
 }

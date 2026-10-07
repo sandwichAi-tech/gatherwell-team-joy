@@ -3053,5 +3053,25 @@
       "payment_required": "Las inscripciones de equipo pagadas se abren cuando los pagos estén conectados.",
       "captain_contact": "Agrega un teléfono o correo del capitán."
     }
+  },
+  "shareKit": {
+    "size": "Tamaño de imagen",
+    "formats": {
+      "square": "Cuadrada",
+      "story": "Historia",
+      "wide": "Ancha"
+    },
+    "previewAlt": "Imagen para compartir de {{title}}",
+    "making": "Preparando tus imágenes",
+    "share": "Compartir",
+    "download": "Descargar",
+    "caption": "Texto",
+    "copyCaption": "Copiar texto",
+    "writing": "Escribiendo texto…",
+    "captionCopied": "Texto copiado en inglés y español",
+    "previewCaption": "Ejemplo",
+    "telegram": "Telegram",
+    "fallbackCaption": "Acompáñame a {{title}}, {{date}}. Aparta tu lugar: {{link}}",
+    "open": "Kit para compartir"
   }
 }

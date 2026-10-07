@@ -1,3 +1,5 @@
+import { ResponsiveSheet } from '@/components/responsive-sheet';
+import { ShareKit } from '@/components/share-kit';
 import { CopyButton } from '@/components/copy-button';
 import { EmptyState } from '@/components/launch-states';
 import { useState } from 'react';
@@ -40,6 +42,7 @@ export function NetworkPage() {
     <div className="network-actions">{actions}</div>
   </div>;
 
+  const [kit, setKit] = useState<NetGathering | null>(null);
   const gathering = (g: NetGathering) => <div key={g.id} className="network-gathering">
     <div className="person-info">
       <Link to="/e/$id" params={{ id: g.id }} className="network-title">{g.title}</Link>
@@ -48,6 +51,7 @@ export function NetworkPage() {
     </div>
     {!g.mine && <div className="network-actions">
       <CopyButton text={partnerLink(g.id, userId)} label={t('network.copyGuestLink')} />
+      <Button variant="secondary" onClick={() => setKit(g)}><Share2 />{t('shareKit.open')}</Button>
       {myHostTeams.map(team => { const on = g.featured_teams.includes(team.teamId); return <Button key={team.teamId} variant={on ? 'default' : 'secondary'} aria-pressed={on} disabled={busy === g.id + team.teamId}
         onClick={() => act(g.id + team.teamId, 'network_feature', { _event: g.id, _team: team.teamId, _on: !on }, on ? 'network.unfeatured' : 'network.featured')}>
         {on ? <Check /> : <Share2 />}{myHostTeams.length > 1 ? t(on ? 'network.featuredFor' : 'network.featureFor', { team: team.name }) : t(on ? 'network.featuredShort' : 'network.feature')}</Button>; })}
@@ -76,6 +80,9 @@ export function NetworkPage() {
         {q.data.suggested.length ? q.data.suggested.map(p => person(p, <Button variant="secondary" disabled={busy === p.user_id} onClick={() => act(p.user_id, 'network_request', { _to: p.user_id }, 'network.requested')}><UserPlus />{t('network.add')}</Button>)) : <EmptyState compact icon="UsersRound" text={t('network.noSuggested')} />}
       </section>
     </>}
+    <ResponsiveSheet open={!!kit} onOpenChange={o => !o && setKit(null)} title={t('shareKit.open')} description={kit?.title}>
+      {kit && <ShareKit title={kit.title} startsAt={kit.starts_at} timezone={kit.timezone} place={kit.location_name ?? (kit.online ? t('network.online') : '')} link={partnerLink(kit.id, userId)} />}
+    </ResponsiveSheet>
   </>;
 }
 
