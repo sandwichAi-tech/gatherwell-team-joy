@@ -299,7 +299,7 @@ function EditTeamSheet({ open, onOpenChange, team, userId }: { open: boolean; on
     setBusy(false);
   };
   const shown = preview ?? current;
-  return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={t('teamSpace.editTeam')}>
+  return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={t('teamSpace.editTeam')} footer={<Button className="sheet-primary" disabled={busy || !name.trim()} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>}>
     <div className="edit-form">
       <div className="form-field"><label className="field-label" htmlFor="team-name">{t('onboarding.teamName')}</label><Input id="team-name" className="field-input" value={name} maxLength={80} onChange={e => setName(e.target.value)} /></div>
       <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
@@ -309,7 +309,6 @@ function EditTeamSheet({ open, onOpenChange, team, userId }: { open: boolean; on
       <div className="form-field"><span className="field-label">{t('teamSpace.brandColor')}</span>
         <div className="swatches">{TEAM_COLORS.map(value => <button type="button" key={value} className={`swatch ${color === value ? 'is-selected' : ''}`} style={{ background: value }} aria-label={value} aria-pressed={color === value} onClick={() => setColor(value)}>{color === value && <Check />}</button>)}
           <label className={`swatch swatch-custom ${color && !TEAM_COLORS.includes(color as typeof TEAM_COLORS[number]) ? 'is-selected' : ''}`} style={color && !TEAM_COLORS.includes(color as typeof TEAM_COLORS[number]) ? { background: color } : undefined} aria-label={t('teamSpace.customColor')}><Plus /><input type="color" className="sr-only" value={color ?? '#2F2340'} onChange={e => setColor(e.target.value.toUpperCase())} /></label></div></div>
-      <Button className="onboarding-continue" disabled={busy || !name.trim()} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
     </div>
   </ResponsiveSheet>;
 }
@@ -331,7 +330,7 @@ function MembersSheet({ open, onOpenChange, teamId, userId, isLeader, directLead
   };
   const update = (patch: { role?: string; custom_badge?: string | null }) => run(() => supabase.from('team_members').update(patch).match({ team_id: teamId, user_id: selected!.userId }), t('teamSpace.memberSaved'), false).then(() => setSelected(s => s ? { ...s, role: patch.role ?? s.role, customBadge: patch.custom_badge !== undefined ? patch.custom_badge : s.customBadge } : s));
 
-  return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={selected ? (selected.name ?? t('teamSpace.someone')) : t('teamSpace.members')}>
+  return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={selected ? (selected.name ?? t('teamSpace.someone')) : t('teamSpace.members')} icon="UsersRound">
     {!selected ? <>
       <div className="search-field"><Search /><Input className="field-input" placeholder={t('teamSpace.searchMembers')} value={search} onChange={e => setSearch(e.target.value)} aria-label={t('teamSpace.searchMembers')} /></div>
       <div className="member-list">{filtered.map(m => <button type="button" key={m.userId} className="member-row" onClick={() => setSelected(m)}>

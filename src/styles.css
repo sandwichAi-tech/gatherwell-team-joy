@@ -1104,7 +1104,7 @@ button { white-space:normal; }
 .missing-number { font-size:96px; line-height:1; margin-top:48px; color:var(--primary); font-variant-numeric:tabular-nums; }
 @media(max-width:767px) {
  button:not([role="switch"]):not([role="checkbox"]), .auth-footer a, .legal-links a { min-height:44px; }
- .page-content { padding-bottom:calc(128px + env(safe-area-inset-bottom)); padding-left:max(16px,env(safe-area-inset-left)); padding-right:max(16px,env(safe-area-inset-right)); }
+ .page-content { padding-bottom:calc(160px + env(safe-area-inset-bottom)); padding-left:max(16px,env(safe-area-inset-left)); padding-right:max(16px,env(safe-area-inset-right)); }
  .settings-value { flex-wrap:wrap; justify-content:flex-end; }
  .settings-label { flex:1 0 96px; overflow-wrap:anywhere; }
  .settings-value { max-width:60%; }
@@ -1377,3 +1377,5 @@ button { white-space:normal; }
 .feed-row{display:grid;gap:4px;padding:16px;border:1px solid var(--border);border-radius:16px;background:var(--card)}
 .feed-row small{color:var(--muted-foreground);font-size:13px}
 .feed-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.segmented button { min-width: 48px; }
+.floating-create { bottom: calc(88px + env(safe-area-inset-bottom)); z-index: 40; }
