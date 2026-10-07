@@ -53,7 +53,12 @@ export function ImageCropSheet({ file, kind, withSquare, onCancel, onDone }: { f
     const el = new Image(); el.onload = () => setImg(el); el.src = url;
     return () => URL.revokeObjectURL(url);
   }, [file, kind]);
-  useEffect(() => { if (box.current) setMaxW(Math.min(480, box.current.clientWidth || 340)); }, [img]);
+  useEffect(() => {
+    const el = box.current; if (!el) return;
+    const measure = () => { const w = el.clientWidth; if (w > 0) setMaxW(Math.min(480, w)); };
+    measure(); const ro = new ResizeObserver(measure); ro.observe(el);
+    return () => ro.disconnect();
+  }, [img]);
 
   const view = frameSize(ratio, maxW);
   const base = img ? Math.max(view.w / img.naturalWidth, view.h / img.naturalHeight) : 1;
@@ -66,7 +71,7 @@ export function ImageCropSheet({ file, kind, withSquare, onCancel, onDone }: { f
 
   useEffect(() => {
     const c = preview.current; if (!c || !img) return;
-    const pw = 120, ph = Math.round(pw / ratio); c.width = pw * 2; c.height = ph * 2; c.style.width = `${pw}px`; c.style.height = `${ph}px`;
+    const pw = kind === 'avatar' ? 72 : 120, ph = Math.round(pw / ratio); c.width = pw * 2; c.height = ph * 2; c.style.width = `${pw}px`; c.style.height = `${ph}px`;
     const ctx = c.getContext('2d'); if (!ctx) return;
     ctx.clearRect(0, 0, c.width, c.height);
     ctx.drawImage(img, rect.sx, rect.sy, rect.sw, rect.sh, 0, 0, c.width, c.height);
