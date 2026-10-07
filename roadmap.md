@@ -70,3 +70,11 @@
 - [x] Public pricing using existing plan limits and monthly/annual prices
 - [x] Landing sticky CTA experiment flag and analytics
 - [x] Verify English and Spanish at 390px and 1440px
+
+# N3 — Event setup (one part at a time)
+- [x] 1. Quick create (title, time presets, place, Publish; More options opens full form)
+- [ ] 2. Smarter time presets learned from each host
+- [ ] 3. More repeat options
+- [ ] 4. Team sign-ups (host picks per-person or per-team pricing)
+- [ ] 5. Social share kit
+- [ ] 6. Promo codes

@@ -829,7 +829,9 @@
       "not_allowed": "No puedes crear reuniones para este equipo.",
       "template_not_found": "Esa plantilla ya no está disponible.",
       "too_long": "Uno de los campos es demasiado largo."
-    }
+    },
+    "quickTitle": "Creación rápida",
+    "moreOptions": "Más opciones"
   },
   "guest": {
     "metaFallback": "Una reunión",
