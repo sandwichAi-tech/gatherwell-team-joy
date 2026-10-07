@@ -1422,3 +1422,68 @@ button { white-space:normal; }
 @media(max-width:520px){.follow-name{font-size:32px}.follow-hero-body{padding-inline:16px}.feed-row{grid-template-columns:1fr;gap:8px}.feed-row>.gw-feature-tile{display:none}.feed-actions{display:grid;grid-template-columns:1fr 1fr}.feed-actions>:first-child{grid-column:1/-1}.follow-actions>*{flex:1}.gw-group .settings-row{grid-template-columns:40px minmax(0,1fr) auto;gap:8px}.convo .topic-row .settings-label{white-space:normal;overflow-wrap:anywhere}.gw-group .segmented button{min-width:44px}}
 /* Compact profile stats retain legible bilingual labels inside phone sheets. */
 @media(max-width:520px){.responsive-sheet .gw-stats-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.responsive-sheet .gw-stat{min-width:0;padding:16px 8px}.responsive-sheet .gw-stat:nth-child(2n){border-right:0}.responsive-sheet .gw-stat:nth-child(n+3){border-top:1px solid var(--border)}.responsive-sheet .gw-stat>span{white-space:normal;overflow-wrap:anywhere}}
+
+/* ===== Landing hero 2.0 (scoped to marketing pages) ===== */
+.gw-landing .gw-lede{font-size:18px;line-height:1.55;color:var(--body);max-width:520px;margin-top:32px}
+.gw-landing .gw-hero{position:relative;overflow:hidden;isolation:isolate;padding:64px 0 72px;background:var(--background)}
+.gw-landing .gw-hero-grid{display:grid;gap:56px;align-items:center;min-height:0;padding-top:0;padding-bottom:0}
+.gw-landing .gw-hero-h1{margin-top:24px;line-height:1.02;padding-bottom:.08em}
+.gw-landing .gw-hero-ctas{margin-top:40px}
+.gw-landing .gw-proof{margin-top:32px}
+.gw-landing .gw-aurora{position:absolute;inset:0;width:auto;height:auto;filter:none;opacity:1;background:none;animation:none;z-index:-1;pointer-events:none}
+.gw-landing .gw-aurora::after{z-index:3}
+.gw-blob{position:absolute;border-radius:50%;filter:blur(140px);animation:gw-drift 20s ease-in-out infinite alternate;will-change:transform}
+.gw-blob-lav{width:620px;height:620px;right:-120px;top:-80px;background:rgba(122,95,168,.28)}
+.gw-blob-peach{width:560px;height:560px;left:-160px;bottom:-200px;background:rgba(243,198,165,.32);animation-delay:-10s}
+.gw-glow{position:absolute;left:-10%;top:5%;width:70%;height:80%;background:radial-gradient(closest-side,rgba(255,255,255,.6),transparent)}
+.dark .gw-glow{opacity:.08}
+@keyframes gw-drift{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-50px,40px,0) scale(1.06)}100%{transform:translate3d(40px,-30px,0) scale(.96)}}
+.gw-landing .gw-hero-visual{padding:0;justify-content:center}
+.gw-landing .gw-stack-wrap{width:auto;display:block;transform:scale(.85);transform-origin:top center;margin-bottom:-15%}
+.gw-landing .gw-stack{width:340px;aspect-ratio:auto;height:470px}
+.gw-stack-card{box-shadow:0 1px 2px rgba(28,23,38,.06),0 6px 16px rgba(28,23,38,.08),0 24px 48px -8px rgba(28,23,38,.14),0 48px 96px -24px rgba(47,35,64,.22);border-radius:20px}
+.gw-stack-card .gw-gcard-title{font-size:18px}
+.gw-landing .gw-stack-toggle{right:-8px;bottom:-8px;width:36px;height:36px;background:rgba(255,255,255,.72);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(232,230,238,.9);color:var(--plum);box-shadow:var(--e1)}
+.gw-landing .gw-stack-toggle::before{content:'';position:absolute;inset:-4px}
+/* Bands */
+.gw-band{position:relative}
+.gw-band-canvas{background:var(--background);box-shadow:0 0 0 100vmax var(--background);clip-path:inset(0 -100vmax)}
+.gw-band-white{background:var(--card);box-shadow:0 0 0 100vmax var(--card);clip-path:inset(0 -100vmax);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.gw-landing .gw-cat-section{padding:40px 0;border-top:1px solid var(--border)}
+.gw-landing .gw-section{padding-bottom:72px}
+/* Category row */
+.gw-landing .gw-cat-row{gap:24px;padding:8px 4px 12px}
+.gw-landing .gw-cat{width:96px;gap:12px}
+.gw-landing .gw-cat-circle{width:88px;height:88px;border:2px solid transparent;background:linear-gradient(#EFEBF6,#EFEBF6) padding-box,linear-gradient(135deg,rgba(122,95,168,.55),rgba(243,198,165,.8)) border-box;transition:transform .18s ease-out,background .18s ease-out,box-shadow .18s ease-out}
+.gw-landing .gw-cat-circle .gw-icon{color:var(--plum)}
+.gw-landing .gw-cat:hover .gw-cat-circle{transform:translateY(-2px);background:linear-gradient(#EFEBF6,#EFEBF6) padding-box,linear-gradient(135deg,#7A5FA8,#F3C6A5) border-box;box-shadow:0 8px 20px -8px rgba(122,95,168,.45)}
+.gw-landing .gw-cat.is-on .gw-cat-circle{background:linear-gradient(#2F2340,#2F2340) padding-box,linear-gradient(135deg,#7A5FA8,#F3C6A5) border-box}
+.gw-landing .gw-cat-label{font-size:14px;font-weight:600}
+.dark .gw-landing .gw-cat-circle{background:linear-gradient(var(--secondary),var(--secondary)) padding-box,linear-gradient(135deg,#7A5FA8,#F3C6A5) border-box}
+.dark .gw-landing .gw-cat-circle .gw-icon{color:var(--lavender)}
+/* Nav */
+.gw-nav-lang{display:inline-flex;align-items:center}
+.gw-nav-lang-item{display:inline-flex;align-items:center}
+.gw-nav-lang button{min-width:32px;min-height:44px;padding:0 4px;font-size:13px;font-weight:600;color:var(--muted-foreground);background:none}
+.gw-nav-lang button[aria-pressed=true]{color:var(--plum)}
+.dark .gw-nav-lang button[aria-pressed=true]{color:var(--lavender)}
+.gw-nav-lang-dot{color:var(--muted-foreground);font-size:13px}
+@media (min-width:1024px){
+  .gw-landing .gw-nav-links{gap:32px}
+  .gw-landing .gw-nav-link{padding:0}
+  .gw-landing .gw-hero{padding:96px 0 120px}
+  .gw-landing .gw-hero-grid{grid-template-columns:55fr 45fr;gap:32px}
+  .gw-landing .gw-hero-h1{font-size:80px}
+  .gw-landing .gw-lede{font-size:20px}
+  .gw-landing .gw-stack-wrap{transform:none;margin:0 auto}
+  .gw-landing .gw-cat-row{justify-content:center;overflow:visible}
+  .gw-landing .gw-section{padding-bottom:112px}
+}
+@media (max-width:1023px){.gw-landing .gw-hero-visual{margin-top:8px}}
+@media (prefers-reduced-motion:reduce){.gw-blob{animation:none}}
+.gw-landing .gw-cat-circle svg.gw-icon{width:32px;height:32px}
+.gw-landing .gw-cat.is-on .gw-cat-circle svg.gw-icon{color:#fff}
+.gw-landing .gw-cat.is-on .gw-icon-feature [opacity="0.2"]{fill:#fff;opacity:.25}
+.gw-landing .gw-icon-feature [opacity="0.2"]{opacity:.25}
+.gw-landing .gw-stack-toggle svg{width:16px;height:16px}
+.gw-landing .gw-cat-chip,.gw-landing .gw-status-chip{white-space:nowrap}

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ClientOnly, Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { LanguageToggle } from '@/components/auth-frame';
+import { LanguageToggle, setLanguage } from '@/components/auth-frame';
 import { GwIcon } from '@/components/gw-icon';
 import { track } from '@/lib/landing';
 
@@ -11,6 +11,15 @@ export function LandingLogo() {
 }
 
 /** Sticky nav: transparent over the hero, frosted white with a hairline after 24px. */
+/** Compact "EN · ES" text toggle for the marketing top bar. */
+function NavLanguage() {
+  const { t, i18n } = useTranslation();
+  const cur = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
+  return <div className="gw-nav-lang" role="group" aria-label={t('me.language')}>
+    {(['en', 'es'] as const).map((l, i) => <span key={l} className="gw-nav-lang-item">{i > 0 && <span aria-hidden="true" className="gw-nav-lang-dot">·</span>}<button type="button" aria-pressed={cur === l} aria-label={t(l === 'en' ? 'me.english' : 'me.spanish')} onClick={() => setLanguage(l)}>{l.toUpperCase()}</button></span>)}
+  </div>;
+}
+
 export function LandingNav() {
   const { t } = useTranslation();
   const [solid, setSolid] = useState(false);
@@ -51,12 +60,12 @@ export function LandingNav() {
       <nav className="gw-nav-links" aria-label={t('landing.nav.main')}>
         <Link to="/discover" className="gw-nav-link">{t('landing.nav.find')}</Link>
         <Link to="/login" search={{ intent: 'host' }} className="gw-nav-link">{t('landing.nav.host')}</Link>
-        <LanguageToggle />
+        <NavLanguage />
         <Link to="/login" className="gw-nav-link">{t('landing.nav.signIn')}</Link>
         <Link to="/login" className="gw-btn gw-btn-primary gw-btn-sm">{t('landing.nav.getStarted')}</Link>
       </nav>
       <div className="gw-nav-mobile">
-        <LanguageToggle />
+        <NavLanguage />
         <button ref={triggerRef} type="button" className="gw-icon-btn" aria-label={t('landing.nav.menu')} aria-expanded={open} onClick={() => setOpen(true)}><GwIcon name="List" size={24} /></button>
       </div>
     </div>

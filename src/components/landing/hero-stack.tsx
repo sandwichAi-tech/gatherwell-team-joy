@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GatheringCard, PhotoCard } from '@/components/landing/gathering-card';
-import type { Category, FeedGathering } from '@/lib/landing';
+import { feedSlot, type Category, type FeedGathering } from '@/lib/landing';
 
 export type HeroItem = { key: string; slot: string } & ({ kind: 'gathering'; g: FeedGathering } | { kind: 'photo'; category: Category });
 
@@ -15,8 +15,8 @@ export const POSES = [
 
 export function HeroCardView({ item, goingOverride, goingSlot, priority, style }: { item: HeroItem; goingOverride?: number | undefined; goingSlot?: React.ReactNode; priority?: boolean | undefined; style?: CSSProperties | undefined }) {
   return item.kind === 'gathering'
-    ? <GatheringCard g={item.g} slot={item.slot} goingOverride={goingOverride} goingSlot={goingSlot} priority={priority} className="gw-hero-card" style={style} />
-    : <PhotoCard slot={item.slot} category={item.category} priority={priority} className="gw-hero-card" style={style} />;
+    ? <GatheringCard g={item.g} slot={feedSlot(item.g.category)} goingOverride={goingOverride} goingSlot={goingSlot} priority={priority} className="gw-stack-card" style={style} />
+    : <PhotoCard slot={feedSlot(item.category)} category={item.category} priority={priority} className="gw-stack-card" style={style} />;
 }
 
 /** First paint and reduced-motion version: the same fanned stack, no animation code. */

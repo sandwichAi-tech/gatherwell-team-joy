@@ -22,7 +22,7 @@ function CreditsPage() {
   return <LandingFrame>
     <main className="gw-container gw-credits">
       <h1 className="gw-display gw-h1">{t('landing.credits.title')}</h1>
-      <p className="gw-hero-sub">{t('landing.credits.sub')}</p>
+      <p className="gw-lede">{t('landing.credits.sub')}</p>
       <ul className="gw-credit-list">{data.map(row => <li key={row.id}>
         <span><strong>{es ? row.alt_es : row.alt_en}</strong><small>{row.slot}</small></span>
         <span>{row.credit ?? t('landing.credits.none')}</span>
