@@ -620,3 +620,16 @@ Spanish admin icon selector: all 14 options displayed localized labels with shar
 - Still open: exhaustive overlay permutations, other-account profile, true populated gatherings, provider/client calendar integration, full contrast audit, reduced-motion emulation and real touch-device drawer gestures. Desktop-mouse toast swipe passed; mobile drawer drag was not asserted, so it is not recorded as a verified pass.
 
 This continuation updates the prior inventory; historical Needs-work rows describe the audit baseline, not a claim that every row received an individual live retest.
+
+## N2 — Public discovery, hosting and pricing verification
+- Added public `/hosts` and `/pricing`, with matching desktop navigation and focus-trapped bilingual mobile menu.
+- Landing keeps its hero and Live Stack, highlights Pilates instead of Sound baths, retains Hikes, and opens the full category picker from More. Existing Sound bath gatherings remain supported.
+- Guest journey: Find it, RSVP, Show up. Host band links to the dedicated hosting page.
+- Hosts page: six benefits with marketing-duotone tiles and sample vignettes, four hosting steps, team-leader band, shared pricing preview, FAQ, final CTA and mobile sticky hosting action.
+- Pricing uses existing PLANS and LICENSES constants: monthly/annual plan toggle, comparison table, 25/100-member monthly licenses, plain FAQs and transparent service/fee notes.
+- Host category selector includes all categories plus Other with a custom label; create/edit RPCs persist categories and the public feed renders custom labels. Pilates receives the existing in-person activity waiver default.
+- Landing sticky CTA remains Find a gathering. Disabled `landing_sticky_host_experiment` enables a session-stable 50/50 host/find test when deliberately switched on; exposure and click analytics include variant and page.
+- Browser checks: landing, Hosts and Pricing at 390px and 1440px, English and Spanish. No horizontal overflow or page errors. Category picker, mobile navigation, annual prices, FAQ expansion and hosting sticky action verified.
+- Signed-in phone checks: Pilates selection, Other label entry and Discover navigation verified in both languages; no overflow or page errors.
+- Visual inspection caught and fixed inherited 200px mobile CTA flex sizing and missing tile background token. Buttons now have 52px height and feature tiles use the shared secondary tint.
+- Build harness: latest completed build passed. No provider secrets or payment configuration changed. Purchase journeys and new-gathering publication were not exercised in this UI verification.

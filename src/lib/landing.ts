@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import type { CATEGORY_ICONS } from '@/components/gw-icon';
 
 export type Category = keyof typeof CATEGORY_ICONS;
-export const CATEGORIES: Category[] = ['run', 'fitcamp', 'yoga', 'soundbath', 'hike', 'walk', 'pickleball', 'more'];
+export const CATEGORIES: Category[] = ['run', 'fitcamp', 'yoga', 'pilates', 'soundbath', 'hike', 'walk', 'pickleball', 'more'];
 export const isCategory = (v: unknown): v is Category => typeof v === 'string' && (CATEGORIES as string[]).includes(v);
 
 /** A public gathering card, normalized from real rows and preview-only samples. */
@@ -15,6 +15,7 @@ export type FeedGathering = {
   title: string;
   startsAt: Date;
   category: Category;
+  categoryLabel?: string | null;
   locationName: string | null;
   isOnline: boolean;
   lat: number | null;
@@ -26,7 +27,7 @@ export type FeedGathering = {
   hostName: string;
 };
 
-type RawReal = { id: string; title: string; starts_at: string; category: string; location_name: string | null; is_online: boolean; lat: number | null; lng: number | null; capacity: number | null; going: number; host_name: string; initials: string[] };
+type RawReal = { category_label?: string | null; id: string; title: string; starts_at: string; category: string; location_name: string | null; is_online: boolean; lat: number | null; lng: number | null; capacity: number | null; going: number; host_name: string; initials: string[] };
 type RawSample = { id: string; hero: boolean; slot_order: number; title_en: string; title_es: string; category: string; dow: number; local_time: string; location_name: string; lat: number | null; lng: number | null; capacity: number | null; going: number; going_names: string[]; host_name: string };
 
 /** Samples exist only for previews; the published site never requests them. */
@@ -55,7 +56,7 @@ export const publicGatheringsQuery = (lang: 'en' | 'es') => queryOptions({
     const payload = (data ?? { real: [], samples: [] }) as unknown as { real: RawReal[]; samples: RawSample[] };
     const real = payload.real.map((r): FeedGathering => ({
       id: r.id, isSample: false, hero: false, title: r.title, startsAt: new Date(r.starts_at),
-      category: isCategory(r.category) ? r.category : 'more', locationName: r.location_name, isOnline: r.is_online,
+      categoryLabel: r.category_label ?? null, category: isCategory(r.category) ? r.category : 'more', locationName: r.location_name, isOnline: r.is_online,
       lat: r.lat, lng: r.lng, capacity: r.capacity, going: r.going, goingNames: [], initials: r.initials ?? [], hostName: r.host_name,
     }));
     const samples = payload.samples.map((s): FeedGathering => ({
@@ -131,7 +132,7 @@ export function formatDistance(km: number, lang: string) {
   return `${number(mi)} mi`;
 }
 
-export type AnalyticsEvent = 'hero_find_click' | 'hero_host_click' | 'category_click' | 'feed_rsvp_click' | 'sticky_cta_click' | 'location_prompt_accept' | 'location_prompt_decline';
+export type AnalyticsEvent = 'hero_find_click' | 'hero_host_click' | 'category_click' | 'feed_rsvp_click' | 'sticky_cta_click' | 'sticky_cta_view' | 'location_prompt_accept' | 'location_prompt_decline';
 
 /** Landing events go through the shared analytics helper. */
 export function track(event: AnalyticsEvent, props: Record<string, string | number | boolean | null | undefined> = {}) {
@@ -159,7 +160,7 @@ export function pickH1Variant(): H1Variant {
 }
 
 export const HERO_SLOTS = ['hero_card_1', 'hero_card_2', 'hero_card_3', 'hero_card_4'] as const;
-export const feedSlot = (c: Category) => `feed_default_${c === 'more' ? 'walk' : c}`;
+export const feedSlot = (c: Category) => `feed_default_${c === 'more' ? 'walk' : c === 'pilates' ? 'yoga' : c}`;
 
 /** Tustin, CA — reference point for preview-only sample gathering distances. */
 export const SAMPLE_ORIGIN = { lat: 33.7458, lng: -117.8262 } as const;

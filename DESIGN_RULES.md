@@ -55,7 +55,7 @@ These rules permanently replace all earlier visual and tone instructions in PROJ
 - UI icons (navigation, buttons, lists, inputs): Phosphor light weight, 20px, muted #8A8496; active or selected states plum #2F2340.
 - Feature and category icons (category bubbles, feature tiles, empty states, badges): duotone weight, 24-28px, plum stroke with lavender #7A5FA8 fill at 20% opacity, inside a 56px tile (16px radius, #EFEBF6 background, 1px #E4DEF0 border) via GwFeatureTile.
 - Never mix weights within one component; no filled cartoon icons or clip-art.
-- Category map: Run clubs PersonSimpleRun, Fit camps Barbell, Yoga FlowerLotus, Sound baths Waveform, Hikes Mountains, Walks PersonSimpleWalk, Pickleball TennisBall, More SquaresFour.
+- Category map: Run clubs PersonSimpleRun, Fit camps Barbell, Yoga FlowerLotus, Pilates PersonSimpleTaiChi, Sound baths Waveform, Hikes Mountains, Walks PersonSimpleWalk, Pickleball TennisBall, More SquaresFour.
 - Badge medallions: 64px circle, 1.5px ring (bronze peach #F3C6A5, silver lavender #7A5FA8, gold plum #2F2340), centered duotone icon, subtle inner highlight.
 
 ## Imagery
@@ -69,3 +69,8 @@ These rules permanently replace all earlier visual and tone instructions in PROJ
 Public marketing pages (landing, Discover marketing sections) may use Inter Tight headings with a single Instrument Serif accent word per headline. The signed-in app stays on Inter. Landing category circles may stay circular but use the same duotone feature-icon style.
 - Marketing category icons use reinforced regular-style duotone contours, plum ink and 30% lavender fill: 32px inside 88px category circles, 16px in gathering chips, matching vignette icons.
 - On phones, the weekly gathering heading is 32px/800 (tracking remains 0 under the authoring constraint), with 12px after its label and 16px before location; the full-width secondary discovery action sits below the cards. Desktop stays unchanged.
+
+### Public hosting and pricing (N2)
+- Public navigation links to Discover, For hosts and Pricing; mobile menu keeps the same destinations and language control.
+- Public hosting benefit tiles use marketing duotone icons in semantic secondary-tinted tiles; pricing reads existing billing constants rather than a separate price catalog.
+- Keep mobile hosting CTAs 52px high; do not inherit the landing row’s 200px flex basis in a column.

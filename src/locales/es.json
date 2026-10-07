@@ -1443,7 +1443,7 @@
   "landing": {
     "nav": {
       "find": "Encontrar una reunión",
-      "host": "Organizar una",
+      "host": "Para anfitriones",
       "signIn": "Iniciar sesión",
       "getStarted": "Comenzar",
       "menu": "Abrir menú",
@@ -1473,7 +1473,8 @@
       "photoTitle_walk": "Caminatas cerca de ti",
       "photoTitle_pickleball": "Pickleball cerca de ti",
       "photoTitle_more": "Reuniones cerca de ti",
-      "photoMeta": "Nuevas reuniones cada semana"
+      "photoMeta": "Nuevas reuniones cada semana",
+      "photoTitle_pilates": "Pilates en el parque"
     },
     "card": {
       "spotsLeft_one": "Queda {{count}} lugar",
@@ -1506,7 +1507,8 @@
       "walk": "Caminatas",
       "pickleball": "Pickleball",
       "more": "Más",
-      "rowLabel": "Explorar por tipo de reunión"
+      "rowLabel": "Explorar por tipo de reunión",
+      "pilates": "Pilates"
     },
     "catOne": {
       "run": "Club de corredores",
@@ -1516,7 +1518,8 @@
       "hike": "Montaña",
       "walk": "Caminata",
       "pickleball": "Pickleball",
-      "more": "Reunión"
+      "more": "Reunión",
+      "pilates": "Pilates"
     },
     "feed": {
       "label": "Esta semana",
@@ -1540,13 +1543,13 @@
     },
     "how": {
       "label": "Cómo funciona",
-      "title": "Tres toques del sillón a tu gente.",
-      "s1t": "Encuéntrala",
-      "s1b": "Mira lo que pasa cerca de ti.",
+      "title": "Cómo funciona para invitados",
+      "s1t": "Encuentra",
+      "s1b": "Descubre algo cerca de ti que vaya contigo.",
       "s2t": "Confirma",
-      "s2b": "Un toque. Mira quién va.",
-      "s3t": "Llega",
-      "s3b": "Conoce a tu gente. Vuelve la próxima semana.",
+      "s2b": "Reserva tu lugar con un enlace. Sin app ni cuenta.",
+      "s3t": "Asiste",
+      "s3b": "Conoce a tu gente y haz de cada encuentro una costumbre.",
       "checkedIn": "Ya registraste tu llegada",
       "checkedInSub": "Club de corredores al amanecer · 7:02 a. m."
     },
@@ -2822,5 +2825,155 @@
     "preview": "Vista previa",
     "apply": "Usar foto",
     "cancel": "Cancelar"
+  },
+  "marketing": {
+    "navPricing": "Precios",
+    "navHost": "Para anfitriones",
+    "discover": "Descubrir",
+    "other": "Otro",
+    "category": "Categoría",
+    "customCategory": "¿Qué tipo de reunión es?",
+    "customCategoryHint": "Dale una categoría que las personas puedan reconocer.",
+    "allCategories": "Todas las categorías de reuniones",
+    "guestTitle": "Cómo funciona para invitados",
+    "guest1": "Encuentra",
+    "guest1b": "Descubre algo cerca de ti que vaya contigo.",
+    "guest2": "Confirma",
+    "guest2b": "Reserva tu lugar con un enlace. Sin app ni cuenta.",
+    "guest3": "Asiste",
+    "guest3b": "Conoce a tu gente y haz de cada encuentro una costumbre.",
+    "hostLink": "¿Organizas un grupo? Descubre cómo ser anfitrión",
+    "hostsTitle": "Organiza reuniones a las que quieran volver.",
+    "hostsSub": "Crea una página en un minuto, invita con un enlace, registra las llegadas y da seguimiento automáticamente — en inglés y español.",
+    "hostCta": "Empieza a organizar gratis",
+    "seePricing": "Ver precios",
+    "hostsLabel": "Para quienes reúnen a su gente",
+    "benefitTitle": "Menos pendientes. Más encuentros.",
+    "benefitSub": "Un solo lugar para los detalles que hacen especial cada reunión.",
+    "benefits": [
+      {
+        "title": "Crea en un minuto",
+        "body": "Elige una plantilla, agrega un lugar y una hora, y tu página estará lista.",
+        "demo": "Pilates en el parque"
+      },
+      {
+        "title": "Tus invitados confirman sin app",
+        "body": "Comparte un enlace. Pueden reservar sin descargar nada ni crear una cuenta.",
+        "demo": "Un enlace. Todos bienvenidos."
+      },
+      {
+        "title": "Recordatorios para que nadie se lo pierda",
+        "body": "Programa recordatorios bilingües con la hora y el punto de encuentro.",
+        "demo": "Nos vemos mañana"
+      },
+      {
+        "title": "Llegadas y seguimiento",
+        "body": "Escanea un código QR al llegar y envía un mensaje después de la reunión.",
+        "demo": "Llegada registrada · A conectar"
+      },
+      {
+        "title": "Ofrece membresías, cursos y boletos",
+        "body": "Dale a tu comunidad más formas de participar, con boletos, membresías y aprendizaje.",
+        "demo": "La próxima etapa, juntos"
+      },
+      {
+        "title": "Lidera con plantillas e información",
+        "body": "Ayuda a tus anfitriones con plantillas compartidas e información solo de actividad.",
+        "demo": "Tu equipo, a su ritmo"
+      }
+    ],
+    "howHostTitle": "Cómo funciona para anfitriones",
+    "howHostSub": "De tu primera idea a tu próxima reunión habitual.",
+    "hostSteps": [
+      {
+        "title": "Crea",
+        "body": "Elige una categoría, completa los detalles y publica tu página."
+      },
+      {
+        "title": "Comparte",
+        "body": "Envía el enlace o muestra el QR. Las confirmaciones quedan en un solo lugar."
+      },
+      {
+        "title": "Recibe",
+        "body": "Registra las llegadas con QR, incluso con una conexión débil."
+      },
+      {
+        "title": "Da seguimiento",
+        "body": "Agradece a quienes vinieron e invítalos a la siguiente reunión."
+      }
+    ],
+    "leaderLabel": "Para líderes de equipo",
+    "leaderTitle": "Dale un buen comienzo a cada anfitrión.",
+    "leaderBody": "Reúne a tus anfitriones en un Espacio de equipo. Comparte plantillas listas para usar, consulta la actividad en Insights y crea un Ritmo de equipo constante — sin convertir la comunidad en una competencia.",
+    "leaderFeatures": [
+      "Espacios de equipo",
+      "Plantillas compartidas",
+      "Insights para líderes",
+      "Ritmo de equipo"
+    ],
+    "pricingLabel": "Planes sencillos",
+    "pricingTitle": "Empieza gratis. Crece a tu ritmo.",
+    "pricingSub": "Tus invitados pueden confirmar gratis. Elige las herramientas y el espacio que necesitas.",
+    "from": "Desde {{price}}",
+    "usd": "Todos los precios están en USD.",
+    "licenseNote": "Las Licencias de equipo se cobran mensualmente. Cada miembro asignado tiene los límites de Growth.",
+    "licenseDetail": "25 miembros: {{small}}/mes · 100 miembros: {{large}}/mes.",
+    "licenseAnnual": "Solo cobro mensual",
+    "choose": "Empieza con {{plan}}",
+    "compareTitle": "Todo, lado a lado.",
+    "comparisonLabel": "Comparación de planes",
+    "unlimited": "Sin límite",
+    "perMember": "{{value}} por miembro",
+    "rows": {
+      "gatherings": "Reuniones al mes",
+      "guests": "Invitados por reunión",
+      "storage": "Almacenamiento",
+      "assistant": "Solicitudes al asistente al mes",
+      "fee": "Cargo de la plataforma",
+      "offers": "Membresías, cursos y descargas",
+      "team": "Funciones de equipo"
+    },
+    "offersIncluded": "Incluido; configura los pagos para ofertas de pago",
+    "teamCore": "Espacio de equipo y plantillas; herramientas de líder según tu rol",
+    "teamLicense": "Lugares Growth, herramientas de líder y gestión de lugares",
+    "feeNote": "Los cargos de la plataforma se aplican a boletos y ofertas de pago. El procesamiento de pagos se cobra por separado.",
+    "serviceNote": "Los pagos y envíos automáticos requieren servicios conectados; la disponibilidad se indica en la app.",
+    "faqTitle": "Buenas preguntas. Respuestas claras.",
+    "hostFaq": [
+      {
+        "q": "¿Mis invitados necesitan una cuenta?",
+        "a": "No. Pueden confirmar desde el enlace de la reunión, sin app ni cuenta. Las cuentas son para mayores de 18 años."
+      },
+      {
+        "q": "¿Puedo organizar cualquier tipo de reunión?",
+        "a": "Elige una categoría o selecciona Otro y escribe tu propia etiqueta. Crea un ambiente acogedor y sigue nuestras pautas para anfitriones."
+      },
+      {
+        "q": "¿Puedo empezar gratis?",
+        "a": "Sí. El plan Gratis incluye cuatro reuniones al mes y hasta 30 invitados por reunión."
+      },
+      {
+        "q": "¿Puede usarlo todo mi equipo?",
+        "a": "Sí. Los Espacios de equipo reúnen a tus anfitriones con plantillas, conversaciones e información de actividad exclusiva para líderes."
+      }
+    ],
+    "pricingFaq": [
+      {
+        "q": "¿Qué es el cargo de la plataforma?",
+        "a": "Un porcentaje de los boletos y ofertas de pago: 8% en Gratis, 4% en Growth y 2% en Pro. El procesamiento de pagos se cobra por separado. Las confirmaciones gratuitas no tienen este cargo."
+      },
+      {
+        "q": "¿Los invitados pueden participar gratis?",
+        "a": "Sí. Nunca necesitan un plan de pago para confirmar. El anfitrión puede poner un precio a una reunión o a una oferta."
+      },
+      {
+        "q": "¿Puedo cancelar cuando quiera?",
+        "a": "Sí. Administra tu suscripción en Yo → Plan. Cancela antes de la renovación; tu plan seguirá activo hasta terminar el periodo pagado."
+      }
+    ],
+    "finalTitle": "Tu próxima reunión empieza aquí.",
+    "finalBody": "Haz que llegar sea fácil. Dales un motivo para volver.",
+    "hostsMeta": "Para anfitriones · Gatherwell",
+    "pricingMeta": "Precios · Gatherwell"
   }
 }

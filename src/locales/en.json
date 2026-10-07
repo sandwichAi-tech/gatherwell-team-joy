@@ -1443,7 +1443,7 @@
   "landing": {
     "nav": {
       "find": "Find a gathering",
-      "host": "Host one",
+      "host": "For hosts",
       "signIn": "Sign in",
       "getStarted": "Get started",
       "menu": "Open menu",
@@ -1473,7 +1473,8 @@
       "photoTitle_walk": "Walks near you",
       "photoTitle_pickleball": "Pickleball near you",
       "photoTitle_more": "Gatherings near you",
-      "photoMeta": "New gatherings every week"
+      "photoMeta": "New gatherings every week",
+      "photoTitle_pilates": "Pilates in the park"
     },
     "card": {
       "spotsLeft_one": "{{count}} spot left",
@@ -1506,7 +1507,8 @@
       "walk": "Walks",
       "pickleball": "Pickleball",
       "more": "More",
-      "rowLabel": "Browse by kind of gathering"
+      "rowLabel": "Browse by kind of gathering",
+      "pilates": "Pilates"
     },
     "catOne": {
       "run": "Run club",
@@ -1516,7 +1518,8 @@
       "hike": "Hike",
       "walk": "Walk",
       "pickleball": "Pickleball",
-      "more": "Gathering"
+      "more": "Gathering",
+      "pilates": "Pilates"
     },
     "feed": {
       "label": "This week",
@@ -1540,13 +1543,13 @@
     },
     "how": {
       "label": "How it works",
-      "title": "Three taps from your couch to your people.",
+      "title": "How it works for guests",
       "s1t": "Find it",
-      "s1b": "Browse what's happening near you.",
+      "s1b": "Find something nearby that feels like you.",
       "s2t": "RSVP",
-      "s2b": "One tap. See who's going.",
+      "s2b": "Save your spot with one link. No app or account needed.",
       "s3t": "Show up",
-      "s3b": "Meet your people. Come back next week.",
+      "s3b": "Meet your people and make it a regular thing.",
       "checkedIn": "You're checked in",
       "checkedInSub": "Sunrise run club · 7:02 am"
     },
@@ -2822,5 +2825,155 @@
     "preview": "Preview",
     "apply": "Use photo",
     "cancel": "Cancel"
+  },
+  "marketing": {
+    "navPricing": "Pricing",
+    "navHost": "For hosts",
+    "discover": "Discover",
+    "other": "Other",
+    "category": "Category",
+    "customCategory": "What kind of gathering?",
+    "customCategoryHint": "Give your gathering a category people will recognize.",
+    "allCategories": "All gathering categories",
+    "guestTitle": "How it works for guests",
+    "guest1": "Find it",
+    "guest1b": "Find something nearby that feels like you.",
+    "guest2": "RSVP",
+    "guest2b": "Save your spot with one link. No app or account needed.",
+    "guest3": "Show up",
+    "guest3b": "Meet your people and make it a regular thing.",
+    "hostLink": "Run a group? See how hosting works",
+    "hostsTitle": "Run gatherings people come back to.",
+    "hostsSub": "Create a page in a minute, fill it with one link, check people in, and follow up automatically — in English and Spanish.",
+    "hostCta": "Start hosting free",
+    "seePricing": "See pricing",
+    "hostsLabel": "Made for hosts",
+    "benefitTitle": "Less organizing. More showing up.",
+    "benefitSub": "One home for the little details that make a great gathering.",
+    "benefits": [
+      {
+        "title": "Create in a minute",
+        "body": "Pick a template, add a place and a time, and your gathering page is ready.",
+        "demo": "Pilates in the park"
+      },
+      {
+        "title": "Guests RSVP without an app",
+        "body": "Share one link. Guests save a spot without downloading anything or creating an account.",
+        "demo": "One link. Everyone welcome."
+      },
+      {
+        "title": "Reminders that boost show-ups",
+        "body": "Schedule bilingual reminders so guests know when to arrive and where to meet.",
+        "demo": "See you tomorrow"
+      },
+      {
+        "title": "Check-in and follow-ups",
+        "body": "Scan a QR code at the door, then send a thoughtful follow-up after the gathering.",
+        "demo": "Checked in · Ready to connect"
+      },
+      {
+        "title": "Sell memberships, courses and tickets",
+        "body": "Offer more ways to join your community, with tickets, recurring memberships and learning.",
+        "demo": "Your next chapter, together"
+      },
+      {
+        "title": "Lead a team with templates and insights",
+        "body": "Give your hosts a head start with shared templates and activity-only insights.",
+        "demo": "Your team, in rhythm"
+      }
+    ],
+    "howHostTitle": "How hosting works",
+    "howHostSub": "From your first idea to your next regular gathering.",
+    "hostSteps": [
+      {
+        "title": "Create",
+        "body": "Choose a category, set your details and publish your page."
+      },
+      {
+        "title": "Share",
+        "body": "Send your link or show your QR code. RSVPs stay in one place."
+      },
+      {
+        "title": "Check in",
+        "body": "Welcome guests with quick QR check-in, even on a weak connection."
+      },
+      {
+        "title": "Follow up",
+        "body": "Thank the people who came and invite them to the next one."
+      }
+    ],
+    "leaderLabel": "For team leaders",
+    "leaderTitle": "Give every host a head start.",
+    "leaderBody": "Bring your hosts together in a Team Space. Share ready-to-launch templates, see activity in Insights, and build a steady Team Rhythm — without turning community into a scoreboard.",
+    "leaderFeatures": [
+      "Team Spaces",
+      "Shared templates",
+      "Leader Insights",
+      "Team Rhythm"
+    ],
+    "pricingLabel": "Simple plans",
+    "pricingTitle": "Start free. Grow at your own pace.",
+    "pricingSub": "Guests can RSVP for free. Choose the tools and room your hosting needs.",
+    "from": "From {{price}}",
+    "usd": "All prices in USD.",
+    "licenseNote": "Team Licenses are billed monthly. Growth limits apply to each assigned member.",
+    "licenseDetail": "25 members: {{small}}/month · 100 members: {{large}}/month.",
+    "licenseAnnual": "Monthly billing only",
+    "choose": "Start with {{plan}}",
+    "compareTitle": "Everything, side by side.",
+    "comparisonLabel": "Plan comparison",
+    "unlimited": "Unlimited",
+    "perMember": "{{value}} per member",
+    "rows": {
+      "gatherings": "Gatherings per month",
+      "guests": "Guests per gathering",
+      "storage": "Storage",
+      "assistant": "Assistant requests per month",
+      "fee": "Platform fee",
+      "offers": "Memberships, courses and downloads",
+      "team": "Team features"
+    },
+    "offersIncluded": "Included; payment setup required for paid offers",
+    "teamCore": "Team Space and shared templates; leader tools by role",
+    "teamLicense": "Growth seats, leader tools and seat management",
+    "feeNote": "Platform fees apply to paid tickets and offers. Payment processing fees are separate.",
+    "serviceNote": "Payments and automated delivery require connected services; availability is shown in the app.",
+    "faqTitle": "Good questions. Clear answers.",
+    "hostFaq": [
+      {
+        "q": "Do my guests need an account?",
+        "a": "No. Guests can RSVP from your gathering link without an app or account. Accounts are for people 18 and older."
+      },
+      {
+        "q": "Can I host any kind of gathering?",
+        "a": "Choose a category or select Other and give it your own label. Keep it welcoming and follow our host guidelines."
+      },
+      {
+        "q": "Can I start for free?",
+        "a": "Yes. The Free plan includes four gatherings a month and up to 30 guests per gathering."
+      },
+      {
+        "q": "Can my team use this together?",
+        "a": "Yes. Team Spaces bring hosts together with templates, discussions and leader-only activity insights."
+      }
+    ],
+    "pricingFaq": [
+      {
+        "q": "What's the platform fee?",
+        "a": "A percentage of paid tickets and offers: 8% on Free, 4% on Growth and 2% on Pro. Payment processing fees are separate. No platform fee applies to free RSVPs."
+      },
+      {
+        "q": "Can guests join for free?",
+        "a": "Yes. Guests never need a paid plan to RSVP. A host may set a ticket price for a gathering or a price for an offer."
+      },
+      {
+        "q": "Can I cancel anytime?",
+        "a": "Yes. Manage your subscription in Me → Plan. Cancel before your next renewal; your current plan stays active through the paid period."
+      }
+    ],
+    "finalTitle": "Your next gathering starts here.",
+    "finalBody": "Make it easy to show up. Give people a reason to come back.",
+    "hostsMeta": "For hosts · Gatherwell",
+    "pricingMeta": "Pricing · Gatherwell"
   }
 }
