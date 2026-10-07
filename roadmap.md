@@ -1,4 +1,9 @@
 # D1 — Premium design audit (current priority)
+## Landing polish — October 7
+- [x] Strengthen marketing category and vignette icons with matching duotone treatment
+- [x] Refine mobile weekly heading, spacing and below-card action
+- [x] Verify 390px and 1440px in English and Spanish
+
 - [x] Inventory every screen, popup, menu, toast and empty state against the ten design criteria
 - [x] Save source-backed findings and browser evidence to DESIGN_AUDIT.md before visual fixes
 - Step 1 delivered: 40 route entries, 72 named overlays, individual toast call sites, menus and state register; source-only and unverified states explicitly distinguished. No visual fixes made.

@@ -10,6 +10,7 @@ import { LandingFrame, StickyFindBar } from '@/components/landing/landing-chrome
 import { LocationFilter, sortForFeed } from '@/components/landing/location-filter';
 import { CATEGORIES, distanceKm, HERO_SLOTS, inNextDays, pickH1Variant, featureFlagsQuery, publicGatheringsQuery, socialProofQuery, testimonialsQuery, track, type Category, type FeedGathering, type H1Variant } from '@/lib/landing';
 import { QueryFeedback } from '@/components/launch-states';
+import { Button } from '@/components/ui/button';
 
 const LiveStack = lazy(() => import('@/components/landing/live-stack'));
 const PHOTO_CATEGORIES: Category[] = ['run', 'fitcamp', 'soundbath', 'pickleball'];
@@ -88,7 +89,7 @@ export function CategoryRow({ selected, onSelect }: { selected: Category | null;
       {CATEGORIES.map(c => {
         const on = selected === c;
         return <button key={c} type="button" className={`gw-cat ${on ? 'is-on' : ''}`} aria-pressed={on} onClick={() => { track('category_click', { category: c }); onSelect(on ? null : c); }}>
-          <span className="gw-cat-circle"><GwIcon name={CATEGORY_ICONS[c]} variant="feature" size={32} /></span>
+          <span className="gw-cat-circle"><GwIcon name={CATEGORY_ICONS[c]} variant="marketing" size={32} /></span>
           <span className="gw-cat-label">{t(`landing.cat.${c}`)}</span>
         </button>;
       })}
@@ -102,29 +103,32 @@ function ThisWeek({ gatherings, category }: { gatherings: FeedGathering[]; categ
   const week = gatherings.filter(g => inNextDays(g.startsAt, 7) && (!category || g.category === category));
   const list = sortForFeed(week, near, distanceKm).slice(0, 8);
   const hasSamples = list.some(g => g.isSample);
-  return <section className="gw-section gw-container gw-band gw-band-canvas" aria-labelledby="this-week-title">
+  return <section className="gw-section gw-container gw-band gw-band-canvas gw-weekly" aria-labelledby="this-week-title">
     <div className="gw-section-head">
       <div><span className="gw-label">{near ? t('landing.feed.label') : t('landing.feed.popular')}</span><h2 id="this-week-title" className="gw-display gw-h2">{t('landing.feed.title')}</h2></div>
-      <Link to="/discover" search={category ? { cat: category } : {}} className="gw-see-all">{t('landing.feed.seeAll')}<GwIcon name="ArrowRight" size={16} /></Link>
+      <Link to="/discover" search={category ? { cat: category } : {}} className="gw-see-all gw-weekly-desktop-link">{t('landing.feed.seeAll')}<GwIcon name="ArrowRight" size={16} /></Link>
     </div>
     <LocationFilter near={near} onNear={setNear} />
     {list.length ? <div className="gw-feed">{list.map(g => <GatheringCard key={g.id} g={g} near={near} showRsvp className="gw-feed-card" />)}</div>
       : <div className="gw-empty"><p>{category ? t('landing.feed.emptyCat') : t('landing.feed.empty')}</p><Link to="/login" search={{ intent: 'host' }} className="gw-btn gw-btn-secondary">{t('landing.feed.hostFirst')}</Link></div>}
     {hasSamples && <p className="gw-fine">{t('landing.feed.sampleNote')}</p>}
+    <Button asChild variant="secondary" className="gw-weekly-mobile-link">
+      <Link to="/discover" search={category ? { cat: category } : {}}>{t('landing.feed.seeAll')}<GwIcon name="ArrowRight" size={20} /></Link>
+    </Button>
   </section>;
 }
 
 function HowItWorks() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const demo: FeedGathering = { id: 'demo', isSample: true, hero: false, title: t('landing.hero.photoTitle_run'), startsAt: new Date(), category: 'run', locationName: null, isOnline: false, lat: null, lng: null, capacity: null, going: 14, goingNames: [], initials: ['M', 'J', 'S'], hostName: 'Nick C.' };
   const [rsvpKey, setRsvpKey] = useState(0);
   return <section className="gw-section gw-container gw-band gw-band-white" id="how-it-works" aria-labelledby="how-title">
     <span className="gw-label">{t('landing.how.label')}</span>
     <h2 id="how-title" className="gw-display gw-h2">{t('landing.how.title')}</h2>
     <ol className="gw-how">
-      <li><div className="gw-vignette"><div className="gw-mini-card"><span className="gw-mini-icon"><GwIcon name="PersonSimpleRun" variant="feature" size={22} /></span><div><strong>{t('landing.catOne.run')}</strong><span>Sat 7:00 am</span></div><AvatarStack letters={['M', 'J', 'S']} size={22} /></div></div><span className="gw-how-num">01</span><h3>{t('landing.how.s1t')}</h3><p>{t('landing.how.s1b')}</p></li>
+      <li><div className="gw-vignette"><div className="gw-mini-card"><span className="gw-mini-icon"><GwIcon name="PersonSimpleRun" variant="marketing" size={22} /></span><div><strong>{t('landing.catOne.run')}</strong><span>{new Intl.DateTimeFormat(i18n.resolvedLanguage === 'es' ? 'es-MX' : 'en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' }).format(new Date(2026, 9, 10, 7))}</span></div><AvatarStack letters={['M', 'J', 'S']} size={22} /></div></div><span className="gw-how-num">01</span><h3>{t('landing.how.s1t')}</h3><p>{t('landing.how.s1b')}</p></li>
       <li><div className="gw-vignette" onMouseEnter={() => setRsvpKey(k => k + 1)}><RsvpButton key={rsvpKey} g={demo} /></div><span className="gw-how-num">02</span><h3>{t('landing.how.s2t')}</h3><p>{t('landing.how.s2b')}</p></li>
-      <li><div className="gw-vignette"><div className="gw-checkin"><span className="gw-checkin-icon"><GwIcon name="Check" size={20} /></span><div><strong>{t('landing.how.checkedIn')}</strong><span>{t('landing.how.checkedInSub')}</span></div></div></div><span className="gw-how-num">03</span><h3>{t('landing.how.s3t')}</h3><p>{t('landing.how.s3b')}</p></li>
+      <li><div className="gw-vignette"><div className="gw-checkin"><span className="gw-checkin-icon"><GwIcon name="Check" variant="marketing" size={20} /></span><div><strong>{t('landing.how.checkedIn')}</strong><span>{t('landing.how.checkedInSub')}</span></div></div></div><span className="gw-how-num">03</span><h3>{t('landing.how.s3t')}</h3><p>{t('landing.how.s3b')}</p></li>
     </ol>
   </section>;
 }
