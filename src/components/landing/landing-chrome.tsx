@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ClientOnly, Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { LanguageToggle } from '@/components/auth-frame';
-import { setLanguage } from '@/lib/i18n';
+import { LanguageToggle, setLanguage } from '@/components/auth-frame';
 import { GwIcon } from '@/components/gw-icon';
 import { track } from '@/lib/landing';
 
