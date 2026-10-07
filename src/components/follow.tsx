@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { GwFeatureTile, GwIcon } from '@/components/gw-icon';
+import { BrandImage } from '@/components/brand-image';
 import { GatheringCover } from '@/components/gathering-cover';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { EmptyState, ListSkeleton, RetryState } from '@/components/launch-states';
@@ -45,7 +46,7 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
   const avatarPath = host?.avatar_url ?? team?.leader?.avatar_url ?? null;
   return <div className="follow-page">
     <section className="gw-hero-card follow-hero">
-      <div className="gw-hero-cover" aria-hidden="true" />
+      <BrandImage slot="host_band" alt="" className="gw-hero-cover" />
       <div className="follow-hero-body">
         <Avatar path={avatarPath} name={name} />
         <p className="eyebrow">{t(kind === 'host' ? 'follow.hostLabel' : 'follow.teamLabel')}</p>

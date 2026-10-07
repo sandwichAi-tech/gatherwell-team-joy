@@ -1408,7 +1408,7 @@ button { white-space:normal; }
 [role=menu][data-state=closed],[role=listbox][data-state=closed]{animation-duration:var(--dur-close)}
 .gw-confirm{border-radius:16px}.gw-confirm-actions>button{min-height:48px;white-space:normal}
 .follow-hero{border:0;border-radius:0;background:transparent;box-shadow:none}
-.follow-hero .gw-hero-cover{border-radius:16px;height:144px}
+.follow-hero .gw-hero-cover{border-radius:16px;height:144px;margin:0}
 .follow-hero-body{padding:0 24px 24px;min-width:0}.follow-name{font-size:40px;line-height:1.2;text-wrap:balance;overflow-wrap:anywhere}
 .follow-meta,.follow-bio,.follow-event strong,.follow-event small{overflow-wrap:anywhere}
 .follow-upcoming{padding-top:24px;border-top:1px solid var(--border)}

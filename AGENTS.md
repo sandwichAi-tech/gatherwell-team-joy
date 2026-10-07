@@ -36,3 +36,5 @@
 - Plans/limits live in billing_accounts, team_licenses, license_seats; effective_plan()+plan_limits() decide limits (triggers, new rows only). Stripe: billing.functions.ts + /api/public/stripe/webhook only; no key → sheet.
 - Platform admin: /admin data and actions go only through src/lib/admin.functions.ts and every action writes admin_audit; reports come from report_content() or the claims trigger.
 - Follows/calendar: public pages read only via get_public_host/get_public_team; iCal via /api/public/calendar/$token (token is the only credential).
+
+- ResponsiveSheet owns the fixed header/footer and scrollable body; callers pass primary actions via footer to keep them reachable.

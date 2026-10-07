@@ -176,7 +176,7 @@ function UserSheet({ id, onClose }: { id: string; onClose: () => void }) {
   const { data: u } = useQuery({ queryKey: ['admin', 'user', id], queryFn: () => fn({ data: { id } }) });
   const [note, setNote] = useState(''); const [busy, setBusy] = useState(false);
   const run = async (action: 'resend' | 'suspend' | 'restore' | 'delete') => {
-    if ((action === 'delete' || action === 'suspend') && !(await confirmAction({ title: t(action === 'delete' ? 'admin.users.delete' : 'admin.users.suspend'), body: t('admin.users.deleteConfirm'), destructive: true, confirmLabel: t(action === 'delete' ? 'admin.users.deleteNow' : 'admin.users.suspend') }))) return;
+    if ((action === 'delete' || action === 'suspend') && !(await confirmAction({ title: t(action === 'delete' ? 'admin.users.delete' : 'admin.users.suspend'), body: action === 'delete' ? t('admin.users.deleteConfirm') : note, destructive: true, confirmLabel: t(action === 'delete' ? 'admin.users.deleteNow' : 'admin.users.suspend') }))) return;
     setBusy(true);
     try {
       const r = await act({ data: { userId: id, action, reason: note || undefined, origin: window.location.origin } });
@@ -367,7 +367,7 @@ function Broadcasts() {
         <span className="admin-row-main"><strong>{lang === 'es' ? b.title_es : b.title_en}{b.is_test && <small className="chip">{t('admin.bc.test')}</small>}</strong>
           <small>{t(`admin.bc.${b.audience}`)} · {fmtDate(b.created_at, lang, true)} · {t('admin.bc.recipients', { count: b.recipients })}</small>
           <small className="tabular-nums">{t('admin.bc.counts', { sent: b.counts['sent'] ?? 0, simulated: b.counts['simulated'] ?? 0, pending: (b.counts['pending'] ?? 0) + (b.counts['sending'] ?? 0), skipped: (b.counts['skipped'] ?? 0) + (b.counts['failed'] ?? 0), seen: b.seen })}</small></span>
-        {b.active ? <Button variant="secondary" size="sm" onClick={async () => { await end({ data: { id: b.id } }); await qc.invalidateQueries({ queryKey: ['admin', 'broadcasts'] }); }}>{t('admin.bc.end')}</Button> : <span className="chip">{t('admin.bc.ended')}</span>}
+        {b.active ? <Button variant="secondary" size="sm" onClick={async () => { if (!(await confirmAction({ title: t('admin.bc.end'), destructive: true, confirmLabel: t('admin.bc.end') }))) return; await end({ data: { id: b.id } }); await qc.invalidateQueries({ queryKey: ['admin', 'broadcasts'] }); }}>{t('admin.bc.end')}</Button> : <span className="chip">{t('admin.bc.ended')}</span>}
       </li>)}{!data?.list.length && <li className="muted-copy">{t('admin.empty')}</li>}</ul>
     </section>
   </>;

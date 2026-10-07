@@ -245,7 +245,7 @@ export function MePage() {
     </SettingsGroup>
 
     <EditProfile open={editing} onOpenChange={setEditing} userId={userId} />
-    <ResponsiveSheet open={panel !== null} onOpenChange={open => { if (!open) setPanel(null); }} title={panel ? panels[panel].title : ''} icon={panel ? panelIcons[panel] : 'UserRound'} icon={panel ? panels[panel].icon : undefined}>{panel && panels[panel].body}</ResponsiveSheet>
+    <ResponsiveSheet open={panel !== null} onOpenChange={open => { if (!open) setPanel(null); }} title={panel ? panels[panel].title : ''} icon={panel ? panelIcons[panel] : 'UserRound'}>{panel && panels[panel].body}</ResponsiveSheet>
     <ResponsiveSheet open={deleting} onOpenChange={setDeleting} title={t('profile.deleteTitle')} icon="Trash2">
       {soleTeams === null ? <p className="auth-subtitle">{t('publicEvent.loading')}</p> : soleTeams.length ? <>
         <p className="auth-subtitle">{t('profile.deleteBlockedText', { teams: soleTeams.join(', ') })}</p>
