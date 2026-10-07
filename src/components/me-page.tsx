@@ -92,7 +92,7 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
       if (coverFile) cover_url = await uploadMedia(userId, coverFile, 'cover');
       else if (removeCover) cover_url = null;
       const { error } = await supabase.from('profiles').update({
-        ...{ cover_url },
+        cover_url,
         full_name: form.full_name.trim(), bio: form.bio.trim() || null, city: form.city.trim() || null,
         phone: form.phone.trim() || null, language: form.language, shop_url: form.shop_url.trim() || null, avatar_url,
       }).eq('id', userId);

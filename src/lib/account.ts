@@ -15,10 +15,10 @@ export const profileQuery = (userId: string) => queryOptions({
   queryFn: async () => {
     const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
     if (error) throw error;
-    if (data) return data as typeof data & { cover_url: string | null };
+    if (data) return data;
     const { data: created, error: insertError } = await supabase.from('profiles').insert({ id: userId }).select('*').single();
     if (insertError) throw insertError;
-    return created as typeof created & { cover_url: string | null };
+    return created;
   },
 });
 
