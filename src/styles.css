@@ -1539,3 +1539,4 @@ a.gw-cat-chip:hover{background:#fff}
 .crop-body{min-width:0;overflow:hidden;box-sizing:border-box}
 .crop-zoom input{box-sizing:border-box}
 .crop-frame,.crop-preview,.crop-presets,.crop-zoom{flex-shrink:0}
+.crop-presets{flex-wrap:nowrap}.crop-presets button{flex:1 1 0;min-width:0;padding:0 6px;font-size:13px;white-space:nowrap}
