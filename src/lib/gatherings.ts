@@ -84,3 +84,20 @@ export function rpcError(t: (k: string) => string, error: unknown) {
   for (const key of ['invalid_title', 'date_required', 'invalid_url', 'invalid_capacity', 'invalid_duration', 'not_allowed', 'template_not_found', 'too_long']) if (m.includes(key)) return t(`gathering.errors.${key}`);
   return t('profile.saveError');
 }
+
+/** Host's most-used weekday + time (needs 2+ past gatherings, series counted once), as the next upcoming date. */
+export function usualSlot(starts: { starts_at: string; series_id: string | null }[], now = new Date()): Date | null {
+  const seen = new Set<string>(); const counts = new Map<string, number>();
+  for (const e of starts) {
+    if (e.series_id) { if (seen.has(e.series_id)) continue; seen.add(e.series_id); }
+    const d = new Date(e.starts_at); const k = `${d.getDay()}-${d.getHours()}-${d.getMinutes()}`;
+    counts.set(k, (counts.get(k) ?? 0) + 1);
+  }
+  let best: string | null = null; let n = 1;
+  for (const [k, c] of counts) if (c > n) { best = k; n = c; }
+  if (!best) return null;
+  const [day, h, m] = best.split('-').map(Number) as [number, number, number];
+  const d = new Date(now); d.setHours(h, m, 0, 0); d.setDate(d.getDate() + ((day - d.getDay() + 7) % 7));
+  if (d <= now) d.setDate(d.getDate() + 7);
+  return d;
+}

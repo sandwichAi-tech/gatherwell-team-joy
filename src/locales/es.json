@@ -739,7 +739,8 @@
       "tonight": "Hoy {{time}}",
       "tomorrow": "Mañana {{time}}",
       "saturday": "Este sábado {{time}}",
-      "monday": "El próximo lunes {{time}}"
+      "monday": "El próximo lunes {{time}}",
+      "usual": "{{day}} {{time}} · tu horario de siempre"
     },
     "duration": "Duración",
     "durations": {
