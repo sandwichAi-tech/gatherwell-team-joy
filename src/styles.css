@@ -1562,7 +1562,7 @@ a.gw-cat-chip:hover{background:#fff}
 .gw-landing .gw-marketing-sub{font-size:18px;line-height:1.6;color:var(--body);margin-top:16px;max-width:640px}
 .gw-landing .gw-benefits-grid{display:grid;gap:24px;margin-top:32px}
 .gw-landing .gw-benefit-card{border:1px solid var(--border);border-radius:24px;padding:24px;background:var(--card);box-shadow:var(--shadow-sm);display:flex;flex-direction:column;align-items:flex-start}
-.gw-landing .gw-marketing-tile{width:64px;height:64px;border-radius:20px;background:var(--lavender-soft);display:grid;place-items:center;flex-shrink:0;margin-bottom:24px}
+.gw-landing .gw-marketing-tile{width:64px;height:64px;border-radius:20px;background:var(--secondary);border:1px solid var(--border);display:grid;place-items:center;flex-shrink:0;margin-bottom:24px}
 .gw-landing .gw-benefit-card h3,.gw-landing .gw-host-steps h3{font-size:22px;line-height:1.3;font-weight:800;margin-bottom:12px}
 .gw-landing .gw-benefit-card>p,.gw-landing .gw-host-steps p{font-size:16px;line-height:1.6;color:var(--body);margin-bottom:24px}
 .gw-landing .gw-benefit-demo{display:flex;align-items:center;gap:12px;width:100%;padding:16px;border-radius:16px;background:var(--background);border:1px solid var(--border);margin-top:auto;font-size:13px;line-height:1.5}
@@ -1593,7 +1593,7 @@ a.gw-cat-chip:hover{background:#fff}
 .gw-landing .gw-comparison-scroll{overflow-x:auto;border:1px solid var(--border);border-radius:20px;margin-top:24px;background:var(--card)}
 .gw-landing .gw-comparison table{border-collapse:collapse;width:100%;min-width:900px;text-align:left;font-size:14px;line-height:1.5}
 .gw-landing .gw-comparison th,.gw-landing .gw-comparison td{padding:24px 16px;border-bottom:1px solid var(--border);vertical-align:top;width:20%}
-.gw-landing .gw-comparison thead{background:var(--lavender-soft)}
+.gw-landing .gw-comparison thead{background:var(--secondary)}
 .gw-landing .gw-comparison tbody tr:last-child>*{border-bottom:0}
 .gw-landing .gw-faq{display:grid;gap:32px}
 .gw-landing .gw-faq details{border-bottom:1px solid var(--border)}
