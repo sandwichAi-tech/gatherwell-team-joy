@@ -80,7 +80,7 @@ function Onboarding() {
     trackEvent('signup'); trackEvent('onboarding_complete');
     localStorage.removeItem(JOIN_CODE_KEY);
     // Mark the cached profile onboarded so the app gate lets Home through immediately.
-    queryClient.setQueryData(profileQuery(user.id).queryKey, (p: unknown) => (p && typeof p === 'object' ? { ...p, onboarded: true } : p));
+    queryClient.setQueryData(profileQuery(user.id).queryKey, p => (p ? { ...p, onboarded: true } : p));
     await queryClient.invalidateQueries({ queryKey: ['workspace', user.id] }).catch(() => null);
     try { await navigate({ to: '/home', replace: true }); } catch { window.location.assign('/home'); }
     void queryClient.invalidateQueries();

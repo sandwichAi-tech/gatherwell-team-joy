@@ -34,7 +34,7 @@ function encode(img: HTMLImageElement, sx: number, sy: number, sw: number, sh: n
 }
 
 /** Crop step: aspect presets (covers), zoom, drag to position and a live preview. Outputs WebP up to 2400px. */
-export function ImageCropSheet({ file, kind, withSquare, onCancel, onDone }: { file: File | null; kind: CropKind; withSquare?: boolean; onCancel: () => void; onDone: (r: CropResult) => void }) {
+export function ImageCropSheet({ file, kind, withSquare, onCancel, onDone }: { file: File | null; kind: CropKind; withSquare?: boolean | undefined; onCancel: () => void; onDone: (r: CropResult) => void }) {
   const { t } = useTranslation();
   const [src, setSrc] = useState<string | null>(null);
   const [img, setImg] = useState<HTMLImageElement | null>(null);
@@ -112,7 +112,7 @@ export function ImageCropSheet({ file, kind, withSquare, onCancel, onDone }: { f
 }
 
 /** Hidden file input + crop step. Drop inside an existing upload label in place of the raw input. */
-export function CropFileInput({ kind, withSquare, capture, onCropped, onRejected, maxBytes = 15 * 1024 * 1024, className = 'sr-only' }: { kind: CropKind; withSquare?: boolean; capture?: 'user' | 'environment'; onCropped: (r: CropResult) => void; onRejected?: () => void; maxBytes?: number; className?: string }) {
+export function CropFileInput({ kind, withSquare, capture, onCropped, onRejected, maxBytes = 15 * 1024 * 1024, className = 'sr-only' }: { kind: CropKind; withSquare?: boolean | undefined; capture?: 'user' | 'environment'; onCropped: (r: CropResult) => void; onRejected?: () => void; maxBytes?: number; className?: string }) {
   const [file, setFile] = useState<File | null>(null);
   return <>
     <input type="file" accept="image/*" className={className} {...(capture ? { capture } : {})} onChange={e => { const f = e.target.files?.[0]; e.target.value = ''; if (!f) return; if (!f.type.startsWith('image/') || f.size > maxBytes) { onRejected?.(); return; } setFile(f); }} />
