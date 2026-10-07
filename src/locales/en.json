@@ -3007,5 +3007,51 @@
     "finalBody": "Make it easy to show up. Give people a reason to come back.",
     "hostsMeta": "For hosts · Gatherwell",
     "pricingMeta": "Pricing · Gatherwell"
+  },
+  "teamRsvp": {
+    "cta": "Register a team ({{min}}–{{max}})",
+    "title": "Register a team",
+    "teamName": "Team name",
+    "sizeHint": "Teams of {{min}} to {{max}} people. Everyone gets their own check-in code.",
+    "captain": "You (team captain)",
+    "person": "Person {{n}}",
+    "remove": "Remove person {{n}}",
+    "optional": "optional",
+    "add": "Add a person",
+    "waiverLater": "Not with you? Leave it — they can sign from their own link or at the door.",
+    "perTeam": "per team",
+    "perPersonTotal": "for {{count}} people",
+    "paymentsNotConnected": "Payments not connected yet — paid team sign-ups open once payments are live.",
+    "submit_one": "Register {{count}} person",
+    "submit_other": "Register {{count}} people",
+    "done": {
+      "going": "{{team}} is in!",
+      "requested": "{{team}} is waiting for host approval",
+      "waitlist": "{{team}} is on the waitlist"
+    },
+    "doneSub": "Each person has their own pass. Send them their link so they can check in and sign the waiver.",
+    "waiverPending": "Waiver pending",
+    "openPass": "Open pass",
+    "sendLinks": "Copy each link and send it by text or WhatsApp.",
+    "signNow": "Sign waiver",
+    "signAtDoor": "Sign at the door",
+    "people_one": "{{count}} person",
+    "people_other": "{{count}} people",
+    "hostToggle": "Team registration",
+    "hostHint": "Guests can sign up a whole team and list each person.",
+    "minSize": "Smallest team",
+    "maxSize": "Largest team",
+    "priceMode": "Team pricing",
+    "mode": {
+      "person": "Price per person",
+      "team": "Price per team"
+    },
+    "capacityNote": "Every team member counts toward the spot limit.",
+    "errors": {
+      "team_name_required": "Add a team name.",
+      "team_size": "This team size is not allowed for this gathering.",
+      "payment_required": "Paid team sign-ups open once payments are connected.",
+      "captain_contact": "Add a phone or email for the team captain."
+    }
   }
 }

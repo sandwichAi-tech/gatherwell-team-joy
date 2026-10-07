@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { Ban, CalendarDays, Clock, MapPin, Video } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { GatheringCover } from '@/components/gathering-cover';
+import { TeamRsvpSheet, TeamConfirmation, type TeamResult } from '@/components/team-rsvp';
 import { CalendarButtons, Confirmation, DirectionsButton, RsvpSheet, type RsvpResult } from '@/components/guest-rsvp';
 import { initialsOf, mediaUrl } from '@/lib/account';
 import { Polls, PhotoRoll, WeatherNote, useLiveCounts } from '@/components/event-live';
@@ -56,6 +57,7 @@ function PublicEventBody() {
   useEffect(() => { rememberRef(id, new URLSearchParams(window.location.search).get('ref')); rememberInvite(new URLSearchParams(window.location.search).get('inv')); }, [id]);
   const [intent, setIntent] = useState<'going' | 'maybe' | null>(null);
   const [result, setResult] = useState<RsvpResult | null>(null);
+  const [teamOpen, setTeamOpen] = useState(false); const [teamResult, setTeamResult] = useState<TeamResult | null>(null);
   const { data: price } = useQuery({ queryKey: ['event-price', id], queryFn: async () => { const { data } = await supabase.rpc('event_price', { _id: id }); return (data as { price_cents: number; pass_fee: boolean; fee_pct: number } | null) ?? null; } });
 
   if (isLoading) return <div className="guest-skeleton" aria-busy="true"><div className="guest-cover skeleton" /><p className="guest-empty">{t('publicEvent.loading')}</p></div>;
@@ -69,6 +71,11 @@ function PublicEventBody() {
   const left = event.capacity != null ? Math.max(0, event.capacity - event.going) : null;
   const full = left === 0;
   const cancelled = event.status === 'cancelled';
+
+  if (teamResult) return <>
+    <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="guest-cover" />
+    <div className="guest-body"><TeamConfirmation result={teamResult} /></div>
+  </>;
 
   if (result) return <>
     <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="guest-cover" />
@@ -117,12 +124,14 @@ function PublicEventBody() {
           : <div className="guest-actions">
             <Button className="guest-primary" onClick={() => setIntent('going')}>{full ? t('guest.joinWaitlist') : price ? t('billing.imInPrice', { amount: formatMoney(price.price_cents, lang) }) : t('guest.imIn')}</Button>
             <Button variant="secondary" className="guest-secondary" onClick={() => setIntent('maybe')}>{t('guest.maybe')}</Button>
+            {event.team_registration && <Button variant="secondary" className="guest-secondary" onClick={() => setTeamOpen(true)}>{t('teamRsvp.cta', { min: event.team_min ?? 2, max: event.team_max ?? 6 })}</Button>}
           </div>}
         <CalendarButtons event={event} />
       </>}
       <Polls eventId={id} code={event.my_code} />
       <PhotoRoll eventId={id} code={event.my_code} canAdd={!!event.my_code} />
     </article>
+    {event.team_registration && <TeamRsvpSheet event={event} open={teamOpen} price={price ?? null} onClose={() => setTeamOpen(false)} onDone={r => { setTeamOpen(false); setTeamResult(r); void queryClient.invalidateQueries({ queryKey: ['public-event', id] }); window.scrollTo({ top: 0 }); }} />}
     <RsvpSheet event={event} intent={intent} onClose={() => setIntent(null)} onDone={r => { void recordReferral(id, r.code); void recordInvite(r.code); setIntent(null); setResult(r); void queryClient.invalidateQueries({ queryKey: ['public-event', id] }); window.scrollTo({ top: 0 }); }} />
   </>;
 }

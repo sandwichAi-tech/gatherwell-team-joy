@@ -8,7 +8,7 @@ export type PublicEvent = {
   is_online: boolean; has_online: boolean; capacity: number | null; status: 'published' | 'cancelled';
   hide_guest_list: boolean; going: number; initials: string[] | null;
   host: { name: string | null; avatar_url: string | null } | null; cohosts?: { name: string | null; avatar_url: string | null }[]; team_name: string | null; my_code: string | null;
-  questions?: RsvpQuestion[]; require_approval?: boolean; visibility?: 'public' | 'team' | 'invite';
+  questions?: RsvpQuestion[]; require_approval?: boolean; team_registration?: boolean; team_min?: number; team_max?: number; team_price_mode?: 'person' | 'team'; visibility?: 'public' | 'team' | 'invite';
 };
 
 export type RsvpQuestion = { id: string; kind: 'text' | 'choice' | 'yesno'; label: string; options?: string[] | undefined; required?: boolean };

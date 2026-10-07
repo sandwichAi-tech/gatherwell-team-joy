@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { GatheringCover } from '@/components/gathering-cover';
 import { Confirmation, Stepper } from '@/components/guest-rsvp';
+import { SignWaiverByCode } from '@/components/team-rsvp';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { Polls, PhotoRoll } from '@/components/event-live';
 import { supabase } from '@/integrations/supabase/client';
@@ -46,6 +47,7 @@ function ManageRsvp() {
     <article className="guest-body">
       {data.event.status === 'cancelled' && <p className="guest-cancelled" role="status"><strong>{t('guest.cancelledTitle')}</strong></p>}
       <Confirmation event={data.event} code={code} status={data.status} />
+      {open && <SignWaiverByCode eventId={data.event_id} code={code} />}
       {open && <section className="guest-card guest-manage">
         <h2 className="guest-subhead">{t('guest.manageTitle')}</h2>
         <div className="guest-plus"><span className="field-label">{t('guest.plusOnes')}</span><Stepper value={plus} onChange={setPlus} label={t('guest.plusOnes')} /></div>

@@ -75,6 +75,6 @@
 - [x] 1. Quick create (title, time presets, place, Publish; More options opens full form)
 - [x] 2. Smarter time presets learned from each host
 - [x] 3. More repeat options
-- [ ] 4. Team sign-ups (host picks per-person or per-team pricing)
+- [x] 4. Team sign-ups (host picks per-person or per-team pricing)
 - [ ] 5. Social share kit
 - [ ] 6. Promo codes

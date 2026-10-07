@@ -54,6 +54,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const addressRef = useRef<HTMLInputElement>(null);
   // Quick create is the default for brand-new gatherings; templates, duplicates and edits open the full form.
   const [rule, setRule] = useState<RepeatRule>({ kind: 'none', monthly: 'date', days: [], endMode: 'count', count: 8, until: '' });
+  const [teamReg, setTeamReg] = useState({ on: false, min: 2, max: 6, mode: 'person' as 'person' | 'team' });
   const [full, setFull] = useState(editing || !!templateId || !!fromId);
 
   // Prefill once from template, the gathering being edited, or the one being duplicated.
@@ -73,6 +74,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       setPlace(isOnline(e) ? 'online' : 'person'); setLocationName(e.location_name ?? ''); setAddress(e.address ?? ''); setNote(e.meeting_note ?? ''); setUrl(e.online_url ?? '');
       setCoords(e.lat != null && e.lng != null ? { lat: e.lat, lng: e.lng } : null);
       setPrice((e as { price_cents?: number | null }).price_cents ? String(((e as { price_cents: number }).price_cents / 100)) : '');
+      { const x = e as { team_registration?: boolean; team_min?: number; team_max?: number; team_price_mode?: string }; setTeamReg({ on: !!x.team_registration, min: x.team_min ?? 2, max: x.team_max ?? 6, mode: x.team_price_mode === 'team' ? 'team' : 'person' }); }
       setCapacity(e.capacity ? String(e.capacity) : ''); setVisibility(e.visibility === 'team' ? 'team' : e.visibility === 'invite' ? 'invite' : 'public');
       if (editing) setStart(toLocalInput(new Date(e.starts_at)));
       else { const d = new Date(e.starts_at); const next = new Date(); next.setDate(next.getDate() + 7); next.setHours(d.getHours(), d.getMinutes(), 0, 0); setStart(toLocalInput(next)); }
@@ -102,6 +104,12 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   if (!workspace) return null;
   const canSell = planStatus?.connect_status === 'active';
   const priceCents = price ? Math.round(Number(price) * 100) : null;
+  const saveTeamReg = async (id: string) => {
+    const { data: ev } = await supabase.from('events').select('series_id').eq('id', id).maybeSingle();
+    const q = supabase.from('events').update({ team_registration: teamReg.on, team_min: teamReg.min, team_max: teamReg.max, team_price_mode: teamReg.mode });
+    const { error } = ev?.series_id ? await q.eq('series_id', ev.series_id) : await q.eq('id', id);
+    if (error) toast.error(t('profile.saveError'));
+  };
   const savePrice = async (id: string) => {
     if (!canSell && !priceCents) return null;
     const { data: ev } = await supabase.from('events').select('series_id').eq('id', id).maybeSingle();
@@ -136,7 +144,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       if (!error && publish && source?.event.status === 'draft') { const r = await supabase.from('events').update({ status: 'published' }).eq('id', eventId!); if (r.error) { setBusy(false); toast.error(rpcError(t, r.error)); return; } }
       setBusy(false);
       if (error) { toast.error(rpcError(t, error)); return; }
-      await savePrice(eventId!);
+      await savePrice(eventId!); await saveTeamReg(eventId!);
       await queryClient.invalidateQueries(); toast.success(t('gathering.saved'));
       void navigate({ to: '/event/$id', params: { id: eventId! } }); return;
     }
@@ -145,6 +153,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (error?.message?.includes('plan_limit_gatherings')) { setLimit('gatherings'); return; }
     if (error || !data) { toast.error(rpcError(t, error)); return; }
     if (priceCents) await savePrice(data);
+    if (teamReg.on) await saveTeamReg(data);
     await queryClient.invalidateQueries();
     if (publish) setDone({ id: data, visibility }); else { toast.success(t('gathering.draftSaved')); void navigate({ to: '/event/$id', params: { id: data } }); }
   };
@@ -247,6 +256,18 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
           <small className="field-hint">{canSell ? t('billing.priceHint') : t('billing.priceNeedsPayouts')}</small></div>
         <div><span className="field-label">{t('gathering.visibility')}</span>
           <div className="segmented full" role="group" aria-label={t('gathering.visibility')}>{(['public', 'invite', 'team'] as const).map(v => <Button key={v} variant="ghost" className={visibility === v ? 'selected' : ''} aria-pressed={visibility === v} onClick={() => setVisibility(v)}>{t(`gathering.vis.${v}`)}</Button>)}</div></div>
+      </section>
+
+      <section className="form-section">
+        <label className="guest-consent"><input type="checkbox" checked={teamReg.on} onChange={e => setTeamReg(r => ({ ...r, on: e.target.checked }))} /><span><strong>{t('teamRsvp.hostToggle')}</strong><br /><small className="field-hint">{t('teamRsvp.hostHint')}</small></span></label>
+        {teamReg.on && <>
+          <div className="two-col">
+            <div><label className="field-label" htmlFor="g-tmin">{t('teamRsvp.minSize')}</label><Input id="g-tmin" type="number" min={2} max={20} className="field-input" value={teamReg.min} onChange={e => { const v = Math.max(2, Math.min(20, Number(e.target.value) || 2)); setTeamReg(r => ({ ...r, min: v, max: Math.max(v, r.max) })); }} /></div>
+            <div><label className="field-label" htmlFor="g-tmax">{t('teamRsvp.maxSize')}</label><Input id="g-tmax" type="number" min={2} max={20} className="field-input" value={teamReg.max} onChange={e => { const v = Math.max(2, Math.min(20, Number(e.target.value) || 2)); setTeamReg(r => ({ ...r, max: v, min: Math.min(v, r.min) })); }} /></div>
+          </div>
+          {priceCents ? <div className="segmented full" role="group" aria-label={t('teamRsvp.priceMode')}>{(['person', 'team'] as const).map(m => <Button key={m} variant="ghost" className={teamReg.mode === m ? 'selected' : ''} aria-pressed={teamReg.mode === m} onClick={() => setTeamReg(r => ({ ...r, mode: m }))}>{t(`teamRsvp.mode.${m}`)}</Button>)}</div> : null}
+          <p className="field-hint">{t('teamRsvp.capacityNote')}</p>
+        </>}
       </section>
 
       <section className="form-section">
