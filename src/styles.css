@@ -1295,6 +1295,11 @@ button { white-space:normal; }
 .gw-hero-card{position:relative;background:var(--card);border:1px solid var(--border);border-radius:24px;box-shadow:var(--e2);overflow:hidden;margin-bottom:16px}
 .gw-hero-cover{height:112px;background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--peach) 70%,transparent),transparent 55%),linear-gradient(135deg,#2F2340,#7A5FA8 60%,#B9A2D8);position:relative}
 .gw-hero-cover::after{content:'';position:absolute;inset:0;opacity:.18;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
+.profile-photo-cover.gathering-cover{width:100%;border-radius:0;min-height:0;aspect-ratio:auto}
+.profile-photo-cover.gathering-cover>span{display:none}
+.profile-photo-cover.gathering-cover.is-fallback>span.brand-image-grain{display:block}
+.profile-photo-cover.brand-image{border-radius:0}
+.offer-cover-photo{position:absolute;inset:0;width:100%;height:100%}
 .gw-hero-card.is-compact .gw-hero-cover{height:80px}
 .gw-hero-body{position:relative;padding:0 24px 24px}
 .gw-hero-avatar{margin-top:-48px;display:inline-block;border-radius:50%;padding:4px;background:var(--card);box-shadow:var(--e2)}

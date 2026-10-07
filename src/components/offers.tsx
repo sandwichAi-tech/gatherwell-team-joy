@@ -1,4 +1,6 @@
 import { EmptyState } from '@/components/launch-states';
+import { CropFileInput } from '@/components/image-crop';
+import { BrandImage } from '@/components/brand-image';
 import { useEffect, useState } from 'react';
 import { confirmAction } from '@/components/confirm-dialog';
 import { Link } from '@tanstack/react-router';
@@ -14,7 +16,7 @@ import { Switch } from '@/components/ui/switch';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
-import { workspaceQuery } from '@/lib/account';
+import { workspaceQuery, mediaUrl, uploadMedia } from '@/lib/account';
 import { COVER_STYLES } from '@/lib/gatherings';
 import { formatMoney, paymentsStatusQuery } from '@/lib/billing';
 import {
@@ -26,9 +28,12 @@ import { cancelOfferMembership, offerDownloadLink, startOfferCheckout } from '@/
 const KINDS: OfferKind[] = ['membership', 'course', 'download'];
 const dateFmt = (iso: string, lang: string) => new Date(iso).toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
-function OfferCover({ offer, wide }: { offer: Pick<Offer, 'cover_style' | 'kind'>; wide?: boolean }) {
-  const { t } = useTranslation();
-  return <div className={`offer-cover ${wide ? 'is-wide' : ''}`} style={{ backgroundImage: COVER_STYLES[offer.cover_style % COVER_STYLES.length] }}><span className="chip offer-kind">{t(`offers.kind.${offer.kind}`)}</span></div>;
+function OfferCover({ offer, wide, preview }: { offer: Pick<Offer, 'cover_style' | 'cover_url' | 'kind' | 'title_en' | 'title_es'>; wide?: boolean; preview?: string | null }) {
+  const { t, i18n } = useTranslation();
+  const { data: url } = useQuery({ queryKey: ['media-url', offer.cover_url], queryFn: () => mediaUrl(offer.cover_url), enabled: !!offer.cover_url && !preview, staleTime: 50 * 60 * 1000 });
+  return <div className={`offer-cover ${wide ? 'is-wide' : ''}`} style={{ backgroundImage: COVER_STYLES[offer.cover_style % COVER_STYLES.length] }}>
+    {(preview || url) && <BrandImage src={preview ?? url} alt={offerTitle(offer, i18n.resolvedLanguage)} className="offer-cover-photo" priority={wide} />}
+    <span className="chip offer-kind">{t(`offers.kind.${offer.kind}`)}</span></div>;
 }
 
 function priceLabel(t: import('i18next').TFunction, o: Pick<Offer, 'price_cents' | 'kind'>, lang: string) {
@@ -70,22 +75,28 @@ function OfferEditor({ offer, teamId, onClose }: { offer: Partial<Offer> | null;
   const { t } = useTranslation();
   const { userId } = useGatherwell();
   const qc = useQueryClient();
-  const blank = { kind: 'membership' as OfferKind, title_en: '', title_es: '', description_en: '', description_es: '', inc_en: '', inc_es: '', price: '', cover_style: 0, drip_days: 7, file_path: null as string | null, publish: false };
+  const blank = { kind: 'membership' as OfferKind, title_en: '', title_es: '', description_en: '', description_es: '', inc_en: '', inc_es: '', price: '', cover_style: 0, cover_url: null as string | null, drip_days: 7, file_path: null as string | null, publish: false };
   const [f, setF] = useState(blank);
   const [busy, setBusy] = useState(false);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  useEffect(() => () => { if (coverPreview) URL.revokeObjectURL(coverPreview); }, [coverPreview]);
   useEffect(() => {
     if (!offer) return;
+    setCoverFile(null); setCoverPreview(null);
     setF({ kind: offer.kind ?? 'membership', title_en: offer.title_en ?? '', title_es: offer.title_es ?? '', description_en: offer.description_en ?? '', description_es: offer.description_es ?? '',
       inc_en: (offer.includes_en ?? []).join('\n'), inc_es: (offer.includes_es ?? []).join('\n'), price: offer.price_cents ? String(offer.price_cents / 100) : '',
-      cover_style: offer.cover_style ?? 0, drip_days: offer.drip_days ?? 7, file_path: offer.file_path ?? null, publish: offer.status === 'published' });
+      cover_style: offer.cover_style ?? 0, cover_url: offer.cover_url ?? null, drip_days: offer.drip_days ?? 7, file_path: offer.file_path ?? null, publish: offer.status === 'published' });
   }, [offer]);
   const lines = (s: string) => s.split('\n').map(x => x.trim()).filter(Boolean).slice(0, 8);
   const priceNum = Number(f.price || 0);
   const valid = !!(f.title_en.trim() || f.title_es.trim()) && Number.isFinite(priceNum) && priceNum >= 0 && priceNum <= 1000 && (f.kind !== 'download' || !f.publish || !!f.file_path);
   const save = async () => {
     setBusy(true);
+    try {
+    const cover_url = coverFile ? await uploadMedia(userId, coverFile, 'cover') : f.cover_url;
     const row = { kind: f.kind, title_en: f.title_en.trim(), title_es: f.title_es.trim(), description_en: f.description_en.trim() || null, description_es: f.description_es.trim() || null,
-      includes_en: lines(f.inc_en), includes_es: lines(f.inc_es), price_cents: Math.round(priceNum * 100), cover_style: f.cover_style, drip_days: f.drip_days, file_path: f.file_path,
+      includes_en: lines(f.inc_en), includes_es: lines(f.inc_es), price_cents: Math.round(priceNum * 100), cover_style: f.cover_style, cover_url, drip_days: f.drip_days, file_path: f.file_path,
       status: f.publish ? 'published' as const : (offer?.status === 'published' ? 'archived' as const : 'draft' as const) };
     const res = await saveOffer(offer?.id ? row : { ...row, team_id: teamId, host_id: userId }, offer?.id);
     setBusy(false);
@@ -93,6 +104,7 @@ function OfferEditor({ offer, teamId, onClose }: { offer: Partial<Offer> | null;
     toast.success(t('templates.saved'));
     await qc.invalidateQueries({ queryKey: ['offers'] });
     onClose();
+    } catch { toast.error(t('offers.uploadError')); } finally { setBusy(false); }
   };
   const remove = async () => {
     if (!offer?.id || !(await confirmAction({ title: t('offers.confirmDelete'), destructive: true }))) return;
@@ -127,6 +139,11 @@ function OfferEditor({ offer, teamId, onClose }: { offer: Partial<Offer> | null;
           <input type="file" accept="application/pdf,.pdf,.epub,.zip" hidden onChange={async e => { const file = e.target.files?.[0]; if (!file) return; if (file.size > 100 * 1024 * 1024) { toast.error(t('offers.fileTooBig')); return; } setBusy(true); try { setF(v => ({ ...v, file_path: '' })); const p = await uploadOfferFile(userId, file); setF(v => ({ ...v, file_path: p })); toast.success(t('offers.fileReady')); } catch { toast.error(t('offers.uploadError')); setF(v => ({ ...v, file_path: null })); } setBusy(false); }} /></label>
         {f.file_path && <small className="muted-small"><Check className="inline-icon" />{t('offers.fileAttached')}</small>}</div>}
       <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
+        <OfferCover offer={f} wide preview={coverPreview} />
+        <div className="photo-row flex-wrap">
+          <Button asChild variant="secondary"><label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" onCropped={r => { setCoverFile(r.file); setCoverPreview(r.previewUrl); }} onRejected={() => toast.error(t('gathering.photoTooBig'))} /></label></Button>
+          {(coverFile || f.cover_url) && <Button variant="ghost" onClick={() => { setCoverFile(null); setCoverPreview(null); setF(v => ({ ...v, cover_url: null })); }}>{t('onboarding.removePhoto')}</Button>}
+        </div>
         <div className="cover-styles" role="group" aria-label={t('onboarding.cover')}>{COVER_STYLES.map((bg, i) => <button key={i} type="button" className={`cover-swatch ${f.cover_style === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} aria-label={`${t('onboarding.cover')} ${i + 1}`} aria-pressed={f.cover_style === i} onClick={() => setF({ ...f, cover_style: i })} />)}</div></div>
       <label className="switch-row"><Switch checked={f.publish} onCheckedChange={v => setF({ ...f, publish: v })} /><span><strong>{t('offers.publish')}</strong><small>{t(f.kind === 'download' && !f.file_path ? 'offers.publishNeedsFile' : 'offers.publishText')}</small></span></label>
       <Button className="onboarding-continue" disabled={!valid || busy} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
@@ -240,13 +257,13 @@ export function PurchasesPanel() {
   return <div className="purchases">
     {memberships.length > 0 && <><h3 className="field-label">{t('offers.memberships')}</h3>
       <ul className="offer-list compact">{memberships.map(p => <li key={p.id} className="offer-row">
-        <OfferCover offer={p.offer!} />
+        {p.offer && <OfferCover offer={p.offer} />}
         <div className="offer-row-main"><Link to="/offer/$id" params={{ id: p.offer_id }}><strong>{offerTitle(p.offer!, lang)}</strong></Link><small>{priceLabel(t, p.offer!, lang)} · {statusText(p)}</small></div>
         {isLive(p) && !p.cancel_at_period_end && <Button variant="ghost" disabled={busy === p.offer_id} onClick={() => doCancel(p.offer_id)}>{t('offers.cancel')}</Button>}
       </li>)}</ul></>}
     {downloads.length > 0 && <><h3 className="field-label">{t('offers.downloads')}</h3>
       <ul className="offer-list compact">{downloads.map(p => <li key={p.id} className="offer-row">
-        <OfferCover offer={p.offer!} />
+        {p.offer && <OfferCover offer={p.offer} />}
         <div className="offer-row-main"><strong>{offerTitle(p.offer!, lang)}</strong><small>{t('offers.receipt', { amount: p.amount_cents ? formatMoney(p.amount_cents, lang) : t('offers.free'), date: dateFmt(p.created_at, lang) })}</small></div>
         {isLive(p) && <Button variant="secondary" size="icon" aria-label={t('offers.download')} disabled={busy === p.offer_id} onClick={() => getFile(p.offer_id)}><Download /></Button>}
       </li>)}</ul></>}
