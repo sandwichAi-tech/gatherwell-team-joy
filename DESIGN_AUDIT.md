@@ -592,3 +592,31 @@ Checked Home, Events, Team, Learn, Me and Network at 375px (Spanish, dark) and 1
 - Empty/loading/error (C, M): Pass — shared EmptyState tiles, shimmer skeletons, titled retry state; full-page loading blocks replaced by a thin top bar after verification showed them pushing loaded content down.
 - Spacing (S): Pass — 88 off-grid values snapped to the 8px grid.
 - Still open: member profiles of other people, popup drag-to-dismiss and admin dropdown labels not verified on screen; populated states need real gatherings.
+
+
+## Design System 2.0 continuation — October 7, 2026
+
+### Phase 2 — shared overlays
+**Pass (verified samples):** Dialog/Drawer/Sheet viewport bounds, blurred dimming, elevation, shared feature-tile headers, scrollable sheet bodies and fixed action footers. Select/context/dropdown items have 48px targets. Toast placement is phone bottom-center above navigation and desktop bottom-right; swipe-dismiss passed at 375px and 414px. Native confirmation call sites: zero. Team invite reset, admin account actions, broadcasts and calendar reset use the shared premium confirmation; typed account DELETE remains intact. Confirmation requests queue instead of overwriting each other.
+
+Spanish admin icon selector: all 14 options displayed localized labels with shared icons. Public mobile navigation: ten consecutive Tab presses stayed inside the menu; Escape closed it and focus returned to the trigger.
+
+### Phase 3 — identity and profiles
+**Pass (verified samples):** Me at 375px Spanish/dark, 414px English/light and 1440px English/dark; host/team public identities at 375px Spanish/dark, 414px English/light and 1440px Spanish/light. Public identities now have graded shared photography, strong titles, safe avatars and one primary follow action. Me sheets use purpose-specific icon headers. Member details were opened at 375px Spanish/dark; narrow activity stats were changed to two columns after visible label crowding was found. Other-person profiles remain unverified; only the current account was opened.
+
+### Phase 4 — states
+**Pass (source + visible empty/unavailable samples):** host/team upcoming-empty states, localized unavailable page, shared list skeleton and retry treatments on public routes/calendar. Screens are not bare empty panels. Deliberately induced network-error/retry and populated gathering lists were not exercised in this continuation.
+
+### Phase 5 — screen drift
+**Pass (verified samples):** follow form hierarchy, inline fine print, submit footer, calendar privacy note and grouped feed rows. Long bilingual provider labels wrap within 48px-minimum actions. Confirm buttons wrap instead of clipping. Calendar's long body scrolls inside the bounded sheet. No database/business-flow changes were required.
+
+### Phase 6 — verification evidence and limits
+- Browser checks: host, team, email-follow, Me, calendar and cancel-only confirmation at 375/414/1440px in the language/theme combinations above. No document overflow or page errors observed.
+- Read-only admin library check plus unsaved badge editor: Spanish Select labels verified visually.
+- Authenticated Home, Gatherings, Learn, Network and Team checked at 375px Spanish/dark: no overflow or page errors observed.
+- Team invite reset confirmation opened and cancelled; no codes or calendar tokens rotated. Follow email form checked without submission. No test posts/accounts/gatherings were created.
+- Automatic build log: latest recorded build OK; no remaining reported type errors.
+- Evidence: `/tmp/browser/design-continuation/` screenshots, results.json and run logs (sandbox verification artifacts, not app assets).
+- Still open: exhaustive overlay permutations, other-account profile, true populated gatherings, provider/client calendar integration, full contrast audit, reduced-motion emulation and real touch-device drawer gestures. Desktop-mouse toast swipe passed; mobile drawer drag was not asserted, so it is not recorded as a verified pass.
+
+This continuation updates the prior inventory; historical Needs-work rows describe the audit baseline, not a claim that every row received an individual live retest.

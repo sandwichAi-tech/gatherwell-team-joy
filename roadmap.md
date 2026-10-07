@@ -11,6 +11,13 @@
 - [x] Phase 5 Screen drift
 - [x] Phase 6 Verification + audit rescoring
 
+# Design System 2.0 continuation — October 7
+- [x] Phase 2: finish shared overlay gaps, localized admin options and keyboard checks
+- [x] Phase 3: extend profile treatment to host/team pages and Me sheets
+- [x] Phase 4: verify new page loading, empty and unavailable states
+- [x] Phase 5: remove drift in follow and calendar layouts
+- [x] Phase 6: bilingual/theme/viewport checks and updated audit evidence
+
 # Gatherwell design reset
 - [x] Save permanent replacement design rules
 - [x] Replace shell, theme, typography and app icons

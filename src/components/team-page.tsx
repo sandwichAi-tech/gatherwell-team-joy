@@ -243,15 +243,15 @@ function WinsFeed({ teamId, userId, lang, isLeader }: { teamId: string; userId: 
 
 function InviteSheet({ open, onOpenChange, workspace, joinCode, isLeader }: { open: boolean; onOpenChange: (o: boolean) => void; workspace: TeamMembership; joinCode: string; isLeader: boolean }) {
   const { t } = useTranslation(); const queryClient = useQueryClient();
-  const [copied, setCopied] = useState(false); const [qr, setQr] = useState(false); const [confirmReset, setConfirmReset] = useState(false);
+  const [copied, setCopied] = useState(false); const [qr, setQr] = useState(false);
   const { userId } = useGatherwell();
   const link = typeof window === 'undefined' ? '' : `${joinLink(joinCode)}?by=${userId}`;
   const message = t('teamSpace.inviteMessage', { team: workspace.name, link });
-  useEffect(() => { if (!open) { setCopied(false); setConfirmReset(false); } }, [open]);
+  useEffect(() => { if (!open) { setCopied(false); } }, [open]);
   const reset = async () => {
     const { error } = await supabase.rpc('reset_join_code', { _team: workspace.teamId });
     if (error) { toast.error(errorText(t, error)); return; }
-    setConfirmReset(false); toast.success(t('teamSpace.codeReset'));
+    toast.success(t('teamSpace.codeReset'));
     await queryClient.invalidateQueries({ queryKey: teamKey(workspace.teamId) });
     await queryClient.invalidateQueries({ queryKey: ['teams'] }); await queryClient.invalidateQueries({ queryKey: ['workspace'] });
   };
@@ -265,8 +265,7 @@ function InviteSheet({ open, onOpenChange, workspace, joinCode, isLeader }: { op
         <Button variant="secondary" onClick={() => setQr(true)}><QrCode />{t('teamSpace.qr')}</Button>
       </div>
       <p className="field-label">{t('onboarding.code')}: <strong className="join-code">{joinCode}</strong></p>
-      {isLeader && (confirmReset ? <div className="confirm-box"><p>{t('teamSpace.resetConfirm')}</p><div className="confirm-actions"><Button variant="secondary" onClick={() => setConfirmReset(false)}>{t('common.back')}</Button><Button variant="destructive" onClick={reset}>{t('teamSpace.resetCode')}</Button></div></div>
-        : <Button variant="ghost" className="quiet-action" onClick={() => setConfirmReset(true)}><RefreshCw />{t('teamSpace.resetCode')}</Button>)}
+      {isLeader && <Button variant="ghost" className="quiet-action" onClick={async () => { if (await confirmAction({ title: t('teamSpace.resetCode'), body: t('teamSpace.resetConfirm'), destructive: true, confirmLabel: t('teamSpace.resetCode') })) await reset(); }}><RefreshCw />{t('teamSpace.resetCode')}</Button>}
     </ResponsiveSheet>
     <Dialog open={qr} onOpenChange={setQr}>
       <DialogContent className="qr-fullscreen"><DialogTitle className="sr-only">{t('teamSpace.qr')}</DialogTitle><DialogDescription className="sr-only">{link}</DialogDescription>
@@ -299,7 +298,7 @@ function EditTeamSheet({ open, onOpenChange, team, userId }: { open: boolean; on
     setBusy(false);
   };
   const shown = preview ?? current;
-  return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={t('teamSpace.editTeam')}>
+  return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={t('teamSpace.editTeam')} footer={<Button className="sheet-primary" disabled={busy || !name.trim()} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>}>
     <div className="edit-form">
       <div className="form-field"><label className="field-label" htmlFor="team-name">{t('onboarding.teamName')}</label><Input id="team-name" className="field-input" value={name} maxLength={80} onChange={e => setName(e.target.value)} /></div>
       <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
@@ -309,7 +308,6 @@ function EditTeamSheet({ open, onOpenChange, team, userId }: { open: boolean; on
       <div className="form-field"><span className="field-label">{t('teamSpace.brandColor')}</span>
         <div className="swatches">{TEAM_COLORS.map(value => <button type="button" key={value} className={`swatch ${color === value ? 'is-selected' : ''}`} style={{ background: value }} aria-label={value} aria-pressed={color === value} onClick={() => setColor(value)}>{color === value && <Check />}</button>)}
           <label className={`swatch swatch-custom ${color && !TEAM_COLORS.includes(color as typeof TEAM_COLORS[number]) ? 'is-selected' : ''}`} style={color && !TEAM_COLORS.includes(color as typeof TEAM_COLORS[number]) ? { background: color } : undefined} aria-label={t('teamSpace.customColor')}><Plus /><input type="color" className="sr-only" value={color ?? '#2F2340'} onChange={e => setColor(e.target.value.toUpperCase())} /></label></div></div>
-      <Button className="onboarding-continue" disabled={busy || !name.trim()} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
     </div>
   </ResponsiveSheet>;
 }
@@ -331,7 +329,7 @@ function MembersSheet({ open, onOpenChange, teamId, userId, isLeader, directLead
   };
   const update = (patch: { role?: string; custom_badge?: string | null }) => run(() => supabase.from('team_members').update(patch).match({ team_id: teamId, user_id: selected!.userId }), t('teamSpace.memberSaved'), false).then(() => setSelected(s => s ? { ...s, role: patch.role ?? s.role, customBadge: patch.custom_badge !== undefined ? patch.custom_badge : s.customBadge } : s));
 
-  return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={selected ? (selected.name ?? t('teamSpace.someone')) : t('teamSpace.members')}>
+  return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={selected ? (selected.name ?? t('teamSpace.someone')) : t('teamSpace.members')} icon="UsersRound">
     {!selected ? <>
       <div className="search-field"><Search /><Input className="field-input" placeholder={t('teamSpace.searchMembers')} value={search} onChange={e => setSearch(e.target.value)} aria-label={t('teamSpace.searchMembers')} /></div>
       <div className="member-list">{filtered.map(m => <button type="button" key={m.userId} className="member-row" onClick={() => setSelected(m)}>

@@ -106,7 +106,7 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
       <div className="edit-preview">
         <div className="gw-hero-cover" aria-hidden="true" />
         <div className="edit-preview-avatar"><Avatar path={removePhoto ? null : profile?.avatar_url} name={form.full_name} preview={preview} size={88} /></div>
-        <div className="photo-row">
+        <div className="photo-row flex-wrap">
           <label className="file-button"><Upload />{t('onboarding.upload')}<input type="file" accept="image/*" hidden onChange={e => pick(e.target.files?.[0])} /></label>
           <label className="file-button"><Camera />{t('onboarding.camera')}<input type="file" accept="image/*" capture="user" hidden onChange={e => pick(e.target.files?.[0])} /></label>
           {(preview || (profile?.avatar_url && !removePhoto)) && <button type="button" className="auth-link" onClick={() => { setFile(null); setPreview(null); setRemovePhoto(true); }}>{t('onboarding.removePhoto')}</button>}
@@ -171,21 +171,22 @@ export function MePage() {
     await signOut();
   };
 
-  const row = (icon: GwIconName, label: string, onClick?: () => void, trailing?: ReactNode, extra = '') => <button type="button" className={`settings-row ${extra}`} onClick={onClick}><GwFeatureTile name={icon} size={20} className="settings-tile" /><span className="settings-label">{label}</span>{trailing ?? <ChevronRight className="settings-chevron" />}</button>;
-  const linkRow = (icon: GwIconName, label: string, to: string, trailing?: ReactNode, search?: Record<string, string>) => <Link className="settings-row" to={to} search={search as never}><GwFeatureTile name={icon} size={20} className="settings-tile" /><span className="settings-label">{label}</span>{trailing ?? <ChevronRight className="settings-chevron" />}</Link>;
-  const staticRow = (icon: GwIconName, label: string, control: ReactNode) => <div className="settings-row is-static"><GwFeatureTile name={icon} size={20} className="settings-tile" /><span className="settings-label">{label}</span>{control}</div>;
+  const row = (icon: GwIconName, label: string, onClick?: () => void, trailing?: ReactNode, extra = '') => <button type="button" className={`settings-row ${extra}`} onClick={onClick}><GwFeatureTile name={icon} size={24} className="settings-tile" /><span className="settings-label">{label}</span>{trailing ?? <ChevronRight className="settings-chevron" />}</button>;
+  const linkRow = (icon: GwIconName, label: string, to: string, trailing?: ReactNode, search?: Record<string, string>) => <Link className="settings-row" to={to} search={search as never}><GwFeatureTile name={icon} size={24} className="settings-tile" /><span className="settings-label">{label}</span>{trailing ?? <ChevronRight className="settings-chevron" />}</Link>;
+  const staticRow = (icon: GwIconName, label: string, control: ReactNode) => <div className="settings-row is-static"><GwFeatureTile name={icon} size={24} className="settings-tile" /><span className="settings-label">{label}</span>{control}</div>;
 
-  const panels: Record<Exclude<Panel, null>, { title: string; body: ReactNode }> = {
-    gatherings: { title: t('profile.myGatherings'), body: <MyGatheringsList userId={userId} /> },
-    challenges: { title: t('profile.myChallenges'), body: <MyChallengesList userId={userId} /> },
-    badges: { title: t('profile.myBadges'), body: workspace ? <BadgeWall teamId={workspace.teamId} /> : <EmptyState compact icon="UsersRound" text={t('workspace.none')} /> },
-    teams: { title: t('profile.myTeams'), body: teams.length ? <div className="team-list">{teams.map(team => <button type="button" key={team.teamId} className={`choice-card ${workspace?.teamId === team.teamId ? 'is-selected' : ''}`} aria-pressed={workspace?.teamId === team.teamId} onClick={() => switchTeam(team.teamId)}><span className="initial-avatar">{initialsOf(team.name)}</span><span><strong>{team.name}</strong><small>{t(`roles.${team.role}`)}{team.customBadge ? ` · ${team.customBadge}` : ''}</small></span>{workspace?.teamId === team.teamId && <Check className="choice-check" />}</button>)}</div> : <EmptyState compact icon="UsersRound" text={t('workspace.none')} /> },
-    notifications: { title: t('profile.notifications'), body: <NotificationSettings userId={userId} /> },
-    invite: { title: t('welcome.title'), body: <InviteFriendsPanel /> },
-    calendar: { title: t('follow.feedTitle'), body: <CalendarFeedPanel userId={userId} /> },
-    purchases: { title: t('offers.purchases'), body: <PurchasesPanel /> },
-    qr: { title: t('profile.qrTitle'), body: <div className="qr-panel">{inviteUrl ? <div className="qr-code"><QRCodeSVG value={inviteUrl} size={280} level="M" marginSize={2} /></div> : <p className="auth-subtitle">{t('publicEvent.loading')}</p>}<p className="auth-subtitle">{t('profile.qrText')}</p></div> },
-    plan: { title: t('profile.plan'), body: <><p className="plan-name">{t(`plans.${workspace?.plan ?? 'free'}`)}</p><p className="auth-subtitle">{workspace?.name ?? t('workspace.none')}</p></> },
+  const panelIcons: Record<Exclude<Panel, null>, GwIconName> = { qr: 'QrCode', gatherings: 'CalendarDays', challenges: 'Flag', badges: 'Award', teams: 'UsersRound', notifications: 'Bell', plan: 'CreditCard', purchases: 'CreditCard', invite: 'UserPlus', calendar: 'CalendarPlus' };
+  const panels: Record<Exclude<Panel, null>, { title: string; icon: GwIconName; body: ReactNode }> = {
+    gatherings: { title: t('profile.myGatherings'), icon: 'CalendarDays', body: <MyGatheringsList userId={userId} /> },
+    challenges: { title: t('profile.myChallenges'), icon: 'Flag', body: <MyChallengesList userId={userId} /> },
+    badges: { title: t('profile.myBadges'), icon: 'Award', body: workspace ? <BadgeWall teamId={workspace.teamId} /> : <EmptyState compact icon="UsersRound" text={t('workspace.none')} /> },
+    teams: { title: t('profile.myTeams'), icon: 'UsersRound', body: teams.length ? <div className="team-list">{teams.map(team => <button type="button" key={team.teamId} className={`choice-card ${workspace?.teamId === team.teamId ? 'is-selected' : ''}`} aria-pressed={workspace?.teamId === team.teamId} onClick={() => switchTeam(team.teamId)}><span className="initial-avatar">{initialsOf(team.name)}</span><span><strong>{team.name}</strong><small>{t(`roles.${team.role}`)}{team.customBadge ? ` · ${team.customBadge}` : ''}</small></span>{workspace?.teamId === team.teamId && <Check className="choice-check" />}</button>)}</div> : <EmptyState compact icon="UsersRound" text={t('workspace.none')} /> },
+    notifications: { title: t('profile.notifications'), icon: 'Bell', body: <NotificationSettings userId={userId} /> },
+    invite: { title: t('welcome.title'), icon: 'UserPlus', body: <InviteFriendsPanel /> },
+    calendar: { title: t('follow.feedTitle'), icon: 'CalendarPlus', body: <CalendarFeedPanel userId={userId} /> },
+    purchases: { title: t('offers.purchases'), icon: 'CreditCard', body: <PurchasesPanel /> },
+    qr: { title: t('profile.qrTitle'), icon: 'QrCode', body: <div className="qr-panel">{inviteUrl ? <div className="qr-code"><QRCodeSVG value={inviteUrl} size={280} level="M" marginSize={2} /></div> : <p className="auth-subtitle">{t('publicEvent.loading')}</p>}<p className="auth-subtitle">{t('profile.qrText')}</p></div> },
+    plan: { title: t('profile.plan'), icon: 'CreditCard', body: <><p className="plan-name">{t(`plans.${workspace?.plan ?? 'free'}`)}</p><p className="auth-subtitle">{workspace?.name ?? t('workspace.none')}</p></> },
   };
 
   const isHost = !!workspace && workspace.role !== 'member';
@@ -231,20 +232,20 @@ export function MePage() {
       {isAdmin && linkRow('ImageDown', t('siteMedia.menu'), '/admin/site-media')}
     </SettingsGroup>}
     <SettingsGroup title={t('profile.groupSupport')}>
-      <a className="settings-row" href="mailto:help@gatherwell.app"><GwFeatureTile name="LifeBuoy" size={20} className="settings-tile" /><span className="settings-label">{t('profile.help')}</span><ChevronRight className="settings-chevron" /></a>
+      <a className="settings-row" href="mailto:help@gatherwell.app"><GwFeatureTile name="LifeBuoy" size={24} className="settings-tile" /><span className="settings-label">{t('profile.help')}</span><ChevronRight className="settings-chevron" /></a>
       {row('LogOut', t('me.signOut'), signOut, <span />)}
     </SettingsGroup>
     <SettingsGroup title={t('profile.groupLegal')}>
       {linkRow('FileText', t('auth.terms'), '/terms')}
       {linkRow('ShieldCheck', t('auth.privacy'), '/privacy')}
-      {(['host', 'guest', 'sms', 'cookies'] as const).map(d => <Link key={d} className="settings-row" to="/legal/$doc" params={{ doc: d }}><GwFeatureTile name="FileText" size={20} className="settings-tile" /><span className="settings-label">{t(`legalDocs.docs.${d}.title`)}</span><ChevronRight className="settings-chevron" /></Link>)}
+      {(['host', 'guest', 'sms', 'cookies'] as const).map(d => <Link key={d} className="settings-row" to="/legal/$doc" params={{ doc: d }}><GwFeatureTile name="FileText" size={24} className="settings-tile" /><span className="settings-label">{t(`legalDocs.docs.${d}.title`)}</span><ChevronRight className="settings-chevron" /></Link>)}
     </SettingsGroup>
     <SettingsGroup danger>
       <button type="button" className="settings-row is-danger" onClick={openDelete}><span className="gw-feature-tile settings-tile is-danger"><Trash2 /></span><span className="settings-label">{t('profile.delete')}</span></button>
     </SettingsGroup>
 
     <EditProfile open={editing} onOpenChange={setEditing} userId={userId} />
-    <ResponsiveSheet open={panel !== null} onOpenChange={open => { if (!open) setPanel(null); }} title={panel ? panels[panel].title : ''}>{panel && panels[panel].body}</ResponsiveSheet>
+    <ResponsiveSheet open={panel !== null} onOpenChange={open => { if (!open) setPanel(null); }} title={panel ? panels[panel].title : ''} icon={panel ? panelIcons[panel] : 'UserRound'}>{panel && panels[panel].body}</ResponsiveSheet>
     <ResponsiveSheet open={deleting} onOpenChange={setDeleting} title={t('profile.deleteTitle')} icon="Trash2">
       {soleTeams === null ? <p className="auth-subtitle">{t('publicEvent.loading')}</p> : soleTeams.length ? <>
         <p className="auth-subtitle">{t('profile.deleteBlockedText', { teams: soleTeams.join(', ') })}</p>
