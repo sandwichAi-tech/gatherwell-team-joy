@@ -22,6 +22,7 @@ import { Switch } from '@/components/ui/switch';
 import { useServerFn } from '@tanstack/react-start';
 import { refundPayments } from '@/lib/billing.functions';
 import { usePaymentGate } from '@/components/plan-page';
+import { ShareKit } from '@/components/share-kit';
 import { NetworkShareToggle } from '@/components/network-share';
 import { MembersOnlyPicker } from '@/components/offers';
 import { WaiverEventToggle } from '@/components/waiver';
@@ -150,10 +151,7 @@ function EventDetailPage() {
     {(manages || cohostIds.length > 0) && <CohostsPanel eventId={event.id} teamId={event.team_id} hostId={event.host_id} canEdit={event.host_id === userId || leadsTeam} />}
 
     <ResponsiveSheet open={sheet === 'share'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.share')} description={event.title}>
-      <div className="share-grid"><CopyButton text={link} />
-        <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(invite)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button>
-        <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(invite)}`}><MessageSquareText />{t('gathering.text')}</a></Button>
-        {event.visibility === 'public' && <Button variant="secondary" onClick={async () => { toast(t('guest.storyMaking')); await storyImage({ title: event.title, date: when, link, coverUrl: await mediaUrl(event.cover_url), coverStyle: event.cover_style, brand: t('brand') }); }}><ImageDown />{t('guest.story')}</Button>}</div>
+      <ShareKit title={event.title} startsAt={event.starts_at} timezone={event.timezone} place={placeOf(event) ?? (event.online_url ? t('teamSpace.online') : '')} link={link} coverPath={event.cover_url} coverStyle={event.cover_style} />
       {isHost && event.visibility === 'public' && event.status === 'published' && <NetworkShareToggle eventId={event.id} />}
       {manages && <RsvpSettingsPanel eventId={event.id} initial={{ questions: ((event as any).rsvp_questions ?? []), require_approval: !!(event as any).require_approval, visibility: event.visibility, invite_token: (event as any).invite_token ?? '', price_cents: (event as any).price_cents ?? null }} />}
       {isHost && <WaiverEventToggle eventId={event.id} teamId={event.team_id} value={!!(event as { requires_waiver?: boolean }).requires_waiver} />}

@@ -18,6 +18,7 @@ import { GatheringCover } from '@/components/gathering-cover';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { supabase } from '@/integrations/supabase/client';
 import { uploadMedia, workspaceQuery } from '@/lib/account';
+import { ShareKit } from '@/components/share-kit';
 import { COVER_STYLES, datePresets, isOnline, rpcError, shareLink, toLocalInput, usualSlot, expandRepeat, REPEATS, type Repeat as RepeatKind, type RepeatRule } from '@/lib/gatherings';
 import { useMapsKey, loadMaps } from '@/lib/maps-client';
 import { checklistOf, eventDetailQuery, templatesQuery } from '@/lib/templates';
@@ -178,11 +179,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       <span className="success-check"><Check /></span>
       <h1>{t('gathering.live')}</h1>
       <p className="success-title">{title}</p><p className="auth-subtitle">{when}{weekly ? ` · ${t(`gathering.repeats.${rule.kind}`)}` : ''}</p>
-      <div className="share-grid success-share">
-        <CopyButton text={link} />
-        <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(invite)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button>
-        <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(invite)}`}><MessageSquareText />{t('gathering.text')}</a></Button>
-      </div>
+      <div className="success-share"><ShareKit title={title.trim()} startsAt={startDate!.toISOString()} place={place === 'person' ? (locationName || address) : t('teamSpace.online')} link={link} coverPath={coverPath} coverStyle={coverStyle} /></div>
       <Button className="onboarding-continue" onClick={() => navigate({ to: '/events', search: { tab: 'hosting' } })}>{t('gathering.done')}</Button>
     </div></div>;
   }
