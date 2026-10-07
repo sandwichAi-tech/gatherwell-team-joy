@@ -3007,5 +3007,51 @@
     "finalBody": "Haz que llegar sea fácil. Dales un motivo para volver.",
     "hostsMeta": "Para anfitriones · Gatherwell",
     "pricingMeta": "Precios · Gatherwell"
+  },
+  "teamRsvp": {
+    "cta": "Inscribir un equipo ({{min}}–{{max}})",
+    "title": "Inscribir un equipo",
+    "teamName": "Nombre del equipo",
+    "sizeHint": "Equipos de {{min}} a {{max}} personas. Cada quien recibe su propio código de registro.",
+    "captain": "Tú (capitán del equipo)",
+    "person": "Persona {{n}}",
+    "remove": "Quitar a la persona {{n}}",
+    "optional": "opcional",
+    "add": "Agregar a una persona",
+    "waiverLater": "¿No está contigo? Déjalo — puede firmar desde su propio enlace o en la entrada.",
+    "perTeam": "por equipo",
+    "perPersonTotal": "por {{count}} personas",
+    "paymentsNotConnected": "Pagos aún no conectados — las inscripciones de equipo pagadas se abren cuando los pagos estén activos.",
+    "submit_one": "Inscribir a {{count}} persona",
+    "submit_other": "Inscribir a {{count}} personas",
+    "done": {
+      "going": "¡{{team}} está dentro!",
+      "requested": "{{team}} espera la aprobación del anfitrión",
+      "waitlist": "{{team}} está en lista de espera"
+    },
+    "doneSub": "Cada persona tiene su propio pase. Mándale su enlace para que pueda registrarse y firmar el descargo.",
+    "waiverPending": "Descargo pendiente",
+    "openPass": "Abrir pase",
+    "sendLinks": "Copia cada enlace y mándalo por mensaje o WhatsApp.",
+    "signNow": "Firmar descargo",
+    "signAtDoor": "Firmar en la entrada",
+    "people_one": "{{count}} persona",
+    "people_other": "{{count}} personas",
+    "hostToggle": "Inscripción por equipos",
+    "hostHint": "Los invitados pueden inscribir a todo un equipo y anotar a cada persona.",
+    "minSize": "Equipo más chico",
+    "maxSize": "Equipo más grande",
+    "priceMode": "Precio por equipo",
+    "mode": {
+      "person": "Precio por persona",
+      "team": "Precio por equipo"
+    },
+    "capacityNote": "Cada integrante cuenta para el límite de lugares.",
+    "errors": {
+      "team_name_required": "Agrega un nombre de equipo.",
+      "team_size": "Este tamaño de equipo no está permitido para esta reunión.",
+      "payment_required": "Las inscripciones de equipo pagadas se abren cuando los pagos estén conectados.",
+      "captain_contact": "Agrega un teléfono o correo del capitán."
+    }
   }
 }

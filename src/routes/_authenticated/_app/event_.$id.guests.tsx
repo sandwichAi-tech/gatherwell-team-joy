@@ -1,9 +1,10 @@
-import { useMemo, useState, type FormEvent } from 'react';
+import { Fragment, useMemo, useState, type FormEvent } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { FileText, ShieldCheck } from '@/components/icons';
+import { FileText, ShieldCheck, UsersRound } from '@/components/icons';
+import { WaiverAccept, useEventWaiver } from '@/components/waiver';
 import { Check } from '@/components/icons';
 import { ArrowLeft, ArrowUp, Download, Mail, MessageSquareText, Phone, Search, UserPlus, X } from '@/components/icons';
 import { Button } from '@/components/ui/button';
