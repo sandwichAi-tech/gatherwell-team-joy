@@ -1,3 +1,5 @@
+import { ResponsiveSheet } from '@/components/responsive-sheet';
+import { ShareKit } from '@/components/share-kit';
 import { CopyButton } from '@/components/copy-button';
 import { EmptyState } from '@/components/launch-states';
 import { useState } from 'react';
@@ -78,6 +80,9 @@ export function NetworkPage() {
         {q.data.suggested.length ? q.data.suggested.map(p => person(p, <Button variant="secondary" disabled={busy === p.user_id} onClick={() => act(p.user_id, 'network_request', { _to: p.user_id }, 'network.requested')}><UserPlus />{t('network.add')}</Button>)) : <EmptyState compact icon="UsersRound" text={t('network.noSuggested')} />}
       </section>
     </>}
+    <ResponsiveSheet open={!!kit} onOpenChange={o => !o && setKit(null)} title={t('shareKit.open')} description={kit?.title}>
+      {kit && <ShareKit title={kit.title} startsAt={kit.starts_at} timezone={kit.timezone} place={kit.location_name ?? (kit.online ? t('network.online') : '')} link={partnerLink(kit.id, userId)} />}
+    </ResponsiveSheet>
   </>;
 }
 
