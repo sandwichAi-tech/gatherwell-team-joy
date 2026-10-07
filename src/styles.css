@@ -1546,3 +1546,69 @@ a.gw-cat-chip:hover{background:#fff}
 .crop-frame,.crop-preview,.crop-presets,.crop-zoom{flex-shrink:0}
 .crop-presets{flex-wrap:nowrap}.crop-presets button{flex:1 1 0;min-width:0;padding:0 6px;font-size:13px;white-space:nowrap}
 .segmented.crop-presets{display:flex;flex-wrap:nowrap}.segmented.crop-presets button{flex:1 1 0;min-width:0;padding:0 6px;font-size:13px;white-space:nowrap}
+
+/* N2: public hosting and pricing, using the marketing surface system. */
+.gw-landing .gw-marketing-section{padding-top:64px;padding-bottom:64px}
+.gw-landing .gw-hosts-hero-grid{display:grid;gap:48px;align-items:center;position:relative;z-index:1}
+.gw-landing .gw-hosts-hero h1,.gw-landing .gw-pricing-hero h1{font-size:48px;line-height:1.06;font-weight:800;max-width:780px;margin:16px 0 24px}
+.gw-landing .gw-pricing-hero{text-align:center;padding-bottom:32px}
+.gw-landing .gw-pricing-hero .gw-lede{margin:0 auto;max-width:640px}
+.gw-landing .gw-host-demo{position:relative;background:var(--card);border:1px solid var(--border);border-radius:24px;padding:24px;box-shadow:0 24px 64px rgb(47 35 64 / .18),0 4px 12px rgb(47 35 64 / .08);transform:rotate(2deg)}
+.gw-landing .gw-host-demo>.chip{position:absolute;top:40px;right:40px}
+.gw-landing .gw-host-demo-cover{height:160px;border-radius:16px;background:linear-gradient(135deg,#E7DEF2,#F8E4D5);display:grid;place-items:center}
+.gw-landing .gw-host-demo h2{font-size:24px;font-weight:800;margin:24px 0 16px}
+.gw-landing .gw-host-demo-row{display:flex;align-items:center;gap:16px;padding:16px 0;border-top:1px solid var(--border);font-size:14px;line-height:1.5}
+.gw-landing .gw-host-demo-row svg{flex-shrink:0}
+.gw-landing .gw-marketing-sub{font-size:18px;line-height:1.6;color:var(--body);margin-top:16px;max-width:640px}
+.gw-landing .gw-benefits-grid{display:grid;gap:24px;margin-top:32px}
+.gw-landing .gw-benefit-card{border:1px solid var(--border);border-radius:24px;padding:24px;background:var(--card);box-shadow:var(--shadow-sm);display:flex;flex-direction:column;align-items:flex-start}
+.gw-landing .gw-marketing-tile{width:64px;height:64px;border-radius:20px;background:var(--lavender-soft);display:grid;place-items:center;flex-shrink:0;margin-bottom:24px}
+.gw-landing .gw-benefit-card h3,.gw-landing .gw-host-steps h3{font-size:22px;line-height:1.3;font-weight:800;margin-bottom:12px}
+.gw-landing .gw-benefit-card>p,.gw-landing .gw-host-steps p{font-size:16px;line-height:1.6;color:var(--body);margin-bottom:24px}
+.gw-landing .gw-benefit-demo{display:flex;align-items:center;gap:12px;width:100%;padding:16px;border-radius:16px;background:var(--background);border:1px solid var(--border);margin-top:auto;font-size:13px;line-height:1.5}
+.gw-landing .gw-benefit-demo svg{flex-shrink:0}
+.gw-landing .gw-host-steps{display:grid;gap:32px;margin-top:40px;list-style:none;padding:0}
+.gw-landing .gw-host-steps .gw-how-num{display:block;margin-bottom:12px}
+.gw-landing .gw-leader-marketing{padding:64px 0}
+.gw-landing .gw-leader-marketing p{max-width:760px;line-height:1.7;margin:24px 0}
+.gw-landing .gw-leader-pills{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:32px}
+.gw-landing .gw-leader-pills>span{display:flex;gap:8px;align-items:center;border:1px solid rgb(255 255 255 / .2);border-radius:99px;padding:12px 16px}
+.gw-landing .gw-leader-marketing .gw-btn-secondary{background:#fff;color:#2F2340}
+.gw-landing .gw-public-plans{display:grid;gap:24px;margin:32px 0}
+.gw-landing .gw-public-plan{display:flex;flex-direction:column;position:relative;padding:24px;border:1px solid var(--border);border-radius:24px;background:var(--card);box-shadow:var(--shadow-sm);min-width:0}
+.gw-landing .gw-public-plan.is-featured{border:2px solid var(--plum);box-shadow:0 12px 32px rgb(47 35 64 / .12)}
+.gw-landing .gw-plan-tag{font-size:12px;font-weight:700;color:var(--lavender);min-height:24px}
+.gw-landing .gw-public-plan h3{font-size:24px;font-weight:800;margin:8px 0 16px}
+.gw-landing .gw-public-price{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px;margin-bottom:24px;min-height:48px}
+.gw-landing .gw-public-price strong{font-size:36px;line-height:1.2;font-weight:800}
+.gw-landing .gw-public-price span{font-size:14px;color:var(--body)}
+.gw-landing .gw-public-plan ul{padding:0;list-style:none;display:grid;gap:16px;margin-bottom:24px;font-size:14px;line-height:1.5}
+.gw-landing .gw-public-plan li{display:flex;gap:8px;align-items:flex-start}
+.gw-landing .gw-public-plan li svg{flex-shrink:0;color:var(--lavender)}
+.gw-landing .gw-public-plan>.gw-btn{margin-top:auto;white-space:normal;text-align:center}
+.gw-landing .gw-price-toggle{margin:0 auto;max-width:320px}
+.gw-landing .gw-price-toggle button{min-height:48px;flex:1;padding:8px 24px;border-radius:12px;font-weight:700}
+.gw-landing .gw-price-save{text-align:center;min-height:24px}
+.gw-landing .gw-comparison{margin:64px 0 24px}
+.gw-landing .gw-comparison-scroll{overflow-x:auto;border:1px solid var(--border);border-radius:20px;margin-top:24px;background:var(--card)}
+.gw-landing .gw-comparison table{border-collapse:collapse;width:100%;min-width:900px;text-align:left;font-size:14px;line-height:1.5}
+.gw-landing .gw-comparison th,.gw-landing .gw-comparison td{padding:24px 16px;border-bottom:1px solid var(--border);vertical-align:top;width:20%}
+.gw-landing .gw-comparison thead{background:var(--lavender-soft)}
+.gw-landing .gw-comparison tbody tr:last-child>*{border-bottom:0}
+.gw-landing .gw-faq{display:grid;gap:32px}
+.gw-landing .gw-faq details{border-bottom:1px solid var(--border)}
+.gw-landing .gw-faq summary{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;list-style:none;min-height:64px;font-size:18px;font-weight:700;padding:16px 0}
+.gw-landing .gw-faq summary::-webkit-details-marker{display:none}
+.gw-landing .gw-faq summary svg{flex-shrink:0;transition:transform .16s}
+.gw-landing .gw-faq details[open] summary svg{transform:rotate(180deg)}
+.gw-landing .gw-faq details p{color:var(--body);line-height:1.7;padding-bottom:24px}
+.gw-landing .gw-final-host{text-align:center}
+.gw-landing .gw-final-host p{margin:16px 0 24px;font-size:18px;color:var(--body)}
+.gw-landing .gw-final-host .gw-btn{margin-top:24px}
+.gw-category-options{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.gw-category-options button{justify-content:flex-start;min-height:56px;white-space:normal;text-align:left}
+.gw-app-discover{display:flex;align-items:center;gap:8px;min-height:44px;font-size:13px;font-weight:700;padding:0 8px;border-radius:12px}
+@media(min-width:768px){.gw-landing .gw-benefits-grid{grid-template-columns:repeat(2,1fr)}.gw-landing .gw-host-steps{grid-template-columns:repeat(2,1fr)}.gw-landing .gw-public-plans{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1024px){.gw-landing .gw-marketing-section{padding-top:96px;padding-bottom:96px}.gw-landing .gw-hosts-hero-grid{grid-template-columns:1.2fr .8fr;gap:64px}.gw-landing .gw-hosts-hero h1,.gw-landing .gw-pricing-hero h1{font-size:64px}.gw-landing .gw-pricing-hero h1{margin-left:auto;margin-right:auto}.gw-landing .gw-benefits-grid{grid-template-columns:repeat(3,1fr)}.gw-landing .gw-host-steps{grid-template-columns:repeat(4,1fr)}.gw-landing .gw-public-plans{grid-template-columns:repeat(4,1fr)}.gw-landing .gw-faq{grid-template-columns:.8fr 1.2fr;gap:64px}.gw-app-discover{display:none}.gw-landing .gw-public-price strong{font-size:32px}}
+@media(max-width:480px){.gw-app-discover span{display:none}.gw-landing .gw-hosts-hero h1,.gw-landing .gw-pricing-hero h1{font-size:40px}.gw-landing .gw-hosts-hero .gw-hero-ctas{flex-direction:column;align-items:stretch}.gw-landing .gw-hosts-hero .gw-btn{white-space:normal;text-align:center}.gw-landing .gw-host-demo{transform:none}.gw-landing .gw-menu-links{gap:16px}.gw-landing .gw-menu-sheet>.gw-nav-lang{margin:16px 0}.gw-landing .gw-menu-sheet>.gw-btn{margin-top:16px}}
+@media(prefers-reduced-motion:reduce){.gw-landing .gw-faq summary svg{transition:none}}
