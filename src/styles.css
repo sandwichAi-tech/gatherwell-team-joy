@@ -1623,3 +1623,17 @@ a.gw-cat-chip:hover{background:#fff}
 .guest-group-head { display: flex; align-items: center; gap: 8px; padding: 12px 4px 4px; color: var(--foreground); }
 .guest-group-head svg { width: 18px; height: 18px; color: var(--primary); }
 .guest-row.in-group { margin-left: 16px; }
+
+/* N3 share kit */
+.share-kit{display:grid;gap:16px}
+.share-kit-formats{width:100%}
+.share-kit-preview{display:grid;place-items:center;background:var(--surface-sunken,var(--muted));border-radius:20px;padding:16px;min-height:200px}
+.share-kit-preview img,.share-kit-skeleton{display:block;border-radius:14px;box-shadow:var(--shadow-lg,0 12px 32px rgba(47,35,64,.22));max-width:100%}
+.share-kit-preview.is-square img,.share-kit-preview.is-square .share-kit-skeleton{width:min(100%,280px);aspect-ratio:1}
+.share-kit-preview.is-story img,.share-kit-preview.is-story .share-kit-skeleton{height:min(52vh,400px);aspect-ratio:9/16;width:auto}
+.share-kit-preview.is-wide img,.share-kit-preview.is-wide .share-kit-skeleton{width:100%;aspect-ratio:16/9}
+.share-kit-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.share-kit-actions>*,.share-kit .share-grid>*{min-height:48px}
+.share-kit-caption{display:grid;gap:8px}
+.share-kit-caption .field-label{display:flex;gap:8px;align-items:center}
+.share-kit-caption-text{white-space:pre-line;font-size:14px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 16px;margin:0}
