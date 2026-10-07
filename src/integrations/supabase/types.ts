@@ -1125,6 +1125,10 @@ export type Database = {
           starts_at: string
           status: string
           team_id: string
+          team_max: number
+          team_min: number
+          team_price_mode: string
+          team_registration: boolean
           template_id: string | null
           theme: string | null
           timezone: string
@@ -1164,6 +1168,10 @@ export type Database = {
           starts_at: string
           status?: string
           team_id: string
+          team_max?: number
+          team_min?: number
+          team_price_mode?: string
+          team_registration?: boolean
           template_id?: string | null
           theme?: string | null
           timezone?: string
@@ -1203,6 +1211,10 @@ export type Database = {
           starts_at?: string
           status?: string
           team_id?: string
+          team_max?: number
+          team_min?: number
+          team_price_mode?: string
+          team_registration?: boolean
           template_id?: string | null
           theme?: string | null
           timezone?: string
@@ -2462,6 +2474,8 @@ export type Database = {
           created_at: string
           email_opt_in: boolean
           event_id: string
+          group_id: string | null
+          group_name: string | null
           guest_email: string | null
           guest_name: string | null
           guest_phone: string | null
@@ -2479,6 +2493,8 @@ export type Database = {
           created_at?: string
           email_opt_in?: boolean
           event_id: string
+          group_id?: string | null
+          group_name?: string | null
           guest_email?: string | null
           guest_name?: string | null
           guest_phone?: string | null
@@ -2496,6 +2512,8 @@ export type Database = {
           created_at?: string
           email_opt_in?: boolean
           event_id?: string
+          group_id?: string | null
+          group_name?: string | null
           guest_email?: string | null
           guest_name?: string | null
           guest_phone?: string | null
@@ -3988,6 +4006,16 @@ export type Database = {
           status: string
         }[]
       }
+      rsvp_team: {
+        Args: {
+          _event_id: string
+          _language: string
+          _participants: Json
+          _team_name: string
+          _token: string
+        }
+        Returns: Json
+      }
       save_assistant_recipe: {
         Args: {
           _ingredients: Json
@@ -4022,6 +4050,14 @@ export type Database = {
         Returns: undefined
       }
       shares_team_with: { Args: { _other: string }; Returns: boolean }
+      sign_waiver_at_door: {
+        Args: { _name: string; _rsvp: string }
+        Returns: undefined
+      }
+      sign_waiver_by_code: {
+        Args: { _code: string; _name: string }
+        Returns: undefined
+      }
       storage_allows: { Args: { _bytes: number }; Returns: boolean }
       storage_used_bytes: { Args: { _uid: string }; Returns: number }
       team_benchmark: { Args: { _root: string }; Returns: Json }
