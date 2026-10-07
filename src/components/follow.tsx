@@ -27,7 +27,7 @@ const pageQuery = (kind: 'host' | 'team', slug: string) => ({
   queryFn: async () => {
     const { data, error } = kind === 'host' ? await supabase.rpc('get_public_host', { _slug: slug }) : await supabase.rpc('get_public_team', { _slug: slug });
     if (error) throw error;
-    if (kind === 'host' && data) return { ...(data as unknown as HostPage), coverSrc: await publicHostCover({ data: { slug } }) };
+    if (kind === 'host' && data) return { ...(data as unknown as HostPage), coverSrc: await publicHostCover({ data: { slug } }).catch(() => null) };
     return data as unknown as HostPage | TeamPage | null;
   },
 });
