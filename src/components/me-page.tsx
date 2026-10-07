@@ -106,7 +106,7 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
       <div className="edit-preview">
         <div className="gw-hero-cover" aria-hidden="true" />
         <div className="edit-preview-avatar"><Avatar path={removePhoto ? null : profile?.avatar_url} name={form.full_name} preview={preview} size={88} /></div>
-        <div className="photo-row">
+        <div className="photo-row flex-wrap">
           <label className="file-button"><Upload />{t('onboarding.upload')}<input type="file" accept="image/*" hidden onChange={e => pick(e.target.files?.[0])} /></label>
           <label className="file-button"><Camera />{t('onboarding.camera')}<input type="file" accept="image/*" capture="user" hidden onChange={e => pick(e.target.files?.[0])} /></label>
           {(preview || (profile?.avatar_url && !removePhoto)) && <button type="button" className="auth-link" onClick={() => { setFile(null); setPreview(null); setRemovePhoto(true); }}>{t('onboarding.removePhoto')}</button>}
@@ -171,9 +171,9 @@ export function MePage() {
     await signOut();
   };
 
-  const row = (icon: GwIconName, label: string, onClick?: () => void, trailing?: ReactNode, extra = '') => <button type="button" className={`settings-row ${extra}`} onClick={onClick}><GwFeatureTile name={icon} size={20} className="settings-tile" /><span className="settings-label">{label}</span>{trailing ?? <ChevronRight className="settings-chevron" />}</button>;
-  const linkRow = (icon: GwIconName, label: string, to: string, trailing?: ReactNode, search?: Record<string, string>) => <Link className="settings-row" to={to} search={search as never}><GwFeatureTile name={icon} size={20} className="settings-tile" /><span className="settings-label">{label}</span>{trailing ?? <ChevronRight className="settings-chevron" />}</Link>;
-  const staticRow = (icon: GwIconName, label: string, control: ReactNode) => <div className="settings-row is-static"><GwFeatureTile name={icon} size={20} className="settings-tile" /><span className="settings-label">{label}</span>{control}</div>;
+  const row = (icon: GwIconName, label: string, onClick?: () => void, trailing?: ReactNode, extra = '') => <button type="button" className={`settings-row ${extra}`} onClick={onClick}><GwFeatureTile name={icon} size={24} className="settings-tile" /><span className="settings-label">{label}</span>{trailing ?? <ChevronRight className="settings-chevron" />}</button>;
+  const linkRow = (icon: GwIconName, label: string, to: string, trailing?: ReactNode, search?: Record<string, string>) => <Link className="settings-row" to={to} search={search as never}><GwFeatureTile name={icon} size={24} className="settings-tile" /><span className="settings-label">{label}</span>{trailing ?? <ChevronRight className="settings-chevron" />}</Link>;
+  const staticRow = (icon: GwIconName, label: string, control: ReactNode) => <div className="settings-row is-static"><GwFeatureTile name={icon} size={24} className="settings-tile" /><span className="settings-label">{label}</span>{control}</div>;
 
   const panels: Record<Exclude<Panel, null>, { title: string; body: ReactNode }> = {
     gatherings: { title: t('profile.myGatherings'), body: <MyGatheringsList userId={userId} /> },
@@ -231,13 +231,13 @@ export function MePage() {
       {isAdmin && linkRow('ImageDown', t('siteMedia.menu'), '/admin/site-media')}
     </SettingsGroup>}
     <SettingsGroup title={t('profile.groupSupport')}>
-      <a className="settings-row" href="mailto:help@gatherwell.app"><GwFeatureTile name="LifeBuoy" size={20} className="settings-tile" /><span className="settings-label">{t('profile.help')}</span><ChevronRight className="settings-chevron" /></a>
+      <a className="settings-row" href="mailto:help@gatherwell.app"><GwFeatureTile name="LifeBuoy" size={24} className="settings-tile" /><span className="settings-label">{t('profile.help')}</span><ChevronRight className="settings-chevron" /></a>
       {row('LogOut', t('me.signOut'), signOut, <span />)}
     </SettingsGroup>
     <SettingsGroup title={t('profile.groupLegal')}>
       {linkRow('FileText', t('auth.terms'), '/terms')}
       {linkRow('ShieldCheck', t('auth.privacy'), '/privacy')}
-      {(['host', 'guest', 'sms', 'cookies'] as const).map(d => <Link key={d} className="settings-row" to="/legal/$doc" params={{ doc: d }}><GwFeatureTile name="FileText" size={20} className="settings-tile" /><span className="settings-label">{t(`legalDocs.docs.${d}.title`)}</span><ChevronRight className="settings-chevron" /></Link>)}
+      {(['host', 'guest', 'sms', 'cookies'] as const).map(d => <Link key={d} className="settings-row" to="/legal/$doc" params={{ doc: d }}><GwFeatureTile name="FileText" size={24} className="settings-tile" /><span className="settings-label">{t(`legalDocs.docs.${d}.title`)}</span><ChevronRight className="settings-chevron" /></Link>)}
     </SettingsGroup>
     <SettingsGroup danger>
       <button type="button" className="settings-row is-danger" onClick={openDelete}><span className="gw-feature-tile settings-tile is-danger"><Trash2 /></span><span className="settings-label">{t('profile.delete')}</span></button>
