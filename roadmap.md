@@ -62,3 +62,11 @@
 - [x] Add profile covers to Me and public host pages, plus cropped offer covers
 - [x] Verify real cover saves, signed-out host display and profile removal/fallback; 390px crop controls in English and Spanish
 - [x] Team invite link explainer card with QR and 3 steps
+
+# N2 — Home, hosts, pricing and menu
+- [ ] Public navigation to Discover, hosts and pricing; signed-in Discover access
+- [ ] Guest-focused landing, Pilates, all categories and custom Other labels
+- [ ] Bilingual hosts page, vignettes, hosting steps, leader band, FAQ and sticky action
+- [ ] Public pricing using existing plan limits and monthly/annual prices
+- [ ] Landing sticky CTA experiment flag and analytics
+- [ ] Verify English and Spanish at 390px and 1440px
