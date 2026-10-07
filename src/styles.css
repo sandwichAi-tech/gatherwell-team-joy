@@ -1615,3 +1615,4 @@ a.gw-cat-chip:hover{background:#fff}
 @media(max-width:480px){.gw-landing .gw-hosts-hero .gw-hero-ctas .gw-btn{flex:0 0 auto;height:52px;min-height:52px}}
 .gw-landing .gw-host-demo-cover svg.gw-icon{width:64px;height:64px}
 .gw-landing .gw-marketing-tile svg.gw-icon{width:32px;height:32px}
+.quick-more { align-self: flex-start; min-height: 48px; gap: 6px; font-weight: 600; color: var(--primary); }

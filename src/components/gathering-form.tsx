@@ -10,7 +10,7 @@ import { useNavigate, useRouter } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { X, Camera, Check, Languages, Copy, MessageCircle, MessageSquareText, MapPin, Globe2, Repeat } from '@/components/icons';
+import { X, Camera, Check, Languages, Copy, MessageCircle, MessageSquareText, MapPin, Globe2, Repeat, ChevronRight } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -176,11 +176,11 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     <div className="gathering-form">
       <header className="gathering-form-head">
         <Button variant="ghost" size="icon" onClick={close} aria-label={t('common.close')}><X /></Button>
-        <h1>{t(editing ? 'gathering.editTitle' : 'gathering.newTitle')}</h1>
+        <h1>{t(editing ? 'gathering.editTitle' : full ? 'gathering.newTitle' : 'gathering.quickTitle')}</h1>
         {tpl && <span className="chip">{t('gathering.fromTemplate', { title: tpl.title })}</span>}
       </header>
 
-      <section className="form-section">
+      {full && <section className="form-section">
         <GatheringCover path={coverPath} style={coverStyle} title={title || 'G'} className="form-cover" />
         <div className="cover-actions">
           <label className="file-button"><Camera /><span>{uploading ? t('onboarding.saving') : t(coverPath ? 'gathering.changePhoto' : 'gathering.addPhoto')}</span>
@@ -189,7 +189,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         </div>
         {!coverPath && <div className="style-picker" role="radiogroup" aria-label={t('gathering.coverStyle')}>{COVER_STYLES.map((bg, i) =>
           <button key={i} type="button" role="radio" aria-checked={coverStyle === i} aria-label={t('gathering.styleN', { n: i + 1 })} className={`style-swatch ${coverStyle === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} onClick={() => setCoverStyle(i)} />)}</div>}
-      </section>
+      </section>}
 
       <section className="form-section">
         <label className="field-label" htmlFor="g-title">{t('gathering.title')}</label>
@@ -201,11 +201,13 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         <span className="field-label">{t('gathering.when')}</span>
         <div className="chip-row">{presets.map(p => { const v = toLocalInput(p.date); return <button key={p.key} type="button" className={`preset-chip ${start === v ? 'is-selected' : ''}`} aria-pressed={start === v} onClick={() => setStart(v)}>{t(`gathering.presets.${p.key}`, { time: p.date.toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' }) })}</button>; })}</div>
         <Input type="datetime-local" className="field-input" value={start} onChange={e => setStart(e.target.value)} aria-label={t('gathering.custom')} />
+        {full && <>
         <span className="field-label">{t('gathering.duration')}</span>
         <div className="chip-row">{DURATIONS.map(d => <button key={d} type="button" className={`preset-chip ${!customDuration && duration === d ? 'is-selected' : ''}`} aria-pressed={!customDuration && duration === d} onClick={() => { setCustomDuration(false); setDuration(d); }}>{t(`gathering.durations.${d}`)}</button>)}
           <button type="button" className={`preset-chip ${customDuration ? 'is-selected' : ''}`} aria-pressed={customDuration} onClick={() => setCustomDuration(true)}>{t('gathering.customDuration')}</button></div>
         {customDuration && <div className="inline-field"><Input type="number" min={5} max={1440} className="field-input" value={duration} onChange={e => setDuration(Math.max(5, Math.min(1440, Number(e.target.value) || 5)))} aria-label={t('gathering.minutes')} /><span>{t('gathering.minutes')}</span></div>}
         {!editing && <PlaybookCard context="create" compact />}
+        </>}
       </section>
 
       <section className="form-section">
@@ -222,6 +224,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         </>}
       </section>
 
+      {full && <>
       <section className="form-section">
         <label className="field-label" htmlFor="g-category">{t('marketing.category')}</label>
         <select id="g-category" className="field-input" value={category} onChange={e => { if (isCategory(e.target.value)) setCategory(e.target.value); }}>
@@ -256,10 +259,12 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         <span className="field-label">{t('gathering.applyTo')}</span>
         <div className="segmented full" role="group" aria-label={t('gathering.applyTo')}>{([false, true] as const).map(w => <Button key={String(w)} variant="ghost" className={wholeSeries === w ? 'selected' : ''} aria-pressed={wholeSeries === w} onClick={() => setWholeSeries(w)}>{t(w ? 'gathering.thisAndLater' : 'gathering.thisDate')}</Button>)}</div>
       </section> : null}
+      </>}
+      {!full && <Button variant="ghost" className="quick-more" onClick={() => setFull(true)}>{t('gathering.moreOptions')}<ChevronRight /></Button>}
       {tpl && <p className="auth-subtitle">{t('gathering.checklistNote', { count: checklistOf(templates.find(x => x.id === tpl.id) ?? { checklist: [] }).length })}</p>}
     </div>
     <div className="sticky-actions">
-      {(!editing || source?.event.status === 'draft') && <Button variant="secondary" disabled={busy} onClick={() => submit(false)}>{t('gathering.saveDraft')}</Button>}
+      {full && (!editing || source?.event.status === 'draft') && <Button variant="secondary" disabled={busy} onClick={() => submit(false)}>{t('gathering.saveDraft')}</Button>}
       <Button disabled={busy} onClick={() => submit(!editing || source?.event.status === 'draft')}>{busy ? t('onboarding.saving') : t(editing && source?.event.status !== 'draft' ? 'gathering.saveChanges' : 'gathering.publish')}</Button>
     </div>
     {limit && <UpgradeSheet open onOpenChange={o => { if (!o) setLimit(null); }} reason={limit} />}

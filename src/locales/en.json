@@ -829,7 +829,9 @@
       "not_allowed": "You can’t create gatherings for this team.",
       "template_not_found": "That template is no longer available.",
       "too_long": "One of the fields is too long."
-    }
+    },
+    "quickTitle": "Quick create",
+    "moreOptions": "More options"
   },
   "guest": {
     "metaFallback": "A gathering",
