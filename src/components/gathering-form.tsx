@@ -18,7 +18,7 @@ import { GatheringCover } from '@/components/gathering-cover';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { supabase } from '@/integrations/supabase/client';
 import { uploadMedia, workspaceQuery } from '@/lib/account';
-import { COVER_STYLES, datePresets, isOnline, rpcError, shareLink, toLocalInput } from '@/lib/gatherings';
+import { COVER_STYLES, datePresets, isOnline, rpcError, shareLink, toLocalInput, usualSlot } from '@/lib/gatherings';
 import { useMapsKey, loadMaps } from '@/lib/maps-client';
 import { checklistOf, eventDetailQuery, templatesQuery } from '@/lib/templates';
 import { UpgradeSheet } from '@/components/plan-page';
@@ -37,6 +37,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const sourceId = eventId ?? fromId;
   const { data: source } = useQuery({ ...eventDetailQuery(sourceId ?? ''), enabled: !!sourceId });
   const mapsKey = useMapsKey();
+  const { data: history = [] } = useQuery({ queryKey: ['host-slots', userId], enabled: !editing, staleTime: 300000,
+    queryFn: async () => (await supabase.from('events').select('starts_at, series_id').eq('host_id', userId).neq('status', 'draft').order('starts_at', { ascending: false }).limit(60)).data ?? [] });
 
   const [category, setCategory] = useState<Category>('more'); const [categoryLabel, setCategoryLabel] = useState('');
   const [title, setTitle] = useState(''); const [coverPath, setCoverPath] = useState<string | null>(null); const [coverStyle, setCoverStyle] = useState(0);
@@ -111,7 +113,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
 
   const urlBad = place === 'online' && url.trim() !== '' && !/^https:\/\/\S+$/i.test(url.trim());
   const valid = title.trim() && start && !urlBad && (place === 'person' || url.trim()) && (!capacity || Number(capacity) >= 1) && (!priceCents || (priceCents >= 100 && priceCents <= 100000));
-  const presets = datePresets();
+  const presets = datePresets(); const usual = editing ? null : usualSlot(history);
   const startDate = start ? new Date(start) : null;
 
   const payload = () => ({
@@ -199,7 +201,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
 
       <section className="form-section">
         <span className="field-label">{t('gathering.when')}</span>
-        <div className="chip-row">{presets.map(p => { const v = toLocalInput(p.date); return <button key={p.key} type="button" className={`preset-chip ${start === v ? 'is-selected' : ''}`} aria-pressed={start === v} onClick={() => setStart(v)}>{t(`gathering.presets.${p.key}`, { time: p.date.toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' }) })}</button>; })}</div>
+        <div className="chip-row">{usual && (() => { const v = toLocalInput(usual); return <button type="button" className={`preset-chip is-usual ${start === v ? 'is-selected' : ''}`} aria-pressed={start === v} onClick={() => setStart(v)}>{t('gathering.presets.usual', { day: usual.toLocaleDateString(lang, { weekday: 'short' }), time: usual.toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' }) })}</button>; })()}{presets.map(p => { const v = toLocalInput(p.date); return <button key={p.key} type="button" className={`preset-chip ${start === v ? 'is-selected' : ''}`} aria-pressed={start === v} onClick={() => setStart(v)}>{t(`gathering.presets.${p.key}`, { time: p.date.toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' }) })}</button>; })}</div>
         <Input type="datetime-local" className="field-input" value={start} onChange={e => setStart(e.target.value)} aria-label={t('gathering.custom')} />
         {full && <>
         <span className="field-label">{t('gathering.duration')}</span>
