@@ -1,3 +1,4 @@
+import { CropFileInput } from '@/components/image-crop';
 import { EmptyState } from '@/components/launch-states';
 import { useTranslateFill } from '@/lib/assistant-client';
 import { confirmAction } from '@/components/confirm-dialog';
@@ -43,7 +44,7 @@ function CoverPicker({ teamId, path, styleIdx, title, onPath, onStyle }: { teamI
   return <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
     <LearnCover path={path} style={styleIdx} title={title || 'L'} className="is-wide" />
     <div className="cover-styles" role="group" aria-label={t('onboarding.cover')}>{COVER_STYLES.map((bg, i) => <button key={i} type="button" className={`cover-swatch ${!path && styleIdx === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} aria-label={`${t('onboarding.cover')} ${i + 1}`} aria-pressed={!path && styleIdx === i} onClick={() => { onPath(null); onStyle(i); }} />)}</div>
-    <label className="file-button"><Upload />{busy ? t('onboarding.saving') : t('onboarding.uploadCover')}<input type="file" accept="image/*" hidden onChange={async e => { const f = e.target.files?.[0]; if (!f) return; setBusy(true); try { onPath(await uploadLearnFile(teamId, await compressImage(f), () => {})); } catch (err) { toast.error(errMsg(t, err)); } setBusy(false); }} /></label></div>;
+    <label className="file-button"><Upload />{busy ? t('onboarding.saving') : t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={async r => { setBusy(true); try { onPath(await uploadLearnFile(teamId, r.file, () => {})); } catch (err) { toast.error(errMsg(t, err)); } setBusy(false); }} /></label></div>;
 }
 
 function TrackEditor({ track, teamId, onClose }: { track: Partial<Track> | null; teamId: string; onClose: () => void }) {

@@ -13,8 +13,9 @@ function usePlaybookText() {
   const day = (d: number) => new Date(Date.UTC(2024, 0, 7 + d, 12)).toLocaleDateString(lang, { weekday: 'long', timeZone: 'UTC' });
   const time = (h: number) => new Date(Date.UTC(2024, 0, 7, h)).toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' });
   const num = (n: number) => n.toLocaleString(lang, { maximumFractionDigits: 1 });
-  return (c: Card) => c.kind === 'slot' ? t('playbook.slot', { cat: cat(c.category), day: day(c.params.dow), time: time(c.params.hour), ratio: num(c.params.ratio) })
-    : c.kind === 'length' ? t('playbook.length', { cat: cat(c.category), min: c.params.min, max: c.params.max })
+  const any = (c: Card) => !c.category || c.category === 'more';
+  return (c: Card) => c.kind === 'slot' ? t(any(c) ? 'playbook.slotAny' : 'playbook.slot', { cat: cat(c.category), day: day(c.params.dow), time: time(c.params.hour), ratio: num(c.params.ratio) })
+    : c.kind === 'length' ? t(any(c) ? 'playbook.lengthAny' : 'playbook.length', { cat: cat(c.category), min: c.params.min, max: c.params.max })
     : t('playbook.followup', { fast: c.params.fast, slow: c.params.slow });
 }
 

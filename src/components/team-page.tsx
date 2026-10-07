@@ -1,3 +1,4 @@
+import { CropFileInput } from '@/components/image-crop';
 import { CopyButton } from '@/components/copy-button';
 import { trackEvent } from '@/lib/analytics';
 import { EmptyState, ListSkeleton } from "@/components/launch-states";
@@ -304,7 +305,7 @@ function EditTeamSheet({ open, onOpenChange, team, userId }: { open: boolean; on
       <div className="form-field"><label className="field-label" htmlFor="team-name">{t('onboarding.teamName')}</label><Input id="team-name" className="field-input" value={name} maxLength={80} onChange={e => setName(e.target.value)} /></div>
       <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
         <div className="cover-edit" style={shown ? { backgroundImage: `url(${shown})` } : color ? { background: `linear-gradient(135deg, ${color}, var(--lavender))` } : undefined}>{!shown && <span className="team-cover-initial">{(name.trim()[0] ?? 'G').toUpperCase()}</span>}</div>
-        <div className="photo-row"><label className="file-button"><Upload />{t('onboarding.uploadCover')}<input type="file" accept="image/*" hidden onChange={e => { const f = e.target.files?.[0]; if (f) { setFile(f); setPreview(URL.createObjectURL(f)); setRemoveCover(false); } }} /></label>
+        <div className="photo-row"><label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={r => { setFile(r.file); setPreview(r.previewUrl); setRemoveCover(false); }} /></label>
           {shown && <button type="button" className="auth-link" onClick={() => { setFile(null); setPreview(null); setRemoveCover(true); }}>{t('onboarding.removePhoto')}</button>}</div></div>
       <div className="form-field"><span className="field-label">{t('teamSpace.brandColor')}</span>
         <div className="swatches">{TEAM_COLORS.map(value => <button type="button" key={value} className={`swatch ${color === value ? 'is-selected' : ''}`} style={{ background: value }} aria-label={value} aria-pressed={color === value} onClick={() => setColor(value)}>{color === value && <Check />}</button>)}

@@ -1,3 +1,4 @@
+import { CropFileInput } from '@/components/image-crop';
 import { EmptyState } from '@/components/launch-states';
 import { trackEvent } from '@/lib/analytics';
 import { confirmAction } from '@/components/confirm-dialog';
@@ -133,7 +134,7 @@ export function ChallengeEditor({ draft, teamId, onClose }: { draft: Partial<Cha
       <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
         <GatheringCover path={f.cover_url} style={f.cover_style} title={f.title_en || f.title_es || 'C'} className="cover-preview" />
         <div className="cover-styles">{COVER_STYLES.map((bg, i) => <button key={i} type="button" className={`cover-swatch ${!f.cover_url && f.cover_style === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} aria-label={`${t('onboarding.cover')} ${i + 1}`} aria-pressed={!f.cover_url && f.cover_style === i} onClick={() => setF({ ...f, cover_url: null, cover_style: i })} />)}</div>
-        <label className="file-button"><Upload />{t('onboarding.uploadCover')}<input type="file" accept="image/*" hidden onChange={async e => { const x = e.target.files?.[0]; if (!x) return; try { setF({ ...f, cover_url: await uploadMedia(userId, await compressImage(x), 'cover') }); } catch { toast.error(t('profile.saveError')); } }} /></label></div>
+        <label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={async r => { try { setF({ ...f, cover_url: await uploadMedia(userId, r.file, 'cover') }); } catch { toast.error(t('profile.saveError')); } }} /></label></div>
       <label className={`switch-row ${canSell ? '' : 'is-disabled'}`}><Switch checked={paid} disabled={!canSell} onCheckedChange={setPaid} /><span><strong>{t('challenges.paid')}</strong><small>{canSell ? t('billing.priceHint') : t('billing.priceNeedsPayouts')}</small></span></label>
       {paid && canSell && <div><label className="field-label" htmlFor="c-price">{t('billing.price')}</label><Input id="c-price" inputMode="decimal" className="field-input" value={price} onChange={e => setPrice(e.target.value.replace(/[^\d.]/g, '').slice(0, 7))} placeholder="$0" /></div>}
       <Button className="onboarding-continue" disabled={busy || !ok} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
