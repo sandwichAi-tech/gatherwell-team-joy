@@ -76,5 +76,5 @@
 - [x] 2. Smarter time presets learned from each host
 - [x] 3. More repeat options
 - [x] 4. Team sign-ups (host picks per-person or per-team pricing)
-- [ ] 5. Social share kit
+- [x] 5. Social share kit
 - [ ] 6. Promo codes
