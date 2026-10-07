@@ -71,7 +71,7 @@ export function ImageCropSheet({ file, kind, withSquare, onCancel, onDone }: { f
 
   useEffect(() => {
     const c = preview.current; if (!c || !img) return;
-    const pw = kind === 'avatar' ? 72 : 120, ph = Math.round(pw / ratio); c.width = pw * 2; c.height = ph * 2; c.style.width = `${pw}px`; c.style.height = `${ph}px`;
+    const pw = kind === 'avatar' ? 72 : Math.round(Math.min(120, 120 * ratio)), ph = Math.round(pw / ratio); c.width = pw * 2; c.height = ph * 2; c.style.width = `${pw}px`; c.style.height = `${ph}px`;
     const ctx = c.getContext('2d'); if (!ctx) return;
     ctx.clearRect(0, 0, c.width, c.height);
     ctx.drawImage(img, rect.sx, rect.sy, rect.sw, rect.sh, 0, 0, c.width, c.height);

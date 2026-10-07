@@ -1538,3 +1538,4 @@ a.gw-cat-chip:hover{background:#fff}
 .invite-how ol{margin:8px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:8px;color:var(--body)}
 .crop-body{min-width:0;overflow:hidden;box-sizing:border-box}
 .crop-zoom input{box-sizing:border-box}
+.crop-frame,.crop-preview,.crop-presets,.crop-zoom{flex-shrink:0}
