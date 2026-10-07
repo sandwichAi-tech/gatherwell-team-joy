@@ -101,3 +101,40 @@ export function usualSlot(starts: { starts_at: string; series_id: string | null 
   if (d <= now) d.setDate(d.getDate() + 7);
   return d;
 }
+
+export const REPEATS = ['none', 'daily', 'weekdays', 'weekly', 'biweekly', 'monthly', 'custom'] as const;
+export type Repeat = typeof REPEATS[number];
+export type MonthlyMode = 'date' | 'nth' | 'last';
+export type RepeatRule = { kind: Repeat; monthly: MonthlyMode; days: number[]; endMode: 'count' | 'until'; count: number; until: string };
+
+/** Expands a repeat rule into concrete start dates (local time kept), capped at 52. */
+export function expandRepeat(start: Date, r: RepeatRule): Date[] {
+  if (r.kind === 'none') return [start];
+  const max = r.endMode === 'count' ? Math.max(1, Math.min(52, r.count)) : 52;
+  const until = r.endMode === 'until' && r.until ? new Date(`${r.until}T23:59:59`) : null;
+  const out: Date[] = []; const ok = (d: Date) => !until || d <= until;
+  const push = (d: Date) => { if (out.length < max && ok(d)) out.push(d); };
+  const at = (base: Date) => { const d = new Date(base); d.setHours(start.getHours(), start.getMinutes(), 0, 0); return d; };
+  if (r.kind === 'monthly') {
+    const nth = Math.floor((start.getDate() - 1) / 7); const wd = start.getDay();
+    for (let i = 0; i < 400 && out.length < max; i++) {
+      const y = start.getFullYear(), m = start.getMonth() + i; let d: Date | null = null;
+      if (r.monthly === 'date') { const c = new Date(y, m, start.getDate()); if (c.getDate() === start.getDate()) d = c; }
+      else if (r.monthly === 'nth') { const f = new Date(y, m, 1); const day = 1 + ((wd - f.getDay() + 7) % 7) + nth * 7; const c = new Date(y, m, day); if (c.getMonth() === ((m % 12) + 12) % 12) d = c; }
+      else { const l = new Date(y, m + 1, 0); d = new Date(y, m, l.getDate() - ((l.getDay() - wd + 7) % 7)); }
+      if (d) { const x = at(d); if (x >= start || i === 0) { if (!ok(x)) break; push(x); } }
+    }
+    return out.length ? out : [start];
+  }
+  if (r.kind === 'weekly' || r.kind === 'biweekly') {
+    const step = r.kind === 'weekly' ? 7 : 14;
+    for (let i = 0; out.length < max; i++) { const d = new Date(start); d.setDate(d.getDate() + i * step); if (!ok(d)) break; push(d); }
+    return out;
+  }
+  const days = r.kind === 'daily' ? [0, 1, 2, 3, 4, 5, 6] : r.kind === 'weekdays' ? [1, 2, 3, 4, 5] : (r.days.length ? r.days : [start.getDay()]);
+  for (let i = 0; i < 400 && out.length < max; i++) {
+    const d = new Date(start); d.setDate(d.getDate() + i); if (!ok(d)) break;
+    if (days.includes(d.getDay())) push(d);
+  }
+  return out.length ? out : [start];
+}

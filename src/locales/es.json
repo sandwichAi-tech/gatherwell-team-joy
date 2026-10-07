@@ -832,7 +832,36 @@
       "too_long": "Uno de los campos es demasiado largo."
     },
     "quickTitle": "Creación rápida",
-    "moreOptions": "Más opciones"
+    "moreOptions": "Más opciones",
+    "repeats": {
+      "none": "No se repite",
+      "daily": "Todos los días",
+      "weekdays": "Entre semana",
+      "weekly": "Cada semana",
+      "biweekly": "Cada 2 semanas",
+      "monthly": "Cada mes",
+      "custom": "Personalizado"
+    },
+    "monthly": {
+      "date": "Día {{date}}",
+      "nth": "{{nth}} {{day}}",
+      "last": "Último {{day}}"
+    },
+    "nth": {
+      "0": "Primer",
+      "1": "Segundo",
+      "2": "Tercer",
+      "3": "Cuarto",
+      "4": "Quinto"
+    },
+    "pickDays": "Elige los días",
+    "ends": "Termina",
+    "end": {
+      "count": "Después de",
+      "until": "En una fecha",
+      "times": "veces"
+    },
+    "repeatSummary": "{{count}} fechas, la última el {{last}}"
   },
   "guest": {
     "metaFallback": "Una reunión",

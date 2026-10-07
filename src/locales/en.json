@@ -832,7 +832,36 @@
       "too_long": "One of the fields is too long."
     },
     "quickTitle": "Quick create",
-    "moreOptions": "More options"
+    "moreOptions": "More options",
+    "repeats": {
+      "none": "Does not repeat",
+      "daily": "Every day",
+      "weekdays": "Weekdays",
+      "weekly": "Every week",
+      "biweekly": "Every 2 weeks",
+      "monthly": "Monthly",
+      "custom": "Custom"
+    },
+    "monthly": {
+      "date": "Day {{date}}",
+      "nth": "{{nth}} {{day}}",
+      "last": "Last {{day}}"
+    },
+    "nth": {
+      "0": "First",
+      "1": "Second",
+      "2": "Third",
+      "3": "Fourth",
+      "4": "Fifth"
+    },
+    "pickDays": "Pick days",
+    "ends": "Ends",
+    "end": {
+      "count": "After",
+      "until": "On a date",
+      "times": "times"
+    },
+    "repeatSummary": "{{count}} dates, last one {{last}}"
   },
   "guest": {
     "metaFallback": "A gathering",
