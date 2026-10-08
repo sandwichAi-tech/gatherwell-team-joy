@@ -579,7 +579,8 @@
       "team": "Solo equipo"
     },
     "openEvent": "Abrir página del encuentro",
-    "breadcrumb": "Ruta del equipo"
+    "breadcrumb": "Ruta del equipo",
+    "telegram": "Telegram"
   },
   "templates": {
     "heading": "Plantillas",
@@ -2268,6 +2269,17 @@
     "languages": {
       "en": "Inglés",
       "es": "Español"
+    },
+    "texts": {
+      "title": "Mensajes de texto",
+      "simTitle": "Simular respuesta",
+      "simBody": "Simula que un teléfono respondió. Prueba IN, OUT, SI, NO, STOP o HELP.",
+      "phone": "Número de teléfono",
+      "reply": "Texto de respuesta",
+      "run": "Simular",
+      "result": "Resultado: {{result}}",
+      "empty": "Todavía no hay mensajes de texto.",
+      "latestInvites": "Invitaciones recientes"
     }
   },
   "legalDocs": {
@@ -2770,19 +2782,25 @@
     "postCount_one": "{{count}} publicación",
     "postCount_other": "{{count}} publicaciones",
     "joinChat": "Únete al chat del grupo",
-    "addChat": "Agregar enlace de grupo de WhatsApp",
-    "editChat": "Editar enlace del chat",
-    "chatLabel": "Enlace de invitación al grupo de WhatsApp",
-    "chatHint": "Pega el enlace de invitación de WhatsApp. Déjalo vacío para quitarlo.",
-    "saveLink": "Guardar enlace",
-    "linkSaved": "Enlace del chat guardado",
-    "badLink": "Ese no parece un enlace de invitación a un grupo de WhatsApp.",
+    "addChat": "Agregar enlace de chat grupal",
+    "editChat": "Editar enlaces de chat grupal",
+    "chatLabel": "Enlace de invitación al chat grupal",
+    "chatHint": "Pega un enlace de invitación de WhatsApp, Telegram, Signal, GroupMe, Messenger o Discord.",
+    "saveLink": "Guardar enlaces",
+    "linkSaved": "Enlaces de chat guardados",
+    "badLink": "Ese enlace no parece una invitación de chat grupal compatible.",
     "errors": {
       "blocked_claim": "Mantén el tema en la reunión. No se permiten afirmaciones de salud, peso ni ingresos.",
       "rate_limited": "Estás publicando muy rápido. Intenta de nuevo en un minuto.",
       "not_allowed": "No puedes publicar aquí.",
       "invalid_title": "Ponle un título al tema."
-    }
+    },
+    "joinOn": "Únete en {{platform}}",
+    "opensApp": "Abre la app del chat grupal",
+    "removeLink": "Quitar enlace",
+    "addAnother": "Agregar",
+    "detected": "Detectado: {{platform}}",
+    "tooMany": "Puedes agregar hasta 5 chats grupales."
   },
   "confirm": {
     "cancel": "Cancelar",
@@ -3131,5 +3149,22 @@
       "dates": "La fecha final debe ser después de la inicial.",
       "taken": "Ya tienes un código con ese nombre."
     }
+  },
+  "textInvite": {
+    "open": "Invitar por mensaje",
+    "title": "Invitar por mensaje de texto",
+    "body": "Solo aparecen personas que aceptaron recibir mensajes en las reuniones de tu equipo. Pueden responder SI para reservar su lugar.",
+    "preview": "Vista previa del mensaje",
+    "previewText": "{{host}} te invita a {{title}}, {{date}}. Responde SI para reservar tu lugar. Responde STOP para no recibir más.",
+    "empty": "Todavía nadie aceptó recibir mensajes. Quienes marquen la opción de mensajes al confirmar aparecerán aquí.",
+    "selectAll": "Seleccionar todo",
+    "send_one": "Enviar a {{count}} persona",
+    "send_other": "Enviar a {{count}} personas",
+    "sent_one": "Invitación en cola para {{count}} persona",
+    "sent_other": "Invitaciones en cola para {{count}} personas",
+    "invited": "Invitada",
+    "notConnected": "Aún no conectado: los mensajes se simulan y se registran hasta activar los mensajes de texto.",
+    "error": "No pudimos enviar las invitaciones. Inténtalo de nuevo.",
+    "replies": "Respuestas hasta ahora: {{count}}"
   }
 }

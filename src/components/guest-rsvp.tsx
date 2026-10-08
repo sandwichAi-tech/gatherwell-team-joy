@@ -1,3 +1,4 @@
+import { tgShare } from '@/lib/chat-links';
 import { PromoField } from '@/components/promo-field';
 import { promoDiscount, type Promo } from '@/lib/promo';
 import { CopyButton } from '@/components/copy-button';
@@ -7,7 +8,7 @@ import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { QRCodeSVG } from 'qrcode.react';
 import { toast } from 'sonner';
-import { CalendarPlus, Copy, MessageCircle, MessageSquareText, Minus, Navigation, Plus, Video } from '@/components/icons';
+import { CalendarPlus, Copy, MessageCircle, MessageSquareText, Minus, Navigation, Plus, Video, Send } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -43,7 +44,7 @@ export function InviteShare({ eventId, title, when }: { eventId: string; title: 
   const link = guestLink(eventId); const text = t('guest.inviteText', { title, date: when, link });
   return <div className="share-grid">
     <CopyButton text={link} />
-    <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(text)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button>
+    <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(text)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button><Button asChild variant="secondary"><a href={tgShare(text)} target="_blank" rel="noopener noreferrer"><Send />{t('teamSpace.telegram')}</a></Button>
     <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(text)}`}><MessageSquareText />{t('gathering.text')}</a></Button>
   </div>;
 }

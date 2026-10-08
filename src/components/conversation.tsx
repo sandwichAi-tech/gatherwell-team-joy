@@ -13,6 +13,8 @@ import { ReportButton } from '@/components/report-button';
 import { supabase } from '@/integrations/supabase/client';
 import { initialsOf } from '@/lib/account';
 import { rosterQuery } from '@/lib/team';
+import { GwFeatureTile, GwIcon, type GwIconProps } from '@/components/gw-icon';
+import { CHAT_LABEL, detectChatPlatform, type ChatLink, type ChatPlatform } from '@/lib/chat-links';
 
 const db = supabase as any;
 const KINDS = [['heart', Heart], ['clap', ThumbsUp], ['highfive', PartyPopper]] as const;
@@ -170,7 +172,7 @@ export function DiscussionsPanel({ teamId, isLeader, me }: { teamId: string; isL
   </section>;
 }
 
-const CHAT_ICON: Record<ChatPlatform, GwIconProps['name']> = { whatsapp: 'MessageCircle', telegram: 'Send', signal: 'MessageSquare', groupme: 'UsersRound', messenger: 'MessageSquareText', discord: 'Headphones' as GwIconProps['name'] };
+const CHAT_ICON: Record<ChatPlatform, GwIconProps['name']> = { whatsapp: 'MessageCircle', telegram: 'Send', signal: 'MessageSquare', groupme: 'UsersRound', messenger: 'MessageSquareText', discord: 'Link2' };
 
 /** "Join the group chat" buttons (several platforms) plus an editor for hosts/leaders. */
 export function GroupChatLink({ table, id, links, canEdit }: { table: 'events' | 'teams'; id: string; links: ChatLink[]; canEdit: boolean }) {
