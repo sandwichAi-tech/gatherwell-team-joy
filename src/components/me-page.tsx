@@ -248,6 +248,7 @@ export function MePage() {
     </SettingsGroup>
     {(isHost || isAdmin) && <SettingsGroup title={t('profile.groupHost')}>
       {isHost && linkRow('FileText', t('offers.title'), '/offers')}
+      {isHost && linkRow('Gift', t('promo.title'), '/promos')}
       {isAdmin && linkRow('ShieldCheck', t('admin.menu'), '/admin', undefined, { tab: 'overview' })}
       {isAdmin && linkRow('ImageDown', t('siteMedia.menu'), '/admin/site-media')}
     </SettingsGroup>}
