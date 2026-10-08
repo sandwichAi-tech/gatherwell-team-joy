@@ -1,4 +1,12 @@
 import { createServerFn } from '@tanstack/react-start';
+import { normalizeCode, promoDiscount, type PromoCheck } from '@/lib/promo';
+
+/** Validates an optional promo code server-side; null when none was entered. */
+export async function promoFor(sb: { rpc: (fn: any, args?: any) => any }, code: string, kind: 'gathering' | 'challenge' | 'offer', target: string, buyer: string): Promise<PromoCheck | null> {
+  const c = normalizeCode(code ?? ''); if (!c) return null;
+  const { data } = await sb.rpc('check_promo', { _code: c, _kind: kind, _target: target, _buyer: buyer });
+  return (data as PromoCheck | null) ?? { ok: false, error: 'invalid' };
+}
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 
@@ -88,7 +96,7 @@ export const startConnectOnboarding = createServerFn({ method: 'POST' })
 export const startTicketCheckout = createServerFn({ method: 'POST' })
   .inputValidator((d: unknown) => z.object({
     eventId: z.string().uuid(), first: z.string().trim().min(1).max(60), last: z.string().trim().max(60), phone: z.string().trim().max(30), email: z.string().trim().email().max(200),
-    plusOnes: z.number().int().min(0).max(3), sms: z.boolean(), mail: z.boolean(), lang: z.enum(['en', 'es']), origin, waiverName: z.string().trim().max(120).optional().default(''),
+    plusOnes: z.number().int().min(0).max(3), sms: z.boolean(), mail: z.boolean(), lang: z.enum(['en', 'es']), origin, waiverName: z.string().trim().max(120).optional().default(''), promo: z.string().max(20).optional().default(''),
   }).parse(d))
   .handler(async ({ data }): Promise<Result> => {
     const { stripe, stripeKey, FEE_PCT } = await import('./billing/stripe.server');
@@ -104,9 +112,15 @@ export const startTicketCheckout = createServerFn({ method: 'POST' })
     const { data: ep } = await supabaseAdmin.rpc('effective_plan', { _uid: ev.host_id });
     const plan = ((ep as { plan?: string } | null)?.plan ?? 'free') as keyof typeof FEE_PCT;
     const qty = 1 + data.plusOnes;
-    const fee = Math.round(ev.price_cents * qty * FEE_PCT[plan] / 100);
+    const promo = await promoFor(supabaseAdmin, data.promo, 'gathering', ev.id, data.email);
+    if (promo && !promo.ok) return { ok: false, error: `promo_${promo.error}` };
+    const discount = promo?.ok ? promoDiscount(ev.price_cents * qty, promo) : 0;
+    const net = ev.price_cents * qty - discount;
+    const fee = Math.round(net * FEE_PCT[plan] / 100);
     const booking = ev.pass_fee ? fee : 0;
-    const items: Record<string, unknown>[] = [{ quantity: qty, price_data: { currency: 'usd', unit_amount: ev.price_cents, product_data: { name: ev.title } } }];
+    const items: Record<string, unknown>[] = [discount
+      ? { quantity: 1, price_data: { currency: 'usd', unit_amount: net, product_data: { name: `${ev.title} × ${qty} (${promo!.ok ? promo!.code : ''})` } } }
+      : { quantity: qty, price_data: { currency: 'usd', unit_amount: ev.price_cents, product_data: { name: ev.title } } }];
     if (booking) items.push({ quantity: 1, price_data: { currency: 'usd', unit_amount: booking, product_data: { name: data.lang === 'es' ? 'Cargo por reservación' : 'Booking fee' } } });
     const meta = { kind: 'gathering', event_id: ev.id, first: data.first, last: data.last, phone: data.phone, email: data.email, plus: String(data.plusOnes), sms: String(data.sms), mail: String(data.mail), lang: data.lang, waiver: ev.requires_waiver ? data.waiverName : '', waiver_ip: ev.requires_waiver ? waiverIp : '' };
     const s = await stripe<{ id: string; url: string }>('checkout/sessions', {
@@ -115,7 +129,7 @@ export const startTicketCheckout = createServerFn({ method: 'POST' })
       success_url: `${data.origin}/e/${ev.id}?paid=1`, cancel_url: `${data.origin}/e/${ev.id}`,
     });
     await supabaseAdmin.from('payments').insert({ kind: 'gathering', event_id: ev.id, host_id: ev.host_id, buyer_name: `${data.first} ${data.last}`.trim(), buyer_email: data.email,
-      amount_cents: ev.price_cents * qty + booking, fee_cents: fee, booking_fee_cents: booking, stripe_session_id: s.id });
+      amount_cents: net + booking, fee_cents: fee, booking_fee_cents: booking, stripe_session_id: s.id, promo_id: promo?.ok ? promo.id : null, discount_cents: discount, buyer_key: data.email.toLowerCase() });
     return { ok: true, url: s.url };
   });
 
@@ -140,7 +154,7 @@ export const refundPayments = createServerFn({ method: 'POST' })
 /** Signed-in member pays to join a paid challenge; the webhook adds them once paid. */
 export const startChallengeCheckout = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ challengeId: z.string().uuid(), origin, lang: z.enum(['en', 'es']) }).parse(d))
+  .inputValidator((d: unknown) => z.object({ challengeId: z.string().uuid(), origin, lang: z.enum(['en', 'es']), promo: z.string().max(20).optional().default('') }).parse(d))
   .handler(async ({ data, context }): Promise<Result> => {
     const { stripe, stripeKey, FEE_PCT } = await import('./billing/stripe.server');
     if (!stripeKey()) return notConnected;
@@ -151,10 +165,15 @@ export const startChallengeCheckout = createServerFn({ method: 'POST' })
     if (!b?.connect_account_id || b.connect_status !== 'active') return { ok: false, error: 'host_not_ready' };
     const { data: ep } = await supabaseAdmin.rpc('effective_plan', { _uid: c.created_by });
     const plan = ((ep as { plan?: string } | null)?.plan ?? 'free') as keyof typeof FEE_PCT;
-    const fee = Math.round(c.price_cents * FEE_PCT[plan] / 100);
+    const email = ((context.claims.email as string) ?? '').toLowerCase();
+    const promo = await promoFor(supabaseAdmin, data.promo, 'challenge', c.id, email || context.userId);
+    if (promo && !promo.ok) return { ok: false, error: `promo_${promo.error}` };
+    const discount = promo?.ok ? promoDiscount(c.price_cents, promo) : 0;
+    const net = c.price_cents - discount;
+    const fee = Math.round(net * FEE_PCT[plan] / 100);
     const booking = b.pass_fee ? fee : 0;
     const name = (data.lang === 'es' ? c.title_es : c.title_en) || c.title_en || c.title_es;
-    const items: Record<string, unknown>[] = [{ quantity: 1, price_data: { currency: 'usd', unit_amount: c.price_cents, product_data: { name } } }];
+    const items: Record<string, unknown>[] = [{ quantity: 1, price_data: { currency: 'usd', unit_amount: net, product_data: { name } } }];
     if (booking) items.push({ quantity: 1, price_data: { currency: 'usd', unit_amount: booking, product_data: { name: data.lang === 'es' ? 'Cargo por reservación' : 'Booking fee' } } });
     const meta = { kind: 'challenge', challenge_id: c.id, user_id: context.userId };
     const s = await stripe<{ id: string; url: string }>('checkout/sessions', {
@@ -162,6 +181,6 @@ export const startChallengeCheckout = createServerFn({ method: 'POST' })
       payment_intent_data: { application_fee_amount: fee, transfer_data: { destination: b.connect_account_id }, metadata: meta },
       success_url: `${data.origin}/challenge/${c.id}?paid=1`, cancel_url: `${data.origin}/challenge/${c.id}`,
     });
-    await supabaseAdmin.from('payments').insert({ kind: 'challenge', challenge_id: c.id, host_id: c.created_by, buyer_email: (context.claims.email as string) ?? null, amount_cents: c.price_cents + booking, fee_cents: fee, booking_fee_cents: booking, stripe_session_id: s.id });
+    await supabaseAdmin.from('payments').insert({ kind: 'challenge', challenge_id: c.id, host_id: c.created_by, buyer_email: (context.claims.email as string) ?? null, amount_cents: net + booking, fee_cents: fee, booking_fee_cents: booking, stripe_session_id: s.id, promo_id: promo?.ok ? promo.id : null, discount_cents: discount, buyer_key: email || context.userId });
     return { ok: true, url: s.url };
   });

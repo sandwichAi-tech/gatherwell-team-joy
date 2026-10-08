@@ -38,6 +38,7 @@ import { Route as AuthenticatedAppMeRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAppNetworkRouteImport } from './routes/_authenticated/_app/network'
 import { Route as AuthenticatedAppOffersRouteImport } from './routes/_authenticated/_app/offers'
 import { Route as AuthenticatedAppPlanRouteImport } from './routes/_authenticated/_app/plan'
+import { Route as AuthenticatedAppPromosRouteImport } from './routes/_authenticated/_app/promos'
 import { Route as AuthenticatedAppTeamRouteImport } from './routes/_authenticated/_app/team'
 import { Route as AuthenticatedAppAdminIndexRouteImport } from './routes/_authenticated/_app/admin.index'
 import { Route as AuthenticatedAppAdminSiteMediaRouteImport } from './routes/_authenticated/_app/admin.site-media'
@@ -209,6 +210,11 @@ const AuthenticatedAppPlanRoute = AuthenticatedAppPlanRouteImport.update({
   path: '/plan',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppPromosRoute = AuthenticatedAppPromosRouteImport.update({
+  id: '/promos',
+  path: '/promos',
+  getParentRoute: () => AuthenticatedAppRouteRoute,
+} as any)
 const AuthenticatedAppTeamRoute = AuthenticatedAppTeamRouteImport.update({
   id: '/team',
   path: '/team',
@@ -377,6 +383,7 @@ export interface FileRoutesByFullPath {
   '/network': typeof AuthenticatedAppNetworkRoute
   '/offers': typeof AuthenticatedAppOffersRoute
   '/plan': typeof AuthenticatedAppPlanRoute
+  '/promos': typeof AuthenticatedAppPromosRoute
   '/team': typeof AuthenticatedAppTeamRoute
   '/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
@@ -431,6 +438,7 @@ export interface FileRoutesByTo {
   '/network': typeof AuthenticatedAppNetworkRoute
   '/offers': typeof AuthenticatedAppOffersRoute
   '/plan': typeof AuthenticatedAppPlanRoute
+  '/promos': typeof AuthenticatedAppPromosRoute
   '/team': typeof AuthenticatedAppTeamRoute
   '/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
@@ -488,6 +496,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/network': typeof AuthenticatedAppNetworkRoute
   '/_authenticated/_app/offers': typeof AuthenticatedAppOffersRoute
   '/_authenticated/_app/plan': typeof AuthenticatedAppPlanRoute
+  '/_authenticated/_app/promos': typeof AuthenticatedAppPromosRoute
   '/_authenticated/_app/team': typeof AuthenticatedAppTeamRoute
   '/_authenticated/_app/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/_authenticated/_app/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
@@ -544,6 +553,7 @@ export interface FileRouteTypes {
     | '/network'
     | '/offers'
     | '/plan'
+    | '/promos'
     | '/team'
     | '/admin/site-media'
     | '/challenge/$id'
@@ -598,6 +608,7 @@ export interface FileRouteTypes {
     | '/network'
     | '/offers'
     | '/plan'
+    | '/promos'
     | '/team'
     | '/admin/site-media'
     | '/challenge/$id'
@@ -654,6 +665,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/network'
     | '/_authenticated/_app/offers'
     | '/_authenticated/_app/plan'
+    | '/_authenticated/_app/promos'
     | '/_authenticated/_app/team'
     | '/_authenticated/_app/admin/site-media'
     | '/_authenticated/_app/challenge/$id'
@@ -914,6 +926,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppPlanRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/promos': {
+      id: '/_authenticated/_app/promos'
+      path: '/promos'
+      fullPath: '/promos'
+      preLoaderRoute: typeof AuthenticatedAppPromosRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/team': {
       id: '/_authenticated/_app/team'
       path: '/team'
@@ -1102,6 +1121,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppNetworkRoute: typeof AuthenticatedAppNetworkRoute
   AuthenticatedAppOffersRoute: typeof AuthenticatedAppOffersRoute
   AuthenticatedAppPlanRoute: typeof AuthenticatedAppPlanRoute
+  AuthenticatedAppPromosRoute: typeof AuthenticatedAppPromosRoute
   AuthenticatedAppTeamRoute: typeof AuthenticatedAppTeamRoute
   AuthenticatedAppAdminSiteMediaRoute: typeof AuthenticatedAppAdminSiteMediaRoute
   AuthenticatedAppChallengeIdRoute: typeof AuthenticatedAppChallengeIdRoute
@@ -1132,6 +1152,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppNetworkRoute: AuthenticatedAppNetworkRoute,
   AuthenticatedAppOffersRoute: AuthenticatedAppOffersRoute,
   AuthenticatedAppPlanRoute: AuthenticatedAppPlanRoute,
+  AuthenticatedAppPromosRoute: AuthenticatedAppPromosRoute,
   AuthenticatedAppTeamRoute: AuthenticatedAppTeamRoute,
   AuthenticatedAppAdminSiteMediaRoute: AuthenticatedAppAdminSiteMediaRoute,
   AuthenticatedAppChallengeIdRoute: AuthenticatedAppChallengeIdRoute,

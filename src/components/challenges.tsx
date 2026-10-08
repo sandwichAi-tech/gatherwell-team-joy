@@ -1,3 +1,5 @@
+import { PromoField } from '@/components/promo-field';
+import { promoDiscount, type Promo } from '@/lib/promo';
 import { CropFileInput } from '@/components/image-crop';
 import { EmptyState } from '@/components/launch-states';
 import { trackEvent } from '@/lib/analytics';
@@ -234,7 +236,7 @@ export function ChallengePage({ id }: { id: string }) {
   const { data: mine = [] } = useQuery(myCheckinsQuery(userId, id));
   const { data: board = [] } = useQuery(leaderboardQuery(id));
   const [sheetDate, setSheetDate] = useState<string | null>(null); const [editing, setEditing] = useState<Partial<Challenge> | null>(null); const [busy, setBusy] = useState(false);
-  const payGate = usePaymentGate(); const payChallenge = useServerFn(startChallengeCheckout);
+  const payGate = usePaymentGate(); const payChallenge = useServerFn(startChallengeCheckout); const [promo, setPromo] = useState<Promo | null>(null);
   if (isError) return <RetryState retry={() => void refetch()} />;
   if (isLoading) return <ListSkeleton />;
   if (!c) return <section className="panel"><Link to="/team" className="back-link"><ArrowLeft />{t('nav.team')}</Link><p className="auth-subtitle">{t('learnHub.notFound')}</p></section>;
@@ -246,7 +248,7 @@ export function ChallengePage({ id }: { id: string }) {
   const meRow = board.find(r => r.user_id === userId); const top = board.slice(0, 10);
   const joined = !!joinedRow;
   const join = async () => {
-    if (c.is_paid && c.price_cents) { void payGate.run(() => payChallenge({ data: { challengeId: id, origin: window.location.origin, lang: lang === 'es' ? 'es' : 'en' } })); return; }
+    if (c.is_paid && c.price_cents) { void payGate.run(() => payChallenge({ data: { challengeId: id, origin: window.location.origin, lang: lang === 'es' ? 'es' : 'en', promo: promo?.code ?? '' } })); return; }
     setBusy(true); const { error } = await supabase.from('challenge_members').insert({ challenge_id: id, user_id: userId }); setBusy(false);
     if (error) { toast.error(t(rpcErrorKey(error))); return; }
     await Promise.all([refetchJoin(), qc.invalidateQueries({ queryKey: ['challenge-board', id] }), qc.invalidateQueries({ queryKey: ['challenges'] })]);
@@ -260,6 +262,7 @@ export function ChallengePage({ id }: { id: string }) {
     <div className="lesson-head"><span className="eyebrow">{phase === 'active' ? t('challenges.dayOf', { day: dayNumber(c, today), total: len }) : t(`challenges.phase.${phase}`)}</span>
       <h1>{title}</h1><p className="track-facts">{fmtDate(c.starts_on, lang)} – {fmtDate(c.ends_on, lang)} · {t('challenges.joinedCount', { count: board.length })}{c.is_paid && c.price_cents ? ` · ${formatMoney(c.price_cents, lang)}` : ''}</p>
       {desc && <p className="challenge-desc">{desc}</p>}
+      {!joined && phase !== 'past' && c.is_paid && !!c.price_cents && <PromoField kind="challenge" target={id} discountCents={promoDiscount(c.price_cents, promo)} value={promo} onChange={setPromo} />}
       <div className="recipe-actions">{!joined && phase !== 'past' && <Button disabled={busy} onClick={join}>{t('challenges.joinChallenge')}</Button>}{leader && <Button variant="secondary" onClick={() => setEditing(c)}><Pencil />{t('challenges.edit')}</Button>}</div></div>
 
     {joined && s.total >= len && <Finisher c={c} days={len} />}

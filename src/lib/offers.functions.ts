@@ -8,7 +8,7 @@ type Result = { ok: true; url: string } | { ok: false; error: string };
 /** Member buys an offer: subscription for memberships/courses, one-time payment for downloads. */
 export const startOfferCheckout = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ offerId: z.string().uuid(), origin, lang: z.enum(['en', 'es']) }).parse(d))
+  .inputValidator((d: unknown) => z.object({ offerId: z.string().uuid(), origin, lang: z.enum(['en', 'es']), promo: z.string().max(20).optional().default('') }).parse(d))
   .handler(async ({ data, context }): Promise<Result> => {
     const { data: o } = await context.supabase.from('offers').select('id, host_id, kind, title_en, title_es, price_cents, status').eq('id', data.offerId).maybeSingle();
     if (!o || o.status !== 'published') return { ok: false, error: 'not_open' };
@@ -21,19 +21,25 @@ export const startOfferCheckout = createServerFn({ method: 'POST' })
     const { data: ep } = await supabaseAdmin.rpc('effective_plan', { _uid: o.host_id });
     const plan = ((ep as { plan?: string } | null)?.plan ?? 'free') as keyof typeof FEE_PCT;
     const pct = FEE_PCT[plan];
+    const { promoFor } = await import('./billing.functions'); const { promoDiscount } = await import('./promo');
+    const email = ((context.claims.email as string) ?? '').toLowerCase();
+    const promo = await promoFor(supabaseAdmin, data.promo, 'offer', o.id, email || context.userId);
+    if (promo && !promo.ok) return { ok: false, error: `promo_${promo.error}` };
+    const discount = promo?.ok ? promoDiscount(o.price_cents, promo) : 0;
+    const net = o.price_cents - discount;
     const name = (data.lang === 'es' ? o.title_es : o.title_en) || o.title_en || o.title_es;
     const meta = { kind: 'offer', offer_id: o.id, user_id: context.userId };
     const recurring = o.kind !== 'download';
     const s = await stripe<{ id: string; url: string }>('checkout/sessions', {
       mode: recurring ? 'subscription' : 'payment', customer_email: context.claims.email as string | undefined, locale: data.lang === 'es' ? 'es-419' : 'en',
-      line_items: [{ quantity: 1, price_data: { currency: 'usd', unit_amount: o.price_cents, product_data: { name }, ...(recurring ? { recurring: { interval: 'month' } } : {}) } }],
+      line_items: [{ quantity: 1, price_data: { currency: 'usd', unit_amount: net, product_data: { name }, ...(recurring ? { recurring: { interval: 'month' } } : {}) } }],
       metadata: meta,
       ...(recurring
         ? { subscription_data: { metadata: meta, application_fee_percent: pct, transfer_data: { destination: b.connect_account_id } } }
-        : { payment_intent_data: { application_fee_amount: Math.round(o.price_cents * pct / 100), transfer_data: { destination: b.connect_account_id }, metadata: meta } }),
+        : { payment_intent_data: { application_fee_amount: Math.round(net * pct / 100), transfer_data: { destination: b.connect_account_id }, metadata: meta } }),
       success_url: `${data.origin}/offer/${o.id}?paid=1`, cancel_url: `${data.origin}/offer/${o.id}`,
     });
-    await supabaseAdmin.from('payments').insert({ kind: 'offer', offer_id: o.id, host_id: o.host_id, buyer_email: (context.claims.email as string) ?? null, amount_cents: o.price_cents, fee_cents: Math.round(o.price_cents * pct / 100), booking_fee_cents: 0, stripe_session_id: s.id });
+    await supabaseAdmin.from('payments').insert({ kind: 'offer', offer_id: o.id, host_id: o.host_id, buyer_email: (context.claims.email as string) ?? null, amount_cents: net, fee_cents: Math.round(net * pct / 100), booking_fee_cents: 0, stripe_session_id: s.id, promo_id: promo?.ok ? promo.id : null, discount_cents: discount, buyer_key: email || context.userId });
     return { ok: true, url: s.url };
   });
 

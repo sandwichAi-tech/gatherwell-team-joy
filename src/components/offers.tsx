@@ -1,3 +1,5 @@
+import { PromoField } from '@/components/promo-field';
+import { promoDiscount, type Promo } from '@/lib/promo';
 import { EmptyState } from '@/components/launch-states';
 import { CropFileInput } from '@/components/image-crop';
 import { BrandImage } from '@/components/brand-image';
@@ -162,7 +164,7 @@ export function OfferPage({ id, paid }: { id: string; paid?: boolean }) {
   const { data: gate } = useQuery(paymentsStatusQuery);
   const checkout = useServerFn(startOfferCheckout);
   const download = useServerFn(offerDownloadLink);
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState(false); const [promo, setPromo] = useState<Promo | null>(null);
   if (q.isPending) return <ListSkeleton />;
   if (q.isError) return <RetryState retry={() => void q.refetch()} />;
   const { offer, purchase, hostName } = q.data;
@@ -174,7 +176,7 @@ export function OfferPage({ id, paid }: { id: string; paid?: boolean }) {
     try {
       if (!offer.price_cents) { const { error } = await joinFreeOffer(offer.id); if (error) throw error; toast.success(t(offer.kind === 'download' ? 'offers.unlocked' : 'offers.joined')); await qc.invalidateQueries({ queryKey: ['offers'] }); }
       else {
-        const r = await checkout({ data: { offerId: offer.id, origin: window.location.origin, lang: lang === 'es' ? 'es' : 'en' } });
+        const r = await checkout({ data: { offerId: offer.id, origin: window.location.origin, lang: lang === 'es' ? 'es' : 'en', promo: promo?.code ?? '' } });
         if (r.ok) { window.location.href = r.url; return; }
         toast.error(t(`offers.errors.${r.error}`, { defaultValue: t('offers.errors.generic') }));
       }
@@ -203,6 +205,8 @@ export function OfferPage({ id, paid }: { id: string; paid?: boolean }) {
         {offer.kind === 'download' && <Button disabled={busy} onClick={getFile}><Download />{t('offers.download')}</Button>}
         {offer.kind !== 'download' && <Button asChild variant="secondary"><Link to="/events"><CalendarDays />{t('offers.seeGatherings')}</Link></Button>}
       </div> : offer.status === 'published' ? <>
+        {!!offer.price_cents && <PromoField kind="offer" target={offer.id} discountCents={promoDiscount(offer.price_cents, promo)} value={promo} onChange={setPromo} />}
+        {promo && !!offer.price_cents && <p className="offer-price">{formatMoney(offer.price_cents - promoDiscount(offer.price_cents, promo), lang)}</p>}
         <Button className="onboarding-continue" disabled={busy} onClick={buy}>{t(offer.kind === 'download' ? 'offers.buy' : 'offers.join')}</Button>
         {!!offer.price_cents && gate && !gate.connected && <p className="muted-small">{t('billing.notConnected')}</p>}
         {offer.kind !== 'download' && !!offer.price_cents && <p className="muted-small">{t('offers.cancelAnytime')}</p>}

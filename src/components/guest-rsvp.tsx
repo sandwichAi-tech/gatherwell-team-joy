@@ -1,3 +1,5 @@
+import { PromoField } from '@/components/promo-field';
+import { promoDiscount, type Promo } from '@/lib/promo';
 import { CopyButton } from '@/components/copy-button';
 import { trackEvent } from '@/lib/analytics';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
@@ -69,8 +71,10 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
   useEffect(() => { void supabase.rpc('event_price', { _id: event.id }).then(({ data }) => setPrice((data as typeof price) ?? null)); }, [event.id]);
   const paid = !!price && intent === 'going';
   const qty = 1 + form.plus;
-  const fee = price?.pass_fee ? Math.round(price.price_cents * qty * price.fee_pct / 100) : 0;
-  const total = price ? price.price_cents * qty + fee : 0;
+  const [promo, setPromo] = useState<Promo | null>(null);
+  const discount = price ? promoDiscount(price.price_cents * qty, promo) : 0;
+  const fee = price?.pass_fee ? Math.round((price.price_cents * qty - discount) * price.fee_pct / 100) : 0;
+  const total = price ? price.price_cents * qty - discount + fee : 0;
   useEffect(() => {
     if (!intent) return;
     void (async () => {
@@ -90,7 +94,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
     const waiverName = waiver?.required ? wName.trim() : '';
     if (paid) {
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim())) { setError(t('guest.errors.invalid_email')); return; }
-      await gate.run(() => checkout({ data: { eventId: event.id, first: form.first.trim(), last: form.last.trim(), phone: form.phone.trim(), email: form.email.trim(), plusOnes: form.plus, sms: form.sms, mail: form.mail, lang, origin: window.location.origin, waiverName } }));
+      await gate.run(() => checkout({ data: { eventId: event.id, first: form.first.trim(), last: form.last.trim(), phone: form.phone.trim(), email: form.email.trim(), plusOnes: form.plus, sms: form.sms, mail: form.mail, lang, origin: window.location.origin, waiverName, promo: promo?.code ?? '' } }));
       return;
     }
     setBusy(true); setError(null);
@@ -120,6 +124,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
       {event.require_approval && intent === 'going' && <p className="guest-hint">{t('rsvpq.approvalHint')}</p>}
       {waiver && <WaiverAccept waiver={waiver} name={wName} accepted={wOk} onName={setWName} onAccepted={setWOk} />}
       {paid && price && <p className="guest-price"><strong>{formatMoney(price.price_cents, lang)}</strong><span>{t('billing.perPerson')}{fee ? ` · ${t('billing.bookingFee', { fee: formatMoney(fee, lang) })}` : ''}</span></p>}
+      {paid && price && <PromoField kind="gathering" target={event.id} buyer={form.email.trim()} discountCents={discount} value={promo} onChange={setPromo} />}
       {error && <p className="field-error" role="alert">{error}</p>}
       <Button type="submit" className="guest-primary" disabled={busy || gate.busy}>{busy || gate.busy ? t('guest.saving') : paid ? t('billing.payAndRsvp', { amount: formatMoney(total, lang) }) : intent === 'maybe' ? t('guest.confirmMaybe') : full ? t('guest.joinWaitlist') : t('guest.confirmGoing')}</Button>
     </form>

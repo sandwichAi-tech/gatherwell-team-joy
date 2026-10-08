@@ -77,4 +77,4 @@
 - [x] 3. More repeat options
 - [x] 4. Team sign-ups (host picks per-person or per-team pricing)
 - [x] 5. Social share kit
-- [ ] 6. Promo codes
+- [x] 6. Promo codes

@@ -1,3 +1,4 @@
+import { PromoUsageCard } from '@/components/promo-codes';
 import { EmptyState } from '@/components/launch-states';
 import { ReferralCard } from '@/components/network-share';
 import { WelcomeRewardsCard } from '@/components/welcome';
@@ -261,6 +262,7 @@ export function EarningsPage() {
     <div className="page-heading"><div><span className="eyebrow">{t('billing.eyebrow')}</span><h1>{t('billing.earnings')}</h1></div></div>
     <p className="auth-subtitle">{t('billing.earningsText')}</p>
     <div className="stats-grid">{stat(t('billing.ticketSales'), formatMoney(sales, lang))}{stat(t('billing.platformFees'), formatMoney(fees, lang))}{stat(t('billing.payouts'), formatMoney(sales - fees, lang))}{stat(t('billing.ticketsSold'), paid.length)}</div>
+    <PromoUsageCard />
     <ReferralCard format={c => formatMoney(c, lang)} />
     <WelcomeRewardsCard />
     {!pays.length ? <section className="panel"><EmptyState compact icon="CreditCard" text={t('billing.noSales')} /></section> : [...groups.entries()].map(([eid, list]) => {
