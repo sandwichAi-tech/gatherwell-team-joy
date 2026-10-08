@@ -50,6 +50,13 @@
       "when": 1791467374454,
       "tag": "0006_text_rsvp_message_kinds",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1791467431850,
+      "tag": "0007_text_rsvp_record_checks",
+      "breakpoints": true
     }
   ]
 }
