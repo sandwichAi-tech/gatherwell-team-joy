@@ -40,5 +40,3 @@
 
 - ResponsiveSheet owns the fixed header/footer and scrollable body; callers pass primary actions via footer to keep them reachable.
 - Profile and offer covers use uploader-owned private media paths and the shared crop input; public host covers are signed server-side only after resolving the host slug, never from caller-supplied paths.
-- Group chat links live in teams/events.chat_links (max 5, platform detected by public.chat_platform mirrored in src/lib/chat-links.ts); whatsapp_url is deprecated, read via readChatLinks() for fallback.
-- Text invites go only through send_text_invites() to text_invite_candidates() (opted-in, not opted out) and are logged in sms_invites; inbound replies go through handle_sms_reply() (IN/OUT within 7 days, STOP/HELP delegated), which queues confirmations in the outbox; admins test it via simulateSmsReply in the message monitor.
