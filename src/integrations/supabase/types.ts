@@ -2020,16 +2020,19 @@ export type Database = {
           amount_cents: number
           booking_fee_cents: number
           buyer_email: string | null
+          buyer_key: string | null
           buyer_name: string | null
           challenge_id: string | null
           created_at: string
           currency: string
+          discount_cents: number
           event_id: string | null
           fee_cents: number
           host_id: string
           id: string
           kind: string
           offer_id: string | null
+          promo_id: string | null
           rsvp_id: string | null
           status: string
           stripe_payment_intent: string | null
@@ -2040,16 +2043,19 @@ export type Database = {
           amount_cents: number
           booking_fee_cents?: number
           buyer_email?: string | null
+          buyer_key?: string | null
           buyer_name?: string | null
           challenge_id?: string | null
           created_at?: string
           currency?: string
+          discount_cents?: number
           event_id?: string | null
           fee_cents?: number
           host_id: string
           id?: string
           kind: string
           offer_id?: string | null
+          promo_id?: string | null
           rsvp_id?: string | null
           status?: string
           stripe_payment_intent?: string | null
@@ -2060,16 +2066,19 @@ export type Database = {
           amount_cents?: number
           booking_fee_cents?: number
           buyer_email?: string | null
+          buyer_key?: string | null
           buyer_name?: string | null
           challenge_id?: string | null
           created_at?: string
           currency?: string
+          discount_cents?: number
           event_id?: string | null
           fee_cents?: number
           host_id?: string
           id?: string
           kind?: string
           offer_id?: string | null
+          promo_id?: string | null
           rsvp_id?: string | null
           status?: string
           stripe_payment_intent?: string | null
@@ -2096,6 +2105,13 @@ export type Database = {
             columns: ["offer_id"]
             isOneToOne: false
             referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_promo_id_fkey"
+            columns: ["promo_id"]
+            isOneToOne: false
+            referencedRelation: "promo_codes"
             referencedColumns: ["id"]
           },
           {
@@ -2198,6 +2214,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      promo_codes: {
+        Row: {
+          active: boolean
+          amount: number
+          applies_all: boolean
+          challenge_ids: string[]
+          code: string
+          created_at: string
+          ends_at: string | null
+          event_ids: string[]
+          host_id: string
+          id: string
+          kind: string
+          max_uses: number | null
+          offer_ids: string[]
+          per_person: number | null
+          starts_at: string | null
+        }
+        Insert: {
+          active?: boolean
+          amount: number
+          applies_all?: boolean
+          challenge_ids?: string[]
+          code: string
+          created_at?: string
+          ends_at?: string | null
+          event_ids?: string[]
+          host_id: string
+          id?: string
+          kind?: string
+          max_uses?: number | null
+          offer_ids?: string[]
+          per_person?: number | null
+          starts_at?: string | null
+        }
+        Update: {
+          active?: boolean
+          amount?: number
+          applies_all?: boolean
+          challenge_ids?: string[]
+          code?: string
+          created_at?: string
+          ends_at?: string | null
+          event_ids?: string[]
+          host_id?: string
+          id?: string
+          kind?: string
+          max_uses?: number | null
+          offer_ids?: string[]
+          per_person?: number | null
+          starts_at?: string | null
+        }
+        Relationships: []
       }
       push_subscriptions: {
         Row: {
@@ -3582,6 +3652,10 @@ export type Database = {
         Args: { _rsvp: string; _undo?: boolean }
         Returns: undefined
       }
+      check_promo: {
+        Args: { _buyer?: string; _code: string; _kind: string; _target: string }
+        Returns: Json
+      }
       claim_outbox: {
         Args: { _limit?: number }
         Returns: {
@@ -3904,6 +3978,14 @@ export type Database = {
       post_shoutout: {
         Args: { _message: string; _team: string; _to: string }
         Returns: undefined
+      }
+      promo_usage: {
+        Args: never
+        Returns: {
+          discount_cents: number
+          promo_id: string
+          uses: number
+        }[]
       }
       promote_waitlist: { Args: { _event: string }; Returns: undefined }
       public_upcoming: { Args: { _host: string; _team: string }; Returns: Json }
