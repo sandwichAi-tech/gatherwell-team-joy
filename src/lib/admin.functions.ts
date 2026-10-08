@@ -369,3 +369,25 @@ export const getAudit = createServerFn({ method: 'POST' }).middleware([requireSu
     const names = Object.fromEntries((people ?? []).map(p => [p.id, p.full_name]));
     return (rows ?? []).map(r => ({ ...r, actor_name: r.actor_id ? names[r.actor_id] ?? null : null }));
   });
+
+/** Message monitor: latest text messages (invites, replies, confirmations) from the outbox. */
+export const listRecentTexts = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth]).handler(async ({ context }) => {
+  const db = await assertAdmin(context);
+  const { data } = await db.from('notification_outbox').select('id, recipient, template, status, language, created_at, sent_at, error')
+    .eq('channel', 'sms').order('created_at', { ascending: false }).limit(30);
+  const { data: invites } = await db.from('sms_invites').select('id, phone, reply, replied_at, created_at, event_id').order('created_at', { ascending: false }).limit(10);
+  const { channelStatus } = await import('@/lib/notify/channels.server');
+  return { texts: data ?? [], invites: invites ?? [], smsConnected: channelStatus().sms };
+});
+
+/** Preview tool: pretend a phone texted back (IN, OUT, STOP, HELP...), then process the outbox right away. */
+export const simulateSmsReply = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ from: z.string().trim().min(7).max(32), body: z.string().trim().min(1).max(160) }).parse(d))
+  .handler(async ({ data, context }) => {
+    const db = await assertAdmin(context);
+    const { data: res, error } = await db.rpc('handle_sms_reply', { _from: data.from, _body: data.body });
+    if (error) return { ok: false as const, error: 'failed' };
+    await audit(db, context.userId, 'sms.simulate_reply', 'phone', null, null, { body: data.body, result: res }, null);
+    try { const { processOutbox } = await import('@/lib/notify/process.server'); await processOutbox(50); } catch (e) { console.error('[simulate] outbox', e); }
+    return { ok: true as const, result: ((res as { result?: string } | null)?.result ?? 'ignored') };
+  });
