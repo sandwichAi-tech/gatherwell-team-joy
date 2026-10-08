@@ -20,8 +20,8 @@ export const Route = createFileRoute('/api/public/sms/inbound')({
         if (!given || given.length !== expected.length || !timingSafeEqual(Buffer.from(given), Buffer.from(expected))) return new Response('Invalid signature', { status: 401 });
         const from = (params.get('From') ?? '').slice(0, 32); const body = (params.get('Body') ?? '').slice(0, 160);
         const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
-        const { data } = await supabaseAdmin.rpc('handle_sms_reply', { _from: from, _body: body });
-        const result = (data as { result?: string } | null)?.result;
+        const { data: reply } = await supabaseAdmin.rpc('handle_sms_reply', { _from: from, _body: body });
+        const result = (reply as { result?: string } | null)?.result;
         const spanish = /cancelar|ayuda|alto|baja|iniciar|s[ií]\b/i.test(body);
         if (result === 'help') return twiml(smsHelp(spanish ? 'es' : 'en'));
         if (result === 'started') return twiml(spanish ? 'Gatherwell: volverás a recibir recordatorios. Responde STOP para no recibir más.' : 'Gatherwell: you will receive reminders again. Reply STOP to opt out.');
