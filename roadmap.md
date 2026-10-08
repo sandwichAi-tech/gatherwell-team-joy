@@ -78,3 +78,7 @@
 - [x] 4. Team sign-ups (host picks per-person or per-team pricing)
 - [x] 5. Social share kit
 - [x] 6. Promo codes
+
+## N4 — Messaging
+- [x] Group chat links beyond WhatsApp (6 platforms, several per team/gathering) + Telegram share everywhere
+- [x] Text invites with Reply IN / SI, OUT / NO cancel, confirmations via outbox, admin "Simulate reply"
