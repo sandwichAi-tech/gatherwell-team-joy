@@ -579,7 +579,8 @@
       "team": "Team only"
     },
     "openEvent": "Open gathering page",
-    "breadcrumb": "Team path"
+    "breadcrumb": "Team path",
+    "telegram": "Telegram"
   },
   "templates": {
     "heading": "Templates",
@@ -2268,6 +2269,17 @@
     "languages": {
       "en": "English",
       "es": "Spanish"
+    },
+    "texts": {
+      "title": "Text messages",
+      "simTitle": "Simulate reply",
+      "simBody": "Pretend a phone texted back. Try IN, OUT, SI, NO, STOP or HELP.",
+      "phone": "Phone number",
+      "reply": "Reply text",
+      "run": "Simulate",
+      "result": "Result: {{result}}",
+      "empty": "No text messages yet.",
+      "latestInvites": "Recent invites"
     }
   },
   "legalDocs": {
@@ -2770,19 +2782,25 @@
     "postCount_one": "{{count}} post",
     "postCount_other": "{{count}} posts",
     "joinChat": "Join the group chat",
-    "addChat": "Add a WhatsApp group link",
-    "editChat": "Edit group chat link",
-    "chatLabel": "WhatsApp group invite link",
-    "chatHint": "Paste the invite link from WhatsApp. Leave empty to remove it.",
-    "saveLink": "Save link",
-    "linkSaved": "Group chat link saved",
-    "badLink": "That doesn't look like a WhatsApp group invite link.",
+    "addChat": "Add a group chat link",
+    "editChat": "Edit group chat links",
+    "chatLabel": "Group chat invite link",
+    "chatHint": "Paste an invite link from WhatsApp, Telegram, Signal, GroupMe, Messenger or Discord.",
+    "saveLink": "Save links",
+    "linkSaved": "Group chat links saved",
+    "badLink": "That doesn't look like a group chat invite link we support.",
     "errors": {
       "blocked_claim": "Please keep it about the gathering. Health, weight and income claims aren't allowed.",
       "rate_limited": "You're posting quickly. Try again in a minute.",
       "not_allowed": "You can't post here.",
       "invalid_title": "Give the topic a title."
-    }
+    },
+    "joinOn": "Join on {{platform}}",
+    "opensApp": "Opens the group chat app",
+    "removeLink": "Remove link",
+    "addAnother": "Add",
+    "detected": "Detected: {{platform}}",
+    "tooMany": "You can add up to 5 group chats."
   },
   "confirm": {
     "cancel": "Cancel",
@@ -3131,5 +3149,22 @@
       "dates": "The end date must be after the start date.",
       "taken": "You already have a code with that name."
     }
+  },
+  "textInvite": {
+    "open": "Text invite",
+    "title": "Invite by text",
+    "body": "Only people who agreed to receive texts at your team's gatherings appear here. They can reply IN to save a spot.",
+    "preview": "Message preview",
+    "previewText": "{{host}} invited you to {{title}}, {{date}}. Reply IN to save your spot. Reply STOP to opt out.",
+    "empty": "No one has opted in to texts yet. People who tick the text option when they RSVP will show up here.",
+    "selectAll": "Select all",
+    "send_one": "Send to {{count}} person",
+    "send_other": "Send to {{count}} people",
+    "sent_one": "Invite queued for {{count}} person",
+    "sent_other": "Invites queued for {{count}} people",
+    "invited": "Invited",
+    "notConnected": "Not connected yet: texts are simulated and logged until texting is switched on.",
+    "error": "Couldn't send the invites. Try again.",
+    "replies": "Replies so far: {{count}}"
   }
 }

@@ -1,3 +1,5 @@
+import { readChatLinks } from '@/lib/chat-links';
+import { TextInvitePanel } from '@/components/text-invite';
 import { CopyButton } from '@/components/copy-button';
 import { OutboxSummary } from '@/components/notifications';
 import { useState } from 'react';
@@ -146,7 +148,8 @@ function EventDetailPage() {
       {event.status !== 'cancelled' && <Button asChild variant="secondary"><Link to="/gathering/$id/edit" params={{ id }}><Pencil />{t('gathering.editSeries')}</Link></Button>}
     </section>}
 
-    <GroupChatLink table="events" id={event.id} url={(event as any).whatsapp_url ?? null} canEdit={manages} />
+    <GroupChatLink table="events" id={event.id} links={readChatLinks(event as any)} canEdit={manages} />
+    {manages && event.status === 'published' && <TextInvitePanel eventId={event.id} title={event.title} startsAt={event.starts_at} timezone={event.timezone} />}
     {event.status !== 'draft' && <EventComments eventId={event.id} teamId={event.team_id} me={userId} />}
     {(manages || cohostIds.length > 0) && <CohostsPanel eventId={event.id} teamId={event.team_id} hostId={event.host_id} canEdit={event.host_id === userId || leadsTeam} />}
 

@@ -16,7 +16,7 @@ import { GwFeatureTile, GwIcon, type GwIconProps } from '@/components/gw-icon';
 import { formatMoney } from '@/lib/billing';
 import {
   adminTeamAction, adminUserAction, endBroadcast, getAdminAccess, getAdminOverview, getAdminTeam, getAdminUser, getAudit, getBroadcasts, getFlags, getLibrary,
-  listAdminTeams, listAdminUsers, listReports, moderateReport, reorderLibrary, saveLibraryItem, sendBroadcast, setFlag, setLibraryPublished, type AdminReport,
+  listAdminTeams, listAdminUsers, listReports, moderateReport, reorderLibrary, saveLibraryItem, sendBroadcast, setFlag, setLibraryPublished, type AdminReport, listRecentTexts, simulateSmsReply,
 } from '@/lib/admin.functions';
 
 export const ADMIN_TABS = ['overview', 'teams', 'users', 'moderation', 'library', 'broadcasts', 'settings', 'audit'] as const;
@@ -92,6 +92,7 @@ function Overview() {
         <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>{t('admin.messages.channel')}</th>{states.map(s => <th key={s}>{t(`admin.messages.${s}`)}</th>)}</tr></thead>
           <tbody>{channels.map(c => <tr key={c}><th>{t(`admin.messages.${c}`)}</th>{states.map(s => <td key={s} className="tabular-nums">{num(o.messages[`${c}:${s}`], lang)}</td>)}</tr>)}</tbody></table></div>
       </section>
+      <TextMonitor />
     </>}
   </>;
 }
@@ -406,5 +407,31 @@ function Audit() {
       <GwIcon name={open === r.id ? 'ChevronUp' : 'ChevronDown'} size={18} /></button>
       {open === r.id && <div className="audit-diff"><div><span className="field-label">{t('admin.audit.before')}</span><pre>{JSON.stringify(r.before, null, 2) ?? '—'}</pre></div><div><span className="field-label">{t('admin.audit.after')}</span><pre>{JSON.stringify(r.after, null, 2) ?? '—'}</pre></div></div>}
     </li>)}{!data.length && <li className="muted-copy">{t('admin.empty')}</li>}</ul>
+  </section>;
+}
+
+function TextMonitor() {
+  const { t } = useTranslation(); const lang = useLang(); const qc = useQueryClient();
+  const list = useServerFn(listRecentTexts); const sim = useServerFn(simulateSmsReply);
+  const { data } = useQuery({ queryKey: ['admin', 'texts'], queryFn: () => list() });
+  const [from, setFrom] = useState(''); const [body, setBody] = useState('IN'); const [busy, setBusy] = useState(false); const [result, setResult] = useState<string | null>(null);
+  const run = async () => {
+    setBusy(true); setResult(null);
+    try { const r = await sim({ data: { from, body } }); setResult(r.ok ? r.result : 'failed'); } catch { setResult('failed'); }
+    setBusy(false); void qc.invalidateQueries({ queryKey: ['admin', 'texts'] });
+  };
+  return <section className="panel text-monitor"><h2 className="section-title">{t('admin.texts.title')}</h2>
+    {data && !data.smsConnected && <p className="not-connected">{t('admin.notConnected')}</p>}
+    <div className="text-sim"><h3>{t('admin.texts.simTitle')}</h3><p className="muted-copy">{t('admin.texts.simBody')}</p>
+      <div className="text-sim-row">
+        <div className="form-field"><label className="field-label" htmlFor="sim-from">{t('admin.texts.phone')}</label><Input id="sim-from" className="field-input" inputMode="tel" placeholder="+15555550123" value={from} onChange={e => setFrom(e.target.value)} /></div>
+        <div className="form-field"><label className="field-label" htmlFor="sim-body">{t('admin.texts.reply')}</label><Input id="sim-body" className="field-input" maxLength={160} value={body} onChange={e => setBody(e.target.value)} /></div>
+        <Button disabled={busy || from.trim().length < 7 || !body.trim()} onClick={run}>{t('admin.texts.run')}</Button>
+      </div>
+      {result && <p className="chip" role="status">{t('admin.texts.result', { result })}</p>}
+    </div>
+    {data && data.invites.length > 0 && <><h3>{t('admin.texts.latestInvites')}</h3><ul className="text-log">{data.invites.map(i => <li key={i.id}><span className="tabular-nums">{i.phone}</span><span>{i.reply ?? '—'}</span><span className="muted-copy">{fmtDate(i.created_at, lang, true)}</span></li>)}</ul></>}
+    {!data?.texts.length ? <p className="muted-copy">{t('admin.texts.empty')}</p> :
+      <div className="admin-table-wrap"><table className="admin-table"><tbody>{data.texts.map(m => <tr key={m.id}><td className="tabular-nums">{m.recipient}</td><td>{m.template}</td><td><span className="chip">{t(`admin.messages.${m.status === 'pending' || m.status === 'sending' ? 'queued' : m.status}`)}</span></td><td className="muted-copy">{fmtDate(m.created_at, lang, true)}</td></tr>)}</tbody></table></div>}
   </section>;
 }

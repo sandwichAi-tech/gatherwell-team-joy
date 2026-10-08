@@ -76,11 +76,24 @@ export function renderSms(template: string, lang: Lang, p: P) {
   const es = lang === 'es'; const title = s(p['title']); const date = when(p, lang);
   const stop = es ? 'Responde STOP para no recibir más' : 'Reply STOP to opt out';
   const link = manageLink(p);
+  const page = p['path'] ? `${APP_URL}${s(p['path'])}` : eventLink(p);
+  const pass = p['code'] ? `${APP_URL}/r/${s(p['code'])}` : page;
+  const hi = s(p['name']) ? (es ? `Hola, ${s(p['name'])}. ` : `Hi ${s(p['name'])}, `) : '';
+  const host = s(p['host']);
   const lines: Record<string, string> = {
     reminder_24h: es ? `Gatherwell: mañana es ${title}, ${date}. ${link}` : `Gatherwell: ${title} is tomorrow, ${date}. ${link}`,
     reminder_2h: es ? `Gatherwell: ${title} empieza en 2 horas. ${link}` : `Gatherwell: ${title} starts in 2 hours. ${link}`,
     waitlist_promoted: es ? `Gatherwell: ¡se liberó un lugar en ${title}! Ya es tuyo. ${link}` : `Gatherwell: a spot opened at ${title} — you're in. ${link}`,
     gathering_cancelled: es ? `Gatherwell: ${title} (${date}) se canceló. Lo sentimos.` : `Gatherwell: ${title} (${date}) is cancelled. Sorry about that.`,
+    gathering_invite: es
+      ? `Gatherwell: ${hi}${host ? `${host} te invita a` : 'Te invitamos a'} ${title}, ${date}. ${page} Responde SI para reservar tu lugar.`
+      : `Gatherwell: ${hi}${host ? `${host} invited you to` : "You're invited to"} ${title}, ${date}. ${page} Reply IN to save your spot.`,
+    text_rsvp_going: es ? `Gatherwell: ¡listo! Tu lugar en ${title} está reservado. Detalles: ${page} Tu pase de entrada: ${pass} Responde NO si ya no puedes ir.` : `Gatherwell: you're in for ${title}. Details: ${page} Your check-in pass: ${pass} Reply OUT if you can't make it.`,
+    text_rsvp_waitlist: es ? `Gatherwell: ${title} está lleno, así que estás en lista de espera. Te avisamos si se libera un lugar. ${pass}` : `Gatherwell: ${title} is full, so you're on the waitlist. We'll text you if a spot opens. ${pass}`,
+    text_rsvp_requested: es ? `Gatherwell: recibimos tu solicitud para ${title}. El anfitrión la revisará pronto. ${pass}` : `Gatherwell: we got your request for ${title}. The host will review it soon. ${pass}`,
+    text_rsvp_finish: es ? `Gatherwell: casi listo. Termina tu reservación para ${title} aquí: ${page}` : `Gatherwell: almost there. Finish your RSVP for ${title} here: ${page}`,
+    text_rsvp_out: es ? `Gatherwell: cancelamos tu lugar en ${title}. Si cambias de idea: ${page}` : `Gatherwell: your spot at ${title} is cancelled. Changed your mind? ${page}`,
+    text_rsvp_closed: es ? `Gatherwell: ${title} ya no acepta reservaciones.` : `Gatherwell: ${title} is no longer taking RSVPs.`,
   };
   if (template === 'host_followup') return `${s(p['body'])} ${stop}`;
   const line = lines[template]; if (!line) return null;

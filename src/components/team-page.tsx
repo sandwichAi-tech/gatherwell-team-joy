@@ -1,3 +1,4 @@
+import { readChatLinks, tgShare } from '@/lib/chat-links';
 import { CropFileInput } from '@/components/image-crop';
 import { CopyButton } from '@/components/copy-button';
 import { trackEvent } from '@/lib/analytics';
@@ -21,7 +22,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { BarChart3, MapPinned } from '@/components/icons';
 import {
   ArrowRight, Share2, Pin, Megaphone, ThumbsUp, PartyPopper, Heart, Copy, Check, MessageCircle, Smartphone, QrCode, RefreshCw,
-  Pencil, UsersRound, Search, ChevronRight, ChevronLeft, Network, Plus, CalendarDays, List, Upload, Trash2, Printer, Crown, X,
+  Pencil, UsersRound, Search, ChevronRight, ChevronLeft, Network, Plus, CalendarDays, List, Upload, Trash2, Printer, Crown, X, Send,
 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -122,7 +123,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
     <PinnedAnnouncement teamId={teamId} />
     <PinnedShoutout teamId={teamId} isLeader={isLeader} />
     <ActiveChallengeCard />
-    <GroupChatLink table="teams" id={teamId} url={(team as any)?.whatsapp_url ?? null} canEdit={isLeader} />
+    <GroupChatLink table="teams" id={teamId} links={readChatLinks(team as any)} canEdit={isLeader} />
     <DiscussionsPanel teamId={teamId} isLeader={isLeader} me={userId} />
     <ComingUp teamId={teamId} lang={lang} onOpen={setOpenEvent} />
     <FromYourLeader teamId={teamId} role={workspace.role} />
@@ -262,7 +263,7 @@ function InviteSheet({ open, onOpenChange, workspace, joinCode, isLeader }: { op
       <div className="copy-field"><span>{link}</span></div>
       <div className="share-grid">
         <CopyButton variant="default" text={link} label={t('onboarding.copy')} />
-        <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(message)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button>
+        <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(message)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button><Button asChild variant="secondary"><a href={tgShare(message)} target="_blank" rel="noopener noreferrer"><Send />{t('teamSpace.telegram')}</a></Button>
         <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(message)}`}><Smartphone />{t('teamSpace.sms')}</a></Button>
         <Button variant="secondary" onClick={() => setQr(true)}><QrCode />{t('teamSpace.qr')}</Button>
       </div>

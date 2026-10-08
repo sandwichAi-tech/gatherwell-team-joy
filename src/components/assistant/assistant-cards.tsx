@@ -1,9 +1,10 @@
+import { tgShare } from '@/lib/chat-links';
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Check, Copy, MessageCircle, MessageSquareText, MapPin, Megaphone, Pencil, BookmarkCheck, Bookmark, ExternalLink, CalendarDays, UsersRound, Clock, BookOpen } from '@/components/icons';
+import { Check, Copy, MessageCircle, MessageSquareText, MapPin, Megaphone, Pencil, BookmarkCheck, Bookmark, ExternalLink, CalendarDays, UsersRound, Clock, BookOpen, Send } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -45,7 +46,7 @@ function GatheringCardView({ draft: initial, close }: { draft: GatheringDraft; c
       <div className="as-card-body"><span className="as-live"><Check />{t('gathering.live')}</span><strong className="as-title">{d.title}</strong><p className="as-meta">{when}</p>
         <div className="as-actions wrap">
           <Button variant="secondary" size="sm" onClick={() => copy(link, t)}><Copy />{t('gathering.copyLink')}</Button>
-          <Button asChild variant="secondary" size="sm"><a href={`https://wa.me/?text=${encodeURIComponent(invite)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button>
+          <Button asChild variant="secondary" size="sm"><a href={`https://wa.me/?text=${encodeURIComponent(invite)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button><Button asChild variant="secondary" size="sm"><a href={tgShare(invite)} target="_blank" rel="noopener noreferrer"><Send />{t('teamSpace.telegram')}</a></Button>
           <Button asChild variant="secondary" size="sm"><a href={`sms:?&body=${encodeURIComponent(invite)}`}><MessageSquareText />{t('gathering.text')}</a></Button>
           <Button size="sm" onClick={() => { close(); void navigate({ to: '/event/$id', params: { id: done.id } }); }}>{t('assistant.openGathering')}</Button>
         </div></div></div>;

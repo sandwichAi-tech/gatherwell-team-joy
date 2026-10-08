@@ -1,10 +1,11 @@
+import { tgShare } from '@/lib/chat-links';
 import { EmptyState } from '@/components/launch-states';
 import { useMemo, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ArrowLeft, CalendarDays, UsersRound, CircleCheck, UserRound, UserPlus, Rocket, Megaphone, MessageCircle, Copy, HandHeart } from '@/components/icons';
+import { ArrowLeft, CalendarDays, UsersRound, CircleCheck, UserRound, UserPlus, Rocket, Megaphone, MessageCircle, Copy, HandHeart, Send } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -126,7 +127,7 @@ export function InsightsPage() {
     <ResponsiveSheet open={!!nudge} onOpenChange={o => !o && setNudge(null)} title={t('insights.checkInTitle', { name: nudge?.name ?? '' })} description={t('insights.noAutoSend')}>
       <div className="edit-form"><div className="copy-field nudge-text"><span>{nudgeText}</span></div>
         <div className="share-grid"><Button onClick={async () => { await navigator.clipboard.writeText(nudgeText); toast.success(t('onboarding.copied')); }}><Copy />{t('insights.copy')}</Button>
-          <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(nudgeText)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button></div></div>
+          <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(nudgeText)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button><Button asChild variant="secondary"><a href={tgShare(nudgeText)} target="_blank" rel="noopener noreferrer"><Send />{t('teamSpace.telegram')}</a></Button></div></div>
     </ResponsiveSheet>
   </>;
 }

@@ -1,9 +1,10 @@
+import { tgShare } from '@/lib/chat-links';
 import { CopyButton } from '@/components/copy-button';
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Copy, MessageCircle, MessageSquareText, Share2, Gift, Check, Trash2 } from '@/components/icons';
+import { Copy, MessageCircle, MessageSquareText, Share2, Gift, Check, Trash2, Send } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -40,7 +41,7 @@ function WelcomeBody({ data, onRedeem }: { data: WelcomeSummary; onRedeem: (rewa
     <div className="welcome-link"><Input readOnly value={link} aria-label={t('welcome.yourLink')} className="field-input" onFocus={e => e.currentTarget.select()} /></div>
     <div className="share-grid">
       <CopyButton text={link} />
-      <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(msg)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button>
+      <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(msg)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button><Button asChild variant="secondary"><a href={tgShare(msg)} target="_blank" rel="noopener noreferrer"><Send />{t('teamSpace.telegram')}</a></Button>
       <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(msg)}`}><MessageSquareText />{t('gathering.text')}</a></Button>
       <Button variant="secondary" onClick={share}><Share2 />{t('welcome.share')}</Button>
     </div>
