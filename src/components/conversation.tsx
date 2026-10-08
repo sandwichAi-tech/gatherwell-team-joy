@@ -170,28 +170,48 @@ export function DiscussionsPanel({ teamId, isLeader, me }: { teamId: string; isL
   </section>;
 }
 
-/** "Join the group chat" button plus an optional editor for hosts/leaders. */
-export function GroupChatLink({ table, id, url, canEdit }: { table: 'events' | 'teams'; id: string; url: string | null; canEdit: boolean }) {
+const CHAT_ICON: Record<ChatPlatform, GwIconProps['name']> = { whatsapp: 'MessageCircle', telegram: 'Send', signal: 'MessageSquare', groupme: 'UsersRound', messenger: 'MessageSquareText', discord: 'Headphones' as GwIconProps['name'] };
+
+/** "Join the group chat" buttons (several platforms) plus an editor for hosts/leaders. */
+export function GroupChatLink({ table, id, links, canEdit }: { table: 'events' | 'teams'; id: string; links: ChatLink[]; canEdit: boolean }) {
   const { t } = useTranslation(); const qc = useQueryClient();
-  const [editing, setEditing] = useState(false); const [value, setValue] = useState(url ?? '');
-  useEffect(() => setValue(url ?? ''), [url]);
-  if (!url && !canEdit) return null;
+  const [editing, setEditing] = useState(false); const [list, setList] = useState<ChatLink[]>(links); const [draft, setDraft] = useState('');
+  const key = links.map(l => l.url).join('|');
+  useEffect(() => setList(links), [key]); // eslint-disable-line react-hooks/exhaustive-deps
+  if (!links.length && !canEdit) return null;
+  const draftPlatform = draft.trim() ? detectChatPlatform(draft) : null;
+  const add = () => {
+    const v = draft.trim(); if (!v) return;
+    if (!detectChatPlatform(v)) { toast.error(t('conversation.badLink')); return; }
+    if (list.some(l => l.url === v)) { setDraft(''); return; }
+    if (list.length >= 5) { toast.error(t('conversation.tooMany')); return; }
+    setList([...list, { url: v }]); setDraft('');
+  };
   const save = async () => {
-    const v = value.trim() || null;
-    if (v && !/^https:\/\/chat\.whatsapp\.com\/[A-Za-z0-9]{10,40}$/.test(v)) { toast.error(t('conversation.badLink')); return; }
-    const { error } = await db.from(table).update({ whatsapp_url: v }).eq('id', id);
+    const pending = draft.trim();
+    let next = list;
+    if (pending) { if (!detectChatPlatform(pending)) { toast.error(t('conversation.badLink')); return; } next = [...list, { url: pending }].slice(0, 5); }
+    const { error } = await db.from(table).update({ chat_links: next }).eq('id', id);
     if (error) { toast.error(t('profile.saveError')); return; }
-    toast.success(t('conversation.linkSaved')); setEditing(false);
-    void qc.invalidateQueries({ queryKey: table === 'events' ? ['event', id] : ['team', id] }); void qc.invalidateQueries();
+    toast.success(t('conversation.linkSaved')); setEditing(false); setDraft('');
+    void qc.invalidateQueries();
   };
   return <section className="panel group-chat">
-    {url && <Button asChild className="w-full"><a href={url} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('conversation.joinChat')}</a></Button>}
-    {canEdit && !editing && <Button variant="ghost" onClick={() => setEditing(true)}>{url ? t('conversation.editChat') : t('conversation.addChat')}</Button>}
+    {links.length > 0 && <><h2 className="section-title">{t('conversation.joinChat')}</h2>
+      <div className="chat-links">{links.map(l => { const p = detectChatPlatform(l.url); if (!p) return null;
+        return <a key={l.url} className="chat-link-row" href={l.url} target="_blank" rel="noopener noreferrer">
+          <GwFeatureTile name={CHAT_ICON[p]} /><span><strong>{t('conversation.joinOn', { platform: CHAT_LABEL[p] })}</strong><small>{t('conversation.opensApp')}</small></span><GwIcon name="ExternalLink" />
+        </a>; })}</div></>}
+    {canEdit && !editing && <Button variant="ghost" onClick={() => setEditing(true)}>{links.length ? t('conversation.editChat') : t('conversation.addChat')}</Button>}
     {editing && <div className="edit-form">
-      <label className="field-label" htmlFor={`wa-${id}`}>{t('conversation.chatLabel')}</label>
-      <Input id={`wa-${id}`} inputMode="url" className="field-input" placeholder="https://chat.whatsapp.com/..." value={value} onChange={e => setValue(e.target.value)} />
-      <small className="field-hint">{t('conversation.chatHint')}</small>
-      <div className="guest-button-row"><Button onClick={save}>{t('conversation.saveLink')}</Button><Button variant="ghost" onClick={() => setEditing(false)}>{t('common.back')}</Button></div>
+      {list.length > 0 && <ul className="chat-edit-list">{list.map(l => { const p = detectChatPlatform(l.url);
+        return <li key={l.url}><GwIcon name={p ? CHAT_ICON[p] : 'Link2'} /><span><strong>{p ? CHAT_LABEL[p] : ''}</strong><small>{l.url}</small></span>
+          <Button variant="ghost" size="icon" aria-label={t('conversation.removeLink')} onClick={() => setList(list.filter(x => x.url !== l.url))}><Trash2 /></Button></li>; })}</ul>}
+      <label className="field-label" htmlFor={`chat-${id}`}>{t('conversation.chatLabel')}</label>
+      <div className="chat-add-row"><Input id={`chat-${id}`} inputMode="url" className="field-input" placeholder="https://" value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); add(); } }} />
+        <Button variant="secondary" onClick={add} disabled={!draftPlatform}><Plus />{t('conversation.addAnother')}</Button></div>
+      <small className="field-hint" aria-live="polite">{draftPlatform ? t('conversation.detected', { platform: CHAT_LABEL[draftPlatform] }) : t('conversation.chatHint')}</small>
+      <div className="guest-button-row"><Button onClick={save}>{t('conversation.saveLink')}</Button><Button variant="ghost" onClick={() => { setEditing(false); setList(links); setDraft(''); }}>{t('common.back')}</Button></div>
     </div>}
   </section>;
 }
