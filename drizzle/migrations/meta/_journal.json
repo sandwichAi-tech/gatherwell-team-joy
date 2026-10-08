@@ -36,6 +36,13 @@
       "when": 1791466176868,
       "tag": "0004_promo_codes",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791467108417,
+      "tag": "0005_group_chats_and_text_rsvp",
+      "breakpoints": true
     }
   ]
 }

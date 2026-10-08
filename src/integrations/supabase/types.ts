@@ -1098,6 +1098,7 @@ export type Database = {
           capacity: number | null
           category: string | null
           category_label: string | null
+          chat_links: Json
           completed_at: string | null
           cover_style: number
           cover_url: string | null
@@ -1141,6 +1142,7 @@ export type Database = {
           capacity?: number | null
           category?: string | null
           category_label?: string | null
+          chat_links?: Json
           completed_at?: string | null
           cover_style?: number
           cover_url?: string | null
@@ -1184,6 +1186,7 @@ export type Database = {
           capacity?: number | null
           category?: string | null
           category_label?: string | null
+          chat_links?: Json
           completed_at?: string | null
           cover_style?: number
           cover_url?: string | null
@@ -2789,6 +2792,50 @@ export type Database = {
         }
         Relationships: []
       }
+      sms_invites: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          language: string
+          name: string | null
+          phone: string
+          replied_at: string | null
+          reply: string | null
+          sent_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          language?: string
+          name?: string | null
+          phone: string
+          replied_at?: string | null
+          reply?: string | null
+          sent_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          language?: string
+          name?: string | null
+          phone?: string
+          replied_at?: string | null
+          reply?: string | null
+          sent_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sms_invites_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sms_optouts: {
         Row: {
           created_at: string
@@ -2943,6 +2990,7 @@ export type Database = {
         Row: {
           allow_host_subteams: boolean
           brand_color: string | null
+          chat_links: Json
           cover_url: string | null
           created_at: string
           id: string
@@ -2957,6 +3005,7 @@ export type Database = {
         Insert: {
           allow_host_subteams?: boolean
           brand_color?: string | null
+          chat_links?: Json
           cover_url?: string | null
           created_at?: string
           id?: string
@@ -2971,6 +3020,7 @@ export type Database = {
         Update: {
           allow_host_subteams?: boolean
           brand_color?: string | null
+          chat_links?: Json
           cover_url?: string | null
           created_at?: string
           id?: string
@@ -3647,6 +3697,7 @@ export type Database = {
           last_date: string
         }[]
       }
+      chat_platform: { Args: { _url: string }; Returns: string }
       check_in_code: { Args: { _code: string; _event: string }; Returns: Json }
       check_in_rsvp: {
         Args: { _rsvp: string; _undo?: boolean }
@@ -3812,6 +3863,10 @@ export type Database = {
       handle_sms_inbound: {
         Args: { _body: string; _from: string }
         Returns: string
+      }
+      handle_sms_reply: {
+        Args: { _body: string; _from: string }
+        Returns: Json
       }
       has_blocked_claim: { Args: { _text: string }; Returns: boolean }
       has_offer_access: {
@@ -4118,6 +4173,10 @@ export type Database = {
           title: string
         }[]
       }
+      send_text_invites: {
+        Args: { _event: string; _phones: string[] }
+        Returns: number
+      }
       set_email_prefs: {
         Args: { _prefs: Json; _token: string }
         Returns: boolean
@@ -4159,6 +4218,16 @@ export type Database = {
           member_count: number
           name: string
           parent_team_id: string
+        }[]
+      }
+      text_invite_candidates: {
+        Args: { _event: string }
+        Returns: {
+          invited: boolean
+          language: string
+          last_seen: string
+          name: string
+          phone: string
         }[]
       }
       toggle_comment_reaction: {
