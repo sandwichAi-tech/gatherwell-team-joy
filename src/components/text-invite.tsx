@@ -38,7 +38,7 @@ export function TextInvitePanel({ eventId, title, startsAt, timezone }: { eventI
       <Button variant="secondary" onClick={() => setOpen(true)}><GwIcon name="MessageSquareText" />{t('textInvite.open')}</Button></section>
     <ResponsiveSheet open={open} onOpenChange={setOpen} title={t('textInvite.title')} description={title}
       footer={<Button className="w-full" disabled={busy || !picked.length} onClick={send}>{t('textInvite.send', { count: picked.length })}</Button>}>
-      {status && !status.sms && <p className="not-connected-note">{t('textInvite.notConnected')}</p>}
+      {status && !status.sms && <p className="not-connected">{t('textInvite.notConnected')}</p>}
       <div className="text-invite-preview"><span className="field-label">{t('textInvite.preview')}</span><p>{t('textInvite.previewText', { host: '', title, date }).trim()}</p></div>
       {isLoading ? <p className="muted-copy">…</p> : !people.length ? <div className="empty-panel"><GwFeatureTile name="MessageSquareText" /><p className="muted-copy">{t('textInvite.empty')}</p></div> : <>
         {fresh.length > 1 && <label className="text-invite-row"><Checkbox checked={picked.length === fresh.length} onCheckedChange={v => setPicked(v ? fresh.map(p => p.phone) : [])} /><span><strong>{t('textInvite.selectAll')}</strong></span></label>}

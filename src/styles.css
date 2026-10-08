@@ -1648,3 +1648,19 @@ a.gw-cat-chip:hover{background:#fff}
 .promo-applied span{flex:1}
 .promo-row-actions{display:flex;align-items:center;gap:4px}
 .promo-targets{border:0;padding:0;margin:0;display:grid;gap:4px}
+
+/* N4 group chats + text invites */
+.chat-links{display:grid;gap:8px}
+.chat-link-row{display:flex;align-items:center;gap:16px;min-height:72px;padding:12px 16px;border:1px solid var(--border);border-radius:16px;background:var(--card);color:var(--foreground);text-decoration:none;transition:box-shadow .18s ease-out,transform .18s ease-out}
+.chat-link-row:hover{box-shadow:var(--e2);transform:translateY(-1px)}
+.chat-link-row:focus-visible{outline:2px solid var(--ring);outline-offset:2px}
+.chat-link-row>span{display:grid;flex:1;gap:2px}.chat-link-row small{color:var(--muted-foreground);font-size:13px}
+.chat-edit-list{display:grid;gap:8px;margin:0 0 8px;padding:0;list-style:none}
+.chat-edit-list li{display:flex;align-items:center;gap:12px;padding:8px 8px 8px 12px;border:1px solid var(--border);border-radius:12px}
+.chat-edit-list li>span{display:grid;flex:1;min-width:0}.chat-edit-list small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted-foreground);font-size:13px}
+.chat-add-row,.text-sim-row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}.chat-add-row>input{flex:1;min-width:200px}
+.text-sim-row .form-field{flex:1;min-width:160px}
+.text-invite-preview{padding:16px;border-radius:16px;background:var(--secondary);margin-bottom:16px}.text-invite-preview p{margin:4px 0 0;font-size:15px}
+.text-invite-list{display:grid;gap:4px;margin:0;padding:0;list-style:none}
+.text-invite-row{display:flex;align-items:center;gap:12px;min-height:48px;padding:8px 4px;cursor:pointer}.text-invite-row>span{display:grid;flex:1}.text-invite-row small{color:var(--muted-foreground);font-size:13px}
+.text-monitor h3{font-size:15px;font-weight:600;margin:16px 0 8px}.text-log{display:grid;gap:4px;padding:0;list-style:none}.text-log li{display:flex;gap:16px;font-size:14px}
