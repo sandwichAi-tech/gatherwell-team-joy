@@ -38,7 +38,7 @@ export const Route = createFileRoute('/api/public/stripe/webhook')({
                 await db.from('payments').update({ status: 'paid', stripe_payment_intent: o.payment_intent }).eq('stripe_session_id', o.id);
               } else if (m.kind === 'offer') {
                 const { data: pay } = await db.from('payments').update({ status: 'paid', stripe_payment_intent: o.payment_intent ?? null }).eq('stripe_session_id', o.id).select('amount_cents').maybeSingle();
-                await db.from('offer_purchases' as any).upsert({ offer_id: m.offer_id, user_id: m.user_id, status: o.subscription ? 'active' : 'paid', stripe_subscription_id: o.subscription ?? null, amount_cents: pay?.amount_cents ?? o.amount_total ?? 0, cancel_at_period_end: false }, { onConflict: 'offer_id,user_id' });
+                await db.from('offer_purchases' as any).upsert({ offer_id: m.offer_id, user_id: m.user_id, status: o.subscription ? 'active' : 'paid', stripe_subscription_id: o.subscription ?? null, amount_cents: pay?.amount_cents ?? o.amount_total ?? 0, cancel_at_period_end: false, ...(m.founding === '1' ? { founding: true } : {}) }, { onConflict: 'offer_id,user_id' });
               } else if (m.kind === 'plan') {
                 await db.from('billing_accounts').upsert({ user_id: m.user_id, stripe_customer_id: o.customer, stripe_subscription_id: o.subscription, plan: m.plan, billing_period: m.period, status: 'active' }, { onConflict: 'user_id' });
               } else if (m.kind === 'license') {
