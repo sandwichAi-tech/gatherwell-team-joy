@@ -1,3 +1,4 @@
+import { SharedProgress } from '@/components/my-progress';
 import { readChatLinks, tgShare } from '@/lib/chat-links';
 import { CropFileInput } from '@/components/image-crop';
 import { CopyButton } from '@/components/copy-button';
@@ -348,6 +349,7 @@ function MembersSheet({ open, onOpenChange, teamId, userId, isLeader, directLead
       <FeaturedBadges userId={selected.userId} />
       <StatsStrip userId={selected.userId} teamId={teamId} />
       <RecentBadges userId={selected.userId} teamId={teamId} />
+      {isLeader && <SharedProgress teamId={teamId} userId={selected.userId} />}
       {isLeader && <section className="gw-manage"><h3 className="gw-group-title">{t('profile.manage')}</h3>
       {selected.role !== 'leader' && <div className="form-field"><span className="field-label">{t('teamSpace.role')}</span>
         <div className="choice-pair">{(['host', 'member'] as const).map(role => <button type="button" key={role} className={`choice-card ${selected.role === role ? 'is-selected' : ''}`} aria-pressed={selected.role === role} onClick={() => update({ role })}><strong>{t(`roles.${role}`)}</strong></button>)}</div></div>}

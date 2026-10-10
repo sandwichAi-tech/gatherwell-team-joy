@@ -238,6 +238,7 @@ export function MePage() {
       {row('CreditCard', t('offers.purchases'), () => setPanel('purchases'))}
     </SettingsGroup>
     <SettingsGroup title={t('profile.groupActivity')}>
+      <Link className="settings-row" to="/progress"><GwFeatureTile name="Flame" size={24} className="settings-tile" /><span className="settings-label">{t('progress.title')}</span><ChevronRight className="settings-chevron" /></Link>
       {row('CalendarDays', t('profile.myGatherings'), () => setPanel('gatherings'))}
       {row('Flag', t('profile.myChallenges'), () => setPanel('challenges'))}
       {row('Award', t('profile.myBadges'), () => setPanel('badges'))}
