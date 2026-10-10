@@ -3900,6 +3900,9 @@
     "toHome": "Ir al inicio",
     "ttlLabel": "Tiempo para publicar",
     "ttlValue": "{{minutes}} min",
-    "ttlSub": "Mediana de {{live}} coaches · {{hour}} en menos de una hora"
+    "ttlSub": "Mediana de {{live}} coaches · {{hour}} en menos de una hora",
+    "draftNote": "Tu reunión pagada quedó guardada como borrador. Se publica con su precio en cuanto conectes tus pagos. Podrás compartir el enlace cuando esté publicada.",
+    "liveDraft": "Buen trabajo, {{name}}. Tu perfil está listo y tu reunión pagada se publicará en cuanto conectes tus pagos.",
+    "draftLabel": "Esperando pagos"
   }
 }

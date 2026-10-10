@@ -117,13 +117,17 @@ function CreateStep({ profile, onDone }: { profile: Prof; onDone: (k: StartKind,
         if (error) throw error; id = data.id;
       } else {
         const start = new Date(`${date}T${time}`);
-        const { data, error } = await supabase.rpc('create_gathering_at', { _team: team, _publish: true, _weekly: false, _p: {
+        const { data, error } = await supabase.rpc('create_gathering_at', { _team: team, _publish: kind === 'free', _weekly: false, _p: {
           title: title.trim(), cover_url: '', cover_style: kind === 'free' ? 1 : 3, starts_at: start.toISOString(), duration_minutes: 60, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           location_name: place.trim(), address: '', meeting_note: '', online_url: '', capacity: '20', visibility: 'public', description_en: t(`quickStart.desc_${kind}`, { lng: 'en' }), description_es: t(`quickStart.desc_${kind}`, { lng: 'es' }), template_id: '', lat: '', lng: '' } });
         if (error || !data) throw error ?? new Error('create');
         id = data as string;
-        if (kind === 'paid') { const { error: ue } = await supabase.from('events').update({ price_cents: cents }).eq('id', id); if (ue) throw ue; }
-        trackEvent('gathering_created', { weekly: false }); trackEvent('gathering_published');
+        trackEvent('gathering_created', { weekly: false });
+        if (kind === 'paid') {
+          // Paid tickets need payouts; until then the gathering waits as a draft with its price noted for the coach.
+          const { error: ue } = await supabase.from('events').update({ price_cents: cents }).eq('id', id);
+          if (!ue) { await supabase.from('events').update({ status: 'published' }).eq('id', id); trackEvent('gathering_published'); }
+        } else trackEvent('gathering_published');
       }
       await qc.invalidateQueries();
       onDone(kind, id);
@@ -162,9 +166,9 @@ function CreateStep({ profile, onDone }: { profile: Prof; onDone: (k: StartKind,
 
 function useStarter(kind: StartKind, id: string) {
   return useQuery({ queryKey: ['qs-starter', kind, id], queryFn: async () => {
-    if (kind === 'circle') { const { data } = await supabase.from('offers').select('id, title_en, title_es, price_cents, cover_style').eq('id', id).maybeSingle(); return data ? { title: '', title_en: data.title_en, title_es: data.title_es, starts_at: null as string | null, timezone: null as string | null, place: '', price: data.price_cents, cover_style: data.cover_style as number | null, cover_url: null as string | null } : null; }
-    const { data } = await supabase.from('events').select('id, title, starts_at, timezone, location_name, price_cents, cover_style, cover_url').eq('id', id).maybeSingle();
-    return data ? { title: data.title, title_en: '', title_es: '', starts_at: data.starts_at, timezone: data.timezone, place: data.location_name ?? '', price: data.price_cents, cover_style: data.cover_style, cover_url: data.cover_url } : null;
+    if (kind === 'circle') { const { data } = await supabase.from('offers').select('id, title_en, title_es, price_cents, cover_style').eq('id', id).maybeSingle(); return data ? { title: '', title_en: data.title_en, title_es: data.title_es, starts_at: null as string | null, timezone: null as string | null, place: '', price: data.price_cents, cover_style: data.cover_style as number | null, cover_url: null as string | null, draft: false } : null; }
+    const { data } = await supabase.from('events').select('id, title, starts_at, timezone, location_name, price_cents, cover_style, cover_url, status').eq('id', id).maybeSingle();
+    return data ? { title: data.title, title_en: '', title_es: '', starts_at: data.starts_at, timezone: data.timezone, place: data.location_name ?? '', price: data.price_cents, cover_style: data.cover_style, cover_url: data.cover_url, draft: data.status !== 'published' } : null;
   } });
 }
 const starterLink = (kind: StartKind, id: string) => `${window.location.origin}${kind === 'circle' ? '/offer/' : '/e/'}${id}`;
@@ -180,6 +184,7 @@ function ShareStep({ kind, id, onNext, onBack }: { kind: StartKind; id: string; 
   const when = d.starts_at ? new Date(d.starts_at).toLocaleString(lang === 'es' ? 'es-MX' : 'en-US', { weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', ...(d.timezone ? { timeZone: d.timezone } : {}) }) : '';
   const message = kind === 'circle' ? t('quickStart.waCircle', { title, link }) : t('quickStart.waGathering', { title, when, link });
   return <div className="qs-body">
+    {d.draft && <p className="qs-note"><GwIcon name="AlertCircle" size={18} />{t('quickStart.draftNote')}</p>}
     <section className="panel qs-section"><h2>{t('quickStart.yourLink')}</h2>
       <div className="qs-link"><code>{link}</code><CopyButton text={link} /></div>
       <div className="qs-qr"><QRCodeSVG value={link} size={168} marginSize={2} title={t('quickStart.qrAlt', { title })} /><p className="field-hint">{t('quickStart.qrHint')}</p></div>
@@ -231,7 +236,7 @@ function LiveStep({ kind, id, name }: { kind: StartKind; id: string; name: strin
   return <div className="qs-body">
     <section className="panel qs-live" aria-live="polite">
       <GwFeatureTile name="CheckCircle2" size={32} />
-      <p className="auth-subtitle">{t('quickStart.liveText', { name: name ?? '' })}</p>
+      <p className="auth-subtitle">{d?.draft ? t('quickStart.liveDraft', { name: name ?? '' }) : t('quickStart.liveText', { name: name ?? '' })}</p>
     </section>
     {d && <section className="panel qs-preview"><span className="eyebrow">{t('quickStart.preview')}</span>
       <GatheringCover style={d.cover_style} title={title} className="qs-preview-cover" />

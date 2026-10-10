@@ -3900,6 +3900,9 @@
     "toHome": "Go to Home",
     "ttlLabel": "Time to live",
     "ttlValue": "{{minutes}} min",
-    "ttlSub": "Median for {{live}} coaches · {{hour}} within an hour"
+    "ttlSub": "Median for {{live}} coaches · {{hour}} within an hour",
+    "draftNote": "Your paid gathering is saved as a draft. It goes live with its price as soon as payouts are connected. You can share the link once it's live.",
+    "liveDraft": "Nice work, {{name}}. Your profile is ready and your paid gathering will go live as soon as payouts are connected.",
+    "draftLabel": "Waiting for payouts"
   }
 }
