@@ -3,7 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { teamKey } from '@/lib/team';
 
 export type Tier = 'bronze' | 'silver' | 'gold';
-export type Badge = { id: string; code: string; name_en: string; name_es: string; description_en: string | null; description_es: string | null; icon: string; tier: Tier; is_custom: boolean; team_id: string | null; sort_order: number };
+export type BadgeKind = 'standard' | 'seasonal' | 'event' | 'founding';
+export type Badge = { id: string; code: string; name_en: string; name_es: string; description_en: string | null; description_es: string | null; icon: string; tier: Tier; is_custom: boolean; team_id: string | null; sort_order: number; kind: BadgeKind; event_id: string | null; available_from: string | null; available_until: string | null };
 export type Earned = { id: string; user_id: string; badge_id: string; team_id: string; awarded_by: string | null; note: string | null; awarded_at: string; seen_at: string | null; featured: number | null };
 
 export const JOIN_BY_KEY = 'gatherwell-join-by';
@@ -11,13 +12,24 @@ export const recognitionKey = (teamId: string) => [...teamKey(teamId), 'recognit
 
 export const badgeName = (b: Pick<Badge, 'name_en' | 'name_es'>, lang?: string) => (lang === 'es' ? b.name_es : b.name_en) || b.name_en;
 export const badgeText = (b: Pick<Badge, 'description_en' | 'description_es'>, lang?: string) => (lang === 'es' ? b.description_es : b.description_en) || b.description_en || '';
+export const isLimited = (b: Pick<Badge, 'kind'>) => b.kind !== 'standard';
 
 export const badgesQuery = (teamId: string) => queryOptions({
   queryKey: [...recognitionKey(teamId), 'badges'],
   queryFn: async (): Promise<Badge[]> => {
-    const { data, error } = await supabase.from('badges').select('id, code, name_en, name_es, description_en, description_es, icon, tier, is_custom, team_id, sort_order').order('sort_order').order('created_at');
+    const { data, error } = await supabase.from('badges').select('id, code, name_en, name_es, description_en, description_es, icon, tier, is_custom, team_id, sort_order, kind, event_id, available_from, available_until').order('sort_order').order('created_at');
     if (error) throw error;
     return (data ?? []) as Badge[];
+  },
+});
+
+export const holderCountsQuery = (teamId: string, ids: string[]) => queryOptions({
+  queryKey: [...recognitionKey(teamId), 'holders', ids.join(',')],
+  enabled: ids.length > 0,
+  queryFn: async (): Promise<Record<string, number>> => {
+    const { data, error } = await supabase.rpc('badge_holder_counts', { _ids: ids });
+    if (error) throw error;
+    return Object.fromEntries((data ?? []).map(r => [r.badge_id, r.holders]));
   },
 });
 
