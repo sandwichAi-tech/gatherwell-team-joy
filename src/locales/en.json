@@ -3092,7 +3092,36 @@
     "finalTitle": "Your next gathering starts here.",
     "finalBody": "Make it easy to show up. Give people a reason to come back.",
     "hostsMeta": "For hosts · Gatherwell",
-    "pricingMeta": "Pricing · Gatherwell"
+    "pricingMeta": "Pricing · Gatherwell",
+    "whoLabel": "Who it's for",
+    "whoTitle": "Made for real lives",
+    "whoSub": "Wherever you're starting, there's a gathering that fits.",
+    "who": [
+      {
+        "title": "New to fitness",
+        "body": "Beginner-friendly gatherings and people who make it easy to start."
+      },
+      {
+        "title": "Busy schedules",
+        "body": "One tap to plan your week and show up."
+      },
+      {
+        "title": "Active at every age",
+        "body": "Gentle, accessible gatherings at your pace."
+      },
+      {
+        "title": "Training for something",
+        "body": "Group runs, challenges and progress you can see."
+      },
+      {
+        "title": "Families",
+        "body": "Family-friendly gatherings in your neighborhood."
+      },
+      {
+        "title": "Coaches and creators",
+        "body": "Share what you teach, online and in person."
+      }
+    ]
   },
   "teamRsvp": {
     "cta": "Register a team ({{min}}–{{max}})",

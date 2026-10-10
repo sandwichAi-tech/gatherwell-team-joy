@@ -12,6 +12,7 @@ import { LocationFilter, sortForFeed } from '@/components/landing/location-filte
 import { CATEGORIES, distanceKm, HERO_SLOTS, inNextDays, pickH1Variant, featureFlagsQuery, publicGatheringsQuery, socialProofQuery, testimonialsQuery, track, type Category, type FeedGathering, type H1Variant } from '@/lib/landing';
 import { QueryFeedback } from '@/components/launch-states';
 import { Button } from '@/components/ui/button';
+import { WhoItsFor } from '@/components/landing/marketing-pages';
 
 const LiveStack = lazy(() => import('@/components/landing/live-stack'));
 const PHOTO_CATEGORIES: Category[] = ['run', 'fitcamp', 'pilates', 'pickleball'];
@@ -28,6 +29,7 @@ export function LandingPage() {
       <CategoryRow selected={category} onSelect={setCategory} />
       <ThisWeek gatherings={gatherings} category={category} />
       <HowItWorks />
+      <WhoItsFor />
       <HostBand />
       <LeadersBand />
       <Testimonials />

@@ -94,4 +94,4 @@
 - [x] Part 2: verified coaches + reviews
 - [x] Part 3: retreats and trips
 - [x] Part 4: ethical access
-- [ ] Part 5: who-it's-for messaging
+- [x] Part 5: who-it's-for messaging

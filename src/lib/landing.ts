@@ -143,7 +143,7 @@ export function track(event: AnalyticsEvent, props: Record<string, string | numb
 export type H1Variant = 'A' | 'B' | 'C' | 'D';
 const H1_VARIANTS: H1Variant[] = ['A', 'B', 'C', 'D'];
 /** Share of visitors per headline. A is the control. */
-export const H1_WEIGHTS: Record<H1Variant, number> = { A: 1, B: 0, C: 0, D: 0 };
+export const H1_WEIGHTS: Record<H1Variant, number> = { A: 1, B: 0, C: 1, D: 1 };
 
 /** ?h1=B forces a variant; otherwise a weighted pick kept for the browser session. */
 export function pickH1Variant(): H1Variant {

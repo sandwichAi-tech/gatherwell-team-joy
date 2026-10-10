@@ -3092,7 +3092,36 @@
     "finalTitle": "Tu próxima reunión empieza aquí.",
     "finalBody": "Haz que llegar sea fácil. Dales un motivo para volver.",
     "hostsMeta": "Para anfitriones · Gatherwell",
-    "pricingMeta": "Precios · Gatherwell"
+    "pricingMeta": "Precios · Gatherwell",
+    "whoLabel": "Para quién es",
+    "whoTitle": "Hecho para la vida real",
+    "whoSub": "Empieces donde empieces, hay una reunión para ti.",
+    "who": [
+      {
+        "title": "Recién empiezas",
+        "body": "Reuniones para principiantes y gente que te hace fácil empezar."
+      },
+      {
+        "title": "Agendas ocupadas",
+        "body": "Un toque para planear tu semana y llegar."
+      },
+      {
+        "title": "Activos a cualquier edad",
+        "body": "Reuniones suaves y accesibles, a tu ritmo."
+      },
+      {
+        "title": "Entrenando para algo",
+        "body": "Carreras en grupo, retos y avances que puedes ver."
+      },
+      {
+        "title": "Familias",
+        "body": "Reuniones para toda la familia en tu vecindario."
+      },
+      {
+        "title": "Coaches y creadores",
+        "body": "Comparte lo que enseñas, en línea y en persona."
+      }
+    ]
   },
   "teamRsvp": {
     "cta": "Inscribir un equipo ({{min}}–{{max}})",
