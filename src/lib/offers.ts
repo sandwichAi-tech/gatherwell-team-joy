@@ -5,14 +5,14 @@ export type OfferKind = 'membership' | 'course' | 'download';
 export type Offer = {
   id: string; host_id: string; team_id: string; kind: OfferKind; title_en: string; title_es: string;
   description_en: string | null; description_es: string | null; includes_en: string[]; includes_es: string[];
-  price_cents: number; cover_style: number; cover_url: string | null; file_path: string | null; drip_days: number; founding_seats: number | null; founding_price_cents: number | null; status: 'draft' | 'published' | 'archived'; created_at: string;
+  price_cents: number; cover_style: number; cover_url: string | null; file_path: string | null; drip_days: number; founding_seats: number | null; founding_price_cents: number | null; community_seats?: number | null; status: 'draft' | 'published' | 'archived'; created_at: string;
 };
-export type Purchase = { id: string; offer_id: string; status: string; cancel_at_period_end: boolean; renews_at: string | null; amount_cents: number; created_at: string; stripe_subscription_id: string | null };
+export type Purchase = { id: string; offer_id: string; status: string; cancel_at_period_end: boolean; renews_at: string | null; amount_cents: number; created_at: string; stripe_subscription_id: string | null; paused_until?: string | null };
 
 // The generated types may lag behind new tables; keep the casts here.
 const db = supabase as unknown as { from: (t: string) => any; rpc: (f: string, a?: Record<string, unknown>) => any };
 
-const COLS = 'id, host_id, team_id, kind, title_en, title_es, description_en, description_es, includes_en, includes_es, price_cents, cover_style, cover_url, file_path, drip_days, founding_seats, founding_price_cents, status, created_at';
+const COLS = 'id, host_id, team_id, kind, title_en, title_es, description_en, description_es, includes_en, includes_es, price_cents, cover_style, cover_url, file_path, drip_days, founding_seats, founding_price_cents, community_seats, status, created_at';
 
 export const offerTitle = (o: Pick<Offer, 'title_en' | 'title_es'>, lang?: string) => (lang?.startsWith('es') ? o.title_es || o.title_en : o.title_en || o.title_es);
 export const offerText = (o: Pick<Offer, 'description_en' | 'description_es'>, lang?: string) => (lang?.startsWith('es') ? o.description_es || o.description_en : o.description_en || o.description_es) ?? '';
@@ -46,7 +46,7 @@ export const offerQuery = (id: string, userId: string) => queryOptions({
   queryFn: async () => {
     const [{ data: offer, error }, { data: purchase }] = await Promise.all([
       db.from('offers').select(COLS).eq('id', id).maybeSingle(),
-      db.from('offer_purchases').select('id, offer_id, status, cancel_at_period_end, renews_at, amount_cents, created_at, stripe_subscription_id').eq('offer_id', id).eq('user_id', userId).maybeSingle(),
+      db.from('offer_purchases').select('id, offer_id, status, cancel_at_period_end, renews_at, amount_cents, created_at, stripe_subscription_id, paused_until').eq('offer_id', id).eq('user_id', userId).maybeSingle(),
     ]);
     if (error) throw error;
     const { data: host } = offer ? await supabase.from('profiles').select('full_name').eq('id', (offer as Offer).host_id).maybeSingle() : { data: null };
@@ -57,7 +57,7 @@ export const offerQuery = (id: string, userId: string) => queryOptions({
 export const purchasesQuery = (userId: string) => queryOptions({
   queryKey: ['offers', 'purchases', userId],
   queryFn: async () => {
-    const { data: rows, error } = await db.from('offer_purchases').select('id, offer_id, status, cancel_at_period_end, renews_at, amount_cents, created_at, stripe_subscription_id').eq('user_id', userId).order('created_at', { ascending: false });
+    const { data: rows, error } = await db.from('offer_purchases').select('id, offer_id, status, cancel_at_period_end, renews_at, amount_cents, created_at, stripe_subscription_id, paused_until').eq('user_id', userId).order('created_at', { ascending: false });
     if (error) throw error;
     const ids = ((rows ?? []) as Purchase[]).map(r => r.offer_id);
     const { data: offers } = ids.length ? await db.from('offers').select(COLS).in('id', ids) : { data: [] };

@@ -114,7 +114,7 @@ export const pinnedShoutoutQuery = (teamId: string) => queryOptions({
 });
 
 /** Mirrors the database claim check so people get the gentle message before sending. */
-const CLAIM = /(weight|lbs?\b|pounds|kilos?\b|\bkg\b|slim|diet pill|fat burn|cure|cures|cured|heal(s|ed)?\b|disease|diabet|cancer|medic|prescription|detox|income|salary|paycheck|commission|earn(ed|ing|s)?\b|\$ ?[0-9]|[0-9]+ ?(usd|dollars|dólares|pesos)|make money|financial freedom|quit (your|my) job|six figures|passive|peso\b|bajar de peso|perder peso|adelgaz|libras|grasa|cura(r|do|ción)?\b|sana(r|do)?\b|enfermedad|medicina|medicament|ingreso|sueldo|salario|comisi[oó]n|ganar dinero|gan[eé] dinero|libertad financiera|dinero)/i;
+const CLAIM = /(weight|lbs?\b|pounds|kilos?\b|\bkg\b|slim|diet pill|fat burn|cure|cures|cured|heal(s|ed)?\b|disease|diabet|cancer|medic|prescription|detox|income|salary|paycheck|commission|earn(ed|ing|s)?\b|\$ ?[0-9]|[0-9]+ ?(usd|dollars|dólares|pesos)|make money|financial freedom|quit (your|my) job|six figures|passive|peso\b|bajar de peso|perder peso|adelgaz|libras|grasa|cura(r|do|ción)?\b|sana(r|do)?\b|enfermedad|medicina|medicament|ingreso|sueldo|salario|comisi[oó]n|ganar dinero|gan[eé] dinero|libertad financiera|dinero|guarantee|garantiz|last chance|or you.?ll (fail|regret|lose|never)|you will fail|before it.?s too late|don.?t miss out|act now|now or never|results in [0-9]+ days|change your life in [0-9]+|[uú]ltima oportunidad|antes de que sea tarde|no te lo pierdas|vas a fracasar|te vas a arrepentir|ahora o nunca|resultados en [0-9]+ d[ií]as)/i;
 export const hasBlockedClaim = (text: string) => CLAIM.test(text);
 
 export function recognitionError(error: unknown) {

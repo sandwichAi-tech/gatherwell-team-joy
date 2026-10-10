@@ -1,3 +1,4 @@
+import { CommunitySeatCard } from '@/components/community-seats';
 import { RetreatDetails } from '@/components/retreat';
 import { asRetreat } from '@/lib/retreat';
 import { VerifiedMark } from '@/components/coach-trust';
@@ -133,6 +134,7 @@ function PublicEventBody() {
             <Button variant="secondary" className="guest-secondary" onClick={() => setIntent('maybe')}>{t('guest.maybe')}</Button>
             {event.team_registration && <Button variant="secondary" className="guest-secondary" onClick={() => setTeamOpen(true)}>{t('teamRsvp.cta', { min: event.team_min ?? 2, max: event.team_max ?? 6 })}</Button>}
           </div>}
+        {price && !event.my_code && <CommunitySeatCard kind="event" target={id} signedIn={signedIn} />}
         <CalendarButtons event={event} />
       </>}
       <Polls eventId={id} code={event.my_code} />

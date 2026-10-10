@@ -7,7 +7,7 @@ export type FollowKind = 'first_time' | 'returning' | 'no_show';
 
 const RULES = 'Never make health, medical, weight-loss or income claims. Never mention outside companies or brands. Never use emoji. Warm, short, personal, plain text.';
 
-export const CLAIM_RE = /(weight|lbs?\b|pounds|kilos?\b|\bkg\b|slim|diet pill|fat burn|cure|cures|cured|heal(s|ed)?\b|disease|diabet|cancer|medic|prescription|detox|income|salary|paycheck|commission|earn(ed|ing|s)?\b|\$ ?[0-9]|[0-9]+ ?(usd|dollars|dólares|pesos)|make money|financial freedom|quit (your|my) job|six figures|passive|peso\b|bajar de peso|perder peso|adelgaz|libras|grasa|cura(r|do|ción)?\b|sana(r|do)?\b|enfermedad|medicina|medicament|ingreso|sueldo|salario|comisi[oó]n|ganar dinero|gan[eé] dinero|libertad financiera|dinero)/i;
+export const CLAIM_RE = /(weight|lbs?\b|pounds|kilos?\b|\bkg\b|slim|diet pill|fat burn|cure|cures|cured|heal(s|ed)?\b|disease|diabet|cancer|medic|prescription|detox|income|salary|paycheck|commission|earn(ed|ing|s)?\b|\$ ?[0-9]|[0-9]+ ?(usd|dollars|dólares|pesos)|make money|financial freedom|quit (your|my) job|six figures|passive|peso\b|bajar de peso|perder peso|adelgaz|libras|grasa|cura(r|do|ción)?\b|sana(r|do)?\b|enfermedad|medicina|medicament|ingreso|sueldo|salario|comisi[oó]n|ganar dinero|gan[eé] dinero|libertad financiera|dinero|guarantee|garantiz|last chance|or you.?ll (fail|regret|lose|never)|you will fail|before it.?s too late|don.?t miss out|act now|now or never|results in [0-9]+ days|change your life in [0-9]+|[uú]ltima oportunidad|antes de que sea tarde|no te lo pierdas|vas a fracasar|te vas a arrepentir|ahora o nunca|resultados en [0-9]+ d[ií]as)/i;
 export const hasClaim = (t: string) => CLAIM_RE.test(t);
 
 export async function claude(key: string, system: string, user: string, maxTokens = 1500) {
@@ -69,7 +69,7 @@ export function keywordRewrite(text: string, lang: Lang) {
 }
 
 export async function claudeRewrite(key: string, text: string, lang: Lang) {
-  const r = await claude(key, `Rewrite the user's text so it keeps its warm meaning but removes every health, medical, weight-loss, income or money claim. Reply in ${lang === 'es' ? 'natural Latin American Spanish' : 'English'} unless the text is clearly in the other language. Output only the rewritten text.`, text, 800);
+  const r = await claude(key, `Rewrite the user's text so it keeps its warm meaning but removes every health, medical, weight-loss, income or money claim, every guaranteed result, and any fear or pressure language (like "last chance" or "you'll regret it"). Keep it calm, honest and inviting. Reply in ${lang === 'es' ? 'natural Latin American Spanish' : 'English'} unless the text is clearly in the other language. Output only the rewritten text.`, text, 800);
   return r;
 }
 

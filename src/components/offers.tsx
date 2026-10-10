@@ -27,7 +27,8 @@ import {
   purchasesQuery, saveOffer, setOfferLink, teamOffersQuery, uploadOfferFile, type Offer, type OfferKind,
   foundingStatusQuery,
 } from '@/lib/offers';
-import { cancelOfferMembership, offerDownloadLink, startOfferCheckout } from '@/lib/offers.functions';
+import { cancelOfferMembership, offerDownloadLink, pauseOfferMembership, startOfferCheckout } from '@/lib/offers.functions';
+import { CommunityRequestsPanel, CommunitySeatCard } from '@/components/community-seats';
 
 const KINDS: OfferKind[] = ['membership', 'course', 'download'];
 const dateFmt = (iso: string, lang: string) => new Date(iso).toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -79,7 +80,7 @@ function OfferEditor({ offer, teamId, onClose }: { offer: Partial<Offer> | null;
   const { t } = useTranslation();
   const { userId } = useGatherwell();
   const qc = useQueryClient();
-  const blank = { kind: 'membership' as OfferKind, title_en: '', title_es: '', description_en: '', description_es: '', inc_en: '', inc_es: '', price: '', cover_style: 0, cover_url: null as string | null, drip_days: 7, file_path: null as string | null, publish: false, f_seats: '', f_price: '' };
+  const blank = { kind: 'membership' as OfferKind, title_en: '', title_es: '', description_en: '', description_es: '', inc_en: '', inc_es: '', price: '', cover_style: 0, cover_url: null as string | null, drip_days: 7, file_path: null as string | null, publish: false, f_seats: '', f_price: '', c_seats: '' };
   const [f, setF] = useState(blank);
   const [busy, setBusy] = useState(false);
   const [coverFile, setCoverFile] = useState<File | null>(null);
@@ -90,7 +91,7 @@ function OfferEditor({ offer, teamId, onClose }: { offer: Partial<Offer> | null;
     setCoverFile(null); setCoverPreview(null);
     setF({ kind: offer.kind ?? 'membership', title_en: offer.title_en ?? '', title_es: offer.title_es ?? '', description_en: offer.description_en ?? '', description_es: offer.description_es ?? '',
       inc_en: (offer.includes_en ?? []).join('\n'), inc_es: (offer.includes_es ?? []).join('\n'), price: offer.price_cents ? String(offer.price_cents / 100) : '',
-      cover_style: offer.cover_style ?? 0, cover_url: offer.cover_url ?? null, drip_days: offer.drip_days ?? 7, file_path: offer.file_path ?? null, publish: offer.status === 'published', f_seats: offer.founding_seats ? String(offer.founding_seats) : '', f_price: offer.founding_seats ? String((offer.founding_price_cents ?? 0) / 100) : '' });
+      cover_style: offer.cover_style ?? 0, cover_url: offer.cover_url ?? null, drip_days: offer.drip_days ?? 7, file_path: offer.file_path ?? null, publish: offer.status === 'published', f_seats: offer.founding_seats ? String(offer.founding_seats) : '', f_price: offer.founding_seats ? String((offer.founding_price_cents ?? 0) / 100) : '', c_seats: offer.community_seats ? String(offer.community_seats) : '' });
   }, [offer]);
   const lines = (s: string) => s.split('\n').map(x => x.trim()).filter(Boolean).slice(0, 8);
   const priceNum = Number(f.price || 0);
@@ -102,6 +103,7 @@ function OfferEditor({ offer, teamId, onClose }: { offer: Partial<Offer> | null;
     const row = { kind: f.kind, title_en: f.title_en.trim(), title_es: f.title_es.trim(), description_en: f.description_en.trim() || null, description_es: f.description_es.trim() || null,
       includes_en: lines(f.inc_en), includes_es: lines(f.inc_es), price_cents: Math.round(priceNum * 100), cover_style: f.cover_style, cover_url, drip_days: f.drip_days, file_path: f.file_path,
       ...(f.kind === 'membership' && Number(f.f_seats) > 0 ? { founding_seats: Math.min(500, Math.round(Number(f.f_seats))), founding_price_cents: Math.round(Number(f.f_price || 0) * 100) } : { founding_seats: null, founding_price_cents: null }),
+      community_seats: Number(f.c_seats) > 0 ? Math.min(100, Math.round(Number(f.c_seats))) : null,
       status: f.publish ? 'published' as const : (offer?.status === 'published' ? 'archived' as const : 'draft' as const) };
     const res = await saveOffer(offer?.id ? row : { ...row, team_id: teamId, host_id: userId }, offer?.id);
     setBusy(false);
@@ -137,6 +139,8 @@ function OfferEditor({ offer, teamId, onClose }: { offer: Partial<Offer> | null;
       </div>
       {field('of-price', f.kind === 'download' ? t('offers.price') : t('offers.priceMonthly'), <Input id="of-price" className="field-input" inputMode="decimal" value={f.price} placeholder="0" onChange={e => setF({ ...f, price: e.target.value.replace(/[^0-9.]/g, '') })} />)}
       <p className="muted-small">{t('offers.feeNote')}</p>
+      {field('of-cseats', t('community.seatsField'), <Input id="of-cseats" className="field-input" inputMode="numeric" value={f.c_seats} placeholder={t('community.seatsNone')} onChange={e => setF({ ...f, c_seats: e.target.value.replace(/\D/g, '').slice(0, 3) })} />)}
+      <p className="muted-small">{t('community.seatsHint')}</p>
       {f.kind === 'membership' && <div className="bilingual">
         {field('of-fseats', t('offers.foundingSeats'), <Input id="of-fseats" className="field-input" inputMode="numeric" value={f.f_seats} placeholder="0" onChange={e => setF({ ...f, f_seats: e.target.value.replace(/[^0-9]/g, '').slice(0, 3) })} />)}
         {field('of-fprice', t('offers.foundingPrice'), <Input id="of-fprice" className="field-input" inputMode="decimal" value={f.f_price} placeholder="0" disabled={!Number(f.f_seats)} onChange={e => setF({ ...f, f_price: e.target.value.replace(/[^0-9.]/g, '') })} />)}
@@ -223,8 +227,10 @@ export function OfferPage({ id, paid }: { id: string; paid?: boolean }) {
         {promo && !!offer.price_cents && <p className="offer-price">{formatMoney(offer.price_cents - promoDiscount(offer.price_cents, promo), lang)}</p>}
         <Button className="onboarding-continue" disabled={busy} onClick={buy}>{t(offer.kind === 'download' ? 'offers.buy' : 'offers.join')}</Button>
         {!!offer.price_cents && gate && !gate.connected && <p className="muted-small">{t('billing.notConnected')}</p>}
-        {offer.kind !== 'download' && !!offer.price_cents && <p className="muted-small">{t('offers.cancelAnytime')}</p>}
+        {offer.kind !== 'download' && !!offer.price_cents && <ul className="member-promises"><li><Check />{t('offers.cancelAnytime')}</li><li><Check />{t('offers.pauseAnytime')}</li></ul>}
+        {!!offer.price_cents && <CommunitySeatCard kind="offer" target={offer.id} signedIn={!!userId} />}
       </> : <p className="muted-small">{t('offers.closed')}</p>}
+      {offer.host_id === userId && <CommunityRequestsPanel kind="offer" target={offer.id} seats={offer.community_seats} />}
     </section>
   </article>;
 }
@@ -247,7 +253,7 @@ export function PurchasesPanel() {
   const { userId } = useGatherwell();
   const qc = useQueryClient();
   const q = useQuery(purchasesQuery(userId));
-  const cancel = useServerFn(cancelOfferMembership);
+  const cancel = useServerFn(cancelOfferMembership); const pause = useServerFn(pauseOfferMembership);
   const download = useServerFn(offerDownloadLink);
   const [busy, setBusy] = useState<string | null>(null);
   if (q.isPending) return <ListSkeleton />;
@@ -264,9 +270,16 @@ export function PurchasesPanel() {
     toast.success(t(r.ended ? 'offers.cancelled' : 'offers.cancelScheduled'));
     await qc.invalidateQueries({ queryKey: ['offers'] });
   };
+  const doPause = async (offerId: string, months: number) => {
+    setBusy(offerId); const r = await pause({ data: { offerId, months } }); setBusy(null);
+    if (!r.ok) { toast.error(t(r.error === 'not_connected' ? 'billing.notConnected' : 'offers.errors.generic')); return; }
+    toast.success(months ? t('offers.pausedToast', { date: dateFmt(r.until!, lang) }) : t('offers.resumedToast'));
+    await qc.invalidateQueries({ queryKey: ['offers'] });
+  };
   const getFile = async (offerId: string) => { setBusy(offerId); const r = await download({ data: { offerId } }); setBusy(null); if (r.ok) window.open(r.url, '_blank', 'noopener'); else toast.error(t('offers.errors.download')); };
   const statusText = (p: (typeof q.data)[number]) => {
     if (p.status === 'canceled') return t('offers.status.ended');
+    if (p.paused_until && new Date(p.paused_until) > new Date()) return t('offers.pausedUntil', { date: dateFmt(p.paused_until, lang) });
     if (p.status === 'past_due') return t('offers.status.pastDue');
     if (p.cancel_at_period_end && p.renews_at) return t('offers.endsOn', { date: dateFmt(p.renews_at, lang) });
     if (p.renews_at) return t('offers.renewsOn', { date: dateFmt(p.renews_at, lang) });
@@ -277,7 +290,10 @@ export function PurchasesPanel() {
       <ul className="offer-list compact">{memberships.map(p => <li key={p.id} className="offer-row">
         {p.offer && <OfferCover offer={p.offer} />}
         <div className="offer-row-main"><Link to="/offer/$id" params={{ id: p.offer_id }}><strong>{offerTitle(p.offer!, lang)}</strong></Link><small>{priceLabel(t, p.offer!, lang)} · {statusText(p)}</small></div>
-        {isLive(p) && !p.cancel_at_period_end && <Button variant="ghost" disabled={busy === p.offer_id} onClick={() => doCancel(p.offer_id)}>{t('offers.cancel')}</Button>}
+        {isLive(p) && !p.cancel_at_period_end && <div className="offer-row-actions">
+          {p.paused_until && new Date(p.paused_until) > new Date() ? <Button variant="ghost" disabled={busy === p.offer_id} onClick={() => doPause(p.offer_id, 0)}>{t('offers.resume')}</Button>
+            : <select className="field-input pause-select" aria-label={t('offers.pause')} value="" disabled={busy === p.offer_id} onChange={e => { const m = Number(e.target.value); if (m) void doPause(p.offer_id, m); }}><option value="">{t('offers.pause')}</option>{[1, 2, 3].map(m => <option key={m} value={m}>{t('offers.pauseMonths', { count: m })}</option>)}</select>}
+          <Button variant="ghost" disabled={busy === p.offer_id} onClick={() => doCancel(p.offer_id)}>{t('offers.cancel')}</Button></div>}
       </li>)}</ul></>}
     {downloads.length > 0 && <><h3 className="field-label">{t('offers.downloads')}</h3>
       <ul className="offer-list compact">{downloads.map(p => <li key={p.id} className="offer-row">
