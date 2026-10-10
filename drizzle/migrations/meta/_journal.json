@@ -155,6 +155,13 @@
       "when": 1791656244352,
       "tag": "0021_v3_ethical_access",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1791657672920,
+      "tag": "0022_u1_two_plans_fee_cap",
+      "breakpoints": true
     }
   ]
 }

@@ -278,6 +278,7 @@ export type Database = {
           connect_account_id: string | null
           connect_status: string
           created_at: string
+          legacy_price_cents: number | null
           pass_fee: boolean
           plan: string
           renews_at: string | null
@@ -292,6 +293,7 @@ export type Database = {
           connect_account_id?: string | null
           connect_status?: string
           created_at?: string
+          legacy_price_cents?: number | null
           pass_fee?: boolean
           plan?: string
           renews_at?: string | null
@@ -306,6 +308,7 @@ export type Database = {
           connect_account_id?: string | null
           connect_status?: string
           created_at?: string
+          legacy_price_cents?: number | null
           pass_fee?: boolean
           plan?: string
           renews_at?: string | null
@@ -2382,6 +2385,33 @@ export type Database = {
         }
         Relationships: []
       }
+      plan_settings: {
+        Row: {
+          fee_percent: number
+          legacy: boolean
+          monthly_cap: number | null
+          monthly_price: number
+          plan: string
+          updated_at: string
+        }
+        Insert: {
+          fee_percent: number
+          legacy?: boolean
+          monthly_cap?: number | null
+          monthly_price?: number
+          plan: string
+          updated_at?: string
+        }
+        Update: {
+          fee_percent?: number
+          legacy?: boolean
+          monthly_cap?: number | null
+          monthly_price?: number
+          plan?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       playbook_patterns: {
         Row: {
           category: string | null
@@ -4166,6 +4196,7 @@ export type Database = {
         Args: { _body: string; _team: string; _title: string }
         Returns: string
       }
+      current_fee_pct: { Args: { _host: string }; Returns: number }
       decide_community_seat: {
         Args: { _approve: boolean; _id: string }
         Returns: string
@@ -4316,6 +4347,7 @@ export type Database = {
         Returns: boolean
       }
       honor_welcome_code: { Args: { _code: string }; Returns: Json }
+      host_fees_this_month: { Args: { _host: string }; Returns: number }
       infer_gathering_category: {
         Args: { _category: string; _title: string }
         Returns: string
@@ -4461,6 +4493,10 @@ export type Database = {
         Returns: undefined
       }
       plan_limits: { Args: { _plan: string }; Returns: Json }
+      platform_fee_cents: {
+        Args: { _amount: number; _host: string }
+        Returns: number
+      }
       playbook_cards: {
         Args: { _category?: string; _context: string }
         Returns: Json
