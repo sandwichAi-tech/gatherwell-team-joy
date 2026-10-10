@@ -1,3 +1,4 @@
+import { EarlyAccessNotice, earlyAccessQuery } from '@/components/early-access';
 import { recordReferral, rememberRef } from '@/lib/network';
 import { recordInvite, rememberInvite } from '@/lib/welcome';
 import { useEffect, useState } from 'react';
@@ -59,6 +60,7 @@ function PublicEventBody() {
   const [result, setResult] = useState<RsvpResult | null>(null);
   const [teamOpen, setTeamOpen] = useState(false); const [teamResult, setTeamResult] = useState<TeamResult | null>(null);
   const { data: price } = useQuery({ queryKey: ['event-price', id], queryFn: async () => { const { data } = await supabase.rpc('event_price', { _id: id }); return (data as { price_cents: number; pass_fee: boolean; fee_pct: number } | null) ?? null; } });
+  const { data: early } = useQuery(earlyAccessQuery(id));
 
   if (isLoading) return <div className="guest-skeleton" aria-busy="true"><div className="guest-cover skeleton" /><p className="guest-empty">{t('publicEvent.loading')}</p></div>;
   if (error) return <RetryState retry={() => void refetch()} />;
