@@ -82,7 +82,8 @@ function Onboarding() {
     // Mark the cached profile onboarded so the app gate lets Home through immediately.
     queryClient.setQueryData(profileQuery(user.id).queryKey, p => (p ? { ...p, onboarded: true } : p));
     await queryClient.invalidateQueries({ queryKey: ['workspace', user.id] }).catch(() => null);
-    try { await navigate({ to: '/home', replace: true }); } catch { window.location.assign('/home'); }
+    const dest = role === 'host' || role === 'leader' ? '/start' : '/home';
+    try { await navigate({ to: dest, replace: true }); } catch { window.location.assign(dest); }
     void queryClient.invalidateQueries();
   }
 

@@ -89,6 +89,7 @@ export function CoachLaunchCard() {
         <div><span className="gw-eyebrow">{t('coach.eyebrow')}</span><h2 id="coach-h">{t('coach.title')}</h2><p className="gw-muted-line"><Lock className="inline-icon" />{t('coach.private')}</p></div>
         <Button variant="ghost" size="icon" aria-label={t('coach.hide')} onClick={async () => { await supabase.from('coach_steps').insert({ step: 'dismissed' }); await qc.invalidateQueries({ queryKey: coachChecklistQuery.queryKey }); }}><X /></Button>
       </header>
+      <Button asChild className="qs-entry"><Link to="/start">{t('quickStart.entry')}</Link></Button>
       <ol className="coach-steps">{STEPS.map(s => <li key={s.key} className={done[s.key] ? 'is-done' : ''}>
         <Link to={s.to} className="coach-step">
           <span className="coach-step-icon">{done[s.key] ? <Check /> : <GwIcon name={s.icon} size={20} />}</span>

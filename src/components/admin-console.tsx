@@ -80,6 +80,7 @@ function Overview() {
       <div className="admin-stats">
         <Stat icon="UserPlus" label={t('admin.stats.signups')} value={num(o.signups, lang)} />
         <Stat icon="UsersRound" label={t('admin.stats.activeTeams')} value={num(o.active_teams, lang)} />
+        <Stat icon="Clock" label={t('quickStart.ttlLabel')} value={o.time_to_live?.median_minutes != null ? t('quickStart.ttlValue', { minutes: num(o.time_to_live.median_minutes, lang) }) : '—'} sub={t('quickStart.ttlSub', { live: o.time_to_live?.live ?? 0, hour: o.time_to_live?.within_hour ?? 0 })} />
         <Stat icon="CalendarPlus" label={t('admin.stats.gatherings')} value={num(o.gatherings, lang)} />
         <Stat icon="CalendarCheck" label={t('admin.stats.rsvps')} value={num(o.rsvps, lang)} />
         <Stat icon="ScanLine" label={t('admin.stats.checkins')} value={num(o.checkins, lang)} />
