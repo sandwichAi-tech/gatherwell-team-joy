@@ -4,7 +4,7 @@ export type Day60Raw = { start_date: string | null; coaches?: Day60Coach[]; span
 export type Day60Target = { key: string; met: boolean; value: string; params: Record<string, string | number> };
 
 const pct = (a: number, b: number) => (b > 0 ? Math.round((a / b) * 100) : 0);
-const median = (xs: number[]) => { if (!xs.length) return null; const s = [...xs].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+const median = (xs: number[]) => { if (!xs.length) return null; const s = [...xs].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m]! : (s[m - 1]! + s[m]!) / 2; };
 
 export function dayCount(start: string, now = new Date()) {
   const d = Math.floor((now.getTime() - new Date(`${start}T00:00:00Z`).getTime()) / 86400000) + 1;
