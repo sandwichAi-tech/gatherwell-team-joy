@@ -190,6 +190,13 @@
       "when": 1791659891972,
       "tag": "0026_u4_roi_fixes",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1791660092826,
+      "tag": "0027_u5_locations",
+      "breakpoints": true
     }
   ]
 }

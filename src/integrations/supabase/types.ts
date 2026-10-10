@@ -1266,6 +1266,7 @@ export type Database = {
           invite_token: string
           lat: number | null
           lng: number | null
+          location_id: string | null
           location_name: string | null
           meeting_note: string | null
           offer_id: string | null
@@ -1316,6 +1317,7 @@ export type Database = {
           invite_token?: string
           lat?: number | null
           lng?: number | null
+          location_id?: string | null
           location_name?: string | null
           meeting_note?: string | null
           offer_id?: string | null
@@ -1366,6 +1368,7 @@ export type Database = {
           invite_token?: string
           lat?: number | null
           lng?: number | null
+          location_id?: string | null
           location_name?: string | null
           meeting_note?: string | null
           offer_id?: string | null
@@ -1400,6 +1403,13 @@ export type Database = {
             columns: ["early_offer_id"]
             isOneToOne: false
             referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
             referencedColumns: ["id"]
           },
           {
@@ -1937,6 +1947,66 @@ export type Database = {
             referencedColumns: ["team_id"]
           },
         ]
+      }
+      locations: {
+        Row: {
+          address: string
+          booking_url: string | null
+          capacity: number | null
+          created_at: string
+          dropin_cents: number | null
+          host_id: string
+          id: string
+          lat: number | null
+          lng: number | null
+          mode: string
+          name: string
+          opening_notes: string
+          photos: string[]
+          schedule: Json
+          slug: string
+          store_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string
+          booking_url?: string | null
+          capacity?: number | null
+          created_at?: string
+          dropin_cents?: number | null
+          host_id: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          mode: string
+          name: string
+          opening_notes?: string
+          photos?: string[]
+          schedule?: Json
+          slug: string
+          store_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string
+          booking_url?: string | null
+          capacity?: number | null
+          created_at?: string
+          dropin_cents?: number | null
+          host_id?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          mode?: string
+          name?: string
+          opening_notes?: string
+          photos?: string[]
+          schedule?: Json
+          slug?: string
+          store_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       member_of_month: {
         Row: {
@@ -4383,6 +4453,7 @@ export type Database = {
         Returns: Json
       }
       get_public_host: { Args: { _slug: string }; Returns: Json }
+      get_public_location: { Args: { _slug: string }; Returns: Json }
       get_public_team: { Args: { _slug: string }; Returns: Json }
       get_rsvp_by_code: { Args: { _code: string }; Returns: Json }
       get_team_invite: {
@@ -4489,6 +4560,7 @@ export type Database = {
         Args: { _days?: number; _include_samples?: boolean; _limit?: number }
         Returns: Json
       }
+      list_public_locations: { Args: never; Returns: Json }
       live_lesson_link: { Args: { _lesson: string }; Returns: string }
       local_today: { Args: { _tz: string }; Returns: string }
       make_profile_slug: { Args: { _name: string }; Returns: string }
@@ -4831,6 +4903,10 @@ export type Database = {
       }
       set_event_cohosts: {
         Args: { _event: string; _users: string[] }
+        Returns: undefined
+      }
+      set_event_location: {
+        Args: { _event: string; _location: string }
         Returns: undefined
       }
       set_event_retreat: {
