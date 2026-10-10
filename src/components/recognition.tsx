@@ -349,22 +349,35 @@ export function RecognitionSummary({ teamId }: { teamId: string }) {
 }
 
 export function BadgeWall({ teamId }: { teamId: string }) {
-  const { t, i18n } = useTranslation(); const { userId } = useGatherwell();
+  const { t, i18n } = useTranslation(); const { userId } = useGatherwell(); const queryClient = useQueryClient();
   const { data: badges = [] } = useQuery(badgesQuery(teamId));
   const { data: earned = [] } = useQuery(myBadgesQuery(teamId, userId));
   const share = useShareBadge();
   const byId = useMemo(() => new Map(earned.map(e => [e.badge_id, e])), [earned]);
   const sorted = [...badges].sort((a, b) => Number(byId.has(b.id)) - Number(byId.has(a.id)));
   const lang = i18n.resolvedLanguage;
+  const featuredCount = earned.filter(e => e.featured != null).length;
+  const toggleFeature = async (earnedId: string, current: number | null) => {
+    if (current == null && featuredCount >= 3) { toast.error(t('recognition.featureFull')); return; }
+    const slot = current ?? ([1, 2, 3].find(s => !earned.some(e => e.featured === s)) ?? null);
+    const { error } = await supabase.rpc('feature_badge', { _id: earnedId, _slot: slot });
+    if (error) { toast.error(t(recognitionError(error))); return; }
+    await queryClient.invalidateQueries({ queryKey: recognitionKey(teamId) });
+    await queryClient.invalidateQueries({ queryKey: ['featured-badges', userId] });
+  };
   return <div className="badge-wall-wrap">
     <RecognitionSummary teamId={teamId} />
+    {earned.length > 0 && <p className="gw-muted-line">{t('recognition.featureHint')}</p>}
     {!earned.length && <span className="chip sample-badge">{t('recognition.noneYet')}</span>}
     <div className="badge-wall">{sorted.map(b => { const e = byId.get(b.id); return <div className={`badge-tile ${e ? '' : 'is-locked'}`} key={b.id}>
       <Medallion badge={b} size={64} locked={!e} />
       <strong>{badgeName(b, lang)}</strong>
       {e ? <small>{t('recognition.earnedOn', { date: new Date(e.awarded_at).toLocaleDateString(lang, { month: 'short', day: 'numeric', year: 'numeric' }) })}</small>
         : <small><Lock className="inline-icon" />{badgeText(b, lang) || t('recognition.leaderAwarded')}</small>}
-      {e && <button type="button" className="auth-link badge-share" onClick={() => void share(b)}><Download />{t('recognition.card')}</button>}
+      {e && <div className="badge-tile-actions">
+        <button type="button" className={`auth-link badge-share badge-feature ${e.featured != null ? 'is-featured' : ''}`} aria-pressed={e.featured != null} onClick={() => void toggleFeature(e.id, e.featured)}><Star />{e.featured != null ? t('recognition.featured') : t('recognition.feature')}</button>
+        <button type="button" className="auth-link badge-share" onClick={() => void share(b)}><Download />{t('recognition.card')}</button>
+      </div>}
     </div>; })}</div>
   </div>;
 }
