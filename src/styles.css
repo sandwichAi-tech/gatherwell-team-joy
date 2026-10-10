@@ -1741,3 +1741,28 @@ a.gw-cat-chip:hover{background:#fff}
 .progress-share { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .choice-pair.four { grid-template-columns: repeat(2, 1fr); }
 @media (min-width: 480px) { .choice-pair.four { grid-template-columns: repeat(4, 1fr); } }
+
+/* V3 coach launch */
+.coach-launch { display: grid; gap: 16px; }
+.coach-launch-head { display: flex; gap: 16px; align-items: center; }
+.coach-launch-head > div { flex: 1; min-width: 0; }
+.coach-launch-head h2 { margin: 2px 0; font-size: 20px; font-weight: 800; }
+.coach-ring-track { fill: none; stroke: var(--muted); stroke-width: 6; }
+.coach-ring-fill { fill: none; stroke: var(--primary); stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset .6s cubic-bezier(.2,.8,.2,1); }
+.coach-ring-label { font-size: 14px; font-weight: 800; fill: var(--foreground); }
+.coach-steps, .earn-milestone-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.coach-step { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 8px; border-radius: 14px; color: inherit; text-decoration: none; }
+.coach-step:hover, .coach-step:focus-visible { background: var(--muted); }
+.coach-step-text { flex: 1; display: grid; gap: 2px; }
+.coach-step-text small { color: var(--muted-foreground); }
+.coach-step-icon { display: grid; place-items: center; width: 40px; height: 40px; flex: none; border-radius: 12px; background: color-mix(in oklab, var(--primary) 10%, transparent); color: var(--primary); }
+.is-done .coach-step-icon { background: var(--primary); color: var(--primary-foreground); }
+.is-done .coach-step-text strong { color: var(--muted-foreground); }
+.coach-celebrate { text-align: center; justify-items: center; }
+.coach-celebrate-medal { display: grid; place-items: center; width: 88px; height: 88px; border-radius: 999px; background: color-mix(in oklab, var(--primary) 12%, var(--card)); animation: coach-pop .5s cubic-bezier(.2,.9,.3,1.3); }
+@keyframes coach-pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .coach-celebrate-medal { animation: none; } .coach-ring-fill { transition: none; } }
+.earn-milestones { display: grid; gap: 12px; margin-bottom: 16px; }
+.earn-milestone-list li { display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 12px; min-height: 52px; }
+.earn-milestone-list small { color: var(--muted-foreground); }
+.price-guidance { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }

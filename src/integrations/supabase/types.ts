@@ -591,6 +591,24 @@ export type Database = {
           },
         ]
       }
+      coach_steps: {
+        Row: {
+          celebrated_at: string
+          step: string
+          user_id: string
+        }
+        Insert: {
+          celebrated_at?: string
+          step: string
+          user_id?: string
+        }
+        Update: {
+          celebrated_at?: string
+          step?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       comment_reactions: {
         Row: {
           comment_id: string
@@ -3944,6 +3962,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      coach_checklist: { Args: never; Returns: Json }
       comment_feed: { Args: { _event: string; _topic: string }; Returns: Json }
       compute_playbook: { Args: never; Returns: number }
       copy_starter_template: {
@@ -4312,6 +4331,7 @@ export type Database = {
         Args: { _message: string; _team: string; _to: string }
         Returns: undefined
       }
+      price_guidance: { Args: { _category: string }; Returns: Json }
       progress_core: { Args: { _tz: string; _user: string }; Returns: Json }
       promo_usage: {
         Args: never

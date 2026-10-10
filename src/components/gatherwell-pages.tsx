@@ -1,3 +1,4 @@
+import { CoachLaunchCard } from '@/components/coach-launch';
 import { PlaybookCard } from '@/components/playbook';
 import { DailyBriefCard, FollowupsHomeCard, MemberPlanCard } from '@/components/smart';
 import { ActiveChallengeCard } from '@/components/challenges';
@@ -69,6 +70,7 @@ export function HomePage() {
   const stats = [{ key: 'members', Icon: UsersRound }, { key: 'events', Icon: CalendarDays }, { key: 'attendance', Icon: Repeat2 }, { key: 'checkins', Icon: CircleCheck }] as const;
   return <>
     <MobileTeamSwitcher />
+    <CoachLaunchCard />
     <DailyBriefCard />
     <PlaybookCard context="brief" compact />
     <FollowupsHomeCard />

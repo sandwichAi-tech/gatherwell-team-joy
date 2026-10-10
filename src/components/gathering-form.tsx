@@ -1,3 +1,4 @@
+import { PriceGuidance } from '@/components/coach-launch';
 import { CATEGORIES, isCategory, type Category } from '@/lib/landing';
 import { CropFileInput, type CropResult } from '@/components/image-crop';
 import { CopyButton } from '@/components/copy-button';
@@ -250,7 +251,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
           <Input id="g-cap" type="number" min={1} inputMode="numeric" className="field-input" value={capacity} onChange={e => setCapacity(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder={t('gathering.noLimit')} /></div>
         <div><label className="field-label" htmlFor="g-price">{t('billing.price')}</label>
           <Input id="g-price" type="text" inputMode="decimal" className="field-input" disabled={!canSell && !price} value={price} onChange={e => setPrice(e.target.value.replace(/[^\d.]/g, '').slice(0, 7))} placeholder="$0" />
-          <small className="field-hint">{canSell ? t('billing.priceHint') : t('billing.priceNeedsPayouts')}</small></div>
+          <small className="field-hint">{canSell ? t('billing.priceHint') : t('billing.priceNeedsPayouts')}</small>
+          <PriceGuidance category={category} /></div>
         <div><span className="field-label">{t('gathering.visibility')}</span>
           <div className="segmented full" role="group" aria-label={t('gathering.visibility')}>{(['public', 'invite', 'team'] as const).map(v => <Button key={v} variant="ghost" className={visibility === v ? 'selected' : ''} aria-pressed={visibility === v} onClick={() => setVisibility(v)}>{t(`gathering.vis.${v}`)}</Button>)}</div></div>
       </section>

@@ -3325,5 +3325,70 @@
     "sharedWithYou": "Progreso compartido contigo",
     "claim": "Que sea sobre actividad: sin afirmaciones de peso, salud o dinero.",
     "saveError": "No se pudo guardar. Inténtalo de nuevo."
+  },
+  "coach": {
+    "eyebrow": "Tu lanzamiento",
+    "title": "Tus primeros $100",
+    "private": "Solo tú puedes ver esto.",
+    "hide": "Ocultar lista",
+    "keepGoing": "Seguir",
+    "steps": {
+      "profile": "Completa tu perfil",
+      "offer": "Crea una membresía o una reunión de pago",
+      "shared": "Comparte tu enlace",
+      "first_rsvp": "Recibe tu primera confirmación",
+      "first_paid": "Recibe a tu primer miembro de pago",
+      "first_100": "Llega a tus primeros $100"
+    },
+    "hints": {
+      "profile": "Agrega una foto, tu nombre y una breve biografía.",
+      "offer": "Ofrece algo a lo que la gente pueda unirse.",
+      "shared": "Usa el kit para compartir en cualquier reunión.",
+      "first_rsvp": "Envía tu enlace a algunas amistades.",
+      "first_paid": "Primero hay que conectar los pagos con tarjeta.",
+      "first_100": "Se cuenta después de las comisiones de la plataforma."
+    },
+    "celebrate": {
+      "profile": {
+        "title": "Perfil listo",
+        "text": "Ahora la gente puede ver quién organiza."
+      },
+      "offer": {
+        "title": "Ya tienes algo que ofrecer",
+        "text": "Tu primera membresía o reunión de pago ya está publicada."
+      },
+      "shared": {
+        "title": "Enlace compartido",
+        "text": "Tu invitación ya está circulando."
+      },
+      "first_rsvp": {
+        "title": "Tu primera confirmación",
+        "text": "Alguien viene. Así se empieza."
+      },
+      "first_paid": {
+        "title": "Tu primer miembro de pago",
+        "text": "Alguien eligió apoyar lo que haces."
+      },
+      "first_100": {
+        "title": "Tus primeros $100",
+        "text": "Un logro real. Bien hecho."
+      },
+      "earn_100": {
+        "title": "$100 ganados",
+        "text": "Tus primeros $100 en Gatherwell."
+      },
+      "earn_1000": {
+        "title": "$1,000 ganados",
+        "text": "Tus ganancias totales superaron los $1,000."
+      },
+      "earn_10000": {
+        "title": "$10,000 ganados",
+        "text": "Tus ganancias totales superaron los $10,000."
+      }
+    },
+    "milestonesTitle": "Logros de ganancias",
+    "reached": "Logrado",
+    "toGo": "Faltan {{amount}}",
+    "priceGuide": "Reuniones similares suelen costar de {{low}} a {{high}}."
   }
 }
