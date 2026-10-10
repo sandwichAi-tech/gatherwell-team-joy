@@ -312,7 +312,7 @@ export function RoiMeter() {
     <p className="roi-line">{t('roi.line', { earned: formatMoney(data.earned, lang), fees: formatMoney(data.fees, lang) })}</p>
     <span className="roi-bar" aria-hidden><span className="roi-earned" style={{ width: `${Math.round(data.earned / total * 100)}%` }} /><span className="roi-fees" style={{ width: `${Math.round(data.fees / total * 100)}%` }} /></span>
     <div className="roi-legend"><span><i className="roi-dot roi-earned" />{t('roi.earned')}</span><span><i className="roi-dot roi-fees" />{t('roi.fees')}</span></div>
-    {data.nudge && <p className="roi-nudge"><GwIcon name="Lightbulb" size={18} />{data.nudge.kind === 'pro' ? t('roi.pro', { amount: formatMoney(data.nudge.saving, lang) }) : t('roi.free', { amount: formatMoney(data.nudge.saving, lang) })}
+    {data.nudge && <p className="roi-nudge"><BarChart3 size={18} aria-hidden />{data.nudge.kind === 'pro' ? t('roi.pro', { amount: formatMoney(data.nudge.saving, lang) }) : t('roi.free', { amount: formatMoney(data.nudge.saving, lang) })}
       <Link to="/plan" className="roi-link">{t('roi.compare')}</Link></p>}
   </section>;
 }
