@@ -2037,7 +2037,8 @@
       "library": "Biblioteca global",
       "broadcasts": "Avisos generales",
       "settings": "Ajustes",
-      "audit": "Registro de cambios"
+      "audit": "Registro de cambios",
+      "verify": "Verificar"
     },
     "period": {
       "week": "Esta semana",
@@ -2303,7 +2304,8 @@
       "invalid": "Revisa los campos e inténtalo de nuevo.",
       "claim": "Primero quita las promesas de salud, médicas, de peso o de ingresos.",
       "text_required": "Agrega el texto editado.",
-      "not_editable": "Esto no se puede editar, solo aprobar o quitar."
+      "not_editable": "Esto no se puede editar, solo aprobar o quitar.",
+      "note_required": "Agrega una nota antes de rechazar."
     },
     "languages": {
       "en": "Inglés",
@@ -2319,6 +2321,19 @@
       "result": "Resultado: {{result}}",
       "empty": "Todavía no hay mensajes de texto.",
       "latestInvites": "Invitaciones recientes"
+    },
+    "verify": {
+      "pending": "En revisión",
+      "approved": "Aprobadas",
+      "rejected": "Rechazadas",
+      "none": "No hay solicitudes aquí.",
+      "identity": "Ver identificación",
+      "document": "Ver documento",
+      "noDocument": "Sin documento",
+      "note": "Nota para quien organiza (obligatoria para rechazar)",
+      "approve": "Aprobar y verificar",
+      "reject": "Rechazar",
+      "keep": "Mostrar {{title}} públicamente"
     }
   },
   "legalDocs": {
@@ -3390,5 +3405,74 @@
     "reached": "Logrado",
     "toGo": "Faltan {{amount}}",
     "priceGuide": "Reuniones similares suelen costar de {{low}} a {{high}}."
+  },
+  "coachTrust": {
+    "verified": "Verificado",
+    "identity": "Identidad confirmada",
+    "since": "Organiza en Gatherwell desde",
+    "hosted_one": "encuentro organizado",
+    "hosted_other": "encuentros organizados",
+    "regulars_one": "habitual",
+    "regulars_other": "habituales",
+    "reviewsCount_one": "{{count}} reseña",
+    "reviewsCount_other": "{{count}} reseñas",
+    "title": "Confianza",
+    "credentials": "Credenciales",
+    "yearsValue_one": "{{count}} año",
+    "yearsValue_other": "{{count}} años",
+    "yearsLabel": "Años de experiencia",
+    "kind": {
+      "certification": "Certificación",
+      "license": "Licencia"
+    },
+    "checkedNote": "Revisado por el equipo de Gatherwell. Los documentos son privados.",
+    "reviews": "Reseñas",
+    "writeReview": "Escribir una reseña",
+    "editReview": "Editar tu reseña",
+    "ratingLabel": "Tu calificación",
+    "stars_one": "{{count}} estrella",
+    "stars_other": "{{count}} estrellas",
+    "reviewBody": "¿Cómo fue? (opcional)",
+    "reviewPlaceholder": "Cuenta qué hizo que los encuentros se sintieran acogedores.",
+    "reviewHint": "Habla de la experiencia. Sin afirmaciones de salud, peso o ingresos.",
+    "postReview": "Publicar reseña",
+    "deleteReview": "Borrar reseña",
+    "cancel": "Cancelar",
+    "reviewSaved": "Gracias por tu reseña",
+    "whoCanReview": "Pueden dejar reseña quienes asistieron o se unieron a una membresía.",
+    "noReviews": "Todavía no hay reseñas.",
+    "getVerified": "Verificarme",
+    "verifyIntro": "Confirma quién eres y, si quieres, agrega certificaciones o licencias. Nuestro equipo revisa cada solicitud.",
+    "statusApproved": "Ya estás verificado",
+    "statusApprovedBody": "La marca Verificado ya aparece en tu perfil, tus encuentros y tus membresías.",
+    "statusPending": "Solicitud en revisión",
+    "statusPendingBody": "Actualizaremos esta página cuando el equipo la revise, por lo general en unos días.",
+    "statusRejected": "No pudimos verificar esta solicitud",
+    "tryAgain": "Puedes enviar una nueva solicitud abajo.",
+    "updateCredentials": "Enviar credenciales actualizadas",
+    "step1": "Tus datos",
+    "idLabel": "Identificación con foto (imagen o PDF)",
+    "idHint": "Una foto clara de una identificación oficial. Hasta 5 MB. Solo el equipo de revisión puede verla.",
+    "credentialsOptional": "Certificaciones y licencias (opcional)",
+    "kindLabel": "Tipo",
+    "credTitle": "Nombre de la credencial",
+    "credIssuer": "Emitida por (opcional)",
+    "credFile": "Archivo del certificado o licencia (opcional)",
+    "removeCred": "Quitar",
+    "addCred": "Agregar una credencial",
+    "privacy": "Tus documentos se guardan en privado y nunca aparecen en tu perfil. Solo se muestran el nombre y el tipo de cada credencial aprobada.",
+    "submit": "Enviar a revisión",
+    "submitted": "Enviado. Lo revisaremos pronto.",
+    "backToMe": "Volver a Yo",
+    "errors": {
+      "blocked_claim": "Quita las afirmaciones de salud, pérdida de peso o ingresos e inténtalo de nuevo.",
+      "not_eligible": "Solo pueden dejar reseña quienes asistieron o se unieron a una membresía.",
+      "already_pending": "Ya tienes una solicitud en revisión.",
+      "identity_required": "Agrega una identificación con foto.",
+      "invalid_credentials": "Revisa el nombre de cada credencial.",
+      "storage_limit": "No hay espacio suficiente para estos archivos.",
+      "tooBig": "Este archivo pesa más de 5 MB.",
+      "failed": "Algo salió mal. Inténtalo de nuevo."
+    }
   }
 }

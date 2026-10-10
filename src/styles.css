@@ -1766,3 +1766,39 @@ a.gw-cat-chip:hover{background:#fff}
 .earn-milestone-list li { display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 12px; min-height: 52px; }
 .earn-milestone-list small { color: var(--muted-foreground); }
 .price-guidance { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+/* V3 Part 2 — verified coaches and reviews */
+.verified-mark { display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; color: var(--primary); font-size: 13px; font-weight: 700; }
+.verified-mark svg { flex: none; }
+.trust-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+.trust-item { display: grid; gap: 4px; padding: 16px; border-radius: 18px; background: var(--card); border: 1px solid var(--border); box-shadow: var(--shadow-sm, 0 1px 2px rgb(0 0 0 / .05)); }
+.trust-item strong { font-size: 18px; font-weight: 800; letter-spacing: -0.01em; }
+.trust-item small { color: var(--muted-foreground); font-size: 13px; }
+.credentials-panel, .reviews-panel { display: grid; gap: 16px; }
+.credential-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.credential-list li { display: flex; align-items: center; gap: 12px; min-height: 48px; }
+.credential-list li > span { flex: 1; display: grid; gap: 2px; min-width: 0; }
+.credential-list small { color: var(--muted-foreground); }
+.credential-list input[type=checkbox] { width: 22px; height: 22px; accent-color: var(--primary); }
+.review-avg { display: inline-flex; align-items: center; gap: 8px; color: var(--muted-foreground); font-size: 13px; }
+.review-stars { display: inline-flex; gap: 1px; color: var(--muted-foreground); }
+.review-stars .is-on, .review-rate .is-on { color: var(--primary); }
+.review-form { display: grid; gap: 8px; }
+.review-rate { display: flex; gap: 4px; }
+.review-rate button { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 14px; background: none; border: 0; color: var(--muted-foreground); cursor: pointer; transition: transform .15s ease; }
+.review-rate button:active { transform: scale(.92); }
+.review-rate button:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.review-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.review-item { display: flex; gap: 12px; }
+.review-item p { margin: 4px 0 0; line-height: 1.5; }
+.review-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.review-head small { color: var(--muted-foreground); }
+.review-avatar { width: 40px; height: 40px; border-radius: 999px; object-fit: cover; flex: none; }
+.review-avatar.is-initials { display: grid; place-items: center; background: var(--muted); font-size: 14px; font-weight: 700; }
+.verify-page { display: grid; gap: 16px; }
+.verify-status { display: flex; gap: 16px; align-items: flex-start; }
+.verify-status h2 { margin: 0 0 4px; font-size: 18px; font-weight: 800; }
+.verify-form { display: grid; gap: 8px; }
+.credential-draft { display: grid; gap: 8px; padding: 16px; border-radius: 16px; background: var(--muted); }
+.verify-submit { min-height: 48px; margin-top: 8px; }
+@media (prefers-reduced-motion: reduce) { .review-rate button { transition: none; } }

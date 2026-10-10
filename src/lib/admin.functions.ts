@@ -391,3 +391,47 @@ export const simulateSmsReply = createServerFn({ method: 'POST' }).middleware([r
     try { const { processOutbox } = await import('@/lib/notify/process.server'); await processOutbox(50); } catch (e) { console.error('[simulate] outbox', e); }
     return { ok: true as const, result: ((res as { result?: string } | null)?.result ?? 'ignored') };
   });
+
+// ===== Coach verification queue =====
+export type AdminVerification = {
+  id: string; user_id: string; status: 'pending' | 'approved' | 'rejected'; name: string | null; email: string | null; years_experience: number | null; created_at: string; review_note: string | null;
+  identity_url: string | null; credentials: { kind: string; title: string; issuer: string | null; doc_url: string | null }[];
+};
+
+export const listVerifications = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ status: z.enum(['pending', 'approved', 'rejected']) }).parse(d))
+  .handler(async ({ data, context }) => {
+    const db = await assertAdmin(context);
+    const { data: rows, error } = await db.from('coach_verifications').select('*').eq('status', data.status).order('created_at', { ascending: data.status === 'pending' }).limit(50);
+    if (error) throw new Error(error.message);
+    const ids = [...new Set((rows ?? []).map(r => r.user_id))];
+    const { data: people } = ids.length ? await db.from('profiles').select('id, full_name').in('id', ids) : { data: [] };
+    const sign = async (p: string | null | undefined) => (p ? (await db.storage.from('media').createSignedUrl(p, 900)).data?.signedUrl ?? null : null);
+    const out: AdminVerification[] = [];
+    for (const r of rows ?? []) {
+      const { data: u } = await db.auth.admin.getUserById(r.user_id);
+      const creds = (Array.isArray(r.credentials) ? r.credentials : []) as { kind: string; title: string; issuer: string | null; doc_path: string | null }[];
+      out.push({
+        id: r.id, user_id: r.user_id, status: r.status as AdminVerification['status'], name: people?.find(p => p.id === r.user_id)?.full_name ?? null, email: u?.user?.email ?? null,
+        years_experience: r.years_experience, created_at: r.created_at, review_note: r.review_note, identity_url: await sign(r.identity_path),
+        credentials: await Promise.all(creds.map(async c => ({ kind: c.kind, title: c.title, issuer: c.issuer, doc_url: await sign(c.doc_path) }))),
+      });
+    }
+    return out;
+  });
+
+export const decideVerification = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: uuid, approve: z.boolean(), note, keep: z.array(z.number().int().min(0).max(7)).optional() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const db = await assertAdmin(context);
+    const { data: r } = await db.from('coach_verifications').select('*').eq('id', data.id).maybeSingle();
+    if (!r || r.status !== 'pending') return { ok: false as const, error: 'not_found' };
+    if (!data.approve && !data.note?.trim()) return { ok: false as const, error: 'note_required' };
+    const creds = (Array.isArray(r.credentials) ? r.credentials : []) as unknown[];
+    const kept = data.approve && data.keep ? creds.filter((_, i) => data.keep!.includes(i)) : creds;
+    const after = { status: data.approve ? 'approved' : 'rejected', credentials: kept, review_note: data.note || null, reviewed_by: context.userId, reviewed_at: new Date().toISOString() };
+    await db.from('coach_verifications').update(after as never).eq('id', data.id);
+    if (data.approve) await db.from('coach_verifications').update({ status: 'rejected', review_note: 'Replaced by a newer verification' }).eq('user_id', r.user_id).eq('status', 'approved').neq('id', data.id);
+    await audit(db, context.userId, data.approve ? 'verification.approve' : 'verification.reject', 'user', r.user_id, { status: r.status, credentials: r.credentials }, after, data.note);
+    return { ok: true as const };
+  });

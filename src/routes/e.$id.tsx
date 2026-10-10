@@ -1,3 +1,4 @@
+import { VerifiedMark } from '@/components/coach-trust';
 import { EarlyAccessNotice, earlyAccessQuery } from '@/components/early-access';
 import { recordReferral, rememberRef } from '@/lib/network';
 import { recordInvite, rememberInvite } from '@/lib/welcome';
@@ -99,7 +100,7 @@ function PublicEventBody() {
 
       <div className="guest-host">
         {hostPhoto ? <img src={hostPhoto} alt="" className="guest-host-photo" /> : <span className="initial-avatar">{initialsOf(event.host?.name ?? null)}</span>}
-        <div><span className="guest-label">{t('guest.hostedBy')}</span><strong>{event.host?.name ?? t('teamSpace.someone')}</strong>{event.team_name && <span className="muted">{event.team_name}</span>}</div>
+        <div><span className="guest-label">{t('guest.hostedBy')}</span><strong>{event.host?.name ?? t('teamSpace.someone')}{event.host?.verified && <> <VerifiedMark compact /></>}</strong>{event.team_name && <span className="muted">{event.team_name}</span>}</div>
       </div>
       {!!event.cohosts?.length && <div className="guest-cohosts"><span className="guest-label">{t('cohosts.withCohosts')}</span><ul>{event.cohosts.map((c, i) => <li key={i}><span className="initial-avatar">{initialsOf(c.name)}</span><span>{c.name ?? t('teamSpace.someone')}</span></li>)}</ul></div>}
 

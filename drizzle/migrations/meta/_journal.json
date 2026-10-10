@@ -120,6 +120,13 @@
       "when": 1791654540170,
       "tag": "0016_v3_coach_launch",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1791654905657,
+      "tag": "0017_v3_verified_coaches_reviews",
+      "breakpoints": true
     }
   ]
 }

@@ -591,6 +591,36 @@ export type Database = {
           },
         ]
       }
+      coach_reviews: {
+        Row: {
+          author_id: string
+          body: string | null
+          created_at: string
+          hidden: boolean
+          host_id: string
+          id: string
+          rating: number
+        }
+        Insert: {
+          author_id: string
+          body?: string | null
+          created_at?: string
+          hidden?: boolean
+          host_id: string
+          id?: string
+          rating: number
+        }
+        Update: {
+          author_id?: string
+          body?: string | null
+          created_at?: string
+          hidden?: boolean
+          host_id?: string
+          id?: string
+          rating?: number
+        }
+        Relationships: []
+      }
       coach_steps: {
         Row: {
           celebrated_at: string
@@ -606,6 +636,45 @@ export type Database = {
           celebrated_at?: string
           step?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      coach_verifications: {
+        Row: {
+          created_at: string
+          credentials: Json
+          id: string
+          identity_path: string
+          review_note: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          user_id: string
+          years_experience: number | null
+        }
+        Insert: {
+          created_at?: string
+          credentials?: Json
+          id?: string
+          identity_path: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          user_id: string
+          years_experience?: number | null
+        }
+        Update: {
+          created_at?: string
+          credentials?: Json
+          id?: string
+          identity_path?: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          user_id?: string
+          years_experience?: number | null
         }
         Relationships: []
       }
@@ -3894,6 +3963,7 @@ export type Database = {
       can_read_challenge: { Args: { _c: string }; Returns: boolean }
       can_read_comment: { Args: { _c: string }; Returns: boolean }
       can_read_track: { Args: { _track: string }; Returns: boolean }
+      can_review_coach: { Args: { _host: string }; Returns: boolean }
       can_rsvp_event: { Args: { _event_id: string }; Returns: boolean }
       can_use_team_templates: { Args: { _team: string }; Returns: boolean }
       can_view_event: { Args: { _event_id: string }; Returns: boolean }
@@ -3963,6 +4033,7 @@ export type Database = {
         }[]
       }
       coach_checklist: { Args: never; Returns: Json }
+      coach_trust: { Args: { _host: string }; Returns: Json }
       comment_feed: { Args: { _event: string; _topic: string }; Returns: Json }
       compute_playbook: { Args: never; Returns: number }
       copy_starter_template: {
@@ -4014,6 +4085,7 @@ export type Database = {
       default_waiver: { Args: { _team: string }; Returns: undefined }
       delete_comment: { Args: { _id: string }; Returns: undefined }
       delete_my_account: { Args: never; Returns: undefined }
+      delete_my_coach_review: { Args: { _host: string }; Returns: undefined }
       due_followup_events: { Args: never; Returns: string[] }
       effective_plan: { Args: { _uid: string }; Returns: Json }
       email_token: { Args: { _email: string; _lang: string }; Returns: string }
@@ -4164,6 +4236,7 @@ export type Database = {
         Args: { _roles: string[]; _team_id: string }
         Returns: boolean
       }
+      is_verified_coach: { Args: { _user: string }; Returns: boolean }
       join_free_offer: { Args: { _offer: string }; Returns: undefined }
       join_team_by_code: {
         Args: { _by?: string; _code: string; _role?: string }
@@ -4476,6 +4549,10 @@ export type Database = {
         }
         Returns: string
       }
+      save_coach_review: {
+        Args: { _body: string; _host: string; _rating: number }
+        Returns: undefined
+      }
       search_team_library: {
         Args: { _q: string; _team: string }
         Returns: {
@@ -4530,6 +4607,10 @@ export type Database = {
       }
       storage_allows: { Args: { _bytes: number }; Returns: boolean }
       storage_used_bytes: { Args: { _uid: string }; Returns: number }
+      submit_verification: {
+        Args: { _credentials: Json; _identity: string; _years: number }
+        Returns: string
+      }
       team_benchmark: { Args: { _root: string }; Returns: Json }
       team_featured_gatherings: { Args: { _team: string }; Returns: Json }
       team_insights: {
@@ -4589,6 +4670,7 @@ export type Database = {
         Returns: string
       }
       user_email: { Args: { _user: string }; Returns: string }
+      verified_hosts: { Args: { _ids: string[] }; Returns: string[] }
       vote_poll: {
         Args: { _code: string; _option: string }
         Returns: undefined

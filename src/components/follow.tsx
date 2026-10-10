@@ -1,3 +1,4 @@
+import { CoachTrustSection, VerifiedMark, useIsVerified } from '@/components/coach-trust';
 import { CopyButton } from '@/components/copy-button';
 import { FeaturedBadges } from '@/components/recognition';
 import { publicHostCover } from '@/lib/host-cover.functions';
@@ -33,6 +34,8 @@ const pageQuery = (kind: 'host' | 'team', slug: string) => ({
   },
 });
 
+function HostSeal({ id }: { id: string }) { return useIsVerified(id) ? <> <VerifiedMark compact /></> : null; }
+
 function Avatar({ path, name, size = 96 }: { path: string | null; name: string | null; size?: number }) {
   const { data: url } = useQuery({ queryKey: ['media-url', path], queryFn: () => mediaUrl(path), enabled: !!path, staleTime: 50 * 60 * 1000 });
   return url ? <img src={url} alt={name ?? ''} className="follow-avatar" width={size} height={size} loading="lazy" decoding="async" /> : <span className="follow-avatar is-initials" aria-hidden="true">{initialsOf(name)}</span>;
@@ -54,7 +57,7 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
       <div className="follow-hero-body">
         <Avatar path={avatarPath} name={name} />
         <p className="eyebrow">{t(kind === 'host' ? 'follow.hostLabel' : 'follow.teamLabel')}</p>
-        <h1 className="follow-name">{name}</h1>
+        <h1 className="follow-name">{name}{host && <HostSeal id={host.id} />}</h1>
         <p className="follow-meta">{[host?.city, team ? t('follow.members', { count: team.members }) : null, t('follow.followers', { count: d.followers })].filter(Boolean).join(' · ')}</p>
         {team?.leader?.name && <p className="follow-meta">{t('follow.ledBy')} {team.leader.slug ? <Link to="/h/$slug" params={{ slug: team.leader.slug }}>{team.leader.name}</Link> : team.leader.name}</p>}
         {host?.bio && <p className="follow-bio">{host.bio}</p>}
@@ -63,6 +66,7 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
           {host?.shop_url && <Button asChild variant="secondary"><a href={host.shop_url} target="_blank" rel="noopener noreferrer"><GwIcon name="ExternalLink" />{t('follow.shop')}</a></Button>}</div>
       </div>
     </section>
+    {host && <CoachTrustSection hostId={host.id} />}
     <section className="follow-upcoming">
       <h2>{t('follow.upcoming')}</h2>
       {d.upcoming.length ? <ul className="follow-list">{d.upcoming.map(e => <li key={e.id}><Link to="/e/$id" params={{ id: e.id }} className="follow-event">
