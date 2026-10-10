@@ -1910,3 +1910,4 @@ a.gw-cat-chip:hover{background:#fff}
 .loc-fine{text-align:center;padding:0 16px}
 .loc-card-list{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}.loc-card{display:flex;align-items:center;gap:12px;padding:16px;min-height:72px}.loc-card-text{flex:1;min-width:0;display:flex;flex-direction:column}.loc-card-text small{color:var(--muted-foreground)}
 .gw-space-chip{min-height:44px;padding:0 16px}.gw-space-chip.selected{background:var(--primary);color:var(--primary-foreground)}
+.loc-page .follow-hero-body{margin-top:0;padding-top:20px}
