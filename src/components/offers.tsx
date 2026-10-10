@@ -24,6 +24,7 @@ import { formatMoney, paymentsStatusQuery } from '@/lib/billing';
 import {
   deleteOffer, getOfferLink, isLive, joinFreeOffer, linkableOffersQuery, myOffersQuery, offerIncludes, offerQuery, offerText, offerTitle,
   purchasesQuery, saveOffer, setOfferLink, teamOffersQuery, uploadOfferFile, type Offer, type OfferKind,
+  foundingStatusQuery,
 } from '@/lib/offers';
 import { cancelOfferMembership, offerDownloadLink, startOfferCheckout } from '@/lib/offers.functions';
 
