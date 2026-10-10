@@ -36,6 +36,6 @@ export function verifyStripeSignature(body: string, header: string | null, secre
   return sigs.some(s => { const b = Buffer.from(s); return b.length === expected.length && timingSafeEqual(b, expected); });
 }
 
+/** Legacy subscription prices, used only for admin revenue estimates. Current plan numbers live in plan_settings. */
 export const PLAN_PRICES = { growth: { month: 2900, year: 29000 }, pro: { month: 7900, year: 79000 } } as const;
 export const LICENSE_PRICES = { team25: { cents: 19900, seats: 25 }, team100: { cents: 49900, seats: 100 } } as const;
-export const FEE_PCT = { free: 8, growth: 4, pro: 2 } as const;

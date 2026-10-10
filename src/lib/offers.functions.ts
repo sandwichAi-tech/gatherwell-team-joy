@@ -13,14 +13,11 @@ export const startOfferCheckout = createServerFn({ method: 'POST' })
     const { data: o } = await context.supabase.from('offers').select('id, host_id, kind, title_en, title_es, price_cents, status').eq('id', data.offerId).maybeSingle();
     if (!o || o.status !== 'published') return { ok: false, error: 'not_open' };
     if (!o.price_cents) return { ok: false, error: 'free' };
-    const { stripe, stripeKey, FEE_PCT } = await import('./billing/stripe.server');
+    const { stripe, stripeKey } = await import('./billing/stripe.server');
     if (!stripeKey()) return { ok: false, error: 'not_connected' };
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
     const { data: b } = await supabaseAdmin.from('billing_accounts').select('connect_account_id, connect_status').eq('user_id', o.host_id).maybeSingle();
     if (!b?.connect_account_id || b.connect_status !== 'active') return { ok: false, error: 'host_not_ready' };
-    const { data: ep } = await supabaseAdmin.rpc('effective_plan', { _uid: o.host_id });
-    const plan = ((ep as { plan?: string } | null)?.plan ?? 'free') as keyof typeof FEE_PCT;
-    const pct = FEE_PCT[plan];
     const { promoFor } = await import('./billing.functions'); const { promoDiscount } = await import('./promo');
     const email = ((context.claims.email as string) ?? '').toLowerCase();
     const promo = await promoFor(supabaseAdmin, data.promo, 'offer', o.id, email || context.userId);
@@ -31,6 +28,11 @@ export const startOfferCheckout = createServerFn({ method: 'POST' })
     if (!base) return { ok: false, error: 'free' };
     const discount = promo?.ok ? promoDiscount(base, promo) : 0;
     const net = base - discount;
+    // One-time downloads get the exact capped fee; subscriptions use the plan's current rate (0 once the month's cap is reached).
+    const { data: pctRaw } = await supabaseAdmin.rpc('current_fee_pct', { _host: o.host_id });
+    const pct = Number(pctRaw ?? 0);
+    const { data: feeRaw } = await supabaseAdmin.rpc('platform_fee_cents', { _host: o.host_id, _amount: net });
+    const oneTimeFee = Number(feeRaw ?? 0);
     const name = (data.lang === 'es' ? o.title_es : o.title_en) || o.title_en || o.title_es;
     const meta = { kind: 'offer', offer_id: o.id, user_id: context.userId, founding: founding ? '1' : '0' };
     const recurring = o.kind !== 'download';
@@ -40,10 +42,10 @@ export const startOfferCheckout = createServerFn({ method: 'POST' })
       metadata: meta,
       ...(recurring
         ? { subscription_data: { metadata: meta, application_fee_percent: pct, transfer_data: { destination: b.connect_account_id } } }
-        : { payment_intent_data: { application_fee_amount: Math.round(net * pct / 100), transfer_data: { destination: b.connect_account_id }, metadata: meta } }),
+        : { payment_intent_data: { application_fee_amount: oneTimeFee, transfer_data: { destination: b.connect_account_id }, metadata: meta } }),
       success_url: `${data.origin}/offer/${o.id}?paid=1`, cancel_url: `${data.origin}/offer/${o.id}`,
     });
-    await supabaseAdmin.from('payments').insert({ kind: 'offer', offer_id: o.id, host_id: o.host_id, buyer_email: (context.claims.email as string) ?? null, amount_cents: net, fee_cents: Math.round(net * pct / 100), booking_fee_cents: 0, stripe_session_id: s.id, promo_id: promo?.ok ? promo.id : null, discount_cents: discount, buyer_key: email || context.userId });
+    await supabaseAdmin.from('payments').insert({ kind: 'offer', offer_id: o.id, host_id: o.host_id, buyer_email: (context.claims.email as string) ?? null, amount_cents: net, fee_cents: recurring ? Math.round(net * pct / 100) : oneTimeFee, booking_fee_cents: 0, stripe_session_id: s.id, promo_id: promo?.ok ? promo.id : null, discount_cents: discount, buyer_key: email || context.userId });
     return { ok: true, url: s.url };
   });
 

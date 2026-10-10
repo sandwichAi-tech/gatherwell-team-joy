@@ -29,15 +29,17 @@ async function ensureCustomer(userId: string, email: string | undefined) {
 
 export const startPlanCheckout = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ plan: z.enum(['growth', 'pro']), period: z.enum(['month', 'year']), origin, lang: z.enum(['en', 'es']) }).parse(d))
+  .inputValidator((d: unknown) => z.object({ plan: z.literal('pro'), origin, lang: z.enum(['en', 'es']) }).parse(d))
   .handler(async ({ data, context }): Promise<Result> => {
-    const { stripe, stripeKey, PLAN_PRICES } = await import('./billing/stripe.server');
+    const { stripe, stripeKey } = await import('./billing/stripe.server');
     if (!stripeKey()) return notConnected;
+    const { data: ps } = await context.supabase.from('plan_settings').select('monthly_price').eq('plan', 'pro').maybeSingle();
+    if (!ps?.monthly_price) return { ok: false, error: 'failed' };
     const customer = await ensureCustomer(context.userId, context.claims.email as string | undefined);
-    const meta = { kind: 'plan', user_id: context.userId, plan: data.plan, period: data.period };
+    const meta = { kind: 'plan', user_id: context.userId, plan: data.plan, period: 'month' };
     const s = await stripe<{ url: string }>('checkout/sessions', {
       mode: 'subscription', customer, locale: data.lang === 'es' ? 'es-419' : 'en',
-      line_items: [{ quantity: 1, price_data: { currency: 'usd', unit_amount: PLAN_PRICES[data.plan][data.period], recurring: { interval: data.period }, product_data: { name: `Gatherwell ${data.plan === 'pro' ? 'Pro' : 'Growth'}` } } }],
+      line_items: [{ quantity: 1, price_data: { currency: 'usd', unit_amount: ps.monthly_price, recurring: { interval: 'month' }, product_data: { name: 'Gatherwell Pro' } } }],
       subscription_data: { metadata: meta }, metadata: meta,
       success_url: `${data.origin}/plan?checkout=done`, cancel_url: `${data.origin}/plan`,
     });
@@ -99,7 +101,7 @@ export const startTicketCheckout = createServerFn({ method: 'POST' })
     plusOnes: z.number().int().min(0).max(3), sms: z.boolean(), mail: z.boolean(), lang: z.enum(['en', 'es']), origin, waiverName: z.string().trim().max(120).optional().default(''), promo: z.string().max(20).optional().default(''),
   }).parse(d))
   .handler(async ({ data }): Promise<Result> => {
-    const { stripe, stripeKey, FEE_PCT } = await import('./billing/stripe.server');
+    const { stripe, stripeKey } = await import('./billing/stripe.server');
     const { getRequestHeader } = await import('@tanstack/react-start/server');
     const waiverIp = (getRequestHeader('cf-connecting-ip') ?? getRequestHeader('x-forwarded-for') ?? '').split(',')[0]!.trim().slice(0, 64);
     if (!stripeKey()) return notConnected;
@@ -109,14 +111,13 @@ export const startTicketCheckout = createServerFn({ method: 'POST' })
     if (ev.requires_waiver && data.waiverName.length < 2) return { ok: false, error: 'waiver_required' };
     const { data: b } = await supabaseAdmin.from('billing_accounts').select('connect_account_id, connect_status').eq('user_id', ev.host_id).maybeSingle();
     if (!b?.connect_account_id || b.connect_status !== 'active') return { ok: false, error: 'host_not_ready' };
-    const { data: ep } = await supabaseAdmin.rpc('effective_plan', { _uid: ev.host_id });
-    const plan = ((ep as { plan?: string } | null)?.plan ?? 'free') as keyof typeof FEE_PCT;
     const qty = 1 + data.plusOnes;
     const promo = await promoFor(supabaseAdmin, data.promo, 'gathering', ev.id, data.email);
     if (promo && !promo.ok) return { ok: false, error: `promo_${promo.error}` };
     const discount = promo?.ok ? promoDiscount(ev.price_cents * qty, promo) : 0;
     const net = ev.price_cents * qty - discount;
-    const fee = Math.round(net * FEE_PCT[plan] / 100);
+    const { data: feeRaw } = await supabaseAdmin.rpc('platform_fee_cents', { _host: ev.host_id, _amount: net });
+    const fee = Number(feeRaw ?? 0);
     const booking = ev.pass_fee ? fee : 0;
     const items: Record<string, unknown>[] = [discount
       ? { quantity: 1, price_data: { currency: 'usd', unit_amount: net, product_data: { name: `${ev.title} × ${qty} (${promo!.ok ? promo!.code : ''})` } } }
@@ -156,21 +157,20 @@ export const startChallengeCheckout = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ challengeId: z.string().uuid(), origin, lang: z.enum(['en', 'es']), promo: z.string().max(20).optional().default('') }).parse(d))
   .handler(async ({ data, context }): Promise<Result> => {
-    const { stripe, stripeKey, FEE_PCT } = await import('./billing/stripe.server');
+    const { stripe, stripeKey } = await import('./billing/stripe.server');
     if (!stripeKey()) return notConnected;
     const { data: c } = await context.supabase.from('challenges').select('id, title_en, title_es, created_by, is_paid, price_cents').eq('id', data.challengeId).maybeSingle();
     if (!c?.is_paid || !c.price_cents) return { ok: false, error: 'not_open' };
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
     const { data: b } = await supabaseAdmin.from('billing_accounts').select('connect_account_id, connect_status, pass_fee').eq('user_id', c.created_by).maybeSingle();
     if (!b?.connect_account_id || b.connect_status !== 'active') return { ok: false, error: 'host_not_ready' };
-    const { data: ep } = await supabaseAdmin.rpc('effective_plan', { _uid: c.created_by });
-    const plan = ((ep as { plan?: string } | null)?.plan ?? 'free') as keyof typeof FEE_PCT;
     const email = ((context.claims.email as string) ?? '').toLowerCase();
     const promo = await promoFor(supabaseAdmin, data.promo, 'challenge', c.id, email || context.userId);
     if (promo && !promo.ok) return { ok: false, error: `promo_${promo.error}` };
     const discount = promo?.ok ? promoDiscount(c.price_cents, promo) : 0;
     const net = c.price_cents - discount;
-    const fee = Math.round(net * FEE_PCT[plan] / 100);
+    const { data: feeRaw } = await supabaseAdmin.rpc('platform_fee_cents', { _host: c.created_by, _amount: net });
+    const fee = Number(feeRaw ?? 0);
     const booking = b.pass_fee ? fee : 0;
     const name = (data.lang === 'es' ? c.title_es : c.title_en) || c.title_en || c.title_es;
     const items: Record<string, unknown>[] = [{ quantity: 1, price_data: { currency: 'usd', unit_amount: net, product_data: { name } } }];
