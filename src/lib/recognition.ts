@@ -4,7 +4,7 @@ import { teamKey } from '@/lib/team';
 
 export type Tier = 'bronze' | 'silver' | 'gold';
 export type Badge = { id: string; code: string; name_en: string; name_es: string; description_en: string | null; description_es: string | null; icon: string; tier: Tier; is_custom: boolean; team_id: string | null; sort_order: number };
-export type Earned = { id: string; user_id: string; badge_id: string; team_id: string; awarded_by: string | null; note: string | null; awarded_at: string; seen_at: string | null };
+export type Earned = { id: string; user_id: string; badge_id: string; team_id: string; awarded_by: string | null; note: string | null; awarded_at: string; seen_at: string | null; featured: number | null };
 
 export const JOIN_BY_KEY = 'gatherwell-join-by';
 export const recognitionKey = (teamId: string) => [...teamKey(teamId), 'recognition'] as const;
