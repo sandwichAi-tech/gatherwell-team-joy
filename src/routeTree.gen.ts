@@ -18,6 +18,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as StudiosRouteImport } from './routes/studios'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAppRouteRouteImport } from './routes/_authenticated/_app/route'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
@@ -112,6 +113,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudiosRoute = StudiosRouteImport.update({
+  id: '/studios',
+  path: '/studios',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -396,6 +402,7 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/studios': typeof StudiosRoute
   '/terms': typeof TermsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/e/$id': typeof EIdRoute
@@ -456,6 +463,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/studios': typeof StudiosRoute
   '/terms': typeof TermsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/e/$id': typeof EIdRoute
@@ -518,6 +526,7 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/studios': typeof StudiosRoute
   '/terms': typeof TermsRoute
   '/_authenticated/_app': typeof AuthenticatedAppRouteRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
@@ -581,6 +590,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/sitemap.xml'
+    | '/studios'
     | '/terms'
     | '/onboarding'
     | '/e/$id'
@@ -641,6 +651,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/sitemap.xml'
+    | '/studios'
     | '/terms'
     | '/onboarding'
     | '/e/$id'
@@ -702,6 +713,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/sitemap.xml'
+    | '/studios'
     | '/terms'
     | '/_authenticated/_app'
     | '/_authenticated/onboarding'
@@ -765,6 +777,7 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  StudiosRoute: typeof StudiosRoute
   TermsRoute: typeof TermsRoute
   EIdRoute: typeof EIdRoute
   HSlugRoute: typeof HSlugRoute
@@ -847,6 +860,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/studios': {
+      id: '/studios'
+      path: '/studios'
+      fullPath: '/studios'
+      preLoaderRoute: typeof StudiosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -1307,6 +1327,7 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  StudiosRoute: StudiosRoute,
   TermsRoute: TermsRoute,
   EIdRoute: EIdRoute,
   HSlugRoute: HSlugRoute,

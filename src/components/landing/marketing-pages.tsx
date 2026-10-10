@@ -7,9 +7,9 @@ import { useQuery } from '@tanstack/react-query';
 
 const BENEFIT_ICONS: GwIconName[] = ['CalendarPlus', 'Link2', 'BellRing', 'QrCode', 'BookOpen', 'UsersRound'];
 const STEP_ICONS: GwIconName[] = ['CalendarPlus', 'Share2', 'QrCode', 'MessageCircle'];
-function StartLink({ secondary = false }: { secondary?: boolean }) {
+function StartLink({ secondary = false, label }: { secondary?: boolean; label?: string }) {
  const { t } = useTranslation();
- return <Link to="/login" search={{ intent: 'host' }} className={`gw-btn gw-btn-${secondary ? 'secondary' : 'primary'} gw-btn-lg`}>{t('marketing.hostCta')}<GwIcon name="ArrowRight" size={20} /></Link>;
+ return <Link to="/login" search={{ intent: 'host' }} className={`gw-btn gw-btn-${secondary ? 'secondary' : 'primary'} gw-btn-lg`}>{label ?? t('marketing.hostCta')}<GwIcon name="ArrowRight" size={20} /></Link>;
 }
 function Faq({ kind }: { kind: 'hostFaq' | 'pricingFaq' }) {
  const { t } = useTranslation();
@@ -38,7 +38,7 @@ export function PricingCards({ preview = false }: { preview?: boolean }) {
 }
 export function HostsPage() {
  const {t}=useTranslation();const benefits=t('marketing.benefits',{returnObjects:true}) as {title:string;body:string;demo:string}[];const steps=t('marketing.hostSteps',{returnObjects:true}) as {title:string;body:string}[];
- return <LandingFrame><main id="main-content"><section className="gw-hero gw-hosts-hero" id="hosts-hero"><div className="gw-aurora" aria-hidden="true"><span className="gw-blob gw-blob-lav"/><span className="gw-blob gw-blob-peach"/><span className="gw-glow"/></div><div className="gw-container gw-hosts-hero-grid"><div><span className="gw-label">{t('marketing.hostsLabel')}</span><h1 className="gw-display">{t('marketing.hostsTitle')}</h1><p className="gw-lede">{t('marketing.hostsSub')}</p><div className="gw-hero-ctas"><StartLink/><Link to="/pricing" className="gw-btn gw-btn-secondary gw-btn-lg">{t('marketing.seePricing')}</Link></div></div><div className="gw-host-demo"><span className="chip sample-badge">{t('landing.card.sample')}</span><div className="gw-host-demo-cover"><GwIcon name="PersonSimpleTaiChi" variant="marketing" size={64}/></div><h2>{t('marketing.benefits.0.demo')}</h2><div className="gw-host-demo-row"><GwIcon name="CalendarCheck" variant="marketing" size={24}/><span>{t('marketing.hostSteps.0.body')}</span></div><div className="gw-host-demo-row"><GwIcon name="UsersRound" variant="marketing" size={24}/><span>{t('marketing.benefits.1.demo')}</span></div><div className="gw-host-demo-row"><GwIcon name="CheckCircle2" variant="marketing" size={24}/><span>{t('marketing.benefits.3.demo')}</span></div></div></div></section>
+ return <LandingFrame><main id="main-content"><section className="gw-hero gw-hosts-hero" id="hosts-hero"><div className="gw-aurora" aria-hidden="true"><span className="gw-blob gw-blob-lav"/><span className="gw-blob gw-blob-peach"/><span className="gw-glow"/></div><div className="gw-container gw-hosts-hero-grid"><div><span className="gw-label">{t('marketing.hostsLabel')}</span><h1 className="gw-display">{t('marketing.hostsTitle')}</h1><p className="gw-lede">{t('marketing.hostsSub')}</p><div className="gw-hero-ctas"><StartLink/><Link to="/pricing" className="gw-btn gw-btn-secondary gw-btn-lg">{t('marketing.seePricing')}</Link></div><Link to="/studios" className="gw-see-all gw-hosts-studio-link">{t('marketing.studios.fromHosts')}<GwIcon name="ArrowRight" size={20} /></Link></div><div className="gw-host-demo"><span className="chip sample-badge">{t('landing.card.sample')}</span><div className="gw-host-demo-cover"><GwIcon name="PersonSimpleTaiChi" variant="marketing" size={64}/></div><h2>{t('marketing.benefits.0.demo')}</h2><div className="gw-host-demo-row"><GwIcon name="CalendarCheck" variant="marketing" size={24}/><span>{t('marketing.hostSteps.0.body')}</span></div><div className="gw-host-demo-row"><GwIcon name="UsersRound" variant="marketing" size={24}/><span>{t('marketing.benefits.1.demo')}</span></div><div className="gw-host-demo-row"><GwIcon name="CheckCircle2" variant="marketing" size={24}/><span>{t('marketing.benefits.3.demo')}</span></div></div></div></section>
  <section className="gw-band gw-band-white gw-marketing-section"><div className="gw-container"><span className="gw-label">{t('marketing.hostsLabel')}</span><h2 className="gw-display gw-h2">{t('marketing.benefitTitle')}</h2><p className="gw-marketing-sub">{t('marketing.benefitSub')}</p><div className="gw-benefits-grid">{benefits.map((b,i)=><article className="gw-benefit-card" key={b.title}><span className="gw-marketing-tile"><GwIcon name={BENEFIT_ICONS[i]!} variant="marketing" size={32}/></span><h3>{b.title}</h3><p>{b.body}</p><div className="gw-benefit-demo"><GwIcon name={BENEFIT_ICONS[i]!} variant="marketing" size={20}/><strong>{b.demo}</strong></div></article>)}</div></div></section>
  <WhoItsFor/>
  <section className="gw-band gw-band-canvas gw-marketing-section"><div className="gw-container"><span className="gw-label">{t('marketing.howHostSub')}</span><h2 className="gw-display gw-h2">{t('marketing.howHostTitle')}</h2><ol className="gw-host-steps">{steps.map((s,i)=><li key={s.title}><span className="gw-marketing-tile"><GwIcon name={STEP_ICONS[i]!} variant="marketing" size={32}/></span><span className="gw-how-num">{String(i+1).padStart(2,'0')}</span><h3>{s.title}</h3><p>{s.body}</p></li>)}</ol></div></section>
@@ -50,4 +50,33 @@ const WHO_ICONS: GwIconName[] = ['Sparkles', 'Clock', 'HandHeart', 'Trophy', 'Ho
 export function WhoItsFor() {
  const { t } = useTranslation(); const items = t('marketing.who', { returnObjects: true }) as { title: string; body: string }[];
  return <section className="gw-band gw-band-canvas gw-marketing-section" aria-labelledby="who-title"><div className="gw-container"><span className="gw-label">{t('marketing.whoLabel')}</span><h2 id="who-title" className="gw-display gw-h2">{t('marketing.whoTitle')}</h2><p className="gw-marketing-sub">{t('marketing.whoSub')}</p><ul className="gw-benefits-grid gw-who-grid">{items.map((w, i) => <li className="gw-benefit-card" key={w.title}><span className="gw-marketing-tile"><GwIcon name={WHO_ICONS[i]!} variant="marketing" size={32} /></span><h3>{w.title}</h3><p>{w.body}</p></li>)}</ul></div></section>;
+}
+const STUDIO_ICONS: GwIconName[] = ['Link2', 'UsersRound', 'Languages'];
+function StudiosPricing() {
+ const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
+ const { data: settings } = useQuery(planSettingsQuery);
+ const fee = (id: 'free' | 'pro') => { const ps = settings?.[id]; if (!ps) return ''; return ps.monthly_cap !== null ? t('billing.feeCapped', { pct: ps.fee_percent, cap: formatMoney(ps.monthly_cap, lang) }) : t('billing.feePct', { pct: ps.fee_percent }); };
+ return <div className="gw-pricing-content">
+  <div className="gw-public-plans">
+   {PLANS.map(plan => <article key={plan.id} className={`gw-public-plan ${plan.id === 'pro' ? 'is-featured' : ''}`}>
+    <span className="gw-plan-tag">{plan.id === 'pro' ? t('billing.popular') : t('billing.name_free')}</span>
+    <h3>{t('billing.name_' + plan.id)}</h3>
+    <p className="gw-public-price"><strong>{settings ? formatMoney(settings[plan.id].monthly_price, lang) : '\u00a0'}</strong><span>{t('billing.perMonth')}</span></p>
+    <p className="gw-plan-fee">{fee(plan.id)}</p>
+    <p className="gw-fine">{t('billing.cardNote')}</p>
+   </article>)}
+  </div>
+  <div className="gw-final-ctas"><StartLink label={t('marketing.studios.startCta')} /><Link to="/pricing" className="gw-btn gw-btn-secondary gw-btn-lg">{t('marketing.seePricing')}</Link></div>
+ </div>;
+}
+export function StudiosPage() {
+ const { t } = useTranslation();
+ const cards = t('marketing.studios.cards', { returnObjects: true }) as { title: string; body: string }[];
+ const simple = t('marketing.studios.simpleList', { returnObjects: true }) as string[];
+ return <LandingFrame><main id="main-content">
+  <section className="gw-hero gw-studios-hero" id="studios-hero"><div className="gw-aurora" aria-hidden="true"><span className="gw-blob gw-blob-lav" /><span className="gw-blob gw-blob-peach" /><span className="gw-glow" /></div><div className="gw-container"><span className="gw-label">{t('marketing.studios.label')}</span><h1 className="gw-display">{t('marketing.studios.title')}</h1><p className="gw-lede">{t('marketing.studios.sub')}</p><div className="gw-hero-ctas"><StartLink /><Link to="/pricing" className="gw-btn gw-btn-secondary gw-btn-lg">{t('marketing.seePricing')}</Link></div></div></section>
+  <section className="gw-band gw-band-white gw-marketing-section"><div className="gw-container"><div className="gw-benefits-grid">{cards.map((c, i) => <article className="gw-benefit-card" key={c.title}><span className="gw-marketing-tile"><GwIcon name={STUDIO_ICONS[i]!} variant="marketing" size={32} /></span><h3>{c.title}</h3><p>{c.body}</p></article>)}</div></div></section>
+  <section className="gw-band gw-band-canvas gw-marketing-section"><div className="gw-container"><span className="gw-label">{t('marketing.studios.simpleLabel')}</span><h2 className="gw-display gw-h2">{t('marketing.studios.simpleTitle')}</h2><p className="gw-marketing-sub">{t('marketing.studios.simpleBody')}</p><ul className="gw-simple-list">{simple.map(s => <li key={s}><GwIcon name="Check" size={20} />{s}</li>)}</ul></div></section>
+  <section className="gw-band gw-band-white gw-marketing-section gw-final-host"><div className="gw-container"><span className="gw-label">{t('marketing.pricingLabel')}</span><h2 className="gw-display gw-h2">{t('marketing.studios.pricingTitle')}</h2><StudiosPricing /></div></section>
+ </main><StickyFindBar heroId="studios-hero" mode="host" /></LandingFrame>;
 }

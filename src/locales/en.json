@@ -3136,8 +3136,32 @@
         "a": "Yes. Manage your subscription in Me → Plan. Cancel before your next renewal; your current plan stays active through the paid period."
       }
     ],
-    "finalTitle": "Your next gathering starts here.",
+"finalTitle": "Your next gathering starts here.",
     "finalBody": "Make it easy to show up. Give people a reason to come back.",
+    "studios": {
+      "meta": "For studios · Gatherwell",
+      "metaDesc": "Keep your booking software and add a community beyond your four walls — Circles, special gatherings and bilingual pages.",
+      "label": "For studios and small spaces",
+      "title": "Your booking software runs the front desk. Gatherwell builds the community beyond your four walls.",
+      "sub": "Keep the tools you already use. Add a community your members check in with every week — in English and Spanish.",
+      "fromHosts": "Run a studio or small space? See how Gatherwell fits",
+      "cards": [
+        { "title": "Keep your booking system", "body": "Link the booking software you already use with a button on your page. Nothing to migrate and nothing changes at the front desk." },
+        { "title": "Fill your classes from the community", "body": "Circles, special gatherings and online content keep people connected between classes, so regulars show up more often." },
+        { "title": "Bilingual from day one", "body": "Every page, invitation and reminder works in English and Spanish, so your whole community feels at home." }
+      ],
+      "simpleLabel": "Simple space mode",
+      "simpleTitle": "Have a small space?",
+      "simpleBody": "Simple space mode is made for nutrition clubs, garage gyms and small rooms — no front-desk software needed.",
+      "simpleList": [
+        "A weekly schedule of gatherings on your own page",
+        "QR check-in at the door, even on a weak connection",
+        "Liability waivers people sign before they join",
+        "Member-only sessions and simple drop-in pricing"
+      ],
+      "pricingTitle": "Simple plans that grow with your community.",
+      "startCta": "Start in under an hour"
+    },
     "hostsMeta": "For hosts · Gatherwell",
     "pricingMeta": "Pricing · Gatherwell",
     "whoLabel": "Who it's for",
