@@ -1932,3 +1932,4 @@ a.gw-cat-chip:hover{background:#fff}
 .gw-landing .gw-simple-list li{display:flex;gap:12px;align-items:flex-start;font-size:15px;line-height:1.55}
 .gw-landing .gw-simple-list li svg{flex-shrink:0;color:var(--lavender);margin-top:2px}
 .gw-landing .gw-final-ctas{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:32px}
+.gw-landing .gw-hosts-studio-link{white-space:normal;text-align:left}
