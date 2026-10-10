@@ -16,12 +16,12 @@ import { GwFeatureTile, GwIcon, type GwIconProps } from '@/components/gw-icon';
 import { formatMoney } from '@/lib/billing';
 import {
   adminTeamAction, adminUserAction, endBroadcast, getAdminAccess, getAdminOverview, getAdminTeam, getAdminUser, getAudit, getBroadcasts, getFlags, getLibrary,
-  listAdminTeams, listAdminUsers, listReports, moderateReport, reorderLibrary, saveLibraryItem, sendBroadcast, setFlag, setLibraryPublished, type AdminReport, listRecentTexts, simulateSmsReply,
+  listAdminTeams, listAdminUsers, listReports, moderateReport, reorderLibrary, saveLibraryItem, sendBroadcast, setFlag, setLibraryPublished, type AdminReport, listRecentTexts, simulateSmsReply, listVerifications, decideVerification, type AdminVerification,
 } from '@/lib/admin.functions';
 
-export const ADMIN_TABS = ['overview', 'teams', 'users', 'moderation', 'library', 'broadcasts', 'settings', 'audit'] as const;
+export const ADMIN_TABS = ['overview', 'teams', 'users', 'moderation', 'verify', 'library', 'broadcasts', 'settings', 'audit'] as const;
 export type AdminTab = (typeof ADMIN_TABS)[number];
-const TAB_ICONS: Record<AdminTab, GwIconProps['name']> = { overview: 'BarChart3', teams: 'UsersRound', users: 'UserRound', moderation: 'Flag', library: 'BookOpen', broadcasts: 'Megaphone', settings: 'Settings2', audit: 'FileText' };
+const TAB_ICONS: Record<AdminTab, GwIconProps['name']> = { overview: 'BarChart3', teams: 'UsersRound', users: 'UserRound', moderation: 'Flag', verify: 'BadgeCheck', library: 'BookOpen', broadcasts: 'Megaphone', settings: 'Settings2', audit: 'FileText' };
 
 const useLang = () => { const { i18n } = useTranslation(); return i18n.resolvedLanguage === 'es' ? 'es' : 'en'; };
 const fmtDate = (iso: string | null | undefined, lang: string, time = false) => iso ? new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', time ? { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' } : { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(iso)) : '—';
@@ -41,6 +41,7 @@ export function AdminConsole({ tab }: { tab: AdminTab }) {
     {tab === 'teams' && <Teams />}
     {tab === 'users' && <Users />}
     {tab === 'moderation' && <Moderation />}
+    {tab === 'verify' && <Verifications />}
     {tab === 'library' && <Library />}
     {tab === 'broadcasts' && <Broadcasts />}
     {tab === 'settings' && <Settings />}
@@ -248,6 +249,46 @@ function ReportCard({ r, lang }: { r: AdminReport; lang: string }) {
         <Button variant="secondary" disabled={busy} onClick={() => run('approve')}><GwIcon name="Check" />{t('admin.mod.approve')}</Button>
         {editable && (editing ? <Button variant="secondary" disabled={busy} onClick={() => run('edit')}><GwIcon name="Save" />{t('admin.mod.saveEdit')}</Button> : <Button variant="secondary" onClick={() => setEditing(true)}><GwIcon name="Pencil" />{t('admin.mod.edit')}</Button>)}
         <Button className="danger-button" disabled={busy} onClick={() => run('remove')}><GwIcon name="Trash2" />{t('admin.mod.remove')}</Button>
+      </div>
+    </>}
+  </article>;
+}
+
+function Verifications() {
+  const { t } = useTranslation(); const lang = useLang();
+  const [status, setStatus] = useState<'pending' | 'approved' | 'rejected'>('pending');
+  const fn = useServerFn(listVerifications);
+  const { data = [], isLoading } = useQuery({ queryKey: ['admin', 'verify', status], queryFn: () => fn({ data: { status } }) });
+  return <>
+    <Segmented value={status} options={['pending', 'approved', 'rejected'] as const} onChange={setStatus} label={v => t(`admin.verify.${v}`)} />
+    {isLoading ? <ListSkeleton /> : <div className="admin-cards">{data.map(v => <VerificationCard key={v.id} v={v} lang={lang} />)}{!data.length && <section className="panel empty-panel"><GwFeatureTile name="BadgeCheck" /><p className="muted-copy">{t('admin.verify.none')}</p></section>}</div>}
+  </>;
+}
+
+function VerificationCard({ v, lang }: { v: AdminVerification; lang: string }) {
+  const { t } = useTranslation(); const qc = useQueryClient(); const act = useServerFn(decideVerification);
+  const [note, setNote] = useState(''); const [keep, setKeep] = useState<number[]>(() => v.credentials.map((_, i) => i)); const [busy, setBusy] = useState(false);
+  const run = async (approve: boolean) => {
+    setBusy(true);
+    try { const res = await act({ data: { id: v.id, approve, note: note || undefined, keep } }); if (!res.ok) toast.error(errText(t, res.error)); else { toast.success(t('admin.saved')); await qc.invalidateQueries({ queryKey: ['admin', 'verify'] }); } }
+    catch { toast.error(t('admin.errors.failed')); }
+    setBusy(false);
+  };
+  return <article className="panel report-card">
+    <strong className="report-title">{v.name ?? '—'}</strong>
+    <p className="muted-copy">{[v.email, fmtDate(v.created_at, lang, true), v.years_experience != null ? t('coachTrust.yearsValue', { count: v.years_experience }) : null].filter(Boolean).join(' · ')}</p>
+    {v.identity_url && <a className="auth-link" href={v.identity_url} target="_blank" rel="noopener noreferrer"><GwIcon name="FileText" />{t('admin.verify.identity')}</a>}
+    {v.credentials.length > 0 && <ul className="credential-list">{v.credentials.map((c, i) => <li key={i}>
+      {v.status === 'pending' && <input type="checkbox" aria-label={t('admin.verify.keep', { title: c.title })} checked={keep.includes(i)} onChange={e => setKeep(k => e.target.checked ? [...k, i] : k.filter(x => x !== i))} />}
+      <span><strong>{c.title}</strong><small>{[t(`coachTrust.kind.${c.kind}`), c.issuer].filter(Boolean).join(' · ')}</small></span>
+      {c.doc_url ? <a className="auth-link" href={c.doc_url} target="_blank" rel="noopener noreferrer">{t('admin.verify.document')}</a> : <small className="muted-small">{t('admin.verify.noDocument')}</small>}
+    </li>)}</ul>}
+    {v.review_note && <p className="muted-copy">{t('admin.mod.resolution')}: {v.review_note}</p>}
+    {v.status === 'pending' && <>
+      <NoteField value={note} onChange={setNote} label={t('admin.verify.note')} />
+      <div className="report-actions">
+        <Button disabled={busy} onClick={() => run(true)}><GwIcon name="BadgeCheck" />{t('admin.verify.approve')}</Button>
+        <Button variant="secondary" disabled={busy || !note.trim()} onClick={() => run(false)}><GwIcon name="X" />{t('admin.verify.reject')}</Button>
       </div>
     </>}
   </article>;

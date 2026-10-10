@@ -41,6 +41,7 @@ import { Route as AuthenticatedAppPlanRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedAppProgressRouteImport } from './routes/_authenticated/_app/progress'
 import { Route as AuthenticatedAppPromosRouteImport } from './routes/_authenticated/_app/promos'
 import { Route as AuthenticatedAppTeamRouteImport } from './routes/_authenticated/_app/team'
+import { Route as AuthenticatedAppVerifyRouteImport } from './routes/_authenticated/_app/verify'
 import { Route as AuthenticatedAppAdminIndexRouteImport } from './routes/_authenticated/_app/admin.index'
 import { Route as AuthenticatedAppAdminSiteMediaRouteImport } from './routes/_authenticated/_app/admin.site-media'
 import { Route as AuthenticatedAppChallengeIdRouteImport } from './routes/_authenticated/_app/challenge.$id'
@@ -227,6 +228,11 @@ const AuthenticatedAppTeamRoute = AuthenticatedAppTeamRouteImport.update({
   path: '/team',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppVerifyRoute = AuthenticatedAppVerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => AuthenticatedAppRouteRoute,
+} as any)
 const AuthenticatedAppAdminIndexRoute =
   AuthenticatedAppAdminIndexRouteImport.update({
     id: '/admin/',
@@ -393,6 +399,7 @@ export interface FileRoutesByFullPath {
   '/progress': typeof AuthenticatedAppProgressRoute
   '/promos': typeof AuthenticatedAppPromosRoute
   '/team': typeof AuthenticatedAppTeamRoute
+  '/verify': typeof AuthenticatedAppVerifyRoute
   '/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/event/$id': typeof AuthenticatedAppEventIdRoute
@@ -449,6 +456,7 @@ export interface FileRoutesByTo {
   '/progress': typeof AuthenticatedAppProgressRoute
   '/promos': typeof AuthenticatedAppPromosRoute
   '/team': typeof AuthenticatedAppTeamRoute
+  '/verify': typeof AuthenticatedAppVerifyRoute
   '/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/event/$id': typeof AuthenticatedAppEventIdRoute
@@ -508,6 +516,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/progress': typeof AuthenticatedAppProgressRoute
   '/_authenticated/_app/promos': typeof AuthenticatedAppPromosRoute
   '/_authenticated/_app/team': typeof AuthenticatedAppTeamRoute
+  '/_authenticated/_app/verify': typeof AuthenticatedAppVerifyRoute
   '/_authenticated/_app/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/_authenticated/_app/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/_authenticated/_app/event/$id': typeof AuthenticatedAppEventIdRoute
@@ -566,6 +575,7 @@ export interface FileRouteTypes {
     | '/progress'
     | '/promos'
     | '/team'
+    | '/verify'
     | '/admin/site-media'
     | '/challenge/$id'
     | '/event/$id'
@@ -622,6 +632,7 @@ export interface FileRouteTypes {
     | '/progress'
     | '/promos'
     | '/team'
+    | '/verify'
     | '/admin/site-media'
     | '/challenge/$id'
     | '/event/$id'
@@ -680,6 +691,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/progress'
     | '/_authenticated/_app/promos'
     | '/_authenticated/_app/team'
+    | '/_authenticated/_app/verify'
     | '/_authenticated/_app/admin/site-media'
     | '/_authenticated/_app/challenge/$id'
     | '/_authenticated/_app/event/$id'
@@ -960,6 +972,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppTeamRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/verify': {
+      id: '/_authenticated/_app/verify'
+      path: '/verify'
+      fullPath: '/verify'
+      preLoaderRoute: typeof AuthenticatedAppVerifyRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/admin/': {
       id: '/_authenticated/_app/admin/'
       path: '/admin'
@@ -1144,6 +1163,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppProgressRoute: typeof AuthenticatedAppProgressRoute
   AuthenticatedAppPromosRoute: typeof AuthenticatedAppPromosRoute
   AuthenticatedAppTeamRoute: typeof AuthenticatedAppTeamRoute
+  AuthenticatedAppVerifyRoute: typeof AuthenticatedAppVerifyRoute
   AuthenticatedAppAdminSiteMediaRoute: typeof AuthenticatedAppAdminSiteMediaRoute
   AuthenticatedAppChallengeIdRoute: typeof AuthenticatedAppChallengeIdRoute
   AuthenticatedAppEventIdRoute: typeof AuthenticatedAppEventIdRoute
@@ -1176,6 +1196,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppProgressRoute: AuthenticatedAppProgressRoute,
   AuthenticatedAppPromosRoute: AuthenticatedAppPromosRoute,
   AuthenticatedAppTeamRoute: AuthenticatedAppTeamRoute,
+  AuthenticatedAppVerifyRoute: AuthenticatedAppVerifyRoute,
   AuthenticatedAppAdminSiteMediaRoute: AuthenticatedAppAdminSiteMediaRoute,
   AuthenticatedAppChallengeIdRoute: AuthenticatedAppChallengeIdRoute,
   AuthenticatedAppEventIdRoute: AuthenticatedAppEventIdRoute,
