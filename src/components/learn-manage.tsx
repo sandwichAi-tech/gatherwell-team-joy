@@ -31,7 +31,7 @@ function errMsg(t: (k: string) => string, e: unknown) {
 /** One Translate action for a form's bilingual pairs: fills each empty side from its filled partner. */
 function TranslatePair<T extends Record<string, unknown>>({ pairs, f, setF }: { pairs: [keyof T & string, keyof T & string][]; f: T; setF: React.Dispatch<React.SetStateAction<T>> }) {
   const { t } = useTranslation(); const tr = useTranslateFill(); const [busy, setBusy] = useState(false);
-  const go = async () => { setBusy(true); for (const [en, es] of pairs) { const a = String(f[en] ?? ''), b = String(f[es] ?? ''); if (a.trim() && b.trim()) continue; if (!a.trim() && !b.trim()) continue; await tr.run(a, b, v => setF(x => ({ ...x, [en]: v })), v => setF(x => ({ ...x, [es]: v }))); } setBusy(false); };
+  const go = async () => { setBusy(true); try { for (const [en, es] of pairs) { const a = String(f[en] ?? ''), b = String(f[es] ?? ''); if (a.trim() && b.trim()) continue; if (!a.trim() && !b.trim()) continue; await tr.run(a, b, v => setF(x => ({ ...x, [en]: v })), v => setF(x => ({ ...x, [es]: v }))); } } catch { toast.error(t('error.message')); } finally { setBusy(false); } };
   return <div className="label-row"><button type="button" className="translate-button" disabled={busy} onClick={go}><Languages />{busy ? t('assistant.translating') : t('templates.translate')}</button>{tr.preview && <small className="not-connected">{t('assistant.previewTranslateNote')}</small>}</div>;
 }
 
