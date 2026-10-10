@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { GwFeatureTile, GwIcon } from '@/components/gw-icon';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { EmptyState, ListSkeleton, RetryState } from '@/components/launch-states';
+import { BrandImage } from '@/components/brand-image';
 import { GatheringCover } from '@/components/gathering-cover';
 import { CropFileInput } from '@/components/image-crop';
 import { FollowButton } from '@/components/follow';
@@ -162,7 +163,7 @@ export function LocationPublicPage({ slug }: { slug: string }) {
   const time = (hhmm: string) => { const [h, m] = hhmm.split(':').map(Number); return new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' }).format(new Date(Date.UTC(2024, 0, 1, h ?? 0, m ?? 0))); };
   return <div className="follow-page loc-page">
     <section className="gw-hero-card follow-hero">
-      {pics[0] ? <img src={pics[0]} alt={l.name} className="gw-hero-cover loc-hero-img" /> : <div className="gw-hero-cover loc-hero-fallback" aria-hidden />}
+      {pics[0] ? <BrandImage src={pics[0]} alt={l.name} className="gw-hero-cover profile-photo-cover" priority /> : <BrandImage slot="host_band" alt="" className="gw-hero-cover" />}
       <div className="follow-hero-body">
         <p className="eyebrow">{t(`locations.mode_${l.mode}`)}</p>
         <h1 className="follow-name">{l.name}</h1>
