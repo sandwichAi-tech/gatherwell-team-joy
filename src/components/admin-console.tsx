@@ -447,11 +447,13 @@ function PlanSettingsPanel() {
 function PlanSettingRow({ s, onSaved }: { s: PlanSetting; onSaved: () => void }) {
   const { t } = useTranslation(); const save = useServerFn(updatePlanSettings);
   const [fee, setFee] = useState(String(s.fee_percent)); const [cap, setCap] = useState(s.monthly_cap === null ? '' : String(s.monthly_cap / 100)); const [price, setPrice] = useState(String(s.monthly_price / 100));
+  const [svcPct, setSvcPct] = useState(String(s.service_fee_percent)); const [svcFixed, setSvcFixed] = useState(String(s.service_fee_fixed / 100));
   const [busy, setBusy] = useState(false);
   const submit = async () => {
     const f = Number(fee), c = cap.trim() === '' ? null : Math.round(Number(cap) * 100), p = Math.round(Number(price) * 100);
-    if (![f, p].every(Number.isFinite) || (c !== null && !Number.isFinite(c))) { toast.error(t('admin.errors.failed')); return; }
-    setBusy(true); const r = await save({ data: { plan: s.plan as 'free' | 'pro', fee_percent: f, monthly_cap: c, monthly_price: p } }).catch(() => ({ ok: false as const })); setBusy(false);
+    const sp = Number(svcPct), sf = Math.round(Number(svcFixed) * 100);
+    if (![f, p, sp, sf].every(Number.isFinite) || (c !== null && !Number.isFinite(c))) { toast.error(t('admin.errors.failed')); return; }
+    setBusy(true); const r = await save({ data: { plan: s.plan as 'free' | 'pro', fee_percent: f, monthly_cap: c, monthly_price: p, service_fee_percent: sp, service_fee_fixed: sf } }).catch(() => ({ ok: false as const })); setBusy(false);
     if (r.ok) { toast.success(t('admin.saved')); onSaved(); } else toast.error(t('admin.errors.failed'));
   };
   const id = `ps-${s.plan}`;
@@ -460,6 +462,8 @@ function PlanSettingRow({ s, onSaved }: { s: PlanSetting; onSaved: () => void })
       <label className="field-label" htmlFor={`${id}-fee`}>{t('admin.planSettings.fee')}<Input id={`${id}-fee`} inputMode="decimal" value={fee} onChange={e => setFee(e.target.value)} /></label>
       <label className="field-label" htmlFor={`${id}-cap`}>{t('admin.planSettings.cap')}<Input id={`${id}-cap`} inputMode="decimal" placeholder={t('admin.planSettings.noCap')} value={cap} onChange={e => setCap(e.target.value)} /></label>
       <label className="field-label" htmlFor={`${id}-price`}>{t('admin.planSettings.price')}<Input id={`${id}-price`} inputMode="decimal" value={price} onChange={e => setPrice(e.target.value)} /></label>
+      <label className="field-label" htmlFor={`${id}-svc`}>{t('admin.planSettings.servicePct')}<Input id={`${id}-svc`} inputMode="decimal" value={svcPct} onChange={e => setSvcPct(e.target.value)} /></label>
+      <label className="field-label" htmlFor={`${id}-svcfix`}>{t('admin.planSettings.serviceFixed')}<Input id={`${id}-svcfix`} inputMode="decimal" value={svcFixed} onChange={e => setSvcFixed(e.target.value)} /></label>
     </div>
     <Button variant="secondary" disabled={busy} onClick={() => void submit()}>{t('admin.planSettings.save')}</Button>
   </div>;

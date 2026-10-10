@@ -28,10 +28,10 @@ export const Route = createFileRoute('/api/public/stripe/webhook')({
                 const code = (r as { code: string }[] | null)?.[0]?.code;
                 const { data: rsvp } = code ? await db.from('rsvps').select('id').eq('checkin_code', code).maybeSingle() : { data: null };
                 if (rsvp?.id && m.waiver) await db.rpc('record_waiver' as never, { _rsvp: rsvp.id, _name: m.waiver, _ip: m.waiver_ip || null, _source: 'rsvp' } as never);
-                const { data: pay } = await db.from('payments').update({ status: 'paid', stripe_payment_intent: o.payment_intent, rsvp_id: rsvp?.id ?? null }).eq('stripe_session_id', o.id).select('amount_cents').maybeSingle();
+                const { data: pay } = await db.from('payments').update({ status: 'paid', stripe_payment_intent: o.payment_intent, rsvp_id: rsvp?.id ?? null }).eq('stripe_session_id', o.id).select('amount_cents, service_fee_cents, service_fee_covered').maybeSingle();
                 const { data: ev } = await db.from('events').select('title, starts_at, timezone, location_name').eq('id', m.event_id).maybeSingle();
                 await db.rpc('enqueue_message', <any>{ _channel: 'email', _recipient: m.email, _language: m.lang === 'es' ? 'es' : 'en', _template: 'payment_receipt', _kind: 'transactional',
-                  _payload: { name: m.first, title: ev?.title ?? '', starts_at: ev?.starts_at, timezone: ev?.timezone, location: ev?.location_name, amount: money(pay?.amount_cents ?? o.amount_total ?? 0), code, event_id: m.event_id },
+                  _payload: { name: m.first, title: ev?.title ?? '', starts_at: ev?.starts_at, timezone: ev?.timezone, location: ev?.location_name, amount: money(pay?.amount_cents ?? o.amount_total ?? 0), service_fee: pay && pay.service_fee_cents && !pay.service_fee_covered ? money(pay.service_fee_cents) : null, ticket: pay && pay.service_fee_cents && !pay.service_fee_covered ? money(pay.amount_cents - pay.service_fee_cents) : null, code, event_id: m.event_id },
                   _send_after: new Date().toISOString(), _event: m.event_id, _rsvp: rsvp?.id ?? undefined });
               } else if (m.kind === 'challenge') {
                 await db.from('challenge_members').upsert({ challenge_id: m.challenge_id, user_id: m.user_id }, { onConflict: 'challenge_id,user_id', ignoreDuplicates: true });

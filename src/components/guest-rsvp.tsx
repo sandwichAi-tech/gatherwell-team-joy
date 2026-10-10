@@ -1,4 +1,5 @@
 import { tgShare } from '@/lib/chat-links';
+import { serviceFee } from '@/lib/plan-fees';
 import { GuestBelonging } from '@/components/belonging';
 import { PromoField } from '@/components/promo-field';
 import { promoDiscount, type Promo } from '@/lib/promo';
@@ -65,7 +66,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
   const { t, i18n } = useTranslation();
   const [form, setForm] = useState({ first: '', last: '', phone: '', email: '', plus: 0, sms: false, mail: false });
   const [busy, setBusy] = useState(false); const [error, setError] = useState<string | null>(null);
-  const [price, setPrice] = useState<{ price_cents: number; pass_fee: boolean; fee_pct: number } | null>(null);
+  const [price, setPrice] = useState<{ price_cents: number; pass_fee: boolean; fee_pct: number; cover_service_fee?: boolean; service_fee_percent?: number; service_fee_fixed?: number } | null>(null);
   const { data: waiver } = useEventWaiver(intent ? event.id : undefined); const [wName, setWName] = useState(''); const [wOk, setWOk] = useState(false);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const gate = usePaymentGate(); const checkout = useServerFn(startTicketCheckout);
@@ -76,7 +77,9 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
   const [promo, setPromo] = useState<Promo | null>(null);
   const discount = price ? promoDiscount(price.price_cents * qty, promo) : 0;
   const fee = price?.pass_fee ? Math.round((price.price_cents * qty - discount) * price.fee_pct / 100) : 0;
-  const total = price ? price.price_cents * qty - discount + fee : 0;
+  const ticketsCents = price ? price.price_cents * qty - discount : 0;
+  const service = price && !price.cover_service_fee ? serviceFee(ticketsCents, Number(price.service_fee_percent ?? 0), price.service_fee_fixed ?? 0) : 0;
+  const total = price ? ticketsCents + fee + service : 0;
   useEffect(() => {
     if (!intent) return;
     void (async () => {
@@ -126,6 +129,13 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
       {event.require_approval && intent === 'going' && <p className="guest-hint">{t('rsvpq.approvalHint')}</p>}
       {waiver && <WaiverAccept waiver={waiver} name={wName} accepted={wOk} onName={setWName} onAccepted={setWOk} />}
       {paid && price && <p className="guest-price"><strong>{formatMoney(price.price_cents, lang)}</strong><span>{t('billing.perPerson')}{fee ? ` · ${t('billing.bookingFee', { fee: formatMoney(fee, lang) })}` : ''}</span></p>}
+      {paid && price && <dl className="guest-fee-lines" aria-label={t('billing.orderSummary')}>
+        <div><dt>{t('billing.tickets', { count: qty })}</dt><dd className="tabular-nums">{formatMoney(ticketsCents, lang)}</dd></div>
+        {!!fee && <div><dt>{t('billing.bookingFeeLabel')}</dt><dd className="tabular-nums">{formatMoney(fee, lang)}</dd></div>}
+        {!!service && <div><dt>{t('billing.serviceFee')}</dt><dd className="tabular-nums">{formatMoney(service, lang)}</dd></div>}
+        <div className="is-total"><dt>{t('billing.total')}</dt><dd className="tabular-nums">{formatMoney(total, lang)}</dd></div>
+        {price.cover_service_fee && <p className="guest-hint">{t('billing.allInPrice')}</p>}
+      </dl>}
       {paid && price && <PromoField kind="gathering" target={event.id} buyer={form.email.trim()} discountCents={discount} value={promo} onChange={setPromo} />}
       {error && <p className="field-error" role="alert">{error}</p>}
       <Button type="submit" className="guest-primary" disabled={busy || gate.busy}>{busy || gate.busy ? t('guest.saving') : paid ? t('billing.payAndRsvp', { amount: formatMoney(total, lang) }) : intent === 'maybe' ? t('guest.confirmMaybe') : full ? t('guest.joinWaitlist') : t('guest.confirmGoing')}</Button>

@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { X, Camera, Check, Languages, Copy, MessageCircle, MessageSquareText, MapPin, Globe2, Repeat, ChevronRight } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { GatheringCover } from '@/components/gathering-cover';
 import { useGatherwell } from '@/components/gatherwell-shell';
@@ -50,7 +51,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const [place, setPlace] = useState<'person' | 'online'>('person'); const [locationName, setLocationName] = useState(''); const [address, setAddress] = useState('');
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null); const [note, setNote] = useState(''); const [url, setUrl] = useState('');
   const [price, setPrice] = useState(''); const [limit, setLimit] = useState<null | 'gatherings' | 'storage'>(null);
-  const [capacity, setCapacity] = useState(''); const [communitySeats, setCommunitySeats] = useState(''); const [visibility, setVisibility] = useState<'public' | 'team' | 'invite'>('public');
+  const [capacity, setCapacity] = useState(''); const [communitySeats, setCommunitySeats] = useState(''); const [coverFee, setCoverFee] = useState(false); const [visibility, setVisibility] = useState<'public' | 'team' | 'invite'>('public');
   const [descEn, setDescEn] = useState(''); const [descEs, setDescEs] = useState(''); const [descTab, setDescTab] = useState<'en' | 'es'>(lang);
   const [wholeSeries, setWholeSeries] = useState(false); const [tpl, setTpl] = useState<{ id: string; title: string } | null>(null);
   const tr = useTranslateFill(); const [busy, setBusy] = useState(false); const [uploading, setUploading] = useState(false);
@@ -78,6 +79,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       setDuration(mins); setCustomDuration(!DURATIONS.includes(mins as 60));
       setPlace(isOnline(e) ? 'online' : 'person'); setLocationName(e.location_name ?? ''); setAddress(e.address ?? ''); setNote(e.meeting_note ?? ''); setUrl(e.online_url ?? '');
       setCoords(e.lat != null && e.lng != null ? { lat: e.lat, lng: e.lng } : null);
+      setCoverFee(!!(e as { cover_service_fee?: boolean }).cover_service_fee);
       setPrice((e as { price_cents?: number | null }).price_cents ? String(((e as { price_cents: number }).price_cents / 100)) : '');
       { const x = e as { team_registration?: boolean; team_min?: number; team_max?: number; team_price_mode?: string }; setTeamReg({ on: !!x.team_registration, min: x.team_min ?? 2, max: x.team_max ?? 6, mode: x.team_price_mode === 'team' ? 'team' : 'person' }); }
       { const rt = asRetreat((e as { retreat?: unknown }).retreat); if (rt) { setRetreatOn(true); setRetreat(rt); if (e.ends_at) setRetreatEnd(toLocalInput(new Date(e.ends_at))); } }
@@ -130,7 +132,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const savePrice = async (id: string) => {
     if (!canSell && !priceCents) return null;
     const { data: ev } = await supabase.from('events').select('series_id').eq('id', id).maybeSingle();
-    const q = supabase.from('events').update({ price_cents: priceCents, pass_fee: planStatus?.pass_fee ?? false, community_seats: priceCents && Number(communitySeats) > 0 ? Math.min(100, Number(communitySeats)) : null });
+    const q = supabase.from('events').update({ price_cents: priceCents, pass_fee: planStatus?.pass_fee ?? false, cover_service_fee: !!priceCents && coverFee, community_seats: priceCents && Number(communitySeats) > 0 ? Math.min(100, Number(communitySeats)) : null });
     const { error } = ev?.series_id ? await q.eq('series_id', ev.series_id) : await q.eq('id', id);
     return error;
   };
@@ -270,6 +272,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
           <Input id="g-price" type="text" inputMode="decimal" className="field-input" disabled={!canSell && !price} value={price} onChange={e => setPrice(e.target.value.replace(/[^\d.]/g, '').slice(0, 7))} placeholder="$0" />
           <small className="field-hint">{canSell ? t('billing.priceHint') : t('billing.priceNeedsPayouts')}</small>
           <PriceGuidance category={category} />
+          {!!priceCents && <label className="settings-row is-static gathering-cover-fee"><span className="settings-label">{t('billing.coverFee')}<small className="field-hint">{coverFee ? t('billing.coverFeeOn') : t('billing.coverFeeOff')}</small></span><Switch aria-label={t('billing.coverFee')} checked={coverFee} onCheckedChange={setCoverFee} /></label>}
           {!!priceCents && <><label className="field-label" htmlFor="g-cseats">{t('community.seatsField')}</label><Input id="g-cseats" inputMode="numeric" className="field-input" value={communitySeats} onChange={e => setCommunitySeats(e.target.value.replace(/\D/g, '').slice(0, 3))} placeholder={t('community.seatsNone')} /><small className="field-hint">{t('community.seatsHint')}</small></>}</div>
         <div><span className="field-label">{t('gathering.visibility')}</span>
           <div className="segmented full" role="group" aria-label={t('gathering.visibility')}>{(['public', 'invite', 'team'] as const).map(v => <Button key={v} variant="ghost" className={visibility === v ? 'selected' : ''} aria-pressed={visibility === v} onClick={() => setVisibility(v)}>{t(`gathering.vis.${v}`)}</Button>)}</div></div>

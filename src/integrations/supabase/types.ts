@@ -1252,6 +1252,7 @@ export type Database = {
           chat_links: Json
           community_seats: number | null
           completed_at: string | null
+          cover_service_fee: boolean
           cover_style: number
           cover_url: string | null
           created_at: string
@@ -1301,6 +1302,7 @@ export type Database = {
           chat_links?: Json
           community_seats?: number | null
           completed_at?: string | null
+          cover_service_fee?: boolean
           cover_style?: number
           cover_url?: string | null
           created_at?: string
@@ -1350,6 +1352,7 @@ export type Database = {
           chat_links?: Json
           community_seats?: number | null
           completed_at?: string | null
+          cover_service_fee?: boolean
           cover_style?: number
           cover_url?: string | null
           created_at?: string
@@ -2263,6 +2266,8 @@ export type Database = {
           offer_id: string | null
           promo_id: string | null
           rsvp_id: string | null
+          service_fee_cents: number
+          service_fee_covered: boolean
           status: string
           stripe_payment_intent: string | null
           stripe_session_id: string | null
@@ -2286,6 +2291,8 @@ export type Database = {
           offer_id?: string | null
           promo_id?: string | null
           rsvp_id?: string | null
+          service_fee_cents?: number
+          service_fee_covered?: boolean
           status?: string
           stripe_payment_intent?: string | null
           stripe_session_id?: string | null
@@ -2309,6 +2316,8 @@ export type Database = {
           offer_id?: string | null
           promo_id?: string | null
           rsvp_id?: string | null
+          service_fee_cents?: number
+          service_fee_covered?: boolean
           status?: string
           stripe_payment_intent?: string | null
           stripe_session_id?: string | null
@@ -2392,6 +2401,8 @@ export type Database = {
           monthly_cap: number | null
           monthly_price: number
           plan: string
+          service_fee_fixed: number
+          service_fee_percent: number
           updated_at: string
         }
         Insert: {
@@ -2400,6 +2411,8 @@ export type Database = {
           monthly_cap?: number | null
           monthly_price?: number
           plan: string
+          service_fee_fixed?: number
+          service_fee_percent?: number
           updated_at?: string
         }
         Update: {
@@ -2408,6 +2421,8 @@ export type Database = {
           monthly_cap?: number | null
           monthly_price?: number
           plan?: string
+          service_fee_fixed?: number
+          service_fee_percent?: number
           updated_at?: string
         }
         Relationships: []
@@ -4704,6 +4719,10 @@ export type Database = {
       }
       send_text_invites: {
         Args: { _event: string; _phones: string[] }
+        Returns: number
+      }
+      service_fee_cents: {
+        Args: { _amount: number; _host: string }
         Returns: number
       }
       set_buddy_wish: {

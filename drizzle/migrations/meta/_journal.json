@@ -162,6 +162,13 @@
       "when": 1791657672920,
       "tag": "0022_u1_two_plans_fee_cap",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1791659146480,
+      "tag": "0023_u2_guest_service_fee",
+      "breakpoints": true
     }
   ]
 }

@@ -2004,7 +2004,23 @@
     "capReached": "Cap reached",
     "capReachedHint": "You've reached this month's cap. No platform fee on your sales until next month.",
     "capHint": "{{pct}}% of your paid sales until you reach {{cap}} this month. After that, 0%.",
-    "getPaidCapped": "Guests pay by card and the money goes to your account. Platform fee: {{n}}% of paid sales, capped at {{cap}} a month."
+    "getPaidCapped": "Guests pay by card and the money goes to your account. Platform fee: {{n}}% of paid sales, capped at {{cap}} a month.",
+    "serviceFee": "Service fee",
+    "bookingFeeLabel": "Booking fee",
+    "total": "Total",
+    "orderSummary": "Order summary",
+    "tickets_one": "{{count}} ticket",
+    "tickets_other": "{{count}} tickets",
+    "allInPrice": "All-in price. No extra fees at checkout.",
+    "allInShort": "all-in price",
+    "plusServiceFee": "+ {{fee}} service fee",
+    "coverFee": "I'll cover the service fee",
+    "coverFeeOn": "Guests see one all-in price. The service fee comes out of your payout.",
+    "coverFeeOff": "Guests pay a small service fee as its own line at checkout.",
+    "serviceCovered": "Service fees you covered",
+    "guestServiceNote": "Guests also paid {{amount}} in service fees. That isn't part of your sales.",
+    "serviceFeeRow": "guest paid {{fee}} service fee",
+    "serviceFeeCoveredRow": "you covered {{fee}} service fee"
   },
   "report": {
     "action": "Report",
@@ -2359,7 +2375,9 @@
       "cap": "Monthly fee cap ($)",
       "noCap": "No cap",
       "price": "Monthly price ($)",
-      "save": "Save"
+      "save": "Save",
+      "servicePct": "Guest service fee (%)",
+      "serviceFixed": "Guest service fee, fixed ($)"
     }
   },
   "legalDocs": {
