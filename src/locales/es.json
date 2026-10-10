@@ -3265,5 +3265,65 @@
     "opensAt": "Todos podrán confirmar a partir del {{when}}.",
     "youreIn": "Acceso anticipado de {{circle}}",
     "youreInText": "Ya puedes confirmar. Los demás podrán a partir del {{when}}."
+  },
+  "progress": {
+    "title": "Mi progreso",
+    "private": "Privado. Solo tú lo ves, a menos que lo compartas.",
+    "stat": {
+      "attended": "Reuniones",
+      "streak": "Semanas seguidas",
+      "best": "Mejor racha",
+      "lessons": "Lecciones hechas"
+    },
+    "byCategory": "Reuniones por tipo",
+    "otherCategory": "Otra",
+    "recapEyebrow": "Tu {{month}}",
+    "recapTitle": "Tu mes",
+    "recap": {
+      "gatherings": "Reuniones",
+      "streak": "Semanas seguidas",
+      "people": "Personas nuevas",
+      "goals": "Metas cumplidas"
+    },
+    "recapLine": "{{g}} reuniones · racha de {{s}} semanas · {{n}} personas nuevas · {{c}} metas cumplidas",
+    "shareRecap": "Compartir mi mes",
+    "goals": "Mis metas",
+    "noGoals": "Escribe una meta con tus palabras, como \"Caminar 3 veces por semana\".",
+    "newGoal": "Nueva meta",
+    "goalPlaceholder": "Caminar 3 veces por semana",
+    "add": "Agregar",
+    "checkToday": "Marcar {{goal}} como hecha hoy",
+    "checks_one": "Cumplida {{count}} vez",
+    "checks_other": "Cumplida {{count}} veces",
+    "removeGoal": "Quitar meta",
+    "bests": "Mejores marcas",
+    "noBests": "Anota tus mejores marcas: una distancia, un tiempo, repeticiones o un levantamiento.",
+    "bestLabel": "Qué",
+    "bestPlaceholder": "5K del sábado",
+    "bestKind": "Tipo",
+    "kind": {
+      "distance": "Distancia",
+      "time": "Tiempo",
+      "reps": "Repeticiones",
+      "lifted": "Levantamiento"
+    },
+    "bestValue": "Cantidad",
+    "bestUnit": "Unidad",
+    "unit": {
+      "km": "km",
+      "mi": "mi",
+      "min": "min",
+      "reps": "rep.",
+      "kg": "kg",
+      "lb": "lb"
+    },
+    "removeBest": "Quitar mejor marca",
+    "shareTitle": "Compartir con mi coach en {{team}}",
+    "shareText": "Los líderes de tu equipo verán tus rachas, metas y mejores marcas. Puedes desactivarlo cuando quieras.",
+    "sharedOn": "Compartido con tu coach.",
+    "sharedOff": "Tu progreso vuelve a ser privado.",
+    "sharedWithYou": "Progreso compartido contigo",
+    "claim": "Que sea sobre actividad: sin afirmaciones de peso, salud o dinero.",
+    "saveError": "No se pudo guardar. Inténtalo de nuevo."
   }
 }

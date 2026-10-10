@@ -3265,5 +3265,65 @@
     "opensAt": "RSVPs open to everyone {{when}}.",
     "youreIn": "Early access for {{circle}}",
     "youreInText": "You can RSVP now. Everyone else can from {{when}}."
+  },
+  "progress": {
+    "title": "My progress",
+    "private": "Private. Only you can see this unless you share it.",
+    "stat": {
+      "attended": "Gatherings",
+      "streak": "Week streak",
+      "best": "Best streak",
+      "lessons": "Lessons done"
+    },
+    "byCategory": "Gatherings by type",
+    "otherCategory": "Other",
+    "recapEyebrow": "Your {{month}}",
+    "recapTitle": "Your month",
+    "recap": {
+      "gatherings": "Gatherings",
+      "streak": "Week streak",
+      "people": "New people met",
+      "goals": "Goals checked off"
+    },
+    "recapLine": "{{g}} gatherings · {{s}}-week streak · {{n}} new people · {{c}} goals checked off",
+    "shareRecap": "Share my month",
+    "goals": "My goals",
+    "noGoals": "Write a goal in your own words, like \"Walk 3 times a week\".",
+    "newGoal": "New goal",
+    "goalPlaceholder": "Walk 3 times a week",
+    "add": "Add",
+    "checkToday": "Check off {{goal}} for today",
+    "checks_one": "Checked off {{count}} time",
+    "checks_other": "Checked off {{count}} times",
+    "removeGoal": "Remove goal",
+    "bests": "Personal bests",
+    "noBests": "Log your own bests: a distance, a time, reps or a lift.",
+    "bestLabel": "What",
+    "bestPlaceholder": "Saturday 5K",
+    "bestKind": "Type",
+    "kind": {
+      "distance": "Distance",
+      "time": "Time",
+      "reps": "Reps",
+      "lifted": "Lift"
+    },
+    "bestValue": "Amount",
+    "bestUnit": "Unit",
+    "unit": {
+      "km": "km",
+      "mi": "mi",
+      "min": "min",
+      "reps": "reps",
+      "kg": "kg",
+      "lb": "lb"
+    },
+    "removeBest": "Remove personal best",
+    "shareTitle": "Share with my coach at {{team}}",
+    "shareText": "Your team leaders will see your streaks, goals and personal bests. Turn it off anytime.",
+    "sharedOn": "Shared with your coach.",
+    "sharedOff": "Your progress is private again.",
+    "sharedWithYou": "Progress shared with you",
+    "claim": "Keep it about activity: no weight, health or money claims.",
+    "saveError": "Couldn't save. Try again."
   }
 }
