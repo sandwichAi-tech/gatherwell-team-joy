@@ -66,7 +66,7 @@ export const earningsQuery = (userId: string) => queryOptions({
   },
 });
 
-export const formatMoney = (cents: number, lang: string) => new Intl.NumberFormat(lang === 'es' ? 'es-MX' : 'en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: cents % 100 ? 2 : 0 }).format(cents / 100);
+export const formatMoney = (cents: number, lang: string) => new Intl.NumberFormat(lang === 'es' ? 'es-MX' : 'en-US', { style: 'currency', currency: 'USD', currencyDisplay: 'narrowSymbol', minimumFractionDigits: cents % 100 ? 2 : 0 }).format(cents / 100);
 export const formatStorage = (mb: number, lang = 'en') => new Intl.NumberFormat(lang.startsWith('es') ? 'es-419' : 'en-US', { style: 'unit', unit: mb >= 1024 ? 'gigabyte' : 'megabyte', maximumFractionDigits: 0 }).format(mb >= 1024 ? Math.round(mb / 1024) : mb);
 
 /** Client-side guard before an upload; the database answers with the person's plan. */
