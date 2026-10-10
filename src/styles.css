@@ -1927,3 +1927,8 @@ a.gw-cat-chip:hover{background:#fff}
 @media (prefers-reduced-motion:reduce){.qs-live{animation:none}.qs-bar>span{transition:none}}
 .qs-preview{display:flex;flex-direction:column;gap:8px}.qs-preview-cover{width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden}.qs-preview-title{font-size:1.25rem}.qs-preview small{color:var(--muted-foreground)}
 .qs-entry{width:100%;margin-bottom:8px}
+.gw-landing .gw-hosts-studio-link{margin-top:20px}
+.gw-landing .gw-simple-list{display:grid;gap:16px;max-width:620px;margin:32px auto 0;padding:0;list-style:none;text-align:left}
+.gw-landing .gw-simple-list li{display:flex;gap:12px;align-items:flex-start;font-size:15px;line-height:1.55}
+.gw-landing .gw-simple-list li svg{flex-shrink:0;color:var(--lavender);margin-top:2px}
+.gw-landing .gw-final-ctas{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:32px}
