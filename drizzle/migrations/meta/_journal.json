@@ -71,6 +71,13 @@
       "when": 1791653341268,
       "tag": "0009_v2_recognition_status",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1791653587807,
+      "tag": "0010_fix_milestones_joined_at",
+      "breakpoints": true
     }
   ]
 }
