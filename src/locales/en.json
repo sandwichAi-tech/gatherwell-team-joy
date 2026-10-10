@@ -3126,7 +3126,7 @@
     "pricingFaq": [
       {
         "q": "What's the platform fee?",
-        "a": "7% of paid tickets and offers on Free, capped at $99 a month. Pro is $99 a month with no platform fee. Card processing is separate on both plans and passed through at cost. Free RSVPs have no fee."
+        "a": "{{fee}} of paid tickets and offers on Free, capped at {{cap}} a month. Pro is {{pro}} a month with no platform fee. Card processing is separate on both plans and passed through at cost. Free RSVPs have no fee."
       },
       {
         "q": "Can guests join for free?",

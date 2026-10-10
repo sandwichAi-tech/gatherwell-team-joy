@@ -12,8 +12,16 @@ function StartLink({ secondary = false, label }: { secondary?: boolean; label?: 
  return <Link to="/login" search={{ intent: 'host' }} className={`gw-btn gw-btn-${secondary ? 'secondary' : 'primary'} gw-btn-lg`}>{label ?? t('marketing.hostCta')}<GwIcon name="ArrowRight" size={20} /></Link>;
 }
 function Faq({ kind }: { kind: 'hostFaq' | 'pricingFaq' }) {
- const { t } = useTranslation();
- const items = t(`marketing.${kind}`, { returnObjects: true }) as { q: string; a: string }[];
+ const { t, i18n } = useTranslation();
+ const { data: settings } = useQuery(planSettingsQuery);
+ const free = settings?.free; const pro = settings?.pro;
+ const money = (n: number) => formatMoney(n, i18n.resolvedLanguage ?? 'en');
+ const vars = kind === 'pricingFaq' && free && pro ? {
+  fee: `${free.fee_percent}%`,
+  cap: free.monthly_cap != null ? money(free.monthly_cap) : '',
+  pro: money(pro.monthly_price),
+ } : undefined;
+ const items = t(`marketing.${kind}`, { returnObjects: true, ...vars }) as { q: string; a: string }[];
  return <section className="gw-band gw-band-white gw-marketing-section"><div className="gw-container gw-faq"><h2 className="gw-display gw-h2">{t('marketing.faqTitle')}</h2><div>{items.map(item => <details key={item.q}><summary>{item.q}<GwIcon name="ChevronDown" size={20} /></summary><p>{item.a}</p></details>)}</div></div></section>;
 }
 export function PricingCards({ preview = false }: { preview?: boolean }) {
