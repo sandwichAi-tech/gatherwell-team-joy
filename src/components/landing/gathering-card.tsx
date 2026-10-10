@@ -92,7 +92,7 @@ export function GatheringCard({ g, slot, near, goingOverride, goingSlot, showRsv
     <div className="gw-gcard-body">
       <h3 className="gw-gcard-title">{showRsvp ? <button type="button" className="gw-gcard-link" onClick={open} aria-label={t('landing.card.open', { title: g.title })}>{g.title}</button> : g.title}</h3>
       <p className="gw-gcard-meta">{meta}</p>
-      <p className="gw-gcard-host"><span className="gw-mini-avatar tone-2" style={{ width: 20, height: 20, fontSize: 9 }} aria-hidden="true">{g.hostName.trim()[0]?.toUpperCase() ?? 'G'}</span>{t('landing.card.hostedBy', { name: g.hostName })}{g.isSample && <span className="gw-sample-tag">{t('landing.card.sample')}</span>}</p>
+      <p className="gw-gcard-host"><span className="gw-mini-avatar tone-2" style={{ width: 20, height: 20, fontSize: 9 }} aria-hidden="true">{g.hostName.trim()[0]?.toUpperCase() ?? 'G'}</span>{t('landing.card.hostedBy', { name: g.hostName })}{g.isSample && <span className="gw-sample-tag">{t('landing.card.sample')}</span>}{g.featured && <span className="gw-sample-tag gw-founding-tag">{t('founding.badge')}</span>}</p>
       <div className="gw-gcard-foot">
         <span className="gw-going"><AvatarStack letters={g.initials} />{goingSlot ?? <GoingLine g={g} going={going} />}</span>
         {showRsvp && <RsvpButton g={g} compact />}

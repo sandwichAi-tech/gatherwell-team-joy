@@ -12,6 +12,8 @@ export type FeedGathering = {
   id: string;
   isSample: boolean;
   hero: boolean;
+  /** Founding coach in their featured window: shown first in Discover. */
+  featured?: boolean;
   title: string;
   startsAt: Date;
   category: Category;
@@ -27,7 +29,7 @@ export type FeedGathering = {
   hostName: string;
 };
 
-type RawReal = { category_label?: string | null; id: string; title: string; starts_at: string; category: string; location_name: string | null; is_online: boolean; lat: number | null; lng: number | null; capacity: number | null; going: number; host_name: string; initials: string[] };
+type RawReal = { category_label?: string | null; id: string; title: string; starts_at: string; category: string; location_name: string | null; is_online: boolean; lat: number | null; lng: number | null; capacity: number | null; going: number; host_name: string; initials: string[]; featured?: boolean };
 type RawSample = { id: string; hero: boolean; slot_order: number; title_en: string; title_es: string; category: string; dow: number; local_time: string; location_name: string; lat: number | null; lng: number | null; capacity: number | null; going: number; going_names: string[]; host_name: string };
 
 /** Samples exist only for previews; the published site never requests them. */
@@ -57,7 +59,7 @@ export const publicGatheringsQuery = (lang: 'en' | 'es') => queryOptions({
     const real = payload.real.map((r): FeedGathering => ({
       id: r.id, isSample: false, hero: false, title: r.title, startsAt: new Date(r.starts_at),
       categoryLabel: r.category_label ?? null, category: isCategory(r.category) ? r.category : 'more', locationName: r.location_name, isOnline: r.is_online,
-      lat: r.lat, lng: r.lng, capacity: r.capacity, going: r.going, goingNames: [], initials: r.initials ?? [], hostName: r.host_name,
+      lat: r.lat, lng: r.lng, capacity: r.capacity, going: r.going, goingNames: [], initials: r.initials ?? [], hostName: r.host_name, featured: !!r.featured,
     }));
     const samples = payload.samples.map((s): FeedGathering => ({
       id: s.id, isSample: true, hero: s.hero, title: lang === 'es' ? s.title_es : s.title_en, startsAt: nextOccurrence(s.dow, s.local_time),
