@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { GatheringCover } from '@/components/gathering-cover';
 import { Confirmation, Stepper } from '@/components/guest-rsvp';
+import { waitlistPositionQuery } from '@/components/early-access';
 import { SignWaiverByCode } from '@/components/team-rsvp';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { Polls, PhotoRoll } from '@/components/event-live';
@@ -26,6 +27,7 @@ export const Route = createFileRoute('/r/$code')({
 function ManageRsvp() {
   const { t } = useTranslation(); const { code } = Route.useParams(); const queryClient = useQueryClient();
   const { data, isLoading } = useQuery(rsvpByCodeQuery(code));
+  const { data: position } = useQuery(waitlistPositionQuery(code, data?.status === 'waitlist'));
   const [plus, setPlus] = useState(0); const [busy, setBusy] = useState(false); const [confirmCancel, setConfirmCancel] = useState(false);
   useEffect(() => { if (data) setPlus(data.plus_ones); }, [data]);
   if (isLoading) return <p className="guest-empty">{t('publicEvent.loading')}</p>;
@@ -47,6 +49,7 @@ function ManageRsvp() {
     <article className="guest-body">
       {data.event.status === 'cancelled' && <p className="guest-cancelled" role="status"><strong>{t('guest.cancelledTitle')}</strong></p>}
       <Confirmation event={data.event} code={code} status={data.status} />
+      {data.status === 'waitlist' && position != null && <p className="waitlist-position" role="status"><strong>{t('guest.waitlistPosition', { n: position })}</strong></p>}
       {open && <SignWaiverByCode eventId={data.event_id} code={code} />}
       {open && <section className="guest-card guest-manage">
         <h2 className="guest-subhead">{t('guest.manageTitle')}</h2>

@@ -25,10 +25,14 @@ export const startOfferCheckout = createServerFn({ method: 'POST' })
     const email = ((context.claims.email as string) ?? '').toLowerCase();
     const promo = await promoFor(supabaseAdmin, data.promo, 'offer', o.id, email || context.userId);
     if (promo && !promo.ok) return { ok: false, error: `promo_${promo.error}` };
-    const discount = promo?.ok ? promoDiscount(o.price_cents, promo) : 0;
-    const net = o.price_cents - discount;
+    const { data: fs } = await supabaseAdmin.rpc('offer_founding_status', { _offer: o.id });
+    const founding = o.kind === 'membership' && !!fs && (fs as { left: number }).left > 0;
+    const base = founding ? (fs as { price_cents: number }).price_cents : o.price_cents;
+    if (!base) return { ok: false, error: 'free' };
+    const discount = promo?.ok ? promoDiscount(base, promo) : 0;
+    const net = base - discount;
     const name = (data.lang === 'es' ? o.title_es : o.title_en) || o.title_en || o.title_es;
-    const meta = { kind: 'offer', offer_id: o.id, user_id: context.userId };
+    const meta = { kind: 'offer', offer_id: o.id, user_id: context.userId, founding: founding ? '1' : '0' };
     const recurring = o.kind !== 'download';
     const s = await stripe<{ id: string; url: string }>('checkout/sessions', {
       mode: recurring ? 'subscription' : 'payment', customer_email: context.claims.email as string | undefined, locale: data.lang === 'es' ? 'es-419' : 'en',

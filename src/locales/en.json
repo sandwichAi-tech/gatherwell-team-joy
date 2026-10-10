@@ -947,8 +947,10 @@
       "rate_limited": "Too many RSVPs in a short time. Please wait a minute.",
       "members_only": "This gathering is for members only.",
       "waiver_required": "Please type your full name and check the box to accept the waiver.",
-      "answers_required": "Please answer the required questions."
-    }
+      "answers_required": "Please answer the required questions.",
+      "early_access": "RSVPs aren't open to everyone yet."
+    },
+    "waitlistPosition": "You're #{{n}} on the waitlist"
   },
   "guestList": {
     "back": "Back to gathering",
@@ -2637,7 +2639,13 @@
       "free": "This offer is free.",
       "download": "Couldn't get the download. Try again.",
       "generic": "Something went wrong. Try again."
-    }
+    },
+    "foundingSeats": "Founding seats",
+    "foundingPrice": "Founding price per month ($)",
+    "foundingHelp": "Optional. The exact number of founding members at a special price. Once they're taken, new members pay the regular price.",
+    "foundingLeft": "{{left}} of {{seats}} founding seats left",
+    "foundingFull": "All {{seats}} founding seats are taken",
+    "foundingPriceLine": "Founding price: {{price}} per month"
   },
   "welcome": {
     "title": "Invite friends",
@@ -3243,5 +3251,19 @@
     "buddyAsked": "Got it. Your host can pair you with a buddy.",
     "buddyCleared": "No buddy needed — noted.",
     "regularAt": "Where you're a regular"
+  },
+  "early": {
+    "title": "Members get early access",
+    "hint": "Let members of your membership RSVP for 48 hours before everyone else.",
+    "giveTo": "Give early access to {{circle}}",
+    "on": "Early access is on for 48 hours.",
+    "off": "RSVPs are now open to everyone.",
+    "activeUntil": "Members only until {{when}}.",
+    "openNow": "Open to everyone now",
+    "error": "Couldn't change early access. Try again.",
+    "membersFirst": "{{circle}} members RSVP first",
+    "opensAt": "RSVPs open to everyone {{when}}.",
+    "youreIn": "Early access for {{circle}}",
+    "youreInText": "You can RSVP now. Everyone else can from {{when}}."
   }
 }

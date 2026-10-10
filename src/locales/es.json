@@ -947,8 +947,10 @@
       "rate_limited": "Demasiadas confirmaciones en poco tiempo. Espera un minuto.",
       "members_only": "Esta reunión es solo para miembros.",
       "waiver_required": "Escribe tu nombre completo y marca la casilla para aceptar la exención.",
-      "answers_required": "Responde las preguntas obligatorias."
-    }
+      "answers_required": "Responde las preguntas obligatorias.",
+      "early_access": "Aún no se abren las confirmaciones para todos."
+    },
+    "waitlistPosition": "Eres el n.º {{n}} en la lista de espera"
   },
   "guestList": {
     "back": "Volver a la reunión",
@@ -2637,7 +2639,13 @@
       "free": "Esta oferta es gratis.",
       "download": "No se pudo obtener la descarga. Inténtalo de nuevo.",
       "generic": "Algo salió mal. Inténtalo de nuevo."
-    }
+    },
+    "foundingSeats": "Lugares fundadores",
+    "foundingPrice": "Precio fundador al mes ($)",
+    "foundingHelp": "Opcional. El número exacto de miembros fundadores con precio especial. Cuando se ocupen, los nuevos miembros pagan el precio normal.",
+    "foundingLeft": "Quedan {{left}} de {{seats}} lugares fundadores",
+    "foundingFull": "Los {{seats}} lugares fundadores ya están ocupados",
+    "foundingPriceLine": "Precio fundador: {{price}} al mes"
   },
   "welcome": {
     "title": "Invita a tus amigos",
@@ -3243,5 +3251,19 @@
     "buddyAsked": "Listo. Tu anfitriona puede asignarte compañía.",
     "buddyCleared": "Anotado, sin compañía.",
     "regularAt": "Donde eres habitual"
+  },
+  "early": {
+    "title": "Acceso anticipado para miembros",
+    "hint": "Deja que los miembros de tu membresía confirmen 48 horas antes que los demás.",
+    "giveTo": "Dar acceso anticipado a {{circle}}",
+    "on": "El acceso anticipado está activo por 48 horas.",
+    "off": "Ahora todos pueden confirmar.",
+    "activeUntil": "Solo miembros hasta el {{when}}.",
+    "openNow": "Abrir a todos ahora",
+    "error": "No se pudo cambiar el acceso anticipado. Inténtalo de nuevo.",
+    "membersFirst": "Los miembros de {{circle}} confirman primero",
+    "opensAt": "Todos podrán confirmar a partir del {{when}}.",
+    "youreIn": "Acceso anticipado de {{circle}}",
+    "youreInText": "Ya puedes confirmar. Los demás podrán a partir del {{when}}."
   }
 }

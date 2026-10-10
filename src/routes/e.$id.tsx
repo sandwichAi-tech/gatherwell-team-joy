@@ -1,3 +1,4 @@
+import { EarlyAccessNotice, earlyAccessQuery } from '@/components/early-access';
 import { recordReferral, rememberRef } from '@/lib/network';
 import { recordInvite, rememberInvite } from '@/lib/welcome';
 import { useEffect, useState } from 'react';
@@ -59,6 +60,7 @@ function PublicEventBody() {
   const [result, setResult] = useState<RsvpResult | null>(null);
   const [teamOpen, setTeamOpen] = useState(false); const [teamResult, setTeamResult] = useState<TeamResult | null>(null);
   const { data: price } = useQuery({ queryKey: ['event-price', id], queryFn: async () => { const { data } = await supabase.rpc('event_price', { _id: id }); return (data as { price_cents: number; pass_fee: boolean; fee_pct: number } | null) ?? null; } });
+  const { data: early } = useQuery(earlyAccessQuery(id));
 
   if (isLoading) return <div className="guest-skeleton" aria-busy="true"><div className="guest-cover skeleton" /><p className="guest-empty">{t('publicEvent.loading')}</p></div>;
   if (error) return <RetryState retry={() => void refetch()} />;
@@ -119,7 +121,8 @@ function PublicEventBody() {
         <p className="tabular-nums">{t('guest.goingCount', { count: event.going })}{left != null && ` · ${full ? t('guest.full') : t('guest.spotsLeft', { count: left })}`}</p>
       </section>
 
-      {!cancelled && <>
+      {!cancelled && early && <EarlyAccessNotice access={early} />}
+      {!cancelled && (!early || early.has_access || event.my_code) && <>
         {event.my_code ? <div className="guest-actions"><p className="guest-label">{t('guest.alreadyIn')}</p><Button asChild className="guest-primary"><Link to="/r/$code" params={{ code: event.my_code }}>{t('guest.manage')}</Link></Button></div>
           : <div className="guest-actions">
             <Button className="guest-primary" onClick={() => setIntent('going')}>{full ? t('guest.joinWaitlist') : price ? t('billing.imInPrice', { amount: formatMoney(price.price_cents, lang) }) : t('guest.imIn')}</Button>

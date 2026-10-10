@@ -92,6 +92,13 @@
       "when": 1791653801198,
       "tag": "0012_v2_limited_badges",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1791654025672,
+      "tag": "0013_v2_real_exclusivity",
+      "breakpoints": true
     }
   ]
 }

@@ -24,6 +24,7 @@ import { formatMoney, paymentsStatusQuery } from '@/lib/billing';
 import {
   deleteOffer, getOfferLink, isLive, joinFreeOffer, linkableOffersQuery, myOffersQuery, offerIncludes, offerQuery, offerText, offerTitle,
   purchasesQuery, saveOffer, setOfferLink, teamOffersQuery, uploadOfferFile, type Offer, type OfferKind,
+  foundingStatusQuery,
 } from '@/lib/offers';
 import { cancelOfferMembership, offerDownloadLink, startOfferCheckout } from '@/lib/offers.functions';
 
@@ -77,7 +78,7 @@ function OfferEditor({ offer, teamId, onClose }: { offer: Partial<Offer> | null;
   const { t } = useTranslation();
   const { userId } = useGatherwell();
   const qc = useQueryClient();
-  const blank = { kind: 'membership' as OfferKind, title_en: '', title_es: '', description_en: '', description_es: '', inc_en: '', inc_es: '', price: '', cover_style: 0, cover_url: null as string | null, drip_days: 7, file_path: null as string | null, publish: false };
+  const blank = { kind: 'membership' as OfferKind, title_en: '', title_es: '', description_en: '', description_es: '', inc_en: '', inc_es: '', price: '', cover_style: 0, cover_url: null as string | null, drip_days: 7, file_path: null as string | null, publish: false, f_seats: '', f_price: '' };
   const [f, setF] = useState(blank);
   const [busy, setBusy] = useState(false);
   const [coverFile, setCoverFile] = useState<File | null>(null);
@@ -88,7 +89,7 @@ function OfferEditor({ offer, teamId, onClose }: { offer: Partial<Offer> | null;
     setCoverFile(null); setCoverPreview(null);
     setF({ kind: offer.kind ?? 'membership', title_en: offer.title_en ?? '', title_es: offer.title_es ?? '', description_en: offer.description_en ?? '', description_es: offer.description_es ?? '',
       inc_en: (offer.includes_en ?? []).join('\n'), inc_es: (offer.includes_es ?? []).join('\n'), price: offer.price_cents ? String(offer.price_cents / 100) : '',
-      cover_style: offer.cover_style ?? 0, cover_url: offer.cover_url ?? null, drip_days: offer.drip_days ?? 7, file_path: offer.file_path ?? null, publish: offer.status === 'published' });
+      cover_style: offer.cover_style ?? 0, cover_url: offer.cover_url ?? null, drip_days: offer.drip_days ?? 7, file_path: offer.file_path ?? null, publish: offer.status === 'published', f_seats: offer.founding_seats ? String(offer.founding_seats) : '', f_price: offer.founding_seats ? String((offer.founding_price_cents ?? 0) / 100) : '' });
   }, [offer]);
   const lines = (s: string) => s.split('\n').map(x => x.trim()).filter(Boolean).slice(0, 8);
   const priceNum = Number(f.price || 0);
@@ -99,6 +100,7 @@ function OfferEditor({ offer, teamId, onClose }: { offer: Partial<Offer> | null;
     const cover_url = coverFile ? await uploadMedia(userId, coverFile, 'cover') : f.cover_url;
     const row = { kind: f.kind, title_en: f.title_en.trim(), title_es: f.title_es.trim(), description_en: f.description_en.trim() || null, description_es: f.description_es.trim() || null,
       includes_en: lines(f.inc_en), includes_es: lines(f.inc_es), price_cents: Math.round(priceNum * 100), cover_style: f.cover_style, cover_url, drip_days: f.drip_days, file_path: f.file_path,
+      ...(f.kind === 'membership' && Number(f.f_seats) > 0 ? { founding_seats: Math.min(500, Math.round(Number(f.f_seats))), founding_price_cents: Math.round(Number(f.f_price || 0) * 100) } : { founding_seats: null, founding_price_cents: null }),
       status: f.publish ? 'published' as const : (offer?.status === 'published' ? 'archived' as const : 'draft' as const) };
     const res = await saveOffer(offer?.id ? row : { ...row, team_id: teamId, host_id: userId }, offer?.id);
     setBusy(false);
@@ -134,6 +136,11 @@ function OfferEditor({ offer, teamId, onClose }: { offer: Partial<Offer> | null;
       </div>
       {field('of-price', f.kind === 'download' ? t('offers.price') : t('offers.priceMonthly'), <Input id="of-price" className="field-input" inputMode="decimal" value={f.price} placeholder="0" onChange={e => setF({ ...f, price: e.target.value.replace(/[^0-9.]/g, '') })} />)}
       <p className="muted-small">{t('offers.feeNote')}</p>
+      {f.kind === 'membership' && <div className="bilingual">
+        {field('of-fseats', t('offers.foundingSeats'), <Input id="of-fseats" className="field-input" inputMode="numeric" value={f.f_seats} placeholder="0" onChange={e => setF({ ...f, f_seats: e.target.value.replace(/[^0-9]/g, '').slice(0, 3) })} />)}
+        {field('of-fprice', t('offers.foundingPrice'), <Input id="of-fprice" className="field-input" inputMode="decimal" value={f.f_price} placeholder="0" disabled={!Number(f.f_seats)} onChange={e => setF({ ...f, f_price: e.target.value.replace(/[^0-9.]/g, '') })} />)}
+      </div>}
+      {f.kind === 'membership' && <p className="muted-small">{t('offers.foundingHelp')}</p>}
       {f.kind === 'course' && field('of-drip', t('offers.drip'), <Input id="of-drip" className="field-input" type="number" min={0} max={60} value={f.drip_days} onChange={e => setF({ ...f, drip_days: Math.max(0, Math.min(60, Number(e.target.value) || 0)) })} />)}
       {f.kind !== 'download' && <p className="muted-small">{t(f.kind === 'course' ? 'offers.courseHelp' : 'offers.membershipHelp')}</p>}
       {f.kind === 'download' && <div className="form-field"><span className="field-label">{t('offers.file')}</span>
@@ -165,16 +172,18 @@ export function OfferPage({ id, paid }: { id: string; paid?: boolean }) {
   const checkout = useServerFn(startOfferCheckout);
   const download = useServerFn(offerDownloadLink);
   const [busy, setBusy] = useState(false); const [promo, setPromo] = useState<Promo | null>(null);
+  const { data: founding } = useQuery({ ...foundingStatusQuery(id), enabled: !!q.data?.offer?.founding_seats });
   if (q.isPending) return <ListSkeleton />;
   if (q.isError) return <RetryState retry={() => void q.refetch()} />;
   const { offer, purchase, hostName } = q.data;
   if (!offer) return <section className="panel empty-state"><Lock /><p>{t('offers.notFound')}</p></section>;
   const owned = isLive(purchase) || offer.host_id === userId;
   const includes = offerIncludes(offer, lang);
+  const foundingOpen = offer.kind === 'membership' && !!founding && founding.left > 0;
   const buy = async () => {
     setBusy(true);
     try {
-      if (!offer.price_cents) { const { error } = await joinFreeOffer(offer.id); if (error) throw error; toast.success(t(offer.kind === 'download' ? 'offers.unlocked' : 'offers.joined')); await qc.invalidateQueries({ queryKey: ['offers'] }); }
+      if (!offer.price_cents || (foundingOpen && founding.price_cents === 0)) { const { error } = await joinFreeOffer(offer.id); if (error) throw error; toast.success(t(offer.kind === 'download' ? 'offers.unlocked' : 'offers.joined')); await qc.invalidateQueries({ queryKey: ['offers'] }); }
       else {
         const r = await checkout({ data: { offerId: offer.id, origin: window.location.origin, lang: lang === 'es' ? 'es' : 'en', promo: promo?.code ?? '' } });
         if (r.ok) { window.location.href = r.url; return; }
@@ -196,6 +205,10 @@ export function OfferPage({ id, paid }: { id: string; paid?: boolean }) {
       <h1>{offerTitle(offer, lang)}</h1>
       {hostName && <p className="muted-small">{t('offers.by', { name: hostName })}</p>}
       <p className="offer-price">{priceLabel(t, offer, lang)}</p>
+      {offer.kind === 'membership' && founding && <div className={`founding-card ${founding.left ? '' : 'is-full'}`} role="status">
+        <strong>{founding.left ? t('offers.foundingLeft', { left: founding.left, seats: founding.seats }) : t('offers.foundingFull', { seats: founding.seats })}</strong>
+        {founding.left > 0 && <span>{t('offers.foundingPriceLine', { price: founding.price_cents ? formatMoney(founding.price_cents, lang) : t('offers.free') })}</span>}
+      </div>}
       {offerText(offer, lang) && <p className="offer-description">{offerText(offer, lang)}</p>}
       {includes.length > 0 && <><h2>{t('offers.whatsIncluded')}</h2><ul className="offer-includes">{includes.map((x, i) => <li key={i}><Check />{x}</li>)}</ul></>}
       {offer.kind === 'course' && <p className="muted-small">{t('offers.dripNote', { count: offer.drip_days })}</p>}

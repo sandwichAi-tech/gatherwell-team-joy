@@ -5,14 +5,14 @@ export type OfferKind = 'membership' | 'course' | 'download';
 export type Offer = {
   id: string; host_id: string; team_id: string; kind: OfferKind; title_en: string; title_es: string;
   description_en: string | null; description_es: string | null; includes_en: string[]; includes_es: string[];
-  price_cents: number; cover_style: number; cover_url: string | null; file_path: string | null; drip_days: number; status: 'draft' | 'published' | 'archived'; created_at: string;
+  price_cents: number; cover_style: number; cover_url: string | null; file_path: string | null; drip_days: number; founding_seats: number | null; founding_price_cents: number | null; status: 'draft' | 'published' | 'archived'; created_at: string;
 };
 export type Purchase = { id: string; offer_id: string; status: string; cancel_at_period_end: boolean; renews_at: string | null; amount_cents: number; created_at: string; stripe_subscription_id: string | null };
 
 // The generated types may lag behind new tables; keep the casts here.
 const db = supabase as unknown as { from: (t: string) => any; rpc: (f: string, a?: Record<string, unknown>) => any };
 
-const COLS = 'id, host_id, team_id, kind, title_en, title_es, description_en, description_es, includes_en, includes_es, price_cents, cover_style, cover_url, file_path, drip_days, status, created_at';
+const COLS = 'id, host_id, team_id, kind, title_en, title_es, description_en, description_es, includes_en, includes_es, price_cents, cover_style, cover_url, file_path, drip_days, founding_seats, founding_price_cents, status, created_at';
 
 export const offerTitle = (o: Pick<Offer, 'title_en' | 'title_es'>, lang?: string) => (lang?.startsWith('es') ? o.title_es || o.title_en : o.title_en || o.title_es);
 export const offerText = (o: Pick<Offer, 'description_en' | 'description_es'>, lang?: string) => (lang?.startsWith('es') ? o.description_es || o.description_en : o.description_en || o.description_es) ?? '';
@@ -88,3 +88,13 @@ export async function uploadOfferFile(userId: string, file: File) {
   if (error) throw error;
   return path;
 }
+
+export type FoundingStatus = { seats: number; price_cents: number; taken: number; left: number } | null;
+export const foundingStatusQuery = (offerId: string) => ({
+  queryKey: ['offers', 'founding', offerId],
+  queryFn: async (): Promise<FoundingStatus> => {
+    const { data, error } = await supabase.rpc('offer_founding_status', { _offer: offerId });
+    if (error) throw error;
+    return (data as FoundingStatus) ?? null;
+  },
+});
