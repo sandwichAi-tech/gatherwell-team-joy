@@ -269,6 +269,7 @@ export function EarningsPage() {
     <Back to="/plan" />
     <div className="page-heading"><div><span className="eyebrow">{t('billing.eyebrow')}</span><h1>{t('billing.earnings')}</h1></div></div>
     <p className="auth-subtitle">{t('billing.earningsText')}</p>
+    <RoiMeter />
     <EarningsMilestones />
     {st && st.limits.fee_cap != null && <section className="panel fee-cap-card" aria-live="polite">
       <div className="fee-cap-head"><strong>{t('billing.feesThisMonth', { paid: formatMoney(Math.min(st.fees_month, st.limits.fee_cap), lang), cap: formatMoney(st.limits.fee_cap, lang) })}</strong>
@@ -296,4 +297,22 @@ export function EarningsPage() {
     </ResponsiveSheet>
     {gate.sheet}
   </>;
+}
+
+type ValueMeter = { earned: number; fees: number; plan: string; founding: boolean; nudge: { kind: 'pro' | 'free'; saving: number } | null };
+// Every figure here comes from paid sales this calendar month; the nudge appears only when the other plan would truly have cost less.
+export function RoiMeter() {
+  const { t, i18n } = useTranslation();
+  const lang = i18n.resolvedLanguage ?? 'en';
+  const { userId } = useGatherwell();
+  const { data } = useQuery({ queryKey: ['value-meter', userId], queryFn: async () => { const { data, error } = await supabase.rpc('my_value_meter'); if (error) throw error; return data as unknown as ValueMeter; } });
+  if (!data) return null;
+  const total = Math.max(data.earned + data.fees, 1);
+  return <section className="panel roi-meter" aria-live="polite">
+    <p className="roi-line">{t('roi.line', { earned: formatMoney(data.earned, lang), fees: formatMoney(data.fees, lang) })}</p>
+    <span className="roi-bar" aria-hidden><span className="roi-earned" style={{ width: `${Math.round(data.earned / total * 100)}%` }} /><span className="roi-fees" style={{ width: `${Math.round(data.fees / total * 100)}%` }} /></span>
+    <div className="roi-legend"><span><i className="roi-dot roi-earned" />{t('roi.earned')}</span><span><i className="roi-dot roi-fees" />{t('roi.fees')}</span></div>
+    {data.nudge && <p className="roi-nudge"><GwIcon name="Lightbulb" size={18} />{data.nudge.kind === 'pro' ? t('roi.pro', { amount: formatMoney(data.nudge.saving, lang) }) : t('roi.free', { amount: formatMoney(data.nudge.saving, lang) })}
+      <Link to="/plan" className="roi-link">{t('roi.compare')}</Link></p>}
+  </section>;
 }
