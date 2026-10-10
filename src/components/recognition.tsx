@@ -20,7 +20,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { initialsOf, mediaUrl, profileQuery, uploadMedia, workspaceQuery } from '@/lib/account';
 import { rosterQuery, teamKey } from '@/lib/team';
 import {
-  badgeName, badgeText, badgesQuery, featuredBadgesQuery, hasBlockedClaim, hostOfMonthQuery, memberOfMonthQuery, myBadgesQuery, pinnedShoutoutQuery, recognitionError, recognitionKey,
+  badgeName, badgeText, badgesQuery, featuredBadgesQuery, hasBlockedClaim, holderCountsQuery, hostOfMonthQuery, isLimited, memberOfMonthQuery, myBadgesQuery, pinnedShoutoutQuery, recognitionError, recognitionKey,
   summaryQuery, unseenBadgesQuery, type Badge, type Tier,
 } from '@/lib/recognition';
 
@@ -313,12 +313,15 @@ function CustomBadgeSheet({ open, onOpenChange, teamId }: { open: boolean; onOpe
   const { t } = useTranslation(); const { userId } = useGatherwell(); const queryClient = useQueryClient();
   const empty = { name_en: '', name_es: '', description_en: '', description_es: '', icon: 'Award', tier: 'bronze' as Tier };
   const [f, setF] = useState(empty); const [busy, setBusy] = useState(false);
-  useEffect(() => { if (!open) setF(empty); }, [open]);
-  const valid = f.name_en.trim() && f.name_es.trim();
+  const [seasonal, setSeasonal] = useState(false); const [from, setFrom] = useState(''); const [until, setUntil] = useState('');
+  useEffect(() => { if (!open) { setF(empty); setSeasonal(false); setFrom(''); setUntil(''); } }, [open]);
+  const windowOk = !seasonal || (from && until && until > from);
+  const valid = f.name_en.trim() && f.name_es.trim() && windowOk;
   const save = async () => {
     if (hasBlockedClaim(`${f.name_en} ${f.name_es} ${f.description_en} ${f.description_es}`)) { toast.error(t('recognition.err.claim_blocked')); return; }
     setBusy(true);
-    const { error } = await supabase.from('badges').insert({ ...f, name_en: f.name_en.trim(), name_es: f.name_es.trim(), description_en: f.description_en.trim() || null, description_es: f.description_es.trim() || null, is_custom: true, team_id: teamId, created_by: userId });
+    const { error } = await supabase.from('badges').insert({ ...f, name_en: f.name_en.trim(), name_es: f.name_es.trim(), description_en: f.description_en.trim() || null, description_es: f.description_es.trim() || null, is_custom: true, team_id: teamId, created_by: userId,
+      ...(seasonal ? { kind: 'seasonal', available_from: new Date(`${from}T00:00:00`).toISOString(), available_until: new Date(`${until}T23:59:59`).toISOString() } : {}) });
     setBusy(false);
     if (error) { toast.error(t(recognitionError(error))); return; }
     toast.success(t('recognition.badgeCreated')); await queryClient.invalidateQueries({ queryKey: recognitionKey(teamId) }); onOpenChange(false);
@@ -328,6 +331,12 @@ function CustomBadgeSheet({ open, onOpenChange, teamId }: { open: boolean; onOpe
   return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={t('recognition.newBadge')}>
     <div className="edit-form">
       <div className="badge-preview"><Medallion badge={f} size={96} /></div>
+      <div className="form-field"><span className="field-label">{t('recognition.badgeType')}</span>
+        <div className="choice-pair">{([false, true] as const).map(s => <button type="button" key={String(s)} aria-pressed={seasonal === s} className={`choice-card ${seasonal === s ? 'is-selected' : ''}`} onClick={() => setSeasonal(s)}><strong>{t(s ? 'recognition.kind.seasonal' : 'recognition.typeStandard')}</strong><small>{t(s ? 'recognition.typeSeasonalHint' : 'recognition.typeStandardHint')}</small></button>)}</div></div>
+      {seasonal && <div className="choice-pair">
+        <div className="form-field"><label className="field-label" htmlFor="cb-from">{t('recognition.seasonFrom')}</label><Input id="cb-from" type="date" className="field-input" value={from} onChange={e => setFrom(e.target.value)} /></div>
+        <div className="form-field"><label className="field-label" htmlFor="cb-until">{t('recognition.seasonTo')}</label><Input id="cb-until" type="date" className="field-input" min={from || undefined} value={until} onChange={e => setUntil(e.target.value)} /></div>
+      </div>}
       {text('name_en', t('recognition.nameEn'), 40)}{text('name_es', t('recognition.nameEs'), 40)}
       {text('description_en', t('recognition.descEn'), 160, true)}{text('description_es', t('recognition.descEs'), 160, true)}
       <div className="form-field"><span className="field-label">{t('recognition.icon')}</span>

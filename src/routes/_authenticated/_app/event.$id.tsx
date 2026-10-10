@@ -1,5 +1,6 @@
 import { readChatLinks } from '@/lib/chat-links';
 import { TextInvitePanel } from '@/components/text-invite';
+import { EventBadgePanel } from '@/components/recognition';
 import { CopyButton } from '@/components/copy-button';
 import { OutboxSummary } from '@/components/notifications';
 import { useState } from 'react';
@@ -150,6 +151,7 @@ function EventDetailPage() {
 
     <GroupChatLink table="events" id={event.id} links={readChatLinks(event as any)} canEdit={manages} />
     {manages && event.status === 'published' && <TextInvitePanel eventId={event.id} title={event.title} startsAt={event.starts_at} timezone={event.timezone} />}
+    {manages && event.status === 'published' && <EventBadgePanel eventId={event.id} teamId={event.team_id} />}
     {event.status !== 'draft' && <EventComments eventId={event.id} teamId={event.team_id} me={userId} />}
     {(manages || cohostIds.length > 0) && <CohostsPanel eventId={event.id} teamId={event.team_id} hostId={event.host_id} canEdit={event.host_id === userId || leadsTeam} />}
 
