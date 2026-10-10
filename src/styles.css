@@ -1938,18 +1938,18 @@ a.gw-cat-chip:hover{background:#fff}
 .day60 { display: grid; gap: 1rem; }
 .day60-summary h2 { font-size: 1.5rem; margin: .25rem 0 0; }
 .day60-sample { margin-left: .5rem; }
-.day60-verdict.is-go { background: hsl(var(--success, 142 60% 40%) / .15); color: hsl(var(--success, 142 60% 30%)); }
-.day60-verdict.is-adjust { background: hsl(var(--warning, 38 90% 50%) / .18); color: hsl(var(--foreground)); }
-.day60-verdict.is-rethink { background: hsl(var(--destructive) / .12); color: hsl(var(--destructive)); }
-.day60-bar { height: .5rem; border-radius: 999px; background: hsl(var(--muted)); overflow: hidden; margin: .75rem 0; }
-.day60-bar span { display: block; height: 100%; background: hsl(var(--primary)); border-radius: inherit; }
+.day60-verdict.is-go { background: color-mix(in srgb, var(--success) 15%, transparent); color: var(--success); }
+.day60-verdict.is-adjust { background: var(--warm-chip); color: var(--foreground); }
+.day60-verdict.is-rethink { background: color-mix(in srgb, var(--destructive) 12%, transparent); color: var(--destructive); }
+.day60-bar { height: .5rem; border-radius: 999px; background: var(--muted); overflow: hidden; margin: .75rem 0; }
+.day60-bar span { display: block; height: 100%; background: var(--primary); border-radius: inherit; }
 .day60-list { list-style: none; padding: .25rem 1rem; margin: 0; }
-.day60-list li { display: grid; grid-template-columns: auto 1fr auto; gap: .75rem; align-items: center; padding: .85rem 0; border-bottom: 1px solid hsl(var(--border)); min-height: 48px; }
+.day60-list li { display: grid; grid-template-columns: auto 1fr auto; gap: .75rem; align-items: center; padding: .85rem 0; border-bottom: 1px solid var(--border); min-height: 48px; }
 .day60-list li:last-child { border-bottom: 0; }
-.day60-icon { color: hsl(var(--muted-foreground)); display: flex; }
-.day60-list li.is-met .day60-icon { color: hsl(var(--success, 142 60% 38%)); }
+.day60-icon { color: var(--muted-foreground); display: flex; }
+.day60-list li.is-met .day60-icon { color: var(--success); }
 .day60-text { display: grid; gap: .15rem; }
-.day60-text small { color: hsl(var(--muted-foreground)); }
+.day60-text small { color: var(--muted-foreground); }
 .day60-value { font-variant-numeric: tabular-nums; font-weight: 600; }
 .day60-stay { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .5rem; }
 .day60-stay-btns { display: flex; gap: .375rem; }
