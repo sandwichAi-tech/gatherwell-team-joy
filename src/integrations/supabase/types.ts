@@ -1127,6 +1127,7 @@ export type Database = {
           created_at: string
           description_en: string | null
           description_es: string | null
+          early_offer_id: string | null
           ends_at: string | null
           hide_guest_list: boolean
           host_id: string
@@ -1140,6 +1141,7 @@ export type Database = {
           online_url: string | null
           pass_fee: boolean
           price_cents: number | null
+          public_rsvp_at: string | null
           recurrence: string
           require_approval: boolean
           requires_waiver: boolean
@@ -1172,6 +1174,7 @@ export type Database = {
           created_at?: string
           description_en?: string | null
           description_es?: string | null
+          early_offer_id?: string | null
           ends_at?: string | null
           hide_guest_list?: boolean
           host_id?: string
@@ -1185,6 +1188,7 @@ export type Database = {
           online_url?: string | null
           pass_fee?: boolean
           price_cents?: number | null
+          public_rsvp_at?: string | null
           recurrence?: string
           require_approval?: boolean
           requires_waiver?: boolean
@@ -1217,6 +1221,7 @@ export type Database = {
           created_at?: string
           description_en?: string | null
           description_es?: string | null
+          early_offer_id?: string | null
           ends_at?: string | null
           hide_guest_list?: boolean
           host_id?: string
@@ -1230,6 +1235,7 @@ export type Database = {
           online_url?: string | null
           pass_fee?: boolean
           price_cents?: number | null
+          public_rsvp_at?: string | null
           recurrence?: string
           require_approval?: boolean
           requires_waiver?: boolean
@@ -1251,6 +1257,13 @@ export type Database = {
           whatsapp_url?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "events_early_offer_id_fkey"
+            columns: ["early_offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "events_offer_id_fkey"
             columns: ["offer_id"]
@@ -1965,6 +1978,7 @@ export type Database = {
           amount_cents: number
           cancel_at_period_end: boolean
           created_at: string
+          founding: boolean
           id: string
           offer_id: string
           renews_at: string | null
@@ -1977,6 +1991,7 @@ export type Database = {
           amount_cents?: number
           cancel_at_period_end?: boolean
           created_at?: string
+          founding?: boolean
           id?: string
           offer_id: string
           renews_at?: string | null
@@ -1989,6 +2004,7 @@ export type Database = {
           amount_cents?: number
           cancel_at_period_end?: boolean
           created_at?: string
+          founding?: boolean
           id?: string
           offer_id?: string
           renews_at?: string | null
@@ -2016,6 +2032,8 @@ export type Database = {
           description_es: string | null
           drip_days: number
           file_path: string | null
+          founding_price_cents: number | null
+          founding_seats: number | null
           host_id: string
           id: string
           includes_en: Json
@@ -2036,6 +2054,8 @@ export type Database = {
           description_es?: string | null
           drip_days?: number
           file_path?: string | null
+          founding_price_cents?: number | null
+          founding_seats?: number | null
           host_id?: string
           id?: string
           includes_en?: Json
@@ -2056,6 +2076,8 @@ export type Database = {
           description_es?: string | null
           drip_days?: number
           file_path?: string | null
+          founding_price_cents?: number | null
+          founding_seats?: number | null
           host_id?: string
           id?: string
           includes_en?: Json
@@ -3892,6 +3914,7 @@ export type Database = {
         Args: { _team: string; _user: string }
         Returns: undefined
       }
+      event_early_access: { Args: { _event: string }; Returns: Json }
       event_going_count: { Args: { _event_id: string }; Returns: number }
       event_payload: { Args: { _event: string; _rsvp: string }; Returns: Json }
       event_price: { Args: { _id: string }; Returns: Json }
@@ -4138,6 +4161,7 @@ export type Database = {
         Returns: undefined
       }
       notify_rsvp_request: { Args: { _rsvp: string }; Returns: undefined }
+      offer_founding_status: { Args: { _offer: string }; Returns: Json }
       pair_buddy: {
         Args: { _buddy: string; _rsvp: string }
         Returns: undefined
@@ -4339,6 +4363,10 @@ export type Database = {
         Args: { _code: string; _on: boolean }
         Returns: undefined
       }
+      set_early_access: {
+        Args: { _event: string; _hours: number; _offer: string }
+        Returns: undefined
+      }
       set_email_prefs: {
         Args: { _prefs: Json; _token: string }
         Returns: boolean
@@ -4430,6 +4458,7 @@ export type Database = {
         Args: { _code: string; _option: string }
         Returns: undefined
       }
+      waitlist_position: { Args: { _code: string }; Returns: number }
       walk_in_waiver: {
         Args: { _name: string; _rsvp: string }
         Returns: undefined
