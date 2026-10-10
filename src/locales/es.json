@@ -2660,7 +2660,15 @@
     "foundingHelp": "Opcional. El número exacto de miembros fundadores con precio especial. Cuando se ocupen, los nuevos miembros pagan el precio normal.",
     "foundingLeft": "Quedan {{left}} de {{seats}} lugares fundadores",
     "foundingFull": "Los {{seats}} lugares fundadores ya están ocupados",
-    "foundingPriceLine": "Precio fundador: {{price}} al mes"
+    "foundingPriceLine": "Precio fundador: {{price}} al mes",
+    "pauseAnytime": "Pausa de 1 a 3 meses cuando lo necesites",
+    "pause": "Pausar",
+    "pauseMonths_one": "Pausar {{count}} mes",
+    "pauseMonths_other": "Pausar {{count}} meses",
+    "resume": "Reanudar",
+    "pausedUntil": "En pausa hasta el {{date}}",
+    "pausedToast": "En pausa hasta el {{date}}. Sin cobros mientras tanto.",
+    "resumedToast": "Qué gusto verte de vuelta. Tu membresía está activa."
   },
   "welcome": {
     "title": "Invita a tus amigos",
@@ -3533,6 +3541,56 @@
       "invalid_deposit": "El anticipo debe ser de al menos $1 y menor que el precio.",
       "payment_needs_price": "Pon un precio antes de elegir anticipo o plan de pagos.",
       "failed": "No se pudieron guardar los detalles del retiro. Inténtalo de nuevo."
+    }
+  },
+  "community": {
+    "title": "Lugares comunitarios",
+    "body": "Esta persona reserva algunos lugares gratis o con pago voluntario. Pide uno en privado; solo quien organiza ve tu solicitud.",
+    "request": "Pedir un lugar comunitario",
+    "signIn": "Inicia sesión para pedir un lugar",
+    "howLabel": "Cómo te gustaría unirte",
+    "mode": {
+      "free": "Gratis",
+      "pwyc": "Pago lo que pueda"
+    },
+    "amount": "Monto que puedes pagar",
+    "note": "Nota para quien organiza (opcional)",
+    "notePh": "Lo que quieras contarle",
+    "private": "Privado: nadie más ve que lo pediste, y los lugares comunitarios nunca se marcan.",
+    "send": "Enviar en privado",
+    "cancel": "Cancelar",
+    "sent": "Enviado. Te responderán en privado.",
+    "pending": "Tu solicitud está con quien organiza.",
+    "withdraw": "Retirar solicitud",
+    "approvedFree": "Tu lugar está confirmado. Bienvenida.",
+    "approvedPay": "Aprobado por {{amount}}. Podrás pagar cuando se activen los pagos con tarjeta.",
+    "declined": "Esta vez no fue posible ofrecerte un lugar.",
+    "hostTitle": "Solicitudes de lugares comunitarios",
+    "used": "{{used}} de {{seats}} usados",
+    "hostNote": "Solo tú ves estas solicitudes. Nadie ve quién usó un lugar comunitario.",
+    "none": "Todavía no hay solicitudes.",
+    "offersPay": "Puede pagar {{amount}}",
+    "asksFree": "Pide un lugar gratis",
+    "approve": "Aprobar",
+    "decline": "Rechazar",
+    "approvedToast": "Lugar aprobado",
+    "declinedToast": "Solicitud rechazada",
+    "status": {
+      "approved": "Aprobada",
+      "declined": "Rechazada",
+      "pending": "En espera"
+    },
+    "seatsField": "Lugares comunitarios (opcional)",
+    "seatsNone": "Ninguno",
+    "seatsHint": "Lugares gratis o con pago voluntario que se piden en privado. Tú apruebas cada uno.",
+    "errors": {
+      "no_seats": "Por ahora ya no hay lugares comunitarios.",
+      "not_signed_in": "Primero inicia sesión.",
+      "own_offer": "Esta publicación es tuya.",
+      "too_long": "La nota debe tener menos de 500 caracteres.",
+      "invalid_amount": "Escribe un monto válido.",
+      "already_decided": "Esta solicitud ya tiene respuesta.",
+      "failed": "Algo salió mal. Inténtalo de nuevo."
     }
   }
 }
