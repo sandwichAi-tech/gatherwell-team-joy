@@ -1,5 +1,7 @@
 {
   "brand": "Gatherwell",
+  "feature_name_singular": "Circle",
+  "feature_name_plural": "Circles",
   "nav": {
     "home": "Home",
     "events": "Gatherings",
@@ -2600,16 +2602,16 @@
   "offers": {
     "eyebrow": "Your services",
     "title": "Offers",
-    "subtitle": "Memberships, monthly courses and downloads for your guests and team.",
+    "subtitle": "Circles, monthly courses and downloads for your guests and team.",
     "new": "New offer",
     "edit": "Edit offer",
     "view": "View offer",
     "hostsOnly": "Offers are for hosts and leaders.",
-    "empty": "No offers yet. Create a membership, a course or a download.",
+    "empty": "No offers yet. Start a Gatherwell Circle, a course or a download.",
     "untitled": "Untitled offer",
     "type": "Type",
     "kind": {
-      "membership": "Membership",
+      "membership": "Circle",
       "course": "Monthly course",
       "download": "Download"
     },
@@ -2635,7 +2637,7 @@
     "feeNote": "Leave at 0 for free. The platform fee for your plan applies to paid offers.",
     "drip": "Days between lessons",
     "courseHelp": "After saving, link a Learn track to this course. Lessons unlock one by one.",
-    "membershipHelp": "After saving, mark gatherings or Learn tracks as members-only for this membership.",
+    "membershipHelp": "After saving, mark gatherings or Learn tracks as members-only for this Circle.",
     "file": "File",
     "uploadFile": "Upload file (PDF)",
     "replaceFile": "Replace file",
@@ -2676,11 +2678,11 @@
     "fromTeam": "Offers from your team",
     "purchases": "Purchases",
     "noPurchases": "No purchases yet.",
-    "memberships": "Memberships and courses",
+    "memberships": "Circles and courses",
     "downloads": "Downloads",
     "cancel": "Cancel",
-    "confirmCancel": "Cancel this membership? You keep access until the end of the period you paid for.",
-    "cancelled": "Membership ended.",
+    "confirmCancel": "Cancel this Circle? You keep access until the end of the period you paid for.",
+    "cancelled": "Circle ended.",
     "cancelScheduled": "Canceled. You keep access until the period ends.",
     "endsOn": "Ends {{date}}",
     "renewsOn": "Renews {{date}}",
@@ -2713,7 +2715,7 @@
     "resume": "Resume",
     "pausedUntil": "Paused until {{date}}",
     "pausedToast": "Paused until {{date}}. No charges while paused.",
-    "resumedToast": "Welcome back. Your membership is active."
+    "resumedToast": "Welcome back. Your Circle is active."
   },
   "welcome": {
     "title": "Invite friends",
@@ -3035,8 +3037,8 @@
         "demo": "Checked in · Ready to connect"
       },
       {
-        "title": "Sell memberships, courses and tickets",
-        "body": "Offer more ways to join your community, with tickets, recurring memberships and learning.",
+        "title": "Sell Circles, courses and tickets",
+        "body": "Offer more ways to join your community, with tickets, monthly Circles and learning.",
         "demo": "Your next chapter, together"
       },
       {
@@ -3093,7 +3095,7 @@
       "storage": "Storage",
       "assistant": "Assistant requests per month",
       "fee": "Platform fee",
-      "offers": "Memberships, courses and downloads",
+      "offers": "Circles, courses and downloads",
       "team": "Team features"
     },
     "offersIncluded": "Included; payment setup required for paid offers",
@@ -3351,7 +3353,7 @@
   },
   "early": {
     "title": "Members get early access",
-    "hint": "Let members of your membership RSVP for 48 hours before everyone else.",
+    "hint": "Let members of your Circle RSVP for 48 hours before everyone else.",
     "giveTo": "Give early access to {{circle}}",
     "on": "Early access is on for 48 hours.",
     "off": "RSVPs are now open to everyone.",
@@ -3431,7 +3433,7 @@
     "keepGoing": "Keep going",
     "steps": {
       "profile": "Complete your profile",
-      "offer": "Create a membership or paid gathering",
+      "offer": "Start a Gatherwell Circle or a paid gathering",
       "shared": "Share your link",
       "first_rsvp": "Get your first RSVP",
       "first_paid": "Welcome your first paying member",
@@ -3452,7 +3454,7 @@
       },
       "offer": {
         "title": "You have something to offer",
-        "text": "Your first membership or paid gathering is live."
+        "text": "Your first Circle or paid gathering is live."
       },
       "shared": {
         "title": "Link shared",
@@ -3521,12 +3523,12 @@
     "deleteReview": "Delete review",
     "cancel": "Cancel",
     "reviewSaved": "Thanks for your review",
-    "whoCanReview": "People who attended or joined a membership can leave a review.",
+    "whoCanReview": "People who attended or joined a Circle can leave a review.",
     "noReviews": "No reviews yet.",
     "getVerified": "Get verified",
     "verifyIntro": "Confirm who you are and, if you like, add certifications or licenses. Our team reviews every request.",
     "statusApproved": "You're verified",
-    "statusApprovedBody": "The Verified mark now shows on your profile, gatherings and memberships.",
+    "statusApprovedBody": "The Verified mark now shows on your profile, gatherings and Circles.",
     "statusPending": "Request in review",
     "statusPendingBody": "We'll update this page once the team has looked at it, usually within a few days.",
     "statusRejected": "We couldn't verify this request",
@@ -3548,7 +3550,7 @@
     "backToMe": "Back to Me",
     "errors": {
       "blocked_claim": "Please remove health, weight-loss or income claims and try again.",
-      "not_eligible": "Only people who attended or joined a membership can review.",
+      "not_eligible": "Only people who attended or joined a Circle can review.",
       "already_pending": "You already have a request in review.",
       "identity_required": "Please add a photo ID.",
       "invalid_credentials": "Please check each credential name.",
@@ -3792,7 +3794,7 @@
     "notFound": "This page may have moved or been removed.",
     "bookClass": "Book a class",
     "ourStore": "Our store",
-    "linkedNote": "Classes are booked on the studio's own page. Here you'll find the community: circles, special gatherings and online content.",
+    "linkedNote": "Classes are booked on the studio's own page. Here you'll find the community: Circles, special gatherings and online content.",
     "roomFor_one": "Room for {{count}}",
     "roomFor_other": "Room for {{count}}",
     "dropinFree": "Free drop-in",
@@ -3843,13 +3845,13 @@
     "kind_circle": "A Circle",
     "kindHint_free": "Easiest way to start",
     "kindHint_paid": "Tickets per person",
-    "kindHint_circle": "Monthly membership",
+    "kindHint_circle": "Monthly community",
     "starter_free": "Saturday Fit Camp",
     "starter_paid": "Wellness Night",
     "starter_circle": "30-Day Reset Circle",
     "desc_free": "A friendly outdoor workout for every level. Bring water and a mat if you have one.",
     "desc_paid": "An evening to slow down, move gently and connect with good people.",
-    "circleDesc": "A monthly circle with weekly check-ins and gatherings to help you keep showing up.",
+    "circleDesc": "A monthly Circle with weekly check-ins and gatherings to help you keep showing up.",
     "starterTitle": "Name",
     "date": "Date",
     "time": "Time",
