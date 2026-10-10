@@ -447,3 +447,58 @@ export const updatePlanSettings = createServerFn({ method: 'POST' }).middleware(
     await audit(db, context.userId, 'plan_settings', 'plan', null, before, data, data.plan);
     return { ok: true as const };
   });
+
+const foundingCoach = z.object({
+  id: uuid.optional(), email: z.string().trim().email().max(200), full_name: z.string().trim().max(120), language: z.enum(['en', 'es']), city: z.string().trim().max(80),
+  small_town: z.boolean(), has_space: z.boolean(), coach_type: z.enum(['distributor', 'independent']), audience: z.string().trim().max(280), launch_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
+});
+
+export const getFounding = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth]).handler(async ({ context }) => {
+  await assertAdmin(context);
+  const { data, error } = await context.supabase.rpc('admin_founding');
+  if (error) throw new Error(error.message);
+  return data as unknown as { program: { start_date: string | null; free_months: number; rate_cents: number; max_coaches: number }; coaches: (z.infer<typeof foundingCoach> & { id: string; user_id: string | null; accepted_at: string | null; council_months: string[]; gatherings_month: number; council_this_month: boolean })[] };
+});
+
+export const saveFoundingCoach = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => foundingCoach.parse(d))
+  .handler(async ({ data, context }) => {
+    const db = await assertAdmin(context);
+    const { id, ...row } = data;
+    const r = id ? await db.from('founding_coaches').update(row).eq('id', id).select('id').maybeSingle() : await db.from('founding_coaches').insert(row).select('id').maybeSingle();
+    if (r.error) return { ok: false as const, error: r.error.message.includes('founding_full') ? 'full' : r.error.message.includes('duplicate') ? 'duplicate' : 'failed' };
+    await audit(db, context.userId, id ? 'founding_update' : 'founding_invite', 'founding_coach', r.data?.id ?? null, null, row);
+    return { ok: true as const };
+  });
+
+export const removeFoundingCoach = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: uuid }).parse(d))
+  .handler(async ({ data, context }) => {
+    const db = await assertAdmin(context);
+    const { data: before } = await db.from('founding_coaches').select('*').eq('id', data.id).maybeSingle();
+    await db.from('founding_coaches').delete().eq('id', data.id);
+    await audit(db, context.userId, 'founding_remove', 'founding_coach', data.id, before, null);
+    return { ok: true as const };
+  });
+
+export const setFoundingStart = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ start_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const db = await assertAdmin(context);
+    const { error } = await db.from('founding_program').update({ start_date: data.start_date, updated_at: new Date().toISOString() }).eq('id', true);
+    if (error) return { ok: false as const };
+    await audit(db, context.userId, 'founding_start', 'founding_program', null, null, data);
+    return { ok: true as const };
+  });
+
+export const setCouncilAttendance = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: uuid, attended: z.boolean() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const db = await assertAdmin(context);
+    const month = new Date(); const key = `${month.getUTCFullYear()}-${String(month.getUTCMonth() + 1).padStart(2, '0')}-01`;
+    const { data: row } = await db.from('founding_coaches').select('council_months').eq('id', data.id).maybeSingle();
+    const set = new Set(row?.council_months ?? []); if (data.attended) set.add(key); else set.delete(key);
+    await db.from('founding_coaches').update({ council_months: [...set] }).eq('id', data.id);
+    await audit(db, context.userId, 'founding_council', 'founding_coach', data.id, null, { month: key, attended: data.attended });
+    return { ok: true as const };
+  });
