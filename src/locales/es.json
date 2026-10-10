@@ -1386,7 +1386,9 @@
       "invalid_person": "Elige a alguien de este equipo.",
       "not_leader": "Solo las líderes pueden hacer esto.",
       "not_allowed": "No puedes hacer eso aquí.",
-      "invalid_message": "Máximo 280 caracteres."
+      "invalid_message": "Máximo 280 caracteres.",
+      "already_exists": "Esta reunión ya tiene una insignia.",
+      "invalid": "Revisa el nombre e inténtalo de nuevo."
     },
     "feature": "Destacar",
     "featured": "Destacada",
@@ -1398,7 +1400,31 @@
     "momSaved": "Miembro del mes guardado",
     "momPlaceholder": "Unas palabras amables (opcional)",
     "momEyebrow": "Miembro del mes · {{month}}",
-    "momTitle": "Miembro del Mes"
+    "momTitle": "Miembro del Mes",
+    "oneOf_one": "1 de 1",
+    "oneOf_other": "1 de {{count}}",
+    "seasonUntil": "Gánala antes del {{date}}",
+    "eventOnly": "Solo para quienes vengan",
+    "kind": {
+      "seasonal": "De temporada",
+      "event": "Reunión",
+      "founding": "Fundador"
+    },
+    "section": {
+      "earned": "Ganadas",
+      "limited": "Edición limitada",
+      "locked": "Por ganar"
+    },
+    "eventBadgeTitle": "Insignia de la reunión",
+    "eventBadgeHint": "Crea una insignia de recuerdo que solo ganan quienes registran su llegada a esta reunión.",
+    "eventBadgeCta": "Crear insignia de la reunión",
+    "eventBadgeNote": "Quienes ya llegaron la reciben ahora; los demás, al registrar su llegada.",
+    "badgeType": "Tipo",
+    "typeStandard": "Estándar",
+    "typeStandardHint": "La otorgas cuando quieras",
+    "typeSeasonalHint": "Se gana al llegar durante esas fechas",
+    "seasonFrom": "Empieza",
+    "seasonTo": "Termina"
   },
   "notify": {
     "channels": "Canales",
