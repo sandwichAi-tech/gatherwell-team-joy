@@ -3136,8 +3136,32 @@
         "a": "Sí. Administra tu suscripción en Yo → Plan. Cancela antes de la renovación; tu plan seguirá activo hasta terminar el periodo pagado."
       }
     ],
-    "finalTitle": "Tu próxima reunión empieza aquí.",
+"finalTitle": "Tu próxima reunión empieza aquí.",
     "finalBody": "Haz que llegar sea fácil. Dales un motivo para volver.",
+    "studios": {
+      "meta": "Para estudios · Gatherwell",
+      "metaDesc": "Conserva tu software de reservas y suma una comunidad más allá de tus cuatro paredes: Círculos, reuniones especiales y páginas bilingües.",
+      "label": "Para estudios y espacios pequeños",
+      "title": "Tu software de reservas atiende la recepción. Gatherwell construye la comunidad más allá de tus cuatro paredes.",
+      "sub": "Conserva las herramientas que ya usas. Suma una comunidad que tu gente visita cada semana, en inglés y español.",
+      "fromHosts": "¿Tienes un estudio o un espacio pequeño? Mira cómo te queda Gatherwell",
+      "cards": [
+        { "title": "Conserva tu sistema de reservas", "body": "Conecta el software de reservas que ya usas con un botón en tu página. Nada que migrar y la recepción sigue igual." },
+        { "title": "Llena tus clases desde la comunidad", "body": "Los Círculos, las reuniones especiales y el contenido en línea mantienen a tu gente conectada entre clases, así los habituales llegan más seguido." },
+        { "title": "Bilingüe desde el primer día", "body": "Cada página, invitación y recordatorio funciona en inglés y español, para que toda tu comunidad se sienta en casa." }
+      ],
+      "simpleLabel": "Modo espacio simple",
+      "simpleTitle": "¿Tienes un espacio pequeño?",
+      "simpleBody": "El modo espacio simple está hecho para clubes de nutrición, gimnasios de garage y cuartos pequeños, sin necesidad de software de recepción.",
+      "simpleList": [
+        "Un horario semanal de reuniones en tu propia página",
+        "Registro con código QR en la puerta, incluso con mala conexión",
+        "Cartas de responsabilidad que se firman antes de participar",
+        "Sesiones solo para miembros y precios sencillos por visita"
+      ],
+      "pricingTitle": "Planes simples que crecen con tu comunidad.",
+      "startCta": "Empieza en menos de una hora"
+    },
     "hostsMeta": "Para anfitriones · Gatherwell",
     "pricingMeta": "Precios · Gatherwell",
     "whoLabel": "Para quién es",
