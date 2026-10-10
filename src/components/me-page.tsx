@@ -27,6 +27,7 @@ import { BadgeWall, RecognitionSummary, useHostOfMonthId } from '@/components/re
 import { supabase } from '@/integrations/supabase/client';
 import { PurchasesPanel } from '@/components/offers';
 import { InviteFriendsPanel } from '@/components/welcome';
+import { RegularHosts } from '@/components/belonging';
 import { MyChallengesList, MyGatheringsList, ProfileHero, RecentBadges, SettingsGroup, StatsStrip } from '@/components/profile-hero';
 import { GwFeatureTile, type GwIconName } from '@/components/gw-icon';
 import { QRCodeSVG } from 'qrcode.react';
@@ -224,6 +225,7 @@ export function MePage() {
     {profile?.shop_url && <a className="auth-link shop-link" href={profile.shop_url} target="_blank" rel="noopener noreferrer">{t('profile.shop')}<ExternalLink /></a>}
     <StatsStrip userId={userId} teamId={workspace?.teamId} />
     <RecentBadges userId={userId} teamId={workspace?.teamId} onAll={workspace ? () => setPanel('badges') : undefined} />
+    <RegularHosts />
     {workspace && <section className="panel recognition-panel"><div className="section-heading"><h2>{t('recognition.title')}</h2></div><RecognitionSummary teamId={workspace.teamId} /></section>}
 
     {planStatus?.status === 'past_due' && <Link to="/plan" className="plan-banner" role="alert">{t('billing.pastDue')}</Link>}

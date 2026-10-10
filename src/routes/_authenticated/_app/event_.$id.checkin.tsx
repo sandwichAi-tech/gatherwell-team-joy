@@ -17,6 +17,7 @@ import { rsvpErrorKey } from '@/lib/guest';
 import { gatherwellHead } from '@/lib/gatherwell-head';
 import { createCheckinQueue, isRetryableCheckinError, type PendingCheckin } from '@/lib/checkin-queue';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
+import { BelongingPrompt, BelongingTags, useBelonging, useSmallGroups } from '@/components/belonging';
 
 export const Route = createFileRoute('/_authenticated/_app/event_/$id/checkin')({ head: () => gatherwellHead('events'), component: CheckInMode });
 
@@ -30,7 +31,7 @@ function CheckInMode() {
   const { data: rows = [], error, isLoading, refetch } = useQuery({
     queryKey: listKey,
     queryFn: async () => {
-      const { data, error } = await supabase.from('rsvps').select('id,guest_name,plus_ones,status,checked_in_at,is_walk_in').eq('event_id', id).in('status', ['going', 'maybe', 'waitlist']).order('guest_name');
+      const { data, error } = await supabase.from('rsvps').select('id,guest_name,plus_ones,status,checked_in_at,is_walk_in,wants_buddy,buddy_rsvp_id,small_group').eq('event_id', id).in('status', ['going', 'maybe', 'waitlist']).order('guest_name');
       if (error) throw error; return data ?? [];
     },
   });
@@ -73,6 +74,7 @@ function CheckInMode() {
     window.addEventListener('beforeunload', warn);
     return () => { clearInterval(timer); window.removeEventListener('online', onOnline); window.removeEventListener('offline', onOffline); window.removeEventListener('beforeunload', warn); };
   }, [id]);
+  const { data: belong = new Map() } = useBelonging(id); const { data: groups = [] } = useSmallGroups(id);
   const match = (n: string | null) => !q || (n ?? '').toLowerCase().includes(q.toLowerCase());
   const waiting = rows.filter(r => !r.checked_in_at && r.status === 'going' && match(r.guest_name));
   const done = rows.filter(r => r.checked_in_at && match(r.guest_name)).sort((a, b) => (b.checked_in_at ?? '').localeCompare(a.checked_in_at ?? ''));
@@ -82,7 +84,10 @@ function CheckInMode() {
     if (error) { if (isRetryableCheckinError(error, status)) enqueue({ key: rid, eventId: id, rsvpId: rid, undo }); else toast.error(t('profile.saveError')); return; }
     trackEvent('checkin');
     if (navigator.vibrate) navigator.vibrate(30);
-    await queryClient.invalidateQueries({ queryKey: listKey });
+    const b = belong.get(rid); const name = rows.find(r => r.id === rid)?.guest_name?.split(/\s+/)[0] ?? '';
+    if (!undo && b && b.checkins === 2) toast.success(t('belong.nowRegular', { name }), { duration: 6000 });
+    else if (!undo && b?.first_time) toast.success(t('belong.welcomePrompt', { name }), { duration: 6000 });
+    await queryClient.invalidateQueries({ queryKey: listKey }); void queryClient.invalidateQueries({ queryKey: ['event', id, 'belonging'] });
   };
   const onCode = async (code: string) => {
     if (!navigator.onLine) { enqueue({ key: code, eventId: id, code, undo: false }); setScan({ result: 'pending' }); return; }
@@ -104,14 +109,15 @@ function CheckInMode() {
     </header>
     {(!online || pending.length > 0) && <div className="connection-note" role="status"><p>{t(pending.length ? 'launch.pending' : 'launch.offline', { count: pending.length })}</p>{pending.length > 0 && <Button variant="secondary" disabled={!online} onClick={() => void sync()}>{t('error.retry')}</Button>}</div>}
     {isLoading ? <ListSkeleton /> : error ? <RetryState retry={() => void refetch()} /> : <main className="checkin-body">
+      {groups.length > 0 && <div className="belong-group-summary" aria-label={t('belong.groups')}>{groups.map(g => <span key={g} className="chip belong-chip"><strong>{g}</strong><span className="tabular-nums">{rows.filter(r => r.small_group === g && r.checked_in_at).length}/{rows.filter(r => r.small_group === g).length}</span></span>)}</div>}
       <h2 className="checkin-section">{t('checkin.toCheckIn')} <span className="tabular-nums">{waiting.length}</span></h2>
       {waiting.length === 0 && <p className="muted">{t('checkin.allIn')}</p>}
       <ul className="checkin-list">{waiting.map(r => <li key={r.id}><span className="initial-avatar">{initialsOf(r.guest_name)}</span>
-        <span className="checkin-name">{r.guest_name}{r.plus_ones > 0 && <small>+{r.plus_ones}</small>}</span>
+        <span className="checkin-name">{r.guest_name}{r.plus_ones > 0 && <small>+{r.plus_ones}</small>}<span className="belong-tags"><BelongingTags info={belong.get(r.id)} row={r} rows={rows} /></span><BelongingPrompt info={belong.get(r.id)} name={r.guest_name} /></span>
         <Button className="checkin-button" disabled={pending.some(p => p.rsvpId === r.id)} onClick={() => checkIn(r.id)}>{t(pending.some(p => p.rsvpId === r.id) ? 'launch.waiting' : 'checkin.checkIn')}</Button></li>)}</ul>
       <h2 className="checkin-section">{t('checkin.checkedIn')} <span className="tabular-nums">{done.length}</span></h2>
       <ul className="checkin-list is-done">{done.map(r => <li key={r.id}><CheckCircle2 className="checkin-ok" />
-        <span className="checkin-name">{r.guest_name}{r.is_walk_in && <small>{t('checkin.walkInTag')}</small>}<small>{r.checked_in_at && new Date(r.checked_in_at).toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' })}</small></span>
+        <span className="checkin-name">{r.guest_name}{r.is_walk_in && <small>{t('checkin.walkInTag')}</small>}{r.small_group && <small>{r.small_group}</small>}<small>{r.checked_in_at && new Date(r.checked_in_at).toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' })}</small></span>
         <Button variant="ghost" size="icon" aria-label={t('checkin.undo')} onClick={() => checkIn(r.id, true)}><Undo2 /></Button></li>)}</ul>
     </main>}
     {scanning && <Scanner onClose={() => setScanning(false)} onCode={onCode} scan={scan} onNext={() => setScan(null)} />}

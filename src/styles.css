@@ -1664,3 +1664,27 @@ a.gw-cat-chip:hover{background:#fff}
 .text-invite-list{display:grid;gap:4px;margin:0;padding:0;list-style:none}
 .text-invite-row{display:flex;align-items:center;gap:12px;min-height:48px;padding:8px 4px;cursor:pointer}.text-invite-row>span{display:grid;flex:1}.text-invite-row small{color:var(--muted-foreground);font-size:13px}
 .text-monitor h3{font-size:15px;font-weight:600;margin:16px 0 8px}.text-log{display:grid;gap:4px;padding:0;list-style:none}.text-log li{display:flex;gap:16px;font-size:14px}
+
+/* V1.1 Belonging */
+.belong-chip { display: inline-flex; align-items: center; gap: 4px; }
+.belong-chip svg { width: 14px; height: 14px; }
+.belong-chip.is-first { background: var(--accent); color: var(--accent-foreground); }
+.belong-chip.is-regular { background: color-mix(in oklab, var(--success, var(--primary)) 16%, transparent); color: var(--foreground); }
+.belong-chip button { display: inline-grid; place-items: center; min-width: 24px; min-height: 24px; border-radius: 999px; }
+.belong-tags { display: inline-flex; flex-wrap: wrap; gap: 4px; margin-inline-start: 6px; }
+.belong-prompt { display: flex; align-items: center; gap: 8px; margin: 6px 0 0; font-size: 0.875rem; color: var(--foreground); }
+.belong-prompt svg { width: 16px; height: 16px; color: var(--primary); flex: none; }
+.belong-pick, .belong-assign, .belong-regulars ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.belong-option { width: 100%; min-height: 56px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: 8px 16px; border-radius: 16px; background: var(--muted); text-align: start; }
+.belong-option.is-active { outline: 2px solid var(--primary); }
+.belong-add { display: flex; gap: 8px; margin-bottom: 16px; }
+.belong-groups, .belong-group-summary { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.belong-group-summary .chip { gap: 8px; }
+.belong-assign li { display: grid; grid-template-columns: 1fr 160px; align-items: center; gap: 8px; }
+.belong-assign select { min-height: 44px; }
+.belong-guest { display: grid; gap: 16px; text-align: start; }
+.belong-expect { padding: 16px; border-radius: 20px; background: var(--muted); }
+.belong-expect .guest-subhead { display: flex; align-items: center; gap: 8px; margin-top: 0; }
+.belong-expect ul { margin: 8px 0 0; padding-inline-start: 20px; display: grid; gap: 4px; }
+.belong-regulars li { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+.belong-regulars .section-title { display: flex; align-items: center; gap: 8px; }
