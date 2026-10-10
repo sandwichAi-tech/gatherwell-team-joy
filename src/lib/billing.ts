@@ -7,10 +7,11 @@ export type Limits = { gatherings: number | null; guests: number | null; storage
 /** Admin-editable plan numbers (plan_settings). Cents for cap and price. */
 export type PlanSetting = { plan: PlanId; fee_percent: number; monthly_cap: number | null; monthly_price: number; legacy: boolean; service_fee_percent: number; service_fee_fixed: number };
 export type PlanStatus = {
-  plan: PlanId; source: 'own' | 'license'; leader?: string | null; team?: string | null; limits: Limits;
+  plan: PlanId; source: 'own' | 'license' | 'founding'; leader?: string | null; team?: string | null; limits: Limits;
   own_plan: PlanId; billing_period: 'month' | 'year' | null; status: 'active' | 'past_due' | 'canceled' | 'trialing'; renews_at: string | null;
   has_customer: boolean; connect_status: 'not_started' | 'pending' | 'active'; pass_fee: boolean;
   legacy_price_cents: number | null; fees_month: number;
+  founding: { start_date: string | null; free_until: string | null; rate_cents: number; in_window: boolean; pending_start: boolean } | null;
   usage: { gatherings: number; largest_guests: number; storage_bytes: number; assistant: number };
 };
 

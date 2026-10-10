@@ -2071,7 +2071,8 @@
       "broadcasts": "Broadcasts",
       "settings": "Settings",
       "audit": "Audit log",
-      "verify": "Verify"
+      "verify": "Verify",
+      "founding": "Founding coaches"
     },
     "period": {
       "week": "This week",
@@ -3664,6 +3665,73 @@
       "invalid_amount": "Please enter a valid amount.",
       "already_decided": "This request was already answered.",
       "failed": "Something went wrong. Please try again."
+    }
+  },
+  "founding": {
+    "badge": "Founding coach",
+    "nowFree": "{{price}} now · Pro included",
+    "pending": "Pro free for 6 months, starting soon",
+    "rateLocked": "Founding rate {{rate}}, locked",
+    "lockedFrom": "{{rate}} a month, locked from {{date}} for as long as you stay on Pro.",
+    "lockedAfter": "After your free months: {{rate}} a month, locked for as long as you stay on Pro.",
+    "nonCash": "Your founding rate is a plan discount, not cash, and never depends on bringing in other coaches.",
+    "commitTitle": "Your founding commitments",
+    "commitIntro": "You're invited to be a Founding coach. Here's what we agree on together.",
+    "commitDone": "Thanks for building Gatherwell with us. Here's what you agreed to.",
+    "accept": "I accept and join",
+    "accepted": "Joined",
+    "welcome": "Welcome, Founding coach",
+    "c": {
+      "launch": "A firm launch date",
+      "launchOn": "Launch on {{date}}",
+      "twoMonthly": "At least 2 gatherings a month",
+      "council": "Join the monthly coach council",
+      "media": "Permission to use your photos and reviews",
+      "audience": "Bring your own audience at launch"
+    },
+    "type": {
+      "distributor": "Distributor",
+      "independent": "Independent"
+    },
+    "lang": {
+      "en": "English",
+      "es": "Spanish"
+    },
+    "f": {
+      "email": "Email",
+      "name": "Name",
+      "language": "Language",
+      "city": "City",
+      "smallTown": "Smaller town",
+      "hasSpace": "Has a space",
+      "type": "Coach type",
+      "audience": "Audience they bring",
+      "launch": "Launch date"
+    },
+    "admin": {
+      "clock": "Shared clock",
+      "clockHint": "One start date for every founding coach: {{months}} months of free Pro, then {{rate}} a month, locked.",
+      "startDate": "Start date",
+      "saveStart": "Save start date",
+      "title": "Founding coaches ({{n}} of {{max}})",
+      "invite": "Invite coach",
+      "edit": "Edit",
+      "remove": "Remove",
+      "save": "Save",
+      "empty": "No founding coaches yet. Invite up to six.",
+      "smallTown": "Smaller town",
+      "hasSpace": "Has a space",
+      "joined": "Joined",
+      "invited": "Invited, not joined yet",
+      "launch": "Launch {{date}}",
+      "gatherings_one": "{{count}} gathering this month",
+      "gatherings_other": "{{count}} gatherings this month",
+      "council": "Council this month"
+    },
+    "errors": {
+      "failed": "Couldn't save. Try again.",
+      "full": "All founding spots are filled.",
+      "duplicate": "That email is already invited."
     }
   }
 }

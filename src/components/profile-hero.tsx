@@ -1,3 +1,4 @@
+import { FoundingMark } from '@/components/founding';
 import { VerifiedMark } from '@/components/coach-trust';
 import type { ReactNode } from 'react';
 import { GatheringCover } from '@/components/gathering-cover';
@@ -9,8 +10,8 @@ import { ListSkeleton, RetryState } from '@/components/launch-states';
 import { myChallengesQuery, myGatheringsQuery, profileStatsQuery, recentBadgesQuery, type MyGathering } from '@/lib/profile-stats';
 
 /** Identity-led hero shared by Me and member detail. */
-export function ProfileHero({ verified, avatar, name, city, team, role, badge, bio, actions, compact, cover }: {
-  cover?: string | null | undefined; verified?: boolean | undefined;
+export function ProfileHero({ founding, verified, avatar, name, city, team, role, badge, bio, actions, compact, cover }: {
+  cover?: string | null | undefined; verified?: boolean | undefined; founding?: boolean | undefined;
   avatar: ReactNode; name?: string | null | undefined; city?: string | null | undefined; team?: string | null | undefined; role?: string | null | undefined; badge?: string | null | undefined; bio?: string | null | undefined; actions?: ReactNode; compact?: boolean | undefined;
 }) {
   return <section className={`gw-hero-card ${compact ? 'is-compact' : ''}`}>
@@ -18,7 +19,7 @@ export function ProfileHero({ verified, avatar, name, city, team, role, badge, b
     <div className="gw-hero-body">
       <div className="gw-hero-avatar">{avatar}</div>
       {actions && <div className="gw-hero-actions">{actions}</div>}
-      <h2 className="gw-hero-name">{name}{verified && <> <VerifiedMark compact /></>}</h2>
+      <h2 className="gw-hero-name">{name}{verified && <> <VerifiedMark compact /></>}{founding && <> <FoundingMark /></>}</h2>
       {(city || team) && <p className="gw-hero-sub">{[city, team].filter(Boolean).join(' · ')}</p>}
       {(role || badge) && <div className="profile-chips">{role && <span className="chip">{role}</span>}{badge && <span className="chip warm-chip">{badge}</span>}</div>}
       {bio && <p className="gw-hero-bio">{bio}</p>}

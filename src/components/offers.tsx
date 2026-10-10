@@ -1,3 +1,4 @@
+import { FoundingSeal } from '@/components/founding';
 import { VerifiedMark, useIsVerified } from '@/components/coach-trust';
 import { PromoField } from '@/components/promo-field';
 import { promoDiscount, type Promo } from '@/lib/promo';
@@ -208,7 +209,7 @@ export function OfferPage({ id, paid }: { id: string; paid?: boolean }) {
     <OfferCover offer={offer} wide />
     <section className="panel offer-body">
       <h1>{offerTitle(offer, lang)}</h1>
-      {hostName && <p className="muted-small">{t('offers.by', { name: hostName })}<OfferSeal id={offer.host_id} /></p>}
+      {hostName && <p className="muted-small">{t('offers.by', { name: hostName })}<OfferSeal id={offer.host_id} /><FoundingSeal id={offer.host_id} /></p>}
       <p className="offer-price">{priceLabel(t, offer, lang)}</p>
       {offer.kind === 'membership' && founding && <div className={`founding-card ${founding.left ? '' : 'is-full'}`} role="status">
         <strong>{founding.left ? t('offers.foundingLeft', { left: founding.left, seats: founding.seats }) : t('offers.foundingFull', { seats: founding.seats })}</strong>

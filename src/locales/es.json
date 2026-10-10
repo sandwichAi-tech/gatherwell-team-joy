@@ -2071,7 +2071,8 @@
       "broadcasts": "Avisos generales",
       "settings": "Ajustes",
       "audit": "Registro de cambios",
-      "verify": "Verificar"
+      "verify": "Verificar",
+      "founding": "Coaches fundadores"
     },
     "period": {
       "week": "Esta semana",
@@ -3664,6 +3665,73 @@
       "invalid_amount": "Escribe un monto válido.",
       "already_decided": "Esta solicitud ya tiene respuesta.",
       "failed": "Algo salió mal. Inténtalo de nuevo."
+    }
+  },
+  "founding": {
+    "badge": "Coach fundador",
+    "nowFree": "{{price}} ahora · Pro incluido",
+    "pending": "Pro gratis por 6 meses, empieza pronto",
+    "rateLocked": "Tarifa de fundador {{rate}}, fija",
+    "lockedFrom": "{{rate}} al mes, fija desde el {{date}} mientras sigas en Pro.",
+    "lockedAfter": "Después de tus meses gratis: {{rate}} al mes, fija mientras sigas en Pro.",
+    "nonCash": "Tu tarifa de fundador es un descuento en el plan, no dinero, y nunca depende de traer a otros coaches.",
+    "commitTitle": "Tus compromisos como fundador",
+    "commitIntro": "Te invitamos a ser Coach fundador. Esto es lo que acordamos juntos.",
+    "commitDone": "Gracias por construir Gatherwell con nosotros. Esto es lo que acordaste.",
+    "accept": "Acepto y me uno",
+    "accepted": "Te uniste",
+    "welcome": "Bienvenido, Coach fundador",
+    "c": {
+      "launch": "Una fecha de lanzamiento firme",
+      "launchOn": "Lanzamiento el {{date}}",
+      "twoMonthly": "Al menos 2 reuniones al mes",
+      "council": "Unirte al consejo mensual de coaches",
+      "media": "Permiso para usar tus fotos y reseñas",
+      "audience": "Traer a tu propio público en el lanzamiento"
+    },
+    "type": {
+      "distributor": "Distribuidor",
+      "independent": "Independiente"
+    },
+    "lang": {
+      "en": "Inglés",
+      "es": "Español"
+    },
+    "f": {
+      "email": "Correo",
+      "name": "Nombre",
+      "language": "Idioma",
+      "city": "Ciudad",
+      "smallTown": "Pueblo pequeño",
+      "hasSpace": "Tiene un espacio",
+      "type": "Tipo de coach",
+      "audience": "Público que trae",
+      "launch": "Fecha de lanzamiento"
+    },
+    "admin": {
+      "clock": "Reloj compartido",
+      "clockHint": "Una sola fecha de inicio para todos los coaches fundadores: {{months}} meses de Pro gratis y luego {{rate}} al mes, fija.",
+      "startDate": "Fecha de inicio",
+      "saveStart": "Guardar fecha de inicio",
+      "title": "Coaches fundadores ({{n}} de {{max}})",
+      "invite": "Invitar coach",
+      "edit": "Editar",
+      "remove": "Quitar",
+      "save": "Guardar",
+      "empty": "Aún no hay coaches fundadores. Invita hasta seis.",
+      "smallTown": "Pueblo pequeño",
+      "hasSpace": "Tiene espacio",
+      "joined": "Se unió",
+      "invited": "Invitado, aún no se une",
+      "launch": "Lanzamiento {{date}}",
+      "gatherings_one": "{{count}} reunión este mes",
+      "gatherings_other": "{{count}} reuniones este mes",
+      "council": "Consejo este mes"
+    },
+    "errors": {
+      "failed": "No se pudo guardar. Intenta de nuevo.",
+      "full": "Ya se llenaron los lugares de fundador.",
+      "duplicate": "Ese correo ya tiene invitación."
     }
   }
 }

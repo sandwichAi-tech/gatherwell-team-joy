@@ -1,3 +1,4 @@
+import { FoundingCommitmentsCard, FoundingPlanBanner } from '@/components/founding';
 import { EarningsMilestones } from '@/components/coach-launch';
 import { PromoUsageCard } from '@/components/promo-codes';
 import { EmptyState } from '@/components/launch-states';
@@ -117,7 +118,8 @@ export function PlanPage() {
       {st.has_customer && <Button variant="secondary" disabled={gate.busy} onClick={() => void gate.run(() => portal({ data: { origin } }))}><CreditCard />{t('billing.manage')}</Button>}
     </section>
 
-    {st.legacy_price_cents !== null && st.source === 'own' && <div className="plan-banner" role="status"><AlertCircle />{t('billing.legacyNote', { plan: t(`billing.name_${st.own_plan}`), price: formatMoney(st.legacy_price_cents, lang) })}</div>}
+    {st.founding && <FoundingPlanBanner f={st.founding} />}
+    {st.legacy_price_cents !== null && st.source === 'own' && !st.founding && <div className="plan-banner" role="status"><AlertCircle />{t('billing.legacyNote', { plan: t(`billing.name_${st.own_plan}`), price: formatMoney(st.legacy_price_cents, lang) })}</div>}
 
     <div className="plan-grid">
       {PLANS.map(p => {
@@ -149,6 +151,7 @@ export function PlanPage() {
       </article>
     </div>
 
+    <FoundingCommitmentsCard />
     <p className="auth-subtitle">{t('billing.cardNote')}</p>
 
     <section className="panel settings-list">
