@@ -1987,7 +1987,24 @@
     "refundedCount_other": "Se iniciaron {{count}} reembolsos.",
     "planWaitTitle_one": "{{count}} persona está esperando.",
     "planWaitTitle_other": "{{count}} personas están esperando.",
-    "planWaitBody": "Llegaste al límite de invitados de tu plan. Mejóralo para darles la bienvenida."
+    "planWaitBody": "Llegaste al límite de invitados de tu plan. Mejóralo para darles la bienvenida.",
+    "feeCapped": "Comisión de {{pct}}%, con tope de {{cap}} al mes",
+    "feePct": "Comisión de {{pct}}%",
+    "everythingFree": "Todo lo de Gratis, más:",
+    "pro_texts": "Recordatorios por mensaje de texto",
+    "pro_autopilot": "Piloto automático con IA: seguimientos, resúmenes y renovaciones",
+    "pro_branding": "Tu propia marca y dominio",
+    "pro_campaigns": "Campañas por correo",
+    "pro_cohosts": "Coanfitriones y administradores del equipo",
+    "pro_insights": "Estadísticas avanzadas",
+    "pro_support": "Soporte prioritario",
+    "cardNote": "El procesamiento de tarjetas es aparte en ambos planes y se cobra al costo.",
+    "legacyNote": "Conservas tu precio de {{plan}} de {{price}} hasta que cambies de plan. Estas son las nuevas opciones.",
+    "feesThisMonth": "Comisiones este mes: {{paid}} de un tope de {{cap}}",
+    "capReached": "Tope alcanzado",
+    "capReachedHint": "Ya llegaste al tope de este mes. No pagas comisión por tus ventas hasta el próximo mes.",
+    "capHint": "{{pct}}% de tus ventas pagadas hasta llegar a {{cap}} este mes. Después, 0%.",
+    "getPaidCapped": "Los invitados pagan con tarjeta y el dinero llega a tu cuenta. Comisión: {{n}}% de las ventas pagadas, con tope de {{cap}} al mes."
   },
   "report": {
     "action": "Reportar",
@@ -2334,6 +2351,15 @@
       "approve": "Aprobar y verificar",
       "reject": "Rechazar",
       "keep": "Mostrar {{title}} públicamente"
+    },
+    "planSettings": {
+      "title": "Precios de los planes",
+      "hint": "Los cambios aplican de inmediato a nuevas ventas. Quienes ya tienen suscripción conservan su precio.",
+      "fee": "Comisión (%)",
+      "cap": "Tope mensual de comisión ($)",
+      "noCap": "Sin tope",
+      "price": "Precio mensual ($)",
+      "save": "Guardar"
     }
   },
   "legalDocs": {
@@ -3078,7 +3104,7 @@
     "pricingFaq": [
       {
         "q": "¿Qué es el cargo de la plataforma?",
-        "a": "Un porcentaje de los boletos y ofertas de pago: 8% en Gratis, 4% en Growth y 2% en Pro. El procesamiento de pagos se cobra por separado. Las confirmaciones gratuitas no tienen este cargo."
+        "a": "En Gratis, 7% de los boletos y ofertas de pago, con tope de $99 al mes. Pro cuesta $99 al mes sin comisión. El procesamiento de tarjetas es aparte en ambos planes y se cobra al costo. Las confirmaciones gratuitas no tienen cargo."
       },
       {
         "q": "¿Los invitados pueden participar gratis?",

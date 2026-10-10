@@ -1867,3 +1867,11 @@ a.gw-cat-chip:hover{background:#fff}
 .member-promises svg { width: 16px; height: 16px; color: var(--primary); }
 .pause-select { width: auto; min-height: 44px; }
 .gw-landing .gw-who-grid{list-style:none;padding:0}.gw-landing .gw-who-grid .gw-benefit-card>p{margin-bottom:0}
+.plan-fee-line,.gw-landing .gw-plan-fee{font-size:14px;line-height:1.5;font-weight:600;color:var(--muted-foreground);margin:-4px 0 16px}
+.plan-features-head,.gw-landing .gw-plan-features-head{font-weight:700;list-style:none}
+.fee-cap-card{display:flex;flex-direction:column;gap:12px}.fee-cap-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.fee-cap-card .plan-meter-bar{display:block;height:8px;border-radius:999px;background:var(--muted);overflow:hidden}.fee-cap-card .plan-meter-bar>span{display:block;height:100%;background:var(--primary);border-radius:inherit}
+.admin-plan-setting{display:flex;flex-direction:column;gap:12px;padding:16px 0;border-top:1px solid var(--border)}.admin-plan-setting h3{font-weight:700}
+.admin-plan-fields{display:grid;gap:12px}@media(min-width:640px){.admin-plan-fields{grid-template-columns:repeat(3,1fr)}}
+.admin-plan-fields .field-label{display:flex;flex-direction:column;gap:6px}
+@media(min-width:1024px){.gw-landing .gw-public-plans{grid-template-columns:repeat(3,1fr)}}

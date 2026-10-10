@@ -19,7 +19,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { workspaceQuery } from '@/lib/account';
 import { rosterQuery } from '@/lib/team';
 import { isAdminQuery } from '@/lib/site-media';
-import { earningsQuery, formatMoney, formatStorage, LICENSES, licenseQuery, paymentsStatusQuery, PLANS, planStatusQuery, type PlanId } from '@/lib/billing';
+import { earningsQuery, formatMoney, formatStorage, LICENSES, licenseQuery, paymentsStatusQuery, PLANS, PRO_FEATURES, planSettingsQuery, planStatusQuery, type PlanId } from '@/lib/billing';
 import { openBillingPortal, refundPayments, startConnectOnboarding, startLicenseCheckout, startPlanCheckout } from '@/lib/billing.functions';
 
 export function NotConnectedSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
@@ -77,7 +77,7 @@ export function PlanPage() {
   const qc = useQueryClient();
   const { data: st } = useQuery(planStatusQuery(userId));
   const { data: ws } = useQuery(workspaceQuery(userId));
-  const [period, setPeriod] = useState<'month' | 'year'>('month');
+  const { data: settings } = useQuery(planSettingsQuery);
   const [downgrade, setDowngrade] = useState<PlanId | null>(null);
   const gate = usePaymentGate();
   const checkout = useServerFn(startPlanCheckout);
@@ -85,17 +85,15 @@ export function PlanPage() {
   const portal = useServerFn(openBillingPortal);
   const connect = useServerFn(startConnectOnboarding);
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
-  if (!st) return <p className="auth-subtitle">{t('publicEvent.loading')}</p>;
+  if (!st || !settings) return <p className="auth-subtitle">{t('publicEvent.loading')}</p>;
   const current = st.plan;
-  const rank = { free: 0, growth: 1, pro: 2 } as const;
   const lim = st.limits;
   const usedMb = Math.round(st.usage.storage_bytes / 1048576);
 
   const choose = (id: PlanId) => {
-    if (id === st.own_plan) return;
-    if (rank[id] < rank[st.own_plan]) { setDowngrade(id); return; }
-    if (id === 'free') return;
-    trackEvent('upgrade_clicked', { plan: id }); void gate.run(() => checkout({ data: { plan: id, period, origin, lang } }));
+    if (id === st.own_plan && st.legacy_price_cents === null) return;
+    if (id === 'free') { setDowngrade(id); return; }
+    trackEvent('upgrade_clicked', { plan: id }); void gate.run(() => checkout({ data: { plan: 'pro', origin, lang } }));
   };
   const togglePassFee = async (on: boolean) => {
     const { error } = await supabase.rpc('set_pass_fee', { _on: on });
@@ -119,28 +117,27 @@ export function PlanPage() {
       {st.has_customer && <Button variant="secondary" disabled={gate.busy} onClick={() => void gate.run(() => portal({ data: { origin } }))}><CreditCard />{t('billing.manage')}</Button>}
     </section>
 
-    <div className="segmented plan-toggle" role="group" aria-label={t('billing.period')}>
-      {(['month', 'year'] as const).map(p => <Button key={p} variant="ghost" aria-pressed={period === p} className={period === p ? 'selected' : ''} onClick={() => setPeriod(p)}>{t(`billing.${p}ly`)}</Button>)}
-    </div>
-    {period === 'year' && <p className="auth-subtitle plan-save">{t('billing.annualSave')}</p>}
+    {st.legacy_price_cents !== null && st.source === 'own' && <div className="plan-banner" role="status"><AlertCircle />{t('billing.legacyNote', { plan: t(`billing.name_${st.own_plan}`), price: formatMoney(st.legacy_price_cents, lang) })}</div>}
 
     <div className="plan-grid">
       {PLANS.map(p => {
-        const isCurrent = st.own_plan === p.id && st.source === 'own' || (st.source === 'license' && p.id === 'growth');
-        const price = period === 'month' ? p.month : p.year;
-        return <article key={p.id} className={`plan-card ${isCurrent ? 'is-current' : ''} ${p.id === 'growth' ? 'is-popular' : ''}`}>
-          {p.id === 'growth' && <span className="plan-tag">{t('billing.popular')}</span>}
+        const ps = settings[p.id];
+        const isCurrent = st.source === 'own' && (st.own_plan === p.id && st.legacy_price_cents === null || (p.id === 'free' && st.own_plan === 'free'));
+        return <article key={p.id} className={`plan-card ${isCurrent ? 'is-current' : ''} ${p.id === 'pro' ? 'is-popular' : ''}`}>
+          {p.id === 'pro' && <span className="plan-tag">{t('billing.popular')}</span>}
           <h3>{t(`billing.name_${p.id}`)}</h3>
-          <p className="plan-price"><strong>{formatMoney(price, lang)}</strong><span>{p.id === 'free' ? '' : t(period === 'month' ? 'billing.perMonth' : 'billing.perYear')}</span></p>
+          <p className="plan-price"><strong>{formatMoney(ps.monthly_price, lang)}</strong><span>{t('billing.perMonth')}</span></p>
+          <p className="plan-fee-line">{ps.monthly_cap !== null ? t('billing.feeCapped', { pct: ps.fee_percent, cap: formatMoney(ps.monthly_cap, lang) }) : t('billing.feePct', { pct: ps.fee_percent })}</p>
           <ul className="plan-features">
-            <li><Check />{p.limits.gatherings === null ? t('billing.fGatheringsUnlimited') : t('billing.fGatherings', { n: p.limits.gatherings })}</li>
-            <li><Check />{p.limits.guests === null ? t('billing.fGuestsUnlimited') : t('billing.fGuests', { n: p.limits.guests })}</li>
-            <li><Check />{t('billing.fStorage', { size: formatStorage(p.limits.storage_mb, lang) })}</li>
-            <li><Check />{t('billing.fAssistant', { n: p.limits.assistant.toLocaleString(lang) })}</li>
-            <li><Check />{t('billing.fFee', { n: p.limits.fee_pct })}</li>
+            {p.id === 'pro' && <li className="plan-features-head">{t('billing.everythingFree')}</li>}
+            {p.id === 'pro' ? PRO_FEATURES.map(f => <li key={f}><Check />{t(`billing.pro_${f}`)}</li>) : <>
+              <li><Check />{t('billing.fGatherings', { n: p.limits.gatherings })}</li>
+              <li><Check />{t('billing.fGuests', { n: p.limits.guests })}</li>
+              <li><Check />{t('billing.fStorage', { size: formatStorage(p.limits.storage_mb, lang) })}</li>
+              <li><Check />{t('billing.fAssistant', { n: p.limits.assistant.toLocaleString(lang) })}</li></>}
           </ul>
           {isCurrent ? <Button variant="secondary" disabled>{t('billing.yourPlan')}</Button>
-            : <Button variant={p.id === 'growth' ? 'default' : 'secondary'} disabled={gate.busy} onClick={() => choose(p.id)}>{rank[p.id] < rank[st.own_plan] ? t('billing.switchTo', { plan: t(`billing.name_${p.id}`) }) : p.id === 'free' ? t('billing.included') : t('billing.upgrade')}</Button>}
+            : <Button variant={p.id === 'pro' ? 'default' : 'secondary'} disabled={gate.busy} onClick={() => choose(p.id)}>{p.id === 'free' ? t('billing.switchTo', { plan: t('billing.name_free') }) : t('billing.upgrade')}</Button>}
         </article>;
       })}
       <article className="plan-card plan-card-team">
@@ -152,6 +149,8 @@ export function PlanPage() {
       </article>
     </div>
 
+    <p className="auth-subtitle">{t('billing.cardNote')}</p>
+
     <section className="panel settings-list">
       {ws?.role === 'leader' && <Link className="settings-row" to="/plan/seats"><UsersRound className="settings-icon" /><span className="settings-label">{t('billing.seats')}</span><ChevronRight className="settings-chevron" /></Link>}
       <Link className="settings-row" to="/earnings"><BarChart3 className="settings-icon" /><span className="settings-label">{t('billing.earnings')}</span><ChevronRight className="settings-chevron" /></Link>
@@ -159,7 +158,7 @@ export function PlanPage() {
 
     <section className="panel get-paid">
       <div className="section-heading"><h2>{t('billing.getPaid')}</h2><span className={`chip connect-${st.connect_status}`}>{t(`billing.connect_${st.connect_status}`)}</span></div>
-      <p className="auth-subtitle">{t('billing.getPaidText', { n: lim.fee_pct })}</p>
+      <p className="auth-subtitle">{lim.fee_cap != null ? t('billing.getPaidCapped', { n: lim.fee_pct, cap: formatMoney(lim.fee_cap, lang) }) : t('billing.getPaidText', { n: lim.fee_pct })}</p>
       {st.connect_status !== 'active' && <Button disabled={gate.busy} onClick={() => void gate.run(() => connect({ data: { origin } }))}>{st.connect_status === 'pending' ? t('billing.connectContinue') : t('billing.connectStart')}</Button>}
       <label className="settings-row is-static"><span className="settings-label">{t('billing.passFee')}<small className="field-hint">{t('billing.passFeeHint')}</small></span><Switch aria-label={t('billing.passFee')} checked={st.pass_fee} onCheckedChange={v => void togglePassFee(v)} /></label>
     </section>
@@ -168,7 +167,7 @@ export function PlanPage() {
       {downgrade && <>
         <ul className="plan-features">
           <li>{t('billing.downKeep')}</li>
-          {(() => { const l = PLANS.find(p => p.id === downgrade)!.limits; return <>
+          {(() => { const l = { ...PLANS.find(p => p.id === downgrade)!.limits, fee_pct: settings[downgrade].fee_percent }; return <>
             <li>{l.gatherings === null ? t('billing.fGatheringsUnlimited') : t('billing.downGatherings', { n: l.gatherings })}</li>
             <li>{l.guests === null ? t('billing.fGuestsUnlimited') : t('billing.downGuests', { n: l.guests })}</li>
             <li>{t('billing.downStorage', { size: formatStorage(l.storage_mb, lang) })}</li>
@@ -240,6 +239,7 @@ export function EarningsPage() {
   const { userId } = useGatherwell();
   const qc = useQueryClient();
   const { data } = useQuery(earningsQuery(userId));
+  const { data: st } = useQuery(planStatusQuery(userId));
   const gate = usePaymentGate();
   const refund = useServerFn(refundPayments);
   const [confirm, setConfirm] = useState<{ eventId?: string; paymentId?: string } | null>(null);
@@ -263,6 +263,12 @@ export function EarningsPage() {
     <div className="page-heading"><div><span className="eyebrow">{t('billing.eyebrow')}</span><h1>{t('billing.earnings')}</h1></div></div>
     <p className="auth-subtitle">{t('billing.earningsText')}</p>
     <EarningsMilestones />
+    {st && st.limits.fee_cap != null && <section className="panel fee-cap-card" aria-live="polite">
+      <div className="fee-cap-head"><strong>{t('billing.feesThisMonth', { paid: formatMoney(Math.min(st.fees_month, st.limits.fee_cap), lang), cap: formatMoney(st.limits.fee_cap, lang) })}</strong>
+        {st.fees_month >= st.limits.fee_cap && <span className="chip connect-active">{t('billing.capReached')}</span>}</div>
+      <span className="plan-meter-bar" aria-hidden><span style={{ width: `${Math.min(100, Math.round(st.fees_month / Math.max(st.limits.fee_cap, 1) * 100))}%` }} /></span>
+      <p className="field-hint">{st.fees_month >= st.limits.fee_cap ? t('billing.capReachedHint') : t('billing.capHint', { pct: st.limits.fee_pct, cap: formatMoney(st.limits.fee_cap, lang) })}</p>
+    </section>}
     <div className="stats-grid">{stat(t('billing.ticketSales'), formatMoney(sales, lang))}{stat(t('billing.platformFees'), formatMoney(fees, lang))}{stat(t('billing.payouts'), formatMoney(sales - fees, lang))}{stat(t('billing.ticketsSold'), paid.length)}</div>
     <PromoUsageCard />
     <ReferralCard format={c => formatMoney(c, lang)} />

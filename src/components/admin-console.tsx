@@ -13,8 +13,8 @@ import { confirmAction } from '@/components/confirm-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { GwFeatureTile, GwIcon, type GwIconProps } from '@/components/gw-icon';
-import { formatMoney } from '@/lib/billing';
-import {
+import { formatMoney, planSettingsQuery, type PlanSetting } from '@/lib/billing';
+import { updatePlanSettings,
   adminTeamAction, adminUserAction, endBroadcast, getAdminAccess, getAdminOverview, getAdminTeam, getAdminUser, getAudit, getBroadcasts, getFlags, getLibrary,
   listAdminTeams, listAdminUsers, listReports, moderateReport, reorderLibrary, saveLibraryItem, sendBroadcast, setFlag, setLibraryPublished, type AdminReport, listRecentTexts, simulateSmsReply, listVerifications, decideVerification, type AdminVerification,
 } from '@/lib/admin.functions';
@@ -425,6 +425,7 @@ function Settings() {
   };
   return <>
     <section className="panel"><Link to="/admin/site-media" className="settings-row"><GwIcon name="ImageDown" className="settings-icon" /><span className="settings-label">{t('siteMedia.menu')}</span><GwIcon name="ChevronRight" className="settings-chevron" /></Link></section>
+    <PlanSettingsPanel />
     <section className="panel"><h2 className="section-title">{t('admin.flags.title')}</h2>
       <ul className="admin-list">{data.map(fl => <li key={fl.key} className="admin-row flag-row">
         <span className="admin-row-main"><strong>{t(`admin.flags.name.${fl.key}`, { defaultValue: fl.key })}</strong><small>{lang === 'es' ? fl.description_es : fl.description_en}</small></span>
@@ -433,6 +434,35 @@ function Settings() {
       </li>)}</ul>
     </section>
   </>;
+}
+
+function PlanSettingsPanel() {
+  const { t } = useTranslation(); const qc = useQueryClient();
+  const { data } = useQuery(planSettingsQuery);
+  if (!data) return <ListSkeleton rows={2} />;
+  return <section className="panel"><h2 className="section-title">{t('admin.planSettings.title')}</h2><p className="field-hint">{t('admin.planSettings.hint')}</p>
+    {(['free', 'pro'] as const).map(id => <PlanSettingRow key={id} s={data[id]} onSaved={() => void qc.invalidateQueries({ queryKey: ['plan-settings'] })} />)}
+  </section>;
+}
+function PlanSettingRow({ s, onSaved }: { s: PlanSetting; onSaved: () => void }) {
+  const { t } = useTranslation(); const save = useServerFn(updatePlanSettings);
+  const [fee, setFee] = useState(String(s.fee_percent)); const [cap, setCap] = useState(s.monthly_cap === null ? '' : String(s.monthly_cap / 100)); const [price, setPrice] = useState(String(s.monthly_price / 100));
+  const [busy, setBusy] = useState(false);
+  const submit = async () => {
+    const f = Number(fee), c = cap.trim() === '' ? null : Math.round(Number(cap) * 100), p = Math.round(Number(price) * 100);
+    if (![f, p].every(Number.isFinite) || (c !== null && !Number.isFinite(c))) { toast.error(t('admin.errors.failed')); return; }
+    setBusy(true); const r = await save({ data: { plan: s.plan as 'free' | 'pro', fee_percent: f, monthly_cap: c, monthly_price: p } }).catch(() => ({ ok: false as const })); setBusy(false);
+    if (r.ok) { toast.success(t('admin.saved')); onSaved(); } else toast.error(t('admin.errors.failed'));
+  };
+  const id = `ps-${s.plan}`;
+  return <div className="admin-plan-setting"><h3>{t(`billing.name_${s.plan}`)}</h3>
+    <div className="admin-plan-fields">
+      <label className="field-label" htmlFor={`${id}-fee`}>{t('admin.planSettings.fee')}<Input id={`${id}-fee`} inputMode="decimal" value={fee} onChange={e => setFee(e.target.value)} /></label>
+      <label className="field-label" htmlFor={`${id}-cap`}>{t('admin.planSettings.cap')}<Input id={`${id}-cap`} inputMode="decimal" placeholder={t('admin.planSettings.noCap')} value={cap} onChange={e => setCap(e.target.value)} /></label>
+      <label className="field-label" htmlFor={`${id}-price`}>{t('admin.planSettings.price')}<Input id={`${id}-price`} inputMode="decimal" value={price} onChange={e => setPrice(e.target.value)} /></label>
+    </div>
+    <Button variant="secondary" disabled={busy} onClick={() => void submit()}>{t('admin.planSettings.save')}</Button>
+  </div>;
 }
 
 const AREAS = ['all', 'team', 'user', 'moderation', 'library', 'broadcast', 'flag'] as const;

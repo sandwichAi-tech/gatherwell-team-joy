@@ -1987,7 +1987,24 @@
     "refundedCount_other": "{{count}} refunds started.",
     "planWaitTitle_one": "{{count}} guest is waiting.",
     "planWaitTitle_other": "{{count}} guests are waiting.",
-    "planWaitBody": "You've reached your plan's guest limit. Upgrade to welcome them."
+    "planWaitBody": "You've reached your plan's guest limit. Upgrade to welcome them.",
+    "feeCapped": "{{pct}}% platform fee, capped at {{cap}} a month",
+    "feePct": "{{pct}}% platform fee",
+    "everythingFree": "Everything in Free, plus:",
+    "pro_texts": "Text reminders",
+    "pro_autopilot": "AI Autopilot: follow-ups, recaps and renewals",
+    "pro_branding": "Custom branding and domain",
+    "pro_campaigns": "Email campaigns",
+    "pro_cohosts": "Co-hosts and team admins",
+    "pro_insights": "Advanced insights",
+    "pro_support": "Priority support",
+    "cardNote": "Card processing is separate on both plans and passed through at cost.",
+    "legacyNote": "You keep your {{plan}} price of {{price}} until you change plans. Here are the new options.",
+    "feesThisMonth": "Fees this month: {{paid}} of {{cap}} cap",
+    "capReached": "Cap reached",
+    "capReachedHint": "You've reached this month's cap. No platform fee on your sales until next month.",
+    "capHint": "{{pct}}% of your paid sales until you reach {{cap}} this month. After that, 0%.",
+    "getPaidCapped": "Guests pay by card and the money goes to your account. Platform fee: {{n}}% of paid sales, capped at {{cap}} a month."
   },
   "report": {
     "action": "Report",
@@ -2334,6 +2351,15 @@
       "approve": "Approve and verify",
       "reject": "Decline",
       "keep": "Show {{title}} publicly"
+    },
+    "planSettings": {
+      "title": "Plan pricing",
+      "hint": "Changes apply to new sales right away. Existing subscribers keep their current price.",
+      "fee": "Platform fee (%)",
+      "cap": "Monthly fee cap ($)",
+      "noCap": "No cap",
+      "price": "Monthly price ($)",
+      "save": "Save"
     }
   },
   "legalDocs": {
@@ -3034,7 +3060,7 @@
     "pricingSub": "Guests can RSVP for free. Choose the tools and room your hosting needs.",
     "from": "From {{price}}",
     "usd": "All prices in USD.",
-    "licenseNote": "Team Licenses are billed monthly. Growth limits apply to each assigned member.",
+    "licenseNote": "Team Licenses are billed monthly. Each assigned member gets Growth limits.",
     "licenseDetail": "25 members: {{small}}/month · 100 members: {{large}}/month.",
     "licenseAnnual": "Monthly billing only",
     "choose": "Start with {{plan}}",
@@ -3078,7 +3104,7 @@
     "pricingFaq": [
       {
         "q": "What's the platform fee?",
-        "a": "A percentage of paid tickets and offers: 8% on Free, 4% on Growth and 2% on Pro. Payment processing fees are separate. No platform fee applies to free RSVPs."
+        "a": "7% of paid tickets and offers on Free, capped at $99 a month. Pro is $99 a month with no platform fee. Card processing is separate on both plans and passed through at cost. Free RSVPs have no fee."
       },
       {
         "q": "Can guests join for free?",

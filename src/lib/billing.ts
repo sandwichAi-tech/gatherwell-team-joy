@@ -3,20 +3,33 @@ import { supabase } from '@/integrations/supabase/client';
 import { getPaymentsStatus } from '@/lib/billing.functions';
 
 export type PlanId = 'free' | 'growth' | 'pro';
-export type Limits = { gatherings: number | null; guests: number | null; storage_mb: number; assistant: number; fee_pct: number };
+export type Limits = { gatherings: number | null; guests: number | null; storage_mb: number; assistant: number; fee_pct: number; fee_cap?: number | null };
+/** Admin-editable plan numbers (plan_settings). Cents for cap and price. */
+export type PlanSetting = { plan: PlanId; fee_percent: number; monthly_cap: number | null; monthly_price: number; legacy: boolean };
 export type PlanStatus = {
   plan: PlanId; source: 'own' | 'license'; leader?: string | null; team?: string | null; limits: Limits;
   own_plan: PlanId; billing_period: 'month' | 'year' | null; status: 'active' | 'past_due' | 'canceled' | 'trialing'; renews_at: string | null;
   has_customer: boolean; connect_status: 'not_started' | 'pending' | 'active'; pass_fee: boolean;
+  legacy_price_cents: number | null; fees_month: number;
   usage: { gatherings: number; largest_guests: number; storage_bytes: number; assistant: number };
 };
 
-/** Display catalog. Prices in cents; annual = 10 months. Limits mirror plan_limits() in the database. */
-export const PLANS: { id: PlanId; month: number; year: number; limits: Limits }[] = [
-  { id: 'free', month: 0, year: 0, limits: { gatherings: 4, guests: 30, storage_mb: 500, assistant: 50, fee_pct: 8 } },
-  { id: 'growth', month: 2900, year: 29000, limits: { gatherings: null, guests: 150, storage_mb: 10240, assistant: 500, fee_pct: 4 } },
-  { id: 'pro', month: 7900, year: 79000, limits: { gatherings: null, guests: null, storage_mb: 102400, assistant: 2000, fee_pct: 2 } },
+/** Plans offered today. Usage limits mirror plan_limits(); prices and fees always come from plan_settings. */
+export const PLANS: { id: Exclude<PlanId, 'growth'>; limits: Omit<Limits, 'fee_pct'> }[] = [
+  { id: 'free', limits: { gatherings: 4, guests: 30, storage_mb: 500, assistant: 50 } },
+  { id: 'pro', limits: { gatherings: null, guests: null, storage_mb: 102400, assistant: 2000 } },
 ];
+export const PRO_FEATURES = ['texts', 'autopilot', 'branding', 'campaigns', 'cohosts', 'insights', 'support'] as const;
+
+export const planSettingsQuery = queryOptions({
+  queryKey: ['plan-settings'],
+  staleTime: 10 * 60_000,
+  queryFn: async (): Promise<Record<PlanId, PlanSetting>> => {
+    const { data, error } = await supabase.from('plan_settings').select('plan, fee_percent, monthly_cap, monthly_price, legacy');
+    if (error) throw error;
+    return Object.fromEntries((data ?? []).map(r => [r.plan, { ...r, fee_percent: Number(r.fee_percent) }])) as Record<PlanId, PlanSetting>;
+  },
+});
 export const LICENSES = [{ id: 'team25' as const, cents: 19900, seats: 25 }, { id: 'team100' as const, cents: 49900, seats: 100 }];
 
 export const planStatusQuery = (userId: string) => queryOptions({
