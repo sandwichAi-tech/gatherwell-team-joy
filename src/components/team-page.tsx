@@ -120,6 +120,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
     </section>
 
     <HostOfMonthCard teamId={teamId} teamName={workspace.name} />
+    <MemberOfMonthCard teamId={teamId} teamName={workspace.name} />
     <PinnedAnnouncement teamId={teamId} />
     <PinnedShoutout teamId={teamId} isLeader={isLeader} />
     <ActiveChallengeCard />
@@ -344,6 +345,7 @@ function MembersSheet({ open, onOpenChange, teamId, userId, isLeader, directLead
       <ProfileHero compact avatar={<span className={`initial-avatar profile-avatar ${selected.userId === homId ? 'hom-ring' : ''}`} style={{ width: 88, height: 88, fontSize: 28 }}>{initialsOf(selected.name)}</span>}
         name={selected.name ?? t('teamSpace.someone')} role={t(`roles.${selected.role}`)} badge={selected.customBadge}
         team={t('profile.memberSince', { date: new Date(selected.joinedAt).toLocaleDateString(i18n.resolvedLanguage, { month: 'short', year: 'numeric' }) })} />
+      <FeaturedBadges userId={selected.userId} />
       <StatsStrip userId={selected.userId} teamId={teamId} />
       <RecentBadges userId={selected.userId} teamId={teamId} />
       {isLeader && <section className="gw-manage"><h3 className="gw-group-title">{t('profile.manage')}</h3>
