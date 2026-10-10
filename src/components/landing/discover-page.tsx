@@ -22,7 +22,7 @@ export function DiscoverPage({ search }: { search: DiscoverSearch }) {
 
   const filtered = data.filter(g => (!search.cat || g.category === search.cat)
     && (when === 'today' ? isToday(g.startsAt) : when === 'weekend' ? isThisWeekend(g.startsAt) : when === 'week' ? inNextDays(g.startsAt, 7) : inNextDays(g.startsAt, 14)));
-  const list = near ? sortForFeed(filtered, near, distanceKm) : [...filtered].sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());
+  const list = near ? sortForFeed(filtered, near, distanceKm) : [...filtered].sort((a, b) => Number(!!b.featured) - Number(!!a.featured) || a.startsAt.getTime() - b.startsAt.getTime());
 
   return <LandingFrame>
     <main className="gw-discover">

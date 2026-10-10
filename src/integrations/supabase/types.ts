@@ -1558,6 +1558,84 @@ export type Database = {
           },
         ]
       }
+      founding_coaches: {
+        Row: {
+          accepted_at: string | null
+          audience: string
+          city: string
+          coach_type: string
+          council_months: string[]
+          created_at: string
+          email: string
+          full_name: string
+          has_space: boolean
+          id: string
+          language: string
+          launch_date: string | null
+          small_town: boolean
+          user_id: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          audience?: string
+          city?: string
+          coach_type?: string
+          council_months?: string[]
+          created_at?: string
+          email: string
+          full_name?: string
+          has_space?: boolean
+          id?: string
+          language?: string
+          launch_date?: string | null
+          small_town?: boolean
+          user_id?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          audience?: string
+          city?: string
+          coach_type?: string
+          council_months?: string[]
+          created_at?: string
+          email?: string
+          full_name?: string
+          has_space?: boolean
+          id?: string
+          language?: string
+          launch_date?: string | null
+          small_town?: boolean
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      founding_program: {
+        Row: {
+          free_months: number
+          id: boolean
+          max_coaches: number
+          rate_cents: number
+          start_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          free_months?: number
+          id?: boolean
+          max_coaches?: number
+          rate_cents?: number
+          start_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          free_months?: number
+          id?: boolean
+          max_coaches?: number
+          rate_cents?: number
+          start_date?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       host_of_month: {
         Row: {
           awarded_by: string | null
@@ -4019,6 +4097,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_founding: { Args: never; Returns: undefined }
       add_walk_in: {
         Args: {
           _email: string
@@ -4033,6 +4112,7 @@ export type Database = {
         Returns: string
       }
       admin_broadcasts: { Args: never; Returns: Json }
+      admin_founding: { Args: never; Returns: Json }
       admin_grant_preview_license: {
         Args: { _team: string; _tier: string }
         Returns: undefined
@@ -4292,6 +4372,7 @@ export type Database = {
         Args: { _from: string; _root: string; _scope: string; _to: string }
         Returns: number
       }
+      founding_status: { Args: { _uid: string }; Returns: Json }
       gathering_validate: { Args: { _p: Json }; Returns: undefined }
       gatherings_this_month: { Args: { _uid: string }; Returns: number }
       get_email_prefs: { Args: { _token: string }; Returns: Json }
@@ -4369,6 +4450,7 @@ export type Database = {
       }
       is_connected: { Args: { _a: string; _b: string }; Returns: boolean }
       is_event_cohost: { Args: { _event: string }; Returns: boolean }
+      is_founding_coach: { Args: { _uid: string }; Returns: boolean }
       is_host_anywhere: { Args: { _u: string }; Returns: boolean }
       is_member_of: { Args: { _team: string; _user: string }; Returns: boolean }
       is_team_member: {

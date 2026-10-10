@@ -169,6 +169,13 @@
       "when": 1791659146480,
       "tag": "0023_u2_guest_service_fee",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1791659430027,
+      "tag": "0024_u3_founding_coaches",
+      "breakpoints": true
     }
   ]
 }

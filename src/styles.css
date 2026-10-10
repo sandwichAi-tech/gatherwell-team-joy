@@ -1879,3 +1879,9 @@ a.gw-cat-chip:hover{background:#fff}
 .guest-fee-lines>div{display:flex;justify-content:space-between;gap:12px;font-size:15px;line-height:1.5}
 .guest-fee-lines dt{color:var(--muted-foreground)}.guest-fee-lines dd{font-weight:600}
 .guest-fee-lines .is-total{border-top:1px solid var(--border);padding-top:8px;font-weight:800}.guest-fee-lines .is-total dt{color:var(--foreground)}.guest-fee-lines .is-total dd{font-weight:800}
+.founding-mark{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:700;line-height:1.5;background:var(--accent);color:var(--accent-foreground);vertical-align:middle}
+.founding-plan{display:flex;gap:16px;align-items:flex-start}.founding-plan h2{font-size:22px;font-weight:800;line-height:1.3;margin:4px 0 8px}
+.founding-list{display:flex;flex-direction:column;gap:12px;margin:16px 0}.founding-list li{display:flex;gap:12px;align-items:flex-start;line-height:1.5}.founding-list svg{flex-shrink:0;color:var(--primary)}
+.founding-row{flex-wrap:wrap;gap:12px}.founding-progress{display:flex;gap:8px;margin-top:4px}.founding-council{display:flex;align-items:center;gap:8px;font-size:14px;min-height:44px}
+.founding-start-row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}.founding-start-row .field-label,.founding-form .field-label{display:flex;flex-direction:column;gap:6px}
+.founding-form{display:flex;flex-direction:column;gap:16px}

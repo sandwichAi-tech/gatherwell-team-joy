@@ -1,3 +1,4 @@
+import { useIsFounding } from '@/components/founding';
 import { useIsVerified } from '@/components/coach-trust';
 import { CropFileInput } from '@/components/image-crop';
 import { GatheringCover } from '@/components/gathering-cover';
@@ -212,11 +213,13 @@ export function MePage() {
 
   const isHost = !!workspace && workspace.role !== 'member';
   const verified = useIsVerified(userId);
+  const founding = useIsFounding(userId);
   return <>
     <h1 className="sr-only">{t('me.title')}</h1>
     <ProfileHero
       cover={profile?.cover_url}
       verified={verified}
+      founding={founding}
       avatar={<span className={homId === userId ? 'hom-ring hom-wrap' : 'hom-wrap'}><Avatar path={profile?.avatar_url} name={profile?.full_name} size={96} /></span>}
       name={profile?.full_name} city={profile?.city} team={workspace?.name} role={workspace ? t(`roles.${workspace.role}`) : null} badge={workspace?.customBadge} bio={profile?.bio}
       actions={<>

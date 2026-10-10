@@ -1,3 +1,4 @@
+import { FoundingSeal } from '@/components/founding';
 import { CoachTrustSection, VerifiedMark, useIsVerified } from '@/components/coach-trust';
 import { CopyButton } from '@/components/copy-button';
 import { FeaturedBadges } from '@/components/recognition';
@@ -57,7 +58,7 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
       <div className="follow-hero-body">
         <Avatar path={avatarPath} name={name} />
         <p className="eyebrow">{t(kind === 'host' ? 'follow.hostLabel' : 'follow.teamLabel')}</p>
-        <h1 className="follow-name">{name}{host && <HostSeal id={host.id} />}</h1>
+        <h1 className="follow-name">{name}{host && <HostSeal id={host.id} />}{host && <FoundingSeal id={host.id} />}</h1>
         <p className="follow-meta">{[host?.city, team ? t('follow.members', { count: team.members }) : null, t('follow.followers', { count: d.followers })].filter(Boolean).join(' · ')}</p>
         {team?.leader?.name && <p className="follow-meta">{t('follow.ledBy')} {team.leader.slug ? <Link to="/h/$slug" params={{ slug: team.leader.slug }}>{team.leader.name}</Link> : team.leader.name}</p>}
         {host?.bio && <p className="follow-bio">{host.bio}</p>}
