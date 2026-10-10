@@ -66,7 +66,7 @@ export function FoundingCommitmentsCard() {
 }
 
 type Coach = Awaited<ReturnType<typeof getFounding>>['coaches'][number];
-const blank = { email: '', full_name: '', language: 'en' as const, city: '', small_town: false, has_space: false, coach_type: 'independent' as const, audience: '', launch_date: null as string | null };
+const blank = { email: '', full_name: '', language: 'en' as 'en' | 'es', city: '', small_town: false, has_space: false, coach_type: 'independent' as 'distributor' | 'independent', audience: '', launch_date: null as string | null };
 
 export function FoundingAdmin() {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en'; const qc = useQueryClient();

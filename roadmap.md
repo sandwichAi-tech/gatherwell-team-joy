@@ -99,3 +99,4 @@
 ## U1 — Money
 - [x] Two plans (Free 7% capped at $99/month, Pro $99/month at 0%), plan_settings, fees-this-month, legacy subscribers kept
 - [x] U2: guest service fee (3% + $0.49) on paid tickets, coach can cover
+- [x] U3: founding coaches (admin screen, shared clock, free Pro then $49 locked, badge, Discover featuring, commitments)
