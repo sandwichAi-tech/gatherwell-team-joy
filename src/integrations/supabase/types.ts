@@ -1687,6 +1687,41 @@ export type Database = {
           },
         ]
       }
+      member_of_month: {
+        Row: {
+          awarded_by: string | null
+          created_at: string
+          month: string
+          note: string | null
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          awarded_by?: string | null
+          created_at?: string
+          month: string
+          note?: string | null
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          awarded_by?: string | null
+          created_at?: string
+          month?: string
+          note?: string | null
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_of_month_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       member_plans: {
         Row: {
           created_at: string
@@ -3271,6 +3306,7 @@ export type Database = {
           awarded_at: string
           awarded_by: string | null
           badge_id: string
+          featured: number | null
           id: string
           note: string | null
           seen_at: string | null
@@ -3281,6 +3317,7 @@ export type Database = {
           awarded_at?: string
           awarded_by?: string | null
           badge_id: string
+          featured?: number | null
           id?: string
           note?: string | null
           seen_at?: string | null
@@ -3291,6 +3328,7 @@ export type Database = {
           awarded_at?: string
           awarded_by?: string | null
           badge_id?: string
+          featured?: number | null
           id?: string
           note?: string | null
           seen_at?: string | null
@@ -3811,6 +3849,10 @@ export type Database = {
         Args: { _team: string; _user: string }
         Returns: undefined
       }
+      evaluate_milestones: {
+        Args: { _team: string; _user: string }
+        Returns: undefined
+      }
       event_going_count: { Args: { _event_id: string }; Returns: number }
       event_payload: { Args: { _event: string; _rsvp: string }; Returns: Json }
       event_price: { Args: { _id: string }; Returns: Json }
@@ -3820,6 +3862,22 @@ export type Database = {
       event_waiver_k: {
         Args: { _event: string; _token: string }
         Returns: Json
+      }
+      feature_badge: {
+        Args: { _id: string; _slot: number }
+        Returns: undefined
+      }
+      featured_badges: {
+        Args: { _user: string }
+        Returns: {
+          code: string
+          featured: number
+          icon: string
+          id: string
+          name_en: string
+          name_es: string
+          tier: string
+        }[]
       }
       follow_target: {
         Args: {
@@ -4003,6 +4061,10 @@ export type Database = {
       }
       my_welcome: { Args: never; Returns: Json }
       name_host_of_month: {
+        Args: { _note: string; _team: string; _user: string }
+        Returns: undefined
+      }
+      name_member_of_month: {
         Args: { _note: string; _team: string; _user: string }
         Returns: undefined
       }
