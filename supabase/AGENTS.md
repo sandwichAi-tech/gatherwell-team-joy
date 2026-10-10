@@ -28,3 +28,4 @@
 - Activity rows are written only by database triggers or backend code; signed-in clients have no insert grant.
 - Team wins come only from database triggers (member join + milestones, event publish, check-in, announcement, leadership change, sub-team creation); join_team_by_code no longer writes activity itself, to avoid duplicates.
 - Guests RSVP only through rsvp_event() / update_rsvp_by_code() / cancel_rsvp_by_code() and read the public page through get_public_event() (initials only, never contact details), so capacity, waitlist and the online link stay enforced server-side.
+- Host plan prices, fee percents and monthly fee caps live only in plan_settings (admin-editable, audited); every checkout takes its fee from platform_fee_cents(), which caps fees per host per calendar month (UTC), so no plan number is hard-coded.

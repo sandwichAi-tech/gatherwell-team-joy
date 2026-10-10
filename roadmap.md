@@ -95,3 +95,6 @@
 - [x] Part 3: retreats and trips
 - [x] Part 4: ethical access
 - [x] Part 5: who-it's-for messaging
+
+## U1 — Money
+- [x] Two plans (Free 7% capped at $99/month, Pro $99/month at 0%), plan_settings, fees-this-month, legacy subscribers kept
