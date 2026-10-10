@@ -171,7 +171,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (error || !data) { toast.error(rpcError(t, error)); return; }
     if (priceCents) await savePrice(data);
     if (teamReg.on) await saveTeamReg(data);
-    if (retreatOn && !(await saveRetreat(data))) { void navigate({ to: '/gathering/$id/edit' as never, params: { id: data } as never }).catch(() => {}); return; }
+    if (retreatOn && !(await saveRetreat(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
     await queryClient.invalidateQueries();
     if (publish) setDone({ id: data, visibility }); else { toast.success(t('gathering.draftSaved')); void navigate({ to: '/event/$id', params: { id: data } }); }
   };
