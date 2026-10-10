@@ -125,6 +125,16 @@ export function BadgeEarnedWatcher() {
   </ResponsiveSheet>;
 }
 
+// ---------- Featured badges (up to 3, chosen by the member) ----------
+export function FeaturedBadges({ userId }: { userId: string }) {
+  const { i18n } = useTranslation();
+  const { data = [] } = useQuery({ ...featuredBadgesQuery(userId), enabled: !!userId });
+  if (!data.length) return null;
+  const lang = i18n.resolvedLanguage;
+  return <div className="featured-badges" role="list">{data.map(b => <span role="listitem" key={b.id} className="featured-badge">
+    <Medallion badge={b} size={44} /><span>{badgeName(b, lang)}</span></span>)}</div>;
+}
+
 // ---------- Host of the Month ----------
 export function useHostOfMonthId(teamId?: string) {
   return useQuery({ ...hostOfMonthQuery(teamId ?? ''), enabled: !!teamId }).data?.user_id ?? null;
