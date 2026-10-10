@@ -134,6 +134,13 @@
       "when": 1791655778868,
       "tag": "0018_v3_retreats",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1791655812862,
+      "tag": "0019_public_event_retreat",
+      "breakpoints": true
     }
   ]
 }
