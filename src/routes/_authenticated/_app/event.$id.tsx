@@ -1,6 +1,7 @@
 import { readChatLinks } from '@/lib/chat-links';
 import { TextInvitePanel } from '@/components/text-invite';
 import { EventBadgePanel } from '@/components/recognition';
+import { EarlyAccessPanel } from '@/components/early-access';
 import { CopyButton } from '@/components/copy-button';
 import { OutboxSummary } from '@/components/notifications';
 import { useState } from 'react';
@@ -161,6 +162,7 @@ function EventDetailPage() {
       {manages && <RsvpSettingsPanel eventId={event.id} initial={{ questions: ((event as any).rsvp_questions ?? []), require_approval: !!(event as any).require_approval, visibility: event.visibility, invite_token: (event as any).invite_token ?? '', price_cents: (event as any).price_cents ?? null }} />}
       {isHost && <WaiverEventToggle eventId={event.id} teamId={event.team_id} value={!!(event as { requires_waiver?: boolean }).requires_waiver} />}
       {isHost && <MembersOnlyPicker table="events" id={event.id} teamId={event.team_id} />}
+      {isHost && event.status === 'published' && <EarlyAccessPanel eventId={event.id} hostId={event.host_id} />}
     </ResponsiveSheet>
     {manages && event.status !== 'draft' && <OutboxSummary eventId={id} />}
     <ResponsiveSheet open={sheet === 'cancel'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.cancelTitle')} description={t('gathering.cancelText')}>

@@ -89,7 +89,7 @@ export const testimonialsQuery = () => queryOptions({
 
 /** Spots-left threshold for the status chip. */
 export function spotsLeft(g: FeedGathering) {
-  if (!g.capacity) return null;
+  if (g.isSample || !g.capacity) return null; // only real capacity data
   const left = g.capacity - g.going;
   return left > 0 && left <= 5 ? left : null;
 }

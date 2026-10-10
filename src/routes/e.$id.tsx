@@ -119,7 +119,8 @@ function PublicEventBody() {
         <p className="tabular-nums">{t('guest.goingCount', { count: event.going })}{left != null && ` · ${full ? t('guest.full') : t('guest.spotsLeft', { count: left })}`}</p>
       </section>
 
-      {!cancelled && <>
+      {!cancelled && early && <EarlyAccessNotice access={early} />}
+      {!cancelled && (!early || early.has_access || event.my_code) && <>
         {event.my_code ? <div className="guest-actions"><p className="guest-label">{t('guest.alreadyIn')}</p><Button asChild className="guest-primary"><Link to="/r/$code" params={{ code: event.my_code }}>{t('guest.manage')}</Link></Button></div>
           : <div className="guest-actions">
             <Button className="guest-primary" onClick={() => setIntent('going')}>{full ? t('guest.joinWaitlist') : price ? t('billing.imInPrice', { amount: formatMoney(price.price_cents, lang) }) : t('guest.imIn')}</Button>
