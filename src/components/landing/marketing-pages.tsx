@@ -3,7 +3,8 @@ import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { GwIcon, type GwIconName } from '@/components/gw-icon';
 import { LandingFrame, StickyFindBar } from './landing-chrome';
-import { PLANS, LICENSES, formatMoney, formatStorage, type Limits } from '@/lib/billing';
+import { PLANS, PRO_FEATURES, LICENSES, formatMoney, formatStorage, planSettingsQuery } from '@/lib/billing';
+import { useQuery } from '@tanstack/react-query';
 
 const BENEFIT_ICONS: GwIconName[] = ['CalendarPlus', 'Link2', 'BellRing', 'QrCode', 'BookOpen', 'UsersRound'];
 const STEP_ICONS: GwIconName[] = ['CalendarPlus', 'Share2', 'QrCode', 'MessageCircle'];
@@ -18,33 +19,23 @@ function Faq({ kind }: { kind: 'hostFaq' | 'pricingFaq' }) {
 }
 export function PricingCards({ preview = false }: { preview?: boolean }) {
  const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
- const [period, setPeriod] = useState<'month' | 'year'>('month');
- const growth = PLANS.find(p => p.id === 'growth')!;
+ const { data: settings } = useQuery(planSettingsQuery);
  const license = LICENSES[0]!;
+ const fee = (id: 'free' | 'pro') => { const ps = settings?.[id]; if (!ps) return ''; return ps.monthly_cap !== null ? t('billing.feeCapped', { pct: ps.fee_percent, cap: formatMoney(ps.monthly_cap, lang) }) : t('billing.feePct', { pct: ps.fee_percent }); };
  return <div className="gw-pricing-content">
-  {!preview && <><div className="segmented gw-price-toggle" role="group" aria-label={t('billing.period')}>{(['month','year'] as const).map(p => <button type="button" key={p} aria-pressed={period===p} className={period===p ? 'selected' : ''} onClick={()=>setPeriod(p)}>{t(p==='month' ? 'billing.monthly' : 'billing.yearly')}</button>)}</div><p className="gw-fine gw-price-save">{period==='year' ? t('billing.annualSave') : t('marketing.usd')}</p></>}
   <div className="gw-public-plans">
-   {PLANS.map(plan => <article key={plan.id} className={`gw-public-plan ${plan.id==='growth' ? 'is-featured' : ''}`}>
-    <span className="gw-plan-tag">{plan.id==='growth' ? t('billing.popular') : t('billing.name_'+plan.id)}</span><h3>{t('billing.name_'+plan.id)}</h3>
-    <p className="gw-public-price"><strong>{formatMoney(plan[period], lang)}</strong>{plan.id!=='free' && <span>{t(period==='month' ? 'billing.perMonth' : 'billing.perYear')}</span>}</p>
-    <ul><li><GwIcon name="Check" size={20}/>{plan.limits.gatherings===null ? t('billing.fGatheringsUnlimited') : t('billing.fGatherings',{n:plan.limits.gatherings})}</li><li><GwIcon name="Check" size={20}/>{plan.limits.guests===null ? t('billing.fGuestsUnlimited') : t('billing.fGuests',{n:plan.limits.guests})}</li><li><GwIcon name="Check" size={20}/>{t('billing.fStorage',{size:formatStorage(plan.limits.storage_mb,lang)})}</li><li><GwIcon name="Check" size={20}/>{t('billing.fAssistant',{n:plan.limits.assistant.toLocaleString(lang)})}</li><li><GwIcon name="Check" size={20}/>{t('marketing.rows.fee')}: {plan.limits.fee_pct}%</li></ul>
-    <Link to="/login" search={{intent:'host'}} className={`gw-btn gw-btn-${plan.id==='growth' ? 'primary' : 'secondary'} gw-btn-block`}>{t('marketing.choose',{plan:t('billing.name_'+plan.id)})}</Link>
+   {PLANS.map(plan => <article key={plan.id} className={`gw-public-plan ${plan.id==='pro' ? 'is-featured' : ''}`}>
+    <span className="gw-plan-tag">{plan.id==='pro' ? t('billing.popular') : t('billing.name_'+plan.id)}</span><h3>{t('billing.name_'+plan.id)}</h3>
+    <p className="gw-public-price"><strong>{settings ? formatMoney(settings[plan.id].monthly_price, lang) : '\u00a0'}</strong><span>{t('billing.perMonth')}</span></p>
+    <p className="gw-plan-fee">{fee(plan.id)}</p>
+    <ul>{plan.id==='pro' ? <><li className="gw-plan-features-head">{t('billing.everythingFree')}</li>{PRO_FEATURES.map(f=><li key={f}><GwIcon name="Check" size={20}/>{t('billing.pro_'+f)}</li>)}</> : <><li><GwIcon name="Check" size={20}/>{t('billing.fGatherings',{n:plan.limits.gatherings})}</li><li><GwIcon name="Check" size={20}/>{t('billing.fGuests',{n:plan.limits.guests})}</li><li><GwIcon name="Check" size={20}/>{t('billing.fStorage',{size:formatStorage(plan.limits.storage_mb,lang)})}</li><li><GwIcon name="Check" size={20}/>{t('billing.fAssistant',{n:plan.limits.assistant.toLocaleString(lang)})}</li><li><GwIcon name="Check" size={20}/>{t('marketing.offersIncluded')}</li></>}</ul>
+    <Link to="/login" search={{intent:'host'}} className={`gw-btn gw-btn-${plan.id==='pro' ? 'primary' : 'secondary'} gw-btn-block`}>{t('marketing.choose',{plan:t('billing.name_'+plan.id)})}</Link>
    </article>)}
    <article className="gw-public-plan"><span className="gw-plan-tag">{t('marketing.leaderLabel')}</span><h3>{t('billing.name_team')}</h3><p className="gw-public-price"><strong>{t('marketing.from',{price:formatMoney(license.cents,lang)})}</strong><span>{t('billing.perMonth')}</span></p><ul><li><GwIcon name="Check" size={20}/>{t('billing.seatsGrowth',{n:license.seats})}</li><li><GwIcon name="Check" size={20}/>{t('marketing.leaderFeatures.0')}</li><li><GwIcon name="Check" size={20}/>{t('marketing.leaderFeatures.1')}</li><li><GwIcon name="Check" size={20}/>{t('marketing.leaderFeatures.2')}</li></ul><p className="gw-fine">{t('marketing.licenseDetail',{small:formatMoney(license.cents,lang),large:formatMoney(LICENSES[1]!.cents,lang)})}</p><Link to="/login" search={{intent:'host'}} className="gw-btn gw-btn-secondary gw-btn-block">{t('marketing.hostCta')}</Link></article>
   </div>
-  {!preview && <><p className="gw-fine">{t('marketing.licenseNote')}</p><Comparison limits={[...PLANS.map(p=>p.limits),growth.limits]} /><p className="gw-fine">{t('marketing.feeNote')}</p><p className="gw-fine">{t('marketing.serviceNote')}</p></>}
+  <p className="gw-fine">{t('billing.cardNote')}</p>
+  {!preview && <><p className="gw-fine">{t('marketing.licenseNote')}</p><p className="gw-fine">{t('marketing.serviceNote')}</p></>}
  </div>;
-}
-function Comparison({ limits }: { limits: Limits[] }) {
- const {t,i18n}=useTranslation();const lang=i18n.resolvedLanguage??'en';
- const rows=['gatherings','guests','storage','assistant','fee','offers','team'] as const;
- const value=(key:typeof rows[number],lim:Limits,team:boolean)=>{
-  if(key==='offers')return t('marketing.offersIncluded');
-  if(key==='team')return t(team?'marketing.teamLicense':'marketing.teamCore');
-  const v=key==='storage'?formatStorage(lim.storage_mb,lang):key==='fee'?`${lim.fee_pct}%`:lim[key]===null?t('marketing.unlimited'):lim[key]!.toLocaleString(lang);
-  return team&&key!=='fee'?t('marketing.perMember',{value:v}):v;
- };
- return <section className="gw-comparison"><h2 className="gw-display gw-h2">{t('marketing.compareTitle')}</h2><div className="gw-comparison-scroll" tabIndex={0} role="region" aria-label={t('marketing.comparisonLabel')}><table><caption className="sr-only">{t('marketing.comparisonLabel')}</caption><thead><tr><th scope="col">{t('marketing.comparisonLabel')}</th>{['free','growth','pro','team'].map(p=><th key={p} scope="col">{t('billing.name_'+p)}</th>)}</tr></thead><tbody>{rows.map(row=><tr key={row}><th scope="row">{t('marketing.rows.'+row)}</th>{limits.map((lim,i)=><td key={i}>{value(row,lim,i===3)}</td>)}</tr>)}</tbody></table></div></section>;
 }
 export function HostsPage() {
  const {t}=useTranslation();const benefits=t('marketing.benefits',{returnObjects:true}) as {title:string;body:string;demo:string}[];const steps=t('marketing.hostSteps',{returnObjects:true}) as {title:string;body:string}[];
