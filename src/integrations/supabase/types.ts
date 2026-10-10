@@ -2614,8 +2614,10 @@ export type Database = {
           cover_url: string | null
           created_at: string
           full_name: string | null
+          host_languages: string[]
           id: string
           language: string
+          live_at: string | null
           notify_prefs: Json
           onboarded: boolean
           phone: string | null
@@ -2631,8 +2633,10 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           full_name?: string | null
+          host_languages?: string[]
           id: string
           language?: string
+          live_at?: string | null
           notify_prefs?: Json
           onboarded?: boolean
           phone?: string | null
@@ -2648,8 +2652,10 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           full_name?: string | null
+          host_languages?: string[]
           id?: string
           language?: string
+          live_at?: string | null
           notify_prefs?: Json
           onboarded?: boolean
           phone?: string | null
@@ -4191,6 +4197,7 @@ export type Database = {
       admin_reports: { Args: { _status: string }; Returns: Json }
       admin_team_detail: { Args: { _id: string }; Returns: Json }
       admin_teams: { Args: { _q: string }; Returns: Json }
+      admin_time_to_live: { Args: { _since: string }; Returns: Json }
       admin_user_detail: { Args: { _id: string }; Returns: Json }
       admin_users: { Args: { _q: string }; Returns: Json }
       ai_usage_status: { Args: never; Returns: Json }
