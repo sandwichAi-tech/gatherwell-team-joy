@@ -196,14 +196,19 @@ export type Database = {
       }
       badges: {
         Row: {
+          available_from: string | null
+          available_until: string | null
           code: string
           created_at: string
           created_by: string | null
           description_en: string | null
           description_es: string | null
+          event_id: string | null
+          founding_limit: number | null
           icon: string
           id: string
           is_custom: boolean
+          kind: string
           name_en: string
           name_es: string
           sort_order: number
@@ -211,14 +216,19 @@ export type Database = {
           tier: string
         }
         Insert: {
+          available_from?: string | null
+          available_until?: string | null
           code?: string
           created_at?: string
           created_by?: string | null
           description_en?: string | null
           description_es?: string | null
+          event_id?: string | null
+          founding_limit?: number | null
           icon?: string
           id?: string
           is_custom?: boolean
+          kind?: string
           name_en: string
           name_es: string
           sort_order?: number
@@ -226,14 +236,19 @@ export type Database = {
           tier?: string
         }
         Update: {
+          available_from?: string | null
+          available_until?: string | null
           code?: string
           created_at?: string
           created_by?: string | null
           description_en?: string | null
           description_es?: string | null
+          event_id?: string | null
+          founding_limit?: number | null
           icon?: string
           id?: string
           is_custom?: boolean
+          kind?: string
           name_en?: string
           name_es?: string
           sort_order?: number
@@ -241,6 +256,13 @@ export type Database = {
           tier?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "badges_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "badges_team_id_fkey"
             columns: ["team_id"]
@@ -3691,6 +3713,13 @@ export type Database = {
         Args: { _badge: string; _note: string; _team: string; _user: string }
         Returns: undefined
       }
+      badge_holder_counts: {
+        Args: { _ids: string[] }
+        Returns: {
+          badge_id: string
+          holders: number
+        }[]
+      }
       build_member_plan: {
         Args: { _team: string; _user: string }
         Returns: undefined
@@ -3788,6 +3817,16 @@ export type Database = {
       compute_playbook: { Args: never; Returns: number }
       copy_starter_template: {
         Args: { _team: string; _template: string }
+        Returns: string
+      }
+      create_event_badge: {
+        Args: {
+          _event: string
+          _icon: string
+          _name_en: string
+          _name_es: string
+          _tier: string
+        }
         Returns: string
       }
       create_gathering: {
