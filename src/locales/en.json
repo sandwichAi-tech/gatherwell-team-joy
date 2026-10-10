@@ -1,5 +1,7 @@
 {
   "brand": "Gatherwell",
+  "feature_name_singular": "Circle",
+  "feature_name_plural": "Circles",
   "nav": {
     "home": "Home",
     "events": "Gatherings",
