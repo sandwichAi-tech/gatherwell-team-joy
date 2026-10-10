@@ -55,6 +55,29 @@ export const summaryQuery = (teamId: string, userId: string) => queryOptions({
 
 export const monthStart = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01`; };
 
+export type FeaturedBadge = { id: string; code: string; name_en: string; name_es: string; icon: string; tier: Tier; featured: number };
+/** Up to 3 badges a person chose to feature. Public by design (names and icons only). */
+export const featuredBadgesQuery = (userId: string) => queryOptions({
+  queryKey: ['featured-badges', userId],
+  queryFn: async (): Promise<FeaturedBadge[]> => {
+    const { data, error } = await supabase.rpc('featured_badges', { _user: userId });
+    if (error) throw error;
+    return (data ?? []) as FeaturedBadge[];
+  },
+  staleTime: 60_000,
+});
+
+export const memberOfMonthQuery = (teamId: string) => queryOptions({
+  queryKey: [...recognitionKey(teamId), 'member-of-month', monthStart()],
+  queryFn: async () => {
+    const { data, error } = await supabase.from('member_of_month').select('user_id, month, note').eq('team_id', teamId).eq('month', monthStart()).maybeSingle();
+    if (error) throw error;
+    if (!data) return null;
+    const { data: p } = await supabase.from('profiles').select('full_name, avatar_url').eq('id', data.user_id).maybeSingle();
+    return { ...data, name: p?.full_name ?? null, avatar: p?.avatar_url ?? null };
+  },
+});
+
 export const hostOfMonthQuery = (teamId: string) => queryOptions({
   queryKey: [...recognitionKey(teamId), 'host-of-month', monthStart()],
   queryFn: async () => {
