@@ -1688,3 +1688,10 @@ a.gw-cat-chip:hover{background:#fff}
 .belong-expect ul { margin: 8px 0 0; padding-inline-start: 20px; display: grid; gap: 4px; }
 .belong-regulars li { display: flex; align-items: center; gap: 8px; min-height: 44px; }
 .belong-regulars .section-title { display: flex; align-items: center; gap: 8px; }
+
+/* V2 — featured badges + member of the month */
+.featured-badges { display: flex; flex-wrap: wrap; gap: 10px; margin: 4px 0 12px; }
+.featured-badge { display: inline-flex; align-items: center; gap: 10px; padding: 6px 14px 6px 6px; border-radius: 999px; background: var(--card, #fff); border: 1px solid color-mix(in srgb, var(--ink, #2F2340) 8%, transparent); box-shadow: 0 2px 8px rgba(47,35,64,.06); font-weight: 600; font-size: 14px; }
+.badge-tile-actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.badge-feature.is-featured { color: var(--mango, #FF8A3D); font-weight: 700; }
+.member-month-card .eyebrow { color: var(--mango, #FF8A3D); }
