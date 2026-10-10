@@ -25,6 +25,7 @@ import { Route as EIdRouteImport } from './routes/e.$id'
 import { Route as HSlugRouteImport } from './routes/h.$slug'
 import { Route as ICodeRouteImport } from './routes/i.$code'
 import { Route as JoinCodeRouteImport } from './routes/join.$code'
+import { Route as LSlugRouteImport } from './routes/l.$slug'
 import { Route as LegalDocRouteImport } from './routes/legal.$doc'
 import { Route as RCodeRouteImport } from './routes/r.$code'
 import { Route as TSlugRouteImport } from './routes/t.$slug'
@@ -34,6 +35,7 @@ import { Route as AuthenticatedAppEventsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAppFollowupsRouteImport } from './routes/_authenticated/_app/followups'
 import { Route as AuthenticatedAppHomeRouteImport } from './routes/_authenticated/_app/home'
 import { Route as AuthenticatedAppLearnRouteImport } from './routes/_authenticated/_app/learn'
+import { Route as AuthenticatedAppLocationsRouteImport } from './routes/_authenticated/_app/locations'
 import { Route as AuthenticatedAppMeRouteImport } from './routes/_authenticated/_app/me'
 import { Route as AuthenticatedAppNetworkRouteImport } from './routes/_authenticated/_app/network'
 import { Route as AuthenticatedAppOffersRouteImport } from './routes/_authenticated/_app/offers'
@@ -145,6 +147,11 @@ const JoinCodeRoute = JoinCodeRouteImport.update({
   path: '/join/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LSlugRoute = LSlugRouteImport.update({
+  id: '/l/$slug',
+  path: '/l/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LegalDocRoute = LegalDocRouteImport.update({
   id: '/legal/$doc',
   path: '/legal/$doc',
@@ -192,6 +199,12 @@ const AuthenticatedAppLearnRoute = AuthenticatedAppLearnRouteImport.update({
   path: '/learn',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppLocationsRoute =
+  AuthenticatedAppLocationsRouteImport.update({
+    id: '/locations',
+    path: '/locations',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppMeRoute = AuthenticatedAppMeRouteImport.update({
   id: '/me',
   path: '/me',
@@ -383,6 +396,7 @@ export interface FileRoutesByFullPath {
   '/h/$slug': typeof HSlugRoute
   '/i/$code': typeof ICodeRoute
   '/join/$code': typeof JoinCodeRoute
+  '/l/$slug': typeof LSlugRoute
   '/legal/$doc': typeof LegalDocRoute
   '/r/$code': typeof RCodeRoute
   '/t/$slug': typeof TSlugRoute
@@ -392,6 +406,7 @@ export interface FileRoutesByFullPath {
   '/followups': typeof AuthenticatedAppFollowupsRoute
   '/home': typeof AuthenticatedAppHomeRoute
   '/learn': typeof AuthenticatedAppLearnRoute
+  '/locations': typeof AuthenticatedAppLocationsRoute
   '/me': typeof AuthenticatedAppMeRoute
   '/network': typeof AuthenticatedAppNetworkRoute
   '/offers': typeof AuthenticatedAppOffersRoute
@@ -440,6 +455,7 @@ export interface FileRoutesByTo {
   '/h/$slug': typeof HSlugRoute
   '/i/$code': typeof ICodeRoute
   '/join/$code': typeof JoinCodeRoute
+  '/l/$slug': typeof LSlugRoute
   '/legal/$doc': typeof LegalDocRoute
   '/r/$code': typeof RCodeRoute
   '/t/$slug': typeof TSlugRoute
@@ -449,6 +465,7 @@ export interface FileRoutesByTo {
   '/followups': typeof AuthenticatedAppFollowupsRoute
   '/home': typeof AuthenticatedAppHomeRoute
   '/learn': typeof AuthenticatedAppLearnRoute
+  '/locations': typeof AuthenticatedAppLocationsRoute
   '/me': typeof AuthenticatedAppMeRoute
   '/network': typeof AuthenticatedAppNetworkRoute
   '/offers': typeof AuthenticatedAppOffersRoute
@@ -500,6 +517,7 @@ export interface FileRoutesById {
   '/h/$slug': typeof HSlugRoute
   '/i/$code': typeof ICodeRoute
   '/join/$code': typeof JoinCodeRoute
+  '/l/$slug': typeof LSlugRoute
   '/legal/$doc': typeof LegalDocRoute
   '/r/$code': typeof RCodeRoute
   '/t/$slug': typeof TSlugRoute
@@ -509,6 +527,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/followups': typeof AuthenticatedAppFollowupsRoute
   '/_authenticated/_app/home': typeof AuthenticatedAppHomeRoute
   '/_authenticated/_app/learn': typeof AuthenticatedAppLearnRoute
+  '/_authenticated/_app/locations': typeof AuthenticatedAppLocationsRoute
   '/_authenticated/_app/me': typeof AuthenticatedAppMeRoute
   '/_authenticated/_app/network': typeof AuthenticatedAppNetworkRoute
   '/_authenticated/_app/offers': typeof AuthenticatedAppOffersRoute
@@ -559,6 +578,7 @@ export interface FileRouteTypes {
     | '/h/$slug'
     | '/i/$code'
     | '/join/$code'
+    | '/l/$slug'
     | '/legal/$doc'
     | '/r/$code'
     | '/t/$slug'
@@ -568,6 +588,7 @@ export interface FileRouteTypes {
     | '/followups'
     | '/home'
     | '/learn'
+    | '/locations'
     | '/me'
     | '/network'
     | '/offers'
@@ -616,6 +637,7 @@ export interface FileRouteTypes {
     | '/h/$slug'
     | '/i/$code'
     | '/join/$code'
+    | '/l/$slug'
     | '/legal/$doc'
     | '/r/$code'
     | '/t/$slug'
@@ -625,6 +647,7 @@ export interface FileRouteTypes {
     | '/followups'
     | '/home'
     | '/learn'
+    | '/locations'
     | '/me'
     | '/network'
     | '/offers'
@@ -675,6 +698,7 @@ export interface FileRouteTypes {
     | '/h/$slug'
     | '/i/$code'
     | '/join/$code'
+    | '/l/$slug'
     | '/legal/$doc'
     | '/r/$code'
     | '/t/$slug'
@@ -684,6 +708,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/followups'
     | '/_authenticated/_app/home'
     | '/_authenticated/_app/learn'
+    | '/_authenticated/_app/locations'
     | '/_authenticated/_app/me'
     | '/_authenticated/_app/network'
     | '/_authenticated/_app/offers'
@@ -733,6 +758,7 @@ export interface RootRouteChildren {
   HSlugRoute: typeof HSlugRoute
   ICodeRoute: typeof ICodeRoute
   JoinCodeRoute: typeof JoinCodeRoute
+  LSlugRoute: typeof LSlugRoute
   LegalDocRoute: typeof LegalDocRoute
   RCodeRoute: typeof RCodeRoute
   TSlugRoute: typeof TSlugRoute
@@ -860,6 +886,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JoinCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/l/$slug': {
+      id: '/l/$slug'
+      path: '/l/$slug'
+      fullPath: '/l/$slug'
+      preLoaderRoute: typeof LSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/legal/$doc': {
       id: '/legal/$doc'
       path: '/legal/$doc'
@@ -921,6 +954,13 @@ declare module '@tanstack/react-router' {
       path: '/learn'
       fullPath: '/learn'
       preLoaderRoute: typeof AuthenticatedAppLearnRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/locations': {
+      id: '/_authenticated/_app/locations'
+      path: '/locations'
+      fullPath: '/locations'
+      preLoaderRoute: typeof AuthenticatedAppLocationsRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
     '/_authenticated/_app/me': {
@@ -1156,6 +1196,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppFollowupsRoute: typeof AuthenticatedAppFollowupsRoute
   AuthenticatedAppHomeRoute: typeof AuthenticatedAppHomeRoute
   AuthenticatedAppLearnRoute: typeof AuthenticatedAppLearnRoute
+  AuthenticatedAppLocationsRoute: typeof AuthenticatedAppLocationsRoute
   AuthenticatedAppMeRoute: typeof AuthenticatedAppMeRoute
   AuthenticatedAppNetworkRoute: typeof AuthenticatedAppNetworkRoute
   AuthenticatedAppOffersRoute: typeof AuthenticatedAppOffersRoute
@@ -1189,6 +1230,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppFollowupsRoute: AuthenticatedAppFollowupsRoute,
   AuthenticatedAppHomeRoute: AuthenticatedAppHomeRoute,
   AuthenticatedAppLearnRoute: AuthenticatedAppLearnRoute,
+  AuthenticatedAppLocationsRoute: AuthenticatedAppLocationsRoute,
   AuthenticatedAppMeRoute: AuthenticatedAppMeRoute,
   AuthenticatedAppNetworkRoute: AuthenticatedAppNetworkRoute,
   AuthenticatedAppOffersRoute: AuthenticatedAppOffersRoute,
@@ -1249,6 +1291,7 @@ const rootRouteChildren: RootRouteChildren = {
   HSlugRoute: HSlugRoute,
   ICodeRoute: ICodeRoute,
   JoinCodeRoute: JoinCodeRoute,
+  LSlugRoute: LSlugRoute,
   LegalDocRoute: LegalDocRoute,
   RCodeRoute: RCodeRoute,
   TSlugRoute: TSlugRoute,

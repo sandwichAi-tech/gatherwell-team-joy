@@ -11,6 +11,7 @@ export const Route = createFileRoute('/discover')({
     ...(isCategory(s['cat']) ? { cat: s['cat'] } : {}),
     ...(s['when'] === 'today' || s['when'] === 'weekend' || s['when'] === 'week' ? { when: s['when'] } : {}),
     ...(s['near'] === 1 || s['near'] === '1' ? { near: 1 as const } : {}),
+    ...(s['space'] === 1 || s['space'] === '1' ? { space: 1 as const } : {}),
   }),
   head: ({ loaderData }) => {
     const title = i18n.t('landing.meta.discoverTitle');

@@ -1890,3 +1890,24 @@ a.gw-cat-chip:hover{background:#fff}
 .roi-earned{background:var(--primary)}.roi-fees{background:var(--muted-foreground)}
 .roi-legend{display:flex;gap:16px;font-size:.8125rem;color:var(--muted-foreground)}.roi-legend span{display:inline-flex;align-items:center;gap:6px}.roi-dot{width:8px;height:8px;border-radius:999px;display:inline-block}
 .roi-nudge{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0;padding:12px;border-radius:12px;background:var(--accent);color:var(--accent-foreground);font-size:.9375rem}.roi-link{font-weight:600;text-decoration:underline;min-height:44px;display:inline-flex;align-items:center}
+.loc-row{display:flex;align-items:center;gap:12px}.loc-row-text{flex:1;min-width:0;display:flex;flex-direction:column}.loc-row-text small{color:var(--muted-foreground)}.loc-row-actions{display:flex;gap:8px}
+.loc-form{display:flex;flex-direction:column;gap:16px}.loc-modes{display:grid;gap:8px;border:0;padding:0;margin:0}
+.loc-mode{display:flex;gap:12px;align-items:flex-start;text-align:left;padding:12px;border-radius:16px;border:1px solid var(--border);background:var(--card);min-height:48px}.loc-mode span{display:flex;flex-direction:column;gap:4px}.loc-mode small{color:var(--muted-foreground)}.loc-mode.selected{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary)}
+.loc-photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.loc-photo,.loc-photo-add{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--muted)}.loc-photo img{width:100%;height:100%;object-fit:cover}
+.loc-photo button{position:absolute;top:4px;right:4px;width:32px;height:32px;border-radius:999px;background:var(--background);display:grid;place-items:center}
+.loc-photo-add{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;font-size:.8125rem;border:1px dashed var(--border)}
+.loc-slot{display:grid;grid-template-columns:1fr 6.5rem 44px;gap:8px;margin-bottom:8px}.loc-slot>input[aria-label]:nth-of-type(2){grid-column:1/3}.loc-slot select{min-height:44px;border-radius:10px;border:1px solid var(--input);background:var(--background);padding:0 8px}
+.loc-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.loc-link-row{display:flex;gap:12px;align-items:center;min-height:48px}.loc-link-row input{width:20px;height:20px}.loc-link-row span{display:flex;flex-direction:column}.loc-link-row small{color:var(--muted-foreground)}
+.loc-delete{color:var(--destructive);align-self:flex-start}
+.loc-hero-img{object-fit:cover}.loc-hero-fallback{background:var(--gradient-brand, var(--primary))}
+.loc-gallery{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory}.loc-gallery img{width:72%;max-width:320px;aspect-ratio:16/9;object-fit:cover;border-radius:16px;scroll-snap-align:start;flex:none}
+.loc-note{display:flex;gap:8px;align-items:flex-start;margin:0;line-height:1.5}.loc-facts{display:flex;flex-direction:column;gap:12px}.loc-chips{display:flex;flex-wrap:wrap;gap:8px}.loc-chips .chip{display:inline-flex;gap:6px;align-items:center}
+.loc-schedule{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:12px}.loc-schedule li{display:grid;grid-template-columns:7rem 1fr;gap:8px}.loc-schedule li span{display:flex;flex-direction:column}.loc-schedule small{color:var(--muted-foreground)}
+.loc-coaches{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-wrap:wrap;gap:16px}.loc-coaches li{display:flex;align-items:center;gap:8px;min-height:44px}
+.loc-coach-avatar{width:40px;height:40px;border-radius:999px;object-fit:cover}.loc-coach-avatar.is-initials{display:grid;place-items:center;background:var(--accent);color:var(--accent-foreground);font-weight:700;font-size:.875rem}
+.loc-page .map-placeholder{flex-direction:column;gap:4px;min-height:160px;margin:8px 0 12px;text-align:center}.loc-page .map-placeholder small{color:var(--muted-foreground)}
+.loc-fine{text-align:center;padding:0 16px}
+.loc-card-list{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}.loc-card{display:flex;align-items:center;gap:12px;padding:16px;min-height:72px}.loc-card-text{flex:1;min-width:0;display:flex;flex-direction:column}.loc-card-text small{color:var(--muted-foreground)}
+.gw-space-chip{min-height:44px;padding:0 16px}.gw-space-chip.selected{background:var(--primary);color:var(--primary-foreground)}
+.loc-page .follow-hero-body{margin-top:0;padding-top:20px}
