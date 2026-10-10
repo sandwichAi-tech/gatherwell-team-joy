@@ -12,6 +12,7 @@ import { Switch } from '@/components/ui/switch';
 import { confirmAction } from '@/components/confirm-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FoundingAdmin } from '@/components/founding';
+import { Day60Admin } from '@/components/day60';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { GwFeatureTile, GwIcon, type GwIconProps } from '@/components/gw-icon';
 import { formatMoney, planSettingsQuery, type PlanSetting } from '@/lib/billing';
@@ -20,9 +21,9 @@ import { updatePlanSettings,
   listAdminTeams, listAdminUsers, listReports, moderateReport, reorderLibrary, saveLibraryItem, sendBroadcast, setFlag, setLibraryPublished, type AdminReport, listRecentTexts, simulateSmsReply, listVerifications, decideVerification, type AdminVerification,
 } from '@/lib/admin.functions';
 
-export const ADMIN_TABS = ['overview', 'teams', 'users', 'moderation', 'verify', 'library', 'broadcasts', 'founding', 'settings', 'audit'] as const;
+export const ADMIN_TABS = ['overview', 'teams', 'users', 'moderation', 'verify', 'library', 'broadcasts', 'founding', 'day60', 'settings', 'audit'] as const;
 export type AdminTab = (typeof ADMIN_TABS)[number];
-const TAB_ICONS: Record<AdminTab, GwIconProps['name']> = { overview: 'BarChart3', teams: 'UsersRound', users: 'UserRound', moderation: 'Flag', verify: 'BadgeCheck', library: 'BookOpen', broadcasts: 'Megaphone', founding: 'Medal', settings: 'Settings2', audit: 'FileText' };
+const TAB_ICONS: Record<AdminTab, GwIconProps['name']> = { overview: 'BarChart3', teams: 'UsersRound', users: 'UserRound', moderation: 'Flag', verify: 'BadgeCheck', library: 'BookOpen', broadcasts: 'Megaphone', founding: 'Medal', day60: 'Target', settings: 'Settings2', audit: 'FileText' };
 
 const useLang = () => { const { i18n } = useTranslation(); return i18n.resolvedLanguage === 'es' ? 'es' : 'en'; };
 const fmtDate = (iso: string | null | undefined, lang: string, time = false) => iso ? new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', time ? { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' } : { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(iso)) : '—';
@@ -46,6 +47,7 @@ export function AdminConsole({ tab }: { tab: AdminTab }) {
     {tab === 'library' && <Library />}
     {tab === 'broadcasts' && <Broadcasts />}
     {tab === 'founding' && <FoundingAdmin />}
+    {tab === 'day60' && <Day60Admin />}
     {tab === 'settings' && <Settings />}
     {tab === 'audit' && <Audit />}
   </div>;

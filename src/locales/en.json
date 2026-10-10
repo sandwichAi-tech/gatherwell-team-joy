@@ -2074,7 +2074,8 @@
       "settings": "Settings",
       "audit": "Audit log",
       "verify": "Verify",
-      "founding": "Founding coaches"
+      "founding": "Founding coaches",
+      "day60": "Day 60"
     },
     "period": {
       "week": "This week",
@@ -3136,7 +3137,7 @@
         "a": "Yes. Manage your subscription in Me → Plan. Cancel before your next renewal; your current plan stays active through the paid period."
       }
     ],
-"finalTitle": "Your next gathering starts here.",
+    "finalTitle": "Your next gathering starts here.",
     "finalBody": "Make it easy to show up. Give people a reason to come back.",
     "studios": {
       "meta": "For studios · Gatherwell",
@@ -3146,9 +3147,18 @@
       "sub": "Keep the tools you already use. Add a community your members check in with every week — in English and Spanish.",
       "fromHosts": "Run a studio or small space? See how Gatherwell fits",
       "cards": [
-        { "title": "Keep your booking system", "body": "Link the booking software you already use with a button on your page. Nothing to migrate and nothing changes at the front desk." },
-        { "title": "Fill your classes from the community", "body": "Circles, special gatherings and online content keep people connected between classes, so regulars show up more often." },
-        { "title": "Bilingual from day one", "body": "Every page, invitation and reminder works in English and Spanish, so your whole community feels at home." }
+        {
+          "title": "Keep your booking system",
+          "body": "Link the booking software you already use with a button on your page. Nothing to migrate and nothing changes at the front desk."
+        },
+        {
+          "title": "Fill your classes from the community",
+          "body": "Circles, special gatherings and online content keep people connected between classes, so regulars show up more often."
+        },
+        {
+          "title": "Bilingual from day one",
+          "body": "Every page, invitation and reminder works in English and Spanish, so your whole community feels at home."
+        }
       ],
       "simpleLabel": "Simple space mode",
       "simpleTitle": "Have a small space?",
@@ -3930,5 +3940,52 @@
     "draftNote": "Your paid gathering is saved as a draft. It goes live with its price as soon as payouts are connected. You can share the link once it's live.",
     "liveDraft": "Nice work, {{name}}. Your profile is ready and your paid gathering will go live as soon as payouts are connected.",
     "draftLabel": "Waiting for payouts"
+  },
+  "day60": {
+    "day": "Day {{n}} of 60",
+    "sample": "Sample",
+    "sampleHint": "Set a founding start date under Founding coaches to see live numbers.",
+    "met": "{{n}} of 10 targets met",
+    "rule": "7+ go · 4–6 adjust · 3 or fewer rethink",
+    "metLabel": "Met",
+    "notMet": "Not met yet",
+    "error": "The scoreboard didn’t load.",
+    "verdict": {
+      "go": "Go",
+      "adjust": "Adjust",
+      "rethink": "Rethink"
+    },
+    "t": {
+      "live": "5 of 6 founding coaches live, median time to live under 60 minutes",
+      "gatherings": "Every live coach holds 4+ gatherings (2 a month)",
+      "paying": "150+ paying members across all Circles",
+      "firstPaid": "5 of 6 coaches get a first paying member within 14 days",
+      "retention": "80%+ of month-one members still paying in month two",
+      "inPerson": "40%+ of paying members attend an in-person gathering",
+      "spanish": "2 Spanish Circles with 15+ paying members each",
+      "smallTown": "Both smaller-town coaches with 10+ paying members",
+      "checkin": "60%+ of RSVPs check in",
+      "stay": "4 of 6 coaches would stay at the founding rate"
+    },
+    "p": {
+      "live": "{{n}} live · median {{min}} min",
+      "gatherings": "{{n}} of {{of}} live coaches at 4+",
+      "paying": "{{n}} paying members",
+      "firstPaid": "{{n}} coaches within 14 days",
+      "retention": "{{n}}% of {{of}} month-one members",
+      "inPerson": "{{n}}% attended in person",
+      "spanish": "{{n}} Spanish Circles at 15+",
+      "smallTown": "{{n}} of {{of}} smaller-town coaches at 10+",
+      "checkin": "{{n}}% checked in",
+      "stay": "{{n}} said yes"
+    },
+    "stayTitle": "Would they stay at the founding rate?",
+    "stayHint": "Ask each coach and record their answer.",
+    "stayNeedsStart": "Available once a founding start date is set.",
+    "stay": {
+      "true": "Yes",
+      "false": "No",
+      "null": "Not asked"
+    }
   }
 }

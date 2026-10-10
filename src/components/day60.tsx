@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { useTranslation } from 'react-i18next';
 import { GwIcon } from '@/components/gw-icon';
-import { ListSkeleton } from '@/components/skeletons';
+import { ListSkeleton } from '@/components/launch-states';
 import { Button } from '@/components/ui/button';
 import { getDay60, setFoundingStay } from '@/lib/admin.functions';
 import { DAY60_SAMPLE, dayCount, evaluateDay60, verdict } from '@/lib/day60';
@@ -12,7 +12,7 @@ export function Day60Admin() {
   const load = useServerFn(getDay60); const stay = useServerFn(setFoundingStay);
   const { data, isLoading, isError, refetch } = useQuery({ queryKey: ['admin', 'day60'], queryFn: () => load() });
   if (isLoading) return <ListSkeleton />;
-  if (isError || !data) return <section className="panel empty-panel"><p className="muted-copy">{t('day60.error')}</p><Button variant="secondary" onClick={() => void refetch()}>{t('common.retry', 'Retry')}</Button></section>;
+  if (isError || !data) return <section className="panel empty-panel"><p className="muted-copy">{t('day60.error')}</p><Button variant="secondary" onClick={() => void refetch()}>{t('error.retry')}</Button></section>;
   const sample = !data.start_date; const raw = sample ? DAY60_SAMPLE : data;
   const targets = evaluateDay60(raw); const met = targets.filter(x => x.met).length; const v = verdict(met);
   const day = sample ? 23 : dayCount(data.start_date!);
