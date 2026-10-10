@@ -1866,3 +1866,4 @@ a.gw-cat-chip:hover{background:#fff}
 .member-promises li { display: flex; gap: 8px; align-items: center; }
 .member-promises svg { width: 16px; height: 16px; color: var(--primary); }
 .pause-select { width: auto; min-height: 44px; }
+.gw-landing .gw-who-grid{list-style:none;padding:0}.gw-landing .gw-who-grid .gw-benefit-card>p{margin-bottom:0}
