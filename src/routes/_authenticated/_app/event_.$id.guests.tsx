@@ -15,6 +15,8 @@ import { useRsvpChanges } from '@/components/event-live';
 import { supabase } from '@/integrations/supabase/client';
 import { initialsOf } from '@/lib/account';
 import { gatherwellHead } from '@/lib/gatherwell-head';
+import { BelongingPrompt, BelongingTags, BuddySheet, SmallGroupsSheet, useBelonging } from '@/components/belonging';
+import { HandHeart, Layers } from '@/components/icons';
 
 export const Route = createFileRoute('/_authenticated/_app/event_/$id/guests')({ head: () => gatherwellHead('events'), component: GuestListPage });
 
@@ -28,7 +30,7 @@ function GuestListPage() {
   const { data: rows = [], isLoading, error } = useQuery({
     queryKey: ['event', id, 'guest-list'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('rsvps').select('id,user_id,guest_name,guest_phone,guest_email,plus_ones,status,sms_opt_in,email_opt_in,created_at,checked_in_at,group_id,group_name').eq('event_id', id).order('created_at');
+      const { data, error } = await supabase.from('rsvps').select('id,user_id,guest_name,guest_phone,guest_email,plus_ones,status,sms_opt_in,email_opt_in,created_at,checked_in_at,group_id,group_name,wants_buddy,buddy_rsvp_id,small_group').eq('event_id', id).order('created_at');
       if (error) throw error; return data ?? [];
     },
   });
@@ -48,6 +50,8 @@ function GuestListPage() {
     if (error) { toast.error(t('profile.saveError')); return; }
     toast.success(t(ok ? (st === 'waitlist' ? 'rsvpq.approvedWaitlist' : 'rsvpq.approved') : 'rsvpq.declined')); await refresh();
   };
+  const { data: belong = new Map() } = useBelonging(id); const [buddyFor, setBuddyFor] = useState<string | null>(null); const [groupsOpen, setGroupsOpen] = useState(false);
+  const active = rows.filter(r => ['going', 'maybe', 'waitlist'].includes(r.status));
   useRsvpChanges(id, () => void queryClient.invalidateQueries({ queryKey: ['event', id, 'guest-list'] }));
   const [tab, setTab] = useState<Tab>('going');
   const TABS = ALL_TABS.filter(k => !['requested', 'declined'].includes(k) || qinfo?.approval || rows.some(r => r.status === k)); const [q, setQ] = useState(''); const [adding, setAdding] = useState(false); const [signing, setSigning] = useState<{ id: string; name: string } | null>(null);
@@ -75,25 +79,30 @@ function GuestListPage() {
       <div className="guest-toolbar">
         <div className="guest-search"><Search /><Input aria-label={t('guestList.search')} placeholder={t('guestList.search')} value={q} onChange={e => setQ(e.target.value)} className="field-input" /></div>
         <Button variant="secondary" onClick={() => setAdding(true)} disabled={event?.status !== 'published'}><UserPlus />{t('guestList.add')}</Button>
+        <Button variant="secondary" onClick={() => setGroupsOpen(true)}><Layers />{t('belong.groups')}</Button>
         <Button variant="secondary" onClick={exportCsv} disabled={!rows.length}><Download />{t('guestList.export')}</Button>
       </div>
       {error ? <p className="guest-empty">{t('guestList.noAccess')}</p> : isLoading ? <p className="guest-empty">{t('publicEvent.loading')}</p> : list.length === 0 ? <p className="guest-empty">{t('guestList.empty')}</p> :
         <ul className="guest-list">{[...list].sort((a, b) => (a.group_name ?? '').localeCompare(b.group_name ?? '') || (a.group_id ?? '').localeCompare(b.group_id ?? '')).map((r, i, arr) => <Fragment key={r.id}>{r.group_id && arr[i - 1]?.group_id !== r.group_id && <li className="guest-group-head"><UsersRound /><strong>{r.group_name}</strong><span className="muted">{t('teamRsvp.people', { count: arr.filter(x => x.group_id === r.group_id).length })}</span></li>}<li className={`guest-row ${r.group_id ? 'in-group' : ''}`}>
           <span className="initial-avatar">{initialsOf(r.guest_name)}</span>
           <div className="guest-row-info">
-            <strong>{r.guest_name ?? t('teamSpace.someone')}{r.plus_ones > 0 && <span className="chip">+{r.plus_ones}</span>}{r.checked_in_at && <span className="chip published-chip">{t('guestList.checkedIn')}</span>}{(needsWaiver || waivers.has(r.id)) && (waivers.has(r.id) ? <span className="waiver-status is-signed" title={t('waiver.signedOn', { name: waivers.get(r.id)!.full_name, version: waivers.get(r.id)!.version })}><ShieldCheck /><span className="sr-only">{t('waiver.signed')}</span></span> : <span className="waiver-status is-missing" title={t('waiver.missing')}><FileText /><span className="sr-only">{t('waiver.missing')}</span></span>)}</strong>
+            <strong>{r.guest_name ?? t('teamSpace.someone')}{r.plus_ones > 0 && <span className="chip">+{r.plus_ones}</span>}{r.checked_in_at && <span className="chip published-chip">{t('guestList.checkedIn')}</span>}<BelongingTags info={belong.get(r.id)} row={r} rows={rows} />{(needsWaiver || waivers.has(r.id)) && (waivers.has(r.id) ? <span className="waiver-status is-signed" title={t('waiver.signedOn', { name: waivers.get(r.id)!.full_name, version: waivers.get(r.id)!.version })}><ShieldCheck /><span className="sr-only">{t('waiver.signed')}</span></span> : <span className="waiver-status is-missing" title={t('waiver.missing')}><FileText /><span className="sr-only">{t('waiver.missing')}</span></span>)}</strong>
             <span className="guest-contact">{r.guest_phone && <a href={`tel:${r.guest_phone}`}><Phone />{r.guest_phone}</a>}{r.guest_email && <a href={`mailto:${r.guest_email}`}><Mail />{r.guest_email}</a>}</span>
+            {['going', 'maybe'].includes(r.status) && <BelongingPrompt info={belong.get(r.id)} name={r.guest_name} />}
             {answers.has(r.id) && <dl className="rsvpq-answers">{questions.filter(q => answers.get(r.id)?.[q.id]).map(q => <div key={q.id}><dt>{q.label}</dt><dd>{ansText(q, answers.get(r.id)?.[q.id])}</dd></div>)}</dl>}
             <span className="muted guest-meta">{r.sms_opt_in && <><MessageSquareText />{t('guestList.textReminders')}</>}{r.email_opt_in && <><Mail />{t('guestList.emailReminders')}</>}<span>{new Date(r.created_at).toLocaleString(lang, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</span></span>
           </div>
           <div className="guest-row-actions">
             {r.status === 'requested' && <><Button size="sm" onClick={() => decide(r.id, true)}><Check />{t('rsvpq.approve')}</Button><Button size="sm" variant="ghost" className="danger-text" onClick={() => decide(r.id, false)}><X />{t('rsvpq.decline')}</Button></>}
             {needsWaiver && !waivers.has(r.id) && r.status === 'going' && <Button size="sm" variant="secondary" onClick={() => setSigning({ id: r.id, name: r.guest_name ?? '' })}><FileText />{t('teamRsvp.signAtDoor')}</Button>}
+            {['going', 'maybe'].includes(r.status) && (r.wants_buddy || belong.get(r.id)?.first_time || r.buddy_rsvp_id) && <Button size="sm" variant="secondary" onClick={() => setBuddyFor(r.id)}><HandHeart />{t(r.buddy_rsvp_id ? 'belong.changeBuddy' : 'belong.pairBuddy')}</Button>}
             {r.status === 'waitlist' && <Button size="sm" onClick={() => setStatus(r.id, 'going')}><ArrowUp />{t('guestList.promote')}</Button>}
             {!['cancelled', 'requested', 'declined'].includes(r.status) && <Button size="sm" variant="ghost" className="danger-text" aria-label={t('guestList.moveCancelled')} onClick={() => setStatus(r.id, 'cancelled')}><X />{t('guestList.moveCancelled')}</Button>}
           </div>
         </li></Fragment>)}</ul>}
     </section>
+    {buddyFor && rows.find(r => r.id === buddyFor) && <BuddySheet eventId={id} row={rows.find(r => r.id === buddyFor)!} rows={active} info={belong} onClose={() => setBuddyFor(null)} />}
+    {groupsOpen && <SmallGroupsSheet eventId={id} rows={active.filter(r => r.status !== 'waitlist')} onClose={() => setGroupsOpen(false)} />}
     {signing && <DoorWaiverSheet eventId={id} rsvp={signing} onClose={() => setSigning(null)} onSaved={refresh} />}
     <AddGuestSheet open={adding} eventId={id} onClose={() => setAdding(false)} onSaved={refresh} />
   </>;

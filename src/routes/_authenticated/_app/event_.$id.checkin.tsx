@@ -30,7 +30,7 @@ function CheckInMode() {
   const { data: rows = [], error, isLoading, refetch } = useQuery({
     queryKey: listKey,
     queryFn: async () => {
-      const { data, error } = await supabase.from('rsvps').select('id,guest_name,plus_ones,status,checked_in_at,is_walk_in').eq('event_id', id).in('status', ['going', 'maybe', 'waitlist']).order('guest_name');
+      const { data, error } = await supabase.from('rsvps').select('id,guest_name,plus_ones,status,checked_in_at,is_walk_in,wants_buddy,buddy_rsvp_id,small_group').eq('event_id', id).in('status', ['going', 'maybe', 'waitlist']).order('guest_name');
       if (error) throw error; return data ?? [];
     },
   });
