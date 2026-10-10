@@ -124,7 +124,7 @@ export function PlanPage() {
     <div className="plan-grid">
       {PLANS.map(p => {
         const ps = settings[p.id];
-        const isCurrent = st.source === 'own' && (st.own_plan === p.id && st.legacy_price_cents === null || (p.id === 'free' && st.own_plan === 'free'));
+        const isCurrent = (st.source === 'founding' && p.id === 'pro') || st.source === 'own' && (st.own_plan === p.id && st.legacy_price_cents === null || (p.id === 'free' && st.own_plan === 'free'));
         return <article key={p.id} className={`plan-card ${isCurrent ? 'is-current' : ''} ${p.id === 'pro' ? 'is-popular' : ''}`}>
           {p.id === 'pro' && <span className="plan-tag">{t('billing.popular')}</span>}
           <h3>{t(`billing.name_${p.id}`)}</h3>
