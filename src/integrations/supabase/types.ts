@@ -2208,6 +2208,39 @@ export type Database = {
           },
         ]
       }
+      personal_bests: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          label: string
+          recorded_on: string
+          unit: string
+          user_id: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          label: string
+          recorded_on?: string
+          unit: string
+          user_id?: string
+          value: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          label?: string
+          recorded_on?: string
+          unit?: string
+          user_id?: string
+          value?: number
+        }
+        Relationships: []
+      }
       playbook_patterns: {
         Row: {
           category: string | null
@@ -2294,6 +2327,82 @@ export type Database = {
           {
             foreignKeyName: "profiles_active_team_id_fkey"
             columns: ["active_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      progress_goal_checks: {
+        Row: {
+          checked_on: string
+          goal_id: string
+          user_id: string
+        }
+        Insert: {
+          checked_on: string
+          goal_id: string
+          user_id?: string
+        }
+        Update: {
+          checked_on?: string
+          goal_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "progress_goal_checks_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "progress_goals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      progress_goals: {
+        Row: {
+          archived: boolean
+          created_at: string
+          id: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          archived?: boolean
+          created_at?: string
+          id?: string
+          title: string
+          user_id?: string
+        }
+        Update: {
+          archived?: boolean
+          created_at?: string
+          id?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      progress_shares: {
+        Row: {
+          created_at: string
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          team_id: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "progress_shares_team_id_fkey"
+            columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
             referencedColumns: ["id"]
@@ -4105,6 +4214,7 @@ export type Database = {
           poll_id: string
         }[]
       }
+      my_progress: { Args: { _tz: string }; Returns: Json }
       my_referrals: { Args: never; Returns: Json }
       my_regular_hosts: {
         Args: never
@@ -4202,6 +4312,7 @@ export type Database = {
         Args: { _message: string; _team: string; _to: string }
         Returns: undefined
       }
+      progress_core: { Args: { _tz: string; _user: string }; Returns: Json }
       promo_usage: {
         Args: never
         Returns: {
@@ -4383,6 +4494,10 @@ export type Database = {
       set_small_groups: {
         Args: { _event: string; _groups: string[] }
         Returns: undefined
+      }
+      shared_progress: {
+        Args: { _team: string; _tz: string; _user: string }
+        Returns: Json
       }
       shares_team_with: { Args: { _other: string }; Returns: boolean }
       sign_waiver_at_door: {
