@@ -259,6 +259,7 @@ export function MePage() {
     {(isHost || isAdmin) && <SettingsGroup title={t('profile.groupHost')}>
       {isHost && linkRow('FileText', t('offers.title'), '/offers')}
       {isHost && linkRow('Gift', t('promo.title'), '/promos')}
+      {isHost && linkRow('MapPin', t('locations.title'), '/locations')}
       {isHost && linkRow('BadgeCheck', t('coachTrust.getVerified'), '/verify')}
       {isAdmin && linkRow('ShieldCheck', t('admin.menu'), '/admin', undefined, { tab: 'overview' })}
       {isAdmin && linkRow('ImageDown', t('siteMedia.menu'), '/admin/site-media')}
