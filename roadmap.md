@@ -82,3 +82,7 @@
 ## N4 — Messaging
 - [x] Group chat links beyond WhatsApp (6 platforms, several per team/gathering) + Telegram share everywhere
 - [x] Text invites with Reply IN / SI, OUT / NO cancel, confirmations via outbox, admin "Simulate reply"
+
+## V2 — Status & recognition (in parts)
+- [x] Part 1: featured badges (up to 3, star toggle on badge wall, shown on Me, member detail, public host page), 7 auto milestone medallions (10/25/50/100 check-ins, 1-year member, first hosted gathering, 10 regulars), Member of the Month (leader tool + team card, mirrors Host of the Month). Migrations 0009–0011; fixed team_members.joined_at + rsvps.guest_email/phone column bugs in evaluate_milestones.
+- [ ] Part 2–4: per V2 spec (rarity, exclusivity, progress)
