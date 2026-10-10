@@ -153,6 +153,19 @@ export function HostOfMonthCard({ teamId, teamName }: { teamId: string; teamName
   </section>;
 }
 
+export function MemberOfMonthCard({ teamId, teamName }: { teamId: string; teamName: string }) {
+  const { t, i18n } = useTranslation();
+  const { data } = useQuery(memberOfMonthQuery(teamId));
+  const { data: photo } = useQuery({ queryKey: ['media-url', data?.avatar], queryFn: () => mediaUrl(data?.avatar), enabled: !!data?.avatar, staleTime: 50 * 60 * 1000 });
+  if (!data) return null;
+  const month = new Date(`${data.month}T12:00:00`).toLocaleDateString(i18n.resolvedLanguage, { month: 'long', year: 'numeric' });
+  return <section className="panel host-month-card member-month-card">
+    <span className="hom-ring hom-avatar">{photo ? <img src={photo} alt="" /> : <span>{initialsOf(data.name)}</span>}</span>
+    <div className="host-month-body"><span className="eyebrow"><Star />{t('recognition.momEyebrow', { month })}</span><h2>{data.name ?? t('teamSpace.someone')}</h2>{data.note && <p>{data.note}</p>}</div>
+    <Button variant="secondary" size="sm" onClick={() => void downloadRecognitionCard({ eyebrow: t('recognition.momEyebrow', { month }), title: t('recognition.momTitle'), name: data.name ?? '', photo, icon: 'Star', tier: 'gold', team: teamName, file: 'gatherwell-member-of-the-month.png' })}><Download />{t('recognition.card')}</Button>
+  </section>;
+}
+
 export function PinnedShoutout({ teamId, isLeader }: { teamId: string; isLeader: boolean }) {
   const { t } = useTranslation(); const queryClient = useQueryClient();
   const { data } = useQuery(pinnedShoutoutQuery(teamId));
