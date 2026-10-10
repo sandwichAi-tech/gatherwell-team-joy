@@ -93,5 +93,5 @@
 - [x] Part 1: launch checklist, earnings milestones, price guidance
 - [x] Part 2: verified coaches + reviews
 - [x] Part 3: retreats and trips
-- [ ] Part 4: ethical access
+- [x] Part 4: ethical access
 - [ ] Part 5: who-it's-for messaging

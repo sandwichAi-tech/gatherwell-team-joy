@@ -1849,3 +1849,20 @@ a.gw-cat-chip:hover{background:#fff}
 .retreat-checklist input { width: 22px; height: 22px; accent-color: var(--primary); }
 .retreat-checklist .is-done span { color: var(--muted-foreground); text-decoration: line-through; }
 @media (prefers-reduced-motion: reduce) { .retreat-faq summary svg { transition: none; } }
+
+/* V3 Part 4 — ethical access */
+.community-card { display: flex; gap: 12px; padding: 16px; margin: 16px 0; border-radius: 18px; background: var(--card); border: 1px solid var(--border); box-shadow: var(--shadow-sm, 0 1px 2px rgb(0 0 0 / .05)); }
+.community-body { flex: 1; display: grid; gap: 8px; min-width: 0; }
+.community-body p { margin: 0; color: var(--muted-foreground); }
+.community-form { display: grid; gap: 8px; }
+.community-panel { display: grid; gap: 12px; }
+.community-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.community-list > li { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+.community-req-main { flex: 1; min-width: 160px; display: grid; gap: 2px; }
+.community-req-main small { color: var(--muted-foreground); }
+.community-req-main p { margin: 4px 0 0; }
+.community-actions { display: flex; gap: 8px; }
+.member-promises { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; color: var(--muted-foreground); font-size: 14px; }
+.member-promises li { display: flex; gap: 8px; align-items: center; }
+.member-promises svg { width: 16px; height: 16px; color: var(--primary); }
+.pause-select { width: auto; min-height: 44px; }

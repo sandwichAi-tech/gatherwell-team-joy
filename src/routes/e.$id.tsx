@@ -1,3 +1,4 @@
+import { CommunitySeatCard } from '@/components/community-seats';
 import { RetreatDetails } from '@/components/retreat';
 import { asRetreat } from '@/lib/retreat';
 import { VerifiedMark } from '@/components/coach-trust';
@@ -59,6 +60,8 @@ function PublicEventBody() {
   useLiveCounts(id, () => void queryClient.invalidateQueries({ queryKey: ['public-event', id] }));
   const { data: hostPhoto } = useQuery({ queryKey: ['media-url', event?.host?.avatar_url], queryFn: () => mediaUrl(event?.host?.avatar_url), enabled: !!event?.host?.avatar_url });
   useEffect(() => { rememberRef(id, new URLSearchParams(window.location.search).get('ref')); rememberInvite(new URLSearchParams(window.location.search).get('inv')); }, [id]);
+  const [signedIn, setSignedIn] = useState(false);
+  useEffect(() => { void supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session)); }, []);
   const [intent, setIntent] = useState<'going' | 'maybe' | null>(null);
   const [result, setResult] = useState<RsvpResult | null>(null);
   const [teamOpen, setTeamOpen] = useState(false); const [teamResult, setTeamResult] = useState<TeamResult | null>(null);
@@ -133,6 +136,7 @@ function PublicEventBody() {
             <Button variant="secondary" className="guest-secondary" onClick={() => setIntent('maybe')}>{t('guest.maybe')}</Button>
             {event.team_registration && <Button variant="secondary" className="guest-secondary" onClick={() => setTeamOpen(true)}>{t('teamRsvp.cta', { min: event.team_min ?? 2, max: event.team_max ?? 6 })}</Button>}
           </div>}
+        {price && !event.my_code && <CommunitySeatCard kind="event" target={id} signedIn={signedIn} />}
         <CalendarButtons event={event} />
       </>}
       <Polls eventId={id} code={event.my_code} />

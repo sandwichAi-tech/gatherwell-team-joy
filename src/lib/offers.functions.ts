@@ -80,3 +80,21 @@ export const offerDownloadLink = createServerFn({ method: 'POST' })
     if (error || !s) return { ok: false as const, error: 'failed' };
     return { ok: true as const, url: s.signedUrl };
   });
+
+/** Pause a membership for 1–3 months (months = 0 resumes). Paid subscriptions also pause billing. */
+export const pauseOfferMembership = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ offerId: z.string().uuid(), months: z.number().int().min(0).max(3) }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: p } = await context.supabase.from('offer_purchases').select('id, stripe_subscription_id, status, paused_until').eq('offer_id', data.offerId).eq('user_id', context.userId).maybeSingle();
+    if (!p || !['active', 'past_due'].includes(p.status)) return { ok: false as const, error: 'not_found' };
+    const until = data.months ? new Date(Date.now() + data.months * 30 * 86400000) : null;
+    if (p.stripe_subscription_id) {
+      const { stripe, stripeKey } = await import('./billing/stripe.server');
+      if (!stripeKey()) return { ok: false as const, error: 'not_connected' };
+      await stripe(`subscriptions/${p.stripe_subscription_id}`, until ? { 'pause_collection[behavior]': 'void', 'pause_collection[resumes_at]': String(Math.floor(until.getTime() / 1000)) } : { pause_collection: '' });
+    }
+    const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
+    await supabaseAdmin.from('offer_purchases').update({ paused_until: until?.toISOString() ?? null }).eq('id', p.id);
+    return { ok: true as const, until: until?.toISOString() ?? null };
+  });

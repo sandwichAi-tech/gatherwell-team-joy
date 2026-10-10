@@ -768,6 +768,45 @@ export type Database = {
           },
         ]
       }
+      community_seat_requests: {
+        Row: {
+          created_at: string
+          decided_at: string | null
+          host_id: string
+          id: string
+          kind: string
+          note: string | null
+          pay_cents: number
+          status: string
+          target_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          decided_at?: string | null
+          host_id: string
+          id?: string
+          kind: string
+          note?: string | null
+          pay_cents?: number
+          status?: string
+          target_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          decided_at?: string | null
+          host_id?: string
+          id?: string
+          kind?: string
+          note?: string | null
+          pay_cents?: number
+          status?: string
+          target_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_briefs: {
         Row: {
           created_at: string
@@ -1208,6 +1247,7 @@ export type Database = {
           category: string | null
           category_label: string | null
           chat_links: Json
+          community_seats: number | null
           completed_at: string | null
           cover_style: number
           cover_url: string | null
@@ -1256,6 +1296,7 @@ export type Database = {
           category?: string | null
           category_label?: string | null
           chat_links?: Json
+          community_seats?: number | null
           completed_at?: string | null
           cover_style?: number
           cover_url?: string | null
@@ -1304,6 +1345,7 @@ export type Database = {
           category?: string | null
           category_label?: string | null
           chat_links?: Json
+          community_seats?: number | null
           completed_at?: string | null
           cover_style?: number
           cover_url?: string | null
@@ -2067,10 +2109,12 @@ export type Database = {
         Row: {
           amount_cents: number
           cancel_at_period_end: boolean
+          community: boolean
           created_at: string
           founding: boolean
           id: string
           offer_id: string
+          paused_until: string | null
           renews_at: string | null
           status: string
           stripe_subscription_id: string | null
@@ -2080,10 +2124,12 @@ export type Database = {
         Insert: {
           amount_cents?: number
           cancel_at_period_end?: boolean
+          community?: boolean
           created_at?: string
           founding?: boolean
           id?: string
           offer_id: string
+          paused_until?: string | null
           renews_at?: string | null
           status?: string
           stripe_subscription_id?: string | null
@@ -2093,10 +2139,12 @@ export type Database = {
         Update: {
           amount_cents?: number
           cancel_at_period_end?: boolean
+          community?: boolean
           created_at?: string
           founding?: boolean
           id?: string
           offer_id?: string
+          paused_until?: string | null
           renews_at?: string | null
           status?: string
           stripe_subscription_id?: string | null
@@ -2115,6 +2163,7 @@ export type Database = {
       }
       offers: {
         Row: {
+          community_seats: number | null
           cover_style: number
           cover_url: string | null
           created_at: string
@@ -2137,6 +2186,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          community_seats?: number | null
           cover_style?: number
           cover_url?: string | null
           created_at?: string
@@ -2159,6 +2209,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          community_seats?: number | null
           cover_style?: number
           cover_url?: string | null
           created_at?: string
@@ -4064,6 +4115,14 @@ export type Database = {
       coach_checklist: { Args: never; Returns: Json }
       coach_trust: { Args: { _host: string }; Returns: Json }
       comment_feed: { Args: { _event: string; _topic: string }; Returns: Json }
+      community_requests: {
+        Args: { _kind: string; _target: string }
+        Returns: Json
+      }
+      community_seat_info: {
+        Args: { _kind: string; _target: string }
+        Returns: Json
+      }
       compute_playbook: { Args: never; Returns: number }
       copy_starter_template: {
         Args: { _team: string; _template: string }
@@ -4105,6 +4164,10 @@ export type Database = {
       }
       create_topic: {
         Args: { _body: string; _team: string; _title: string }
+        Returns: string
+      }
+      decide_community_seat: {
+        Args: { _approve: boolean; _id: string }
         Returns: string
       }
       decide_rsvp: {
@@ -4482,10 +4545,20 @@ export type Database = {
         Args: { _id: string; _note: string; _reason: string; _type: string }
         Returns: boolean
       }
+      request_community_seat: {
+        Args: {
+          _kind: string
+          _note: string
+          _pay_cents: number
+          _target: string
+        }
+        Returns: undefined
+      }
       request_ip: { Args: never; Returns: string }
       reset_calendar_feeds: { Args: never; Returns: Json }
       reset_invite_link: { Args: { _event: string }; Returns: string }
       reset_join_code: { Args: { _team: string }; Returns: string }
+      resume_my_membership: { Args: { _offer: string }; Returns: undefined }
       retreat_checklist: { Args: { _code: string }; Returns: Json }
       rsvp_belonging: {
         Args: { _event: string }
@@ -4724,6 +4797,10 @@ export type Database = {
         Returns: string
       }
       welcome_summary: { Args: { _code: string }; Returns: Json }
+      withdraw_community_request: {
+        Args: { _kind: string; _target: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

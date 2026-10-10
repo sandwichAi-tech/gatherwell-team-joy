@@ -2660,7 +2660,15 @@
     "foundingHelp": "Optional. The exact number of founding members at a special price. Once they're taken, new members pay the regular price.",
     "foundingLeft": "{{left}} of {{seats}} founding seats left",
     "foundingFull": "All {{seats}} founding seats are taken",
-    "foundingPriceLine": "Founding price: {{price}} per month"
+    "foundingPriceLine": "Founding price: {{price}} per month",
+    "pauseAnytime": "Pause for 1 to 3 months whenever you need",
+    "pause": "Pause",
+    "pauseMonths_one": "Pause {{count}} month",
+    "pauseMonths_other": "Pause {{count}} months",
+    "resume": "Resume",
+    "pausedUntil": "Paused until {{date}}",
+    "pausedToast": "Paused until {{date}}. No charges while paused.",
+    "resumedToast": "Welcome back. Your membership is active."
   },
   "welcome": {
     "title": "Invite friends",
@@ -3533,6 +3541,56 @@
       "invalid_deposit": "The deposit has to be at least $1 and less than the price.",
       "payment_needs_price": "Set a price before choosing a deposit or payment plan.",
       "failed": "Couldn't save the retreat details. Please try again."
+    }
+  },
+  "community": {
+    "title": "Community seats",
+    "body": "This host keeps a few free or pay-what-you-can spots. Ask privately; only the host sees your request.",
+    "request": "Request a community seat",
+    "signIn": "Sign in to request a seat",
+    "howLabel": "How you'd like to join",
+    "mode": {
+      "free": "Free",
+      "pwyc": "Pay what I can"
+    },
+    "amount": "Amount you can pay",
+    "note": "A note to the host (optional)",
+    "notePh": "Anything you'd like the host to know",
+    "private": "Private: no one else sees that you asked, and community seats are never labeled.",
+    "send": "Send privately",
+    "cancel": "Cancel",
+    "sent": "Sent. The host will reply privately.",
+    "pending": "Your request is with the host.",
+    "withdraw": "Withdraw request",
+    "approvedFree": "Your seat is confirmed. Welcome in.",
+    "approvedPay": "Approved at {{amount}}. You can pay once card payments are switched on.",
+    "declined": "The host couldn't offer a seat this time.",
+    "hostTitle": "Community seat requests",
+    "used": "{{used}} of {{seats}} used",
+    "hostNote": "Only you see these requests. Guests and members never see who used a community seat.",
+    "none": "No requests yet.",
+    "offersPay": "Can pay {{amount}}",
+    "asksFree": "Asks for a free seat",
+    "approve": "Approve",
+    "decline": "Decline",
+    "approvedToast": "Seat approved",
+    "declinedToast": "Request declined",
+    "status": {
+      "approved": "Approved",
+      "declined": "Declined",
+      "pending": "Waiting"
+    },
+    "seatsField": "Community seats (optional)",
+    "seatsNone": "None",
+    "seatsHint": "Free or pay-what-you-can spots that people can request privately. You approve each one.",
+    "errors": {
+      "no_seats": "All community seats are taken right now.",
+      "not_signed_in": "Please sign in first.",
+      "own_offer": "This is your own listing.",
+      "too_long": "Please keep the note under 500 characters.",
+      "invalid_amount": "Please enter a valid amount.",
+      "already_decided": "This request was already answered.",
+      "failed": "Something went wrong. Please try again."
     }
   }
 }
