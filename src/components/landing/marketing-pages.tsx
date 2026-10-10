@@ -51,3 +51,32 @@ export function WhoItsFor() {
  const { t } = useTranslation(); const items = t('marketing.who', { returnObjects: true }) as { title: string; body: string }[];
  return <section className="gw-band gw-band-canvas gw-marketing-section" aria-labelledby="who-title"><div className="gw-container"><span className="gw-label">{t('marketing.whoLabel')}</span><h2 id="who-title" className="gw-display gw-h2">{t('marketing.whoTitle')}</h2><p className="gw-marketing-sub">{t('marketing.whoSub')}</p><ul className="gw-benefits-grid gw-who-grid">{items.map((w, i) => <li className="gw-benefit-card" key={w.title}><span className="gw-marketing-tile"><GwIcon name={WHO_ICONS[i]!} variant="marketing" size={32} /></span><h3>{w.title}</h3><p>{w.body}</p></li>)}</ul></div></section>;
 }
+const STUDIO_ICONS: GwIconName[] = ['Link2', 'UsersRound', 'Languages'];
+function StudiosPricing() {
+ const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
+ const { data: settings } = useQuery(planSettingsQuery);
+ const fee = (id: 'free' | 'pro') => { const ps = settings?.[id]; if (!ps) return ''; return ps.monthly_cap !== null ? t('billing.feeCapped', { pct: ps.fee_percent, cap: formatMoney(ps.monthly_cap, lang) }) : t('billing.feePct', { pct: ps.fee_percent }); };
+ return <div className="gw-pricing-content">
+  <div className="gw-public-plans">
+   {PLANS.map(plan => <article key={plan.id} className={`gw-public-plan ${plan.id === 'pro' ? 'is-featured' : ''}`}>
+    <span className="gw-plan-tag">{plan.id === 'pro' ? t('billing.popular') : t('billing.name_free')}</span>
+    <h3>{t('billing.name_' + plan.id)}</h3>
+    <p className="gw-public-price"><strong>{settings ? formatMoney(settings[plan.id].monthly_price, lang) : '\u00a0'}</strong><span>{t('billing.perMonth')}</span></p>
+    <p className="gw-plan-fee">{fee(plan.id)}</p>
+    <p className="gw-fine">{t('billing.cardNote')}</p>
+   </article>)}
+  </div>
+  <div className="gw-final-ctas"><StartLink label={t('marketing.studios.startCta')} /><Link to="/pricing" className="gw-btn gw-btn-secondary gw-btn-lg">{t('marketing.seePricing')}</Link></div>
+ </div>;
+}
+export function StudiosPage() {
+ const { t } = useTranslation();
+ const cards = t('marketing.studios.cards', { returnObjects: true }) as { title: string; body: string }[];
+ const simple = t('marketing.studios.simpleList', { returnObjects: true }) as string[];
+ return <LandingFrame><main id="main-content">
+  <section className="gw-hero gw-studios-hero" id="studios-hero"><div className="gw-aurora" aria-hidden="true"><span className="gw-blob gw-blob-lav" /><span className="gw-blob gw-blob-peach" /><span className="gw-glow" /></div><div className="gw-container"><span className="gw-label">{t('marketing.studios.label')}</span><h1 className="gw-display">{t('marketing.studios.title')}</h1><p className="gw-lede">{t('marketing.studios.sub')}</p><div className="gw-hero-ctas"><StartLink /><Link to="/pricing" className="gw-btn gw-btn-secondary gw-btn-lg">{t('marketing.seePricing')}</Link></div></div></section>
+  <section className="gw-band gw-band-white gw-marketing-section"><div className="gw-container"><div className="gw-benefits-grid">{cards.map((c, i) => <article className="gw-benefit-card" key={c.title}><span className="gw-marketing-tile"><GwIcon name={STUDIO_ICONS[i]!} variant="marketing" size={32} /></span><h3>{c.title}</h3><p>{c.body}</p></article>)}</div></div></section>
+  <section className="gw-band gw-band-canvas gw-marketing-section"><div className="gw-container"><span className="gw-label">{t('marketing.studios.simpleLabel')}</span><h2 className="gw-display gw-h2">{t('marketing.studios.simpleTitle')}</h2><p className="gw-marketing-sub">{t('marketing.studios.simpleBody')}</p><ul className="gw-simple-list">{simple.map(s => <li key={s}><GwIcon name="Check" size={20} />{s}</li>)}</ul></div></section>
+  <section className="gw-band gw-band-white gw-marketing-section gw-final-host"><div className="gw-container"><span className="gw-label">{t('marketing.pricingLabel')}</span><h2 className="gw-display gw-h2">{t('marketing.studios.pricingTitle')}</h2><StudiosPricing /></div></section>
+ </main><StickyFindBar heroId="studios-hero" mode="host" /></LandingFrame>;
+}
