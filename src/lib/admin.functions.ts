@@ -505,3 +505,21 @@ export const setCouncilAttendance = createServerFn({ method: 'POST' }).middlewar
     await audit(db, context.userId, 'founding_council', 'founding_coach', data.id, null, { month: key, attended: data.attended });
     return { ok: true as const };
   });
+
+/** Day-60 founding scoreboard raw counts (admin only). */
+export const getDay60 = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth]).handler(async ({ context }) => {
+  await assertAdmin(context);
+  const { data, error } = await context.supabase.rpc('admin_day60');
+  if (error) throw new Error(error.message);
+  return data as unknown as import('./day60').Day60Raw;
+});
+
+export const setFoundingStay = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: uuid, stay: z.boolean().nullable() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const db = await assertAdmin(context);
+    const { error } = await db.from('founding_coaches').update({ stay_at_rate: data.stay }).eq('id', data.id);
+    if (error) return { ok: false as const };
+    await audit(db, context.userId, 'founding_stay', 'founding_coach', data.id, null, { stay: data.stay });
+    return { ok: true as const };
+  });

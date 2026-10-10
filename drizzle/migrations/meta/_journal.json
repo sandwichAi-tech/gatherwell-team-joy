@@ -204,6 +204,13 @@
       "when": 1791660504512,
       "tag": "0028_u6_quick_start",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1791661831643,
+      "tag": "0029_day60_scoreboard",
+      "breakpoints": true
     }
   ]
 }

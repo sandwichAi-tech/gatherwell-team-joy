@@ -1583,6 +1583,7 @@ export type Database = {
           language: string
           launch_date: string | null
           small_town: boolean
+          stay_at_rate: boolean | null
           user_id: string | null
         }
         Insert: {
@@ -1599,6 +1600,7 @@ export type Database = {
           language?: string
           launch_date?: string | null
           small_town?: boolean
+          stay_at_rate?: boolean | null
           user_id?: string | null
         }
         Update: {
@@ -1615,6 +1617,7 @@ export type Database = {
           language?: string
           launch_date?: string | null
           small_town?: boolean
+          stay_at_rate?: boolean | null
           user_id?: string | null
         }
         Relationships: []
@@ -4188,6 +4191,7 @@ export type Database = {
         Returns: string
       }
       admin_broadcasts: { Args: never; Returns: Json }
+      admin_day60: { Args: never; Returns: Json }
       admin_founding: { Args: never; Returns: Json }
       admin_grant_preview_license: {
         Args: { _team: string; _tier: string }

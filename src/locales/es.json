@@ -2074,7 +2074,8 @@
       "settings": "Ajustes",
       "audit": "Registro de cambios",
       "verify": "Verificar",
-      "founding": "Coaches fundadores"
+      "founding": "Coaches fundadores",
+      "day60": "Día 60"
     },
     "period": {
       "week": "Esta semana",
@@ -3136,7 +3137,7 @@
         "a": "Sí. Administra tu suscripción en Yo → Plan. Cancela antes de la renovación; tu plan seguirá activo hasta terminar el periodo pagado."
       }
     ],
-"finalTitle": "Tu próxima reunión empieza aquí.",
+    "finalTitle": "Tu próxima reunión empieza aquí.",
     "finalBody": "Haz que llegar sea fácil. Dales un motivo para volver.",
     "studios": {
       "meta": "Para estudios · Gatherwell",
@@ -3146,9 +3147,18 @@
       "sub": "Conserva las herramientas que ya usas. Suma una comunidad que tu gente visita cada semana, en inglés y español.",
       "fromHosts": "¿Tienes un estudio o un espacio pequeño? Mira cómo te queda Gatherwell",
       "cards": [
-        { "title": "Conserva tu sistema de reservas", "body": "Conecta el software de reservas que ya usas con un botón en tu página. Nada que migrar y la recepción sigue igual." },
-        { "title": "Llena tus clases desde la comunidad", "body": "Los Círculos, las reuniones especiales y el contenido en línea mantienen a tu gente conectada entre clases, así los habituales llegan más seguido." },
-        { "title": "Bilingüe desde el primer día", "body": "Cada página, invitación y recordatorio funciona en inglés y español, para que toda tu comunidad se sienta en casa." }
+        {
+          "title": "Conserva tu sistema de reservas",
+          "body": "Conecta el software de reservas que ya usas con un botón en tu página. Nada que migrar y la recepción sigue igual."
+        },
+        {
+          "title": "Llena tus clases desde la comunidad",
+          "body": "Los Círculos, las reuniones especiales y el contenido en línea mantienen a tu gente conectada entre clases, así los habituales llegan más seguido."
+        },
+        {
+          "title": "Bilingüe desde el primer día",
+          "body": "Cada página, invitación y recordatorio funciona en inglés y español, para que toda tu comunidad se sienta en casa."
+        }
       ],
       "simpleLabel": "Modo espacio simple",
       "simpleTitle": "¿Tienes un espacio pequeño?",
@@ -3930,5 +3940,52 @@
     "draftNote": "Tu reunión pagada quedó guardada como borrador. Se publica con su precio en cuanto conectes tus pagos. Podrás compartir el enlace cuando esté publicada.",
     "liveDraft": "Buen trabajo, {{name}}. Tu perfil está listo y tu reunión pagada se publicará en cuanto conectes tus pagos.",
     "draftLabel": "Esperando pagos"
+  },
+  "day60": {
+    "day": "Día {{n}} de 60",
+    "sample": "Ejemplo",
+    "sampleHint": "Define la fecha de inicio en Coaches fundadores para ver datos reales.",
+    "met": "{{n}} de 10 metas cumplidas",
+    "rule": "7 o más: adelante · 4–6: ajustar · 3 o menos: replantear",
+    "metLabel": "Cumplida",
+    "notMet": "Aún no",
+    "error": "El marcador no cargó.",
+    "verdict": {
+      "go": "Adelante",
+      "adjust": "Ajustar",
+      "rethink": "Replantear"
+    },
+    "t": {
+      "live": "5 de 6 coaches fundadores activos, mediana de lanzamiento menor a 60 minutos",
+      "gatherings": "Cada coach activo realiza 4+ encuentros (2 al mes)",
+      "paying": "150+ miembros que pagan en todos los Círculos",
+      "firstPaid": "5 de 6 coaches logran su primer miembro que paga en 14 días",
+      "retention": "80%+ de los miembros del primer mes siguen pagando el segundo",
+      "inPerson": "40%+ de los miembros que pagan asisten a un encuentro presencial",
+      "spanish": "2 Círculos en español con 15+ miembros que pagan cada uno",
+      "smallTown": "Ambos coaches de pueblos pequeños con 10+ miembros que pagan",
+      "checkin": "60%+ de las reservas hacen check-in",
+      "stay": "4 de 6 coaches se quedarían con la tarifa de fundador"
+    },
+    "p": {
+      "live": "{{n}} activos · mediana {{min}} min",
+      "gatherings": "{{n}} de {{of}} coaches activos con 4+",
+      "paying": "{{n}} miembros que pagan",
+      "firstPaid": "{{n}} coaches en 14 días",
+      "retention": "{{n}}% de {{of}} miembros del primer mes",
+      "inPerson": "{{n}}% asistió en persona",
+      "spanish": "{{n}} Círculos en español con 15+",
+      "smallTown": "{{n}} de {{of}} coaches de pueblos pequeños con 10+",
+      "checkin": "{{n}}% hizo check-in",
+      "stay": "{{n}} dijeron que sí"
+    },
+    "stayTitle": "¿Se quedarían con la tarifa de fundador?",
+    "stayHint": "Pregunta a cada coach y registra su respuesta.",
+    "stayNeedsStart": "Disponible cuando haya fecha de inicio.",
+    "stay": {
+      "true": "Sí",
+      "false": "No",
+      "null": "Sin preguntar"
+    }
   }
 }
