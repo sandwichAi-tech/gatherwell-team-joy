@@ -93,7 +93,6 @@ export function PlanPage() {
   const choose = (id: PlanId) => {
     if (id === st.own_plan && st.legacy_price_cents === null) return;
     if (id === 'free') { setDowngrade(id); return; }
-    if (id === 'free') return;
     trackEvent('upgrade_clicked', { plan: id }); void gate.run(() => checkout({ data: { plan: 'pro', origin, lang } }));
   };
   const togglePassFee = async (on: boolean) => {
