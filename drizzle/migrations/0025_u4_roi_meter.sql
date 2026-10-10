@@ -3,7 +3,7 @@ RETURNS jsonb LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path TO 'publi
 DECLARE _end timestamptz := _start + interval '1 month';
   _earn int; _fees int; _plan text; _free plan_settings; _pro plan_settings; _free_cost int; _pro_cost int; _cur_cost int; _founding boolean;
 BEGIN
-  SELECT coalesce(sum(amount_cents - booking_fee_cents - CASE WHEN service_fee_covered THEN service_fee_cents*2 ELSE service_fee_cents END),0)::int,
+  SELECT coalesce(sum(amount_cents - booking_fee_cents - CASE WHEN service_fee_covered THEN 0 ELSE service_fee_cents END),0)::int,
          coalesce(sum(fee_cents - booking_fee_cents),0)::int
     INTO _earn, _fees FROM payments WHERE host_id=_host AND status='paid' AND created_at>=_start AND created_at<_end;
   _earn := greatest(_earn,0);
