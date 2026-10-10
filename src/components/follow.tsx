@@ -1,4 +1,5 @@
 import { CopyButton } from '@/components/copy-button';
+import { FeaturedBadges } from '@/components/recognition';
 import { publicHostCover } from '@/lib/host-cover.functions';
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
@@ -57,6 +58,7 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
         <p className="follow-meta">{[host?.city, team ? t('follow.members', { count: team.members }) : null, t('follow.followers', { count: d.followers })].filter(Boolean).join(' · ')}</p>
         {team?.leader?.name && <p className="follow-meta">{t('follow.ledBy')} {team.leader.slug ? <Link to="/h/$slug" params={{ slug: team.leader.slug }}>{team.leader.name}</Link> : team.leader.name}</p>}
         {host?.bio && <p className="follow-bio">{host.bio}</p>}
+        {host && <FeaturedBadges userId={host.id} />}
         <div className="follow-actions"><FollowButton kind={kind} target={d.id} following={d.following} slug={slug} />
           {host?.shop_url && <Button asChild variant="secondary"><a href={host.shop_url} target="_blank" rel="noopener noreferrer"><GwIcon name="ExternalLink" />{t('follow.shop')}</a></Button>}</div>
       </div>

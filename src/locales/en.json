@@ -1387,7 +1387,18 @@
       "not_leader": "Only leaders can do this.",
       "not_allowed": "You can't do that here.",
       "invalid_message": "Keep it to 280 characters."
-    }
+    },
+    "feature": "Feature",
+    "featured": "Featured",
+    "featureHint": "Tap the star to feature up to 3 badges on your profile and host page.",
+    "featureFull": "You can feature up to 3 badges. Unfeature one first.",
+    "nameMember": "Member of the month",
+    "nameMemberText": "Celebrate a member who showed up and lifted the team this month.",
+    "nameMemberCta": "Name member of the month",
+    "momSaved": "Member of the month saved",
+    "momPlaceholder": "A few kind words (optional)",
+    "momEyebrow": "Member of the month · {{month}}",
+    "momTitle": "Member of the Month"
   },
   "notify": {
     "channels": "Channels",

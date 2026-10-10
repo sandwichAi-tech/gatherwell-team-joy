@@ -64,6 +64,27 @@
       "when": 1791652324118,
       "tag": "0008_belonging",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791653341268,
+      "tag": "0009_v2_recognition_status",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1791653587807,
+      "tag": "0010_fix_milestones_joined_at",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1791653610344,
+      "tag": "0011_fix_milestones_guest_columns",
+      "breakpoints": true
     }
   ]
 }

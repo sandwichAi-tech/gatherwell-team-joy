@@ -23,7 +23,7 @@ import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { useSwitchTeam } from '@/components/team-switcher';
 import { setLanguage } from '@/components/auth-frame';
-import { BadgeWall, RecognitionSummary, useHostOfMonthId } from '@/components/recognition';
+import { BadgeWall, FeaturedBadges, RecognitionSummary, useHostOfMonthId } from '@/components/recognition';
 import { supabase } from '@/integrations/supabase/client';
 import { PurchasesPanel } from '@/components/offers';
 import { InviteFriendsPanel } from '@/components/welcome';
@@ -223,6 +223,7 @@ export function MePage() {
       </>}
     />
     {profile?.shop_url && <a className="auth-link shop-link" href={profile.shop_url} target="_blank" rel="noopener noreferrer">{t('profile.shop')}<ExternalLink /></a>}
+    <FeaturedBadges userId={userId} />
     <StatsStrip userId={userId} teamId={workspace?.teamId} />
     <RecentBadges userId={userId} teamId={workspace?.teamId} onAll={workspace ? () => setPanel('badges') : undefined} />
     <RegularHosts />

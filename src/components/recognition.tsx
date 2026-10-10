@@ -20,7 +20,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { initialsOf, mediaUrl, profileQuery, uploadMedia, workspaceQuery } from '@/lib/account';
 import { rosterQuery, teamKey } from '@/lib/team';
 import {
-  badgeName, badgeText, badgesQuery, hasBlockedClaim, hostOfMonthQuery, myBadgesQuery, pinnedShoutoutQuery, recognitionError, recognitionKey,
+  badgeName, badgeText, badgesQuery, featuredBadgesQuery, hasBlockedClaim, hostOfMonthQuery, memberOfMonthQuery, myBadgesQuery, pinnedShoutoutQuery, recognitionError, recognitionKey,
   summaryQuery, unseenBadgesQuery, type Badge, type Tier,
 } from '@/lib/recognition';
 
@@ -125,6 +125,16 @@ export function BadgeEarnedWatcher() {
   </ResponsiveSheet>;
 }
 
+// ---------- Featured badges (up to 3, chosen by the member) ----------
+export function FeaturedBadges({ userId }: { userId: string }) {
+  const { i18n } = useTranslation();
+  const { data = [] } = useQuery({ ...featuredBadgesQuery(userId), enabled: !!userId });
+  if (!data.length) return null;
+  const lang = i18n.resolvedLanguage;
+  return <div className="featured-badges" role="list">{data.map(b => <span role="listitem" key={b.id} className="featured-badge">
+    <Medallion badge={b} size={44} /><span>{badgeName(b, lang)}</span></span>)}</div>;
+}
+
 // ---------- Host of the Month ----------
 export function useHostOfMonthId(teamId?: string) {
   return useQuery({ ...hostOfMonthQuery(teamId ?? ''), enabled: !!teamId }).data?.user_id ?? null;
@@ -140,6 +150,19 @@ export function HostOfMonthCard({ teamId, teamName }: { teamId: string; teamName
     <span className="hom-ring hom-avatar">{photo ? <img src={photo} alt="" /> : <span>{initialsOf(data.name)}</span>}</span>
     <div className="host-month-body"><span className="eyebrow"><Crown />{t('recognition.homEyebrow', { month })}</span><h2>{data.name ?? t('teamSpace.someone')}</h2>{data.note && <p>{data.note}</p>}</div>
     <Button variant="secondary" size="sm" onClick={() => void downloadRecognitionCard({ eyebrow: t('recognition.homEyebrow', { month }), title: t('recognition.homTitle'), name: data.name ?? '', photo, icon: 'Crown', tier: 'gold', team: teamName, file: 'gatherwell-host-of-the-month.png' })}><Download />{t('recognition.card')}</Button>
+  </section>;
+}
+
+export function MemberOfMonthCard({ teamId, teamName }: { teamId: string; teamName: string }) {
+  const { t, i18n } = useTranslation();
+  const { data } = useQuery(memberOfMonthQuery(teamId));
+  const { data: photo } = useQuery({ queryKey: ['media-url', data?.avatar], queryFn: () => mediaUrl(data?.avatar), enabled: !!data?.avatar, staleTime: 50 * 60 * 1000 });
+  if (!data) return null;
+  const month = new Date(`${data.month}T12:00:00`).toLocaleDateString(i18n.resolvedLanguage, { month: 'long', year: 'numeric' });
+  return <section className="panel host-month-card member-month-card">
+    <span className="hom-ring hom-avatar">{photo ? <img src={photo} alt="" /> : <span>{initialsOf(data.name)}</span>}</span>
+    <div className="host-month-body"><span className="eyebrow"><Star />{t('recognition.momEyebrow', { month })}</span><h2>{data.name ?? t('teamSpace.someone')}</h2>{data.note && <p>{data.note}</p>}</div>
+    <Button variant="secondary" size="sm" onClick={() => void downloadRecognitionCard({ eyebrow: t('recognition.momEyebrow', { month }), title: t('recognition.momTitle'), name: data.name ?? '', photo, icon: 'Star', tier: 'gold', team: teamName, file: 'gatherwell-member-of-the-month.png' })}><Download />{t('recognition.card')}</Button>
   </section>;
 }
 
@@ -209,16 +232,18 @@ export function ShoutoutSheet({ open, onOpenChange, teamId }: { open: boolean; o
 }
 
 // ---------- Leader tools ----------
-type LeaderSheet = 'host' | 'award' | 'custom' | null;
+type LeaderSheet = 'host' | 'member' | 'award' | 'custom' | null;
 export function RecognitionTools({ teamId }: { teamId: string }) {
   const { t } = useTranslation(); const [sheet, setSheet] = useState<LeaderSheet>(null);
   return <>
     <div className="tool-grid recognition-tools">
       <button type="button" className="tool-tile" onClick={() => setSheet('host')}><Crown /><span>{t('recognition.nameHost')}</span></button>
+      <button type="button" className="tool-tile" onClick={() => setSheet('member')}><Star /><span>{t('recognition.nameMember')}</span></button>
       <button type="button" className="tool-tile" onClick={() => setSheet('award')}><Award /><span>{t('recognition.awardBadge')}</span></button>
       <button type="button" className="tool-tile" onClick={() => setSheet('custom')}><Plus /><span>{t('recognition.newBadge')}</span></button>
     </div>
     <HostSheet open={sheet === 'host'} onOpenChange={o => !o && setSheet(null)} teamId={teamId} />
+    <MemberSheet open={sheet === 'member'} onOpenChange={o => !o && setSheet(null)} teamId={teamId} />
     <AwardSheet open={sheet === 'award'} onOpenChange={o => !o && setSheet(null)} teamId={teamId} />
     <CustomBadgeSheet open={sheet === 'custom'} onOpenChange={o => !o && setSheet(null)} teamId={teamId} />
   </>;
@@ -239,6 +264,25 @@ function HostSheet({ open, onOpenChange, teamId }: { open: boolean; onOpenChange
       <div className="form-field"><span className="field-label">{t('recognition.who')}</span><PersonPicker teamId={teamId} value={who} onChange={setWho} /></div>
       <div className="form-field"><label className="field-label" htmlFor="hom-note">{t('recognition.noteOptional')}</label><Textarea id="hom-note" rows={2} className="field-textarea" maxLength={280} value={note} onChange={e => setNote(e.target.value)} placeholder={t('recognition.homPlaceholder')} /></div>
       <Button className="onboarding-continue" disabled={busy || !who} onClick={() => void save()}><Crown />{t('recognition.nameHostCta')}</Button>
+    </div>
+  </ResponsiveSheet>;
+}
+
+function MemberSheet({ open, onOpenChange, teamId }: { open: boolean; onOpenChange: (o: boolean) => void; teamId: string }) {
+  const { t } = useTranslation(); const queryClient = useQueryClient();
+  const [who, setWho] = useState(''); const [note, setNote] = useState(''); const [busy, setBusy] = useState(false);
+  useEffect(() => { if (!open) { setWho(''); setNote(''); } }, [open]);
+  const save = async () => {
+    if (hasBlockedClaim(note)) { toast.error(t('recognition.err.claim_blocked')); return; }
+    setBusy(true); const { error } = await supabase.rpc('name_member_of_month', { _team: teamId, _user: who, _note: note.trim() }); setBusy(false);
+    if (error) { toast.error(t(recognitionError(error))); return; }
+    toast.success(t('recognition.momSaved')); await queryClient.invalidateQueries({ queryKey: teamKey(teamId) }); onOpenChange(false);
+  };
+  return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={t('recognition.nameMember')} description={t('recognition.nameMemberText')}>
+    <div className="edit-form">
+      <div className="form-field"><span className="field-label">{t('recognition.who')}</span><PersonPicker teamId={teamId} value={who} onChange={setWho} /></div>
+      <div className="form-field"><label className="field-label" htmlFor="mom-note">{t('recognition.noteOptional')}</label><Textarea id="mom-note" rows={2} className="field-textarea" maxLength={280} value={note} onChange={e => setNote(e.target.value)} placeholder={t('recognition.momPlaceholder')} /></div>
+      <Button className="onboarding-continue" disabled={busy || !who} onClick={() => void save()}><Star />{t('recognition.nameMemberCta')}</Button>
     </div>
   </ResponsiveSheet>;
 }
@@ -305,22 +349,35 @@ export function RecognitionSummary({ teamId }: { teamId: string }) {
 }
 
 export function BadgeWall({ teamId }: { teamId: string }) {
-  const { t, i18n } = useTranslation(); const { userId } = useGatherwell();
+  const { t, i18n } = useTranslation(); const { userId } = useGatherwell(); const queryClient = useQueryClient();
   const { data: badges = [] } = useQuery(badgesQuery(teamId));
   const { data: earned = [] } = useQuery(myBadgesQuery(teamId, userId));
   const share = useShareBadge();
   const byId = useMemo(() => new Map(earned.map(e => [e.badge_id, e])), [earned]);
   const sorted = [...badges].sort((a, b) => Number(byId.has(b.id)) - Number(byId.has(a.id)));
   const lang = i18n.resolvedLanguage;
+  const featuredCount = earned.filter(e => e.featured != null).length;
+  const toggleFeature = async (earnedId: string, current: number | null) => {
+    if (current == null && featuredCount >= 3) { toast.error(t('recognition.featureFull')); return; }
+    const slot = current ?? ([1, 2, 3].find(s => !earned.some(e => e.featured === s)) ?? null);
+    const { error } = await supabase.rpc('feature_badge', { _id: earnedId, _slot: slot as number });
+    if (error) { toast.error(t(recognitionError(error))); return; }
+    await queryClient.invalidateQueries({ queryKey: recognitionKey(teamId) });
+    await queryClient.invalidateQueries({ queryKey: ['featured-badges', userId] });
+  };
   return <div className="badge-wall-wrap">
     <RecognitionSummary teamId={teamId} />
+    {earned.length > 0 && <p className="gw-muted-line">{t('recognition.featureHint')}</p>}
     {!earned.length && <span className="chip sample-badge">{t('recognition.noneYet')}</span>}
     <div className="badge-wall">{sorted.map(b => { const e = byId.get(b.id); return <div className={`badge-tile ${e ? '' : 'is-locked'}`} key={b.id}>
       <Medallion badge={b} size={64} locked={!e} />
       <strong>{badgeName(b, lang)}</strong>
       {e ? <small>{t('recognition.earnedOn', { date: new Date(e.awarded_at).toLocaleDateString(lang, { month: 'short', day: 'numeric', year: 'numeric' }) })}</small>
         : <small><Lock className="inline-icon" />{badgeText(b, lang) || t('recognition.leaderAwarded')}</small>}
-      {e && <button type="button" className="auth-link badge-share" onClick={() => void share(b)}><Download />{t('recognition.card')}</button>}
+      {e && <div className="badge-tile-actions">
+        <button type="button" className={`auth-link badge-share badge-feature ${e.featured != null ? 'is-featured' : ''}`} aria-pressed={e.featured != null} onClick={() => void toggleFeature(e.id, e.featured)}><Star />{e.featured != null ? t('recognition.featured') : t('recognition.feature')}</button>
+        <button type="button" className="auth-link badge-share" onClick={() => void share(b)}><Download />{t('recognition.card')}</button>
+      </div>}
     </div>; })}</div>
   </div>;
 }

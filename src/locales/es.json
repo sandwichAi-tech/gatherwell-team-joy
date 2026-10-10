@@ -1387,7 +1387,18 @@
       "not_leader": "Solo las líderes pueden hacer esto.",
       "not_allowed": "No puedes hacer eso aquí.",
       "invalid_message": "Máximo 280 caracteres."
-    }
+    },
+    "feature": "Destacar",
+    "featured": "Destacada",
+    "featureHint": "Toca la estrella para destacar hasta 3 insignias en tu perfil y tu página de anfitrión.",
+    "featureFull": "Puedes destacar hasta 3 insignias. Quita una primero.",
+    "nameMember": "Miembro del mes",
+    "nameMemberText": "Celebra a un miembro que estuvo presente y levantó al equipo este mes.",
+    "nameMemberCta": "Nombrar miembro del mes",
+    "momSaved": "Miembro del mes guardado",
+    "momPlaceholder": "Unas palabras amables (opcional)",
+    "momEyebrow": "Miembro del mes · {{month}}",
+    "momTitle": "Miembro del Mes"
   },
   "notify": {
     "channels": "Canales",
