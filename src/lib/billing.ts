@@ -5,7 +5,7 @@ import { getPaymentsStatus } from '@/lib/billing.functions';
 export type PlanId = 'free' | 'growth' | 'pro';
 export type Limits = { gatherings: number | null; guests: number | null; storage_mb: number; assistant: number; fee_pct: number; fee_cap?: number | null };
 /** Admin-editable plan numbers (plan_settings). Cents for cap and price. */
-export type PlanSetting = { plan: PlanId; fee_percent: number; monthly_cap: number | null; monthly_price: number; legacy: boolean };
+export type PlanSetting = { plan: PlanId; fee_percent: number; monthly_cap: number | null; monthly_price: number; legacy: boolean; service_fee_percent: number; service_fee_fixed: number };
 export type PlanStatus = {
   plan: PlanId; source: 'own' | 'license'; leader?: string | null; team?: string | null; limits: Limits;
   own_plan: PlanId; billing_period: 'month' | 'year' | null; status: 'active' | 'past_due' | 'canceled' | 'trialing'; renews_at: string | null;
@@ -25,9 +25,9 @@ export const planSettingsQuery = queryOptions({
   queryKey: ['plan-settings'],
   staleTime: 10 * 60_000,
   queryFn: async (): Promise<Record<PlanId, PlanSetting>> => {
-    const { data, error } = await supabase.from('plan_settings').select('plan, fee_percent, monthly_cap, monthly_price, legacy');
+    const { data, error } = await supabase.from('plan_settings').select('plan, fee_percent, monthly_cap, monthly_price, legacy, service_fee_percent, service_fee_fixed');
     if (error) throw error;
-    return Object.fromEntries((data ?? []).map(r => [r.plan, { ...r, fee_percent: Number(r.fee_percent) }])) as Record<PlanId, PlanSetting>;
+    return Object.fromEntries((data ?? []).map(r => [r.plan, { ...r, fee_percent: Number(r.fee_percent), service_fee_percent: Number(r.service_fee_percent) }])) as Record<PlanId, PlanSetting>;
   },
 });
 export const LICENSES = [{ id: 'team25' as const, cents: 19900, seats: 25 }, { id: 'team100' as const, cents: 49900, seats: 100 }];
@@ -57,7 +57,7 @@ export const licenseQuery = (teamId: string) => queryOptions({
 export const earningsQuery = (userId: string) => queryOptions({
   queryKey: ['earnings', userId],
   queryFn: async () => {
-    const { data, error } = await supabase.from('payments').select('id, event_id, buyer_name, amount_cents, fee_cents, booking_fee_cents, status, created_at').eq('host_id', userId).neq('status', 'pending').order('created_at', { ascending: false }).limit(200);
+    const { data, error } = await supabase.from('payments').select('id, event_id, buyer_name, amount_cents, fee_cents, booking_fee_cents, service_fee_cents, service_fee_covered, status, created_at').eq('host_id', userId).neq('status', 'pending').order('created_at', { ascending: false }).limit(200);
     if (error) throw error;
     const ids = [...new Set((data ?? []).map(p => p.event_id).filter((x): x is string => !!x))];
     const { data: evs } = ids.length ? await supabase.from('events').select('id, title, starts_at').in('id', ids) : { data: [] };

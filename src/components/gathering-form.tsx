@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { X, Camera, Check, Languages, Copy, MessageCircle, MessageSquareText, MapPin, Globe2, Repeat, ChevronRight } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { GatheringCover } from '@/components/gathering-cover';
 import { useGatherwell } from '@/components/gatherwell-shell';

@@ -2004,7 +2004,23 @@
     "capReached": "Tope alcanzado",
     "capReachedHint": "Ya llegaste al tope de este mes. No pagas comisión por tus ventas hasta el próximo mes.",
     "capHint": "{{pct}}% de tus ventas pagadas hasta llegar a {{cap}} este mes. Después, 0%.",
-    "getPaidCapped": "Los invitados pagan con tarjeta y el dinero llega a tu cuenta. Comisión: {{n}}% de las ventas pagadas, con tope de {{cap}} al mes."
+    "getPaidCapped": "Los invitados pagan con tarjeta y el dinero llega a tu cuenta. Comisión: {{n}}% de las ventas pagadas, con tope de {{cap}} al mes.",
+    "serviceFee": "Cargo por servicio",
+    "bookingFeeLabel": "Cargo por reservación",
+    "total": "Total",
+    "orderSummary": "Resumen del pedido",
+    "tickets_one": "{{count}} boleto",
+    "tickets_other": "{{count}} boletos",
+    "allInPrice": "Precio final. Sin cargos extra al pagar.",
+    "allInShort": "precio final",
+    "plusServiceFee": "+ {{fee}} de cargo por servicio",
+    "coverFee": "Yo cubro el cargo por servicio",
+    "coverFeeOn": "Tus invitados ven un solo precio final. El cargo por servicio se descuenta de tu pago.",
+    "coverFeeOff": "Tus invitados pagan un pequeño cargo por servicio en su propia línea al pagar.",
+    "serviceCovered": "Cargos por servicio que cubriste",
+    "guestServiceNote": "Tus invitados también pagaron {{amount}} en cargos por servicio. Eso no forma parte de tus ventas.",
+    "serviceFeeRow": "el invitado pagó {{fee}} de cargo por servicio",
+    "serviceFeeCoveredRow": "cubriste {{fee}} de cargo por servicio"
   },
   "report": {
     "action": "Reportar",
@@ -2359,7 +2375,9 @@
       "cap": "Tope mensual de comisión ($)",
       "noCap": "Sin tope",
       "price": "Precio mensual ($)",
-      "save": "Guardar"
+      "save": "Guardar",
+      "servicePct": "Cargo por servicio al invitado (%)",
+      "serviceFixed": "Cargo por servicio al invitado, fijo ($)"
     }
   },
   "legalDocs": {

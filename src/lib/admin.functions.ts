@@ -438,11 +438,11 @@ export const decideVerification = createServerFn({ method: 'POST' }).middleware(
 
 /** Admin edits plan numbers (dollars in, cents stored); every change is audited. */
 export const updatePlanSettings = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ plan: z.enum(['free', 'pro']), fee_percent: z.number().min(0).max(30), monthly_cap: z.number().int().min(0).max(1000000).nullable(), monthly_price: z.number().int().min(0).max(1000000) }).parse(d))
+  .inputValidator((d: unknown) => z.object({ plan: z.enum(['free', 'pro']), fee_percent: z.number().min(0).max(30), monthly_cap: z.number().int().min(0).max(1000000).nullable(), monthly_price: z.number().int().min(0).max(1000000), service_fee_percent: z.number().min(0).max(20), service_fee_fixed: z.number().int().min(0).max(1000) }).parse(d))
   .handler(async ({ data, context }) => {
     const db = await assertAdmin(context);
     const { data: before } = await db.from('plan_settings').select('*').eq('plan', data.plan).maybeSingle();
-    const { error } = await db.from('plan_settings').update({ fee_percent: data.fee_percent, monthly_cap: data.monthly_cap, monthly_price: data.monthly_price, updated_at: new Date().toISOString() }).eq('plan', data.plan);
+    const { error } = await db.from('plan_settings').update({ fee_percent: data.fee_percent, monthly_cap: data.monthly_cap, monthly_price: data.monthly_price, service_fee_percent: data.service_fee_percent, service_fee_fixed: data.service_fee_fixed, updated_at: new Date().toISOString() }).eq('plan', data.plan);
     if (error) return { ok: false as const };
     await audit(db, context.userId, 'plan_settings', 'plan', null, before, data, data.plan);
     return { ok: true as const };

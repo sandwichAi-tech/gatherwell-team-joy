@@ -73,3 +73,4 @@ ADDENDUM (Oct 2026, confirmed rules — additive, nothing above removed):
 - API keys come later: any feature needing an outside service (Claude, Resend, Mailgun, Twilio, Stripe, Google Maps) goes in a backend function that reads the key from Lovable Cloud secrets; if the key is missing, use a realistic mock and a small "Not connected yet" note. Never hard-code keys or put them in front-end code.
 - Row-level security on every table. Accounts are 18+. Guests can RSVP without an account.
 - Pricing: Free 7% capped at $99/month; Pro $99/month at 0%. Numbers live in plan_settings.
+- Guest service fee: 3% + $0.49 on paid single tickets only (never free RSVPs or subscriptions); a coach can cover it per gathering. Numbers live in plan_settings.

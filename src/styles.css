@@ -1875,3 +1875,7 @@ a.gw-cat-chip:hover{background:#fff}
 .admin-plan-fields{display:grid;gap:12px}@media(min-width:640px){.admin-plan-fields{grid-template-columns:repeat(3,1fr)}}
 .admin-plan-fields .field-label{display:flex;flex-direction:column;gap:6px}
 @media(min-width:1024px){.gw-landing .gw-public-plans{grid-template-columns:repeat(3,1fr)}}
+.guest-fee-lines{display:flex;flex-direction:column;gap:8px;padding:16px;border-radius:16px;background:var(--muted);border:1px solid var(--border)}
+.guest-fee-lines>div{display:flex;justify-content:space-between;gap:12px;font-size:15px;line-height:1.5}
+.guest-fee-lines dt{color:var(--muted-foreground)}.guest-fee-lines dd{font-weight:600}
+.guest-fee-lines .is-total{border-top:1px solid var(--border);padding-top:8px;font-weight:800}.guest-fee-lines .is-total dt{color:var(--foreground)}.guest-fee-lines .is-total dd{font-weight:800}

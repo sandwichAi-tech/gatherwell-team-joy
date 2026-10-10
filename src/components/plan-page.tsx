@@ -245,8 +245,12 @@ export function EarningsPage() {
   const [confirm, setConfirm] = useState<{ eventId?: string; paymentId?: string } | null>(null);
   const pays = data?.payments ?? [];
   const paid = pays.filter(p => p.status === 'paid');
-  const sales = paid.reduce((s, p) => s + p.amount_cents - p.booking_fee_cents, 0);
+  // Ticket sales exclude anything the guest paid on top (booking and service fees); a covered service fee comes out of the payout.
+  const guestPaidFee = (p: (typeof paid)[number]) => p.booking_fee_cents + (p.service_fee_covered ? 0 : p.service_fee_cents);
+  const sales = paid.reduce((s, p) => s + p.amount_cents - guestPaidFee(p), 0);
   const fees = paid.reduce((s, p) => s + p.fee_cents - p.booking_fee_cents, 0);
+  const coveredService = paid.reduce((s, p) => s + (p.service_fee_covered ? p.service_fee_cents : 0), 0);
+  const guestService = paid.reduce((s, p) => s + (p.service_fee_covered ? 0 : p.service_fee_cents), 0);
   const groups = new Map<string, typeof pays>();
   pays.forEach(p => { const k = p.event_id ?? 'other'; groups.set(k, [...(groups.get(k) ?? []), p]); });
 
@@ -269,7 +273,8 @@ export function EarningsPage() {
       <span className="plan-meter-bar" aria-hidden><span style={{ width: `${Math.min(100, Math.round(st.fees_month / Math.max(st.limits.fee_cap, 1) * 100))}%` }} /></span>
       <p className="field-hint">{st.fees_month >= st.limits.fee_cap ? t('billing.capReachedHint') : t('billing.capHint', { pct: st.limits.fee_pct, cap: formatMoney(st.limits.fee_cap, lang) })}</p>
     </section>}
-    <div className="stats-grid">{stat(t('billing.ticketSales'), formatMoney(sales, lang))}{stat(t('billing.platformFees'), formatMoney(fees, lang))}{stat(t('billing.payouts'), formatMoney(sales - fees, lang))}{stat(t('billing.ticketsSold'), paid.length)}</div>
+    <div className="stats-grid">{stat(t('billing.ticketSales'), formatMoney(sales, lang))}{stat(t('billing.platformFees'), formatMoney(fees, lang))}{stat(t('billing.serviceCovered'), formatMoney(coveredService, lang))}{stat(t('billing.payouts'), formatMoney(sales - fees - coveredService, lang))}{stat(t('billing.ticketsSold'), paid.length)}</div>
+    {guestService > 0 && <p className="field-hint">{t('billing.guestServiceNote', { amount: formatMoney(guestService, lang) })}</p>}
     <PromoUsageCard />
     <ReferralCard format={c => formatMoney(c, lang)} />
     <WelcomeRewardsCard />
@@ -277,7 +282,7 @@ export function EarningsPage() {
       const ev = data?.events.get(eid);
       return <section key={eid} className="panel">
         <div className="section-heading"><h2>{ev?.title ?? t('billing.otherSales')}</h2>{eid !== 'other' && list.some(p => p.status === 'paid') && <Button variant="link" onClick={() => setConfirm({ eventId: eid })}>{t('billing.refundAll')}</Button>}</div>
-        {list.map(p => <div key={p.id} className="seat-row"><span><strong>{p.buyer_name ?? t('billing.guest')}</strong><small>{formatMoney(p.amount_cents, lang)} · {t(`billing.status_${p.status}`)}</small></span>
+        {list.map(p => <div key={p.id} className="seat-row"><span><strong>{p.buyer_name ?? t('billing.guest')}</strong><small>{formatMoney(p.amount_cents, lang)}{p.service_fee_cents ? ` · ${t(p.service_fee_covered ? 'billing.serviceFeeCoveredRow' : 'billing.serviceFeeRow', { fee: formatMoney(p.service_fee_cents, lang) })}` : ''} · {t(`billing.status_${p.status}`)}</small></span>
           {p.status === 'paid' && <Button variant="secondary" onClick={() => setConfirm({ paymentId: p.id })}>{t('billing.refund')}</Button>}</div>)}
       </section>;
     })}
