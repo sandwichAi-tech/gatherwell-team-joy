@@ -8,7 +8,7 @@ import { ReportButton } from '@/components/report-button';
 import { takePendingAnnouncement } from '@/lib/assistant-client';
 import { useChannelStatus } from '@/components/notifications';
 import { ActiveChallengeCard, ChallengesSection } from '@/components/challenges';
-import { HostOfMonthCard, Medallion, PinnedShoutout, RecognitionTools, ShoutoutModeration, ShoutoutSheet, useHostOfMonthId } from '@/components/recognition';
+import { FeaturedBadges, HostOfMonthCard, Medallion, MemberOfMonthCard, PinnedShoutout, RecognitionTools, ShoutoutModeration, ShoutoutSheet, useHostOfMonthId } from '@/components/recognition';
 import type { Tier } from '@/lib/recognition';
 import i18n from '@/lib/i18n';
 import { useEffect, useMemo, useState } from 'react';
