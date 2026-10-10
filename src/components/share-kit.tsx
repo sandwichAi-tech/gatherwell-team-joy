@@ -1,3 +1,4 @@
+import { markLinkShared } from '@/components/coach-launch';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useServerFn } from '@tanstack/react-start';
@@ -111,7 +112,7 @@ export function ShareKit({ title, startsAt, timezone, place, link, coverPath, co
   const download = () => {
     if (!current) return;
     const a = document.createElement('a'); a.href = current.url; a.download = `gathering-${format}.png`; a.click();
-    trackEvent('share', { action: 'download', format });
+    trackEvent('share', { action: 'download', format }); void markLinkShared();
   };
   const nativeShare = async () => {
     const f = file();
@@ -119,7 +120,7 @@ export function ShareKit({ title, startsAt, timezone, place, link, coverPath, co
       if (f && navigator.canShare?.({ files: [f] })) await navigator.share({ files: [f], text: captionText, title });
       else if (navigator.share) await navigator.share({ text: captionText, url: link, title });
       else { await copyText(link); toast.success(t('onboarding.copied')); }
-      trackEvent('share', { action: 'native' });
+      trackEvent('share', { action: 'native' }); void markLinkShared();
     } catch { /* closed by the person */ }
   };
 

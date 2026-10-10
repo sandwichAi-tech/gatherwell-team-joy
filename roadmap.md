@@ -88,3 +88,10 @@
 - [x] Part 2: limited badges + collection sections
 - [x] Part 3: founding seats, early access, waitlist position, real capacity chips
 - [x] Part 4: personal progress, month recap, coach sharing
+
+## V3 — Coaches (in parts)
+- [x] Part 1: launch checklist, earnings milestones, price guidance
+- [ ] Part 2: verified coaches + reviews
+- [ ] Part 3: retreats and trips
+- [ ] Part 4: ethical access
+- [ ] Part 5: who-it's-for messaging

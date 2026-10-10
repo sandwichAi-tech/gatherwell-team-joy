@@ -20,9 +20,9 @@ export async function markLinkShared() {
 }
 
 const STEPS: { key: string; icon: GwIconName; to: string }[] = [
-  { key: 'profile', icon: 'UserCircle', to: '/me' },
-  { key: 'offer', icon: 'Sparkle', to: '/offers' },
-  { key: 'shared', icon: 'ShareNetwork', to: '/events' },
+  { key: 'profile', icon: 'UserRound', to: '/me' },
+  { key: 'offer', icon: 'Sparkles', to: '/offers' },
+  { key: 'shared', icon: 'Share2', to: '/events' },
   { key: 'first_rsvp', icon: 'CalendarCheck', to: '/events' },
   { key: 'first_paid', icon: 'HandHeart', to: '/earnings' },
   { key: 'first_100', icon: 'Trophy', to: '/earnings' },
