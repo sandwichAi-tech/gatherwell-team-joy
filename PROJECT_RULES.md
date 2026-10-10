@@ -73,6 +73,7 @@ ADDENDUM (Oct 2026, confirmed rules — additive, nothing above removed):
 - API keys come later: any feature needing an outside service (Claude, Resend, Mailgun, Twilio, Stripe, Google Maps) goes in a backend function that reads the key from Lovable Cloud secrets; if the key is missing, use a realistic mock and a small "Not connected yet" note. Never hard-code keys or put them in front-end code.
 - Row-level security on every table. Accounts are 18+. Guests can RSVP without an account.
 - Pricing: Free 7% capped at $99/month; Pro $99/month at 0%. Numbers live in plan_settings.
+- The paid community feature is called Circles. Its display name lives in one translation key (feature_name_singular / feature_name_plural).
 - Locations: Gatherwell never runs a front desk or sells products for a location; "Book a class" and "Our store" only link out.
 - Guest service fee: 3% + $0.49 on paid single tickets only (never free RSVPs or subscriptions); a coach can cover it per gathering. Numbers live in plan_settings.
 - Founding coaches (max 6): Pro free for 6 months from one shared start date, then $49/month locked while on Pro. Non-cash, never tied to recruiting.
