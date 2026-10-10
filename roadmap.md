@@ -1,3 +1,8 @@
+# Mobile layout audit — October 10, 2026
+- [ ] Check public pages at 375/390/414px in English and Spanish, including menus and gathering previews
+- [ ] Inspect signed-in layouts and shared overlays; distinguish confirmed defects from source-only risks
+- [ ] Deliver detailed mobile findings, evidence, coverage, and remaining verification blockers
+
 # D1 — Premium design audit (current priority)
 ## Landing polish — October 7
 - [x] Strengthen marketing category and vignette icons with matching duotone treatment
