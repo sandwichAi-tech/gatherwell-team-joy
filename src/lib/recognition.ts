@@ -119,6 +119,6 @@ export const hasBlockedClaim = (text: string) => CLAIM.test(text);
 
 export function recognitionError(error: unknown) {
   const m = error instanceof Error ? error.message : typeof error === 'object' && error && 'message' in error ? String((error as { message: unknown }).message) : '';
-  for (const key of ['claim_blocked', 'already_awarded', 'invalid_person', 'not_leader', 'not_allowed', 'invalid_message']) if (m.includes(key)) return `recognition.err.${key}`;
+  for (const key of ['claim_blocked', 'already_awarded', 'invalid_person', 'not_leader', 'not_allowed', 'invalid_message', 'already_exists', 'invalid']) if (m.includes(key)) return `recognition.err.${key}`;
   return 'profile.saveError';
 }
