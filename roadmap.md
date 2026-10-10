@@ -92,6 +92,6 @@
 ## V3 — Coaches (in parts)
 - [x] Part 1: launch checklist, earnings milestones, price guidance
 - [x] Part 2: verified coaches + reviews
-- [ ] Part 3: retreats and trips
+- [x] Part 3: retreats and trips
 - [ ] Part 4: ethical access
 - [ ] Part 5: who-it's-for messaging
