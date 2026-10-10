@@ -3104,7 +3104,7 @@
     "pricingFaq": [
       {
         "q": "¿Qué es el cargo de la plataforma?",
-        "a": "Un porcentaje de los boletos y ofertas de pago: 8% en Gratis, 4% en Growth y 2% en Pro. El procesamiento de pagos se cobra por separado. Las confirmaciones gratuitas no tienen este cargo."
+        "a": "En Gratis, 7% de los boletos y ofertas de pago, con tope de $99 al mes. Pro cuesta $99 al mes sin comisión. El procesamiento de tarjetas es aparte en ambos planes y se cobra al costo. Las confirmaciones gratuitas no tienen cargo."
       },
       {
         "q": "¿Los invitados pueden participar gratis?",
