@@ -34,6 +34,8 @@ export const getAdminOverview = createServerFn({ method: 'POST' }).middleware([r
     const { data: o, error } = await context.supabase.rpc('admin_overview', { _since: since.toISOString() });
     if (error) throw new Error(error.message);
     const r = o as Record<string, unknown> & { paid: Record<string, number>; licenses: Record<string, number> };
+    const { data: ttl } = await context.supabase.rpc('admin_time_to_live', { _since: since.toISOString() });
+    r['time_to_live'] = ttl ?? null;
     const connected = !!process.env['STRIPE_SECRET_KEY'];
     let mrr: number | null = null;
     if (connected) {
@@ -47,6 +49,7 @@ export const getAdminOverview = createServerFn({ method: 'POST' }).middleware([r
   });
 
 export type AdminOverview = {
+  time_to_live: { median_minutes: number | null; live: number; within_hour: number } | null;
   signups: number; active_teams: number; gatherings: number; rsvps: number; checkins: number; ai_requests: number; ai_cost_cents: number;
   messages: Record<string, number>; plans: { free: number; growth: number; pro: number; team: number };
   weeks: { week: string; signups: number; checkins: number }[]; mrr_cents: number | null; stripe_connected: boolean;
