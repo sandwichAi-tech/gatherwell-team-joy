@@ -1,4 +1,6 @@
 import { PriceGuidance } from '@/components/coach-launch';
+import { RetreatEditor, cleanRetreat } from '@/components/retreat';
+import { asRetreat, emptyRetreat, type Retreat } from '@/lib/retreat';
 import { CATEGORIES, isCategory, type Category } from '@/lib/landing';
 import { CropFileInput, type CropResult } from '@/components/image-crop';
 import { CopyButton } from '@/components/copy-button';
@@ -58,6 +60,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const [rule, setRule] = useState<RepeatRule>({ kind: 'none', monthly: 'date', days: [], endMode: 'count', count: 8, until: '' });
   const [teamReg, setTeamReg] = useState({ on: false, min: 2, max: 6, mode: 'person' as 'person' | 'team' });
   const [full, setFull] = useState(editing || !!templateId || !!fromId);
+  const [retreatOn, setRetreatOn] = useState(false); const [retreat, setRetreat] = useState<Retreat>(emptyRetreat); const [retreatEnd, setRetreatEnd] = useState(''); const [galleryBusy, setGalleryBusy] = useState(false);
 
   // Prefill once from template, the gathering being edited, or the one being duplicated.
   useEffect(() => {
@@ -77,6 +80,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       setCoords(e.lat != null && e.lng != null ? { lat: e.lat, lng: e.lng } : null);
       setPrice((e as { price_cents?: number | null }).price_cents ? String(((e as { price_cents: number }).price_cents / 100)) : '');
       { const x = e as { team_registration?: boolean; team_min?: number; team_max?: number; team_price_mode?: string }; setTeamReg({ on: !!x.team_registration, min: x.team_min ?? 2, max: x.team_max ?? 6, mode: x.team_price_mode === 'team' ? 'team' : 'person' }); }
+      { const rt = asRetreat((e as { retreat?: unknown }).retreat); if (rt) { setRetreatOn(true); setRetreat(rt); if (e.ends_at) setRetreatEnd(toLocalInput(new Date(e.ends_at))); } }
       setCapacity(e.capacity ? String(e.capacity) : ''); setVisibility(e.visibility === 'team' ? 'team' : e.visibility === 'invite' ? 'invite' : 'public');
       if (editing) setStart(toLocalInput(new Date(e.starts_at)));
       else { const d = new Date(e.starts_at); const next = new Date(); next.setDate(next.getDate() + 7); next.setHours(d.getHours(), d.getMinutes(), 0, 0); setStart(toLocalInput(next)); }
@@ -112,6 +116,16 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     const { error } = ev?.series_id ? await q.eq('series_id', ev.series_id) : await q.eq('id', id);
     if (error) toast.error(t('profile.saveError'));
   };
+  const saveRetreat = async (id: string) => {
+    if (!retreatOn && !(source?.event as { retreat?: unknown } | undefined)?.retreat) return true;
+    const { error } = await supabase.rpc('set_event_retreat', { _event: id, _retreat: (retreatOn ? cleanRetreat(retreat) : null) as never, _ends_at: retreatOn ? new Date(retreatEnd).toISOString() : (null as unknown as string) });
+    if (error) { toast.error(t(`retreat.errors.${['blocked_claim', 'invalid_retreat_dates', 'invalid_balance_due', 'invalid_deposit', 'payment_needs_price'].find(k => error.message.includes(k)) ?? 'failed'}`)); return false; }
+    return true;
+  };
+  const uploadGallery = async (file: File) => {
+    setGalleryBusy(true);
+    try { return await uploadMedia(userId, file, 'cover'); } catch (err) { if (err instanceof Error && err.message === 'storage_limit') setLimit('storage'); else toast.error(t('profile.saveError')); return null; } finally { setGalleryBusy(false); }
+  };
   const savePrice = async (id: string) => {
     if (!canSell && !priceCents) return null;
     const { data: ev } = await supabase.from('events').select('series_id').eq('id', id).maybeSingle();
@@ -123,11 +137,12 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   if (!editing && workspace.role === 'member') return <section className="panel"><h2>{t('gathering.hostsOnly')}</h2><p>{t('gathering.hostsOnlyText')}</p></section>;
 
   const urlBad = place === 'online' && url.trim() !== '' && !/^https:\/\/\S+$/i.test(url.trim());
-  const valid = title.trim() && start && !urlBad && (place === 'person' || url.trim()) && (!capacity || Number(capacity) >= 1) && (!priceCents || (priceCents >= 100 && priceCents <= 100000));
+  const valid = !(retreatOn && (!retreatEnd || !start || new Date(retreatEnd) <= new Date(start))) && title.trim() && start && !urlBad && (place === 'person' || url.trim()) && (!capacity || Number(capacity) >= 1) && (!priceCents || (priceCents >= 100 && priceCents <= 100000));
   const presets = datePresets(); const usual = editing ? null : usualSlot(history);
   const startDate = start ? new Date(start) : null;
   const dates = startDate && !editing ? expandRepeat(startDate, rule) : [];
-  const weekly = dates.length > 1;
+  const weekly = !retreatOn && dates.length > 1;
+  const retreatBad = retreatOn && (!retreatEnd || !startDate || new Date(retreatEnd) <= startDate);
 
   const payload = () => ({
     category, category_label: category === 'more' ? categoryLabel.trim() : '', title: title.trim(), cover_url: coverPath ?? '', cover_style: coverStyle, starts_at: new Date(start).toISOString(), duration_minutes: duration,
@@ -146,7 +161,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       if (!error && publish && source?.event.status === 'draft') { const r = await supabase.from('events').update({ status: 'published' }).eq('id', eventId!); if (r.error) { setBusy(false); toast.error(rpcError(t, r.error)); return; } }
       setBusy(false);
       if (error) { toast.error(rpcError(t, error)); return; }
-      await savePrice(eventId!); await saveTeamReg(eventId!);
+      await savePrice(eventId!); await saveTeamReg(eventId!); if (!(await saveRetreat(eventId!))) return;
       await queryClient.invalidateQueries(); toast.success(t('gathering.saved'));
       void navigate({ to: '/event/$id', params: { id: eventId! } }); return;
     }
@@ -156,6 +171,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (error || !data) { toast.error(rpcError(t, error)); return; }
     if (priceCents) await savePrice(data);
     if (teamReg.on) await saveTeamReg(data);
+    if (retreatOn && !(await saveRetreat(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
     await queryClient.invalidateQueries();
     if (publish) setDone({ id: data, visibility }); else { toast.success(t('gathering.draftSaved')); void navigate({ to: '/event/$id', params: { id: data } }); }
   };
@@ -277,7 +293,13 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         {tr.preview && <p className="not-connected">{t('assistant.previewTranslateNote')}</p>}
       </section>
 
-      {!editing ? <section className="form-section">
+      <section className="form-section">
+        <label className="guest-consent"><input type="checkbox" checked={retreatOn} onChange={e => { setRetreatOn(e.target.checked); if (e.target.checked && !retreatEnd && startDate) { const d = new Date(startDate); d.setDate(d.getDate() + 2); d.setHours(12, 0, 0, 0); setRetreatEnd(toLocalInput(d)); } }} /><span><strong>{t('retreat.toggle')}</strong><br /><small className="field-hint">{t('retreat.toggleHint')}</small></span></label>
+        {retreatOn && <RetreatEditor value={retreat} onChange={setRetreat} end={retreatEnd} setEnd={setRetreatEnd} priceCents={priceCents} onUpload={uploadGallery} uploading={galleryBusy} />}
+        {retreatBad && tried && <p className="field-error">{t('retreat.errors.invalid_retreat_dates')}</p>}
+      </section>
+
+      {retreatOn ? null : !editing ? <section className="form-section">
         <label className="field-label" htmlFor="g-repeat">{t('gathering.repeat')}</label>
         <select id="g-repeat" className="field-input" value={rule.kind} onChange={e => setRule(r => ({ ...r, kind: e.target.value as RepeatKind }))}>
           {REPEATS.map(k => <option key={k} value={k}>{t(`gathering.repeats.${k}`)}</option>)}

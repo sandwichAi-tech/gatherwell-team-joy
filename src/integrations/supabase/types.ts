@@ -1232,6 +1232,7 @@ export type Database = {
           recurrence: string
           require_approval: boolean
           requires_waiver: boolean
+          retreat: Json | null
           rsvp_questions: Json
           series_id: string | null
           small_groups: string[]
@@ -1279,6 +1280,7 @@ export type Database = {
           recurrence?: string
           require_approval?: boolean
           requires_waiver?: boolean
+          retreat?: Json | null
           rsvp_questions?: Json
           series_id?: string | null
           small_groups?: string[]
@@ -1326,6 +1328,7 @@ export type Database = {
           recurrence?: string
           require_approval?: boolean
           requires_waiver?: boolean
+          retreat?: Json | null
           rsvp_questions?: Json
           series_id?: string | null
           small_groups?: string[]
@@ -2760,6 +2763,32 @@ export type Database = {
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      retreat_checks: {
+        Row: {
+          checked_at: string
+          item: number
+          rsvp_id: string
+        }
+        Insert: {
+          checked_at?: string
+          item: number
+          rsvp_id: string
+        }
+        Update: {
+          checked_at?: string
+          item?: number
+          rsvp_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "retreat_checks_rsvp_id_fkey"
+            columns: ["rsvp_id"]
+            isOneToOne: false
+            referencedRelation: "rsvps"
             referencedColumns: ["id"]
           },
         ]
@@ -4457,6 +4486,7 @@ export type Database = {
       reset_calendar_feeds: { Args: never; Returns: Json }
       reset_invite_link: { Args: { _event: string }; Returns: string }
       reset_join_code: { Args: { _team: string }; Returns: string }
+      retreat_checklist: { Args: { _code: string }; Returns: Json }
       rsvp_belonging: {
         Args: { _event: string }
         Returns: {
@@ -4583,6 +4613,10 @@ export type Database = {
         Args: { _event: string; _users: string[] }
         Returns: undefined
       }
+      set_event_retreat: {
+        Args: { _ends_at: string; _event: string; _retreat: Json }
+        Returns: undefined
+      }
       set_pass_fee: { Args: { _on: boolean }; Returns: undefined }
       set_referral_thanks: {
         Args: { _amount: number; _kind: string }
@@ -4643,6 +4677,10 @@ export type Database = {
       toggle_comment_reaction: {
         Args: { _id: string; _kind: string }
         Returns: boolean
+      }
+      toggle_retreat_item: {
+        Args: { _code: string; _item: number; _on: boolean }
+        Returns: undefined
       }
       track_progress: {
         Args: { _team: string }

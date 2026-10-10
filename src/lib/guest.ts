@@ -7,7 +7,7 @@ export type PublicEvent = {
   location_name: string | null; address: string | null; meeting_note: string | null; lat: number | null; lng: number | null;
   is_online: boolean; has_online: boolean; capacity: number | null; status: 'published' | 'cancelled';
   hide_guest_list: boolean; going: number; initials: string[] | null;
-  host: { name: string | null; avatar_url: string | null; verified?: boolean } | null; cohosts?: { name: string | null; avatar_url: string | null }[]; team_name: string | null; my_code: string | null;
+  host: { name: string | null; avatar_url: string | null; verified?: boolean } | null; retreat?: unknown; cohosts?: { name: string | null; avatar_url: string | null }[]; team_name: string | null; my_code: string | null;
   questions?: RsvpQuestion[]; require_approval?: boolean; team_registration?: boolean; team_min?: number; team_max?: number; team_price_mode?: 'person' | 'team'; visibility?: 'public' | 'team' | 'invite';
 };
 

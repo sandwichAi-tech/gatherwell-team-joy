@@ -1,3 +1,4 @@
+import { RetreatChecklist } from '@/components/retreat';
 import { useEffect, useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -49,6 +50,7 @@ function ManageRsvp() {
     <article className="guest-body">
       {data.event.status === 'cancelled' && <p className="guest-cancelled" role="status"><strong>{t('guest.cancelledTitle')}</strong></p>}
       <Confirmation event={data.event} code={code} status={data.status} />
+      <RetreatChecklist code={code} />
       {data.status === 'waitlist' && position != null && <p className="waitlist-position" role="status"><strong>{t('guest.waitlistPosition', { n: position })}</strong></p>}
       {open && <SignWaiverByCode eventId={data.event_id} code={code} />}
       {open && <section className="guest-card guest-manage">

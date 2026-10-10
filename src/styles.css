@@ -1802,3 +1802,50 @@ a.gw-cat-chip:hover{background:#fff}
 .credential-draft { display: grid; gap: 8px; padding: 16px; border-radius: 16px; background: var(--muted); }
 .verify-submit { min-height: 48px; margin-top: 8px; }
 @media (prefers-reduced-motion: reduce) { .review-rate button { transition: none; } }
+
+/* V3 Part 3 — retreats and trips */
+.retreat-editor { display: grid; gap: 8px; margin-top: 8px; padding: 16px; border-radius: 18px; background: var(--muted); }
+.retreat-day-edit { display: grid; gap: 8px; padding: 12px; border-radius: 14px; background: var(--card); border: 1px solid var(--border); }
+.retreat-day-num { font-size: 13px; color: var(--muted-foreground); }
+.retreat-gallery-edit { display: flex; flex-wrap: wrap; gap: 8px; }
+.retreat-thumb { position: relative; width: 96px; height: 64px; border-radius: 12px; overflow: hidden; }
+.retreat-thumb-img { width: 100%; height: 100%; object-fit: cover; }
+.retreat-thumb button { position: absolute; top: 4px; right: 4px; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 999px; border: 0; background: var(--card); color: var(--foreground); box-shadow: var(--shadow-sm, 0 1px 2px rgb(0 0 0 / .1)); }
+.retreat-add-photo { min-height: 64px; }
+.retreat-details { display: grid; gap: 24px; margin: 16px 0; }
+.retreat-range { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; font-weight: 700; }
+.retreat-gallery { display: grid; grid-auto-flow: column; grid-auto-columns: 80%; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; border-radius: 18px; }
+.retreat-gallery-item { scroll-snap-align: start; aspect-ratio: 16 / 9; border-radius: 18px; overflow: hidden; }
+.retreat-gallery-img { width: 100%; height: 100%; object-fit: cover; }
+@media (min-width: 768px) { .retreat-gallery { grid-auto-columns: calc(50% - 4px); } }
+.retreat-section { display: grid; gap: 12px; }
+.retreat-section h2 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -0.01em; }
+.retreat-timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.retreat-timeline > li { position: relative; display: flex; gap: 16px; padding-bottom: 20px; }
+.retreat-timeline > li::before { content: ''; position: absolute; left: 6px; top: 18px; bottom: 0; width: 2px; background: var(--border); }
+.retreat-timeline > li:last-child::before { display: none; }
+.retreat-dot { flex: none; width: 14px; height: 14px; margin-top: 4px; border-radius: 999px; background: var(--primary); box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 18%, transparent); }
+.retreat-timeline h3 { margin: 2px 0 6px; font-size: 16px; font-weight: 700; }
+.retreat-timeline ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; color: var(--muted-foreground); }
+.retreat-cards { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.retreat-card { display: flex; gap: 12px; padding: 16px; border-radius: 18px; background: var(--card); border: 1px solid var(--border); box-shadow: var(--shadow-sm, 0 1px 2px rgb(0 0 0 / .05)); }
+.retreat-card h3 { margin: 0 0 4px; font-size: 16px; font-weight: 700; }
+.retreat-card p { margin: 0; color: var(--muted-foreground); white-space: pre-line; }
+.retreat-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.retreat-list li { display: flex; gap: 8px; align-items: flex-start; }
+.retreat-list.is-yes svg { color: var(--primary); margin-top: 3px; }
+.retreat-list.is-no svg { color: var(--muted-foreground); margin-top: 3px; }
+.retreat-schedule { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.retreat-schedule li { display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px; border-radius: 14px; background: var(--card); border: 1px solid var(--border); }
+.retreat-pre { margin: 0; white-space: pre-line; color: var(--muted-foreground); }
+.retreat-faq { border-bottom: 1px solid var(--border); }
+.retreat-faq summary { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 48px; font-weight: 700; cursor: pointer; list-style: none; }
+.retreat-faq summary::-webkit-details-marker { display: none; }
+.retreat-faq[open] summary svg { transform: rotate(180deg); }
+.retreat-faq summary svg { transition: transform .2s ease; flex: none; }
+.retreat-faq p { margin: 0 0 12px; color: var(--muted-foreground); }
+.retreat-checklist { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.retreat-checklist label { display: flex; align-items: center; gap: 12px; min-height: 48px; cursor: pointer; }
+.retreat-checklist input { width: 22px; height: 22px; accent-color: var(--primary); }
+.retreat-checklist .is-done span { color: var(--muted-foreground); text-decoration: line-through; }
+@media (prefers-reduced-motion: reduce) { .retreat-faq summary svg { transition: none; } }

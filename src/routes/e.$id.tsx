@@ -1,3 +1,5 @@
+import { RetreatDetails } from '@/components/retreat';
+import { asRetreat } from '@/lib/retreat';
 import { VerifiedMark } from '@/components/coach-trust';
 import { EarlyAccessNotice, earlyAccessQuery } from '@/components/early-access';
 import { recordReferral, rememberRef } from '@/lib/network';
@@ -116,6 +118,7 @@ function PublicEventBody() {
         </section>}
 
       {description && <section className="guest-description"><p>{description}</p></section>}
+      {asRetreat(event.retreat) && <RetreatDetails retreat={asRetreat(event.retreat)!} startsAt={event.starts_at} endsAt={event.ends_at} priceCents={price?.price_cents ?? null} />}
 
       <section className="guest-going" aria-live="polite">
         {!event.hide_guest_list && (event.initials?.length ?? 0) > 0 && <div className="guest-avatars" aria-hidden="true">{event.initials!.map((i, n) => <span key={n} className="initial-avatar">{i}</span>)}</div>}
