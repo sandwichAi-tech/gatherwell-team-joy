@@ -1,3 +1,4 @@
+import { useIsVerified } from '@/components/coach-trust';
 import { CropFileInput } from '@/components/image-crop';
 import { GatheringCover } from '@/components/gathering-cover';
 import { CalendarFeedPanel } from '@/components/follow';
@@ -210,10 +211,12 @@ export function MePage() {
   };
 
   const isHost = !!workspace && workspace.role !== 'member';
+  const verified = useIsVerified(userId);
   return <>
     <h1 className="sr-only">{t('me.title')}</h1>
     <ProfileHero
       cover={profile?.cover_url}
+      verified={verified}
       avatar={<span className={homId === userId ? 'hom-ring hom-wrap' : 'hom-wrap'}><Avatar path={profile?.avatar_url} name={profile?.full_name} size={96} /></span>}
       name={profile?.full_name} city={profile?.city} team={workspace?.name} role={workspace ? t(`roles.${workspace.role}`) : null} badge={workspace?.customBadge} bio={profile?.bio}
       actions={<>
@@ -253,6 +256,7 @@ export function MePage() {
     {(isHost || isAdmin) && <SettingsGroup title={t('profile.groupHost')}>
       {isHost && linkRow('FileText', t('offers.title'), '/offers')}
       {isHost && linkRow('Gift', t('promo.title'), '/promos')}
+      {isHost && linkRow('BadgeCheck', t('coachTrust.getVerified'), '/verify')}
       {isAdmin && linkRow('ShieldCheck', t('admin.menu'), '/admin', undefined, { tab: 'overview' })}
       {isAdmin && linkRow('ImageDown', t('siteMedia.menu'), '/admin/site-media')}
     </SettingsGroup>}

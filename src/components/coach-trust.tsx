@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { GwFeatureTile, GwIcon } from '@/components/gw-icon';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
-import { useGatherwell } from '@/lib/gatherwell-context';
+import { useGatherwell } from '@/components/gatherwell-shell';
 import { initialsOf, mediaUrl, uploadMedia } from '@/lib/account';
 
 type Credential = { kind: 'certification' | 'license'; title: string; issuer: string | null };
@@ -96,7 +96,7 @@ function ReviewsPanel({ hostId, d }: { hostId: string; d: CoachTrust }) {
       <label className="field-label" htmlFor="review-body">{t('coachTrust.reviewBody')}</label>
       <Textarea id="review-body" rows={3} maxLength={500} value={body} onChange={e => setBody(e.target.value)} placeholder={t('coachTrust.reviewPlaceholder')} />
       <p className="muted-small">{t('coachTrust.reviewHint')}</p>
-      <div className="form-actions"><Button disabled={busy || !rating} onClick={save}>{t('coachTrust.postReview')}</Button><Button variant="ghost" onClick={() => setOpen(false)}>{t('common.cancel')}</Button>{d.my_review && <Button variant="ghost" onClick={remove}>{t('coachTrust.deleteReview')}</Button>}</div>
+      <div className="form-actions"><Button disabled={busy || !rating} onClick={save}>{t('coachTrust.postReview')}</Button><Button variant="ghost" onClick={() => setOpen(false)}>{t('coachTrust.cancel')}</Button>{d.my_review && <Button variant="ghost" onClick={remove}>{t('coachTrust.deleteReview')}</Button>}</div>
     </div>}
     {!d.can_review && <p className="muted-small">{t('coachTrust.whoCanReview')}</p>}
     {d.reviews.length ? <ul className="review-list">{d.reviews.map(r => <li key={r.id} className="review-item">

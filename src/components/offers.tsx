@@ -1,3 +1,4 @@
+import { VerifiedMark, useIsVerified } from '@/components/coach-trust';
 import { PromoField } from '@/components/promo-field';
 import { promoDiscount, type Promo } from '@/lib/promo';
 import { EmptyState } from '@/components/launch-states';
@@ -203,7 +204,7 @@ export function OfferPage({ id, paid }: { id: string; paid?: boolean }) {
     <OfferCover offer={offer} wide />
     <section className="panel offer-body">
       <h1>{offerTitle(offer, lang)}</h1>
-      {hostName && <p className="muted-small">{t('offers.by', { name: hostName })}</p>}
+      {hostName && <p className="muted-small">{t('offers.by', { name: hostName })}<OfferSeal id={offer.host_id} /></p>}
       <p className="offer-price">{priceLabel(t, offer, lang)}</p>
       {offer.kind === 'membership' && founding && <div className={`founding-card ${founding.left ? '' : 'is-full'}`} role="status">
         <strong>{founding.left ? t('offers.foundingLeft', { left: founding.left, seats: founding.seats }) : t('offers.foundingFull', { seats: founding.seats })}</strong>
@@ -310,3 +311,5 @@ export function MembersOnlyPicker({ table, id, teamId }: { table: 'events' | 'tr
     </select>
     <small className="muted-small">{t(table === 'events' ? 'offers.membersOnlyEvent' : 'offers.membersOnlyTrack')}</small></div>;
 }
+
+function OfferSeal({ id }: { id: string }) { return useIsVerified(id) ? <> <VerifiedMark compact /></> : null; }
