@@ -79,13 +79,13 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
   </div>;
 }
 
-export function FollowButton({ kind, target, following, slug }: { kind: 'host' | 'team'; target: string; following: boolean; slug: string }) {
+export function FollowButton({ kind, target, following, slug }: { kind: 'host' | 'team' | 'location'; target: string; following: boolean; slug: string }) {
   const { t, i18n } = useTranslation();
   const qc = useQueryClient();
   const [busy, setBusy] = useState(false);
   const [sheet, setSheet] = useState(false);
   const [email, setEmail] = useState('');
-  const refresh = () => qc.invalidateQueries({ queryKey: ['public-follow-page', kind, slug] });
+  const refresh = () => qc.invalidateQueries({ queryKey: kind === 'location' ? ['public-location', slug] : ['public-follow-page', kind, slug] });
   const follow = async (withEmail?: string) => {
     setBusy(true);
     const { error } = await supabase.rpc('follow_target', { _kind: kind, _target: target, ...(withEmail ? { _email: withEmail } : {}), _lang: i18n.resolvedLanguage === 'es' ? 'es' : 'en' });
