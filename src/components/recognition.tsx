@@ -268,6 +268,25 @@ function HostSheet({ open, onOpenChange, teamId }: { open: boolean; onOpenChange
   </ResponsiveSheet>;
 }
 
+function MemberSheet({ open, onOpenChange, teamId }: { open: boolean; onOpenChange: (o: boolean) => void; teamId: string }) {
+  const { t } = useTranslation(); const queryClient = useQueryClient();
+  const [who, setWho] = useState(''); const [note, setNote] = useState(''); const [busy, setBusy] = useState(false);
+  useEffect(() => { if (!open) { setWho(''); setNote(''); } }, [open]);
+  const save = async () => {
+    if (hasBlockedClaim(note)) { toast.error(t('recognition.err.claim_blocked')); return; }
+    setBusy(true); const { error } = await supabase.rpc('name_member_of_month', { _team: teamId, _user: who, _note: note.trim() }); setBusy(false);
+    if (error) { toast.error(t(recognitionError(error))); return; }
+    toast.success(t('recognition.momSaved')); await queryClient.invalidateQueries({ queryKey: teamKey(teamId) }); onOpenChange(false);
+  };
+  return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={t('recognition.nameMember')} description={t('recognition.nameMemberText')}>
+    <div className="edit-form">
+      <div className="form-field"><span className="field-label">{t('recognition.who')}</span><PersonPicker teamId={teamId} value={who} onChange={setWho} /></div>
+      <div className="form-field"><label className="field-label" htmlFor="mom-note">{t('recognition.noteOptional')}</label><Textarea id="mom-note" rows={2} className="field-textarea" maxLength={280} value={note} onChange={e => setNote(e.target.value)} placeholder={t('recognition.momPlaceholder')} /></div>
+      <Button className="onboarding-continue" disabled={busy || !who} onClick={() => void save()}><Star />{t('recognition.nameMemberCta')}</Button>
+    </div>
+  </ResponsiveSheet>;
+}
+
 function AwardSheet({ open, onOpenChange, teamId }: { open: boolean; onOpenChange: (o: boolean) => void; teamId: string }) {
   const { t, i18n } = useTranslation(); const queryClient = useQueryClient();
   const { data: badges = [] } = useQuery({ ...badgesQuery(teamId), enabled: open });
