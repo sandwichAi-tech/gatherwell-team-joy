@@ -1,4 +1,5 @@
 import { tgShare } from '@/lib/chat-links';
+import { GuestBelonging } from '@/components/belonging';
 import { PromoField } from '@/components/promo-field';
 import { promoDiscount, type Promo } from '@/lib/promo';
 import { CopyButton } from '@/components/copy-button';
@@ -153,6 +154,7 @@ export function Confirmation({ event, code, status }: { event: ConfirmEvent; cod
       {event.meeting_note && <span className="muted">{event.meeting_note}</span>}
     </div>
     {event.online_url && (status === 'going' || status === 'maybe') && <Button asChild className="guest-primary"><a href={event.online_url} target="_blank" rel="noopener noreferrer"><Video />{t('guest.joinOnline')}</a></Button>}
+    <GuestBelonging code={code} status={status} />
     {status === 'going' && <div className="guest-qr" ref={qr}><QRCodeSVG value={code} size={176} bgColor="var(--qr-background)" fgColor="var(--qr-foreground)" level="M" marginSize={4} title={t('guest.qrHelp')} /><span>{t('guest.qrHelp')}</span><Button variant="secondary" onClick={saveQr}>{t('launch.saveQr')}</Button></div>}
     {!['cancelled', 'declined'].includes(status) && <><CalendarButtons event={event} /><DirectionsButton event={event} /></>}
     <h3 className="guest-subhead">{t('guest.inviteFriend')}</h3>

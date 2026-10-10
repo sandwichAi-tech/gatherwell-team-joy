@@ -11,6 +11,8 @@ PEOPLE:
 - Guest: RSVPs to an event through a link with no account.
 - Admin: platform staff.
 
+PRINCIPLE: Every feature should help people feel connected, confident, and that it's simple — never pressure, fear or false promises.
+
 RULES (never break these):
 1. Mobile-first. Design every screen for a phone held in one hand first. Minimum 48px tap targets. Desktop is secondary.
 2. Every user-facing word goes through i18n with English and Spanish. Spanish is natural Latin American Spanish, never stiff.
