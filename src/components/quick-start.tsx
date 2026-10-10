@@ -183,7 +183,7 @@ function ShareStep({ kind, id, onNext, onBack }: { kind: StartKind; id: string; 
     <section className="panel qs-section"><h2>{t('quickStart.yourLink')}</h2>
       <div className="qs-link"><code>{link}</code><CopyButton text={link} /></div>
       <div className="qs-qr"><QRCodeSVG value={link} size={168} marginSize={2} title={t('quickStart.qrAlt', { title })} /><p className="field-hint">{t('quickStart.qrHint')}</p></div>
-      <CopyButton text={message} label={t('quickStart.copyWa')} copiedLabel={t('quickStart.copiedWa')} />
+      <CopyButton text={message} label={t('quickStart.copyWa')} />
     </section>
     {kind !== 'circle' && d.starts_at ? <section className="panel qs-section"><h2>{t('quickStart.images')}</h2>
       <ShareKit title={title} startsAt={d.starts_at} timezone={d.timezone} place={d.place} link={link} coverPath={d.cover_url} coverStyle={d.cover_style} /></section>
@@ -199,7 +199,7 @@ function PaidStep({ kind, onNext, onBack }: { kind?: StartKind | undefined; onNe
   const connect = useServerFn(startConnectOnboarding);
   const checkout = useServerFn(startPlanCheckout);
   const { data: ps } = useQuery(planSettingsQuery);
-  const free = ps?.find(p => p.plan === 'free'); const pro = ps?.find(p => p.plan === 'pro');
+  const free = ps?.free; const pro = ps?.pro;
   const [plan, setPlan] = useState<'free' | 'pro'>('free');
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
   const finish = () => { if (plan === 'pro') void gate.run(() => checkout({ data: { plan: 'pro', origin, lang } })); else onNext(); };
