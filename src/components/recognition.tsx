@@ -232,16 +232,18 @@ export function ShoutoutSheet({ open, onOpenChange, teamId }: { open: boolean; o
 }
 
 // ---------- Leader tools ----------
-type LeaderSheet = 'host' | 'award' | 'custom' | null;
+type LeaderSheet = 'host' | 'member' | 'award' | 'custom' | null;
 export function RecognitionTools({ teamId }: { teamId: string }) {
   const { t } = useTranslation(); const [sheet, setSheet] = useState<LeaderSheet>(null);
   return <>
     <div className="tool-grid recognition-tools">
       <button type="button" className="tool-tile" onClick={() => setSheet('host')}><Crown /><span>{t('recognition.nameHost')}</span></button>
+      <button type="button" className="tool-tile" onClick={() => setSheet('member')}><Star /><span>{t('recognition.nameMember')}</span></button>
       <button type="button" className="tool-tile" onClick={() => setSheet('award')}><Award /><span>{t('recognition.awardBadge')}</span></button>
       <button type="button" className="tool-tile" onClick={() => setSheet('custom')}><Plus /><span>{t('recognition.newBadge')}</span></button>
     </div>
     <HostSheet open={sheet === 'host'} onOpenChange={o => !o && setSheet(null)} teamId={teamId} />
+    <MemberSheet open={sheet === 'member'} onOpenChange={o => !o && setSheet(null)} teamId={teamId} />
     <AwardSheet open={sheet === 'award'} onOpenChange={o => !o && setSheet(null)} teamId={teamId} />
     <CustomBadgeSheet open={sheet === 'custom'} onOpenChange={o => !o && setSheet(null)} teamId={teamId} />
   </>;
