@@ -20,7 +20,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { initialsOf, mediaUrl, profileQuery, uploadMedia, workspaceQuery } from '@/lib/account';
 import { rosterQuery, teamKey } from '@/lib/team';
 import {
-  badgeName, badgeText, badgesQuery, featuredBadgesQuery, hasBlockedClaim, hostOfMonthQuery, memberOfMonthQuery, myBadgesQuery, pinnedShoutoutQuery, recognitionError, recognitionKey,
+  badgeName, badgeText, badgesQuery, featuredBadgesQuery, hasBlockedClaim, holderCountsQuery, hostOfMonthQuery, isLimited, memberOfMonthQuery, myBadgesQuery, pinnedShoutoutQuery, recognitionError, recognitionKey,
   summaryQuery, unseenBadgesQuery, type Badge, type Tier,
 } from '@/lib/recognition';
 
@@ -313,12 +313,15 @@ function CustomBadgeSheet({ open, onOpenChange, teamId }: { open: boolean; onOpe
   const { t } = useTranslation(); const { userId } = useGatherwell(); const queryClient = useQueryClient();
   const empty = { name_en: '', name_es: '', description_en: '', description_es: '', icon: 'Award', tier: 'bronze' as Tier };
   const [f, setF] = useState(empty); const [busy, setBusy] = useState(false);
-  useEffect(() => { if (!open) setF(empty); }, [open]);
-  const valid = f.name_en.trim() && f.name_es.trim();
+  const [seasonal, setSeasonal] = useState(false); const [from, setFrom] = useState(''); const [until, setUntil] = useState('');
+  useEffect(() => { if (!open) { setF(empty); setSeasonal(false); setFrom(''); setUntil(''); } }, [open]);
+  const windowOk = !seasonal || (from && until && until > from);
+  const valid = f.name_en.trim() && f.name_es.trim() && windowOk;
   const save = async () => {
     if (hasBlockedClaim(`${f.name_en} ${f.name_es} ${f.description_en} ${f.description_es}`)) { toast.error(t('recognition.err.claim_blocked')); return; }
     setBusy(true);
-    const { error } = await supabase.from('badges').insert({ ...f, name_en: f.name_en.trim(), name_es: f.name_es.trim(), description_en: f.description_en.trim() || null, description_es: f.description_es.trim() || null, is_custom: true, team_id: teamId, created_by: userId });
+    const { error } = await supabase.from('badges').insert({ ...f, name_en: f.name_en.trim(), name_es: f.name_es.trim(), description_en: f.description_en.trim() || null, description_es: f.description_es.trim() || null, is_custom: true, team_id: teamId, created_by: userId,
+      ...(seasonal ? { kind: 'seasonal', available_from: new Date(`${from}T00:00:00`).toISOString(), available_until: new Date(`${until}T23:59:59`).toISOString() } : {}) });
     setBusy(false);
     if (error) { toast.error(t(recognitionError(error))); return; }
     toast.success(t('recognition.badgeCreated')); await queryClient.invalidateQueries({ queryKey: recognitionKey(teamId) }); onOpenChange(false);
@@ -328,6 +331,12 @@ function CustomBadgeSheet({ open, onOpenChange, teamId }: { open: boolean; onOpe
   return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={t('recognition.newBadge')}>
     <div className="edit-form">
       <div className="badge-preview"><Medallion badge={f} size={96} /></div>
+      <div className="form-field"><span className="field-label">{t('recognition.badgeType')}</span>
+        <div className="choice-pair">{([false, true] as const).map(s => <button type="button" key={String(s)} aria-pressed={seasonal === s} className={`choice-card ${seasonal === s ? 'is-selected' : ''}`} onClick={() => setSeasonal(s)}><strong>{t(s ? 'recognition.kind.seasonal' : 'recognition.typeStandard')}</strong><small>{t(s ? 'recognition.typeSeasonalHint' : 'recognition.typeStandardHint')}</small></button>)}</div></div>
+      {seasonal && <div className="choice-pair">
+        <div className="form-field"><label className="field-label" htmlFor="cb-from">{t('recognition.seasonFrom')}</label><Input id="cb-from" type="date" className="field-input" value={from} onChange={e => setFrom(e.target.value)} /></div>
+        <div className="form-field"><label className="field-label" htmlFor="cb-until">{t('recognition.seasonTo')}</label><Input id="cb-until" type="date" className="field-input" min={from || undefined} value={until} onChange={e => setUntil(e.target.value)} /></div>
+      </div>}
       {text('name_en', t('recognition.nameEn'), 40)}{text('name_es', t('recognition.nameEs'), 40)}
       {text('description_en', t('recognition.descEn'), 160, true)}{text('description_es', t('recognition.descEs'), 160, true)}
       <div className="form-field"><span className="field-label">{t('recognition.icon')}</span>
@@ -354,9 +363,16 @@ export function BadgeWall({ teamId }: { teamId: string }) {
   const { data: earned = [] } = useQuery(myBadgesQuery(teamId, userId));
   const share = useShareBadge();
   const byId = useMemo(() => new Map(earned.map(e => [e.badge_id, e])), [earned]);
-  const sorted = [...badges].sort((a, b) => Number(byId.has(b.id)) - Number(byId.has(a.id)));
   const lang = i18n.resolvedLanguage;
+  const now = Date.now();
+  const stillOpen = (b: Badge) => b.kind === 'event' || b.kind === 'founding' ? b.kind === 'event' : !b.available_until || new Date(b.available_until).getTime() > now;
+  const earnedList = badges.filter(b => byId.has(b.id));
+  const limitedList = badges.filter(b => !byId.has(b.id) && isLimited(b) && stillOpen(b));
+  const lockedList = badges.filter(b => !byId.has(b.id) && !isLimited(b));
+  const limitedIds = badges.filter(b => isLimited(b) && (byId.has(b.id) || stillOpen(b))).map(b => b.id);
+  const { data: holders = {} } = useQuery(holderCountsQuery(teamId, limitedIds));
   const featuredCount = earned.filter(e => e.featured != null).length;
+  const fmt = (d: string) => new Date(d).toLocaleDateString(lang, { month: 'short', day: 'numeric', year: 'numeric' });
   const toggleFeature = async (earnedId: string, current: number | null) => {
     if (current == null && featuredCount >= 3) { toast.error(t('recognition.featureFull')); return; }
     const slot = current ?? ([1, 2, 3].find(s => !earned.some(e => e.featured === s)) ?? null);
@@ -365,19 +381,70 @@ export function BadgeWall({ teamId }: { teamId: string }) {
     await queryClient.invalidateQueries({ queryKey: recognitionKey(teamId) });
     await queryClient.invalidateQueries({ queryKey: ['featured-badges', userId] });
   };
+  const limitedLine = (b: Badge) => {
+    const n = holders[b.id] ?? 0;
+    if (b.kind === 'seasonal' && b.available_until) return byId.has(b.id) ? t('recognition.oneOf', { count: n }) : t('recognition.seasonUntil', { date: fmt(b.available_until) });
+    if (b.kind === 'founding') return t('recognition.oneOf', { count: n });
+    return byId.has(b.id) ? t('recognition.oneOf', { count: n }) : t('recognition.eventOnly');
+  };
+  const tile = (b: Badge) => { const e = byId.get(b.id); return <div className={`badge-tile ${e ? '' : 'is-locked'} ${isLimited(b) ? 'is-limited' : ''}`} key={b.id}>
+    {isLimited(b) && <span className="badge-limited-tag">{t(`recognition.kind.${b.kind}`)}</span>}
+    <Medallion badge={b} size={64} locked={!e} />
+    <strong>{badgeName(b, lang)}</strong>
+    {isLimited(b) && <small className="badge-rarity">{limitedLine(b)}</small>}
+    {e ? <small>{t('recognition.earnedOn', { date: fmt(e.awarded_at) })}</small>
+      : !isLimited(b) && <small><Lock className="inline-icon" />{badgeText(b, lang) || t('recognition.leaderAwarded')}</small>}
+    {e && <div className="badge-tile-actions">
+      <button type="button" className={`auth-link badge-share badge-feature ${e.featured != null ? 'is-featured' : ''}`} aria-pressed={e.featured != null} onClick={() => void toggleFeature(e.id, e.featured)}><Star />{e.featured != null ? t('recognition.featured') : t('recognition.feature')}</button>
+      <button type="button" className="auth-link badge-share" onClick={() => void share(b)}><Download />{t('recognition.card')}</button>
+    </div>}
+  </div>; };
+  const section = (key: string, list: Badge[]) => list.length > 0 && <section className="badge-section" aria-labelledby={`bs-${key}`}>
+    <h3 id={`bs-${key}`} className="badge-section-title">{t(`recognition.section.${key}`)}<span>{list.length}</span></h3>
+    <div className="badge-wall">{list.map(tile)}</div>
+  </section>;
   return <div className="badge-wall-wrap">
     <RecognitionSummary teamId={teamId} />
     {earned.length > 0 && <p className="gw-muted-line">{t('recognition.featureHint')}</p>}
     {!earned.length && <span className="chip sample-badge">{t('recognition.noneYet')}</span>}
-    <div className="badge-wall">{sorted.map(b => { const e = byId.get(b.id); return <div className={`badge-tile ${e ? '' : 'is-locked'}`} key={b.id}>
-      <Medallion badge={b} size={64} locked={!e} />
-      <strong>{badgeName(b, lang)}</strong>
-      {e ? <small>{t('recognition.earnedOn', { date: new Date(e.awarded_at).toLocaleDateString(lang, { month: 'short', day: 'numeric', year: 'numeric' }) })}</small>
-        : <small><Lock className="inline-icon" />{badgeText(b, lang) || t('recognition.leaderAwarded')}</small>}
-      {e && <div className="badge-tile-actions">
-        <button type="button" className={`auth-link badge-share badge-feature ${e.featured != null ? 'is-featured' : ''}`} aria-pressed={e.featured != null} onClick={() => void toggleFeature(e.id, e.featured)}><Star />{e.featured != null ? t('recognition.featured') : t('recognition.feature')}</button>
-        <button type="button" className="auth-link badge-share" onClick={() => void share(b)}><Download />{t('recognition.card')}</button>
-      </div>}
-    </div>; })}</div>
+    {section('earned', earnedList)}
+    {section('limited', limitedList)}
+    {section('locked', lockedList)}
   </div>;
+}
+
+// ---------- Host: gathering-only badge ----------
+export function EventBadgePanel({ eventId, teamId }: { eventId: string; teamId: string }) {
+  const { t, i18n } = useTranslation(); const queryClient = useQueryClient();
+  const { data: badges = [] } = useQuery(badgesQuery(teamId));
+  const existing = badges.find(b => b.kind === 'event' && b.event_id === eventId);
+  const { data: holders = {} } = useQuery(holderCountsQuery(teamId, existing ? [existing.id] : []));
+  const [open, setOpen] = useState(false);
+  const [f, setF] = useState({ name_en: '', name_es: '', icon: 'Star', tier: 'gold' as Tier });
+  const [busy, setBusy] = useState(false);
+  const save = async () => {
+    if (hasBlockedClaim(`${f.name_en} ${f.name_es}`)) { toast.error(t('recognition.err.claim_blocked')); return; }
+    setBusy(true);
+    const { error } = await supabase.rpc('create_event_badge', { _event: eventId, _name_en: f.name_en.trim(), _name_es: f.name_es.trim(), _icon: f.icon, _tier: f.tier });
+    setBusy(false);
+    if (error) { toast.error(t(recognitionError(error))); return; }
+    toast.success(t('recognition.badgeCreated')); await queryClient.invalidateQueries({ queryKey: recognitionKey(teamId) }); setOpen(false);
+  };
+  return <section className="detail-section event-badge-panel">
+    <h2 className="section-title">{t('recognition.eventBadgeTitle')}</h2>
+    {existing ? <div className="event-badge-row"><Medallion badge={existing} size={52} /><div><strong>{badgeName(existing, i18n.resolvedLanguage)}</strong><small>{t('recognition.oneOf', { count: holders[existing.id] ?? 0 })}</small></div></div>
+      : <><p className="gw-muted-line">{t('recognition.eventBadgeHint')}</p><Button variant="outline" onClick={() => setOpen(true)}><Plus />{t('recognition.eventBadgeCta')}</Button></>}
+    <ResponsiveSheet open={open} onOpenChange={setOpen} title={t('recognition.eventBadgeTitle')} footer={<Button className="onboarding-continue" disabled={busy || !f.name_en.trim() || !f.name_es.trim()} onClick={() => void save()}>{t('common.create')}</Button>}>
+      <div className="edit-form">
+        <div className="badge-preview"><Medallion badge={f} size={96} /></div>
+        <div className="form-field"><label className="field-label" htmlFor="eb-en">{t('recognition.nameEn')}</label><Input id="eb-en" className="field-input" maxLength={40} value={f.name_en} onChange={e => setF({ ...f, name_en: e.target.value })} /></div>
+        <div className="form-field"><label className="field-label" htmlFor="eb-es">{t('recognition.nameEs')}</label><Input id="eb-es" className="field-input" maxLength={40} value={f.name_es} onChange={e => setF({ ...f, name_es: e.target.value })} /></div>
+        <div className="form-field"><span className="field-label">{t('recognition.icon')}</span>
+          <div className="icon-pick">{CUSTOM_ICONS.map(name => <button type="button" key={name} aria-label={name} aria-pressed={f.icon === name} className={`icon-option ${f.icon === name ? 'is-selected' : ''}`} onClick={() => setF({ ...f, icon: name })}><GwIcon name={name} variant="feature" size={24} /></button>)}</div></div>
+        <div className="form-field"><span className="field-label">{t('recognition.tier')}</span>
+          <div className="choice-pair three">{(['bronze', 'silver', 'gold'] as const).map(tier => <button type="button" key={tier} aria-pressed={f.tier === tier} className={`choice-card ${f.tier === tier ? 'is-selected' : ''}`} onClick={() => setF({ ...f, tier })}><strong>{t(`recognition.tiers.${tier}`)}</strong></button>)}</div></div>
+        <p className="gw-muted-line">{t('recognition.eventBadgeNote')}</p>
+      </div>
+    </ResponsiveSheet>
+  </section>;
 }

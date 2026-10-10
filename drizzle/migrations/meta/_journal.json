@@ -85,6 +85,13 @@
       "when": 1791653610344,
       "tag": "0011_fix_milestones_guest_columns",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1791653801198,
+      "tag": "0012_v2_limited_badges",
+      "breakpoints": true
     }
   ]
 }

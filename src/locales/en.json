@@ -1386,7 +1386,9 @@
       "invalid_person": "Choose someone on this team.",
       "not_leader": "Only leaders can do this.",
       "not_allowed": "You can't do that here.",
-      "invalid_message": "Keep it to 280 characters."
+      "invalid_message": "Keep it to 280 characters.",
+      "already_exists": "This gathering already has a badge.",
+      "invalid": "Check the name and try again."
     },
     "feature": "Feature",
     "featured": "Featured",
@@ -1398,7 +1400,31 @@
     "momSaved": "Member of the month saved",
     "momPlaceholder": "A few kind words (optional)",
     "momEyebrow": "Member of the month · {{month}}",
-    "momTitle": "Member of the Month"
+    "momTitle": "Member of the Month",
+    "oneOf_one": "1 of 1",
+    "oneOf_other": "1 of {{count}}",
+    "seasonUntil": "Earn it by {{date}}",
+    "eventOnly": "Only for those who come",
+    "kind": {
+      "seasonal": "Seasonal",
+      "event": "Gathering",
+      "founding": "Founding"
+    },
+    "section": {
+      "earned": "Earned",
+      "limited": "Limited edition",
+      "locked": "Still to earn"
+    },
+    "eventBadgeTitle": "Gathering badge",
+    "eventBadgeHint": "Create a keepsake badge that only people who check in to this gathering earn.",
+    "eventBadgeCta": "Create gathering badge",
+    "eventBadgeNote": "Everyone already checked in gets it now; others get it when they check in.",
+    "badgeType": "Type",
+    "typeStandard": "Standard",
+    "typeStandardHint": "You award it anytime",
+    "typeSeasonalHint": "Earned by checking in during the dates",
+    "seasonFrom": "Starts",
+    "seasonTo": "Ends"
   },
   "notify": {
     "channels": "Channels",

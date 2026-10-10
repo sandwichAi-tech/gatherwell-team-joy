@@ -1695,3 +1695,15 @@ a.gw-cat-chip:hover{background:#fff}
 .badge-tile-actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
 .badge-feature.is-featured { color: var(--mango, #FF8A3D); font-weight: 700; }
 .member-month-card .eyebrow { color: var(--mango, #FF8A3D); }
+
+/* V2 limited badges */
+.badge-section { margin-top: 24px; }
+.badge-section-title { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted-foreground); margin: 0 0 12px; }
+.badge-section-title span { font-weight: 600; color: var(--foreground); opacity: .6; }
+.badge-tile { position: relative; }
+.badge-tile.is-limited { box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--primary) 35%, transparent); }
+.badge-limited-tag { position: absolute; top: 8px; right: 8px; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: color-mix(in oklab, var(--primary) 12%, transparent); color: var(--primary); }
+.badge-rarity { font-weight: 700; color: var(--foreground); }
+.event-badge-row { display: flex; align-items: center; gap: 16px; }
+.event-badge-row div { display: grid; gap: 2px; }
+.event-badge-row small { color: var(--muted-foreground); }
