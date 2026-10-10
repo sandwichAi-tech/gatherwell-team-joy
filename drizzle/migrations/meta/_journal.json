@@ -106,6 +106,13 @@
       "when": 1791654244412,
       "tag": "0014_v2_personal_progress",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1791654291424,
+      "tag": "0015_fix_progress_core_contact",
+      "breakpoints": true
     }
   ]
 }
