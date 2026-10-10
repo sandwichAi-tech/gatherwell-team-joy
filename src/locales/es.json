@@ -2602,16 +2602,16 @@
   "offers": {
     "eyebrow": "Tus servicios",
     "title": "Ofertas",
-    "subtitle": "Membresías, cursos mensuales y descargas para tus invitados y tu equipo.",
+    "subtitle": "Círculos, cursos mensuales y descargas para tus invitados y tu equipo.",
     "new": "Nueva oferta",
     "edit": "Editar oferta",
     "view": "Ver oferta",
     "hostsOnly": "Las ofertas son para anfitriones y líderes.",
-    "empty": "Aún no tienes ofertas. Crea una membresía, un curso o una descarga.",
+    "empty": "Aún no tienes ofertas. Crea un Círculo Gatherwell, un curso o una descarga.",
     "untitled": "Oferta sin título",
     "type": "Tipo",
     "kind": {
-      "membership": "Membresía",
+      "membership": "Círculo",
       "course": "Curso mensual",
       "download": "Descarga"
     },
@@ -2637,7 +2637,7 @@
     "feeNote": "Déjalo en 0 si es gratis. En las ofertas pagadas se aplica la comisión de tu plan.",
     "drip": "Días entre lecciones",
     "courseHelp": "Después de guardar, vincula un programa de Aprender a este curso. Las lecciones se abren una por una.",
-    "membershipHelp": "Después de guardar, marca reuniones o programas de Aprender como exclusivos de esta membresía.",
+    "membershipHelp": "Después de guardar, marca reuniones o programas de Aprender como exclusivos de este Círculo.",
     "file": "Archivo",
     "uploadFile": "Subir archivo (PDF)",
     "replaceFile": "Cambiar archivo",
@@ -2678,11 +2678,11 @@
     "fromTeam": "Ofertas de tu equipo",
     "purchases": "Compras",
     "noPurchases": "Aún no tienes compras.",
-    "memberships": "Membresías y cursos",
+    "memberships": "Círculos y cursos",
     "downloads": "Descargas",
     "cancel": "Cancelar",
-    "confirmCancel": "¿Cancelar esta membresía? Conservas el acceso hasta que termine el periodo que pagaste.",
-    "cancelled": "Membresía terminada.",
+    "confirmCancel": "¿Cancelar este Círculo? Conservas el acceso hasta que termine el periodo que pagaste.",
+    "cancelled": "Círculo terminado.",
     "cancelScheduled": "Cancelada. Conservas el acceso hasta que termine el periodo.",
     "endsOn": "Termina el {{date}}",
     "renewsOn": "Se renueva el {{date}}",
@@ -2715,7 +2715,7 @@
     "resume": "Reanudar",
     "pausedUntil": "En pausa hasta el {{date}}",
     "pausedToast": "En pausa hasta el {{date}}. Sin cobros mientras tanto.",
-    "resumedToast": "Qué gusto verte de vuelta. Tu membresía está activa."
+    "resumedToast": "Qué gusto verte de vuelta. Tu Círculo está activo."
   },
   "welcome": {
     "title": "Invita a tus amigos",
@@ -3037,8 +3037,8 @@
         "demo": "Llegada registrada · A conectar"
       },
       {
-        "title": "Ofrece membresías, cursos y boletos",
-        "body": "Dale a tu comunidad más formas de participar, con boletos, membresías y aprendizaje.",
+        "title": "Ofrece Círculos, cursos y boletos",
+        "body": "Dale a tu comunidad más formas de participar, con boletos, Círculos mensuales y aprendizaje.",
         "demo": "La próxima etapa, juntos"
       },
       {
@@ -3095,7 +3095,7 @@
       "storage": "Almacenamiento",
       "assistant": "Solicitudes al asistente al mes",
       "fee": "Cargo de la plataforma",
-      "offers": "Membresías, cursos y descargas",
+      "offers": "Círculos, cursos y descargas",
       "team": "Funciones de equipo"
     },
     "offersIncluded": "Incluido; configura los pagos para ofertas de pago",
@@ -3353,7 +3353,7 @@
   },
   "early": {
     "title": "Acceso anticipado para miembros",
-    "hint": "Deja que los miembros de tu membresía confirmen 48 horas antes que los demás.",
+    "hint": "Deja que los miembros de tu Círculo confirmen 48 horas antes que los demás.",
     "giveTo": "Dar acceso anticipado a {{circle}}",
     "on": "El acceso anticipado está activo por 48 horas.",
     "off": "Ahora todos pueden confirmar.",
@@ -3433,7 +3433,7 @@
     "keepGoing": "Seguir",
     "steps": {
       "profile": "Completa tu perfil",
-      "offer": "Crea una membresía o una reunión de pago",
+      "offer": "Crea un Círculo Gatherwell o una reunión de pago",
       "shared": "Comparte tu enlace",
       "first_rsvp": "Recibe tu primera confirmación",
       "first_paid": "Recibe a tu primer miembro de pago",
@@ -3454,7 +3454,7 @@
       },
       "offer": {
         "title": "Ya tienes algo que ofrecer",
-        "text": "Tu primera membresía o reunión de pago ya está publicada."
+        "text": "Tu primer Círculo o reunión de pago ya está publicado."
       },
       "shared": {
         "title": "Enlace compartido",
@@ -3523,12 +3523,12 @@
     "deleteReview": "Borrar reseña",
     "cancel": "Cancelar",
     "reviewSaved": "Gracias por tu reseña",
-    "whoCanReview": "Pueden dejar reseña quienes asistieron o se unieron a una membresía.",
+    "whoCanReview": "Pueden dejar reseña quienes asistieron o se unieron a un Círculo.",
     "noReviews": "Todavía no hay reseñas.",
     "getVerified": "Verificarme",
     "verifyIntro": "Confirma quién eres y, si quieres, agrega certificaciones o licencias. Nuestro equipo revisa cada solicitud.",
     "statusApproved": "Ya estás verificado",
-    "statusApprovedBody": "La marca Verificado ya aparece en tu perfil, tus encuentros y tus membresías.",
+    "statusApprovedBody": "La marca Verificado ya aparece en tu perfil, tus encuentros y tus Círculos.",
     "statusPending": "Solicitud en revisión",
     "statusPendingBody": "Actualizaremos esta página cuando el equipo la revise, por lo general en unos días.",
     "statusRejected": "No pudimos verificar esta solicitud",
@@ -3550,7 +3550,7 @@
     "backToMe": "Volver a Yo",
     "errors": {
       "blocked_claim": "Quita las afirmaciones de salud, pérdida de peso o ingresos e inténtalo de nuevo.",
-      "not_eligible": "Solo pueden dejar reseña quienes asistieron o se unieron a una membresía.",
+      "not_eligible": "Solo pueden dejar reseña quienes asistieron o se unieron a un Círculo.",
       "already_pending": "Ya tienes una solicitud en revisión.",
       "identity_required": "Agrega una identificación con foto.",
       "invalid_credentials": "Revisa el nombre de cada credencial.",
@@ -3794,7 +3794,7 @@
     "notFound": "Puede que la página se haya movido o eliminado.",
     "bookClass": "Reservar clase",
     "ourStore": "Nuestra tienda",
-    "linkedNote": "Las clases se reservan en la página del estudio. Aquí encuentras la comunidad: círculos, reuniones especiales y contenido en línea.",
+    "linkedNote": "Las clases se reservan en la página del estudio. Aquí encuentras la comunidad: Círculos, reuniones especiales y contenido en línea.",
     "roomFor_one": "Cupo para {{count}}",
     "roomFor_other": "Cupo para {{count}}",
     "dropinFree": "Visita gratis",
@@ -3845,13 +3845,13 @@
     "kind_circle": "Un Círculo",
     "kindHint_free": "La forma más fácil de empezar",
     "kindHint_paid": "Boletos por persona",
-    "kindHint_circle": "Membresía mensual",
+    "kindHint_circle": "Comunidad mensual",
     "starter_free": "Fit Camp del sábado",
     "starter_paid": "Noche de bienestar",
     "starter_circle": "Círculo Reinicio de 30 días",
     "desc_free": "Un entrenamiento al aire libre para todos los niveles. Trae agua y un tapete si tienes.",
     "desc_paid": "Una noche para bajar el ritmo, moverte con calma y convivir con buena gente.",
-    "circleDesc": "Un círculo mensual con reportes semanales y reuniones para ayudarte a seguir viniendo.",
+    "circleDesc": "Un Círculo mensual con reportes semanales y reuniones para ayudarte a seguir viniendo.",
     "starterTitle": "Nombre",
     "date": "Fecha",
     "time": "Hora",
