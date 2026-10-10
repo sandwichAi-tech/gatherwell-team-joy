@@ -3733,5 +3733,13 @@
       "full": "Ya se llenaron los lugares de fundador.",
       "duplicate": "Ese correo ya tiene invitación."
     }
+  },
+  "roi": {
+    "line": "Ganaste {{earned}} con Gatherwell este mes. Comisiones de la plataforma: {{fees}}.",
+    "earned": "Ganancias",
+    "fees": "Comisiones",
+    "pro": "Con Pro habrías ahorrado {{amount}} este mes, e incluye recordatorios por mensaje de texto.",
+    "free": "Con el plan Gratis habrías pagado {{amount}} menos este mes, y también el mes pasado.",
+    "compare": "Comparar planes"
   }
 }

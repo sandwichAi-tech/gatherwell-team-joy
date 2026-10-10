@@ -1885,3 +1885,8 @@ a.gw-cat-chip:hover{background:#fff}
 .founding-row{flex-wrap:wrap;gap:12px}.founding-progress{display:flex;gap:8px;margin-top:4px}.founding-council{display:flex;align-items:center;gap:8px;font-size:14px;min-height:44px}
 .founding-start-row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}.founding-start-row .field-label,.founding-form .field-label{display:flex;flex-direction:column;gap:6px}
 .founding-form{display:flex;flex-direction:column;gap:16px}
+.roi-meter{display:flex;flex-direction:column;gap:12px}.roi-line{font-size:1.125rem;font-weight:700;line-height:1.4;margin:0}
+.roi-bar{display:flex;height:10px;border-radius:999px;background:var(--muted);overflow:hidden}.roi-bar>span{display:block;height:100%}
+.roi-earned{background:var(--primary)}.roi-fees{background:var(--muted-foreground)}
+.roi-legend{display:flex;gap:16px;font-size:.8125rem;color:var(--muted-foreground)}.roi-legend span{display:inline-flex;align-items:center;gap:6px}.roi-dot{width:8px;height:8px;border-radius:999px;display:inline-block}
+.roi-nudge{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0;padding:12px;border-radius:12px;background:var(--accent);color:var(--accent-foreground);font-size:.9375rem}.roi-link{font-weight:600;text-decoration:underline;min-height:44px;display:inline-flex;align-items:center}

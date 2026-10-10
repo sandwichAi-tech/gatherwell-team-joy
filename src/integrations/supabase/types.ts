@@ -4444,6 +4444,14 @@ export type Database = {
       }
       honor_welcome_code: { Args: { _code: string }; Returns: Json }
       host_fees_this_month: { Args: { _host: string }; Returns: number }
+      host_month_recap: {
+        Args: { _host: string; _start: string }
+        Returns: Json
+      }
+      host_value_month: {
+        Args: { _host: string; _start: string }
+        Returns: Json
+      }
       infer_gathering_category: {
         Args: { _category: string; _title: string }
         Returns: string
@@ -4544,6 +4552,7 @@ export type Database = {
           team_name: string
         }[]
       }
+      my_value_meter: { Args: never; Returns: Json }
       my_welcome: { Args: never; Returns: Json }
       name_host_of_month: {
         Args: { _note: string; _team: string; _user: string }
@@ -4803,6 +4812,7 @@ export type Database = {
         Args: { _event: string; _phones: string[] }
         Returns: number
       }
+      send_value_receipts: { Args: never; Returns: number }
       service_fee_cents: {
         Args: { _amount: number; _host: string }
         Returns: number

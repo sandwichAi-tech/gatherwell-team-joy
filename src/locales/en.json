@@ -3733,5 +3733,13 @@
       "full": "All founding spots are filled.",
       "duplicate": "That email is already invited."
     }
+  },
+  "roi": {
+    "line": "You earned {{earned}} through Gatherwell this month. Platform fees: {{fees}}.",
+    "earned": "Earnings",
+    "fees": "Platform fees",
+    "pro": "Pro would have saved you {{amount}} this month and includes text reminders.",
+    "free": "Free would have cost you {{amount}} less this month, and last month too.",
+    "compare": "Compare plans"
   }
 }
