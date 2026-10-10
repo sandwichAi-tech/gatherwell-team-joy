@@ -360,7 +360,7 @@ export function BadgeWall({ teamId }: { teamId: string }) {
   const toggleFeature = async (earnedId: string, current: number | null) => {
     if (current == null && featuredCount >= 3) { toast.error(t('recognition.featureFull')); return; }
     const slot = current ?? ([1, 2, 3].find(s => !earned.some(e => e.featured === s)) ?? null);
-    const { error } = await supabase.rpc('feature_badge', { _id: earnedId, _slot: slot });
+    const { error } = await supabase.rpc('feature_badge', { _id: earnedId, _slot: slot as number });
     if (error) { toast.error(t(recognitionError(error))); return; }
     await queryClient.invalidateQueries({ queryKey: recognitionKey(teamId) });
     await queryClient.invalidateQueries({ queryKey: ['featured-badges', userId] });
