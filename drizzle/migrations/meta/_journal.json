@@ -113,6 +113,13 @@
       "when": 1791654291424,
       "tag": "0015_fix_progress_core_contact",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1791654540170,
+      "tag": "0016_v3_coach_launch",
+      "breakpoints": true
     }
   ]
 }
