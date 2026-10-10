@@ -20,7 +20,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { initialsOf, mediaUrl, profileQuery, uploadMedia, workspaceQuery } from '@/lib/account';
 import { rosterQuery, teamKey } from '@/lib/team';
 import {
-  badgeName, badgeText, badgesQuery, hasBlockedClaim, hostOfMonthQuery, myBadgesQuery, pinnedShoutoutQuery, recognitionError, recognitionKey,
+  badgeName, badgeText, badgesQuery, featuredBadgesQuery, hasBlockedClaim, hostOfMonthQuery, memberOfMonthQuery, myBadgesQuery, pinnedShoutoutQuery, recognitionError, recognitionKey,
   summaryQuery, unseenBadgesQuery, type Badge, type Tier,
 } from '@/lib/recognition';
 
