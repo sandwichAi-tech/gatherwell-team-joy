@@ -1,0 +1,2 @@
+ALTER TABLE public.profiles DROP CONSTRAINT IF EXISTS profiles_role_intent_check;
+ALTER TABLE public.profiles ADD CONSTRAINT profiles_role_intent_check CHECK (role_intent IN ('guest','leader','host','member'));
