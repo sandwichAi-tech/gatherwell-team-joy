@@ -103,13 +103,19 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
       return;
     }
     setBusy(true); setError(null);
-    const { data, error: err } = await waiverRpc('rsvp_event_full', { _answers: answers, _token: inviteToken(), _waiver_name: waiverName, _event_id: event.id, _first: form.first.trim(), _last: form.last.trim(), _phone: form.phone.trim(), _email: form.email.trim(),
-      _language: i18n.resolvedLanguage === 'es' ? 'es' : 'en', _plus_ones: form.plus, _status: intent, _sms: form.sms, _mail: form.mail });
-    setBusy(false);
-    const row = (Array.isArray(data) ? data[0] : null) as { code: string; status: string } | null;
-    if (err || !row) { setError(t(rsvpErrorKey(err))); return; }
-    trackEvent('rsvp', { status: row.status });
-    onDone({ code: row.code, status: row.status as RsvpResult['status'] });
+    try {
+      const { data, error: err } = await waiverRpc('rsvp_event_full', { _answers: answers, _token: inviteToken(), _waiver_name: waiverName, _event_id: event.id, _first: form.first.trim(), _last: form.last.trim(), _phone: form.phone.trim(), _email: form.email.trim(),
+        _language: i18n.resolvedLanguage === 'es' ? 'es' : 'en', _plus_ones: form.plus, _status: intent, _sms: form.sms, _mail: form.mail });
+      const row = (Array.isArray(data) ? data[0] : null) as { code: string; status: string } | null;
+      if (err || !row) { const k = rsvpErrorKey(err); setError(t(k === 'guest.errors.generic' ? 'guest.errors.save_failed' : k)); return; }
+      trackEvent('rsvp', { status: row.status });
+      onDone({ code: row.code, status: row.status as RsvpResult['status'] });
+    } catch (e) {
+      console.error('RSVP failed', e);
+      setError(t('guest.errors.save_failed'));
+    } finally {
+      setBusy(false);
+    }
   };
   const full = event.capacity != null && event.going >= event.capacity;
   const title = intent === 'maybe' ? t('guest.sheetMaybe') : full ? t('guest.sheetWaitlist') : t('guest.sheetGoing');

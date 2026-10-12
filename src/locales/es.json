@@ -946,6 +946,7 @@
       "not_open": "Esta reunión no está recibiendo confirmaciones.",
       "too_long": "Uno de los campos es demasiado largo.",
       "generic": "Algo salió mal. Inténtalo de nuevo.",
+      "save_failed": "No pudimos guardar tu confirmación. Inténtalo de nuevo.",
       "rate_limited": "Demasiadas confirmaciones en poco tiempo. Espera un minuto.",
       "members_only": "Esta reunión es solo para miembros.",
       "waiver_required": "Escribe tu nombre completo y marca la casilla para aceptar la exención.",

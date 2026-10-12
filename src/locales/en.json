@@ -946,6 +946,7 @@
       "not_open": "This gathering isn't taking RSVPs.",
       "too_long": "One of the fields is too long.",
       "generic": "Something went wrong. Please try again.",
+      "save_failed": "We couldn't save your RSVP. Please try again.",
       "rate_limited": "Too many RSVPs in a short time. Please wait a minute.",
       "members_only": "This gathering is for members only.",
       "waiver_required": "Please type your full name and check the box to accept the waiver.",

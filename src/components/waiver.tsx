@@ -14,7 +14,8 @@ import { supabase } from '@/integrations/supabase/client';
 export type EventWaiver = { required: boolean; version?: number; draft?: boolean; title_en?: string; title_es?: string; body_en?: string; body_es?: string };
 const db = supabase as unknown as { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>; from: (t: string) => any };
 
-export const waiverRpc = db.rpc;
+/** Bound so supabase keeps its `this` (a detached `.rpc` throws "reading 'rest'"). */
+export const waiverRpc = (fn: string, args: Record<string, unknown>) => db.rpc(fn, args);
 
 export function useEventWaiver(eventId: string | undefined) {
   return useQuery({ queryKey: ['event-waiver', eventId], enabled: !!eventId, staleTime: 5 * 60_000,
