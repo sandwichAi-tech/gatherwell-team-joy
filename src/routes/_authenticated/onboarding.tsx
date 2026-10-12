@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Camera, Upload, Crown, CalendarHeart, UsersRound, Check, ImagePlus } from '@/components/icons';
+import { Camera, Upload, Crown, CalendarHeart, UsersRound, Check, ImagePlus, Compass } from '@/components/icons';
 import { QRCodeSVG } from 'qrcode.react';
 import { CopyButton } from '@/components/copy-button';
 import { CropFileInput } from '@/components/image-crop';
@@ -18,7 +18,7 @@ import { JOIN_CODE_KEY, initialsOf, joinLink, parseJoinCode, profileQuery, uploa
 export const Route = createFileRoute('/_authenticated/onboarding')({ head: () => pageHead('onboarding.nameTitle', 'meta.onboarding'), component: Onboarding });
 
 type Step = 'name' | 'place' | 'role' | 'team';
-type Role = 'leader' | 'host' | 'member';
+type Role = 'guest' | 'leader' | 'host' | 'member';
 
 function Onboarding() {
   const { t, i18n } = useTranslation();
@@ -65,7 +65,7 @@ function Onboarding() {
       if (!profile?.full_name) list.push('name');
       if (!profile?.city) list.push('place');
       if (!profile?.role_intent) list.push('role');
-      if (!workspace && !joinedTeam) list.push('team');
+      if (!workspace && !joinedTeam && profile?.role_intent !== 'guest') list.push('team');
       setJoined(joinedTeam); if (joinedTeam) requestPushMoment('joined');
       setSteps(list);
       if (!list.length && !joinedTeam) await finish();
@@ -104,6 +104,7 @@ function Onboarding() {
         const { error: e } = await supabase.from('profiles').update({ city: city.trim(), language: i18n.resolvedLanguage === 'es' ? 'es' : 'en' }).eq('id', user.id); if (e) throw e;
       } else if (step === 'role' && role) {
         const { error: e } = await supabase.from('profiles').update({ role_intent: role }).eq('id', user.id); if (e) throw e;
+        if (role === 'guest') { setSteps(steps!.filter(s => s !== 'team')); await queryClient.invalidateQueries({ queryKey: ['profile', user.id] }); setBusy(false); await finish(); return; }
       } else if (step === 'team') {
         if (role === 'leader') {
           const { data, error: e } = await supabase.rpc('create_team', { _name: teamName.trim() }); if (e || !data?.[0]) throw e;
@@ -163,7 +164,7 @@ function Onboarding() {
 
   if (atEnd) return shell(<p className="auth-subtitle">{t('onboarding.saving')}</p>, false);
 
-  const roles = [{ key: 'leader', Icon: Crown }, { key: 'host', Icon: CalendarHeart }, { key: 'member', Icon: UsersRound }] as const;
+  const roles = [{ key: 'guest', Icon: Compass }, { key: 'leader', Icon: Crown }, { key: 'host', Icon: CalendarHeart }, { key: 'member', Icon: UsersRound }] as const;
 
   return shell(<>
     {step === 'name' && <>

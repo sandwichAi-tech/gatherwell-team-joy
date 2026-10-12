@@ -211,6 +211,13 @@
       "when": 1791661831643,
       "tag": "0029_day60_scoreboard",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1791826946728,
+      "tag": "0030_role_intent_guest",
+      "breakpoints": true
     }
   ]
 }

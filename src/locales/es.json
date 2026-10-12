@@ -302,6 +302,8 @@
     "city": "Ciudad",
     "cityPlaceholder": "Tu ciudad",
     "roleTitle": "¿Qué te trae a Gatherwell?",
+    "guest": "Vengo a unirme a encuentros",
+    "guestText": "Encuentra encuentros cerca de ti, guarda tus confirmaciones y únete al Círculo de un coach.",
     "leader": "Lidero un equipo",
     "leaderText": "Crea tu espacio de equipo e invita a tu gente.",
     "host": "Organizo encuentros",
