@@ -48,7 +48,8 @@
     "followSubtitle": "Algunas personas con quienes reconectar esta semana.",
     "followChip": "3 contactos pendientes",
     "followAction": "Contactar",
-    "viewDetails": "Ver detalles"
+    "viewDetails": "Ver detalles",
+    "statsLabel": "Tu equipo en números"
   },
   "events": {
     "title": "Reuniones",
