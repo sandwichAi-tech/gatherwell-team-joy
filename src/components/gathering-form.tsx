@@ -172,6 +172,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     setBusy(false);
     if (error?.message?.includes('plan_limit_gatherings')) { setLimit('gatherings'); return; }
     if (error || !data) { toast.error(rpcError(t, error)); return; }
+    if (weekly) { const { data: ev } = await supabase.from('events').select('series_id').eq('id', data).maybeSingle(); if (ev?.series_id) { const { count } = await supabase.from('events').select('id', { count: 'exact', head: true }).eq('series_id', ev.series_id); if ((count ?? dates.length) < dates.length) toast.info(t('billing.freeSeriesLimit'), { duration: 8000 }); } }
     if (priceCents) await savePrice(data);
     if (teamReg.on) await saveTeamReg(data);
     if (retreatOn && !(await saveRetreat(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }

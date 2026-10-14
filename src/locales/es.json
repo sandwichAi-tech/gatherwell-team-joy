@@ -2036,7 +2036,8 @@
     "serviceCovered": "Cargos por servicio que cubriste",
     "guestServiceNote": "Tus invitados también pagaron {{amount}} en cargos por servicio. Eso no forma parte de tus ventas.",
     "serviceFeeRow": "el invitado pagó {{fee}} de cargo por servicio",
-    "serviceFeeCoveredRow": "cubriste {{fee}} de cargo por servicio"
+    "serviceFeeCoveredRow": "cubriste {{fee}} de cargo por servicio",
+    "freeSeriesLimit": "Gratis incluye 4 encuentros al mes. Pasa a Avanzado para encuentros ilimitados."
   },
   "report": {
     "action": "Reportar",
@@ -2832,7 +2833,8 @@
     "save": "Guardar coanfitriones",
     "saved": "Coanfitriones guardados",
     "tooMany": "Puedes agregar hasta 3 coanfitriones.",
-    "withCohosts": "Con la coorganización de"
+    "withCohosts": "Con la coorganización de",
+    "proOnly": "Los coanfitriones son parte de Pro. Pasa a Pro para agregar coanfitriones."
   },
   "rsvpq": {
     "guestHeading": "Unas preguntas del anfitrión",
