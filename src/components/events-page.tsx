@@ -5,7 +5,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Plus, List, Map as MapIcon, ArrowRight } from '@/components/icons';
 import { Button } from '@/components/ui/button';
-import { EventRows } from '@/components/gatherwell-pages';
 import { GatheringCover } from '@/components/gathering-cover';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { MapPlaceholder, RealMap } from '@/components/map-page';
@@ -56,7 +55,6 @@ export function EventsPage({ tab }: { tab: EventsTab }) {
     {isLoading ? <ListSkeleton /> : data.length ? <div className="gathering-grid">{data.map(e => <GatheringCard key={e.id} e={e} lang={lang} />)}</div> : <>
       <section className="panel empty-gatherings"><h2>{t(`events.empty.${tab}`)}</h2><p>{t('events.emptyText')}</p>
         {canCreate && <Button asChild><Link to="/gathering/new"><Plus />{t('gathering.createFirst')}<ArrowRight /></Link></Button>}</section>
-      {tab !== 'past' && <section className="panel tab-panel"><div className="section-heading"><h2>{t('events.heading')}</h2><span className="chip sample-badge">{t('common.sample')}</span></div><EventRows /></section>}
     </>}
   </>;
 }

@@ -125,7 +125,7 @@ export function PriceGuidance({ category }: { category: string }) {
     const { data, error } = await supabase.rpc('price_guidance', { _category: category === 'more' ? '' : category }); if (error) throw error;
     return data as unknown as { sample: boolean; low: number; high: number };
   } });
-  if (!data) return null;
+  if (!data || data.sample) return null;
   const low = data.low ? formatMoney(data.low, lang) : t('offers.free');
   return <small className="field-hint price-guidance">{data.sample && <span className="chip sample-badge">{t('common.sample')}</span>}{t('coach.priceGuide', { low, high: formatMoney(data.high, lang) })}</small>;
 }

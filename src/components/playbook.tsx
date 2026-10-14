@@ -38,7 +38,7 @@ export function BenchmarkPanel({ teamId }: { teamId: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.language?.startsWith('es') ? 'es' : 'en';
   const { data } = useQuery({ queryKey: ['benchmark', teamId], staleTime: 30 * 60_000,
     queryFn: async () => { const { data, error } = await supabase.rpc('team_benchmark' as never, { _root: teamId } as never); if (error) throw error; return data as unknown as Bench; } });
-  if (!data) return null;
+  if (!data || data.sample) return null;
   const rows: { key: 'avg' | 'showup'; team: number; net: number; unit: string }[] = [
     { key: 'avg', team: Number(data.team.avg_checkins), net: Number(data.network.avg_checkins), unit: '' },
     { key: 'showup', team: Number(data.team.showup), net: Number(data.network.showup), unit: '%' },

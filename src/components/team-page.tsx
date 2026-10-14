@@ -35,7 +35,6 @@ import { ProfileHero, RecentBadges, StatsStrip } from '@/components/profile-hero
 import { confirmAction } from '@/components/confirm-dialog';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { TeamSwitcher, useSwitchTeam } from '@/components/team-switcher';
-import { EventRows } from '@/components/gatherwell-pages';
 import { supabase } from '@/integrations/supabase/client';
 import { initialsOf, joinLink, mediaUrl, uploadMedia, workspaceQuery, type TeamMembership } from '@/lib/account';
 import {
@@ -170,13 +169,13 @@ function PinnedAnnouncement({ teamId }: { teamId: string }) {
 function ComingUp({ teamId, lang, onOpen }: { teamId: string; lang: string; onOpen: (event: TeamEvent) => void }) {
   const { t } = useTranslation();
   const { data = [], isLoading } = useQuery(upcomingQuery(teamId));
-  return <section className="panel"><div className="section-heading"><h2>{t('home.upcoming')}</h2><div className="heading-actions">{!isLoading && !data.length && <span className="chip sample-badge">{t('common.sample')}</span>}<Button asChild variant="link"><Link to="/events">{t('home.viewAll')}<ArrowRight /></Link></Button></div></div>
+  return <section className="panel"><div className="section-heading"><h2>{t('home.upcoming')}</h2><div className="heading-actions"><Button asChild variant="link"><Link to="/events">{t('home.viewAll')}<ArrowRight /></Link></Button></div></div>
     {isLoading ? <ListSkeleton /> : data.length ? <div className="event-list">{data.map(event => <button type="button" className="event-row event-button" key={event.id} onClick={() => onOpen(event)}>
       <DateTile iso={event.starts_at} lang={lang} />
       <div className="event-info"><h3>{event.title}</h3><p>{new Date(event.starts_at).toLocaleTimeString(lang, { hour: '2-digit', minute: '2-digit' })} · {event.location_name ?? (event.online_url ? t('teamSpace.online') : t('teamSpace.placeTbd'))}</p>
         <div className="event-registration"><span>{event.capacity ? t('sampleEvents.registered', { count: event.going ?? 0, total: event.capacity }) : t('teamSpace.going', { count: event.going ?? 0 })}</span></div>
         {event.capacity ? <progress className="attendance-progress" value={event.going ?? 0} max={event.capacity} /> : null}</div>
-      <ChevronRight className="settings-chevron" /></button>)}</div> : <EventRows />}
+      <ChevronRight className="settings-chevron" /></button>)}</div> : <p className="auth-subtitle">{t('teamSpace.noUpcoming')}</p>}
   </section>;
 }
 
@@ -227,7 +226,7 @@ function WinsFeed({ teamId, userId, lang, isLeader }: { teamId: string; userId: 
     if (error) toast.error(errorText(t, error));
     await queryClient.invalidateQueries({ queryKey: [...teamKey(teamId), 'wins'] });
   };
-  return <section className="panel" id="wins"><div className="section-heading"><h2>{t('teamSpace.wins')}</h2><div className="heading-actions">{!isLoading && !data.length && <span className="chip sample-badge">{t('common.sample')}</span>}<Button variant="secondary" size="sm" onClick={() => setShouting(true)}><Megaphone />{t('recognition.giveShoutout')}</Button></div></div>
+  return <section className="panel" id="wins"><div className="section-heading"><h2>{t('teamSpace.wins')}</h2><div className="heading-actions"><Button variant="secondary" size="sm" onClick={() => setShouting(true)}><Megaphone />{t('recognition.giveShoutout')}</Button></div></div>
     {isLoading ? <ListSkeleton /> : data.length ? <ol className="wins-list">{data.map(win => <li className="win-item" key={win.id}>
       {win.type === 'badge_earned' ? <Medallion badge={{ icon: String(win.payload['icon'] ?? 'Award'), tier: (['bronze', 'silver', 'gold'].includes(String(win.payload['tier'])) ? win.payload['tier'] : 'bronze') as Tier }} size={40} />
         : <span className={`initial-avatar ${win.actorId && win.actorId === homId ? 'hom-ring' : ''}`}>{win.type === 'milestone' || win.type === 'host_of_month' ? <Crown /> : initialsOf(win.actorName ?? (win.payload['guest'] as string | undefined))}</span>}
