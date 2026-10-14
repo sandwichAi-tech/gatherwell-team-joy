@@ -1,0 +1,2 @@
+ALTER TABLE public.events ADD COLUMN IF NOT EXISTS refund_policy text NOT NULL DEFAULT '24h' CHECK (refund_policy IN ('24h','7d','none'));
+ALTER TABLE public.offers ADD COLUMN IF NOT EXISTS refund_policy text NOT NULL DEFAULT '24h' CHECK (refund_policy IN ('24h','7d','none'));
