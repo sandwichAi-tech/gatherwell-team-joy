@@ -2056,7 +2056,10 @@
     "upgradeAdvTitle": "Pasa a Avanzado",
     "upgradeReasonGatherings": "Usaste {{used}} de {{max}} encuentros este mes",
     "upgradeReasonGuests": "Un encuentro llegó a {{max}} personas",
-    "upgradeAdvBody": "Avanzado incluye encuentros ilimitados y hasta 100 personas en cada uno."
+    "upgradeAdvBody": "Avanzado incluye encuentros ilimitados y hasta 100 personas en cada uno.",
+    "payoutsRequired": "Conecta tus pagos para vender Círculos y entradas",
+    "comingSoon": "Próximamente",
+    "connectToEarn": "Conecta tus pagos para empezar a ganar"
   },
   "report": {
     "action": "Reportar",
@@ -3075,7 +3078,8 @@
       {
         "title": "Ofrece Círculos, cursos y boletos",
         "body": "Dale a tu comunidad más formas de participar, con boletos, Círculos mensuales y aprendizaje.",
-        "demo": "La próxima etapa, juntos"
+        "demo": "La próxima etapa, juntos",
+        "sells": true
       },
       {
         "title": "Lidera con plantillas e información",

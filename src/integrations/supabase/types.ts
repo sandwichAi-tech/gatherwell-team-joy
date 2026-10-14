@@ -4690,6 +4690,7 @@ export type Database = {
         Args: { _buddy: string; _rsvp: string }
         Returns: undefined
       }
+      payouts_live: { Args: { _uid: string }; Returns: boolean }
       plan_limits: { Args: { _plan: string }; Returns: Json }
       platform_fee_cents: {
         Args: { _amount: number; _host: string }

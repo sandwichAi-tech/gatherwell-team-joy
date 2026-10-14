@@ -158,6 +158,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
 
   const submit = async (publish: boolean) => {
     setTried(true); if (!valid) { toast.error(t('gathering.fixFields')); return; }
+    if (priceCents && publish && !canSell) { toast.error(t('billing.payoutsRequired')); return; }
     setBusy(true);
     if (editing) {
       const { error } = await supabase.rpc('update_gathering', { _event: eventId!, _p: payload(), _whole_series: wholeSeries });

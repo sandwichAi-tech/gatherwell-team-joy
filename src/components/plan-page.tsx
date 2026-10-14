@@ -138,7 +138,7 @@ export function PlanPage() {
         <h2>{t('billing.upgradeAdvTitle')}</h2>
         <p className="auth-subtitle">{g ? t('billing.upgradeReasonGatherings', { used: st.usage.gatherings, max: lim.gatherings }) : t('billing.upgradeReasonGuests', { max: lim.guests })}</p>
         <p className="field-hint">{t('billing.upgradeAdvBody')}</p>
-        <Button disabled={gate.busy} onClick={() => choose('growth')}>{t('billing.upgradeAdvTitle')}</Button>
+        {gate.connected ? <Button disabled={gate.busy} onClick={() => choose('growth')}>{t('billing.upgradeAdvTitle')}</Button> : <Button variant="secondary" disabled>{t('billing.comingSoon')}</Button>}
       </section>;
     })()}
     {st.founding && <FoundingPlanBanner f={st.founding} />}
@@ -151,6 +151,7 @@ export function PlanPage() {
         return <article key={p.id} className={`plan-card ${isCurrent ? 'is-current' : ''} `}>
           <PlanCardBody id={p.id} setting={ps} tagClass="plan-tag" priceClass="plan-price" feeClass="plan-fee-line" />
           {isCurrent ? <Button variant="secondary" disabled>{t('billing.yourPlan')}</Button>
+            : p.id !== 'free' && !gate.connected ? <Button variant="secondary" disabled>{t('billing.comingSoon')}</Button>
             : <Button variant={p.id === 'pro' ? 'default' : 'secondary'} disabled={gate.busy} onClick={() => choose(p.id)}>{p.id === 'free' ? t('billing.switchTo', { plan: t('billing.name_free') }) : t('billing.upgrade')}</Button>}
         </article>;
       })}

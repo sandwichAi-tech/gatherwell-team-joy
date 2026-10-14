@@ -108,7 +108,7 @@ function OfferEditor({ offer, teamId, onClose }: { offer: Partial<Offer> | null;
       status: f.publish ? 'published' as const : (offer?.status === 'published' ? 'archived' as const : 'draft' as const) };
     const res = await saveOffer(offer?.id ? row : { ...row, team_id: teamId, host_id: userId }, offer?.id);
     setBusy(false);
-    if (res.error) { toast.error(t('offers.saveError')); return; }
+    if (res.error) { toast.error(t(String(res.error.message).includes('payouts_required') ? 'billing.payoutsRequired' : 'offers.saveError')); return; }
     toast.success(t('templates.saved'));
     await qc.invalidateQueries({ queryKey: ['offers'] });
     onClose();
