@@ -2005,7 +2005,7 @@
     "planWaitTitle_other": "{{count}} guests are waiting.",
     "planWaitBody": "You've reached your plan's guest limit. Upgrade to welcome them.",
     "feeCapped": "{{pct}}% platform fee, capped at {{cap}} a month",
-    "feePct": "{{pct}}% platform fee",
+    "feePct": "{{pct}}% of paid sales",
     "everythingFree": "Everything in Free, plus:",
     "pro_texts": "Text reminders",
     "pro_autopilot": "AI Autopilot: follow-ups, recaps and renewals",

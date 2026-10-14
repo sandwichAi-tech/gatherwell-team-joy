@@ -2005,7 +2005,7 @@
     "planWaitTitle_other": "{{count}} personas están esperando.",
     "planWaitBody": "Llegaste al límite de invitados de tu plan. Mejóralo para darles la bienvenida.",
     "feeCapped": "Comisión de {{pct}}%, con tope de {{cap}} al mes",
-    "feePct": "Comisión de {{pct}}%",
+    "feePct": "{{pct}}% de las ventas pagadas",
     "everythingFree": "Todo lo de Gratis, más:",
     "pro_texts": "Recordatorios por mensaje de texto",
     "pro_autopilot": "Piloto automático con IA: seguimientos, resúmenes y renovaciones",
