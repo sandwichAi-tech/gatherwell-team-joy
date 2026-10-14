@@ -123,3 +123,9 @@ export function rsvpErrorKey(error: unknown) {
   for (const k of ['name_required', 'contact_required', 'invalid_email', 'not_open', 'too_long', 'rate_limited', 'members_only', 'waiver_required', 'answers_required', 'early_access']) if (m.includes(k)) return `guest.errors.${k}`;
   return 'guest.errors.generic';
 }
+
+/** Server-side prefetch for public pages: cache found data so it ships with the HTML; never cache misses (invite links may unlock them in the browser). */
+export async function prefetchPublic<T>(qc: import('@tanstack/react-query').QueryClient, opts: { queryKey: readonly unknown[]; queryFn: () => Promise<T> }) {
+  try { const data = await qc.fetchQuery(opts as never); if (data == null) qc.removeQueries({ queryKey: opts.queryKey }); }
+  catch { qc.removeQueries({ queryKey: opts.queryKey }); }
+}

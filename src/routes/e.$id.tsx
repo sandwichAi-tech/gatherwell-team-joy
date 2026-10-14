@@ -27,8 +27,9 @@ import { ReportButton } from '@/components/report-button';
 import { RetryState } from '@/components/launch-states';
 
 export const Route = createFileRoute('/e/$id')({
-  loader: async ({ params }) => {
+  loader: async ({ params, context }) => {
     if (!isUuid(params.id)) return null;
+    await prefetchPublic(context.queryClient, publicEventQuery(params.id));
     try { return await getPublicEventMeta({ data: { id: params.id } }); } catch { return null; }
   },
   head: ({ loaderData }) => {
