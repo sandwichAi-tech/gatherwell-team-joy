@@ -208,27 +208,15 @@ function PaidStep({ kind, onNext, onBack }: { kind?: StartKind | undefined; onNe
   const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
   const gate = usePaymentGate();
   const connect = useServerFn(startConnectOnboarding);
-  const checkout = useServerFn(startPlanCheckout);
-  const { data: ps } = useQuery(planSettingsQuery);
-  const free = ps?.free; const pro = ps?.pro;
-  const [plan, setPlan] = useState<'free' | 'pro'>('free');
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
-  const finish = () => { if (plan === 'pro') void gate.run(() => checkout({ data: { plan: 'pro', origin, lang } })); else onNext(); };
   return <div className="qs-body">
     <section className="panel qs-section"><h2>{t('quickStart.payouts')}</h2>
       <p className="auth-subtitle">{kind === 'free' ? t('quickStart.payoutsFree') : t('quickStart.payoutsText')}</p>
       {!gate.connected && <p className="qs-note"><GwIcon name="AlertCircle" size={18} />{t('quickStart.notConnected')}</p>}
       <Button variant="secondary" disabled={gate.busy} onClick={() => void gate.run(() => connect({ data: { origin } }))}><GwIcon name="CreditCard" />{t('quickStart.connectPayouts')}</Button>
     </section>
-    <section className="panel qs-section"><h2>{t('quickStart.choosePlan')}</h2>
-      <div className="qs-starters" role="radiogroup" aria-label={t('quickStart.choosePlan')}>
-        <button type="button" role="radio" aria-checked={plan === 'free'} className={`loc-mode${plan === 'free' ? ' selected' : ''}`} onClick={() => setPlan('free')}><GwFeatureTile name="Sparkles" size={24} /><span><strong>{t('quickStart.planFree')}</strong><small>{free ? t('quickStart.planFreeLine', { pct: Number(free.fee_percent), cap: formatMoney(free.monthly_cap ?? 0, lang) }) : ''}</small></span></button>
-        <button type="button" role="radio" aria-checked={plan === 'pro'} className={`loc-mode${plan === 'pro' ? ' selected' : ''}`} onClick={() => setPlan('pro')}><GwFeatureTile name="Award" size={24} /><span><strong>{t('quickStart.planPro')}</strong><small>{pro ? t('quickStart.planProLine', { price: formatMoney(pro.monthly_price, lang) }) : ''}</small></span></button>
-      </div>
-      <p className="field-hint">{t('quickStart.processing')}</p>
-    </section>
-    <div className="qs-nav"><Button variant="secondary" onClick={onBack}>{t('quickStart.back')}</Button><Button disabled={gate.busy} onClick={finish}>{plan === 'pro' ? t('quickStart.goPro') : t('quickStart.finish')}</Button></div>
-    {plan === 'pro' && <Button variant="link" onClick={onNext}>{t('quickStart.decideLater')}</Button>}
+    <p className="qs-note"><GwIcon name="Sparkles" size={18} />{t('quickStart.onFree')}</p>
+    <div className="qs-nav"><Button variant="secondary" onClick={onBack}>{t('quickStart.back')}</Button><Button onClick={onNext}>{t('quickStart.finish')}</Button></div>
     {gate.sheet}
   </div>;
 }

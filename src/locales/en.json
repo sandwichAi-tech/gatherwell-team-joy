@@ -2052,7 +2052,11 @@
     "savingGrowth": "On Advanced you'd have paid {{amount}} less this month",
     "savingPro": "On Pro you'd have paid {{amount}} less this month",
     "noLimitsUntil": "No limits until {{date}}",
-    "noLimitsEnding": "Your first 30 days end on {{date}}. After that, Free includes 4 gatherings a month and up to 30 guests at each."
+    "noLimitsEnding": "Your first 30 days end on {{date}}. After that, Free includes 4 gatherings a month and up to 30 guests at each.",
+    "upgradeAdvTitle": "Upgrade to Advanced",
+    "upgradeReasonGatherings": "You've used {{used}} of {{max}} gatherings this month",
+    "upgradeReasonGuests": "A gathering has reached {{max}} guests",
+    "upgradeAdvBody": "Advanced includes unlimited gatherings and up to 100 guests at each."
   },
   "report": {
     "action": "Report",
@@ -3969,7 +3973,8 @@
     "ttlSub": "Median for {{live}} coaches · {{hour}} within an hour",
     "draftNote": "Your paid gathering is saved as a draft. It goes live with its price as soon as payouts are connected. You can share the link once it's live.",
     "liveDraft": "Nice work, {{name}}. Your profile is ready and your paid gathering will go live as soon as payouts are connected.",
-    "draftLabel": "Waiting for payouts"
+    "draftLabel": "Waiting for payouts",
+    "onFree": "You're on Free, with no limits for your first 30 days."
   },
   "day60": {
     "day": "Day {{n}} of 60",
