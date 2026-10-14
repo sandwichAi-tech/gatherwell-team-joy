@@ -26,7 +26,7 @@
     "name": "Nick",
     "workspace": "Espacio de Nick",
     "workspaceLabel": "Espacio",
-    "plan": "Plan de crecimiento · Ejemplo",
+    "plan": "Plan Avanzado · Ejemplo",
     "sampleNote": "Datos de ejemplo. Los cambios duran esta sesión.",
     "memberView": "Cambiar a vista de miembro",
     "leaderView": "Cambiar a vista de líder",
@@ -268,7 +268,7 @@
     "activity": "Tu actividad",
     "activityValue": "12 encuentros organizados · 3 próximos",
     "workspace": "Espacio",
-    "workspaceValue": "128 miembros · Plan de crecimiento"
+    "workspaceValue": "128 miembros · Plan Avanzado"
   },
   "auth": {
     "title": "Te damos la bienvenida a Gatherwell",
@@ -373,7 +373,7 @@
   },
   "plans": {
     "free": "Plan gratuito",
-    "growth": "Plan Growth",
+    "growth": "Plan Avanzado",
     "pro": "Plan Pro",
     "team": "Plan Equipo"
   },
@@ -1892,9 +1892,9 @@
     "title": "Tu plan",
     "current": "Plan actual",
     "plan_free": "Gratis",
-    "plan_growth": "Growth",
+    "plan_growth": "Avanzado",
     "plan_pro": "Pro",
-    "licensePlan": "Growth (Licencia de equipo de {{leader}})",
+    "licensePlan": "Avanzado (Licencia de equipo de {{leader}})",
     "renews": "Se renueva el {{date}}",
     "meterGatherings": "{{used}} de {{max}} reuniones este mes",
     "meterGatheringsUnlimited": "{{used}} reuniones este mes · ilimitadas",
@@ -1909,7 +1909,7 @@
     "annualSave": "Pago anual: 2 meses gratis.",
     "popular": "Más popular",
     "name_free": "Gratis",
-    "name_growth": "Growth",
+    "name_growth": "Avanzado",
     "name_pro": "Pro",
     "name_team": "Licencias de equipo",
     "perMonth": "/mes",
@@ -1925,10 +1925,10 @@
     "upgrade": "Mejorar plan",
     "included": "Incluido",
     "switchTo": "Cambiar a {{plan}}",
-    "teamText": "Da Growth a los miembros que elijas. La compra una líder para su equipo.",
+    "teamText": "Da el plan Avanzado a los miembros que elijas. La compra una líder para su equipo.",
     "team25": "Equipo 25",
     "team100": "Equipo 100",
-    "seatsGrowth": "Growth para hasta {{n}} miembros",
+    "seatsGrowth": "Avanzado para hasta {{n}} miembros",
     "buy": "Comprar",
     "organization": "Organización",
     "orgText": "Para organizaciones grandes",
@@ -2005,7 +2005,7 @@
     "planWaitTitle_other": "{{count}} personas están esperando.",
     "planWaitBody": "Llegaste al límite de invitados de tu plan. Mejóralo para darles la bienvenida.",
     "feeCapped": "Comisión de {{pct}}%, con tope de {{cap}} al mes",
-    "feePct": "Comisión de {{pct}}%",
+    "feePct": "{{pct}}% de las ventas pagadas",
     "everythingFree": "Todo lo de Gratis, más:",
     "pro_texts": "Recordatorios por mensaje de texto",
     "pro_autopilot": "Piloto automático con IA: seguimientos, resúmenes y renovaciones",
@@ -2098,7 +2098,7 @@
     },
     "plan": {
       "free": "Gratis",
-      "growth": "Growth",
+      "growth": "Avanzado",
       "pro": "Pro",
       "team": "Licencia de equipo"
     },
@@ -3096,7 +3096,7 @@
     "pricingSub": "Tus invitados pueden confirmar gratis. Elige las herramientas y el espacio que necesitas.",
     "from": "Desde {{price}}",
     "usd": "Todos los precios están en USD.",
-    "licenseNote": "Las Licencias de equipo se cobran mensualmente. Cada miembro asignado tiene los límites de Growth.",
+    "licenseNote": "Las Licencias de equipo se cobran mensualmente. Cada miembro que asignes recibe el plan Avanzado.",
     "licenseDetail": "25 miembros: {{small}}/mes · 100 miembros: {{large}}/mes.",
     "licenseAnnual": "Solo cobro mensual",
     "choose": "Empieza con {{plan}}",
@@ -3115,7 +3115,7 @@
     },
     "offersIncluded": "Incluido; configura los pagos para ofertas de pago",
     "teamCore": "Espacio de equipo y plantillas; herramientas de líder según tu rol",
-    "teamLicense": "Lugares Growth, herramientas de líder y gestión de lugares",
+    "teamLicense": "Lugares Avanzado, herramientas de líder y gestión de lugares",
     "feeNote": "Los cargos de la plataforma se aplican a boletos y ofertas de pago. El procesamiento de pagos se cobra por separado.",
     "serviceNote": "Los pagos y envíos automáticos requieren servicios conectados; la disponibilidad se indica en la app.",
     "faqTitle": "Buenas preguntas. Respuestas claras.",
@@ -3140,7 +3140,7 @@
     "pricingFaq": [
       {
         "q": "¿Qué es el cargo de la plataforma?",
-        "a": "En Gratis, {{fee}} de los boletos y ofertas de pago, con tope de {{cap}} al mes. Pro cuesta {{pro}} al mes sin comisión. El procesamiento de tarjetas es aparte en ambos planes y se cobra al costo. Las confirmaciones gratuitas no tienen cargo."
+        "a": "En Gratis, {{fee}} de los boletos y ofertas de pago. Pro cuesta {{pro}} al mes sin comisión. El procesamiento de tarjetas es aparte en ambos planes y se cobra al costo. Las confirmaciones gratuitas no tienen cargo."
       },
       {
         "q": "¿Los invitados pueden participar gratis?",
@@ -3935,7 +3935,7 @@
     "choosePlan": "Elige tu plan",
     "planFree": "Gratis",
     "planPro": "Pro",
-    "planFreeLine": "$0 al mes. Comisión de {{pct}}% sobre ventas pagadas, nunca más de {{cap}} al mes.",
+    "planFreeLine": "$0 al mes. {{pct}}% de las ventas pagadas.",
     "planProLine": "{{price}} al mes. Sin comisión de la plataforma, con recordatorios y herramientas para crecer.",
     "processing": "El procesamiento de tarjetas es aparte en ambos planes y se cobra al costo.",
     "goPro": "Elegir Pro",

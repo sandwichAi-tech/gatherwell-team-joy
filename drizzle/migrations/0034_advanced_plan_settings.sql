@@ -1,0 +1,2 @@
+UPDATE public.plan_settings SET monthly_price = 4900, fee_percent = 2, monthly_cap = NULL, legacy = false, updated_at = now() WHERE plan = 'growth';
+UPDATE public.plan_settings SET monthly_cap = NULL, updated_at = now() WHERE plan = 'free';
