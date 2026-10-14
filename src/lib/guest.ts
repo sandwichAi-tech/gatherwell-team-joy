@@ -125,7 +125,7 @@ export function rsvpErrorKey(error: unknown) {
 }
 
 /** Server-side prefetch for public pages: cache found data so it ships with the HTML; never cache misses (invite links may unlock them in the browser). */
-export async function prefetchPublic<T>(qc: import('@tanstack/react-query').QueryClient, opts: { queryKey: readonly unknown[]; queryFn: () => Promise<T> }) {
+export async function prefetchPublic(qc: import('@tanstack/react-query').QueryClient, opts: { queryKey: readonly unknown[]; queryFn?: unknown }) {
   try { const data = await qc.fetchQuery(opts as never); if (data == null) qc.removeQueries({ queryKey: opts.queryKey }); }
   catch { qc.removeQueries({ queryKey: opts.queryKey }); }
 }
