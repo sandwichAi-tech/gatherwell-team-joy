@@ -89,8 +89,8 @@ export function NetworkPage() {
 /** Partner gatherings a host or leader featured for this team. */
 export function FeaturedFromNetwork({ teamId }: { teamId: string }) {
   const { t, i18n } = useTranslation();
-  const { data = [] } = useQuery(featuredQuery(teamId));
-  if (!data.length) return null;
+  const { data = [], isError } = useQuery({ ...featuredQuery(teamId), retry: 1 });
+  if (isError || !data.length) return null;
   return <section className="panel"><div className="section-heading"><h2>{t('network.partnerGatherings')}</h2></div>
     {data.map(g => <Link key={g.id} to="/e/$id" params={{ id: g.id }} className="network-gathering is-link">
       <div className="person-info"><h3>{g.title}</h3><p>{when(g.starts_at, g.timezone, i18n.resolvedLanguage ?? 'en')}{g.location_name ? ` · ${g.location_name}` : ''}</p><p className="muted-small">{t('network.sharedBy', { host: g.shared_by ?? '' })}</p></div>
