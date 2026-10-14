@@ -10,7 +10,7 @@ export type PlanStatus = {
   plan: PlanId; source: 'own' | 'license' | 'founding'; leader?: string | null; team?: string | null; limits: Limits;
   own_plan: PlanId; billing_period: 'month' | 'year' | null; status: 'active' | 'past_due' | 'canceled' | 'trialing'; renews_at: string | null;
   has_customer: boolean; connect_status: 'not_started' | 'pending' | 'active'; pass_fee: boolean;
-  legacy_price_cents: number | null; fees_month: number;
+  legacy_price_cents: number | null; fees_month: number; sales_month: number; no_limits_until: string | null;
   founding: { start_date: string | null; free_until: string | null; rate_cents: number; in_window: boolean; pending_start: boolean } | null;
   usage: { gatherings: number; largest_guests: number; storage_bytes: number; assistant: number };
 };

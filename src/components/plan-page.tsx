@@ -1,3 +1,4 @@
+import { noLimitsPhase, planSaving } from '@/lib/plan-savings';
 import { PlanCardBody } from '@/components/plan-features';
 import { FoundingCommitmentsCard, FoundingPlanBanner } from '@/components/founding';
 import { EarningsMilestones } from '@/components/coach-launch';
@@ -119,6 +120,16 @@ export function PlanPage() {
       {st.has_customer && <Button variant="secondary" disabled={gate.busy} onClick={() => void gate.run(() => portal({ data: { origin } }))}><CreditCard />{t('billing.manage')}</Button>}
     </section>
 
+    {st.source === 'own' && (() => {
+      const dfmt = (d: string) => new Date(d).toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', { month: 'long', day: 'numeric' });
+      const phase = noLimitsPhase(st.no_limits_until);
+      const save = planSaving(st.plan, st.sales_month, settings);
+      return <section className="panel" aria-live="polite">
+        <strong>{t('billing.feesMonth', { paid: formatMoney(st.fees_month, lang) })}</strong>
+        {save && <p className="field-hint">{t(save.plan === 'growth' ? 'billing.savingGrowth' : 'billing.savingPro', { amount: formatMoney(save.cents, lang) })}</p>}
+        {st.plan === 'free' && phase && st.no_limits_until && <p className="field-hint">{phase === 'active' ? t('billing.noLimitsUntil', { date: dfmt(st.no_limits_until) }) : t('billing.noLimitsEnding', { date: dfmt(st.no_limits_until) })}</p>}
+      </section>;
+    })()}
     {st.founding && <FoundingPlanBanner f={st.founding} />}
     {st.legacy_price_cents !== null && st.source === 'own' && !st.founding && <div className="plan-banner" role="status"><AlertCircle />{t('billing.legacyNote', { plan: t(`billing.name_${st.own_plan}`), price: formatMoney(st.legacy_price_cents, lang) })}</div>}
 

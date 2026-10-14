@@ -2047,7 +2047,12 @@
     "everythingAdvanced": "Everything in Advanced, plus:",
     "fAssistantHelp": "{{n}} assistant requests a month (AI help writing invites, captions and recaps)",
     "firstDays": "No limits for your first 30 days",
-    "licenseMembers": "Each member you assign gets the Advanced plan."
+    "licenseMembers": "Each member you assign gets the Advanced plan.",
+    "feesMonth": "Fees this month: {{paid}}",
+    "savingGrowth": "On Advanced you'd have paid {{amount}} less this month",
+    "savingPro": "On Pro you'd have paid {{amount}} less this month",
+    "noLimitsUntil": "No limits until {{date}}",
+    "noLimitsEnding": "Your first 30 days end on {{date}}. After that, Free includes 4 gatherings a month and up to 30 guests at each."
   },
   "report": {
     "action": "Report",

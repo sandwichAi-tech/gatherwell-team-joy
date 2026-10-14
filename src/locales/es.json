@@ -2047,7 +2047,12 @@
     "everythingAdvanced": "Todo lo de Avanzado, más:",
     "fAssistantHelp": "{{n}} solicitudes al asistente al mes (ayuda con IA para escribir invitaciones, textos y resúmenes)",
     "firstDays": "Sin límites tus primeros 30 días",
-    "licenseMembers": "Cada miembro que asignes recibe el plan Avanzado."
+    "licenseMembers": "Cada miembro que asignes recibe el plan Avanzado.",
+    "feesMonth": "Cargos este mes: {{paid}}",
+    "savingGrowth": "Con Avanzado habrías pagado {{amount}} menos este mes",
+    "savingPro": "Con Pro habrías pagado {{amount}} menos este mes",
+    "noLimitsUntil": "Sin límites hasta el {{date}}",
+    "noLimitsEnding": "Tus primeros 30 días terminan el {{date}}. Después, Gratis incluye 4 encuentros al mes y hasta 30 personas en cada uno."
   },
   "report": {
     "action": "Reportar",
