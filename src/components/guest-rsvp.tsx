@@ -28,7 +28,10 @@ type CalEvent = Pick<PublicEvent, 'id' | 'title' | 'starts_at' | 'ends_at' | 'lo
 
 export function CalendarButtons({ event }: { event: CalEvent }) {
   const { t } = useTranslation();
-  const details = `${t('guest.calendarDetails')} ${guestLink(event.id)}`;
+  // The page link needs the browser address, so it fills in once the page has loaded (it also renders on the server).
+  const [link, setLink] = useState('');
+  useEffect(() => { setLink(guestLink(event.id)); }, [event.id]);
+  const details = `${t('guest.calendarDetails')} ${link}`.trim();
   return <div className="guest-button-row">
     <Button variant="secondary" onClick={() => downloadIcs(event, details)}><CalendarPlus />{t('guest.addCalendar')}</Button>
     <Button asChild variant="secondary"><a href={googleCalendarUrl(event, details)} target="_blank" rel="noopener noreferrer"><CalendarPlus />{t('guest.googleCalendar')}</a></Button>
