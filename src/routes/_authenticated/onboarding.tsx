@@ -36,6 +36,7 @@ function Onboarding() {
   const [role, setRole] = useState<Role | null>(null);
   const [code, setCode] = useState('');
   const [teamName, setTeamName] = useState('');
+  const [hostJoin, setHostJoin] = useState(false);
   const [cover, setCover] = useState<File | null>(null);
   const [joined, setJoined] = useState<{ team: string; leader: string | null } | null>(null);
   const [created, setCreated] = useState<{ team: string; joinCode: string } | null>(null);
@@ -88,9 +89,13 @@ function Onboarding() {
   }
 
   const step = steps?.[index];
+  // Hosts get their own page by default; joining a team is optional.
+  const creating = role === 'leader' || (role === 'host' && !hostJoin);
+  const hostName = role === 'host' && !hostJoin;
+  useEffect(() => { if (step === 'team' && role === 'host' && !teamName) setTeamName(name.trim()); }, [step, role, name, teamName]);
   const total = steps?.length ?? 0;
   const atEnd = !!steps && index >= total;
-  const canContinue = step === 'name' ? name.trim().length > 1 : step === 'place' ? city.trim().length > 0 : step === 'role' ? !!role : step === 'team' ? (role === 'leader' ? teamName.trim().length > 0 : parseJoinCode(code).length >= 6) : true;
+  const canContinue = step === 'name' ? name.trim().length > 1 : step === 'place' ? city.trim().length > 0 : step === 'role' ? !!role : step === 'team' ? (creating ? teamName.trim().length > 0 : parseJoinCode(code).length >= 6) : true;
 
   const next = async () => {
     if (!step || !canContinue) return;
@@ -106,10 +111,11 @@ function Onboarding() {
         const { error: e } = await supabase.from('profiles').update({ role_intent: role }).eq('id', user.id); if (e) throw e;
         if (role === 'guest') { setSteps(steps!.filter(s => s !== 'team')); await queryClient.invalidateQueries({ queryKey: ['profile', user.id] }); setBusy(false); await finish(); return; }
       } else if (step === 'team') {
-        if (role === 'leader') {
+        if (creating) {
           const { data, error: e } = await supabase.rpc('create_team', { _name: teamName.trim() }); if (e || !data?.[0]) throw e;
           if (cover) { const path = await uploadMedia(user.id, cover, 'cover'); await supabase.from('teams').update({ cover_url: path }).eq('id', data[0].id); }
           await queryClient.invalidateQueries({ queryKey: ['workspace', user.id] });
+          if (role === 'host') { await queryClient.invalidateQueries({ queryKey: ['profile', user.id] }); setIndex(index + 1); setBusy(false); await finish(); return; }
           setCreated({ team: teamName.trim(), joinCode: data[0].join_code });
         } else {
           const clean = parseJoinCode(code);
@@ -190,7 +196,12 @@ function Onboarding() {
       <h1 className="onboarding-title">{t('onboarding.roleTitle')}</h1>
       <div className="choice-list">{roles.map(({ key, Icon }) => <button key={key} type="button" className={`choice-card role-card ${role === key ? 'is-selected' : ''}`} aria-pressed={role === key} onClick={() => setRole(key)}><span className="creation-icon"><Icon /></span><span><strong>{t(`onboarding.${key}`)}</strong><small>{t(`onboarding.${key}Text`)}</small></span>{role === key && <Check className="choice-check" />}</button>)}</div>
     </>}
-    {step === 'team' && (role === 'leader' ? <>
+    {step === 'team' && (hostName ? <>
+      <h1 className="onboarding-title">{t('onboarding.hostPageTitle')}</h1>
+      <label className="field-label" htmlFor="team-name">{t('onboarding.hostPageLabel')}</label>
+      <Input id="team-name" maxLength={80} className="field-input" value={teamName} onChange={e => setTeamName(e.target.value)} />
+      <button type="button" className="auth-link" onClick={() => { setError(null); setHostJoin(true); }}>{t('onboarding.hostJoinInstead')}</button>
+    </> : creating ? <>
       <h1 className="onboarding-title">{t('onboarding.createTitle')}</h1>
       <p className="auth-subtitle">{t('onboarding.createText')}</p>
       <label className="field-label" htmlFor="team-name">{t('onboarding.teamName')}</label>
