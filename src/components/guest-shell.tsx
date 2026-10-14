@@ -1,12 +1,14 @@
-import type { ReactNode } from 'react';
-import { ClientOnly, Link } from '@tanstack/react-router';
+import { useEffect, type ReactNode } from 'react';
+import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { Brand, LanguageToggle } from '@/components/auth-frame';
-import { ListSkeleton, QueryFeedback } from '@/components/launch-states';
+import { QueryFeedback } from '@/components/launch-states';
+import { applySavedLanguage } from '@/lib/i18n';
 
-/** Public guest pages render client-only so browser-detected language never mismatches hydration. */
+/** Public guest pages server-render in English; the saved language applies once this page has hydrated. */
 export function GuestShell({ children }: { children: ReactNode }) {
-  return <ClientOnly fallback={<div className="guest-screen"><ListSkeleton /></div>}><GuestShellInner>{children}</GuestShellInner></ClientOnly>;
+  useEffect(() => { applySavedLanguage(); }, []);
+  return <GuestShellInner>{children}</GuestShellInner>;
 }
 
 function GuestShellInner({ children }: { children: ReactNode }) {

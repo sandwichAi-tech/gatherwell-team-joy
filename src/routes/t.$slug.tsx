@@ -1,10 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { pageQuery } from '@/components/follow';
+import { prefetchPublic } from '@/lib/guest';
 import i18n from '@/lib/i18n';
 import { GuestShell } from '@/components/guest-shell';
 import { FollowPage } from '@/components/follow';
 import { RetryState } from '@/components/launch-states';
 
 export const Route = createFileRoute('/t/$slug')({
+  loader: ({ context, params }) => prefetchPublic(context.queryClient, pageQuery('team', params.slug)),
   head: () => {
     const title = `${i18n.t('follow.meta.teamTitle')} · ${i18n.t('brand')}`;
     const description = i18n.t('follow.meta.team');

@@ -149,10 +149,11 @@ function LocPhoto({ path, onRemove }: { path: string; onRemove: () => void }) {
 
 /* ---------- Public page /l/:slug ---------- */
 
+export const publicLocationQuery = (slug: string) => ({ queryKey: ['public-location', slug], queryFn: async () => { const { data, error } = await supabase.rpc('get_public_location', { _slug: slug }); if (error) throw error; return data as unknown as PublicLoc | null; } });
 export function LocationPublicPage({ slug }: { slug: string }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? 'en';
-  const q = useQuery({ queryKey: ['public-location', slug], queryFn: async () => { const { data, error } = await supabase.rpc('get_public_location', { _slug: slug }); if (error) throw error; return data as unknown as PublicLoc | null; } });
+  const q = useQuery(publicLocationQuery(slug));
   const photos = useQuery({ queryKey: ['public-location-photos', slug], queryFn: () => publicLocationPhotos({ data: { slug } }), staleTime: 50 * 60 * 1000 });
   if (q.isLoading) return <ListSkeleton />;
   if (q.isError) return <RetryState retry={() => void q.refetch()} />;

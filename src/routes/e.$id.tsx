@@ -18,7 +18,7 @@ import { TeamRsvpSheet, TeamConfirmation, type TeamResult } from '@/components/t
 import { CalendarButtons, Confirmation, DirectionsButton, RsvpSheet, type RsvpResult } from '@/components/guest-rsvp';
 import { initialsOf, mediaUrl } from '@/lib/account';
 import { Polls, PhotoRoll, WeatherNote, useLiveCounts } from '@/components/event-live';
-import { formatWhen, isUuid, publicEventQuery, rsvpByCodeQuery } from '@/lib/guest';
+import { formatWhen, isUuid, prefetchPublic, publicEventQuery, rsvpByCodeQuery } from '@/lib/guest';
 import { getPublicEventMeta } from '@/lib/public-event.functions';
 import i18n from '@/lib/i18n';
 import { supabase } from '@/integrations/supabase/client';
@@ -27,8 +27,9 @@ import { ReportButton } from '@/components/report-button';
 import { RetryState } from '@/components/launch-states';
 
 export const Route = createFileRoute('/e/$id')({
-  loader: async ({ params }) => {
+  loader: async ({ params, context }) => {
     if (!isUuid(params.id)) return null;
+    await prefetchPublic(context.queryClient, publicEventQuery(params.id));
     try { return await getPublicEventMeta({ data: { id: params.id } }); } catch { return null; }
   },
   head: ({ loaderData }) => {

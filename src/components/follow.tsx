@@ -25,7 +25,7 @@ type Upcoming = { id: string; title: string; starts_at: string; timezone: string
 type HostPage = { id: string; name: string | null; avatar_url: string | null; cover_url: string | null; coverSrc?: string | null; city: string | null; bio: string | null; shop_url: string | null; followers: number; following: boolean; upcoming: Upcoming[] };
 type TeamPage = { id: string; name: string; cover_url: string | null; leader: { name: string | null; slug: string | null; avatar_url: string | null } | null; members: number; followers: number; following: boolean; upcoming: Upcoming[] };
 
-const pageQuery = (kind: 'host' | 'team', slug: string) => ({
+export const pageQuery = (kind: 'host' | 'team', slug: string) => ({
   queryKey: ['public-follow-page', kind, slug],
   queryFn: async () => {
     const { data, error } = kind === 'host' ? await supabase.rpc('get_public_host', { _slug: slug }) : await supabase.rpc('get_public_team', { _slug: slug });

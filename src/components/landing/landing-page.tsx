@@ -47,7 +47,9 @@ function Headline({ variant }: { variant: H1Variant }) {
 function Hero({ gatherings }: { gatherings: FeedGathering[] }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [picked] = useState(pickH1Variant);
+  // Server and first browser render share variant A; the rotating pick applies after hydration.
+  const [picked, setPicked] = useState<H1Variant>('A');
+  useEffect(() => { setPicked(pickH1Variant()); }, []);
   const { data: flags } = useQuery(featureFlagsQuery());
   const forced = flags?.['landing_headline'];
   const variant: H1Variant = forced?.enabled && ['A', 'B', 'C', 'D'].includes(forced.value ?? '') ? forced.value as H1Variant : picked;
