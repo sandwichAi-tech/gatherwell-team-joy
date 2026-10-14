@@ -315,6 +315,7 @@
     "code": "Team code",
     "codePlaceholder": "e.g. 8F2KQ7AB",
     "invalidCode": "We couldn't find a team with that code.",
+    "photoFailed": "Your photo didn't upload. You can add it later in Me > Edit profile.",
     "hostPageTitle": "Name your page",
     "hostPageLabel": "Team or company name",
     "hostJoinInstead": "Have a team code? Join a team instead",
