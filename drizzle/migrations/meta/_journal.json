@@ -239,6 +239,13 @@
       "when": 1792012648517,
       "tag": "0033_featured_gatherings_empty_on_not_allowed",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1792012649517,
+      "tag": "0034_advanced_plan_settings",
+      "breakpoints": true
     }
   ]
 }

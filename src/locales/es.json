@@ -373,7 +373,7 @@
   },
   "plans": {
     "free": "Plan gratuito",
-    "growth": "Plan Growth",
+    "growth": "Plan Avanzado",
     "pro": "Plan Pro",
     "team": "Plan Equipo"
   },
@@ -3140,7 +3140,7 @@
     "pricingFaq": [
       {
         "q": "¿Qué es el cargo de la plataforma?",
-        "a": "En Gratis, {{fee}} de los boletos y ofertas de pago, con tope de {{cap}} al mes. Pro cuesta {{pro}} al mes sin comisión. El procesamiento de tarjetas es aparte en ambos planes y se cobra al costo. Las confirmaciones gratuitas no tienen cargo."
+        "a": "En Gratis, {{fee}} de los boletos y ofertas de pago. Pro cuesta {{pro}} al mes sin comisión. El procesamiento de tarjetas es aparte en ambos planes y se cobra al costo. Las confirmaciones gratuitas no tienen cargo."
       },
       {
         "q": "¿Los invitados pueden participar gratis?",
