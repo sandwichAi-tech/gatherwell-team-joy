@@ -81,6 +81,7 @@ export const toLocalInput = (d: Date) => {
 
 export function rpcError(t: (k: string) => string, error: unknown) {
   const m = typeof error === 'object' && error && 'message' in error ? String((error as { message: unknown }).message) : '';
+  if (m.includes('payouts_required')) return t('billing.payoutsRequired');
   for (const key of ['invalid_title', 'date_required', 'invalid_url', 'invalid_capacity', 'invalid_duration', 'not_allowed', 'template_not_found', 'too_long']) if (m.includes(key)) return t(`gathering.errors.${key}`);
   return t('profile.saveError');
 }
