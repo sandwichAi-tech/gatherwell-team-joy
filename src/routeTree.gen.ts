@@ -31,6 +31,7 @@ import { Route as LegalDocRouteImport } from './routes/legal.$doc'
 import { Route as RCodeRouteImport } from './routes/r.$code'
 import { Route as TSlugRouteImport } from './routes/t.$slug'
 import { Route as UnsubscribeTokenRouteImport } from './routes/unsubscribe.$token'
+import { Route as AuthenticatedAppCirclesRouteImport } from './routes/_authenticated/_app/circles'
 import { Route as AuthenticatedAppEarningsRouteImport } from './routes/_authenticated/_app/earnings'
 import { Route as AuthenticatedAppEventsRouteImport } from './routes/_authenticated/_app/events'
 import { Route as AuthenticatedAppFollowupsRouteImport } from './routes/_authenticated/_app/followups'
@@ -178,6 +179,11 @@ const UnsubscribeTokenRoute = UnsubscribeTokenRouteImport.update({
   id: '/unsubscribe/$token',
   path: '/unsubscribe/$token',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAppCirclesRoute = AuthenticatedAppCirclesRouteImport.update({
+  id: '/circles',
+  path: '/circles',
+  getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
 const AuthenticatedAppEarningsRoute =
   AuthenticatedAppEarningsRouteImport.update({
@@ -414,6 +420,7 @@ export interface FileRoutesByFullPath {
   '/r/$code': typeof RCodeRoute
   '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
+  '/circles': typeof AuthenticatedAppCirclesRoute
   '/earnings': typeof AuthenticatedAppEarningsRoute
   '/events': typeof AuthenticatedAppEventsRoute
   '/followups': typeof AuthenticatedAppFollowupsRoute
@@ -475,6 +482,7 @@ export interface FileRoutesByTo {
   '/r/$code': typeof RCodeRoute
   '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
+  '/circles': typeof AuthenticatedAppCirclesRoute
   '/earnings': typeof AuthenticatedAppEarningsRoute
   '/events': typeof AuthenticatedAppEventsRoute
   '/followups': typeof AuthenticatedAppFollowupsRoute
@@ -539,6 +547,7 @@ export interface FileRoutesById {
   '/r/$code': typeof RCodeRoute
   '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
+  '/_authenticated/_app/circles': typeof AuthenticatedAppCirclesRoute
   '/_authenticated/_app/earnings': typeof AuthenticatedAppEarningsRoute
   '/_authenticated/_app/events': typeof AuthenticatedAppEventsRoute
   '/_authenticated/_app/followups': typeof AuthenticatedAppFollowupsRoute
@@ -602,6 +611,7 @@ export interface FileRouteTypes {
     | '/r/$code'
     | '/t/$slug'
     | '/unsubscribe/$token'
+    | '/circles'
     | '/earnings'
     | '/events'
     | '/followups'
@@ -663,6 +673,7 @@ export interface FileRouteTypes {
     | '/r/$code'
     | '/t/$slug'
     | '/unsubscribe/$token'
+    | '/circles'
     | '/earnings'
     | '/events'
     | '/followups'
@@ -726,6 +737,7 @@ export interface FileRouteTypes {
     | '/r/$code'
     | '/t/$slug'
     | '/unsubscribe/$token'
+    | '/_authenticated/_app/circles'
     | '/_authenticated/_app/earnings'
     | '/_authenticated/_app/events'
     | '/_authenticated/_app/followups'
@@ -952,6 +964,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/unsubscribe/$token'
       preLoaderRoute: typeof UnsubscribeTokenRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/_app/circles': {
+      id: '/_authenticated/_app/circles'
+      path: '/circles'
+      fullPath: '/circles'
+      preLoaderRoute: typeof AuthenticatedAppCirclesRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
     }
     '/_authenticated/_app/earnings': {
       id: '/_authenticated/_app/earnings'
@@ -1230,6 +1249,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAppRouteRouteChildren {
+  AuthenticatedAppCirclesRoute: typeof AuthenticatedAppCirclesRoute
   AuthenticatedAppEarningsRoute: typeof AuthenticatedAppEarningsRoute
   AuthenticatedAppEventsRoute: typeof AuthenticatedAppEventsRoute
   AuthenticatedAppFollowupsRoute: typeof AuthenticatedAppFollowupsRoute
@@ -1265,6 +1285,7 @@ interface AuthenticatedAppRouteRouteChildren {
 }
 
 const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
+  AuthenticatedAppCirclesRoute: AuthenticatedAppCirclesRoute,
   AuthenticatedAppEarningsRoute: AuthenticatedAppEarningsRoute,
   AuthenticatedAppEventsRoute: AuthenticatedAppEventsRoute,
   AuthenticatedAppFollowupsRoute: AuthenticatedAppFollowupsRoute,
