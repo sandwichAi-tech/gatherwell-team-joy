@@ -2052,7 +2052,11 @@
     "savingGrowth": "Con Avanzado habrías pagado {{amount}} menos este mes",
     "savingPro": "Con Pro habrías pagado {{amount}} menos este mes",
     "noLimitsUntil": "Sin límites hasta el {{date}}",
-    "noLimitsEnding": "Tus primeros 30 días terminan el {{date}}. Después, Gratis incluye 4 encuentros al mes y hasta 30 personas en cada uno."
+    "noLimitsEnding": "Tus primeros 30 días terminan el {{date}}. Después, Gratis incluye 4 encuentros al mes y hasta 30 personas en cada uno.",
+    "upgradeAdvTitle": "Pasa a Avanzado",
+    "upgradeReasonGatherings": "Usaste {{used}} de {{max}} encuentros este mes",
+    "upgradeReasonGuests": "Un encuentro llegó a {{max}} personas",
+    "upgradeAdvBody": "Avanzado incluye encuentros ilimitados y hasta 100 personas en cada uno."
   },
   "report": {
     "action": "Reportar",
@@ -3969,7 +3973,8 @@
     "ttlSub": "Mediana de {{live}} coaches · {{hour}} en menos de una hora",
     "draftNote": "Tu reunión pagada quedó guardada como borrador. Se publica con su precio en cuanto conectes tus pagos. Podrás compartir el enlace cuando esté publicada.",
     "liveDraft": "Buen trabajo, {{name}}. Tu perfil está listo y tu reunión pagada se publicará en cuanto conectes tus pagos.",
-    "draftLabel": "Esperando pagos"
+    "draftLabel": "Esperando pagos",
+    "onFree": "Estás en Gratis, sin límites durante tus primeros 30 días."
   },
   "day60": {
     "day": "Día {{n}} de 60",

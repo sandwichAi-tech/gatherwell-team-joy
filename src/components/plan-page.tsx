@@ -130,6 +130,17 @@ export function PlanPage() {
         {st.plan === 'free' && phase && st.no_limits_until && <p className="field-hint">{phase === 'active' ? t('billing.noLimitsUntil', { date: dfmt(st.no_limits_until) }) : t('billing.noLimitsEnding', { date: dfmt(st.no_limits_until) })}</p>}
       </section>;
     })()}
+    {st.source === 'own' && st.plan === 'free' && !noLimitsPhase(st.no_limits_until) && (() => {
+      const g = lim.gatherings !== null && st.usage.gatherings >= lim.gatherings;
+      const q = lim.guests !== null && st.usage.largest_guests >= lim.guests;
+      if (!g && !q) return null;
+      return <section className="panel plan-upgrade" role="status">
+        <h2>{t('billing.upgradeAdvTitle')}</h2>
+        <p className="auth-subtitle">{g ? t('billing.upgradeReasonGatherings', { used: st.usage.gatherings, max: lim.gatherings }) : t('billing.upgradeReasonGuests', { max: lim.guests })}</p>
+        <p className="field-hint">{t('billing.upgradeAdvBody')}</p>
+        <Button disabled={gate.busy} onClick={() => choose('growth')}>{t('billing.upgradeAdvTitle')}</Button>
+      </section>;
+    })()}
     {st.founding && <FoundingPlanBanner f={st.founding} />}
     {st.legacy_price_cents !== null && st.source === 'own' && !st.founding && <div className="plan-banner" role="status"><AlertCircle />{t('billing.legacyNote', { plan: t(`billing.name_${st.own_plan}`), price: formatMoney(st.legacy_price_cents, lang) })}</div>}
 
