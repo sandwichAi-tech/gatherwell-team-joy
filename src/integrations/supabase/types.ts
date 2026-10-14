@@ -2621,6 +2621,7 @@ export type Database = {
           id: string
           language: string
           live_at: string | null
+          no_limits_until: string | null
           notify_prefs: Json
           onboarded: boolean
           phone: string | null
@@ -2640,6 +2641,7 @@ export type Database = {
           id: string
           language?: string
           live_at?: string | null
+          no_limits_until?: string | null
           notify_prefs?: Json
           onboarded?: boolean
           phone?: string | null
@@ -2659,6 +2661,7 @@ export type Database = {
           id?: string
           language?: string
           live_at?: string | null
+          no_limits_until?: string | null
           notify_prefs?: Json
           onboarded?: boolean
           phone?: string | null
@@ -4534,6 +4537,8 @@ export type Database = {
         Args: { _host: string; _start: string }
         Returns: Json
       }
+      host_no_limits_until: { Args: { _uid: string }; Returns: string }
+      host_sales_this_month: { Args: { _host: string }; Returns: number }
       host_value_month: {
         Args: { _host: string; _start: string }
         Returns: Json
@@ -4950,6 +4955,7 @@ export type Database = {
         Args: { _code: string; _name: string }
         Returns: undefined
       }
+      start_hosting_window: { Args: never; Returns: string }
       storage_allows: { Args: { _bytes: number }; Returns: boolean }
       storage_used_bytes: { Args: { _uid: string }; Returns: number }
       submit_verification: {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
@@ -237,6 +237,8 @@ function LiveStep({ kind, id, name }: { kind: StartKind; id: string; name: strin
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
   const s = useStarter(kind, id);
+  // Going live starts the first 30 days without limits (set once).
+  useEffect(() => { void supabase.rpc('start_hosting_window'); }, []);
   const d = s.data;
   const title = d ? (kind === 'circle' ? (lang === 'es' ? d.title_es : d.title_en) : d.title) : '';
   return <div className="qs-body">
