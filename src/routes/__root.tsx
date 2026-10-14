@@ -16,7 +16,7 @@ import appCss from "../styles.css?url";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
-import i18n from "@/lib/i18n";
+import i18n, { applySavedLanguage, isServerRenderedMarketing } from "@/lib/i18n";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ListSkeleton } from '@/components/launch-states';
 
@@ -130,8 +130,8 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
   useEffect(() => {
-    const language = localStorage.getItem("gatherwell-language") ?? (navigator.language.toLowerCase().startsWith("es") ? "es" : "en");
-    void i18n.changeLanguage(language);
+    // Server-rendered marketing pages switch language themselves once their own content has hydrated.
+    if (!isServerRenderedMarketing(window.location.pathname)) applySavedLanguage();
     const theme = localStorage.getItem("gatherwell-theme") ?? "system";
     document.documentElement.classList.toggle("dark", theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches));
     const applyLanguage = () => { document.documentElement.lang = i18n.resolvedLanguage ?? "en"; };

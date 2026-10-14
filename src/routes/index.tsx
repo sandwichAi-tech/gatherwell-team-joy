@@ -1,10 +1,10 @@
-import { ClientOnly, createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { LandingPage } from '@/components/landing/landing-page';
 import i18n from '@/lib/i18n';
 import { publicShareImage } from '@/lib/public-media.functions';
-import { ListSkeleton, RetryState } from '@/components/launch-states';
+import { RetryState } from '@/components/launch-states';
 
 export const Route = createFileRoute('/')({
   loader: () => publicShareImage({ data: { slot: 'og_share_image' } }).catch(() => null),
@@ -17,6 +17,6 @@ export const Route = createFileRoute('/')({
   component: function PublicHome() {
     const navigate = useNavigate();
     useEffect(() => { void supabase.auth.getUser().then(({ data }) => { if (data.user) void navigate({ to: '/home', replace: true }); }); }, [navigate]);
-    return <ClientOnly fallback={<ListSkeleton />}><LandingPage /></ClientOnly>;
+    return <LandingPage />;
   },
 });

@@ -19,7 +19,7 @@
 - DESIGN_RULES.md is authoritative for visuals and tone over PROJECT_RULES.md, so the permanent premium reset supersedes the initial shell design.
 - Keep bilingual sample dashboard content and detail sheets frontend-only, with session state rather than stored user data, so previews never imply connected services.
 - App screens live under _authenticated/_app: the _authenticated gate redirects signed-out visitors to /login, and the _app layout sends anyone not onboarded (or holding a pending invite) to /onboarding before rendering GatherwellShell.
-- Public surfaces (/login, /join/$code, /e/$id, /terms, /privacy) render through AuthFrame inside ClientOnly so browser-detected language never causes hydration mismatches.
+- Marketing pages (/, /hosts, /pricing, /studios, /discover) server-render in English (i18n starts 'en') and switch language after hydration, so crawlers and link previews see content. AuthFrame surfaces (/login, /join/$code, /e/$id, /terms, /privacy) still use ClientOnly until 1.13.
 - Uploaded photos go to the private media bucket under the uploader's folder and are shown via signed URLs, because public buckets are blocked.
 - Event detail lives at /event/$id inside the app shell; the public guest page stays at /e/$id.
 - Signed-out visitors may call only guest RPCs (public event/price, RSVP by code, polls, invites, email prefs by token); all else needs sign-in + team role, as the guest page is the only anonymous surface.

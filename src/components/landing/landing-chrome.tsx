@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { ClientOnly, Link } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { LanguageToggle, setLanguage } from '@/components/auth-frame';
 import { GwIcon } from '@/components/gw-icon';
 import { useQuery } from '@tanstack/react-query';
 import { featureFlagsQuery, track } from '@/lib/landing';
+import { applySavedLanguage } from '@/lib/i18n';
 
 export function LandingLogo() {
   const { t } = useTranslation();
@@ -130,7 +131,8 @@ export function StickyFindBar({ heroId, mode = 'find' }: { heroId: string; mode?
   </div>;
 }
 
-/** Public marketing pages render client-only so browser-detected language never mismatches hydration. */
+/** Marketing pages server-render in English; the root switches to the saved language after hydration, so first renders match. */
 export function LandingFrame({ children }: { children: ReactNode }) {
-  return <ClientOnly fallback={<div className="gw-landing" />}><div className="gw-landing"><LandingNav />{children}<LandingFooter /></div></ClientOnly>;
+  useEffect(() => { applySavedLanguage(); }, []);
+  return <div className="gw-landing"><LandingNav />{children}<LandingFooter /></div>;
 }
