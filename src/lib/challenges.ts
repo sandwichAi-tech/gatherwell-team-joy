@@ -76,6 +76,7 @@ export async function challengePhotoUrls(paths: string[]) {
 
 export function rpcErrorKey(error: unknown) {
   const m = typeof error === 'object' && error && 'message' in error ? String((error as { message: unknown }).message) : '';
+  if (m.includes('payouts_required')) return 'billing.payoutsRequired';
   for (const k of ['not_joined', 'date_closed', 'out_of_range', 'invalid_message', 'not_allowed']) if (m.includes(k)) return `challenges.err.${k}`;
   return 'profile.saveError';
 }

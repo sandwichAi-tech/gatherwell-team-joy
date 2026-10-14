@@ -2056,7 +2056,10 @@
     "upgradeAdvTitle": "Pasa a Avanzado",
     "upgradeReasonGatherings": "Usaste {{used}} de {{max}} encuentros este mes",
     "upgradeReasonGuests": "Un encuentro llegó a {{max}} personas",
-    "upgradeAdvBody": "Avanzado incluye encuentros ilimitados y hasta 100 personas en cada uno."
+    "upgradeAdvBody": "Avanzado incluye encuentros ilimitados y hasta 100 personas en cada uno.",
+    "payoutsRequired": "Conecta tus pagos para vender Círculos y entradas",
+    "comingSoon": "Próximamente",
+    "connectToEarn": "Conecta tus pagos para empezar a ganar"
   },
   "report": {
     "action": "Reportar",

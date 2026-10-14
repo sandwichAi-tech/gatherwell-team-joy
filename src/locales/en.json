@@ -2056,7 +2056,10 @@
     "upgradeAdvTitle": "Upgrade to Advanced",
     "upgradeReasonGatherings": "You've used {{used}} of {{max}} gatherings this month",
     "upgradeReasonGuests": "A gathering has reached {{max}} guests",
-    "upgradeAdvBody": "Advanced includes unlimited gatherings and up to 100 guests at each."
+    "upgradeAdvBody": "Advanced includes unlimited gatherings and up to 100 guests at each.",
+    "payoutsRequired": "Connect payouts to sell Circles and tickets",
+    "comingSoon": "Coming soon",
+    "connectToEarn": "Connect payouts to start earning"
   },
   "report": {
     "action": "Report",
