@@ -24,7 +24,7 @@ function MyCircles() {
   return <>
     <div className="page-heading"><div><h1>{t('myCircles.title')}</h1></div></div>
     {q.isPending ? <ListSkeleton /> : q.isError ? <RetryState retry={() => void q.refetch()} /> : !circles.length
-      ? <EmptyState icon="UsersThree" title={t('myCircles.empty')} text={t('myCircles.emptyText')} action={<Button asChild><Link to="/discover">{t('myCircles.browse')}</Link></Button>} />
+      ? <EmptyState icon="UsersRound" title={t('myCircles.empty')} text={t('myCircles.emptyText')} action={<Button asChild><Link to="/discover">{t('myCircles.browse')}</Link></Button>} />
       : <ul className="offer-list">{circles.map(p => <li key={p.id}><Link to="/offer/$id" params={{ id: p.offer_id }} className="offer-row is-link"><OfferCover offer={p.offer!} /><div className="offer-row-main"><strong>{offerTitle(p.offer!, lang)}</strong></div><ChevronRight /></Link></li>)}</ul>}
   </>;
 }
