@@ -144,8 +144,8 @@ export function LearnHome() {
     <div className="page-heading"><div><span className="eyebrow">{t('learn.eyebrow')}</span><h1>{t('learn.title')}</h1><p>{t('learn.sentence')}</p></div>
       {leader && <Button asChild variant="secondary"><Link to="/learn/manage"><Settings2 />{t('learnHub.manage')}</Link></Button>}</div>
     {startHere && <section className="learn-section"><TrackCard track={startHere} data={data} featured /></section>}
-    <section className="learn-section"><div className="section-heading"><h2>{t('learnHub.yourTracks')}</h2>{!tracks.length && <span className="chip sample-badge">{t('common.sample')}</span>}</div>
-      {tracks.length ? rest.length ? <div className="track-grid">{rest.map(tr => <TrackCard key={tr.id} track={tr} data={data} />)}</div> : <p className="auth-subtitle">{t('learnHub.allShown')}</p> : <SampleTracks />}</section>
+    <section className="learn-section"><div className="section-heading"><h2>{t('learnHub.yourTracks')}</h2></div>
+      {tracks.length ? rest.length ? <div className="track-grid">{rest.map(tr => <TrackCard key={tr.id} track={tr} data={data} />)}</div> : <p className="auth-subtitle">{t('learnHub.allShown')}</p> : <p className="auth-subtitle">{t('learnHub.noTracks')}</p>}</section>
     <section className="learn-section"><div className="section-heading"><h2>{t('learnHub.live')}</h2></div>
       {upcoming.length ? <div className="live-grid">{upcoming.map(l => <LiveCard key={l.id} lesson={l} track={byId.get(l.track_id)} />)}</div> : <EmptyState compact icon="GraduationCap" text={t('learnHub.noLive')} />}
       {replays.length > 0 && <ul className="replay-list">{replays.map(l => <li key={l.id}><Radio /><div><strong>{lessonTitle(l, lang)}</strong><small>{fmtWhen(l.live_starts_at!, lang)}</small></div><Button asChild variant="secondary" size="sm"><Link to="/learn/lesson/$id" params={{ id: l.id }}><Play />{t('learnHub.replay')}</Link></Button></li>)}</ul>}</section>

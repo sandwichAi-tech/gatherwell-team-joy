@@ -27,6 +27,8 @@ function range(period: Period) {
   return { from: from.toISOString(), to: to.toISOString() };
 }
 
+const EMPTY: Insights = { stats: { g: 0, g_prev: 0, r: 0, r_prev: 0, c: 0, c_prev: 0, h: 0, h_prev: 0, m: 0, m_prev: 0, t: 0, t_prev: 0 }, weekly: [], top_hosts: [], templates: [], nudge: [] };
+/** @deprecated Signed-in screens never show sample data. */
 const SAMPLE: Insights = {
   stats: { g: 14, g_prev: 11, r: 186, r_prev: 152, c: 142, c_prev: 120, h: 6, h_prev: 5, m: 12, m_prev: 9, t: 5, t_prev: 3 },
   weekly: [18, 22, 19, 27, 24, 31, 29, 35].map((count, i) => ({ week: new Date(Date.now() - (7 - i) * 604800000).toISOString(), count })),
@@ -74,7 +76,8 @@ export function InsightsPage() {
   if (workspace.role !== 'leader') return <section className="panel"><h2>{t('insights.leadersOnly')}</h2><Button asChild variant="secondary" className="mt-4"><Link to="/team"><ArrowLeft />{t('eventDetail.backToTeam')}</Link></Button></section>;
 
   const real = data && (data.stats.g + data.stats.r + data.stats.c + data.stats.m + data.stats.t) > 0;
-  const view = real ? data! : SAMPLE; const sample = !isLoading && !real;
+  void real; void SAMPLE; void isLoading;
+  const view = data ?? EMPTY; const sample = false;
   const s = view.stats;
   const cards = [
     { key: 'gatherings', Icon: CalendarDays, v: s.g, p: s.g_prev }, { key: 'guests', Icon: UsersRound, v: s.r, p: s.r_prev }, { key: 'checkins', Icon: CircleCheck, v: s.c, p: s.c_prev },

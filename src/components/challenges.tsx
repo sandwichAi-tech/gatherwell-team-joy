@@ -75,13 +75,11 @@ export function ChallengesSection() {
   const groups = useMemo(() => ({ active: list.filter(c => phaseOf(c) === 'active'), upcoming: list.filter(c => phaseOf(c) === 'upcoming').reverse(), past: list.filter(c => phaseOf(c) === 'past') }), [list]);
   if (isLoading) return <ListSkeleton />;
   return <section className="panel" id="challenges">
-    <div className="section-heading"><h2>{t('challenges.title')}</h2>{leader ? <Button onClick={() => setEditing({})}><Plus />{t('challenges.new')}</Button> : !list.length && <span className="chip sample-badge">{t('common.sample')}</span>}</div>
+    <div className="section-heading"><h2>{t('challenges.title')}</h2>{leader ? <Button onClick={() => setEditing({})}><Plus />{t('challenges.new')}</Button> : null}</div>
     {list.length ? <>
       <div className="segmented-tabs" role="tablist">{(['active', 'upcoming', 'past'] as const).map(k => <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? 'is-active' : ''} onClick={() => setTab(k)}>{t(`challenges.phase.${k}`)} <span className="tab-count">{groups[k].length}</span></button>)}</div>
       {groups[tab].length ? <div className="challenge-list">{groups[tab].map(c => <ChallengeRow key={c.id} c={c} />)}</div> : <p className="auth-subtitle">{t(`challenges.none.${tab}`)}</p>}
-    </> : <div className="challenge-list">{STARTERS.slice(0, 2).map((k, i) => <button type="button" key={k} className="challenge-row" onClick={() => openDetail(t(`challenges.starter.${k}.title`), t('challenges.sampleNote'))}>
-      <div className="gathering-cover challenge-thumb" style={{ backgroundImage: COVER_STYLES[i] }} aria-hidden="true"><span>{t(`challenges.starter.${k}.title`)[0]}</span></div>
-      <span className="lesson-info"><strong>{t(`challenges.starter.${k}.title`)}</strong><small>{t('challenges.dayOf', { day: 6 - i * 3, total: STARTER_DAYS[k] })} · {t('challenges.joinedCount', { count: 18 - i * 7 })}</small></span><span className="chip sample-badge">{t('common.sample')}</span></button>)}</div>}
+    </> : <p className="auth-subtitle">{t('challenges.noneYet')}</p>}
     {leader && <ChallengeEditor draft={editing} teamId={teamId} onClose={() => setEditing(null)} />}
   </section>;
 }
