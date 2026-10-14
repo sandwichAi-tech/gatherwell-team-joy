@@ -35,7 +35,7 @@ const customerHomeQuery = (userId: string, offerIds: string[]) => ({
 });
 
 export function CustomerHome({ userId }: { userId: string }) {
-  const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage;
+  const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
   const purchases = useQuery(purchasesQuery(userId));
   const circles = (purchases.data ?? []).filter(p => p.offer?.kind === 'membership' && isLive(p));
   const q = useQuery({ ...customerHomeQuery(userId, circles.map(c => c.offer_id)), enabled: purchases.isSuccess || purchases.isError });
