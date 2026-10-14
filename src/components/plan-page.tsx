@@ -1,3 +1,4 @@
+import { PlanCardBody } from '@/components/plan-features';
 import { FoundingCommitmentsCard, FoundingPlanBanner } from '@/components/founding';
 import { EarningsMilestones } from '@/components/coach-launch';
 import { PromoUsageCard } from '@/components/promo-codes';
@@ -125,19 +126,8 @@ export function PlanPage() {
       {PLANS.map(p => {
         const ps = settings[p.id];
         const isCurrent = (st.source === 'founding' && p.id === 'pro') || st.source === 'own' && (st.own_plan === p.id && st.legacy_price_cents === null || (p.id === 'free' && st.own_plan === 'free'));
-        return <article key={p.id} className={`plan-card ${isCurrent ? 'is-current' : ''} ${p.id === 'pro' ? 'is-popular' : ''}`}>
-          {p.id === 'pro' && <span className="plan-tag">{t('billing.popular')}</span>}
-          <h3>{t(`billing.name_${p.id}`)}</h3>
-          <p className="plan-price"><strong>{formatMoney(ps.monthly_price, lang)}</strong><span>{t('billing.perMonth')}</span></p>
-          <p className="plan-fee-line">{ps.monthly_cap !== null ? t('billing.feeCapped', { pct: ps.fee_percent, cap: formatMoney(ps.monthly_cap, lang) }) : t('billing.feePct', { pct: ps.fee_percent })}</p>
-          <ul className="plan-features">
-            {p.id === 'pro' && <li className="plan-features-head">{t('billing.everythingFree')}</li>}
-            {p.id === 'pro' ? PRO_FEATURES.map(f => <li key={f}><Check />{t(`billing.pro_${f}`)}</li>) : <>
-              <li><Check />{t('billing.fGatherings', { n: p.limits.gatherings })}</li>
-              <li><Check />{t('billing.fGuests', { n: p.limits.guests })}</li>
-              <li><Check />{t('billing.fStorage', { size: formatStorage(p.limits.storage_mb, lang) })}</li>
-              <li><Check />{t('billing.fAssistant', { n: p.limits.assistant.toLocaleString(lang) })}</li></>}
-          </ul>
+        return <article key={p.id} className={`plan-card ${isCurrent ? 'is-current' : ''} `}>
+          <PlanCardBody id={p.id} setting={ps} tagClass="plan-tag" priceClass="plan-price" feeClass="plan-fee-line" />
           {isCurrent ? <Button variant="secondary" disabled>{t('billing.yourPlan')}</Button>
             : <Button variant={p.id === 'pro' ? 'default' : 'secondary'} disabled={gate.busy} onClick={() => choose(p.id)}>{p.id === 'free' ? t('billing.switchTo', { plan: t('billing.name_free') }) : t('billing.upgrade')}</Button>}
         </article>;
