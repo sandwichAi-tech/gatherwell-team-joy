@@ -592,7 +592,8 @@
     },
     "openEvent": "Abrir página del encuentro",
     "breadcrumb": "Ruta del equipo",
-    "telegram": "Telegram"
+    "telegram": "Telegram",
+    "noUpcoming": "Aún no hay encuentros próximos."
   },
   "templates": {
     "heading": "Plantillas",
@@ -1227,7 +1228,8 @@
       "tracks": "Rutas",
       "recipes": "Recetas",
       "progress": "Avance"
-    }
+    },
+    "noTracks": "Aún no hay rutas."
   },
   "challenges": {
     "title": "Retos",
@@ -1342,7 +1344,8 @@
       "out_of_range": "Ese día no es parte del reto.",
       "invalid_message": "Escribe hasta 280 caracteres.",
       "not_allowed": "No tienes acceso a este reto."
-    }
+    },
+    "noneYet": "Aún no hay retos."
   },
   "recognition": {
     "title": "Reconocimiento",

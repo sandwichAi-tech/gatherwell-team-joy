@@ -35,7 +35,6 @@ import { ProfileHero, RecentBadges, StatsStrip } from '@/components/profile-hero
 import { confirmAction } from '@/components/confirm-dialog';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { TeamSwitcher, useSwitchTeam } from '@/components/team-switcher';
-import { EventRows } from '@/components/gatherwell-pages';
 import { supabase } from '@/integrations/supabase/client';
 import { initialsOf, joinLink, mediaUrl, uploadMedia, workspaceQuery, type TeamMembership } from '@/lib/account';
 import {
