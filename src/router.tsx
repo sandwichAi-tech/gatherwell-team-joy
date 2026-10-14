@@ -14,8 +14,8 @@ export const getRouter = () => {
     defaultPendingMs: 200,
     defaultPendingComponent: ListSkeleton,
     // Public pages prefetch into the query cache on the server; ship that cache with the HTML.
-    dehydrate: () => ({ queryState: dehydrate(queryClient) }),
-    hydrate: (d: { queryState: DehydratedState }) => { hydrate(queryClient, d.queryState); },
+    dehydrate: () => ({ queryState: JSON.stringify(dehydrate(queryClient)) }),
+    hydrate: (d: { queryState: string }) => { hydrate(queryClient, JSON.parse(d.queryState) as DehydratedState); },
   });
 
   return router;
