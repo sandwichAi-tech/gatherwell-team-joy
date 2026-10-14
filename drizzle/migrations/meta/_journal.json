@@ -232,6 +232,13 @@
       "when": 1792011828244,
       "tag": "0032_events_read_own_rsvps",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1792012648517,
+      "tag": "0033_featured_gatherings_empty_on_not_allowed",
+      "breakpoints": true
     }
   ]
 }
