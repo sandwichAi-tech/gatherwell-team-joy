@@ -225,6 +225,13 @@
       "when": 1792011253966,
       "tag": "0031_storage_allows_first_avatar",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1792011828244,
+      "tag": "0032_events_read_own_rsvps",
+      "breakpoints": true
     }
   ]
 }
