@@ -5,6 +5,7 @@ import { LanguageToggle, setLanguage } from '@/components/auth-frame';
 import { GwIcon } from '@/components/gw-icon';
 import { useQuery } from '@tanstack/react-query';
 import { featureFlagsQuery, track } from '@/lib/landing';
+import { applySavedLanguage } from '@/lib/i18n';
 
 export function LandingLogo() {
   const { t } = useTranslation();
@@ -132,5 +133,6 @@ export function StickyFindBar({ heroId, mode = 'find' }: { heroId: string; mode?
 
 /** Marketing pages server-render in English; the root switches to the saved language after hydration, so first renders match. */
 export function LandingFrame({ children }: { children: ReactNode }) {
+  useEffect(() => { applySavedLanguage(); }, []);
   return <div className="gw-landing"><LandingNav />{children}<LandingFooter /></div>;
 }

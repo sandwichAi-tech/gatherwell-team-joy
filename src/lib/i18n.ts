@@ -9,3 +9,14 @@ i18n.use(initReactI18next).init({
   react: { useSuspense: false },
 });
 export default i18n;
+
+/** Switch to the saved (or browser) language. Call only after the current page has hydrated. */
+export function applySavedLanguage() {
+  const language = localStorage.getItem('gatherwell-language') ?? (navigator.language.toLowerCase().startsWith('es') ? 'es' : 'en');
+  if (i18n.resolvedLanguage !== language) void i18n.changeLanguage(language);
+}
+
+/** Marketing pages render on the server in English, so the language switch waits for their own hydration. */
+export function isServerRenderedMarketing(pathname: string) {
+  return ['/', '/hosts', '/pricing', '/studios', '/discover'].includes(pathname.replace(/\/$/, '') || '/');
+}
