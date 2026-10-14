@@ -26,7 +26,7 @@
     "name": "Nick",
     "workspace": "Nick’s workspace",
     "workspaceLabel": "Workspace",
-    "plan": "Growth plan · Sample",
+    "plan": "Advanced plan · Sample",
     "sampleNote": "Sample data. Changes last for this session.",
     "memberView": "Switch to member view",
     "leaderView": "Switch to leader view",
@@ -268,7 +268,7 @@
     "activity": "Your activity",
     "activityValue": "12 gatherings hosted · 3 upcoming",
     "workspace": "Workspace",
-    "workspaceValue": "128 members · Growth plan"
+    "workspaceValue": "128 members · Advanced plan"
   },
   "auth": {
     "title": "Welcome to Gatherwell",
@@ -373,7 +373,7 @@
   },
   "plans": {
     "free": "Free plan",
-    "growth": "Growth plan",
+    "growth": "Advanced plan",
     "pro": "Pro plan",
     "team": "Team plan"
   },
@@ -1892,9 +1892,9 @@
     "title": "Your plan",
     "current": "Current plan",
     "plan_free": "Free",
-    "plan_growth": "Growth",
+    "plan_growth": "Advanced",
     "plan_pro": "Pro",
-    "licensePlan": "Growth (Team License from {{leader}})",
+    "licensePlan": "Advanced (Team License from {{leader}})",
     "renews": "Renews {{date}}",
     "meterGatherings": "{{used}} of {{max}} gatherings this month",
     "meterGatheringsUnlimited": "{{used}} gatherings this month · unlimited",
@@ -1909,7 +1909,7 @@
     "annualSave": "Annual billing: 2 months free.",
     "popular": "Most popular",
     "name_free": "Free",
-    "name_growth": "Growth",
+    "name_growth": "Advanced",
     "name_pro": "Pro",
     "name_team": "Team Licenses",
     "perMonth": "/month",
@@ -1925,10 +1925,10 @@
     "upgrade": "Upgrade",
     "included": "Included",
     "switchTo": "Switch to {{plan}}",
-    "teamText": "Give Growth to the members you choose. Bought by a leader for their team.",
+    "teamText": "Give Advanced to the members you choose. Bought by a leader for their team.",
     "team25": "Team 25",
     "team100": "Team 100",
-    "seatsGrowth": "Growth for up to {{n}} members",
+    "seatsGrowth": "Advanced for up to {{n}} members",
     "buy": "Buy",
     "organization": "Organization",
     "orgText": "For larger organizations",
@@ -2098,7 +2098,7 @@
     },
     "plan": {
       "free": "Free",
-      "growth": "Growth",
+      "growth": "Advanced",
       "pro": "Pro",
       "team": "Team License"
     },
@@ -3096,7 +3096,7 @@
     "pricingSub": "Guests can RSVP for free. Choose the tools and room your hosting needs.",
     "from": "From {{price}}",
     "usd": "All prices in USD.",
-    "licenseNote": "Team Licenses are billed monthly. Each assigned member gets Growth limits.",
+    "licenseNote": "Team Licenses are billed monthly. Each member you assign gets the Advanced plan.",
     "licenseDetail": "25 members: {{small}}/month · 100 members: {{large}}/month.",
     "licenseAnnual": "Monthly billing only",
     "choose": "Start with {{plan}}",
@@ -3115,7 +3115,7 @@
     },
     "offersIncluded": "Included; payment setup required for paid offers",
     "teamCore": "Team Space and shared templates; leader tools by role",
-    "teamLicense": "Growth seats, leader tools and seat management",
+    "teamLicense": "Advanced seats, leader tools and seat management",
     "feeNote": "Platform fees apply to paid tickets and offers. Payment processing fees are separate.",
     "serviceNote": "Payments and automated delivery require connected services; availability is shown in the app.",
     "faqTitle": "Good questions. Clear answers.",
@@ -3140,7 +3140,7 @@
     "pricingFaq": [
       {
         "q": "What's the platform fee?",
-        "a": "{{fee}} of paid tickets and offers on Free, capped at {{cap}} a month. Pro is {{pro}} a month with no platform fee. Card processing is separate on both plans and passed through at cost. Free RSVPs have no fee."
+        "a": "{{fee}} of paid tickets and offers on Free. Pro is {{pro}} a month with no platform fee. Card processing is separate on both plans and passed through at cost. Free RSVPs have no fee."
       },
       {
         "q": "Can guests join for free?",
@@ -3935,7 +3935,7 @@
     "choosePlan": "Choose your plan",
     "planFree": "Free",
     "planPro": "Pro",
-    "planFreeLine": "$0 a month. {{pct}}% fee on paid sales, never more than {{cap}} a month.",
+    "planFreeLine": "$0 a month. {{pct}}% of paid sales.",
     "planProLine": "{{price}} a month. No platform fee, plus reminders and growth tools.",
     "processing": "Card processing is separate on both plans and charged at cost.",
     "goPro": "Choose Pro",
