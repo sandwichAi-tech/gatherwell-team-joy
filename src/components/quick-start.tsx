@@ -137,7 +137,7 @@ function CreateStep({ profile, onDone }: { profile: Prof; onDone: (k: StartKind,
       }
       await qc.invalidateQueries();
       onDone(kind, id);
-    } catch { toast.error(t('quickStart.error')); }
+    } catch (err) { toast.error(t(String((err as { message?: string })?.message ?? '').includes('payouts_required') ? 'billing.payoutsRequired' : 'quickStart.error')); }
     setBusy(false);
   };
 
