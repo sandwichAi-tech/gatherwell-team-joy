@@ -68,20 +68,21 @@ function HomeFeatured() { const { workspace } = useAccount(); return workspace ?
 
 export function HomePage() {
   const { t } = useTranslation(); const { openCreate, openDetail, openPlaceholder } = useGatherwell(); const { profile } = useAccount();
+  const guest = profile?.role_intent === 'guest';
   const stats = [{ key: 'members', Icon: UsersRound }, { key: 'events', Icon: CalendarDays }, { key: 'attendance', Icon: Repeat2 }, { key: 'checkins', Icon: CircleCheck }] as const;
   return <>
     <MobileTeamSwitcher />
-    <FoundingCommitmentsCard />
-    <CoachLaunchCard />
-    <DailyBriefCard />
-    <PlaybookCard context="brief" compact />
+    {!guest && <FoundingCommitmentsCard />}
+    {!guest && <CoachLaunchCard />}
+    {!guest && <DailyBriefCard />}
+    {!guest && <PlaybookCard context="brief" compact />}
     <FollowupsHomeCard />
     <MemberPlanCard />
-    <NextCard />
+    {!guest && <NextCard />}
     <ActiveChallengeCard />
     <HomeFeatured />
-    <HomeTemplates />
-    <LeaderInsightsLink />
+    {!guest && <HomeTemplates />}
+    {!guest && <LeaderInsightsLink />}
     <div className="greeting page-heading"><div><span className="eyebrow">{t('home.eyebrow')}</span><h1>{t('home.greeting', { name: firstName(profile?.full_name) || t('common.name') })}</h1><p>{t('home.subtitle')}</p><span className="chip sample-badge mobile-sample">{t('common.sample')}</span></div><Button className="page-create" onClick={openCreate}><Plus />{t('common.create')}</Button></div>
     <section className="stats-grid" aria-label={t('common.sample')}>
       {stats.map(({ key, Icon }) => <article className="stat-card" key={key}><div className="stat-heading"><span>{t(`stats.${key}.label`)}</span><Icon /></div><strong className="stat-value">{t(`stats.${key}.value`)}</strong><p className={key === 'events' ? '' : 'positive-change'}>{t(`stats.${key}.note`)}</p><Button variant="link" className="detail-link" onClick={() => openDetail(t(`stats.${key}.label`), `${t(`stats.${key}.value`)} · ${t(`stats.${key}.note`)}`)}>{t('home.viewDetails')}<ArrowRight /></Button></article>)}

@@ -34,7 +34,7 @@ import { CommunityRequestsPanel, CommunitySeatCard } from '@/components/communit
 const KINDS: OfferKind[] = ['membership', 'course', 'download'];
 const dateFmt = (iso: string, lang: string) => new Date(iso).toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
-function OfferCover({ offer, wide, preview }: { offer: Pick<Offer, 'cover_style' | 'cover_url' | 'kind' | 'title_en' | 'title_es'>; wide?: boolean; preview?: string | null }) {
+export function OfferCover({ offer, wide, preview }: { offer: Pick<Offer, 'cover_style' | 'cover_url' | 'kind' | 'title_en' | 'title_es'>; wide?: boolean; preview?: string | null }) {
   const { t, i18n } = useTranslation();
   const { data: url } = useQuery({ queryKey: ['media-url', offer.cover_url], queryFn: () => mediaUrl(offer.cover_url), enabled: !!offer.cover_url && !preview, staleTime: 50 * 60 * 1000 });
   return <div className={`offer-cover ${wide ? 'is-wide' : ''}`} style={{ backgroundImage: COVER_STYLES[offer.cover_style % COVER_STYLES.length] }}>
