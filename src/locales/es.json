@@ -2012,7 +2012,7 @@
     "pro_branding": "Tu propia marca y dominio",
     "pro_campaigns": "Campañas por correo",
     "pro_cohosts": "Coanfitriones y administradores del equipo",
-    "pro_insights": "Estadísticas avanzadas",
+    "pro_insights": "Estadísticas detalladas",
     "pro_support": "Soporte prioritario",
     "cardNote": "El procesamiento de tarjetas es aparte en ambos planes y se cobra al costo.",
     "legacyNote": "Conservas tu precio de {{plan}} de {{price}} hasta que cambies de plan. Estas son las nuevas opciones.",
@@ -2037,7 +2037,17 @@
     "guestServiceNote": "Tus invitados también pagaron {{amount}} en cargos por servicio. Eso no forma parte de tus ventas.",
     "serviceFeeRow": "el invitado pagó {{fee}} de cargo por servicio",
     "serviceFeeCoveredRow": "cubriste {{fee}} de cargo por servicio",
-    "freeSeriesLimit": "Gratis incluye 4 encuentros al mes. Pasa a Avanzado para encuentros ilimitados."
+    "freeSeriesLimit": "Gratis incluye 4 encuentros al mes. Pasa a Avanzado para encuentros ilimitados.",
+    "tag_free": "Para quienes empiezan",
+    "tag_growth": "Para quienes están creciendo",
+    "tag_pro": "Para coaches de tiempo completo",
+    "feeOnSales": "Cargo del {{pct}}% en ventas pagadas",
+    "noPlatformFee": "Sin cargo de plataforma",
+    "orYearly": "o {{price}} al año",
+    "everythingAdvanced": "Todo lo de Avanzado, más:",
+    "fAssistantHelp": "{{n}} solicitudes al asistente al mes (ayuda con IA para escribir invitaciones, textos y resúmenes)",
+    "firstDays": "Sin límites tus primeros 30 días",
+    "licenseMembers": "Cada miembro que asignes recibe el plan Avanzado."
   },
   "report": {
     "action": "Reportar",
@@ -3119,7 +3129,6 @@
     "teamCore": "Espacio de equipo y plantillas; herramientas de líder según tu rol",
     "teamLicense": "Lugares Avanzado, herramientas de líder y gestión de lugares",
     "feeNote": "Los cargos de la plataforma se aplican a boletos y ofertas de pago. El procesamiento de pagos se cobra por separado.",
-    "serviceNote": "Los pagos y envíos automáticos requieren servicios conectados; la disponibilidad se indica en la app.",
     "faqTitle": "Buenas preguntas. Respuestas claras.",
     "hostFaq": [
       {

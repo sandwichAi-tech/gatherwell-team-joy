@@ -29,22 +29,22 @@ async function ensureCustomer(userId: string, email: string | undefined) {
 
 export const startPlanCheckout = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ plan: z.literal('pro'), origin, lang: z.enum(['en', 'es']) }).parse(d))
+  .inputValidator((d: unknown) => z.object({ plan: z.enum(['growth', 'pro']), origin, lang: z.enum(['en', 'es']) }).parse(d))
   .handler(async ({ data, context }): Promise<Result> => {
     const { stripe, stripeKey } = await import('./billing/stripe.server');
     if (!stripeKey()) return notConnected;
-    const { data: ps } = await context.supabase.from('plan_settings').select('monthly_price').eq('plan', 'pro').maybeSingle();
+    const { data: ps } = await context.supabase.from('plan_settings').select('monthly_price').eq('plan', data.plan).maybeSingle();
     if (!ps?.monthly_price) return { ok: false, error: 'failed' };
     // Founding coaches: free during the window, then the founding rate, locked while they stay on Pro.
     const { data: st } = await context.supabase.rpc('my_plan_status');
-    const founding = (st as { founding?: { in_window: boolean; rate_cents: number } | null } | null)?.founding;
+    const founding = data.plan === 'pro' ? (st as { founding?: { in_window: boolean; rate_cents: number } | null } | null)?.founding : null;
     if (founding?.in_window) return { ok: false, error: 'founding_free' };
     const price = founding ? founding.rate_cents : ps.monthly_price;
     const customer = await ensureCustomer(context.userId, context.claims.email as string | undefined);
     const meta = { kind: 'plan', user_id: context.userId, plan: data.plan, period: 'month', ...(founding ? { founding_rate: String(founding.rate_cents) } : {}) };
     const s = await stripe<{ url: string }>('checkout/sessions', {
       mode: 'subscription', customer, locale: data.lang === 'es' ? 'es-419' : 'en',
-      line_items: [{ quantity: 1, price_data: { currency: 'usd', unit_amount: price, recurring: { interval: 'month' }, product_data: { name: founding ? 'Gatherwell Pro (Founding)' : 'Gatherwell Pro' } } }],
+      line_items: [{ quantity: 1, price_data: { currency: 'usd', unit_amount: price, recurring: { interval: 'month' }, product_data: { name: founding ? 'Gatherwell Pro (Founding)' : data.plan === 'growth' ? 'Gatherwell Advanced' : 'Gatherwell Pro' } } }],
       subscription_data: { metadata: meta }, metadata: meta,
       success_url: `${data.origin}/plan?checkout=done`, cancel_url: `${data.origin}/plan`,
     });

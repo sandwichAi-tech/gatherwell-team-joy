@@ -2012,7 +2012,7 @@
     "pro_branding": "Custom branding and domain",
     "pro_campaigns": "Email campaigns",
     "pro_cohosts": "Co-hosts and team admins",
-    "pro_insights": "Advanced insights",
+    "pro_insights": "In-depth insights",
     "pro_support": "Priority support",
     "cardNote": "Card processing is separate on both plans and passed through at cost.",
     "legacyNote": "You keep your {{plan}} price of {{price}} until you change plans. Here are the new options.",
@@ -2037,7 +2037,17 @@
     "guestServiceNote": "Guests also paid {{amount}} in service fees. That isn't part of your sales.",
     "serviceFeeRow": "guest paid {{fee}} service fee",
     "serviceFeeCoveredRow": "you covered {{fee}} service fee",
-    "freeSeriesLimit": "Free includes 4 gatherings a month. Upgrade to Advanced for unlimited."
+    "freeSeriesLimit": "Free includes 4 gatherings a month. Upgrade to Advanced for unlimited.",
+    "tag_free": "For new hosts",
+    "tag_growth": "For growing hosts",
+    "tag_pro": "For full-time coaches",
+    "feeOnSales": "{{pct}}% fee on paid sales",
+    "noPlatformFee": "No platform fee",
+    "orYearly": "or {{price}} a year",
+    "everythingAdvanced": "Everything in Advanced, plus:",
+    "fAssistantHelp": "{{n}} assistant requests a month (AI help writing invites, captions and recaps)",
+    "firstDays": "No limits for your first 30 days",
+    "licenseMembers": "Each member you assign gets the Advanced plan."
   },
   "report": {
     "action": "Report",
@@ -3119,7 +3129,6 @@
     "teamCore": "Team Space and shared templates; leader tools by role",
     "teamLicense": "Advanced seats, leader tools and seat management",
     "feeNote": "Platform fees apply to paid tickets and offers. Payment processing fees are separate.",
-    "serviceNote": "Payments and automated delivery require connected services; availability is shown in the app.",
     "faqTitle": "Good questions. Clear answers.",
     "hostFaq": [
       {
