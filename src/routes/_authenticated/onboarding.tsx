@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
 import { requestPushMoment } from '@/components/notifications';
 import { useEffect, useRef, useState } from 'react';
@@ -102,9 +103,16 @@ function Onboarding() {
     setBusy(true); setError(null);
     try {
       if (step === 'name') {
-        const update: { full_name: string; avatar_url?: string } = { full_name: name.trim() };
-        if (photo) update.avatar_url = await uploadMedia(user.id, photo, 'avatar');
-        const { error: e } = await supabase.from('profiles').update(update).eq('id', user.id); if (e) throw e;
+        const { error: e } = await supabase.from('profiles').update({ full_name: name.trim() }).eq('id', user.id); if (e) throw e;
+        if (photo) {
+          try {
+            const avatar = await uploadMedia(user.id, photo, 'avatar');
+            const { error: pe } = await supabase.from('profiles').update({ avatar_url: avatar }).eq('id', user.id); if (pe) throw pe;
+          } catch (photoError) {
+            console.error('Profile photo upload failed:', photoError instanceof Error ? photoError.message : photoError);
+            toast(t('onboarding.photoFailed'));
+          }
+        }
       } else if (step === 'place') {
         const { error: e } = await supabase.from('profiles').update({ city: city.trim(), language: i18n.resolvedLanguage === 'es' ? 'es' : 'en' }).eq('id', user.id); if (e) throw e;
       } else if (step === 'role' && role) {

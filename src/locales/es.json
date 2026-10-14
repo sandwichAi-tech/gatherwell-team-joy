@@ -315,6 +315,7 @@
     "code": "Código del equipo",
     "codePlaceholder": "ej. 8F2KQ7AB",
     "invalidCode": "No encontramos un equipo con ese código.",
+    "photoFailed": "Tu foto no se subió. Puedes agregarla después en Yo > Editar perfil.",
     "hostPageTitle": "Ponle nombre a tu página",
     "hostPageLabel": "Nombre del equipo o la empresa",
     "hostJoinInstead": "¿Tienes un código de equipo? Únete a un equipo",

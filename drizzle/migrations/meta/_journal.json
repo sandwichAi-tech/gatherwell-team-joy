@@ -218,6 +218,13 @@
       "when": 1791826946728,
       "tag": "0030_role_intent_guest",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1792011253966,
+      "tag": "0031_storage_allows_first_avatar",
+      "breakpoints": true
     }
   ]
 }
