@@ -48,7 +48,8 @@
     "followSubtitle": "A few people to reconnect with this week.",
     "followChip": "3 to follow up",
     "followAction": "Follow up",
-    "viewDetails": "View details"
+    "viewDetails": "View details",
+    "statsLabel": "Your team in numbers"
   },
   "events": {
     "title": "Gatherings",

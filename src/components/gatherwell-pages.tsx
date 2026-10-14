@@ -70,6 +70,29 @@ function HomeTemplates() { const { workspace } = useAccount(); return workspace 
 function MobileTeamSwitcher() { const { userId } = useGatherwell(); return <TeamSwitcher userId={userId} className="mobile-switcher" />; }
 function HomeFeatured() { const { workspace } = useAccount(); return workspace ? <><FeaturedFromNetwork teamId={workspace.teamId} /><TeamOffersStrip teamId={workspace.teamId} /></> : null; }
 
+/** Real team numbers only; each block hides when it has nothing to show. */
+function HomeRealData() {
+  const { t, i18n } = useTranslation(); const { workspace } = useAccount();
+  const teamId = workspace?.teamId; const manage = !!workspace && workspace.role !== 'member';
+  const q = useQuery({ queryKey: ['home-real', teamId, manage], enabled: !!teamId, queryFn: async () => {
+    const now = new Date(); const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    const [members, upcoming, checkins] = await Promise.all([
+      supabase.from('team_members').select('user_id', { count: 'exact', head: true }).eq('team_id', teamId!),
+      supabase.from('events').select('id, title, starts_at, location_name', { count: 'exact' }).eq('team_id', teamId!).eq('status', 'published').gte('starts_at', now.toISOString()).order('starts_at').limit(3),
+      manage ? supabase.from('rsvps').select('id, events!inner(team_id)', { count: 'exact', head: true }).eq('events.team_id', teamId!).gte('checked_in_at', monthStart) : Promise.resolve({ count: null }),
+    ]);
+    return { members: members.count ?? 0, upcomingCount: upcoming.count ?? 0, upcoming: upcoming.data ?? [], checkins: checkins.count };
+  } });
+  if (!q.data) return null;
+  const d = q.data; const lang = i18n.resolvedLanguage ?? 'en';
+  const tiles = [{ key: 'members', Icon: UsersRound, value: d.members }, { key: 'events', Icon: CalendarDays, value: d.upcomingCount }, ...(d.checkins != null ? [{ key: 'checkins', Icon: CircleCheck, value: d.checkins }] : [])];
+  return <>
+    <section className="stats-grid" aria-label={t('home.statsLabel')}>{tiles.map(({ key, Icon, value }) => <article className="stat-card" key={key}><div className="stat-heading"><span>{t(`stats.${key}.label`)}</span><Icon /></div><strong className="stat-value">{value.toLocaleString(lang)}</strong></article>)}</section>
+    {d.upcoming.length > 0 && <section className="panel upcoming-panel"><div className="section-heading"><h2>{t('home.upcoming')}</h2><Button asChild variant="link"><Link to="/events">{t('home.viewAll')}<ArrowRight /></Link></Button></div>
+      <div className="event-list">{d.upcoming.map(e => <Link key={e.id} to="/event/$id" params={{ id: e.id }} className="event-row"><div className="date-tile"><span>{new Date(e.starts_at).toLocaleDateString(lang, { month: 'short' })}</span><strong>{new Date(e.starts_at).getDate()}</strong></div><div className="event-info"><h3>{e.title}</h3><p>{new Date(e.starts_at).toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' })}{e.location_name ? ` · ${e.location_name}` : ''}</p></div></Link>)}</div></section>}
+  </>;
+}
+
 export function HomePage() {
   const { t } = useTranslation(); const { openCreate, openDetail, openPlaceholder } = useGatherwell(); const { profile } = useAccount();
   const guest = profile?.role_intent === 'guest';
@@ -89,16 +112,9 @@ export function HomePage() {
     <HomeFeatured />
     {!guest && <HomeTemplates />}
     {!guest && <LeaderInsightsLink />}
-    <div className="greeting page-heading"><div><span className="eyebrow">{t('home.eyebrow')}</span><h1>{t('home.greeting', { name: firstName(profile?.full_name) || t('common.name') })}</h1><p>{t('home.subtitle')}</p><span className="chip sample-badge mobile-sample">{t('common.sample')}</span></div><Button className="page-create" onClick={openCreate}><Plus />{t('common.create')}</Button></div>
-    <section className="stats-grid" aria-label={t('common.sample')}>
-      {stats.map(({ key, Icon }) => <article className="stat-card" key={key}><div className="stat-heading"><span>{t(`stats.${key}.label`)}</span><Icon /></div><strong className="stat-value">{t(`stats.${key}.value`)}</strong><p className={key === 'events' ? '' : 'positive-change'}>{t(`stats.${key}.note`)}</p><Button variant="link" className="detail-link" onClick={() => openDetail(t(`stats.${key}.label`), `${t(`stats.${key}.value`)} · ${t(`stats.${key}.note`)}`)}>{t('home.viewDetails')}<ArrowRight /></Button></article>)}
-    </section>
-    <div className="dashboard-columns">
-      <section className="panel upcoming-panel"><div className="section-heading"><h2>{t('home.upcoming')}</h2><Button asChild variant="link"><Link to="/events">{t('home.viewAll')}<ArrowRight /></Link></Button></div><EventRows /></section>
-      <div className="dashboard-right"><section className="network-panel"><div className="circle-lines" aria-hidden="true" /><span className="eyebrow">{t('home.networkLabel')}</span><h2>{t('home.networkTitle')}</h2><p>{t('home.networkText')}</p><Button asChild className="peach-button"><Link to="/network">{t('home.networkAction')}<ArrowRight /></Link></Button></section>
-      <section className="panel pulse-panel"><h2>{t('home.pulse')}</h2><div className="pulse-list">{(['sofia', 'challenge', 'maria'] as const).map(key => <div className="pulse-item" key={key}><span className="pulse-dot" /><div><h3>{t(`pulse.${key}.title`)}</h3><p>{t(`pulse.${key}.time`)}</p></div></div>)}</div></section></div>
-    </div>
-    <section className="panel follow-panel"><div className="section-heading"><div><h2>{t('home.followTitle')}</h2><p>{t('home.followSubtitle')}</p></div><span className="chip warm-chip">{t('home.followChip')}</span></div><PeopleRows follow /></section>
+    <div className="greeting page-heading"><div><span className="eyebrow">{t('home.eyebrow')}</span><h1>{t('home.greeting', { name: firstName(profile?.full_name) || t('common.name') })}</h1><p>{t('home.subtitle')}</p></div><Button className="page-create" onClick={openCreate}><Plus />{t('common.create')}</Button></div>
+    <HomeRealData />
+    <section className="network-panel"><div className="circle-lines" aria-hidden="true" /><span className="eyebrow">{t('home.networkLabel')}</span><h2>{t('home.networkTitle')}</h2><p>{t('home.networkText')}</p><Button asChild className="peach-button"><Link to="/network">{t('home.networkAction')}<ArrowRight /></Link></Button></section>
   </>;
 }
 export function EmptyPage({ page }: { page: 'events' | 'team' | 'learn' | 'me' }) {
