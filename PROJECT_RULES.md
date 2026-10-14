@@ -78,3 +78,4 @@ ADDENDUM (Oct 2026, confirmed rules — additive, nothing above removed):
 - Guest service fee: 3% + $0.49 on paid single tickets only (never free RSVPs or subscriptions); a coach can cover it per gathering. Numbers live in plan_settings.
 - Founding coaches (max 6): Pro free for 6 months from one shared start date, then $49/month locked while on Pro. Non-cash, never tied to recruiting.
 - Every host gets their own space by default; a team is optional.
+- One app, one login, two homes: customers (role_intent 'guest') and hosts. Me has 'Start hosting' and 'Switch to attending'.

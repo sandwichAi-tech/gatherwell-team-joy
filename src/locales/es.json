@@ -8,7 +8,10 @@
     "team": "Equipo",
     "learn": "Aprende",
     "me": "Yo",
-    "label": "Navegación principal"
+    "label": "Navegación principal",
+    "discover": "Descubrir",
+    "circles": "Círculos",
+    "progress": "Progreso"
   },
   "common": {
     "create": "Crear",
@@ -3994,5 +3997,12 @@
       "false": "No",
       "null": "Sin preguntar"
     }
+  },
+  "myCircles": {
+    "title": "Mis Círculos",
+    "empty": "Aún no te has unido a un Círculo",
+    "emptyText": "Encuentra el Círculo de un coach cerca de ti y únete.",
+    "browse": "Ir a Descubrir",
+    "meta": "Los Círculos a los que perteneces."
   }
 }

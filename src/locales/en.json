@@ -8,7 +8,10 @@
     "team": "Team",
     "learn": "Learn",
     "me": "Me",
-    "label": "Main navigation"
+    "label": "Main navigation",
+    "discover": "Discover",
+    "circles": "Circles",
+    "progress": "Progress"
   },
   "common": {
     "create": "Create",
@@ -3994,5 +3997,12 @@
       "false": "No",
       "null": "Not asked"
     }
+  },
+  "myCircles": {
+    "title": "My Circles",
+    "empty": "You haven't joined a Circle yet",
+    "emptyText": "Find a coach's Circle near you and join in.",
+    "browse": "Go to Discover",
+    "meta": "The Circles you belong to."
   }
 }
