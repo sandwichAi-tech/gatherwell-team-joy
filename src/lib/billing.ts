@@ -16,10 +16,13 @@ export type PlanStatus = {
 };
 
 /** Plans offered today. Usage limits mirror plan_limits(); prices and fees always come from plan_settings. */
-export const PLANS: { id: Exclude<PlanId, 'growth'>; limits: Omit<Limits, 'fee_pct'> }[] = [
+export const PLANS: { id: PlanId; limits: Omit<Limits, 'fee_pct'> }[] = [
   { id: 'free', limits: { gatherings: 4, guests: 30, storage_mb: 500, assistant: 50 } },
+  { id: 'growth', limits: { gatherings: null, guests: 100, storage_mb: 10240, assistant: 500 } },
   { id: 'pro', limits: { gatherings: null, guests: null, storage_mb: 102400, assistant: 2000 } },
 ];
+/** Annual billing charges ten months. */
+export const yearlyCents = (monthly: number) => monthly * 10;
 export const PRO_FEATURES = ['texts', 'autopilot', 'branding', 'campaigns', 'cohosts', 'insights', 'support'] as const;
 
 export const planSettingsQuery = queryOptions({

@@ -94,7 +94,7 @@ export function PlanPage() {
   const choose = (id: PlanId) => {
     if (id === st.own_plan && st.legacy_price_cents === null) return;
     if (id === 'free') { setDowngrade(id); return; }
-    trackEvent('upgrade_clicked', { plan: id }); void gate.run(() => checkout({ data: { plan: 'pro', origin, lang } }));
+    trackEvent('upgrade_clicked', { plan: id }); void gate.run(() => checkout({ data: { plan: id === 'growth' ? 'growth' : 'pro', origin, lang } }));
   };
   const togglePassFee = async (on: boolean) => {
     const { error } = await supabase.rpc('set_pass_fee', { _on: on });
