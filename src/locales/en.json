@@ -4049,5 +4049,12 @@
     "modeGroup": "How you use Gatherwell",
     "startHosting": "Start hosting",
     "switchAttending": "Switch to attending"
+  },
+  "refunds": {
+    "label": "Refunds",
+    "24h": "Full refund until 24 hours before",
+    "7d": "Full refund until 7 days before",
+    "none": "No refunds",
+    "hostCancels": "If the host cancels, everyone gets a full refund."
   }
 }
