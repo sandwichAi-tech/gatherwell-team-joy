@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { GwIcon, type GwIconName } from '@/components/gw-icon';
 import { LandingFrame, StickyFindBar } from './landing-chrome';
 import { PlanCardBody } from '@/components/plan-features';
-import { PLANS, PRO_FEATURES, LICENSES, formatMoney, formatStorage, planSettingsQuery } from '@/lib/billing';
+import { paymentsStatusQuery, PLANS, PRO_FEATURES, LICENSES, formatMoney, formatStorage, planSettingsQuery } from '@/lib/billing';
 import { useQuery } from '@tanstack/react-query';
 
 const BENEFIT_ICONS: GwIconName[] = ['CalendarPlus', 'Link2', 'BellRing', 'QrCode', 'BookOpen', 'UsersRound'];
@@ -28,12 +28,13 @@ function Faq({ kind }: { kind: 'hostFaq' | 'pricingFaq' }) {
 export function PricingCards({ preview = false }: { preview?: boolean }) {
  const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
  const { data: settings } = useQuery(planSettingsQuery);
+ const { data: pay } = useQuery(paymentsStatusQuery);
  const license = LICENSES[0]!;
  return <div className="gw-pricing-content">
   <div className="gw-public-plans">
    {PLANS.map(plan => <article key={plan.id} className={"gw-public-plan"}>
     <PlanCardBody id={plan.id} setting={settings?.[plan.id]} tagClass="gw-plan-tag" priceClass="gw-public-price" feeClass="gw-plan-fee"/>
-    <Link to="/login" search={{intent:'host'}} className={`gw-btn gw-btn-${plan.id==='pro' ? 'primary' : 'secondary'} gw-btn-block`}>{t('marketing.choose',{plan:t('billing.name_'+plan.id)})}</Link>
+    {plan.id !== 'free' && !pay?.connected ? <span className="gw-btn gw-btn-secondary gw-btn-block" aria-disabled="true">{t('billing.comingSoon')}</span> : <Link to="/login" search={{intent:'host'}} className={`gw-btn gw-btn-${plan.id==='pro' ? 'primary' : 'secondary'} gw-btn-block`}>{t('marketing.choose',{plan:t('billing.name_'+plan.id)})}</Link>}
    </article>)}
    <article className="gw-public-plan"><span className="gw-plan-tag">{t('marketing.leaderLabel')}</span><h3>{t('billing.name_team')}</h3><p className="gw-public-price"><strong>{t('marketing.from',{price:formatMoney(license.cents,lang)})}</strong><span>{t('billing.perMonth')}</span></p><ul><li><GwIcon name="Check" size={20}/>{t('billing.seatsGrowth',{n:license.seats})}</li><li><GwIcon name="Check" size={20}/>{t('marketing.leaderFeatures.0')}</li><li><GwIcon name="Check" size={20}/>{t('marketing.leaderFeatures.1')}</li><li><GwIcon name="Check" size={20}/>{t('marketing.leaderFeatures.2')}</li></ul><p className="gw-fine">{t('marketing.licenseDetail',{small:formatMoney(license.cents,lang),large:formatMoney(LICENSES[1]!.cents,lang)})}</p><Link to="/login" search={{intent:'host'}} className="gw-btn gw-btn-secondary gw-btn-block">{t('marketing.hostCta')}</Link></article>
   </div>

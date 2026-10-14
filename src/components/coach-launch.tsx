@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { GwIcon, type GwIconName } from '@/components/gw-icon';
 import { supabase } from '@/integrations/supabase/client';
-import { formatMoney } from '@/lib/billing';
+import { formatMoney, paymentsStatusQuery } from '@/lib/billing';
 
 type Checklist = { profile: boolean; offer: boolean; shared: boolean; first_rsvp: boolean; first_paid: boolean; earned_cents: number; celebrated: string[]; is_host: boolean };
 export const coachChecklistQuery = { queryKey: ['coach-checklist'], queryFn: async (): Promise<Checklist | null> => {
@@ -75,8 +75,12 @@ function useCelebrations(c: Checklist | null | undefined, keys: string[], done: 
 export function CoachLaunchCard() {
   const { t } = useTranslation(); const qc = useQueryClient();
   const { data: c } = useQuery(coachChecklistQuery);
+  const { data: pay } = useQuery(paymentsStatusQuery);
+  const live = !!pay?.connected;
   const done = c ? doneMap(c) : {};
-  const keys = STEPS.map(s => s.key);
+  // Money steps stay hidden until card payments are connected.
+  const steps = live ? STEPS : STEPS.filter(s => s.key !== 'first_paid' && s.key !== 'first_100');
+  const keys = steps.map(s => s.key);
   const { step, close } = useCelebrations(c, keys, done);
   if (!c || !c.is_host) return <Celebration step={step} onClose={close} />;
   const count = keys.filter(k => done[k]).length;
@@ -90,12 +94,13 @@ export function CoachLaunchCard() {
         <Button variant="ghost" size="icon" aria-label={t('coach.hide')} onClick={async () => { await supabase.from('coach_steps').insert({ step: 'dismissed' }); await qc.invalidateQueries({ queryKey: coachChecklistQuery.queryKey }); }}><X /></Button>
       </header>
       <Button asChild className="qs-entry"><Link to="/start">{t('quickStart.entry')}</Link></Button>
-      <ol className="coach-steps">{STEPS.map(s => <li key={s.key} className={done[s.key] ? 'is-done' : ''}>
+      <ol className="coach-steps">{steps.map(s => <li key={s.key} className={done[s.key] ? 'is-done' : ''}>
         <Link to={s.to} className="coach-step">
           <span className="coach-step-icon">{done[s.key] ? <Check /> : <GwIcon name={s.icon} size={20} />}</span>
           <span className="coach-step-text"><strong>{t(`coach.steps.${s.key}`)}</strong>{!done[s.key] && <small>{t(`coach.hints.${s.key}`)}</small>}</span>
           {!done[s.key] && <ChevronRight className="settings-chevron" />}
         </Link></li>)}</ol>
+      {!live && <p className="gw-muted-line"><GwIcon name="CreditCard" size={18} />{t('billing.connectToEarn')}</p>}
     </section>}
   </>;
 }
