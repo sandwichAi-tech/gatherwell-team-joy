@@ -4004,5 +4004,21 @@
     "emptyText": "Find a coach's Circle near you and join in.",
     "browse": "Go to Discover",
     "meta": "The Circles you belong to."
+  },
+  "customerHome": {
+    "next": "Next up",
+    "noRsvps": "No RSVPs yet",
+    "noRsvpsText": "Gatherings you RSVP to show up here.",
+    "find": "Find a gathering",
+    "code": "Check-in code",
+    "waitlist": "You're on the waitlist",
+    "circles": "Your Circles",
+    "latest": "Latest content",
+    "membersOnly": "Members only",
+    "past": "Past",
+    "again": "Go again",
+    "modeGroup": "How you use Gatherwell",
+    "startHosting": "Start hosting",
+    "switchAttending": "Switch to attending"
   }
 }
