@@ -1,3 +1,5 @@
+import { useQuery } from '@tanstack/react-query';
+import { RefundLine } from '@/components/refund-line';
 import { tgShare } from '@/lib/chat-links';
 import { serviceFee } from '@/lib/plan-fees';
 import { GuestBelonging } from '@/components/belonging';
@@ -69,7 +71,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
   const { t, i18n } = useTranslation();
   const [form, setForm] = useState({ first: '', last: '', phone: '', email: '', plus: 0, sms: false, mail: false });
   const [busy, setBusy] = useState(false); const [error, setError] = useState<string | null>(null);
-  const [price, setPrice] = useState<{ price_cents: number; pass_fee: boolean; fee_pct: number; cover_service_fee?: boolean; service_fee_percent?: number; service_fee_fixed?: number } | null>(null);
+  const [price, setPrice] = useState<{ price_cents: number; pass_fee: boolean; fee_pct: number; cover_service_fee?: boolean; service_fee_percent?: number; service_fee_fixed?: number; refund_policy?: string } | null>(null);
   const { data: waiver } = useEventWaiver(intent ? event.id : undefined); const [wName, setWName] = useState(''); const [wOk, setWOk] = useState(false);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const gate = usePaymentGate(); const checkout = useServerFn(startTicketCheckout);
@@ -138,6 +140,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
       {event.require_approval && intent === 'going' && <p className="guest-hint">{t('rsvpq.approvalHint')}</p>}
       {waiver && <WaiverAccept waiver={waiver} name={wName} accepted={wOk} onName={setWName} onAccepted={setWOk} />}
       {paid && price && <p className="guest-price"><strong>{formatMoney(price.price_cents, lang)}</strong><span>{t('billing.perPerson')}{fee ? ` · ${t('billing.bookingFee', { fee: formatMoney(fee, lang) })}` : ''}</span></p>}
+      {paid && price && <RefundLine policy={price.refund_policy} />}
       {paid && price && <dl className="guest-fee-lines" aria-label={t('billing.orderSummary')}>
         <div><dt>{t('billing.tickets', { count: qty })}</dt><dd className="tabular-nums">{formatMoney(ticketsCents, lang)}</dd></div>
         {!!fee && <div><dt>{t('billing.bookingFeeLabel')}</dt><dd className="tabular-nums">{formatMoney(fee, lang)}</dd></div>}
@@ -164,6 +167,7 @@ export function Confirmation({ event, code, status }: { event: ConfirmEvent; cod
     const a = document.createElement('a'); a.href = url; a.download = 'gatherwell-qr.svg'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
   const when = formatWhen(event.starts_at, lang);
+  const { data: cprice } = useQuery({ queryKey: ['event-price-refund', event.id], queryFn: async () => { const { data } = await supabase.rpc('event_price', { _id: event.id }); return (data as { refund_policy?: string } | null) ?? null; } });
   return <section className="guest-confirm" aria-live="polite">
     <h2 className="guest-confirm-title">{t(`guest.confirm.${status}`)}</h2>
     <p className="guest-confirm-sub">{t(`guest.confirmSub.${status}`)}</p>
@@ -172,6 +176,7 @@ export function Confirmation({ event, code, status }: { event: ConfirmEvent; cod
       {(event.location_name || event.address) && <span>{[event.location_name, event.address].filter(Boolean).join(' · ')}</span>}
       {event.meeting_note && <span className="muted">{event.meeting_note}</span>}
     </div>
+    {cprice && status === 'going' && <RefundLine policy={cprice.refund_policy} />}
     {event.online_url && (status === 'going' || status === 'maybe') && <Button asChild className="guest-primary"><a href={event.online_url} target="_blank" rel="noopener noreferrer"><Video />{t('guest.joinOnline')}</a></Button>}
     <GuestBelonging code={code} status={status} />
     {status === 'going' && <div className="guest-qr" ref={qr}><QRCodeSVG value={code} size={176} bgColor="var(--qr-background)" fgColor="var(--qr-foreground)" level="M" marginSize={4} title={t('guest.qrHelp')} /><span>{t('guest.qrHelp')}</span><Button variant="secondary" onClick={saveQr}>{t('launch.saveQr')}</Button></div>}

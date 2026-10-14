@@ -1,3 +1,4 @@
+import { asRefundPolicy, refundText } from './refunds';
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
@@ -10,7 +11,7 @@ export const startOfferCheckout = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ offerId: z.string().uuid(), origin, lang: z.enum(['en', 'es']), promo: z.string().max(20).optional().default('') }).parse(d))
   .handler(async ({ data, context }): Promise<Result> => {
-    const { data: o } = await context.supabase.from('offers').select('id, host_id, kind, title_en, title_es, price_cents, status').eq('id', data.offerId).maybeSingle();
+    const { data: o } = await context.supabase.from('offers').select('id, host_id, kind, title_en, title_es, price_cents, status, refund_policy').eq('id', data.offerId).maybeSingle();
     if (!o || o.status !== 'published') return { ok: false, error: 'not_open' };
     if (!o.price_cents) return { ok: false, error: 'free' };
     const { stripe, stripeKey } = await import('./billing/stripe.server');
@@ -38,6 +39,7 @@ export const startOfferCheckout = createServerFn({ method: 'POST' })
     const recurring = o.kind !== 'download';
     const s = await stripe<{ id: string; url: string }>('checkout/sessions', {
       mode: recurring ? 'subscription' : 'payment', customer_email: context.claims.email as string | undefined, locale: data.lang === 'es' ? 'es-419' : 'en',
+      custom_text: { submit: { message: refundText(asRefundPolicy(o.refund_policy), data.lang) } },
       line_items: [{ quantity: 1, price_data: { currency: 'usd', unit_amount: net, product_data: { name }, ...(recurring ? { recurring: { interval: 'month' } } : {}) } }],
       metadata: meta,
       ...(recurring

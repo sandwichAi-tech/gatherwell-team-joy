@@ -1,3 +1,4 @@
+import { asRefundPolicy, refundText } from './refunds';
 import { createServerFn } from '@tanstack/react-start';
 import { normalizeCode, promoDiscount, type PromoCheck } from '@/lib/promo';
 
@@ -111,7 +112,7 @@ export const startTicketCheckout = createServerFn({ method: 'POST' })
     const waiverIp = (getRequestHeader('cf-connecting-ip') ?? getRequestHeader('x-forwarded-for') ?? '').split(',')[0]!.trim().slice(0, 64);
     if (!stripeKey()) return notConnected;
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
-    const { data: ev } = await supabaseAdmin.from('events').select('id, title, host_id, price_cents, pass_fee, cover_service_fee, status, visibility, requires_waiver').eq('id', data.eventId).maybeSingle();
+    const { data: ev } = await supabaseAdmin.from('events').select('id, title, host_id, price_cents, pass_fee, cover_service_fee, status, visibility, requires_waiver, refund_policy').eq('id', data.eventId).maybeSingle();
     if (!ev || ev.status !== 'published' || ev.visibility !== 'public' || !ev.price_cents) return { ok: false, error: 'not_open' };
     if (ev.requires_waiver && data.waiverName.length < 2) return { ok: false, error: 'waiver_required' };
     const { data: b } = await supabaseAdmin.from('billing_accounts').select('connect_account_id, connect_status').eq('user_id', ev.host_id).maybeSingle();
@@ -135,7 +136,8 @@ export const startTicketCheckout = createServerFn({ method: 'POST' })
     if (service && !covered) items.push({ quantity: 1, price_data: { currency: 'usd', unit_amount: service, product_data: { name: data.lang === 'es' ? 'Cargo por servicio' : 'Service fee' } } });
     const meta = { kind: 'gathering', event_id: ev.id, first: data.first, last: data.last, phone: data.phone, email: data.email, plus: String(data.plusOnes), sms: String(data.sms), mail: String(data.mail), lang: data.lang, waiver: ev.requires_waiver ? data.waiverName : '', waiver_ip: ev.requires_waiver ? waiverIp : '' };
     const s = await stripe<{ id: string; url: string }>('checkout/sessions', {
-      mode: 'payment', customer_email: data.email, locale: data.lang === 'es' ? 'es-419' : 'en', line_items: items, metadata: meta,
+      mode: 'payment', customer_email: data.email, locale: data.lang === 'es' ? 'es-419' : 'en', line_items: items,
+      custom_text: { submit: { message: refundText(asRefundPolicy(ev.refund_policy), data.lang) } }, metadata: meta,
       payment_intent_data: { application_fee_amount: fee + service, transfer_data: { destination: b.connect_account_id }, metadata: meta },
       success_url: `${data.origin}/e/${ev.id}?paid=1`, cancel_url: `${data.origin}/e/${ev.id}`,
     });
