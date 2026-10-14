@@ -3078,7 +3078,8 @@
       {
         "title": "Sell Circles, courses and tickets",
         "body": "Offer more ways to join your community, with tickets, monthly Circles and learning.",
-        "demo": "Your next chapter, together"
+        "demo": "Your next chapter, together",
+        "sells": true
       },
       {
         "title": "Lead a team with templates and insights",

@@ -3078,7 +3078,8 @@
       {
         "title": "Ofrece Círculos, cursos y boletos",
         "body": "Dale a tu comunidad más formas de participar, con boletos, Círculos mensuales y aprendizaje.",
-        "demo": "La próxima etapa, juntos"
+        "demo": "La próxima etapa, juntos",
+        "sells": true
       },
       {
         "title": "Lidera con plantillas e información",
