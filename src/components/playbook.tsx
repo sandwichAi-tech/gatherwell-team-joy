@@ -25,6 +25,8 @@ export function PlaybookCard({ context, compact = false }: { context: 'brief' | 
     queryFn: async () => { const { data, error } = await supabase.rpc('playbook_cards' as never, { _context: context } as never); if (error) throw error; return (data ?? []) as unknown as Card[]; } });
   if (!data?.length) return null;
   const sample = data.some(c => c.sample);
+  // Signed-in screens never show sample data: hide until real patterns exist.
+  if (sample) return null;
   return <section className={`panel playbook-card${compact ? ' is-compact' : ''}`} aria-label={t('playbook.title')}>
     <div className="playbook-head"><span className="playbook-icon" aria-hidden="true"><Sparkles /></span><span className="eyebrow">{t('playbook.title')}</span>{sample && <span className="chip sample-badge">{t('common.sample')}</span>}</div>
     <ul className="playbook-list">{data.map((c, i) => <li key={i}>{text(c)}</li>)}</ul>
