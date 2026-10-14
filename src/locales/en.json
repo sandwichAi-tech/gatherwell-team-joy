@@ -2036,7 +2036,8 @@
     "serviceCovered": "Service fees you covered",
     "guestServiceNote": "Guests also paid {{amount}} in service fees. That isn't part of your sales.",
     "serviceFeeRow": "guest paid {{fee}} service fee",
-    "serviceFeeCoveredRow": "you covered {{fee}} service fee"
+    "serviceFeeCoveredRow": "you covered {{fee}} service fee",
+    "freeSeriesLimit": "Free includes 4 gatherings a month. Upgrade to Advanced for unlimited."
   },
   "report": {
     "action": "Report",
@@ -2832,7 +2833,8 @@
     "save": "Save co-hosts",
     "saved": "Co-hosts saved",
     "tooMany": "You can add up to 3 co-hosts.",
-    "withCohosts": "Co-hosted by"
+    "withCohosts": "Co-hosted by",
+    "proOnly": "Co-hosts are part of Pro. Upgrade to Pro to add co-hosts."
   },
   "rsvpq": {
     "guestHeading": "A few questions from the host",

@@ -35,7 +35,7 @@ export function CohostsPanel({ eventId, teamId, hostId, canEdit }: { eventId: st
   if (!canEdit && !ids.length) return null;
   const save = async () => {
     setBusy(true); const { error } = await db.rpc('set_event_cohosts', { _event: eventId, _users: pick }); setBusy(false);
-    if (error) { toast.error(t(error.message.includes('too_many') ? 'cohosts.tooMany' : 'profile.saveError')); return; }
+    if (error) { toast.error(t(error.message.includes('too_many') ? 'cohosts.tooMany' : error.message.includes('plan_pro_cohosts') ? 'cohosts.proOnly' : 'profile.saveError')); return; }
     toast.success(t('cohosts.saved')); setOpen(false);
     void qc.invalidateQueries({ queryKey: ['event', eventId, 'cohosts'] });
   };

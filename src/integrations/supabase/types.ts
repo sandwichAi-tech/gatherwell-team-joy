@@ -4455,6 +4455,10 @@ export type Database = {
       }
       founding_status: { Args: { _uid: string }; Returns: Json }
       gathering_validate: { Args: { _p: Json }; Returns: undefined }
+      gatherings_in_month: {
+        Args: { _at: string; _uid: string }
+        Returns: number
+      }
       gatherings_this_month: { Args: { _uid: string }; Returns: number }
       get_email_prefs: { Args: { _token: string }; Returns: Json }
       get_member_plan: { Args: { _team: string }; Returns: Json }
