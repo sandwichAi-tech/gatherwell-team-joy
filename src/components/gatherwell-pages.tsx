@@ -1,3 +1,4 @@
+import { TemplateEditor, type TemplateDraft } from '@/components/templates';
 import { CustomerHome } from '@/components/customer-home';
 import { FoundingCommitmentsCard } from '@/components/founding';
 import { CoachLaunchCard } from '@/components/coach-launch';
@@ -29,16 +30,18 @@ function useAccount() {
 }
 
 function NextCard() {
-  const { t } = useTranslation(); const { openPlaceholder } = useGatherwell(); const { profile, workspace } = useAccount();
+  const { t } = useTranslation(); const { userId } = useGatherwell(); const { profile, workspace } = useAccount(); const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
+  const [draft, setDraft] = useState<TemplateDraft | null>(null);
   const role = profile?.role_intent ?? 'member';
   const item = (title: string, text: string, action: React.ReactNode, done = false) => <div className={`next-item ${done ? 'is-done' : ''}`}><span className="next-status">{done ? <Check /> : null}</span><div className="person-info"><h3>{title}</h3><p>{text}</p></div>{action}</div>;
   return <section className="panel next-panel"><span className="eyebrow">{t('next.label')}</span>
     {role === 'leader' && <>
       {item(t('next.inviteTitle'), t('next.inviteText'), <Button variant={copied ? 'secondary' : 'default'} disabled={!workspace} onClick={async () => { if (!workspace) return; await navigator.clipboard.writeText(joinLink(workspace.joinCode)); setCopied(true); window.setTimeout(() => setCopied(false), 2000); }}>{copied ? <Check /> : <Copy />}{copied ? t('next.copied') : t('next.inviteAction')}</Button>, copied)}
-      {item(t('next.templateTitle'), t('next.templateText'), <Button variant={copied ? 'default' : 'secondary'} onClick={() => openPlaceholder('event')}>{t('next.templateAction')}</Button>)}
+      {item(t('next.templateTitle'), t('next.templateText'), <Button variant={copied ? 'default' : 'secondary'} onClick={() => setDraft({ checklist: [], default_duration_minutes: 60, visibility_default: 'team' })}>{t('next.templateAction')}</Button>)}
+      {workspace && <TemplateEditor draft={draft} teamId={workspace.teamId} userId={userId} onClose={() => setDraft(null)} />}
     </>}
-    {role === 'host' && item(t('next.hostTitle'), t('next.hostText'), <Button onClick={() => openPlaceholder('event')}><Plus />{t('next.hostAction')}</Button>)}
+    {role === 'host' && item(t('next.hostTitle'), t('next.hostText'), <Button onClick={() => void navigate({ to: '/gathering/new' })}><Plus />{t('next.hostAction')}</Button>)}
     {role === 'member' && item(t('next.memberTitle'), t('next.memberText'), <Button asChild><Link to="/events">{t('next.memberAction')}<ArrowRight /></Link></Button>)}
   </section>;
 }
