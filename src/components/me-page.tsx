@@ -180,6 +180,14 @@ export function MePage() {
 
   const signOut = async () => { await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut(); void navigate({ to: '/login', replace: true }); };
 
+  // Customers and hosts share one login; the mode lives on role_intent.
+  const switchMode = async (mode: 'host' | 'guest') => {
+    const update = mode === 'host' ? { role_intent: 'host', onboarded: false } : { role_intent: 'guest' };
+    const { error } = await supabase.from('profiles').update(update).eq('id', userId);
+    if (error) { toast.error(t('profile.saveError')); return; }
+    await queryClient.invalidateQueries({ queryKey: ['profile', userId] });
+    void navigate({ to: mode === 'host' ? '/onboarding' : '/home' });
+  };
   const openDelete = async () => {
     setConfirmText(''); setDeleting(true); setSoleTeams(null);
     const { data } = await supabase.rpc('my_sole_leader_teams');
@@ -242,6 +250,11 @@ export function MePage() {
       {row('UsersRound', t('profile.myTeams'), () => setPanel('teams'), <span className="settings-value">{workspace?.name}<ChevronRight className="settings-chevron" /></span>)}
       {linkRow('CreditCard', t('profile.plan'), '/plan', <span className="settings-value">{t(`billing.plan_${planStatus?.plan ?? 'free'}`)}<ChevronRight className="settings-chevron" /></span>)}
       {row('CreditCard', t('offers.purchases'), () => setPanel('purchases'))}
+    </SettingsGroup>
+    <SettingsGroup title={t('customerHome.modeGroup')}>
+      {profile?.role_intent === 'guest'
+        ? row('CalendarHeart', t('customerHome.startHosting'), () => void switchMode('host'))
+        : row('Compass', t('customerHome.switchAttending'), () => void switchMode('guest'))}
     </SettingsGroup>
     <SettingsGroup title={t('profile.groupActivity')}>
       <Link className="settings-row" to="/progress"><GwFeatureTile name="Flame" size={24} className="settings-tile" /><span className="settings-label">{t('progress.title')}</span><ChevronRight className="settings-chevron" /></Link>

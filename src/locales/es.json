@@ -4004,5 +4004,21 @@
     "emptyText": "Encuentra el Círculo de un coach cerca de ti y únete.",
     "browse": "Ir a Descubrir",
     "meta": "Los Círculos a los que perteneces."
+  },
+  "customerHome": {
+    "next": "Lo que sigue",
+    "noRsvps": "Aún no tienes confirmaciones",
+    "noRsvpsText": "Aquí verás los encuentros que confirmes.",
+    "find": "Buscar un encuentro",
+    "code": "Código de registro",
+    "waitlist": "Estás en la lista de espera",
+    "circles": "Tus Círculos",
+    "latest": "Contenido reciente",
+    "membersOnly": "Solo miembros",
+    "past": "Anteriores",
+    "again": "Volver a ir",
+    "modeGroup": "Cómo usas Gatherwell",
+    "startHosting": "Empezar a organizar",
+    "switchAttending": "Cambiar a asistir"
   }
 }
