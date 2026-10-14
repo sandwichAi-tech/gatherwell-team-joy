@@ -103,10 +103,16 @@ function CreateStep({ profile, onDone }: { profile: Prof; onDone: (k: StartKind,
     if (!kind || !title.trim()) { toast.error(t('quickStart.needStarter')); return; }
     if (kind !== 'circle' && (!date || !time)) { toast.error(t('quickStart.needDate')); return; }
     if (kind !== 'free' && !(Number(price) >= 1)) { toast.error(t('quickStart.needPrice')); return; }
-    const team = profile.active_team_id;
-    if (!team) { toast.error(t('quickStart.needTeam')); return; }
+    let team = profile.active_team_id;
     setBusy(true);
     try {
+      if (!team) {
+        // Every host gets their own space by default: create it from their name.
+        const { data: made, error: te } = await supabase.rpc('create_team', { _name: name.trim() });
+        if (te || !made?.[0]) throw te ?? new Error('create_team');
+        team = made[0].id;
+        await supabase.from('profiles').update({ active_team_id: team }).eq('id', userId);
+      }
       const { error: pe } = await supabase.from('profiles').update({ full_name: name.trim(), bio: bio.trim().slice(0, 160) || null, city: city.trim() || null, host_languages: langs, language: langs.includes(lang) ? lang : (langs[0] as 'en' | 'es'), avatar_url: avatar }).eq('id', userId);
       if (pe) throw pe;
       const cents = Math.round(Number(price) * 100);
