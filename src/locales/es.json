@@ -4049,5 +4049,12 @@
     "modeGroup": "Cómo usas Gatherwell",
     "startHosting": "Empezar a organizar",
     "switchAttending": "Cambiar a asistir"
+  },
+  "refunds": {
+    "label": "Reembolsos",
+    "24h": "Reembolso completo hasta 24 horas antes",
+    "7d": "Reembolso completo hasta 7 días antes",
+    "none": "Sin reembolsos",
+    "hostCancels": "Si el anfitrión cancela, todos reciben el reembolso completo."
   }
 }

@@ -1,3 +1,4 @@
+import { RefundLine } from '@/components/refund-line';
 import { CommunitySeatCard } from '@/components/community-seats';
 import { serviceFee } from '@/lib/plan-fees';
 import { RetreatDetails } from '@/components/retreat';
@@ -67,7 +68,7 @@ function PublicEventBody() {
   const [intent, setIntent] = useState<'going' | 'maybe' | null>(null);
   const [result, setResult] = useState<RsvpResult | null>(null);
   const [teamOpen, setTeamOpen] = useState(false); const [teamResult, setTeamResult] = useState<TeamResult | null>(null);
-  const { data: price } = useQuery({ queryKey: ['event-price', id], queryFn: async () => { const { data } = await supabase.rpc('event_price', { _id: id }); return (data as { price_cents: number; pass_fee: boolean; fee_pct: number; cover_service_fee?: boolean; service_fee_percent?: number; service_fee_fixed?: number } | null) ?? null; } });
+  const { data: price } = useQuery({ queryKey: ['event-price', id], queryFn: async () => { const { data } = await supabase.rpc('event_price', { _id: id }); return (data as { price_cents: number; pass_fee: boolean; fee_pct: number; cover_service_fee?: boolean; service_fee_percent?: number; service_fee_fixed?: number; refund_policy?: string } | null) ?? null; } });
   const { data: early } = useQuery(earlyAccessQuery(id));
 
   if (isLoading) return <div className="guest-skeleton" aria-busy="true"><div className="guest-cover skeleton" /><p className="guest-empty">{t('publicEvent.loading')}</p></div>;
@@ -98,6 +99,7 @@ function PublicEventBody() {
     <article className="guest-body">
       <div className="guest-title-row"><h1 className="guest-title">{event.title}</h1><ReportButton type="event" id={id} /></div>
       {price && <p className="guest-price-line"><strong className="tabular-nums">{formatMoney(price.price_cents, lang)}</strong><span>{t('billing.perPerson')}{price.pass_fee ? ` · ${t('billing.feeNote', { pct: price.fee_pct })}` : ''}{price.cover_service_fee ? ` · ${t('billing.allInShort')}` : ` · ${t('billing.plusServiceFee', { fee: formatMoney(serviceFee(price.price_cents, Number(price.service_fee_percent ?? 0), price.service_fee_fixed ?? 0), lang) })}`}</span></p>}
+      {price && <RefundLine policy={price.refund_policy} />}
       {cancelled && <div className="guest-cancelled" role="status"><Ban /><div><strong>{t('guest.cancelledTitle')}</strong><p>{t('guest.cancelledText')}</p></div></div>}
       <ul className="guest-facts">
         <li><CalendarDays /><span>{day}</span></li>

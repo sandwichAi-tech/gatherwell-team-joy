@@ -1,3 +1,5 @@
+import { RefundLine, RefundSelect } from '@/components/refund-line';
+import { asRefundPolicy, type RefundPolicy } from '@/lib/refunds';
 import { FoundingSeal } from '@/components/founding';
 import { VerifiedMark, useIsVerified } from '@/components/coach-trust';
 import { PromoField } from '@/components/promo-field';
@@ -81,7 +83,7 @@ function OfferEditor({ offer, teamId, onClose }: { offer: Partial<Offer> | null;
   const { t } = useTranslation();
   const { userId } = useGatherwell();
   const qc = useQueryClient();
-  const blank = { kind: 'membership' as OfferKind, title_en: '', title_es: '', description_en: '', description_es: '', inc_en: '', inc_es: '', price: '', cover_style: 0, cover_url: null as string | null, drip_days: 7, file_path: null as string | null, publish: false, f_seats: '', f_price: '', c_seats: '' };
+  const blank = { kind: 'membership' as OfferKind, title_en: '', title_es: '', description_en: '', description_es: '', inc_en: '', inc_es: '', price: '', refund: '24h' as RefundPolicy, cover_style: 0, cover_url: null as string | null, drip_days: 7, file_path: null as string | null, publish: false, f_seats: '', f_price: '', c_seats: '' };
   const [f, setF] = useState(blank);
   const [busy, setBusy] = useState(false);
   const [coverFile, setCoverFile] = useState<File | null>(null);
@@ -91,7 +93,7 @@ function OfferEditor({ offer, teamId, onClose }: { offer: Partial<Offer> | null;
     if (!offer) return;
     setCoverFile(null); setCoverPreview(null);
     setF({ kind: offer.kind ?? 'membership', title_en: offer.title_en ?? '', title_es: offer.title_es ?? '', description_en: offer.description_en ?? '', description_es: offer.description_es ?? '',
-      inc_en: (offer.includes_en ?? []).join('\n'), inc_es: (offer.includes_es ?? []).join('\n'), price: offer.price_cents ? String(offer.price_cents / 100) : '',
+      inc_en: (offer.includes_en ?? []).join('\n'), inc_es: (offer.includes_es ?? []).join('\n'), price: offer.price_cents ? String(offer.price_cents / 100) : '', refund: asRefundPolicy((offer as { refund_policy?: string }).refund_policy),
       cover_style: offer.cover_style ?? 0, cover_url: offer.cover_url ?? null, drip_days: offer.drip_days ?? 7, file_path: offer.file_path ?? null, publish: offer.status === 'published', f_seats: offer.founding_seats ? String(offer.founding_seats) : '', f_price: offer.founding_seats ? String((offer.founding_price_cents ?? 0) / 100) : '', c_seats: offer.community_seats ? String(offer.community_seats) : '' });
   }, [offer]);
   const lines = (s: string) => s.split('\n').map(x => x.trim()).filter(Boolean).slice(0, 8);
@@ -102,7 +104,7 @@ function OfferEditor({ offer, teamId, onClose }: { offer: Partial<Offer> | null;
     try {
     const cover_url = coverFile ? await uploadMedia(userId, coverFile, 'cover') : f.cover_url;
     const row = { kind: f.kind, title_en: f.title_en.trim(), title_es: f.title_es.trim(), description_en: f.description_en.trim() || null, description_es: f.description_es.trim() || null,
-      includes_en: lines(f.inc_en), includes_es: lines(f.inc_es), price_cents: Math.round(priceNum * 100), cover_style: f.cover_style, cover_url, drip_days: f.drip_days, file_path: f.file_path,
+      includes_en: lines(f.inc_en), includes_es: lines(f.inc_es), price_cents: Math.round(priceNum * 100), refund_policy: f.refund, cover_style: f.cover_style, cover_url, drip_days: f.drip_days, file_path: f.file_path,
       ...(f.kind === 'membership' && Number(f.f_seats) > 0 ? { founding_seats: Math.min(500, Math.round(Number(f.f_seats))), founding_price_cents: Math.round(Number(f.f_price || 0) * 100) } : { founding_seats: null, founding_price_cents: null }),
       community_seats: Number(f.c_seats) > 0 ? Math.min(100, Math.round(Number(f.c_seats))) : null,
       status: f.publish ? 'published' as const : (offer?.status === 'published' ? 'archived' as const : 'draft' as const) };
@@ -139,6 +141,7 @@ function OfferEditor({ offer, teamId, onClose }: { offer: Partial<Offer> | null;
         {field('of-ies', `${t('offers.includes')} · ES`, <Textarea id="of-ies" rows={3} className="field-textarea" value={f.inc_es} onChange={e => setF({ ...f, inc_es: e.target.value })} />)}
       </div>
       {field('of-price', f.kind === 'download' ? t('offers.price') : t('offers.priceMonthly'), <Input id="of-price" className="field-input" inputMode="decimal" value={f.price} placeholder="0" onChange={e => setF({ ...f, price: e.target.value.replace(/[^0-9.]/g, '') })} />)}
+      {priceNum > 0 && <RefundSelect id="of-refund" value={f.refund} onChange={v => setF({ ...f, refund: v })} />}
       <p className="muted-small">{t('offers.feeNote')}</p>
       {field('of-cseats', t('community.seatsField'), <Input id="of-cseats" className="field-input" inputMode="numeric" value={f.c_seats} placeholder={t('community.seatsNone')} onChange={e => setF({ ...f, c_seats: e.target.value.replace(/\D/g, '').slice(0, 3) })} />)}
       <p className="muted-small">{t('community.seatsHint')}</p>
@@ -211,6 +214,7 @@ export function OfferPage({ id, paid }: { id: string; paid?: boolean }) {
       <h1>{offerTitle(offer, lang)}</h1>
       {hostName && <p className="muted-small">{t('offers.by', { name: hostName })}<OfferSeal id={offer.host_id} /><FoundingSeal id={offer.host_id} /></p>}
       <p className="offer-price">{priceLabel(t, offer, lang)}</p>
+      {!!offer.price_cents && <RefundLine policy={(offer as { refund_policy?: string }).refund_policy} />}
       {offer.kind === 'membership' && founding && <div className={`founding-card ${founding.left ? '' : 'is-full'}`} role="status">
         <strong>{founding.left ? t('offers.foundingLeft', { left: founding.left, seats: founding.seats }) : t('offers.foundingFull', { seats: founding.seats })}</strong>
         {founding.left > 0 && <span>{t('offers.foundingPriceLine', { price: founding.price_cents ? formatMoney(founding.price_cents, lang) : t('offers.free') })}</span>}

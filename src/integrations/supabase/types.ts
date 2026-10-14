@@ -1275,6 +1275,7 @@ export type Database = {
           price_cents: number | null
           public_rsvp_at: string | null
           recurrence: string
+          refund_policy: string
           require_approval: boolean
           requires_waiver: boolean
           retreat: Json | null
@@ -1326,6 +1327,7 @@ export type Database = {
           price_cents?: number | null
           public_rsvp_at?: string | null
           recurrence?: string
+          refund_policy?: string
           require_approval?: boolean
           requires_waiver?: boolean
           retreat?: Json | null
@@ -1377,6 +1379,7 @@ export type Database = {
           price_cents?: number | null
           public_rsvp_at?: string | null
           recurrence?: string
+          refund_policy?: string
           require_approval?: boolean
           requires_waiver?: boolean
           retreat?: Json | null
@@ -2336,6 +2339,7 @@ export type Database = {
           includes_es: Json
           kind: string
           price_cents: number
+          refund_policy: string
           status: string
           team_id: string
           title_en: string
@@ -2359,6 +2363,7 @@ export type Database = {
           includes_es?: Json
           kind: string
           price_cents?: number
+          refund_policy?: string
           status?: string
           team_id: string
           title_en?: string
@@ -2382,6 +2387,7 @@ export type Database = {
           includes_es?: Json
           kind?: string
           price_cents?: number
+          refund_policy?: string
           status?: string
           team_id?: string
           title_en?: string
