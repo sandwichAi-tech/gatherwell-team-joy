@@ -523,3 +523,39 @@ export const setFoundingStay = createServerFn({ method: 'POST' }).middleware([re
     await audit(db, context.userId, 'founding_stay', 'founding_coach', data.id, null, { stay: data.stay });
     return { ok: true as const };
   });
+
+/** Mail log: every outbound message (email, text, push) from the outbox, newest first, 50 per page. */
+export const listMail = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({
+    channel: z.enum(['all', 'email', 'sms', 'push']), status: z.enum(['all', 'pending', 'sent', 'simulated', 'failed', 'skipped']),
+    template: z.string().max(60), q: z.string().max(100), from: z.string().max(10), to: z.string().max(10), page: z.number().int().min(0).max(200),
+  }).parse(d))
+  .handler(async ({ data, context }) => {
+    const db = await assertAdmin(context);
+    let q = db.from('notification_outbox').select('id, created_at, sent_at, recipient, channel, template, status, language, error', { count: 'exact' })
+      .order('created_at', { ascending: false }).range(data.page * 50, data.page * 50 + 49);
+    if (data.channel !== 'all') q = q.eq('channel', data.channel);
+    if (data.status !== 'all') q = data.status === 'pending' ? q.in('status', ['pending', 'sending']) : q.eq('status', data.status);
+    if (data.template) q = q.eq('template', data.template);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(data.from)) q = q.gte('created_at', `${data.from}T00:00:00Z`);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(data.to)) q = q.lte('created_at', `${data.to}T23:59:59Z`);
+    const term = data.q.trim().replace(/[%,()]/g, '');
+    if (term) q = q.ilike('recipient', `%${term}%`);
+    const day = new Date(); day.setUTCHours(0, 0, 0, 0);
+    const [{ data: rows, count }, queued, sentToday, failedToday, simToday, tpl] = await Promise.all([
+      q,
+      db.from('notification_outbox').select('id', { count: 'exact', head: true }).in('status', ['pending', 'sending']),
+      db.from('notification_outbox').select('id', { count: 'exact', head: true }).eq('status', 'sent').gte('created_at', day.toISOString()),
+      db.from('notification_outbox').select('id', { count: 'exact', head: true }).eq('status', 'failed').gte('created_at', day.toISOString()),
+      db.from('notification_outbox').select('id', { count: 'exact', head: true }).eq('status', 'simulated').gte('created_at', day.toISOString()),
+      db.from('notification_outbox').select('template').order('created_at', { ascending: false }).limit(1000),
+    ]);
+    const { channelStatus } = await import('@/lib/notify/channels.server');
+    const c = channelStatus();
+    return {
+      rows: rows ?? [], total: count ?? 0,
+      counters: { queued: queued.count ?? 0, sentToday: sentToday.count ?? 0, failedToday: failedToday.count ?? 0, simulatedToday: simToday.count ?? 0 },
+      providers: { email: c.email, sms: c.sms, push: c.push },
+      templates: [...new Set((tpl.data ?? []).map(r => r.template))].sort(),
+    };
+  });

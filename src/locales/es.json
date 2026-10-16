@@ -2112,7 +2112,8 @@
    "audit": "Registro de cambios",
    "verify": "Verificar",
    "founding": "Coaches fundadores",
-   "day60": "Día 60"
+   "day60": "Día 60",
+   "mail": "Correo"
   },
   "period": {
    "week": "Esta semana",
@@ -2419,6 +2420,42 @@
    "save": "Guardar",
    "servicePct": "Cargo por servicio al invitado (%)",
    "serviceFixed": "Cargo por servicio al invitado, fijo ($)"
+  },
+  "mail": {
+   "queued": "En cola",
+   "sentToday": "Enviados hoy",
+   "failedToday": "Fallidos hoy",
+   "simulatedToday": "Simulados hoy",
+   "providers": "Servicios de envío",
+   "live": "Activo",
+   "simulated": "Simulado",
+   "email": "Correo",
+   "sms": "Texto",
+   "push": "Notificación",
+   "search": "Buscar correo o teléfono",
+   "allChannels": "Todos los canales",
+   "allStatuses": "Todos los estados",
+   "allTemplates": "Todos los mensajes",
+   "from": "Desde",
+   "to": "Hasta",
+   "time": "Hora",
+   "recipient": "Destinatario",
+   "channel": "Canal",
+   "template": "Mensaje",
+   "status": "Estado",
+   "reveal": "Mostrar destinatario completo",
+   "loadMore": "Cargar más",
+   "empty": "Ningún mensaje coincide con estos filtros.",
+   "total": "{{count}} mensajes",
+   "simNote": "Todavía no hay un servicio de envío conectado, así que los mensajes se registran aquí como simulados en lugar de entregarse.",
+   "statuses": {
+    "pending": "En cola",
+    "sending": "En cola",
+    "sent": "Enviado",
+    "simulated": "Simulado",
+    "failed": "Falló",
+    "skipped": "Omitido"
+   }
   }
  },
  "legalDocs": {

@@ -2112,7 +2112,8 @@
    "audit": "Audit log",
    "verify": "Verify",
    "founding": "Founding coaches",
-   "day60": "Day 60"
+   "day60": "Day 60",
+   "mail": "Mail"
   },
   "period": {
    "week": "This week",
@@ -2419,6 +2420,42 @@
    "save": "Save",
    "servicePct": "Guest service fee (%)",
    "serviceFixed": "Guest service fee, fixed ($)"
+  },
+  "mail": {
+   "queued": "Queued",
+   "sentToday": "Sent today",
+   "failedToday": "Failed today",
+   "simulatedToday": "Simulated today",
+   "providers": "Senders",
+   "live": "Live",
+   "simulated": "Simulated",
+   "email": "Email",
+   "sms": "Text",
+   "push": "Push",
+   "search": "Search email or phone",
+   "allChannels": "All channels",
+   "allStatuses": "All statuses",
+   "allTemplates": "All messages",
+   "from": "From",
+   "to": "To",
+   "time": "Time",
+   "recipient": "Recipient",
+   "channel": "Channel",
+   "template": "Message",
+   "status": "Status",
+   "reveal": "Show full recipient",
+   "loadMore": "Load more",
+   "empty": "No messages match these filters.",
+   "total": "{{count}} messages",
+   "simNote": "No sending service is connected yet, so messages are recorded here as simulated instead of being delivered.",
+   "statuses": {
+    "pending": "Queued",
+    "sending": "Queued",
+    "sent": "Sent",
+    "simulated": "Simulated",
+    "failed": "Failed",
+    "skipped": "Skipped"
+   }
   }
  },
  "legalDocs": {
