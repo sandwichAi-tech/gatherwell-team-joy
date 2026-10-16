@@ -1,6 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
+import { canRetryMessage } from './mail-retry';
 
 type Ctx = { supabase: { rpc: (fn: 'has_role', args: { _user_id: string; _role: 'admin' }) => PromiseLike<{ data: boolean | null }> }; userId: string };
 
@@ -359,7 +360,7 @@ export const setFlag = createServerFn({ method: 'POST' }).middleware([requireSup
   });
 
 export const getAudit = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ q: z.string().max(100), area: z.enum(['all', 'team', 'user', 'moderation', 'library', 'broadcast', 'flag']) }).parse(d))
+  .inputValidator((d: unknown) => z.object({ q: z.string().max(100), area: z.enum(['all', 'team', 'user', 'moderation', 'library', 'broadcast', 'flag', 'mail']) }).parse(d))
   .handler(async ({ data, context }) => {
     const db = await assertAdmin(context);
     let q = db.from('admin_audit').select('*').order('created_at', { ascending: false }).limit(200);
@@ -532,7 +533,7 @@ export const listMail = createServerFn({ method: 'POST' }).middleware([requireSu
   }).parse(d))
   .handler(async ({ data, context }) => {
     const db = await assertAdmin(context);
-    let q = db.from('notification_outbox').select('id, created_at, sent_at, recipient, channel, template, status, language, error', { count: 'exact' })
+    let q = db.from('notification_outbox').select('id, created_at, sent_at, provider_message_id, attempts, recipient, channel, template, status, language, error', { count: 'exact' })
       .order('created_at', { ascending: false }).range(data.page * 50, data.page * 50 + 49);
     if (data.channel !== 'all') q = q.eq('channel', data.channel);
     if (data.status !== 'all') q = data.status === 'pending' ? q.in('status', ['pending', 'sending']) : q.eq('status', data.status);
@@ -553,9 +554,19 @@ export const listMail = createServerFn({ method: 'POST' }).middleware([requireSu
     const { channelStatus } = await import('@/lib/notify/channels.server');
     const c = channelStatus();
     return {
-      rows: rows ?? [], total: count ?? 0,
+      rows: (rows ?? []).map(row => ({ ...row, retryable: canRetryMessage(row) })), total: count ?? 0,
       counters: { queued: queued.count ?? 0, sentToday: sentToday.count ?? 0, failedToday: failedToday.count ?? 0, simulatedToday: simToday.count ?? 0 },
       providers: { email: c.email, sms: c.sms, push: c.push },
       templates: [...new Set((tpl.data ?? []).map(r => r.template))].sort(),
     };
+  });
+
+/** The database locks the selected row and commits its retry and audit together. */
+export const retryMail = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: uuid }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { data: result, error } = await context.supabase.rpc('admin_retry_message', { _id: data.id });
+    if (error) throw new Error(error.message);
+    return z.object({ ok: z.boolean(), error: z.enum(['not_found', 'not_retryable']).optional() }).parse(result);
   });

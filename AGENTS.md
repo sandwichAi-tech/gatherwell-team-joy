@@ -31,6 +31,7 @@
 - All AI (assistant + src/lib/ai/*, smart.functions.ts) runs server-side via Claude, model in assistant/config.ts; no key → preview text, not counted. Cards act on confirm.
 - Plans/limits live in billing_accounts, team_licenses, license_seats; effective_plan()+plan_limits() decide limits (triggers, new rows only). Stripe: billing.functions.ts + /api/public/stripe/webhook only; no key → sheet.
 - Platform admin: /admin data and actions go only through src/lib/admin.functions.ts and every action writes admin_audit; reports come from report_content() or the claims trigger.
+- Admin message retries use admin_retry_message() to lock and atomically requeue only failed, unacknowledged rows with an audit entry; delivery remains exclusively in the normal outbox processor so recipient preferences and simulated mode are preserved.
 - Follows/calendar: public pages read only via get_public_host/get_public_team; iCal via /api/public/calendar/$token (token is the only credential).
 
 - ResponsiveSheet owns the fixed header/footer and scrollable body; callers pass primary actions via footer to keep them reachable.
