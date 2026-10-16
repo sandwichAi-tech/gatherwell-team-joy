@@ -7,7 +7,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Camera, Upload, Crown, CalendarHeart, UsersRound, Check, ImagePlus, Compass } from '@/components/icons';
 import { QRCodeSVG } from 'qrcode.react';
-import { CopyButton } from '@/components/copy-button';
+import { CopyButton, ShareButton } from '@/components/copy-button';
 import { CropFileInput } from '@/components/image-crop';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -158,7 +158,7 @@ function Onboarding() {
     <section className="invite-card" aria-labelledby="invite-card-title">
       <h2 id="invite-card-title">{t('onboarding.inviteCardTitle')}</h2>
       <p>{t('onboarding.inviteExplain', { team: created.team })}</p>
-      <div className="copy-field"><code>{joinLink(created.joinCode)}</code><CopyButton text={joinLink(created.joinCode)} label={t('onboarding.copy')} /></div>
+      <div className="copy-field"><code>{joinLink(created.joinCode)}</code><CopyButton text={joinLink(created.joinCode)} label={t('onboarding.copy')} /></div><ShareButton url={joinLink(created.joinCode)} />
       <div className="invite-qr"><QRCodeSVG value={joinLink(created.joinCode)} size={152} level="M" marginSize={2} title={t('onboarding.inviteQr')} /></div>
       <details className="invite-how"><summary>{t('onboarding.inviteHow')}</summary>
         <ol><li>{t('onboarding.inviteStep1', { team: created.team })}</li><li>{t('onboarding.inviteStep2')}</li><li>{t('onboarding.inviteStep3', { team: created.team })}</li></ol>

@@ -1,4 +1,4 @@
-import { CopyButton } from '@/components/copy-button';
+import { CopyButton, ShareButton } from '@/components/copy-button';
 import { useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -64,7 +64,7 @@ export function RsvpSettingsPanel({ eventId, initial }: { eventId: string; initi
     <div className="setting-row"><div><strong>{t('rsvpq.inviteOnly')}</strong><p className="auth-subtitle">{t('rsvpq.inviteOnlyHelp')}</p></div>
       <Switch checked={invite} onCheckedChange={v => void patch({ visibility: v ? 'invite' : 'public' })} aria-label={t('rsvpq.inviteOnly')} /></div>
     {invite && <div className="rsvpq-link"><code>{link}</code>
-      <div className="guest-button-row"><CopyButton text={link} />
+      <div className="guest-button-row"><CopyButton text={link} /><ShareButton url={link} />
         <Button variant="ghost" onClick={async () => { const { data, error } = await db.rpc('reset_invite_link', { _event: eventId }); if (error) { toast.error(t('profile.saveError')); return; } setToken(data); toast.success(t('rsvpq.linkReset')); }}><Repeat />{t('rsvpq.resetLink')}</Button></div></div>}
     <h3 className="guest-subhead">{t('rsvpq.questions', { count: qs.length, max: MAX_QUESTIONS })}</h3>
     {qs.map((q, i) => <div key={q.id} className="rsvpq-edit">
