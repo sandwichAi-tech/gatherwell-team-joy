@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
-import { CopyButton } from '@/components/copy-button';
+import { CopyButton, ShareButton } from '@/components/copy-button';
 import { RsvpQuestionsFields, answersReady } from '@/components/rsvp-questions';
 import { WaiverAccept, useEventWaiver, waiverRpc } from '@/components/waiver';
 import { inviteToken, rsvpErrorKey, type PublicEvent } from '@/lib/guest';
@@ -93,6 +93,7 @@ export function TeamConfirmation({ result }: { result: TeamResult }) {
         {result.status === 'going' && <QRCodeSVG value={p.code} size={120} bgColor="var(--qr-background)" fgColor="var(--qr-foreground)" level="M" marginSize={3} title={t('guest.qrHelp')} />}
         <span className={`waiver-status ${p.signed ? 'is-signed' : 'is-missing'}`}>{p.signed && <ShieldCheck />}{p.signed ? t('waiver.signed') : t('teamRsvp.waiverPending')}</span>
         <CopyButton text={link} />
+        <ShareButton url={link} />
         <Link to="/r/$code" params={{ code: p.code }} className="guest-manage-link">{t('teamRsvp.openPass')}</Link>
       </li>;
     })}</ul>

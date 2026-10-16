@@ -1,6 +1,6 @@
 import { FoundingSeal } from '@/components/founding';
 import { CoachTrustSection, VerifiedMark, useIsVerified } from '@/components/coach-trust';
-import { CopyButton } from '@/components/copy-button';
+import { CopyButton, ShareButton } from '@/components/copy-button';
 import { FeaturedBadges } from '@/components/recognition';
 import { publicHostCover } from '@/lib/host-cover.functions';
 import { useState } from 'react';
@@ -141,6 +141,7 @@ export function CalendarFeedPanel({ userId }: { userId: string }) {
       <GwFeatureTile name="CalendarDays" size={24} /><div className="feed-row-main"><strong>{label}</strong><small>{hint}</small>
       <div className="feed-actions">
         <CopyButton text={url} label={t('follow.copyLink')} />
+        <ShareButton url={url} />
         <Button asChild variant="secondary"><a href={`https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcal)}`} target="_blank" rel="noopener noreferrer"><GwIcon name="ExternalLink" />{t("follow.googleCalendar")}</a></Button>
         <Button asChild variant="secondary"><a href={webcal}><GwIcon name="CalendarPlus" />{t('follow.appleOutlook')}</a></Button>
       </div></div>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Check, Copy } from '@/components/icons';
+import { Check, Copy, Share2 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -28,4 +28,13 @@ export function CopyButton({ text, label, icon, variant = 'secondary', ...rest }
   return <Button variant={variant} {...rest} onClick={() => void onClick()} aria-live="polite">
     {copied ? <Check /> : icon ?? <Copy />}{copied ? t('onboarding.copied') : label ?? t('gathering.copyLink')}
   </Button>;
+}
+
+/** Opens the phone's share menu; hidden where the browser has none, so the copy button stays the fallback. */
+export function ShareButton({ text, url, title, variant = 'secondary', ...rest }: { text?: string; url: string; title?: string } & Omit<ComponentProps<typeof Button>, 'onClick' | 'children'>) {
+  const { t } = useTranslation();
+  const [can, setCan] = useState(false);
+  useEffect(() => { setCan(typeof navigator.share === 'function'); }, []);
+  if (!can) return null;
+  return <Button variant={variant} {...rest} onClick={() => { void navigator.share({ url, ...(text ? { text } : {}), ...(title ? { title } : {}) }).catch(() => undefined); }}><Share2 />{t('shareKit.share')}</Button>;
 }

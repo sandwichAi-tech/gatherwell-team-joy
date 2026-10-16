@@ -1,7 +1,7 @@
 import { SharedProgress } from '@/components/my-progress';
 import { readChatLinks, tgShare } from '@/lib/chat-links';
 import { CropFileInput } from '@/components/image-crop';
-import { CopyButton } from '@/components/copy-button';
+import { CopyButton, ShareButton } from '@/components/copy-button';
 import { trackEvent } from '@/lib/analytics';
 import { EmptyState, ListSkeleton } from "@/components/launch-states";
 import { ClaimGuard } from '@/components/smart';
@@ -265,6 +265,7 @@ function InviteSheet({ open, onOpenChange, workspace, joinCode, isLeader }: { op
       <div className="copy-field"><span>{link}</span></div>
       <div className="share-grid">
         <CopyButton variant="default" text={link} label={t('onboarding.copy')} />
+        <ShareButton url={link} />
         <Button asChild variant="secondary"><a href={`https://wa.me/?text=${encodeURIComponent(message)}`} target="_blank" rel="noopener noreferrer"><MessageCircle />{t('teamSpace.whatsapp')}</a></Button><Button asChild variant="secondary"><a href={tgShare(message)} target="_blank" rel="noopener noreferrer"><Send />{t('teamSpace.telegram')}</a></Button>
         <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(message)}`}><Smartphone />{t('teamSpace.sms')}</a></Button>
         <Button variant="secondary" onClick={() => setQr(true)}><QrCode />{t('teamSpace.qr')}</Button>

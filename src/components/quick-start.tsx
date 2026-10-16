@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { GwFeatureTile, GwIcon, type GwIconName } from '@/components/gw-icon';
 import { CropFileInput } from '@/components/image-crop';
-import { CopyButton } from '@/components/copy-button';
+import { CopyButton, ShareButton } from '@/components/copy-button';
 import { ShareKit } from '@/components/share-kit';
 import { GatheringCover } from '@/components/gathering-cover';
 import { ListSkeleton } from '@/components/launch-states';
@@ -193,6 +193,7 @@ function ShareStep({ kind, id, onNext, onBack }: { kind: StartKind; id: string; 
     {d.draft && <p className="qs-note"><GwIcon name="AlertCircle" size={18} />{t('quickStart.draftNote')}</p>}
     <section className="panel qs-section"><h2>{t('quickStart.yourLink')}</h2>
       <div className="qs-link"><code>{link}</code><CopyButton text={link} /></div>
+      <ShareButton url={link} text={message} />
       <div className="qs-qr"><QRCodeSVG value={link} size={168} marginSize={2} title={t('quickStart.qrAlt', { title })} /><p className="field-hint">{t('quickStart.qrHint')}</p></div>
       <CopyButton text={message} label={t('quickStart.copyWa')} />
     </section>
