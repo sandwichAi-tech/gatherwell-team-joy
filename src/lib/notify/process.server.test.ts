@@ -1,0 +1,31 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+const mocks = vi.hoisted(() => ({ rpc: vi.fn(), update: vi.fn(), eq: vi.fn() }));
+vi.mock('@/integrations/supabase/client.server', () => ({
+  supabaseAdmin: { rpc: mocks.rpc, from: () => ({ update: mocks.update }) },
+}));
+import { processOutbox } from './process.server';
+
+afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); vi.clearAllMocks(); });
+
+describe('retried messages use normal outbox delivery', () => {
+  const row = { id: 'retry-test', channel: 'email', recipient: 'retry-test@example.invalid', language: 'en', template: 'rsvp_confirmed', kind: 'transactional', payload: { title: 'Test gathering' }, user_id: null, attempts: 1, skip_reason: null, unsub_token: null };
+  it('records simulation instead of contacting a provider when no sending secret exists', async () => {
+    vi.stubEnv('RESEND_API_KEY', undefined);
+    const fetch = vi.fn(); vi.stubGlobal('fetch', fetch);
+    mocks.rpc.mockResolvedValue({ data: [row], error: null });
+    mocks.update.mockReturnValue({ eq: mocks.eq }); mocks.eq.mockResolvedValue({ error: null });
+    expect(await processOutbox(1)).toEqual({ processed: 1, simulated: 1 });
+    expect(fetch).not.toHaveBeenCalled();
+    expect(mocks.update).toHaveBeenCalledWith(expect.objectContaining({ status: 'simulated', error: null, locked_at: null }));
+    expect(mocks.eq).toHaveBeenCalledWith('id', 'retry-test');
+  });
+  it('skips retried messages when the queue marks their recipient as opted out', async () => {
+    const fetch = vi.fn(); vi.stubGlobal('fetch', fetch);
+    mocks.rpc.mockResolvedValue({ data: [{ ...row, skip_reason: 'unsubscribed' }], error: null });
+    mocks.update.mockReturnValue({ eq: mocks.eq }); mocks.eq.mockResolvedValue({ error: null });
+    expect(await processOutbox(1)).toEqual({ processed: 1, skipped: 1 });
+    expect(fetch).not.toHaveBeenCalled();
+    expect(mocks.update).toHaveBeenCalledWith(expect.objectContaining({ status: 'skipped', error: 'unsubscribed', sent_at: null }));
+  });
+});
