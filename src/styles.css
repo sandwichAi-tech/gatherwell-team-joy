@@ -1974,3 +1974,14 @@ a.gw-cat-chip:hover{background:#fff}
 .gw-landing .gw-pay-card dt{font-size:13px;font-weight:600;color:var(--gw-ink-soft,#475569)}
 .gw-landing .gw-pay-card dd{margin:2px 0 0;font-size:15px;line-height:1.45}
 @media(min-width:768px){.gw-landing .gw-pay-table{display:table}.gw-landing .gw-pay-cards{display:none}}
+.mail-log{display:grid;gap:16px}
+.mail-providers{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.mail-filters{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
+.mail-filters select,.mail-filters .form-field{min-width:150px}
+.mail-row{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:56px}
+.mail-row .link-button{background:none;border:0;padding:0;min-height:32px;text-align:left;color:var(--primary);font-size:14px;cursor:pointer}
+.status-chip{display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap;background:var(--muted);color:var(--foreground)}
+.status-chip.is-sent,.status-chip.is-live{background:color-mix(in oklab,var(--success) 18%,transparent)}
+.status-chip.is-failed{background:color-mix(in oklab,var(--destructive) 18%,transparent)}
+.status-chip.is-simulated,.status-chip.is-sim{background:color-mix(in oklab,var(--accent) 40%,transparent)}
+.status-chip.is-pending{background:color-mix(in oklab,var(--primary) 14%,transparent)}
