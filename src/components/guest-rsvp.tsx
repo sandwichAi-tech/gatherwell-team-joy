@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { RefundLine } from '@/components/refund-line';
 import { tgShare } from '@/lib/chat-links';
 import { serviceFee } from '@/lib/plan-fees';
+import { rsvpReminderConsent } from '@/lib/rsvp-form';
 import { GuestBelonging } from '@/components/belonging';
 import { PromoField } from '@/components/promo-field';
 import { promoDiscount, type Promo } from '@/lib/promo';
@@ -71,6 +72,7 @@ export type RsvpResult = { code: string; status: 'going' | 'maybe' | 'waitlist' 
 export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEvent; intent: 'going' | 'maybe' | null; onClose: () => void; onDone: (r: RsvpResult) => void }) {
   const { t, i18n } = useTranslation();
   const [form, setForm] = useState({ first: '', last: '', phone: '', email: '', plus: 0, sms: false, mail: false });
+  const [contact, setContact] = useState<'email' | 'phone'>('email');
   const [busy, setBusy] = useState(false); const [error, setError] = useState<string | null>(null);
   const [price, setPrice] = useState<{ price_cents: number; pass_fee: boolean; fee_pct: number; cover_service_fee?: boolean; service_fee_percent?: number; service_fee_fixed?: number; refund_policy?: string } | null>(null);
   const { data: waiver } = useEventWaiver(intent ? event.id : undefined); const [wName, setWName] = useState(''); const [wOk, setWOk] = useState(false);
@@ -103,15 +105,16 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
     if (!waiverReady(waiver, wName, wOk)) { setError(t('guest.errors.waiver_required')); return; }
     if (intent === 'going' && !answersReady(event.questions, answers)) { setError(t('guest.errors.answers_required')); return; }
     const waiverName = waiver?.required ? wName.trim() : '';
+    const consent = rsvpReminderConsent(form);
     if (paid) {
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim())) { setError(t('guest.errors.invalid_email')); return; }
-      await gate.run(() => checkout({ data: { eventId: event.id, first: form.first.trim(), last: form.last.trim(), phone: form.phone.trim(), email: form.email.trim(), plusOnes: form.plus, sms: form.sms, mail: form.mail, lang, origin: window.location.origin, waiverName, promo: promo?.code ?? '' } }));
+      await gate.run(() => checkout({ data: { eventId: event.id, first: form.first.trim(), last: form.last.trim(), phone: form.phone.trim(), email: form.email.trim(), plusOnes: form.plus, sms: consent.sms, mail: consent.mail, lang, origin: window.location.origin, waiverName, promo: promo?.code ?? '' } }));
       return;
     }
     setBusy(true); setError(null);
     try {
       const { data, error: err } = await waiverRpc('rsvp_event_full', { _answers: answers, _token: inviteToken(), _waiver_name: waiverName, _event_id: event.id, _first: form.first.trim(), _last: form.last.trim(), _phone: form.phone.trim(), _email: form.email.trim(),
-        _language: i18n.resolvedLanguage === 'es' ? 'es' : 'en', _plus_ones: form.plus, _status: intent, _sms: form.sms, _mail: form.mail });
+        _language: i18n.resolvedLanguage === 'es' ? 'es' : 'en', _plus_ones: form.plus, _status: intent, _sms: consent.sms, _mail: consent.mail });
       const row = (Array.isArray(data) ? data[0] : null) as { code: string; status: string } | null;
       if (err || !row) { const k = rsvpErrorKey(err); setError(t(k === 'guest.errors.generic' ? 'guest.errors.save_failed' : k)); return; }
       trackEvent('rsvp', { status: row.status });
@@ -125,18 +128,20 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
   };
   const full = event.capacity != null && event.going >= event.capacity;
   const title = intent === 'maybe' ? t('guest.sheetMaybe') : full ? t('guest.sheetWaitlist') : t('guest.sheetGoing');
-  return <ResponsiveSheet open={!!intent} onOpenChange={o => !o && onClose()} title={title} description={event.title}>
-    <form className="guest-form" onSubmit={submit} noValidate>
-      <div className="guest-name-row">
-        <div><label className="field-label" htmlFor="g-first">{t('guest.firstName')}</label><Input id="g-first" autoComplete="given-name" required maxLength={60} className="field-input" value={form.first} onChange={e => setForm({ ...form, first: e.target.value })} /></div>
+  return <ResponsiveSheet open={!!intent} onOpenChange={o => !o && onClose()} title={title} description={event.title} footer={<Button type="submit" form="guest-rsvp-form" className="guest-primary" disabled={busy || gate.busy}>{busy || gate.busy ? t('guest.saving') : paid ? t('billing.payAndRsvp', { amount: formatMoney(total, lang) }) : intent === 'maybe' ? t('guest.confirmMaybe') : full ? t('guest.joinWaitlist') : t('guest.confirmGoing')}</Button>}>
+    <form id="guest-rsvp-form" className="guest-form" onSubmit={submit} noValidate>
+      <div><label className="field-label" htmlFor="g-first">{t('guest.firstName')}</label><Input id="g-first" autoComplete="given-name" required maxLength={60} className="field-input" value={form.first} onChange={e => setForm({ ...form, first: e.target.value })} /></div>
+      {!paid && <div className="segmented full" role="group" aria-label={t('guest.contactMethod')}>
+        {(['email', 'phone'] as const).map(key => <Button key={key} type="button" variant="ghost" className={contact === key ? 'selected' : ''} aria-pressed={contact === key} onClick={() => setContact(key)}>{t(`guest.${key}`)}</Button>)}
+      </div>}
+      {(paid || contact === 'email') ? <div><label className="field-label" htmlFor="g-email">{t('guest.email')}</label><Input id="g-email" type="email" autoComplete="email" maxLength={200} className="field-input" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} /></div>
+        : <div><label className="field-label" htmlFor="g-phone">{t('guest.phone')}</label><Input id="g-phone" type="tel" inputMode="tel" autoComplete="tel" maxLength={30} className="field-input" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} /></div>}
+      {form.phone.trim() && <label className="guest-consent"><Checkbox checked={form.sms} onCheckedChange={v => setForm({ ...form, sms: !!v })} /><span>{t('guest.smsConsent')} <a href="/legal/sms" target="_blank" rel="noopener">{t('legalDocs.docs.sms.title')}</a></span></label>}
+      {form.email.trim() && <label className="guest-consent"><Checkbox checked={form.mail} onCheckedChange={v => setForm({ ...form, mail: !!v })} /><span>{t('guest.emailConsent')}</span></label>}
+      <details className="guest-optional"><summary>{t('guest.optionalDetails')}</summary><div className="guest-optional-body">
         <div><label className="field-label" htmlFor="g-last">{t('guest.lastName')}</label><Input id="g-last" autoComplete="family-name" maxLength={60} className="field-input" value={form.last} onChange={e => setForm({ ...form, last: e.target.value })} /></div>
-      </div>
-      <div><label className="field-label" htmlFor="g-phone">{t('guest.phone')}</label><Input id="g-phone" type="tel" inputMode="tel" autoComplete="tel" maxLength={30} className="field-input" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} /></div>
-      <div><label className="field-label" htmlFor="g-email">{t('guest.email')}</label><Input id="g-email" type="email" autoComplete="email" maxLength={200} className="field-input" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} /></div>
-      <p className="guest-hint">{t('guest.contactHint')}</p>
-      <div className="guest-plus"><span className="field-label">{t('guest.plusOnes')}</span><Stepper value={form.plus} onChange={plus => setForm({ ...form, plus })} label={t('guest.plusOnes')} /></div>
-      <label className="guest-consent"><Checkbox checked={form.sms} onCheckedChange={v => setForm({ ...form, sms: !!v })} /><span>{t('guest.smsConsent')} <a href="/legal/sms" target="_blank" rel="noopener">{t('legalDocs.docs.sms.title')}</a></span></label>
-      <label className="guest-consent"><Checkbox checked={form.mail} onCheckedChange={v => setForm({ ...form, mail: !!v })} /><span>{t('guest.emailConsent')}</span></label>
+        <div className="guest-plus"><span className="field-label">{t('guest.plusOnes')}</span><Stepper value={form.plus} onChange={plus => setForm({ ...form, plus })} label={t('guest.plusOnes')} /></div>
+      </div></details>
       {!!event.questions?.length && <RsvpQuestionsFields questions={event.questions} value={answers} onChange={setAnswers} />}
       {event.require_approval && intent === 'going' && <p className="guest-hint">{t('rsvpq.approvalHint')}</p>}
       {waiver && <WaiverAccept waiver={waiver} name={wName} accepted={wOk} onName={setWName} onAccepted={setWOk} />}
@@ -151,7 +156,6 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
       </dl>}
       {paid && price && <PromoField kind="gathering" target={event.id} buyer={form.email.trim()} discountCents={discount} value={promo} onChange={setPromo} />}
       {error && <p className="field-error" role="alert">{error}</p>}
-      <Button type="submit" className="guest-primary" disabled={busy || gate.busy}>{busy || gate.busy ? t('guest.saving') : paid ? t('billing.payAndRsvp', { amount: formatMoney(total, lang) }) : intent === 'maybe' ? t('guest.confirmMaybe') : full ? t('guest.joinWaitlist') : t('guest.confirmGoing')}</Button>
     </form>
     {gate.sheet}
   </ResponsiveSheet>;

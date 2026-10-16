@@ -909,6 +909,8 @@
     "phone": "Celular",
     "email": "Correo",
     "contactHint": "Agrega un celular o un correo para que puedan contactarte.",
+    "contactMethod": "Contacto",
+    "optionalDetails": "Apellido e invitados adicionales (opcional)",
     "plusOnes": "Invitados que llevas",
     "less": "Uno menos",
     "more": "Uno más",
