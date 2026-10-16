@@ -1,6 +1,7 @@
 # AD2 — Admin message retry
-- [ ] Add confirmed, audited retries for failed messages without bypassing recipient preferences
-- [ ] Verify retry safeguards and simulated processing; signed-in admin verification requires an available admin session
+- [x] Add confirmed, audited retries for failed messages without bypassing recipient preferences
+- [x] Verify retry eligibility, simulated processing and opt-out handling with 10 targeted tests; 16 routing tests passed and build OK
+- [ ] Verify a real retry and audit read-back in Admin > Mail; blocked because no preview account matches the requesting user and no admin session is available
 
 # Mobile layout audit — October 10, 2026
 - [x] Simplify guest RSVP, keep confirmation reachable, and verify reminder defaults without preselecting guest consent; test RSVP saved/read back/cancelled, 375/414px Spanish checked, three consent tests passed. Existing query-feedback warnings and a background 400 remain outside this change.
