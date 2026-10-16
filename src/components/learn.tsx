@@ -81,15 +81,6 @@ function TrackCard({ track, data, featured = false }: { track: Track; data: Lear
   </article>;
 }
 
-function SampleTracks() {
-  const { t } = useTranslation(); const { openDetail } = useGatherwell();
-  return <div className="track-grid">{(['welcome', 'host', 'rhythm'] as const).map((k, i) => <article className="track-card" key={k}>
-    <div className="learn-cover" style={{ backgroundImage: COVER_STYLES[i] }} aria-hidden="true"><span>{t(`learnHub.sample.${k}.title`)[0]}</span></div>
-    <div className="track-body"><div className="track-meta"><span className="chip sample-badge">{t('common.sample')}</span></div><h3>{t(`learnHub.sample.${k}.title`)}</h3><p className="track-facts">{t(`learnHub.sample.${k}.facts`)}</p>
-      <div className="track-foot"><ProgressRing value={[0.6, 0.25, 0][i]!} label={t('common.sample')} /><Button variant="secondary" onClick={() => openDetail(t(`learnHub.sample.${k}.title`), t('learnHub.sampleNote'))}>{t('learnHub.start')}<ArrowRight /></Button></div></div>
-  </article>)}</div>;
-}
-
 export function LiveCard({ lesson, track }: { lesson: Lesson; track?: Track | undefined }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en'; const qc = useQueryClient();
   const { userId } = useGatherwell(); const now = useNow(15_000);
