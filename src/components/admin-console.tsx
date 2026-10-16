@@ -18,12 +18,12 @@ import { GwFeatureTile, GwIcon, type GwIconProps } from '@/components/gw-icon';
 import { formatMoney, planSettingsQuery, type PlanSetting } from '@/lib/billing';
 import { updatePlanSettings,
   adminTeamAction, adminUserAction, endBroadcast, getAdminAccess, getAdminOverview, getAdminTeam, getAdminUser, getAudit, getBroadcasts, getFlags, getLibrary,
-  listAdminTeams, listAdminUsers, listReports, moderateReport, reorderLibrary, saveLibraryItem, sendBroadcast, setFlag, setLibraryPublished, type AdminReport, listRecentTexts, simulateSmsReply, listVerifications, decideVerification, type AdminVerification,
+  listAdminTeams, listAdminUsers, listReports, moderateReport, reorderLibrary, saveLibraryItem, sendBroadcast, setFlag, setLibraryPublished, type AdminReport, listRecentTexts, simulateSmsReply, listMail, listVerifications, decideVerification, type AdminVerification,
 } from '@/lib/admin.functions';
 
-export const ADMIN_TABS = ['overview', 'teams', 'users', 'moderation', 'verify', 'library', 'broadcasts', 'founding', 'day60', 'settings', 'audit'] as const;
+export const ADMIN_TABS = ['overview', 'teams', 'users', 'moderation', 'verify', 'library', 'broadcasts', 'founding', 'day60', 'settings', 'audit', 'mail'] as const;
 export type AdminTab = (typeof ADMIN_TABS)[number];
-const TAB_ICONS: Record<AdminTab, GwIconProps['name']> = { overview: 'BarChart3', teams: 'UsersRound', users: 'UserRound', moderation: 'Flag', verify: 'BadgeCheck', library: 'BookOpen', broadcasts: 'Megaphone', founding: 'Medal', day60: 'Trophy', settings: 'Settings2', audit: 'FileText' };
+const TAB_ICONS: Record<AdminTab, GwIconProps['name']> = { overview: 'BarChart3', teams: 'UsersRound', users: 'UserRound', moderation: 'Flag', verify: 'BadgeCheck', library: 'BookOpen', broadcasts: 'Megaphone', founding: 'Medal', day60: 'Trophy', settings: 'Settings2', audit: 'FileText', mail: 'Mail' };
 
 const useLang = () => { const { i18n } = useTranslation(); return i18n.resolvedLanguage === 'es' ? 'es' : 'en'; };
 const fmtDate = (iso: string | null | undefined, lang: string, time = false) => iso ? new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', time ? { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' } : { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(iso)) : '—';
@@ -50,6 +50,7 @@ export function AdminConsole({ tab }: { tab: AdminTab }) {
     {tab === 'day60' && <Day60Admin />}
     {tab === 'settings' && <Settings />}
     {tab === 'audit' && <Audit />}
+    {tab === 'mail' && <MailLog />}
   </div>;
 }
 
@@ -513,5 +514,51 @@ function TextMonitor() {
     {data && data.invites.length > 0 && <><h3>{t('admin.texts.latestInvites')}</h3><ul className="text-log">{data.invites.map(i => <li key={i.id}><span className="tabular-nums">{i.phone}</span><span>{i.reply ?? '—'}</span><span className="muted-copy">{fmtDate(i.created_at, lang, true)}</span></li>)}</ul></>}
     {!data?.texts.length ? <p className="muted-copy">{t('admin.texts.empty')}</p> :
       <div className="admin-table-wrap"><table className="admin-table"><tbody>{data.texts.map(m => <tr key={m.id}><td className="tabular-nums">{m.recipient}</td><td>{m.template}</td><td><span className="chip">{t(`admin.messages.${m.status === 'pending' || m.status === 'sending' ? 'queued' : m.status}`)}</span></td><td className="muted-copy">{fmtDate(m.created_at, lang, true)}</td></tr>)}</tbody></table></div>}
+  </section>;
+}
+
+const mask = (r: string) => r.includes('@') ? r.replace(/^(.{1,2}).*(@.*)$/, '$1***$2') : r.length > 4 ? `${'*'.repeat(r.length - 4)}${r.slice(-4)}` : r;
+const MAIL_CHANNELS = ['all', 'email', 'sms', 'push'] as const;
+const MAIL_STATUSES = ['all', 'pending', 'sent', 'simulated', 'failed', 'skipped'] as const;
+
+function MailLog() {
+  const { t } = useTranslation(); const lang = useLang();
+  const [channel, setChannel] = useState<(typeof MAIL_CHANNELS)[number]>('all');
+  const [status, setStatus] = useState<(typeof MAIL_STATUSES)[number]>('all');
+  const [template, setTemplate] = useState(''); const [q, setQ] = useState(''); const [from, setFrom] = useState(''); const [to, setTo] = useState('');
+  const [pages, setPages] = useState(1); const [shown, setShown] = useState<Set<string>>(new Set());
+  const fn = useServerFn(listMail);
+  const filters = { channel, status, template, q, from, to };
+  const { data } = useQuery({ queryKey: ['admin', 'mail', filters, pages], refetchInterval: 30000,
+    queryFn: async () => { const all = await Promise.all(Array.from({ length: pages }, (_, page) => fn({ data: { ...filters, page } }))); return { ...all[0]!, rows: all.flatMap(a => a.rows) }; } });
+  const reset = <T,>(set: (v: T) => void) => (v: T) => { set(v); setPages(1); };
+  const anySim = data && (!data.providers.email || !data.providers.sms || !data.providers.push);
+  return <section className="panel mail-log">
+    <div className="admin-stats">
+      <Stat icon="Clock" label={t('admin.mail.queued')} value={num(data?.counters.queued, lang)} />
+      <Stat icon="Send" label={t('admin.mail.sentToday')} value={num(data?.counters.sentToday, lang)} sub={`${t('admin.mail.simulatedToday')}: ${num(data?.counters.simulatedToday, lang)}`} />
+      <Stat icon="AlertCircle" label={t('admin.mail.failedToday')} value={num(data?.counters.failedToday, lang)} />
+    </div>
+    {data && <div className="mail-providers"><span className="field-label">{t('admin.mail.providers')}</span>{(['email', 'sms', 'push'] as const).map(k => <span key={k} className={`status-chip ${data.providers[k] ? 'is-live' : 'is-sim'}`}>{t(`admin.mail.${k}`)}: {t(data.providers[k] ? 'admin.mail.live' : 'admin.mail.simulated')}</span>)}</div>}
+    {anySim && <p className="not-connected">{t('admin.mail.simNote')}</p>}
+    <div className="admin-toolbar mail-filters">
+      <Search value={q} onChange={reset(setQ)} label={t('admin.mail.search')} />
+      <select aria-label={t('admin.mail.channel')} className="field-input" value={channel} onChange={e => reset(setChannel)(e.target.value as typeof channel)}>{MAIL_CHANNELS.map(c => <option key={c} value={c}>{c === 'all' ? t('admin.mail.allChannels') : t(`admin.mail.${c}`)}</option>)}</select>
+      <select aria-label={t('admin.mail.status')} className="field-input" value={status} onChange={e => reset(setStatus)(e.target.value as typeof status)}>{MAIL_STATUSES.map(c => <option key={c} value={c}>{c === 'all' ? t('admin.mail.allStatuses') : t(`admin.mail.statuses.${c}`)}</option>)}</select>
+      <select aria-label={t('admin.mail.template')} className="field-input" value={template} onChange={e => reset(setTemplate)(e.target.value)}><option value="">{t('admin.mail.allTemplates')}</option>{data?.templates.map(x => <option key={x} value={x}>{x}</option>)}</select>
+      <label className="form-field"><span className="field-label">{t('admin.mail.from')}</span><Input type="date" className="field-input" value={from} onChange={e => reset(setFrom)(e.target.value)} /></label>
+      <label className="form-field"><span className="field-label">{t('admin.mail.to')}</span><Input type="date" className="field-input" value={to} onChange={e => reset(setTo)(e.target.value)} /></label>
+    </div>
+    {data && <p className="muted-copy">{t('admin.mail.total', { count: data.total })}</p>}
+    <ul className="admin-list">{data?.rows.map(r => <li key={r.id} className="admin-row mail-row">
+      <span className="admin-row-main">
+        <strong>{r.template}</strong>
+        <small>{fmtDate(r.created_at, lang, true)} · {t(`admin.mail.${r.channel}`)} · {r.language.toUpperCase()}</small>
+        <button type="button" className="link-button" aria-label={t('admin.mail.reveal')} onClick={() => setShown(s => new Set(s).add(r.id))}>{shown.has(r.id) ? r.recipient : mask(r.recipient)}</button>
+        {r.error && <small>{r.error}</small>}
+      </span>
+      <span className={`status-chip is-${r.status === 'sending' ? 'pending' : r.status}`}>{t(`admin.mail.statuses.${r.status}`)}</span>
+    </li>)}{data && !data.rows.length && <li className="muted-copy">{t('admin.mail.empty')}</li>}</ul>
+    {data && data.rows.length < data.total && <Button variant="secondary" onClick={() => setPages(p => p + 1)}>{t('admin.mail.loadMore')}</Button>}
   </section>;
 }
