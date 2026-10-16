@@ -97,6 +97,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
   const [sheet, setSheet] = useState<Sheet>(null);
   const [draftBody, setDraftBody] = useState<string | null>(null);
   useEffect(() => { const pending = takePendingAnnouncement(); if (pending) { setDraftBody(pending); if (isLeader) setSheet('announce'); else void navigator.clipboard?.writeText(pending).catch(() => {}); } }, [isLeader]);
+  useEffect(() => { if (isLeader && window.location.hash === '#announce') { setSheet('announce'); history.replaceState(null, '', window.location.pathname + window.location.search); } }, [isLeader]);
   const navigate = useNavigate();
   const switchTeam = useSwitchTeam(userId);
   const setOpenEvent = (event: TeamEvent) => { void navigate({ to: '/event/$id', params: { id: event.id } }); };
