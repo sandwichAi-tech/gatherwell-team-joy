@@ -14,8 +14,10 @@ export const getPublicEventMeta = createServerFn({ method: 'GET' })
       const h = new Headers(init?.headers); if (key.startsWith('sb_') && h.get('Authorization') === `Bearer ${key}`) h.delete('Authorization'); h.set('apikey', key); return fetch(input, { ...init, headers: h });
     } } });
     const { data: ev } = await sb.rpc('get_public_event', { _id: data.id });
-    const e = ev as null | { title: string; starts_at: string; timezone: string; cover_url: string | null; location_name: string | null; address: string | null; lat: number | null; lng: number | null; status: string };
+    const e = ev as null | { title: string; starts_at: string; timezone: string; cover_url: string | null; location_name: string | null; address: string | null; lat: number | null; lng: number | null; status: string; is_online?: boolean; host?: { name?: string | null } | null };
     if (!e) return null;
+    const { data: pr } = await sb.rpc('event_price', { _id: data.id });
+    const priceCents = (pr as { price_cents?: number } | null)?.price_cents ?? null;
     let image: string | null = null;
     if (e.cover_url) {
       if (/^https:/.test(e.cover_url)) image = e.cover_url;
@@ -32,5 +34,5 @@ export const getPublicEventMeta = createServerFn({ method: 'GET' })
     const staticMap = mapsKey && where
       ? `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(where)}&zoom=15&size=640x260&scale=2&markers=color:0x2F2340%7C${encodeURIComponent(where)}&key=${mapsKey}`
       : null;
-    return { title: e.title, startsAt: e.starts_at, timezone: e.timezone, image: image ?? new URL(shareImage, getRequest().url).href, staticMap, cancelled: e.status === 'cancelled' };
+    return { title: e.title, startsAt: e.starts_at, timezone: e.timezone, image: image ?? new URL(shareImage, getRequest().url).href, staticMap, cancelled: e.status === 'cancelled', host: e.host?.name ?? null, place: e.location_name || null, online: !!e.is_online, priceCents };
   });

@@ -41,7 +41,9 @@ export const Route = createFileRoute('/e/$id')({
     }
     const date = new Intl.DateTimeFormat(i18n.resolvedLanguage === 'es' ? 'es-419' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: loaderData.timezone || 'UTC', timeZoneName: 'short' }).format(new Date(loaderData.startsAt));
     const title = `${loaderData.title} · ${date}`;
-    const description = loaderData.cancelled ? i18n.t('guest.cancelledTitle') : `${date} — ${i18n.t('guest.metaInvite')}`;
+    const lng = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
+    const bits = [date, loaderData.place ?? (loaderData.online ? i18n.t('guest.metaOnline') : null), loaderData.host ? i18n.t('guest.metaHost', { name: loaderData.host }) : null, loaderData.priceCents ? formatMoney(loaderData.priceCents, lng) : i18n.t('guest.metaFree')].filter(Boolean);
+    const description = loaderData.cancelled ? i18n.t('guest.cancelledTitle') : `${bits.join(' · ')} — ${i18n.t('guest.metaInvite')}`;
     const meta: Array<Record<string, string>> = [{ title }, { name: 'description', content: description }, { property: 'og:title', content: title }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: loaderData.image ? 'summary_large_image' : 'summary' }, { name: 'twitter:title', content: title }, { name: 'twitter:description', content: description }];
     if (loaderData.image) meta.push({ property: 'og:image', content: loaderData.image }, { name: 'twitter:image', content: loaderData.image });
     return { meta };
