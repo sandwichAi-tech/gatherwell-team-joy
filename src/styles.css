@@ -446,6 +446,7 @@
 .guest-footer{text-align:center;padding:28px 20px calc(28px + env(safe-area-inset-bottom));font-size:13px}.guest-footer a{color:var(--muted-foreground);text-decoration:underline;text-underline-offset:3px;display:inline-flex;min-height:44px;align-items:center}
 .guest-empty{padding:48px 20px;text-align:center;color:var(--muted-foreground)}
 .guest-form{display:grid;gap:16px}.guest-name-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.guest-optional{border-top:1px solid var(--border);border-bottom:1px solid var(--border)}.guest-optional summary{cursor:pointer;min-height:48px;display:flex;align-items:center;font-size:14px;font-weight:600;color:var(--foreground);gap:8px}.guest-optional summary::before{content:'+';font-size:20px}.guest-optional[open] summary::before{content:'−'}.guest-optional-body{display:grid;gap:16px;padding:8px 0 16px}
 .guest-hint{font-size:13px;color:var(--muted-foreground);margin-top:-4px}
 .guest-plus{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .guest-stepper{display:flex;align-items:center;gap:12px}.guest-stepper button{width:44px;height:44px;border-radius:12px}.guest-stepper output{min-width:20px;text-align:center;font-weight:600;font-size:17px}
