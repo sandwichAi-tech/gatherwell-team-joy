@@ -2337,7 +2337,8 @@
         "moderation": "Moderation",
         "library": "Library",
         "broadcast": "Broadcasts",
-        "flag": "Flags"
+        "flag": "Flags",
+        "mail": "Messages"
       },
       "actions": {
         "team_change_plan": "Changed a team's plan",
@@ -2360,7 +2361,8 @@
         "broadcast_send": "Sent a broadcast",
         "broadcast_test": "Sent a test broadcast",
         "broadcast_end": "Took down a broadcast",
-        "flag_update": "Changed a feature flag"
+        "flag_update": "Changed a feature flag",
+        "mail_retry": "Retried a failed message"
       }
     },
     "activity": {
@@ -2453,6 +2455,12 @@
       "empty": "No messages match these filters.",
       "total": "{{count}} messages",
       "simNote": "No sending service is connected yet, so messages are recorded here as simulated instead of being delivered.",
+      "retry": "Retry message",
+      "retryTitle": "Retry this message?",
+      "retryBody": "This starts a new set of delivery attempts. Recipient preferences still apply. Delivery stays simulated where sending is not connected. If an earlier attempt reached the recipient despite an error, they may receive a duplicate.",
+      "retryQueued": "Message queued for another attempt.",
+      "retryUnavailable": "This message can no longer be retried. The list has been refreshed.",
+      "retryError": "The message could not be retried. Please try again.",
       "statuses": {
         "pending": "Queued",
         "sending": "Queued",

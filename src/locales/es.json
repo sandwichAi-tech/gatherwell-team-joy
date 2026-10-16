@@ -2337,7 +2337,8 @@
         "moderation": "Moderación",
         "library": "Biblioteca",
         "broadcast": "Avisos",
-        "flag": "Funciones"
+        "flag": "Funciones",
+        "mail": "Mensajes"
       },
       "actions": {
         "team_change_plan": "Cambió el plan de un equipo",
@@ -2360,7 +2361,8 @@
         "broadcast_send": "Envió un aviso general",
         "broadcast_test": "Envió un aviso de prueba",
         "broadcast_end": "Quitó un aviso general",
-        "flag_update": "Cambió una función"
+        "flag_update": "Cambió una función",
+        "mail_retry": "Volvió a intentar un mensaje fallido"
       }
     },
     "activity": {
@@ -2453,6 +2455,12 @@
       "empty": "Ningún mensaje coincide con estos filtros.",
       "total": "{{count}} mensajes",
       "simNote": "Todavía no hay un servicio de envío conectado, así que los mensajes se registran aquí como simulados en lugar de entregarse.",
+      "retry": "Reintentar mensaje",
+      "retryTitle": "¿Reintentar este mensaje?",
+      "retryBody": "Se inicia una nueva serie de intentos de envío. Se respetan las preferencias del destinatario. El envío sigue simulado donde no hay un servicio conectado. Si un intento anterior llegó pese al error, la persona podría recibir el mensaje dos veces.",
+      "retryQueued": "El mensaje está en cola para otro intento.",
+      "retryUnavailable": "Este mensaje ya no se puede reintentar. La lista se actualizó.",
+      "retryError": "No se pudo reintentar el mensaje. Inténtalo de nuevo.",
       "statuses": {
         "pending": "En cola",
         "sending": "En cola",

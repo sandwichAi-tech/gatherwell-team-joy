@@ -4208,6 +4208,7 @@ export type Database = {
       }
       admin_overview: { Args: { _since: string }; Returns: Json }
       admin_reports: { Args: { _status: string }; Returns: Json }
+      admin_retry_message: { Args: { _id: string }; Returns: Json }
       admin_team_detail: { Args: { _id: string }; Returns: Json }
       admin_teams: { Args: { _q: string }; Returns: Json }
       admin_time_to_live: { Args: { _since: string }; Returns: Json }

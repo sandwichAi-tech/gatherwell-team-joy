@@ -18,7 +18,7 @@ import { GwFeatureTile, GwIcon, type GwIconProps } from '@/components/gw-icon';
 import { formatMoney, planSettingsQuery, type PlanSetting } from '@/lib/billing';
 import { updatePlanSettings,
   adminTeamAction, adminUserAction, endBroadcast, getAdminAccess, getAdminOverview, getAdminTeam, getAdminUser, getAudit, getBroadcasts, getFlags, getLibrary,
-  listAdminTeams, listAdminUsers, listReports, moderateReport, reorderLibrary, saveLibraryItem, sendBroadcast, setFlag, setLibraryPublished, type AdminReport, listRecentTexts, simulateSmsReply, listMail, listVerifications, decideVerification, type AdminVerification,
+  listAdminTeams, listAdminUsers, listReports, moderateReport, reorderLibrary, saveLibraryItem, sendBroadcast, setFlag, setLibraryPublished, type AdminReport, listRecentTexts, simulateSmsReply, listMail, retryMail, listVerifications, decideVerification, type AdminVerification,
 } from '@/lib/admin.functions';
 
 export const ADMIN_TABS = ['overview', 'teams', 'users', 'moderation', 'verify', 'library', 'broadcasts', 'founding', 'day60', 'settings', 'audit', 'mail'] as const;
@@ -475,7 +475,7 @@ function PlanSettingRow({ s, onSaved }: { s: PlanSetting; onSaved: () => void })
   </div>;
 }
 
-const AREAS = ['all', 'team', 'user', 'moderation', 'library', 'broadcast', 'flag'] as const;
+const AREAS = ['all', 'team', 'user', 'moderation', 'library', 'broadcast', 'flag', 'mail'] as const;
 function Audit() {
   const { t } = useTranslation(); const lang = useLang();
   const [q, setQ] = useState(''); const [area, setArea] = useState<(typeof AREAS)[number]>('all'); const [open, setOpen] = useState<string | null>(null);
@@ -522,15 +522,29 @@ const MAIL_CHANNELS = ['all', 'email', 'sms', 'push'] as const;
 const MAIL_STATUSES = ['all', 'pending', 'sent', 'simulated', 'failed', 'skipped'] as const;
 
 function MailLog() {
-  const { t } = useTranslation(); const lang = useLang();
+  const { t } = useTranslation(); const lang = useLang(); const qc = useQueryClient();
   const [channel, setChannel] = useState<(typeof MAIL_CHANNELS)[number]>('all');
   const [status, setStatus] = useState<(typeof MAIL_STATUSES)[number]>('all');
   const [template, setTemplate] = useState(''); const [q, setQ] = useState(''); const [from, setFrom] = useState(''); const [to, setTo] = useState('');
   const [pages, setPages] = useState(1); const [shown, setShown] = useState<Set<string>>(new Set());
   const fn = useServerFn(listMail);
+  const retry = useServerFn(retryMail);
+  const [retrying, setRetrying] = useState<string | null>(null);
+  const retryMessage = async (id: string) => {
+    if (retrying) return;
+    setRetrying(id);
+    try {
+      if (!(await confirmAction({ title: t('admin.mail.retryTitle'), body: t('admin.mail.retryBody'), confirmLabel: t('admin.mail.retry') }))) return;
+      const result = await retry({ data: { id } });
+      if (result.ok) toast.success(t('admin.mail.retryQueued'));
+      else toast.error(t('admin.mail.retryUnavailable'));
+      await Promise.all([qc.invalidateQueries({ queryKey: ['admin', 'mail'] }), qc.invalidateQueries({ queryKey: ['admin', 'audit'] })]);
+    } catch { toast.error(t('admin.mail.retryError')); }
+    finally { setRetrying(null); }
+  };
   const filters = { channel, status, template, q, from, to };
   const { data } = useQuery({ queryKey: ['admin', 'mail', filters, pages], refetchInterval: 30000,
-    queryFn: async () => { const all = await Promise.all(Array.from({ length: pages }, (_, page) => fn({ data: { ...filters, page } }))); return { ...all[0]!, rows: all.flatMap(a => a.rows) }; } });
+    queryFn: async () => { const all = await Promise.all(Array.from({ length: pages }, (_, page) => fn({ data: { ...filters, page } }))); const first = all[0]; if (!first) throw new Error('empty_mail_pages'); return { ...first, rows: all.flatMap(a => a.rows) }; } });
   const reset = <T,>(set: (v: T) => void) => (v: T) => { set(v); setPages(1); };
   const anySim = data && (!data.providers.email || !data.providers.sms || !data.providers.push);
   return <section className="panel mail-log">
@@ -557,7 +571,8 @@ function MailLog() {
         <button type="button" className="link-button" aria-label={t('admin.mail.reveal')} onClick={() => setShown(s => new Set(s).add(r.id))}>{shown.has(r.id) ? r.recipient : mask(r.recipient)}</button>
         {r.error && <small>{r.error}</small>}
       </span>
-      <span className={`status-chip is-${r.status === 'sending' ? 'pending' : r.status}`}>{t(`admin.mail.statuses.${r.status}`)}</span>
+      <div className="flex shrink-0 flex-col items-end gap-2"><span className={`status-chip is-${r.status === 'sending' ? 'pending' : r.status}`}>{t(`admin.mail.statuses.${r.status}`)}</span>
+      {r.retryable && <Button variant="ghost" size="icon" disabled={retrying !== null} aria-label={t('admin.mail.retry')} title={t('admin.mail.retry')} onClick={() => void retryMessage(r.id)}><GwIcon name="RefreshCw" size={20} /></Button>}</div>
     </li>)}{data && !data.rows.length && <li className="muted-copy">{t('admin.mail.empty')}</li>}</ul>
     {data && data.rows.length < data.total && <Button variant="secondary" onClick={() => setPages(p => p + 1)}>{t('admin.mail.loadMore')}</Button>}
   </section>;
