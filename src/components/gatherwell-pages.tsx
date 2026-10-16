@@ -101,6 +101,8 @@ export function HomePage() {
   const stats = [{ key: 'members', Icon: UsersRound }, { key: 'events', Icon: CalendarDays }, { key: 'attendance', Icon: Repeat2 }, { key: 'checkins', Icon: CircleCheck }] as const;
   return <>
     <MobileTeamSwitcher />
+    <div className="greeting page-heading"><div><span className="eyebrow">{t('home.eyebrow')}</span><h1>{t('home.greeting', { name: firstName(profile?.full_name) || t('common.name') })}</h1><p>{t('home.subtitle')}</p></div><Button className="page-create" onClick={openCreate}><Plus />{t('common.create')}</Button></div>
+    <HomeRealData />
     {!guest && <FoundingCommitmentsCard />}
     {!guest && <CoachLaunchCard />}
     {!guest && <DailyBriefCard />}
@@ -112,8 +114,6 @@ export function HomePage() {
     <HomeFeatured />
     {!guest && <HomeTemplates />}
     {!guest && <LeaderInsightsLink />}
-    <div className="greeting page-heading"><div><span className="eyebrow">{t('home.eyebrow')}</span><h1>{t('home.greeting', { name: firstName(profile?.full_name) || t('common.name') })}</h1><p>{t('home.subtitle')}</p></div><Button className="page-create" onClick={openCreate}><Plus />{t('common.create')}</Button></div>
-    <HomeRealData />
     <section className="network-panel"><div className="circle-lines" aria-hidden="true" /><span className="eyebrow">{t('home.networkLabel')}</span><h2>{t('home.networkTitle')}</h2><p>{t('home.networkText')}</p><Button asChild className="peach-button"><Link to="/network">{t('home.networkAction')}<ArrowRight /></Link></Button></section>
   </>;
 }
