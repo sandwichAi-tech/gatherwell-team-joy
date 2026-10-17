@@ -2322,7 +2322,13 @@
       "headline": "Headline {{v}}",
       "name": {
         "landing_headline": "Front page headline",
-        "landing_testimonials": "Front page testimonials"
+        "landing_testimonials": "Front page testimonials",
+        "feature_learn": "Learn tracks, lessons and recipes",
+        "feature_network": "Network and partner sharing",
+        "feature_retreats": "Retreats, trips and courses",
+        "feature_badges_limited": "Limited badges and personal bests",
+        "feature_playbook": "Playbook cards",
+        "feature_team_map": "Team map"
       }
     },
     "audit": {
