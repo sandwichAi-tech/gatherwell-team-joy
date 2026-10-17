@@ -1,3 +1,4 @@
+import { useFeature } from '@/lib/feature-flags';
 import { RefundSelect } from '@/components/refund-line';
 import { asRefundPolicy, type RefundPolicy } from '@/lib/refunds';
 import { PriceGuidance } from '@/components/coach-launch';
@@ -63,6 +64,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const [rule, setRule] = useState<RepeatRule>({ kind: 'none', monthly: 'date', days: [], endMode: 'count', count: 8, until: '' });
   const [teamReg, setTeamReg] = useState({ on: false, min: 2, max: 6, mode: 'person' as 'person' | 'team' });
   const [full, setFull] = useState(editing || !!templateId || !!fromId);
+  const [retreatsOn] = useFeature('feature_retreats');
   const [retreatOn, setRetreatOn] = useState(false); const [retreat, setRetreat] = useState<Retreat>(emptyRetreat); const [retreatEnd, setRetreatEnd] = useState(''); const [galleryBusy, setGalleryBusy] = useState(false);
 
   // Prefill once from template, the gathering being edited, or the one being duplicated.
@@ -305,8 +307,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       </section>
 
       <section className="form-section">
-        <label className="guest-consent"><input type="checkbox" checked={retreatOn} onChange={e => { setRetreatOn(e.target.checked); if (e.target.checked && !retreatEnd && startDate) { const d = new Date(startDate); d.setDate(d.getDate() + 2); d.setHours(12, 0, 0, 0); setRetreatEnd(toLocalInput(d)); } }} /><span><strong>{t('retreat.toggle')}</strong><br /><small className="field-hint">{t('retreat.toggleHint')}</small></span></label>
-        {retreatOn && <RetreatEditor value={retreat} onChange={setRetreat} end={retreatEnd} setEnd={setRetreatEnd} priceCents={priceCents} onUpload={uploadGallery} uploading={galleryBusy} />}
+        {(retreatsOn || retreatOn) && <><label className="guest-consent"><input type="checkbox" checked={retreatOn} onChange={e => { setRetreatOn(e.target.checked); if (e.target.checked && !retreatEnd && startDate) { const d = new Date(startDate); d.setDate(d.getDate() + 2); d.setHours(12, 0, 0, 0); setRetreatEnd(toLocalInput(d)); } }} /><span><strong>{t('retreat.toggle')}</strong><br /><small className="field-hint">{t('retreat.toggleHint')}</small></span></label>
+        {retreatOn && <RetreatEditor value={retreat} onChange={setRetreat} end={retreatEnd} setEnd={setRetreatEnd} priceCents={priceCents} onUpload={uploadGallery} uploading={galleryBusy} />}</>}
         {retreatBad && tried && <p className="field-error">{t('retreat.errors.invalid_retreat_dates')}</p>}
       </section>
 

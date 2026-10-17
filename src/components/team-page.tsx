@@ -1,3 +1,4 @@
+import { Feature } from '@/lib/feature-flags';
 import { SharedProgress } from '@/components/my-progress';
 import { readChatLinks, tgShare } from '@/lib/chat-links';
 import { CropFileInput } from '@/components/image-crop';
@@ -134,7 +135,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
     {isLeader && <section className="panel leader-tools"><div className="section-heading"><h2>{t('teamSpace.leaderTools')}</h2><span className="chip">{t('roles.leader')}</span></div>
       <div className="leader-links">
         <Link to="/team/insights" className="tool-tile"><BarChart3 /><span>{t('insights.title')}</span><ChevronRight className="settings-chevron" /></Link>
-        <Link to="/team/map" className="tool-tile"><MapPinned /><span>{t('insights.mapLink')}</span><ChevronRight className="settings-chevron" /></Link>
+        <Feature flag="feature_team_map"><Link to="/team/map" className="tool-tile"><MapPinned /><span>{t('insights.mapLink')}</span><ChevronRight className="settings-chevron" /></Link></Feature>
       </div>
       <div className="tool-grid">
         {([['edit', Pencil, 'editTeam'], ['invite', Share2, 'invite'], ['members', UsersRound, 'members'], ['announce', Megaphone, 'announce'], ['subteams', Network, 'subteams']] as const).map(([key, Icon, label]) =>

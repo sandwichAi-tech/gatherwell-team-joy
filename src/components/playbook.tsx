@@ -1,3 +1,4 @@
+import { useFeature } from '@/lib/feature-flags';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Sparkles } from '@/components/icons';
@@ -19,7 +20,11 @@ function usePlaybookText() {
     : t('playbook.followup', { fast: c.params.fast, slow: c.params.slow });
 }
 
-export function PlaybookCard({ context, compact = false }: { context: 'brief' | 'insights' | 'create'; compact?: boolean }) {
+export function PlaybookCard(props: { context: 'brief' | 'insights' | 'create'; compact?: boolean }) {
+  const [on] = useFeature('feature_playbook');
+  return on ? <PlaybookCardInner {...props} /> : null;
+}
+function PlaybookCardInner({ context, compact = false }: { context: 'brief' | 'insights' | 'create'; compact?: boolean }) {
   const { t } = useTranslation(); const text = usePlaybookText();
   const { data } = useQuery({ queryKey: ['playbook', context], staleTime: 60 * 60_000,
     queryFn: async () => { const { data, error } = await supabase.rpc('playbook_cards' as never, { _context: context } as never); if (error) throw error; return (data ?? []) as unknown as Card[]; } });

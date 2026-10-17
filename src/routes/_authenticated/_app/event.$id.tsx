@@ -1,3 +1,4 @@
+import { Feature } from '@/lib/feature-flags';
 import { CommunityRequestsPanel } from '@/components/community-seats';
 import { readChatLinks } from '@/lib/chat-links';
 import { TextInvitePanel } from '@/components/text-invite';
@@ -160,7 +161,7 @@ function EventDetailPage() {
 
     <ResponsiveSheet open={sheet === 'share'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.share')} description={event.title}>
       <ShareKit title={event.title} startsAt={event.starts_at} timezone={event.timezone} place={placeOf(event) ?? (event.online_url ? t('teamSpace.online') : '')} link={link} coverPath={event.cover_url} coverStyle={event.cover_style} />
-      {isHost && event.visibility === 'public' && event.status === 'published' && <NetworkShareToggle eventId={event.id} />}
+      {isHost && event.visibility === 'public' && event.status === 'published' && <Feature flag="feature_network"><NetworkShareToggle eventId={event.id} /></Feature>}
       {manages && <RsvpSettingsPanel eventId={event.id} initial={{ questions: ((event as any).rsvp_questions ?? []), require_approval: !!(event as any).require_approval, visibility: event.visibility, invite_token: (event as any).invite_token ?? '', price_cents: (event as any).price_cents ?? null }} />}
       {isHost && <WaiverEventToggle eventId={event.id} teamId={event.team_id} value={!!(event as { requires_waiver?: boolean }).requires_waiver} />}
       {isHost && <MembersOnlyPicker table="events" id={event.id} teamId={event.team_id} />}
