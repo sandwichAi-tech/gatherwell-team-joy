@@ -80,3 +80,6 @@ ADDENDUM (Oct 2026, confirmed rules — additive, nothing above removed):
 - Every host gets their own space by default; a team is optional.
 - One app, one login, two homes: customers (role_intent 'guest') and hosts. Me has 'Start hosting' and 'Switch to attending'.
 - Signed-in screens never show sample or demo data. Show real numbers or hide the block.
+
+## Launch mode
+Launch mode: the app shows only what serves three jobs. Leader: see the organization's week and help hosts run what works. Host: fill gatherings and follow up. Guest: get there easily and feel welcome. Everything else stays behind a feature flag until users ask for it.

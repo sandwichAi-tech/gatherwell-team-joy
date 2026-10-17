@@ -2,6 +2,7 @@ import { TemplateEditor, type TemplateDraft } from '@/components/templates';
 import { CustomerHome } from '@/components/customer-home';
 import { FoundingCommitmentsCard } from '@/components/founding';
 import { CoachLaunchCard } from '@/components/coach-launch';
+import { Feature } from '@/lib/feature-flags';
 import { PlaybookCard } from '@/components/playbook';
 import { DailyBriefCard, FollowupsHomeCard, MemberPlanCard } from '@/components/smart';
 import { ActiveChallengeCard } from '@/components/challenges';
@@ -53,7 +54,7 @@ function SignOutButton() {
 
 function HomeTemplates() { const { workspace } = useAccount(); return workspace ? <FromYourLeader teamId={workspace.teamId} role={workspace.role} /> : null; }
 function MobileTeamSwitcher() { const { userId } = useGatherwell(); return <TeamSwitcher userId={userId} className="mobile-switcher" />; }
-function HomeFeatured() { const { workspace } = useAccount(); return workspace ? <><FeaturedFromNetwork teamId={workspace.teamId} /><TeamOffersStrip teamId={workspace.teamId} /></> : null; }
+function HomeFeatured() { const { workspace } = useAccount(); return workspace ? <><Feature flag="feature_network"><FeaturedFromNetwork teamId={workspace.teamId} /></Feature><TeamOffersStrip teamId={workspace.teamId} /></> : null; }
 
 /** Real team numbers only; each block hides when it has nothing to show. */
 function HomeRealData() {
@@ -99,7 +100,7 @@ export function HomePage() {
     <HomeFeatured />
     {!guest && <HomeTemplates />}
     {!guest && <LeaderInsightsLink />}
-    <section className="network-panel"><div className="circle-lines" aria-hidden="true" /><span className="eyebrow">{t('home.networkLabel')}</span><h2>{t('home.networkTitle')}</h2><p>{t('home.networkText')}</p><Button asChild className="peach-button"><Link to="/network">{t('home.networkAction')}<ArrowRight /></Link></Button></section>
+    <Feature flag="feature_network"><section className="network-panel"><div className="circle-lines" aria-hidden="true" /><span className="eyebrow">{t('home.networkLabel')}</span><h2>{t('home.networkTitle')}</h2><p>{t('home.networkText')}</p><Button asChild className="peach-button"><Link to="/network">{t('home.networkAction')}<ArrowRight /></Link></Button></section></Feature>
   </>;
 }
 function LeaderInsightsLink() {
@@ -107,5 +108,5 @@ function LeaderInsightsLink() {
   const { data: workspace } = useQuery(workspaceQuery(userId));
   if (workspace?.role !== 'leader') return null;
   return <section className="panel leader-insights-link"><div className="section-heading"><div><span className="eyebrow">{t('insights.eyebrow')}</span><h2>{t('insights.title')}</h2><p>{t('insights.homeText')}</p></div>
-    <div className="leader-links"><Button asChild><Link to="/team/insights">{t('insights.homeLink')}<ArrowRight /></Link></Button><Button asChild variant="secondary"><Link to="/team/map">{t('insights.mapLink')}</Link></Button></div></div></section>;
+    <div className="leader-links"><Button asChild><Link to="/team/insights">{t('insights.homeLink')}<ArrowRight /></Link></Button><Feature flag="feature_team_map"><Button asChild variant="secondary"><Link to="/team/map">{t('insights.mapLink')}</Link></Button></Feature></div></div></section>;
 }

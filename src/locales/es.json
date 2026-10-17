@@ -2322,7 +2322,13 @@
       "headline": "Titular {{v}}",
       "name": {
         "landing_headline": "Titular de la página principal",
-        "landing_testimonials": "Testimonios en la página principal"
+        "landing_testimonials": "Testimonios en la página principal",
+        "feature_learn": "Rutas, lecciones y recetas",
+        "feature_network": "Red y compartir con socios",
+        "feature_retreats": "Retiros, viajes y cursos",
+        "feature_badges_limited": "Insignias limitadas y mejores marcas",
+        "feature_playbook": "Tarjetas de estrategias",
+        "feature_team_map": "Mapa del equipo"
       }
     },
     "audit": {

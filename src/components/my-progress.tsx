@@ -1,3 +1,4 @@
+import { Feature } from '@/lib/feature-flags';
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -122,7 +123,7 @@ export function MyProgressPage() {
         <Button onClick={() => void addGoal()} disabled={!goal.trim()}><Plus />{t('progress.add')}</Button></div>
     </section>
 
-    <section className="progress-block"><h3 className="gw-group-title">{t('progress.bests')}</h3>
+    <Feature flag="feature_badges_limited"><section className="progress-block"><h3 className="gw-group-title">{t('progress.bests')}</h3>
       {bests.data?.length ? <ul className="progress-bests">{bests.data.map(b => <li key={b.id}>
         <div><strong>{b.label}</strong><small>{new Date(`${b.recorded_on}T12:00:00`).toLocaleDateString(lang, { month: 'short', day: 'numeric', year: 'numeric' })}</small></div>
         <span className="tabular-nums">{b.value} {t(`progress.unit.${b.unit}`)}</span>
@@ -139,7 +140,7 @@ export function MyProgressPage() {
           <Button onClick={() => void addBest()} disabled={!pb.label.trim() || !Number(pb.value)}><Plus />{t('progress.add')}</Button>
         </div>
       </div>
-    </section>
+    </section></Feature>
 
     {ws?.teamId && <section className="panel progress-share">
       <div><strong>{t('progress.shareTitle', { team: ws.name })}</strong><p className="gw-muted-line">{t('progress.shareText')}</p></div>

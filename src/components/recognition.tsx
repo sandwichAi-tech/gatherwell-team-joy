@@ -1,3 +1,4 @@
+import { useFeature } from '@/lib/feature-flags';
 import { EmptyState } from '@/components/launch-states';
 import { trackEvent } from '@/lib/analytics';
 import { ClaimGuard } from '@/components/smart';
@@ -367,6 +368,7 @@ export function BadgeWall({ teamId }: { teamId: string }) {
   const now = Date.now();
   const stillOpen = (b: Badge) => b.kind === 'event' || b.kind === 'founding' ? b.kind === 'event' : !b.available_until || new Date(b.available_until).getTime() > now;
   const earnedList = badges.filter(b => byId.has(b.id));
+  const [limitedOn] = useFeature('feature_badges_limited');
   const limitedList = badges.filter(b => !byId.has(b.id) && isLimited(b) && stillOpen(b));
   const lockedList = badges.filter(b => !byId.has(b.id) && !isLimited(b));
   const limitedIds = badges.filter(b => isLimited(b) && (byId.has(b.id) || stillOpen(b))).map(b => b.id);
@@ -408,7 +410,7 @@ export function BadgeWall({ teamId }: { teamId: string }) {
     {earned.length > 0 && <p className="gw-muted-line">{t('recognition.featureHint')}</p>}
     {!earned.length && <span className="chip sample-badge">{t('recognition.noneYet')}</span>}
     {section('earned', earnedList)}
-    {section('limited', limitedList)}
+    {limitedOn && section('limited', limitedList)}
     {section('locked', lockedList)}
   </div>;
 }
