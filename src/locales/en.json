@@ -643,7 +643,9 @@
     "publishToggle": "Published",
     "publishToggleText": "Hosts on your team can launch it.",
     "saved": "Template saved",
-    "saveAs": "Save as template"
+    "saveAs": "Save as template",
+    "startFrom": "Start from a blueprint",
+    "orScratch": "Or fill in your own below."
   },
   "eventDetail": {
     "eyebrow": "Event",

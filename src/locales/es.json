@@ -643,7 +643,9 @@
     "publishToggle": "Publicada",
     "publishToggleText": "Los anfitriones de tu equipo pueden lanzarla.",
     "saved": "Plantilla guardada",
-    "saveAs": "Guardar como plantilla"
+    "saveAs": "Guardar como plantilla",
+    "startFrom": "Empieza con un modelo",
+    "orScratch": "O completa el tuyo abajo."
   },
   "eventDetail": {
     "eyebrow": "Evento",
