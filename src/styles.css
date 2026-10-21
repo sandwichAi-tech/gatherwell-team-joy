@@ -1986,3 +1986,13 @@ a.gw-cat-chip:hover{background:#fff}
 .status-chip.is-failed{background:color-mix(in oklab,var(--destructive) 18%,transparent)}
 .status-chip.is-simulated,.status-chip.is-sim{background:color-mix(in oklab,var(--accent) 40%,transparent)}
 .status-chip.is-pending{background:color-mix(in oklab,var(--primary) 14%,transparent)}
+
+/* Compact leader insights card (Home) */
+.leader-insights-link { padding: 0; overflow: hidden; }
+.insights-compact { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 14px 16px; color: inherit; text-decoration: none; }
+.insights-compact-icon { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border-radius: 14px; background: var(--secondary); color: var(--primary); }
+.insights-compact-text { display: grid; gap: 2px; min-width: 0; flex: 1; }
+.insights-compact-text strong { font-size: 1rem; line-height: 1.2; }
+.insights-compact-text small { color: var(--muted-foreground); font-size: .85rem; line-height: 1.3; }
+.insights-compact-map { display: flex; align-items: center; min-height: 44px; padding: 0 16px 12px 72px; font-size: .875rem; font-weight: 600; color: var(--primary); }
+.team-insights-top { display: flex; }

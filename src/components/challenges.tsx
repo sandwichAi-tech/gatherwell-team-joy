@@ -103,10 +103,13 @@ export function ChallengeEditor({ draft, teamId, onClose }: { draft: Partial<Cha
   const [typeId, setTypeId] = useState<string | null>(null);
   const useType = (ct: (typeof types)[number]) => { setStarter(null); setTypeId(ct.id); setF({ ...f, title_en: ct.title_en, title_es: ct.title_es, description_en: ct.description_en ?? '', description_es: ct.description_es ?? '', daily_prompt_en: ct.daily_prompt_en ?? '', daily_prompt_es: ct.daily_prompt_es ?? '', ends_on: addDays(f.starts_on, ct.duration_days - 1) }); };
   const set = (k: keyof typeof empty) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
+  const L = (k: 'title' | 'description' | 'daily_prompt') => `${k}_${i18n.resolvedLanguage === 'es' ? 'es' : 'en'}` as keyof typeof empty;
   const ok = !!(f.title_en.trim() || f.title_es.trim()) && f.starts_on && f.ends_on >= f.starts_on;
   const save = async () => {
     setBusy(true);
-    const row = { title_en: f.title_en.trim(), title_es: f.title_es.trim(), description_en: f.description_en.trim() || null, description_es: f.description_es.trim() || null, daily_prompt_en: f.daily_prompt_en.trim() || null, daily_prompt_es: f.daily_prompt_es.trim() || null, starts_on: f.starts_on, ends_on: f.ends_on, cover_url: f.cover_url, cover_style: f.cover_style, ...(canSell || !paid ? { is_paid: paid && !!price, price_cents: paid && price ? Math.round(Number(price) * 100) : null } : {}) };
+    const both = (k: 'title' | 'description' | 'daily_prompt') => { const en = f[`${k}_en`].trim(), es = f[`${k}_es`].trim(); return { en: en || es, es: es || en }; };
+    const tt = both('title'), dd = both('description'), pp = both('daily_prompt');
+    const row = { title_en: tt.en, title_es: tt.es, description_en: dd.en || null, description_es: dd.es || null, daily_prompt_en: pp.en || null, daily_prompt_es: pp.es || null, starts_on: f.starts_on, ends_on: f.ends_on, cover_url: f.cover_url, cover_style: f.cover_style, ...(canSell || !paid ? { is_paid: paid && !!price, price_cents: paid && price ? Math.round(Number(price) * 100) : null } : {}) };
     const res = draft?.id ? await supabase.from('challenges').update(row).eq('id', draft.id) : await supabase.from('challenges').insert({ ...row, team_id: teamId, created_by: userId });
     setBusy(false);
     if (res.error) { toast.error(t(rpcErrorKey(res.error))); return; }
@@ -124,13 +127,13 @@ export function ChallengeEditor({ draft, teamId, onClose }: { draft: Partial<Cha
       {!draft?.id && <div className="form-field"><span className="field-label">{t('challenges.startFrom')}</span>
         <div className="starter-grid">{STARTERS.map(k => <button type="button" key={k} className={`choice-card ${starter === k ? 'is-selected' : ''}`} aria-pressed={starter === k} onClick={() => useStarter(k)}><strong>{t(`challenges.starter.${k}.title`)}</strong><small>{t('challenges.days', { count: STARTER_DAYS[k] })}</small></button>)}
           {types.map(ct => <button type="button" key={ct.id} className={`choice-card ${typeId === ct.id ? 'is-selected' : ''}`} aria-pressed={typeId === ct.id} onClick={() => useType(ct)}><strong>{i18n.resolvedLanguage === 'es' ? ct.title_es : ct.title_en}</strong><small>{t('challenges.days', { count: ct.duration_days })}</small></button>)}</div></div>}
-      <div className="bilingual">{field('ch-ten', `${t('templates.title')} · EN`, 'title_en')}{field('ch-tes', `${t('templates.title')} · ES`, 'title_es')}</div>
+      {field('ch-t', t('templates.title'), L('title'))}
       <div className="choice-pair">
         <div className="form-field"><label className="field-label" htmlFor="ch-start">{t('challenges.startsOn')}</label><Input id="ch-start" type="date" className="field-input" value={f.starts_on} onChange={e => { const len = Math.max(0, (new Date(f.ends_on).getTime() - new Date(f.starts_on).getTime()) / 86_400_000); setF({ ...f, starts_on: e.target.value, ends_on: e.target.value ? addDays(e.target.value, len) : f.ends_on }); }} /></div>
         <div className="form-field"><label className="field-label" htmlFor="ch-end">{t('challenges.endsOn')}</label><Input id="ch-end" type="date" min={f.starts_on} className="field-input" value={f.ends_on} onChange={set('ends_on')} /></div>
       </div>
-      <div className="bilingual">{field('ch-den', `${t('templates.description')} · EN`, 'description_en', true)}{field('ch-des', `${t('templates.description')} · ES`, 'description_es', true)}</div>
-      <div className="bilingual">{field('ch-pen', `${t('challenges.dailyPrompt')} · EN`, 'daily_prompt_en', true)}{field('ch-pes', `${t('challenges.dailyPrompt')} · ES`, 'daily_prompt_es', true)}</div>
+      {field('ch-d', t('templates.description'), L('description'), true)}
+      {field('ch-p', t('challenges.dailyPrompt'), L('daily_prompt'), true)}
       <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
         <GatheringCover path={f.cover_url} style={f.cover_style} title={f.title_en || f.title_es || 'C'} className="cover-preview" />
         <div className="cover-styles">{COVER_STYLES.map((bg, i) => <button key={i} type="button" className={`cover-swatch ${!f.cover_url && f.cover_style === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} aria-label={`${t('onboarding.cover')} ${i + 1}`} aria-pressed={!f.cover_url && f.cover_style === i} onClick={() => setF({ ...f, cover_url: null, cover_style: i })} />)}</div>
