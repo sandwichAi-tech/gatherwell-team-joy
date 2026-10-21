@@ -5,7 +5,7 @@
 - [x] Challenge form: one title/description in the creator's language (copied to the other)
 - [x] Hosts and leaders can edit their own liability waiver from Team
 - [ ] Reorganize Learn into Resources (guides, downloads, replays; recipes as a tag) and move customer challenges there — waits on your go-ahead, Learn is parked in launch mode
-- [ ] Show blueprints inside the New event form — next step
+- [x] Show blueprints inside the New event form
 
 # AD2 — Admin message retry
 - [x] Add confirmed, audited retries for failed messages without bypassing recipient preferences

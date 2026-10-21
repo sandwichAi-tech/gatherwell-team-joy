@@ -41,7 +41,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const editing = !!eventId;
   const { data: workspace } = useQuery(workspaceQuery(userId));
   const { data: planStatus } = useQuery(planStatusQuery(userId));
-  const { data: templates = [] } = useQuery({ ...templatesQuery(), enabled: !!templateId });
+  const { data: templates = [] } = useQuery({ ...templatesQuery(), enabled: !editing });
   const sourceId = eventId ?? fromId;
   const { data: source } = useQuery({ ...eventDetailQuery(sourceId ?? ''), enabled: !!sourceId });
   const mapsKey = useMapsKey();
@@ -218,6 +218,12 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         <h1>{t(editing ? 'gathering.editTitle' : full ? 'gathering.newTitle' : 'gathering.quickTitle')}</h1>
         {tpl && <span className="chip">{t('gathering.fromTemplate', { title: tpl.title })}</span>}
       </header>
+
+      {!editing && !templateId && !fromId && (() => { const list = templates.filter(x => x.is_published).slice(0, 8); return list.length > 0 && <section className="form-section blueprint-pick" aria-label={t('templates.startFrom')}>
+        <span className="field-label">{t('templates.startFrom')}</span>
+        <div className="chip-row">{list.map(x => <button key={x.id} type="button" className="preset-chip" onClick={() => void navigate({ to: '/gathering/new', search: { template: x.id } })}>{x.title}</button>)}</div>
+        <small className="field-hint">{t('templates.orScratch')}</small>
+      </section>; })()}
 
       {full && <section className="form-section">
         <GatheringCover path={coverPath} style={coverStyle} title={title || 'G'} className="form-cover" />
