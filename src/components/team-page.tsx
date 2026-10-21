@@ -17,6 +17,8 @@ import { useEffect, useMemo, useState } from 'react';
 import type { TFunction } from 'i18next';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { FromYourLeader, TemplatesSection } from '@/components/templates';
+import { WaiverEditorSheet } from '@/components/waiver';
+import { FileText } from '@/components/icons';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -96,6 +98,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
   const { data: team } = useQuery(teamDetailQuery(teamId));
   const { data: tree = [] } = useQuery(teamTreeQuery(teamId));
   const [sheet, setSheet] = useState<Sheet>(null);
+  const [waiverOpen, setWaiverOpen] = useState(false); const canHost = isLeader || workspace.role === 'host';
   const [draftBody, setDraftBody] = useState<string | null>(null);
   useEffect(() => { const pending = takePendingAnnouncement(); if (pending) { setDraftBody(pending); if (isLeader) setSheet('announce'); else void navigator.clipboard?.writeText(pending).catch(() => {}); } }, [isLeader]);
   useEffect(() => { if (isLeader && window.location.hash === '#announce') { setSheet('announce'); history.replaceState(null, '', window.location.pathname + window.location.search); } }, [isLeader]);
@@ -128,7 +131,10 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
     <ActiveChallengeCard />
     <GroupChatLink table="teams" id={teamId} links={readChatLinks(team as any)} canEdit={isLeader} />
     <DiscussionsPanel teamId={teamId} isLeader={isLeader} me={userId} />
+    {isLeader && <Link to="/team/insights" className="panel tool-tile team-insights-top"><BarChart3 /><span>{t('insights.title')}</span><ChevronRight className="settings-chevron" /></Link>}
     <ComingUp teamId={teamId} lang={lang} onOpen={setOpenEvent} />
+    {canHost && <section className="panel"><div className="section-heading"><h2>{t('waiver.hostTools')}</h2></div><button type="button" className="settings-row" onClick={() => setWaiverOpen(true)}><FileText className="settings-icon" /><span className="settings-label">{t('waiver.manage')}</span><ChevronRight className="settings-chevron" /></button></section>}
+    <WaiverEditorSheet teamId={teamId} open={waiverOpen} onClose={() => setWaiverOpen(false)} />
     <FromYourLeader teamId={teamId} role={workspace.role} />
     <ChallengesSection />
 

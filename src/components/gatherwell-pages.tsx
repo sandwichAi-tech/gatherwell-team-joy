@@ -1,3 +1,4 @@
+import { BarChart3 } from '@/components/icons';
 import { TemplateEditor, type TemplateDraft } from '@/components/templates';
 import { CustomerHome } from '@/components/customer-home';
 import { FoundingCommitmentsCard } from '@/components/founding';
@@ -107,6 +108,7 @@ function LeaderInsightsLink() {
   const { t } = useTranslation(); const { userId } = useGatherwell();
   const { data: workspace } = useQuery(workspaceQuery(userId));
   if (workspace?.role !== 'leader') return null;
-  return <section className="panel leader-insights-link"><div className="section-heading"><div><span className="eyebrow">{t('insights.eyebrow')}</span><h2>{t('insights.title')}</h2><p>{t('insights.homeText')}</p></div>
+  return <section className="panel leader-insights-link"><Link to="/team/insights" className="insights-compact"><span className="insights-compact-icon"><BarChart3 /></span><span className="insights-compact-text"><span className="eyebrow">{t('insights.eyebrow')}</span><strong>{t('insights.title')}</strong><small>{t('insights.homeShort')}</small></span><ArrowRight className="settings-chevron" /></Link>
+    <Feature flag="feature_team_map"><Link to="/team/map" className="insights-compact-map">{t('insights.mapLink')}</Link></Feature></section>;
     <div className="leader-links"><Button asChild><Link to="/team/insights">{t('insights.homeLink')}<ArrowRight /></Link></Button><Feature flag="feature_team_map"><Button asChild variant="secondary"><Link to="/team/map">{t('insights.mapLink')}</Link></Button></Feature></div></div></section>;
 }
