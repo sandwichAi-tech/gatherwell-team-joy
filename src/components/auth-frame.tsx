@@ -19,7 +19,7 @@ export function LanguageToggle() {
 
 export function Brand() {
   const { t } = useTranslation();
-  return <div className="brand auth-brand"><span className="brand-mark" aria-hidden="true">g</span><span>{t('brand')}</span></div>;
+  return <div className="brand auth-brand"><span className="wordmark" aria-hidden="true"><span className="wordmark-zohee">Zohee</span><span className="wordmark-well">Well</span></span><span className="sr-only">{t('brand')}</span></div>;
 }
 
 export function AuthFrame({ children, footer = true }: { children: ReactNode; footer?: boolean }) {
