@@ -75,16 +75,16 @@ export function renderEmail(template: string, lang: Lang, p: P, unsubscribeUrl: 
   const foot = lang === 'es' ? 'Recibes este correo por tu actividad en ZoheeWell.' : 'You are receiving this because of your activity on ZoheeWell.';
   const unsub = lang === 'es' ? 'Cambiar o dejar de recibir correos' : 'Change or stop these emails';
   const html = `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${esc(c.subject)}</title></head>
-<body style="margin:0;background:#F7F7F9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;color:#2F2340">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F7F7F9;padding:32px 16px"><tr><td align="center">
+<body style="margin:0;background:#F7F0F0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Noto Sans,Roboto,Helvetica,Arial,sans-serif;color:#35263F">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F7F0F0;padding:32px 16px"><tr><td align="center">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#FFFFFF;border:1px solid #E8E5EE;border-radius:16px;overflow:hidden">
-<tr><td style="height:4px;background:#2F2340;font-size:0;line-height:0">&nbsp;</td></tr>
-<tr><td style="padding:28px 32px 8px"><span style="display:inline-block;width:28px;height:28px;border-radius:8px;background:#2F2340;color:#F3C6A5;text-align:center;font-weight:600;font-size:20px;line-height:26px">g</span><span style="font-weight:700;font-size:16px;vertical-align:top;line-height:28px;margin-left:10px">ZoheeWell</span></td></tr>
-<tr><td style="padding:16px 32px 8px"><h1 style="margin:0;font-size:22px;line-height:1.3;font-weight:700;color:#2F2340">${esc(c.heading)}</h1></td></tr>
+<tr><td style="height:4px;background:#35263F;font-size:0;line-height:0">&nbsp;</td></tr>
+<tr><td style="padding:28px 32px 8px"><span style="display:inline-block;width:28px;height:28px;border-radius:8px;background:#35263F;color:#F3C6A5;text-align:center;font-weight:600;font-size:20px;line-height:26px">g</span><span style="font-weight:700;font-size:16px;vertical-align:top;line-height:28px;margin-left:10px">ZoheeWell</span></td></tr>
+<tr><td style="padding:16px 32px 8px"><h1 style="margin:0;font-size:22px;line-height:1.3;font-weight:700;color:#35263F">${esc(c.heading)}</h1></td></tr>
 <tr><td style="padding:8px 32px 8px;font-size:15px;line-height:1.65;color:#4A4255">${c.body.filter(Boolean).map(b => `<p style="margin:0 0 12px">${esc(b).replace(/\n/g, '<br>')}</p>`).join('')}</td></tr>
-${c.cta ? `<tr><td style="padding:8px 32px 28px"><a href="${esc(c.cta.url)}" style="display:inline-block;background:#2F2340;color:#FFFFFF;text-decoration:none;font-weight:600;font-size:15px;padding:14px 22px;border-radius:12px">${esc(c.cta.label)}</a></td></tr>` : '<tr><td style="padding:0 0 20px"></td></tr>'}
+${c.cta ? `<tr><td style="padding:8px 32px 28px"><a href="${esc(c.cta.url)}" style="display:inline-block;background:#35263F;color:#FFFFFF;text-decoration:none;font-weight:600;font-size:15px;padding:14px 22px;border-radius:12px">${esc(c.cta.label)}</a></td></tr>` : '<tr><td style="padding:0 0 20px"></td></tr>'}
 </table>
-<p style="max-width:520px;font-size:12px;line-height:1.6;color:#8A8296;margin:16px auto 0">${esc(foot)}${unsubscribeUrl ? ` <a href="${esc(unsubscribeUrl)}" style="color:#7A5FA8">${esc(unsub)}</a>` : ''}</p>
+<p style="max-width:520px;font-size:12px;line-height:1.6;color:#8A8296;margin:16px auto 0">${esc(foot)}${unsubscribeUrl ? ` <a href="${esc(unsubscribeUrl)}" style="color:#6A5277">${esc(unsub)}</a>` : ''}</p>
 </td></tr></table></body></html>`;
   const text = [c.heading, '', ...c.body.filter(Boolean), '', c.cta ? `${c.cta.label}: ${c.cta.url}` : '', '', foot, unsubscribeUrl ? `${unsub}: ${unsubscribeUrl}` : ''].join('\n').replace(/\n{3,}/g, '\n\n').trim();
   return { subject: c.subject, html, text };
