@@ -6,10 +6,11 @@ import { GwIcon } from '@/components/gw-icon';
 import { useQuery } from '@tanstack/react-query';
 import { featureFlagsQuery, track } from '@/lib/landing';
 import { applySavedLanguage, SPANISH_ENABLED } from '@/lib/i18n';
+import { BrandLogo } from '@/components/brand-logo';
 
 export function LandingLogo() {
   const { t } = useTranslation();
-  return <Link to="/" className="brand gw-landing-logo" aria-label={t('brand')}><span className="wordmark" aria-hidden="true"><span className="wordmark-zohee">Zohee</span><span className="wordmark-well">Well</span></span><span className="sr-only">{t('brand')}</span></Link>;
+  return <Link to="/" className="brand gw-landing-logo" aria-label={t('brand')}><BrandLogo /><span className="sr-only">{t('brand')}</span></Link>;
 }
 
 /** Sticky nav: transparent over the hero, frosted white with a hairline after 24px. */

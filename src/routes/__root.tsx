@@ -19,13 +19,14 @@ import { useTranslation } from "react-i18next";
 import i18n, { applySavedLanguage, isServerRenderedMarketing } from "@/lib/i18n";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ListSkeleton } from '@/components/launch-states';
+import { BrandLogo } from '@/components/brand-logo';
 
 function NotFoundComponent() {
   const { t } = useTranslation();
   return (
     <div className="missing-page">
       <div className="missing-inner">
-        <span className="brand"><span className="brand-mark" aria-hidden="true">g</span>{t('brand')}</span>
+        <span className="brand"><BrandLogo /><span className="sr-only">{t('brand')}</span></span>
         <h1 className="missing-number">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">{t("error.notFound")}</h2>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -97,9 +98,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "icon", href: "/favicon.png?v=zoheewell-logo", type: "image/png" },
       { rel: "manifest", href: "/manifest.webmanifest" },
-      { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
+      { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png?v=zoheewell-logo" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" },

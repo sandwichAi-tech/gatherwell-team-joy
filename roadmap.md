@@ -122,6 +122,7 @@
 - [x] U3: founding coaches (admin screen, shared clock, free Pro then $49 locked, badge, Discover featuring, commitments)
 
 # Beta readiness — October 22
+- [x] Install supplied ZoheeWell logos with light/dark variants and matching browser/home-screen icons
 - [x] 1. Finish ZoheeWell rebrand wording (headline, voice) + remove test event from public pages
 - [ ] 2. Real end-to-end test of the core loop with two test accounts: sign up → create event → share → guest RSVP → check-in → recap
 - [ ] 3. Fix everything step 2 finds (signed-in screens on phone + desktop)
