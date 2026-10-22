@@ -8,10 +8,14 @@ i18n.use(initReactI18next).init({
   lng: 'en', fallbackLng: 'en', interpolation: { escapeValue: false },
   react: { useSuspense: false },
 });
+/** Spanish is paused for launch; flip to true to bring the language switch back. */
+export const SPANISH_ENABLED = false;
+if (!SPANISH_ENABLED) i18n.on('languageChanged', l => { if (l !== 'en') void i18n.changeLanguage('en'); });
 export default i18n;
 
 /** Switch to the saved (or browser) language. Call only after the current page has hydrated. */
 export function applySavedLanguage() {
+  if (!SPANISH_ENABLED) return;
   const language = localStorage.getItem('gatherwell-language') ?? (navigator.language.toLowerCase().startsWith('es') ? 'es' : 'en');
   if (i18n.resolvedLanguage !== language) void i18n.changeLanguage(language);
 }

@@ -1,3 +1,4 @@
+import { SPANISH_ENABLED } from '@/lib/i18n';
 import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
 import { requestPushMoment } from '@/components/notifications';
@@ -195,8 +196,8 @@ function Onboarding() {
     </>}
     {step === 'place' && <>
       <h1 className="onboarding-title">{t('onboarding.placeTitle')}</h1>
-      <span className="field-label">{t('onboarding.language')}</span>
-      <div className="choice-pair">{(['en', 'es'] as const).map(lang => <button key={lang} type="button" className={`choice-card ${i18n.resolvedLanguage === lang ? 'is-selected' : ''}`} aria-pressed={i18n.resolvedLanguage === lang} onClick={() => setLanguage(lang)}><strong>{t(lang === 'en' ? 'me.english' : 'me.spanish')}</strong></button>)}</div>
+      {SPANISH_ENABLED && <><span className="field-label">{t('onboarding.language')}</span>
+      <div className="choice-pair">{(['en', 'es'] as const).map(lang => <button key={lang} type="button" className={`choice-card ${i18n.resolvedLanguage === lang ? 'is-selected' : ''}`} aria-pressed={i18n.resolvedLanguage === lang} onClick={() => setLanguage(lang)}><strong>{t(lang === 'en' ? 'me.english' : 'me.spanish')}</strong></button>)}</div></>}
       <label className="field-label" htmlFor="city">{t('onboarding.city')}</label>
       <Input id="city" autoComplete="address-level2" maxLength={80} className="field-input" placeholder={t('onboarding.cityPlaceholder')} value={city} onChange={e => setCity(e.target.value)} />
     </>}
