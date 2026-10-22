@@ -139,6 +139,6 @@ export function icsFor(l: Lesson, title: string, description: string) {
   const start = new Date(l.live_starts_at!); const end = new Date(start.getTime() + (l.duration_minutes || 60) * 60_000);
   const f = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
   const esc = (s: string) => s.replace(/[\\,;]/g, m => `\\${m}`).replace(/\n/g, '\\n');
-  const body = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Gatherwell//Learn//EN', 'BEGIN:VEVENT', `UID:${l.id}@gatherwell`, `DTSTAMP:${f(new Date())}`, `DTSTART:${f(start)}`, `DTEND:${f(end)}`, `SUMMARY:${esc(title)}`, `DESCRIPTION:${esc(description)}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+  const body = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//ZoheeWell//Learn//EN', 'BEGIN:VEVENT', `UID:${l.id}@gatherwell`, `DTSTAMP:${f(new Date())}`, `DTSTART:${f(start)}`, `DTEND:${f(end)}`, `SUMMARY:${esc(title)}`, `DESCRIPTION:${esc(description)}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([body], { type: 'text/calendar' })); a.download = 'gatherwell-live.ics'; a.click();
 }

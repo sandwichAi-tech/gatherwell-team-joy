@@ -55,7 +55,7 @@ export function googleCalendarUrl(e: When, details: string) {
 
 export function downloadIcs(e: When & { id: string }, details: string) {
   const esc = (s: string) => s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/[,;]/g, m => `\\${m}`);
-  const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Gatherwell//EN', 'BEGIN:VEVENT', `UID:${e.id}@gatherwell`, `DTSTAMP:${stamp(new Date())}`,
+  const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//ZoheeWell//EN', 'BEGIN:VEVENT', `UID:${e.id}@gatherwell`, `DTSTAMP:${stamp(new Date())}`,
     `DTSTART:${stamp(new Date(e.starts_at))}`, `DTEND:${stamp(endOf(e))}`, `SUMMARY:${esc(e.title)}`, `DESCRIPTION:${esc(details)}`, `LOCATION:${esc(placeText(e))}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
   const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
   const a = document.createElement('a'); a.href = url; a.download = 'gathering.ics'; a.click();

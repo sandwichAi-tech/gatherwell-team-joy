@@ -18,7 +18,7 @@ export const Route = createFileRoute('/api/public/calendar/$token')({
     if (!res.ok) return new Response('Unavailable', { status: 503 });
     const rows = (await res.json()) as Row[];
     const now = stamp(new Date().toISOString());
-    const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Gatherwell//Calendar//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:Gatherwell', 'REFRESH-INTERVAL;VALUE=DURATION:PT1H', 'X-PUBLISHED-TTL:PT1H'];
+    const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//ZoheeWell//Calendar//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:ZoheeWell', 'REFRESH-INTERVAL;VALUE=DURATION:PT1H', 'X-PUBLISHED-TTL:PT1H'];
     for (const r of rows) {
       const end = r.ends_at ?? new Date(new Date(r.starts_at).getTime() + 3600000).toISOString();
       lines.push('BEGIN:VEVENT', `UID:${r.id}@gatherwell`, `DTSTAMP:${now}`, `DTSTART:${stamp(r.starts_at)}`, `DTEND:${stamp(end)}`, fold(`SUMMARY:${esc(r.title)}`), `URL:${APP_URL}/event/${r.id}`, fold(`DESCRIPTION:${esc(`${APP_URL}/event/${r.id}`)}`), `STATUS:${r.status === 'cancelled' ? 'CANCELLED' : 'CONFIRMED'}`);

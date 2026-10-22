@@ -1,4 +1,4 @@
-/** Single place to change the Claude model used by the Gatherwell Assistant. */
+/** Single place to change the Claude model used by the ZoheeWell Assistant. */
 export const ASSISTANT_MODEL = 'claude-sonnet-4-5';
 export const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
 export const ANTHROPIC_VERSION = '2023-06-01';

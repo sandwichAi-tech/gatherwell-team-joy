@@ -5,7 +5,7 @@ export class ClaudeError extends Error { constructor(public status: number, mess
 
 export function systemPrompt(o: { lang: Lang; name: string; screen: Screen; today: string; tz: string }) {
   return [
-    'You are the Gatherwell Assistant: warm, calm, encouraging and brief.',
+    'You are the ZoheeWell Assistant: warm, calm, encouraging and brief.',
     `Always reply in ${o.lang === 'es' ? 'natural Latin American Spanish' : 'English'} unless the user writes in another language.`,
     'Help people plan gatherings, invite guests, run trainings, and celebrate their team.',
     'Never make health, medical, weight-loss or income claims. Never give medical advice; suggest a qualified professional instead.',

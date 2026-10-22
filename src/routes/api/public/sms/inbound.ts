@@ -24,8 +24,8 @@ export const Route = createFileRoute('/api/public/sms/inbound')({
         const result = (reply as { result?: string } | null)?.result;
         const spanish = /cancelar|ayuda|alto|baja|iniciar|s[ií]\b/i.test(body);
         if (result === 'help') return twiml(smsHelp(spanish ? 'es' : 'en'));
-        if (result === 'started') return twiml(spanish ? 'Gatherwell: volverás a recibir recordatorios. Responde STOP para no recibir más.' : 'Gatherwell: you will receive reminders again. Reply STOP to opt out.');
-        if (result === 'no_invite') return twiml(spanish ? 'Gatherwell: no encontramos una invitación reciente para este número. Responde STOP para no recibir más.' : "Gatherwell: we couldn't find a recent invite for this number. Reply STOP to opt out.");
+        if (result === 'started') return twiml(spanish ? 'ZoheeWell: volverás a recibir recordatorios. Responde STOP para no recibir más.' : 'ZoheeWell: you will receive reminders again. Reply STOP to opt out.');
+        if (result === 'no_invite') return twiml(spanish ? 'ZoheeWell: no encontramos una invitación reciente para este número. Responde STOP para no recibir más.' : "ZoheeWell: we couldn't find a recent invite for this number. Reply STOP to opt out.");
         return twiml(); // RSVP confirmations go out through the outbox; STOP confirmations come from the carrier
       },
     },

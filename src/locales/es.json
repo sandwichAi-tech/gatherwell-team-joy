@@ -1,5 +1,5 @@
 {
-  "brand": "Gatherwell",
+  "brand": "ZoheeWell",
   "feature_name_singular": "Círculo",
   "feature_name_plural": "Círculos",
   "nav": {
@@ -159,14 +159,14 @@
     "events": "Haz tiempo para reunirte con tu gente.",
     "team": "Un espacio para conectar y celebrar en equipo.",
     "learn": "Ideas nuevas y talleres para tu equipo.",
-    "me": "Tu perfil y preferencias de Gatherwell.",
-    "login": "Entra a Gatherwell, el lugar tranquilo para los eventos de tu equipo.",
-    "onboarding": "Configura tu perfil de Gatherwell.",
-    "join": "Únete a tu equipo en Gatherwell.",
-    "terms": "Términos de Gatherwell.",
-    "privacy": "Privacidad de Gatherwell.",
-    "event": "Un evento en Gatherwell.",
-    "unsubscribe": "Elige qué correos de Gatherwell quieres recibir."
+    "me": "Tu perfil y preferencias de ZoheeWell.",
+    "login": "Entra a ZoheeWell, el lugar tranquilo para los eventos de tu equipo.",
+    "onboarding": "Configura tu perfil de ZoheeWell.",
+    "join": "Únete a tu equipo en ZoheeWell.",
+    "terms": "Términos de ZoheeWell.",
+    "privacy": "Privacidad de ZoheeWell.",
+    "event": "Un evento en ZoheeWell.",
+    "unsubscribe": "Elige qué correos de ZoheeWell quieres recibir."
   },
   "stats": {
     "members": {
@@ -271,7 +271,7 @@
     "workspaceValue": "128 miembros · Plan Avanzado"
   },
   "auth": {
-    "title": "Te damos la bienvenida a Gatherwell",
+    "title": "Te damos la bienvenida a ZoheeWell",
     "subtitle": "Tu equipo, tus eventos, un solo lugar tranquilo.",
     "google": "Continuar con Google",
     "or": "o",
@@ -305,7 +305,7 @@
     "language": "Idioma",
     "city": "Ciudad",
     "cityPlaceholder": "Tu ciudad",
-    "roleTitle": "¿Qué te trae a Gatherwell?",
+    "roleTitle": "¿Qué te trae a ZoheeWell?",
     "guest": "Vengo a unirme a eventos",
     "guestText": "Encuentra eventos cerca de ti, guarda tus confirmaciones y únete al Círculo de un coach.",
     "leader": "Lidero un equipo",
@@ -526,7 +526,7 @@
       "heart": "Me encanta"
     },
     "inviteText": "Cualquier persona con este enlace puede unirse a {{team}}.",
-    "inviteMessage": "Únete conmigo a {{team}} en Gatherwell: {{link}}",
+    "inviteMessage": "Únete conmigo a {{team}} en ZoheeWell: {{link}}",
     "whatsapp": "WhatsApp",
     "sms": "Mensaje de texto",
     "qr": "Código QR",
@@ -883,7 +883,7 @@
   "guest": {
     "metaFallback": "Una reunión",
     "metaInvite": "Estás invitado. Confirma en segundos, sin crear cuenta.",
-    "hostYourOwn": "Organiza tu propia reunión en Gatherwell",
+    "hostYourOwn": "Organiza tu propia reunión en ZoheeWell",
     "hostedBy": "Organiza",
     "onlineHidden": "El enlace aparece después de confirmar.",
     "mapAlt": "Mapa del punto de evento",
@@ -1507,7 +1507,7 @@
     "all": "Darme de baja de todos los correos",
     "resubscribe": "Volver a recibir correos",
     "saved": "Guardado. Gracias.",
-    "doneAll": "Te diste de baja de todos los correos de Gatherwell.",
+    "doneAll": "Te diste de baja de todos los correos de ZoheeWell.",
     "invalid": "Este enlace ya no es válido.",
     "note": "Aún podrías recibir mensajes importantes sobre una reunión a la que confirmaste."
   },
@@ -1517,7 +1517,7 @@
     "subtitle": "Cada espacio de foto del producto. Cambia una imagen y se publica al instante.",
     "loading": "Cargando…",
     "denied": "Solo administradores",
-    "deniedBody": "Esta sección es para el equipo de Gatherwell.",
+    "deniedBody": "Esta sección es para el equipo de ZoheeWell.",
     "custom": "Tu foto",
     "temporary": "Foto temporal",
     "editHint": "Sube o cambia la foto, elige el punto focal y descríbela en ambos idiomas.",
@@ -1651,7 +1651,7 @@
     },
     "hostBand": {
       "label": "Para quienes organizan",
-      "title": "¿Tienes un grupo? Organízalo en Gatherwell.",
+      "title": "¿Tienes un grupo? Organízalo en ZoheeWell.",
       "body": "Club de corredores, fit camp o caminata dominical. Crea una página, comparte el enlace y mira quién viene.",
       "cta": "Organizar una",
       "phoneTitle": "Lista de invitados",
@@ -1685,7 +1685,7 @@
       "terms": "Términos",
       "privacy": "Privacidad",
       "credits": "Créditos fotográficos",
-      "copyright": "© 2026 Gatherwell"
+      "copyright": "© 2026 ZoheeWell"
     },
     "sticky": {
       "find": "Encontrar una reunión"
@@ -1700,26 +1700,26 @@
       "dateLabel": "Cuándo",
       "count_one": "{{count}} reunión",
       "count_other": "{{count}} reuniones",
-      "back": "Volver a Gatherwell"
+      "back": "Volver a ZoheeWell"
     },
     "credits": {
       "title": "Créditos fotográficos",
-      "sub": "Las fotos que usamos en Gatherwell y quienes las tomaron.",
+      "sub": "Las fotos que usamos en ZoheeWell y quienes las tomaron.",
       "slot": "Ubicación",
       "credit": "Crédito",
       "none": "Sin crédito"
     },
     "meta": {
-      "homeTitle": "Gatherwell · Reuniones de bienestar cerca de ti",
+      "homeTitle": "ZoheeWell · Reuniones de bienestar cerca de ti",
       "home": "Encuentra clubes de corredores, fit camps, yoga, baños de sonido y caminatas cerca de ti. Confirma con un toque y solo llega.",
-      "discoverTitle": "Descubrir reuniones · Gatherwell",
+      "discoverTitle": "Descubrir reuniones · ZoheeWell",
       "discover": "Explora próximos clubes de corredores, fit camps, yoga, baños de sonido y caminatas cerca de ti, y confirma con un toque.",
-      "creditsTitle": "Créditos fotográficos · Gatherwell",
-      "credits": "Quienes tomaron las fotos de Gatherwell."
+      "creditsTitle": "Créditos fotográficos · ZoheeWell",
+      "credits": "Quienes tomaron las fotos de ZoheeWell."
     }
   },
   "assistant": {
-    "title": "Asistente Gatherwell",
+    "title": "Asistente ZoheeWell",
     "greeting": "Hola, {{name}}. ¿En qué te puedo ayudar?",
     "there": "",
     "previewMode": "Modo de vista previa",
@@ -1786,7 +1786,7 @@
     "save": "Guardar",
     "cancel": "Cancelar",
     "claims": {
-      "note": "Este texto podría sonar a promesa de salud o de dinero. En Gatherwell hablamos de la experiencia.",
+      "note": "Este texto podría sonar a promesa de salud o de dinero. En ZoheeWell hablamos de la experiencia.",
       "use": "Usar el texto sugerido",
       "thinking": "Buscando un texto más amable…",
       "blocked": "Quita las promesas de salud, peso o dinero antes de enviar."
@@ -2092,10 +2092,10 @@
     "menu": "Consola de administración",
     "eyebrow": "Plataforma",
     "title": "Consola de administración",
-    "subtitle": "Equipos, personas, moderación y ajustes de todo Gatherwell.",
+    "subtitle": "Equipos, personas, moderación y ajustes de todo ZoheeWell.",
     "loading": "Cargando…",
     "deniedTitle": "Esta página no está disponible",
-    "deniedBody": "La consola de administración es solo para el equipo de Gatherwell. Si crees que deberías tener acceso, escribe a soporte.",
+    "deniedBody": "La consola de administración es solo para el equipo de ZoheeWell. Si crees que deberías tener acceso, escribe a soporte.",
     "backHome": "Volver a Inicio",
     "empty": "Todavía no hay nada aquí.",
     "saved": "Guardado.",
@@ -2108,7 +2108,7 @@
     "actions": "Acciones",
     "keep": "Volver",
     "pausedTitle": "Este equipo está en pausa",
-    "pausedBody": "Por ahora no se pueden crear reuniones nuevas. El equipo de soporte de Gatherwell se pondrá en contacto.",
+    "pausedBody": "Por ahora no se pueden crear reuniones nuevas. El equipo de soporte de ZoheeWell se pondrá en contacto.",
     "tabs": {
       "overview": "Resumen",
       "teams": "Equipos",
@@ -2492,7 +2492,7 @@
         "sections": [
           {
             "h": "Quiénes somos",
-            "p": "Gatherwell es un espacio para que los equipos planeen y organicen reuniones juntos. Al crear una cuenta, aceptas estos términos."
+            "p": "ZoheeWell es un espacio para que los equipos planeen y organicen reuniones juntos. Al crear una cuenta, aceptas estos términos."
           },
           {
             "h": "Tu cuenta",
@@ -2566,7 +2566,7 @@
           },
           {
             "h": "Boletos",
-            "p": "Si vendes boletos, eres responsable de los reembolsos cuando canceles. Gatherwell cobra una pequeña comisión según tu plan."
+            "p": "Si vendes boletos, eres responsable de los reembolsos cuando canceles. ZoheeWell cobra una pequeña comisión según tu plan."
           },
           {
             "h": "Seguridad",
@@ -2704,7 +2704,7 @@
     "edit": "Editar oferta",
     "view": "Ver oferta",
     "hostsOnly": "Las ofertas son para anfitriones y líderes.",
-    "empty": "Aún no tienes ofertas. Crea un Círculo Gatherwell, un curso o una descarga.",
+    "empty": "Aún no tienes ofertas. Crea un Círculo ZoheeWell, un curso o una descarga.",
     "untitled": "Oferta sin título",
     "type": "Tipo",
     "kind": {
@@ -2857,7 +2857,7 @@
     "codeNotFound": "Código no encontrado o ya usado.",
     "waiting": "Sin usar",
     "inviteTitle": "Te invitaron",
-    "inviteMeta": "Alguien te invitó a una reunión en Gatherwell.",
+    "inviteMeta": "Alguien te invitó a una reunión en ZoheeWell.",
     "inviteLoading": "Buscando reuniones cerca de ti..."
   },
   "playbook": {
@@ -2866,7 +2866,7 @@
     "length": "Las reuniones de {{cat}} con mejores resultados duran entre {{min}} y {{max}} minutos.",
     "followup": "Los equipos que dan seguimiento en las primeras 24 horas conservan más personas nuevas: regresa el {{fast}}%, frente al {{slow}}%.",
     "sampleNote": "Consejo de ejemplo. Los patrones reales aparecen cuando la red tenga al menos 20 reuniones de 5 equipos.",
-    "realNote": "Basado en actividad anónima de los equipos de Gatherwell. Nunca con nombres.",
+    "realNote": "Basado en actividad anónima de los equipos de ZoheeWell. Nunca con nombres.",
     "benchTitle": "Tu equipo y la red",
     "benchText": "Últimos 90 días, solo actividad.",
     "bench": {
@@ -3248,12 +3248,12 @@
     "finalTitle": "Tu próxima reunión empieza aquí.",
     "finalBody": "Haz que llegar sea fácil. Dales un motivo para volver.",
     "studios": {
-      "meta": "Para estudios · Gatherwell",
+      "meta": "Para estudios · ZoheeWell",
       "metaDesc": "Conserva tu software de reservas y suma una comunidad más allá de tus cuatro paredes: Círculos, reuniones especiales y páginas bilingües.",
       "label": "Para estudios y espacios pequeños",
-      "title": "Tu software de reservas atiende la recepción. Gatherwell construye la comunidad más allá de tus cuatro paredes.",
+      "title": "Tu software de reservas atiende la recepción. ZoheeWell construye la comunidad más allá de tus cuatro paredes.",
       "sub": "Conserva las herramientas que ya usas. Suma una comunidad que tu gente visita cada semana, en inglés y español.",
-      "fromHosts": "¿Tienes un estudio o un espacio pequeño? Mira cómo te queda Gatherwell",
+      "fromHosts": "¿Tienes un estudio o un espacio pequeño? Mira cómo te queda ZoheeWell",
       "cards": [
         {
           "title": "Conserva tu sistema de reservas",
@@ -3280,8 +3280,8 @@
       "pricingTitle": "Planes simples que crecen con tu comunidad.",
       "startCta": "Empieza en menos de una hora"
     },
-    "hostsMeta": "Para anfitriones · Gatherwell",
-    "pricingMeta": "Precios · Gatherwell",
+    "hostsMeta": "Para anfitriones · ZoheeWell",
+    "pricingMeta": "Precios · ZoheeWell",
     "whoLabel": "Para quién es",
     "whoTitle": "Hecho para la vida real",
     "whoSub": "Empieces donde empieces, hay una reunión para ti.",
@@ -3590,7 +3590,7 @@
     "keepGoing": "Seguir",
     "steps": {
       "profile": "Completa tu perfil",
-      "offer": "Crea un Círculo Gatherwell o una reunión de pago",
+      "offer": "Crea un Círculo ZoheeWell o una reunión de pago",
       "shared": "Comparte tu enlace",
       "first_rsvp": "Recibe tu primera confirmación",
       "first_paid": "Recibe a tu primer miembro de pago",
@@ -3631,7 +3631,7 @@
       },
       "earn_100": {
         "title": "$100 ganados",
-        "text": "Tus primeros $100 en Gatherwell."
+        "text": "Tus primeros $100 en ZoheeWell."
       },
       "earn_1000": {
         "title": "$1,000 ganados",
@@ -3650,7 +3650,7 @@
   "coachTrust": {
     "verified": "Verificado",
     "identity": "Identidad confirmada",
-    "since": "Organiza en Gatherwell desde",
+    "since": "Organiza en ZoheeWell desde",
     "hosted_one": "evento organizado",
     "hosted_other": "eventos organizados",
     "regulars_one": "habitual",
@@ -3666,7 +3666,7 @@
       "certification": "Certificación",
       "license": "Licencia"
     },
-    "checkedNote": "Revisado por el equipo de Gatherwell. Los documentos son privados.",
+    "checkedNote": "Revisado por el equipo de ZoheeWell. Los documentos son privados.",
     "reviews": "Reseñas",
     "writeReview": "Escribir una reseña",
     "editReview": "Editar tu reseña",
@@ -3836,7 +3836,7 @@
     "nonCash": "Tu tarifa de fundador es un descuento en el plan, no dinero, y nunca depende de traer a otros coaches.",
     "commitTitle": "Tus compromisos como fundador",
     "commitIntro": "Te invitamos a ser Coach fundador. Esto es lo que acordamos juntos.",
-    "commitDone": "Gracias por construir Gatherwell con nosotros. Esto es lo que acordaste.",
+    "commitDone": "Gracias por construir ZoheeWell con nosotros. Esto es lo que acordaste.",
     "accept": "Acepto y me uno",
     "accepted": "Te uniste",
     "welcome": "Bienvenido, Coach fundador",
@@ -3894,7 +3894,7 @@
     }
   },
   "roi": {
-    "line": "Ganaste {{earned}} con Gatherwell este mes. Comisiones de la plataforma: {{fees}}.",
+    "line": "Ganaste {{earned}} con ZoheeWell este mes. Comisiones de la plataforma: {{fees}}.",
     "earned": "Ganancias",
     "fees": "Comisiones",
     "pro": "Con Pro habrías ahorrado {{amount}} este mes, e incluye recordatorios por mensaje de texto.",
@@ -3922,7 +3922,7 @@
     "removePhoto": "Quitar foto",
     "photoAlt": "{{name}}, foto {{n}}",
     "bookingUrl": "Enlace a tu página de reservas",
-    "bookingHint": "Abre tu propia página de reservas en otra pestaña. Gatherwell nunca funciona como recepción.",
+    "bookingHint": "Abre tu propia página de reservas en otra pestaña. ZoheeWell nunca funciona como recepción.",
     "openingNotes": "Notas de horario",
     "openingPlaceholder": "Abierto entre semana por la mañana. Estacionamiento atrás.",
     "schedule": "Horario semanal",
@@ -3936,7 +3936,7 @@
     "dropin": "Precio por visita (USD)",
     "simpleHint": "Cada reunión que hagas aquí conserva sus lugares, lista de espera, exención, acceso para miembros y registro con QR.",
     "storeUrl": "Enlace a nuestra tienda (opcional)",
-    "storeHint": "Lleva a tu propia tienda externa. Nada se vende a través de Gatherwell.",
+    "storeHint": "Lleva a tu propia tienda externa. Nada se vende a través de ZoheeWell.",
     "linkGatherings": "Reuniones en este lugar",
     "noGatherings": "Crea una próxima reunión y luego vincúlala aquí.",
     "save": "Guardar lugar",
@@ -3966,7 +3966,7 @@
     "map": "Mapa",
     "mapSoon": "Pronto tendrás un mapa interactivo",
     "directions": "Cómo llegar",
-    "fine": "Gatherwell ayuda a la gente a encontrar este espacio y reunirse ahí. No vende productos ni funciona como recepción de este lugar.",
+    "fine": "ZoheeWell ayuda a la gente a encontrar este espacio y reunirse ahí. No vende productos ni funciona como recepción de este lugar.",
     "hasSpace": "Con espacio",
     "spacesTitle": "Lugares con espacio",
     "noSpaces": "Aún no hay espacios publicados.",
@@ -4131,7 +4131,7 @@
     "membersOnly": "Solo miembros",
     "past": "Anteriores",
     "again": "Volver a ir",
-    "modeGroup": "Cómo usas Gatherwell",
+    "modeGroup": "Cómo usas ZoheeWell",
     "startHosting": "Empezar a organizar",
     "switchAttending": "Cambiar a asistir"
   },

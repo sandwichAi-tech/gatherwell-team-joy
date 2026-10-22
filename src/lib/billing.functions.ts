@@ -45,7 +45,7 @@ export const startPlanCheckout = createServerFn({ method: 'POST' })
     const meta = { kind: 'plan', user_id: context.userId, plan: data.plan, period: 'month', ...(founding ? { founding_rate: String(founding.rate_cents) } : {}) };
     const s = await stripe<{ url: string }>('checkout/sessions', {
       mode: 'subscription', customer, locale: data.lang === 'es' ? 'es-419' : 'en',
-      line_items: [{ quantity: 1, price_data: { currency: 'usd', unit_amount: price, recurring: { interval: 'month' }, product_data: { name: founding ? 'Gatherwell Pro (Founding)' : data.plan === 'growth' ? 'Gatherwell Advanced' : 'Gatherwell Pro' } } }],
+      line_items: [{ quantity: 1, price_data: { currency: 'usd', unit_amount: price, recurring: { interval: 'month' }, product_data: { name: founding ? 'ZoheeWell Pro (Founding)' : data.plan === 'growth' ? 'ZoheeWell Advanced' : 'ZoheeWell Pro' } } }],
       subscription_data: { metadata: meta }, metadata: meta,
       success_url: `${data.origin}/plan?checkout=done`, cancel_url: `${data.origin}/plan`,
     });
@@ -64,7 +64,7 @@ export const startLicenseCheckout = createServerFn({ method: 'POST' })
     const meta = { kind: 'license', user_id: context.userId, team_id: data.teamId, tier: data.tier };
     const s = await stripe<{ url: string }>('checkout/sessions', {
       mode: 'subscription', customer, locale: data.lang === 'es' ? 'es-419' : 'en',
-      line_items: [{ quantity: 1, price_data: { currency: 'usd', unit_amount: LICENSE_PRICES[data.tier].cents, recurring: { interval: 'month' }, product_data: { name: `Gatherwell ${data.tier === 'team25' ? 'Team 25' : 'Team 100'}` } } }],
+      line_items: [{ quantity: 1, price_data: { currency: 'usd', unit_amount: LICENSE_PRICES[data.tier].cents, recurring: { interval: 'month' }, product_data: { name: `ZoheeWell ${data.tier === 'team25' ? 'Team 25' : 'Team 100'}` } } }],
       subscription_data: { metadata: meta }, metadata: meta,
       success_url: `${data.origin}/plan/seats?checkout=done`, cancel_url: `${data.origin}/plan/seats`,
     });

@@ -12,15 +12,15 @@ export function renderErrorPage(language = 'en'): string {
     <title>${escape(copy.title)}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-      body { font: 15px/1.55 Inter, system-ui, sans-serif; background: #F7F7F9; color: #1C1726; display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 1.5rem; }
+      body { font: 15px/1.55 Noto Sans, system-ui, sans-serif; background: #F7F0F0; color: #35263F; display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 1.5rem; }
       .card { max-width: 28rem; width: 100%; text-align: center; padding: 2rem; }
       h1 { font-size: 1.25rem; margin: 0 0 0.5rem; }
       p { color: #4A4458; margin: 0 0 1.5rem; }
       .actions { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
       a, button { min-height:48px; box-sizing:border-box; display:inline-flex; align-items:center; padding: 0.5rem 1rem; border-radius: 12px; font: inherit; cursor: pointer; text-decoration: none; border: 1px solid transparent; }
-      :focus-visible { outline:2px solid #7A5FA8; outline-offset:3px; }
-      .primary { background: #2F2340; color: #fff; }
-      .secondary { background: #fff; color: #1C1726; border-color: #E8E6EE; }
+      :focus-visible { outline:2px solid #6A5277; outline-offset:3px; }
+      .primary { background: #35263F; color: #fff; }
+      .secondary { background: #fff; color: #35263F; border-color: #E8E3EC; }
     </style>
   </head>
   <body>
