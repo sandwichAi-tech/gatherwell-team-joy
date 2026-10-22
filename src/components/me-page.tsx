@@ -1,3 +1,4 @@
+import { SPANISH_ENABLED } from '@/lib/i18n';
 import { useIsFounding } from '@/components/founding';
 import { useIsVerified } from '@/components/coach-trust';
 import { CropFileInput } from '@/components/image-crop';
@@ -150,7 +151,7 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
       </fieldset>
       {SPANISH_ENABLED && <fieldset className="edit-section"><legend>{t('me.language')}</legend>
         <div className="choice-pair">{(['en', 'es'] as const).map(lang => <button key={lang} type="button" className={`choice-card ${form.language === lang ? 'is-selected' : ''}`} aria-pressed={form.language === lang} onClick={() => setForm({ ...form, language: lang })}><strong>{t(lang === 'en' ? 'me.english' : 'me.spanish')}</strong></button>)}</div>
-      </fieldset>
+      </fieldset>}
     </div>
   </ResponsiveSheet>;
 }

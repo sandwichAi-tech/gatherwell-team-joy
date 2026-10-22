@@ -5,7 +5,7 @@ import { LanguageToggle, setLanguage } from '@/components/auth-frame';
 import { GwIcon } from '@/components/gw-icon';
 import { useQuery } from '@tanstack/react-query';
 import { featureFlagsQuery, track } from '@/lib/landing';
-import { applySavedLanguage } from '@/lib/i18n';
+import { applySavedLanguage, SPANISH_ENABLED } from '@/lib/i18n';
 
 export function LandingLogo() {
   const { t } = useTranslation();

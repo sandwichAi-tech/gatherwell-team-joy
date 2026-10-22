@@ -1,3 +1,4 @@
+import { SPANISH_ENABLED } from '@/lib/i18n';
 import { toast } from 'sonner';
 import { trackEvent } from '@/lib/analytics';
 import { requestPushMoment } from '@/components/notifications';

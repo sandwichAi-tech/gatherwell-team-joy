@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { ClientOnly, Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import i18n from '@/lib/i18n';
+import i18n, { SPANISH_ENABLED } from '@/lib/i18n';
 import { ListSkeleton } from '@/components/launch-states';
 
 export function setLanguage(language: 'en' | 'es') {
