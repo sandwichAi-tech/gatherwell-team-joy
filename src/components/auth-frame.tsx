@@ -3,6 +3,7 @@ import { ClientOnly, Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import i18n, { SPANISH_ENABLED } from '@/lib/i18n';
 import { ListSkeleton } from '@/components/launch-states';
+import { BrandLogo } from '@/components/brand-logo';
 
 export function setLanguage(language: 'en' | 'es') {
   void i18n.changeLanguage(language);
@@ -19,7 +20,7 @@ export function LanguageToggle() {
 
 export function Brand() {
   const { t } = useTranslation();
-  return <div className="brand auth-brand"><span className="wordmark" aria-hidden="true"><span className="wordmark-zohee">Zohee</span><span className="wordmark-well">Well</span></span><span className="sr-only">{t('brand')}</span></div>;
+  return <div className="brand auth-brand"><BrandLogo /><span className="sr-only">{t('brand')}</span></div>;
 }
 
 export function AuthFrame({ children, footer = true }: { children: ReactNode; footer?: boolean }) {
