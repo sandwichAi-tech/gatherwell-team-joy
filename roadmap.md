@@ -122,11 +122,11 @@
 - [x] U3: founding coaches (admin screen, shared clock, free Pro then $49 locked, badge, Discover featuring, commitments)
 
 # Beta readiness — October 22
-- [ ] 1. Finish ZoheeWell rebrand wording (headline, voice) + remove test event from public pages
+- [x] 1. Finish ZoheeWell rebrand wording (headline, voice) + remove test event from public pages
 - [ ] 2. Real end-to-end test of the core loop with two test accounts: sign up → create event → share → guest RSVP → check-in → recap
 - [ ] 3. Fix everything step 2 finds (signed-in screens on phone + desktop)
 - [ ] 4. Add /help and /safety pages + in-app "Report a problem / feedback" button for beta testers
-- [ ] 5. Turn on real email (needed so testers get invites/reminders) — needs your email provider choice
+- [ ] 5. Turn on real email — already wired (simulated); waits on your email domain later
 - [ ] 6. Beta invite gate: invite-code signups + beta banner
 - [ ] 7. Load speed on phones (first screen under 2s)
 - [ ] 8. Nick's notes: Learn → Resources, customer challenges, coach templates in picker
