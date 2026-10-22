@@ -891,7 +891,7 @@ ul.order-list li{grid-template-columns:minmax(0,1fr) auto}
 }
 @media (max-width:479px){.gw-nav-mobile .segmented{display:none}}
 
-/* ===== Gatherwell Assistant ===== */
+/* ===== ZoheeWell Assistant ===== */
 .as-drawer{height:85dvh;max-height:85dvh}
 .as-panel{width:420px!important;max-width:100vw!important;padding:0!important;display:flex;flex-direction:column;background:var(--background)}
 .as-panel>button[class*="absolute"]{display:none}

@@ -5,7 +5,7 @@ import {
 } from '@phosphor-icons/react';
 import { SealCheck, ForkKnife, Storefront } from '@phosphor-icons/react';
 
-/** Every icon in Gatherwell renders through GwIcon so weight, size and color stay consistent. */
+/** Every icon in ZoheeWell renders through GwIcon so weight, size and color stay consistent. */
 const REGISTRY = {
   PersonSimpleTaiChi,
   AtSign: At,

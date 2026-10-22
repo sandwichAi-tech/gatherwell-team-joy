@@ -58,7 +58,7 @@ export async function downloadRecognitionCard(o: { eyebrow: string; title: strin
   // wordmark
   x.fillStyle = '#2F2340'; x.beginPath(); x.roundRect(96, 120, 88, 88, 22); x.fill();
   x.fillStyle = '#F3C6A5'; x.font = '600 66px Inter, sans-serif'; x.textAlign = 'center'; x.fillText('g', 140, 186);
-  x.textAlign = 'left'; x.fillStyle = '#2F2340'; x.font = '700 42px Inter, sans-serif'; x.fillText('Gatherwell', 212, 180);
+  x.textAlign = 'left'; x.fillStyle = '#2F2340'; x.font = '700 42px Inter, sans-serif'; x.fillText('ZoheeWell', 212, 180);
   // medallion
   const tc = TIER_COLORS[o.tier];
   x.fillStyle = '#FFFFFF'; x.beginPath(); x.arc(540, 760, 250, 0, Math.PI * 2); x.fill();

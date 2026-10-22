@@ -5,8 +5,8 @@ import { sendWebPush } from './webpush.server';
 type Row = { id: string; channel: string; recipient: string; language: string; template: string; kind: string; payload: Record<string, unknown>; user_id: string | null; attempts: number; skip_reason: string | null; unsub_token: string | null };
 type Result = { status: 'sent' | 'simulated' | 'failed' | 'skipped'; providerId?: string | null; error?: string | null };
 
-const RESEND_FROM = 'Gatherwell <hello@mail.yourdomain.com>';
-const MAILGUN_FROM = 'Your Team on Gatherwell <team@team.yourdomain.com>';
+const RESEND_FROM = 'ZoheeWell <hello@mail.yourdomain.com>';
+const MAILGUN_FROM = 'Your Team on ZoheeWell <team@team.yourdomain.com>';
 
 async function sendEmail(row: Row): Promise<Result> {
   const lang = row.language === 'es' ? 'es' : 'en';

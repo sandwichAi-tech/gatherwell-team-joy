@@ -152,7 +152,7 @@ async function storyCard(name: string, title: string, days: number, line: string
   const g = x.createLinearGradient(0, 0, 1080, 1920); g.addColorStop(0, '#2F2340'); g.addColorStop(1, '#7A5FA8'); x.fillStyle = g; x.fillRect(0, 0, 1080, 1920);
   x.strokeStyle = 'rgba(255,255,255,0.08)'; x.lineWidth = 2; for (let r = 220; r < 1400; r += 140) { x.beginPath(); x.arc(980, 260, r, 0, Math.PI * 2); x.stroke(); }
   x.fillStyle = '#F3C6A5'; x.fillRect(96, 140, 96, 96); x.fillStyle = '#2F2340'; x.font = '600 72px Inter, sans-serif'; x.textAlign = 'center'; x.fillText('g', 144, 212);
-  x.textAlign = 'left'; x.fillStyle = '#FFFFFF'; x.font = '700 44px Inter, sans-serif'; x.fillText('Gatherwell', 224, 206);
+  x.textAlign = 'left'; x.fillStyle = '#FFFFFF'; x.font = '700 44px Inter, sans-serif'; x.fillText('ZoheeWell', 224, 206);
   x.fillStyle = '#D2CADA'; x.font = '600 36px Inter, sans-serif'; x.fillText(line.toUpperCase(), 96, 880);
   x.fillStyle = '#FFFFFF'; x.font = '700 96px Inter, sans-serif';
   const words = title.split(' '); let row = '', y = 1000;
