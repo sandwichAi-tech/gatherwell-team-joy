@@ -1,13 +1,13 @@
 {
   "id": "/",
-  "name": "Gatherwell",
-  "short_name": "Gatherwell",
+  "name": "ZoheeWell",
+  "short_name": "ZoheeWell",
   "lang": "en",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#F7F7F9",
-  "theme_color": "#F7F7F9",
+  "background_color": "#F7F0F0",
+  "theme_color": "#F7F0F0",
   "icons": [
     {
       "src": "/icons/icon-192.png",
