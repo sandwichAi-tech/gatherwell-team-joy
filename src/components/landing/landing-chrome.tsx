@@ -17,6 +17,7 @@ export function LandingLogo() {
 function NavLanguage() {
   const { t, i18n } = useTranslation();
   const cur = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
+  if (!SPANISH_ENABLED) return null;
   return <div className="gw-nav-lang" role="group" aria-label={t('me.language')}>
     {(['en', 'es'] as const).map((l, i) => <span key={l} className="gw-nav-lang-item">{i > 0 && <span aria-hidden="true" className="gw-nav-lang-dot">·</span>}<button type="button" aria-pressed={cur === l} aria-label={t(l === 'en' ? 'me.english' : 'me.spanish')} onClick={() => setLanguage(l)}>{l.toUpperCase()}</button></span>)}
   </div>;

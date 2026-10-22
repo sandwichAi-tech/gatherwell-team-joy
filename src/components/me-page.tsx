@@ -148,7 +148,7 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
         {field('phone', t('profile.phone'), { type: 'tel', autoComplete: 'tel', maxLength: 30 })}
         {field('shop_url', t('profile.shop'), { type: 'url', inputMode: 'url', placeholder: 'https://', maxLength: 300 })}
       </fieldset>
-      <fieldset className="edit-section"><legend>{t('me.language')}</legend>
+      {SPANISH_ENABLED && <fieldset className="edit-section"><legend>{t('me.language')}</legend>
         <div className="choice-pair">{(['en', 'es'] as const).map(lang => <button key={lang} type="button" className={`choice-card ${form.language === lang ? 'is-selected' : ''}`} aria-pressed={form.language === lang} onClick={() => setForm({ ...form, language: lang })}><strong>{t(lang === 'en' ? 'me.english' : 'me.spanish')}</strong></button>)}</div>
       </fieldset>
     </div>
@@ -266,7 +266,7 @@ export function MePage() {
     </SettingsGroup>
     <SettingsGroup title={t('profile.groupPreferences')}>
       {row('Bell', t('profile.notifications'), () => setPanel('notifications'))}
-      {staticRow('Globe2', t('me.language'), <div className="segmented" role="group" aria-label={t('me.language')}>{(['en', 'es'] as const).map(lang => <Button key={lang} variant="ghost" aria-pressed={i18n.resolvedLanguage === lang} className={i18n.resolvedLanguage === lang ? 'selected' : ''} onClick={() => saveLanguage(lang)}>{lang === 'en' ? 'EN' : 'ES'}</Button>)}</div>)}
+      {SPANISH_ENABLED && staticRow('Globe2', t('me.language'), <div className="segmented" role="group" aria-label={t('me.language')}>{(['en', 'es'] as const).map(lang => <Button key={lang} variant="ghost" aria-pressed={i18n.resolvedLanguage === lang} className={i18n.resolvedLanguage === lang ? 'selected' : ''} onClick={() => saveLanguage(lang)}>{lang === 'en' ? 'EN' : 'ES'}</Button>)}</div>)}
       {staticRow('Sun', t('me.appearance'), <div className="segmented" role="group" aria-label={t('me.appearance')}>{([{ value: 'light', Icon: Sun }, { value: 'dark', Icon: Moon }, { value: 'system', Icon: Monitor }] as const).map(({ value, Icon }) => <Button key={value} variant="ghost" size="icon" className={theme === value ? 'selected' : ''} aria-pressed={theme === value} aria-label={t(`me.${value}`)} title={t(`me.${value}`)} onClick={() => setTheme(value)}><Icon /></Button>)}</div>)}
     </SettingsGroup>
     {(isHost || isAdmin) && <SettingsGroup title={t('profile.groupHost')}>

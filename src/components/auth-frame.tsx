@@ -11,6 +11,7 @@ export function setLanguage(language: 'en' | 'es') {
 
 export function LanguageToggle() {
   const { t, i18n: inst } = useTranslation();
+  if (!SPANISH_ENABLED) return null;
   return <div className="segmented auth-language" role="group" aria-label={t('me.language')}>
     {(['en', 'es'] as const).map(lang => <button key={lang} type="button" aria-pressed={inst.resolvedLanguage === lang} className={inst.resolvedLanguage === lang ? 'selected' : ''} onClick={() => setLanguage(lang)}>{t(lang === 'en' ? 'me.english' : 'me.spanish')}</button>)}
   </div>;
