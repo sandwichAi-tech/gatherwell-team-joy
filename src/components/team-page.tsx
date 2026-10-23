@@ -154,7 +154,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
     {!isLeader && <section className="panel"><button type="button" className="settings-row" onClick={() => setSheet('members')}><UsersRound className="settings-icon" /><span className="settings-label">{t('teamSpace.members')}</span><ChevronRight className="settings-chevron" /></button></section>}
 
     {(tree.length > 1 || canCreateSub) && <SubTeams teamId={teamId} canCreate={canCreateSub} isLeader={isLeader} allowHosts={!!team?.allow_host_subteams} />}
-    {canHost && <TemplatesSection teamId={teamId} userId={userId} />}
+    {canHost && <TemplatesSection teamId={teamId} userId={userId} isLeader={isLeader} />}
     <TeamCalendar teamId={teamId} lang={lang} onOpen={setOpenEvent} />
     <WinsFeed teamId={teamId} userId={userId} lang={lang} isLeader={isLeader} />
 

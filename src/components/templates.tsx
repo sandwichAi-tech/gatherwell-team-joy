@@ -3,14 +3,12 @@ import { EmptyState } from '@/components/launch-states';
 import { ClaimGuard } from '@/components/smart';
 import { GatheringCover } from '@/components/gathering-cover';
 import { CATEGORIES, isCategory } from '@/lib/landing';
-import { confirmAction } from '@/components/confirm-dialog';
-import { useTranslateFill } from '@/lib/assistant-client';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Plus, Rocket, Upload, ArrowUp, ArrowDown, Trash2, Languages, Copy, Pencil } from '@/components/icons';
+import { Plus, Rocket, Upload, Copy, Pencil } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -34,7 +32,6 @@ function errText(t: (k: string) => string, error: unknown) {
 
 export function TemplateCard({ template, children }: { template: Template; children?: React.ReactNode }) {
   const { t, i18n } = useTranslation();
-  const cover = useSignedUrl(template.cover_url);
   const description = i18n.resolvedLanguage === 'es' ? template.description_es || template.description_en : template.description_en || template.description_es;
   return <article className="template-card">
     <GatheringCover path={template.cover_url} style={template.cover_style} title={template.title} className="blueprint-cover" />
@@ -138,7 +135,7 @@ export function TemplateEditor({ draft, teamId, userId, onClose }: { draft: Temp
 export const toDraft = (tpl: Template): TemplateDraft => ({ ...tpl, checklist: checklistOf(tpl) });
 
 /** Leader library: team templates plus starters that can be copied in. */
-export function TemplatesSection({ teamId, userId }: { teamId: string; userId: string }) {
+export function TemplatesSection({ teamId, userId, isLeader = false }: { teamId: string; userId: string; isLeader?: boolean }) {
   const { t } = useTranslation(); const queryClient = useQueryClient();
   const { data = [] } = useQuery(templatesQuery());
   const [editing, setEditing] = useState<TemplateDraft | null>(null);
@@ -154,7 +151,7 @@ export function TemplatesSection({ teamId, userId }: { teamId: string; userId: s
   };
   return <section className="panel">
     <div className="section-heading"><h2><Button asChild variant="link"><Link to="/blueprints">{t('templates.heading')}</Link></Button></h2><Button onClick={() => setEditing({ checklist: [], default_duration_minutes: 60, visibility_default: 'team' })}><Plus />{t('templates.new')}</Button></div>
-    {own.length ? <div className="template-grid">{own.map(tpl => <TemplateCard key={tpl.id} template={tpl}><Button size="sm" variant="secondary" onClick={() => setEditing(toDraft(tpl))}><Pencil />{t('templates.edit')}</Button><Button size="sm" onClick={() => void navigate({ to: '/gathering/new', search: { template: tpl.id } })}>{t('templates.useThis')}</Button></TemplateCard>)}</div>
+    {own.length ? <div className="template-grid">{own.map(tpl => <TemplateCard key={tpl.id} template={tpl}>{(isLeader || tpl.created_by === userId) && <Button size="sm" variant="secondary" onClick={() => setEditing(toDraft(tpl))}><Pencil />{t('templates.edit')}</Button>}<Button size="sm" onClick={() => void navigate({ to: '/gathering/new', search: { template: tpl.id } })}>{t('templates.useThis')}</Button></TemplateCard>)}</div>
       : <EmptyState compact icon="Layers" text={t('templates.empty')} />}
     {starters.length > 0 && <><h3 className="subsection-title">{t('templates.starters')}</h3>
       <div className="template-grid">{starters.map(tpl => <TemplateCard key={tpl.id} template={tpl}><Button size="sm" variant="secondary" onClick={() => void navigate({ to: '/gathering/new', search: { template: tpl.id } })}><Copy />{t('templates.useThis')}</Button></TemplateCard>)}</div></>}
