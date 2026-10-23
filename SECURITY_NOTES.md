@@ -27,3 +27,35 @@ Reviewed October 2026. Every open scanner note is either fixed or listed here wi
 - Team leaders no longer read guest RSVPs, answers, waiver records or event outbox; only hosts and assigned co-hosts do. Text-invite candidates limited to the caller's own hosted/co-hosted events.
 - Signed-out callers can no longer run 19 functions (10 trigger-only, 9 signed-in-only). 58 public-callable security-definer functions remain, mostly guest RPCs; the full allowlist review is pending.
 - New versioned fee, price, consent, refund and payout policy tables; orders ledger, entitlements and provider event log exist but are not yet used by checkout.
+
+## Prompt 2 corrective evidence — 2026-10-23 (active)
+
+### Independently supplied database verification, not rerun by this agent
+The requester supplied the following results after commit ac2eef3c5d5ff7138522b81254c348b35d9ca72d. These supersede the earlier lack-of-role-evidence note; attribution is preserved.
+
+| Authenticated account | RSVPs | Waiver acceptances | Event outbox |
+|---|---:|---:|---:|
+| Host 97964c37-afbf-4166-83ca-689bf72df4c0, own offerings | 8 | 7 | 10 |
+| Unrelated host 57c4cd39-5305-4daf-89fd-186c1ab2ce85 | 0 | 0 | 0 |
+| Unassigned team leader 43c560ea-fd8b-4398-b12d-7c2b6af14bcd | 0 | 0 | 0 |
+| Attendee 49249434-e598-4d1b-a95c-e3f3d82d31c7 | exactly own 1 | not reported | not reported |
+
+- In a transaction rolled back by the independent tester, assigning the unrelated host as co-host of the tested event exposed 7 RSVPs and 7 waivers for that event; outbox was not reported for this case.
+- In rolled-back transactions, unrelated host and unassigned leader each affected 0 rows attempting direct RSVP UPDATE and DELETE.
+- No independent evidence was supplied for service role, course/offer managers, other roles, or other participant tables. No claim is made that they passed.
+
+### This turn's verified correction
+- 0049 applied: environment required on future orders (validated CHECK), environment/key uniqueness replaces the global key constraint, exact offering/kind target constraints validated, all seven profile FKs added with zero orphan references. Orders host/buyer SET NULL; manager users/entitlement users CASCADE, assigners SET NULL. A server trigger requires a host on future host sales while permitting FK anonymization after profile deletion; buyer remains nullable.
+- Linked-offer hosts and explicit track managers can access track participants; leadership is not a branch of that function.
+- 7/7 acceptances backfilled by team/version and RSVP language, all English in current rows, 0 unmatched. Server triggers own exact version/hash, capture later waiver text versions, and prevent mutation of referenced consent text. 0050 applied only after read-back: both snapshot columns now NOT NULL.
+- Feature flag INSERT/UPDATE/DELETE now append old/new, actor, optional transaction reason/source, and time to config_versions. No flag was changed; config_versions remains 0 rows. Ordinary roles have no direct write grants; existing read policy retained.
+- Manual SQL regression created at tests/database/prompt2_rls_disposable.sql with explicit disposable-copy instructions. It was NOT executed: no isolated writable copy was available. Production/preview fixtures were not created.
+- Full existing automated suite: 19 files / 96 tests passed twice, including all eight fee tests. SQL runtime assertions are created-only, not counted as passing automated checks.
+- Linter 262 findings: 10 no-policy, 1 public extension, 58 anonymous definer, 193 authenticated definer; unchanged from prior turn, vs documented Prompt 0 baseline 286 (77 anonymous). Prompt 0 baseline is documentary, not rerun here.
+- Strict literal no-DROP/no-TRUNCATE scan has a disclosed exception: DROP CONSTRAINT orders_idempotency_key_key is necessary for scoped uniqueness. TRUNCATE appears only as a revoked privilege, not an operation. No DROP TABLE/COLUMN/SCHEMA/DATABASE, TRUNCATE operation, or business DELETE exists in the new migrations.
+- Pre/post read-only counts unchanged: events 15, RSVPs 8, waivers 7, outbox 40, offers 2; orders/entitlements/managers/tracks/payments/config history all 0. Nine flag values and timestamps unchanged. Counts alone do not prove every field unchanged; migration SQL performs only the requested consent backfill.
+
+### Unverified and recovery
+- Created-only SQL role, invalid-order/entitlement, FK deletion/anonymization, future acceptance/flag trigger, and service-role behavior need execution against a disposable copy. No browser, mobile/desktop, accessibility, payment or provider flow was exercised; this change has no presentation code.
+- SOURCE_OF_TRUTH.md and active rule documents unchanged. Dedicated hosted Project Knowledge field was not fetched in this turn; supplied Project Knowledge remains the controlling context, not newly API-verified.
+- Forward repair is preferred: append corrective functions/constraints if copy testing discovers an issue. Preserve all consent snapshots and economic rows. Do not reset data or edit applied migration history; restoring global key uniqueness requires first inspecting cross-environment duplicate keys and must not delete orders.

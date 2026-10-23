@@ -828,6 +828,7 @@ export type Database = {
           new_value: Json | null
           old_value: Json | null
           reason: string | null
+          source: string | null
         }
         Insert: {
           changed_by?: string | null
@@ -837,6 +838,7 @@ export type Database = {
           new_value?: Json | null
           old_value?: Json | null
           reason?: string | null
+          source?: string | null
         }
         Update: {
           changed_by?: string | null
@@ -846,6 +848,7 @@ export type Database = {
           new_value?: Json | null
           old_value?: Json | null
           reason?: string | null
+          source?: string | null
         }
         Relationships: []
       }
@@ -1118,6 +1121,13 @@ export type Database = {
             columns: ["track_id"]
             isOneToOne: false
             referencedRelation: "tracks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entitlements_user_profile_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -2488,10 +2498,24 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "offer_managers_assigner_profile_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "offer_managers_offer_id_fkey"
             columns: ["offer_id"]
             isOneToOne: false
             referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offer_managers_user_profile_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -2766,6 +2790,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "orders_buyer_profile_fkey"
+            columns: ["buyer_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "orders_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
@@ -2777,6 +2808,13 @@ export type Database = {
             columns: ["fee_rule_id"]
             isOneToOne: false
             referencedRelation: "fee_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_host_profile_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
@@ -4509,10 +4547,24 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "track_managers_assigner_profile_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "track_managers_track_id_fkey"
             columns: ["track_id"]
             isOneToOne: false
             referencedRelation: "tracks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "track_managers_user_profile_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -4673,6 +4725,8 @@ export type Database = {
       waiver_acceptances: {
         Row: {
           accepted_at: string
+          accepted_body_sha256: string
+          consent_text_version_id: string
           event_id: string
           full_name: string
           ip: string | null
@@ -4683,6 +4737,8 @@ export type Database = {
         }
         Insert: {
           accepted_at?: string
+          accepted_body_sha256: string
+          consent_text_version_id: string
           event_id: string
           full_name: string
           ip?: string | null
@@ -4693,6 +4749,8 @@ export type Database = {
         }
         Update: {
           accepted_at?: string
+          accepted_body_sha256?: string
+          consent_text_version_id?: string
           event_id?: string
           full_name?: string
           ip?: string | null
@@ -4702,6 +4760,13 @@ export type Database = {
           version?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "waiver_acceptances_consent_text_version_id_fkey"
+            columns: ["consent_text_version_id"]
+            isOneToOne: false
+            referencedRelation: "consent_text_versions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "waiver_acceptances_event_id_fkey"
             columns: ["event_id"]
