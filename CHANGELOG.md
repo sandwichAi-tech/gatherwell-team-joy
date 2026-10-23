@@ -1,5 +1,11 @@
 # ZoheeWell Change Log
 
+## v0.9 — Domain model, permissions and configuration foundation (2026-10-23)
+- Changed (database): migrations 0047 and 0048. Added versioned fee rules (legacy 7%/2%/0%/3%+49¢ kept immutable; flat 5% active), plan prices incl. annual, plan limits, consent texts (backfilled from 11 waivers -> 22 en/es rows), refund policy (event default v1 per approved rules), payout policy (after event end; interval unconfigured), config history, provider event log, orders/items/refunds/payout holds, entitlements, course and offer manager assignments. Leaders lost read access to participant contact data; text-invite candidates restricted to own events; 19 functions no longer callable signed-out.
+- Not changed: screens, styles, copy, providers, feature flags; payments/stripe_events/plan_settings rows untouched (0 payments to backfill).
+- Tested: 96/96 automated checks (8 new fee/annual rule checks). Read-only checks confirmed policies and counts. Linter: 286 -> 262 findings (public-callable 77 -> 58).
+- Unverified: live role-by-role access tests (sandbox cannot switch roles or write rows); leader screens that showed guest lists now show none — not browser-checked; checkout does not yet write orders/entitlements; remaining 58 public functions need an allowlist review.
+
 ## v0.8 — Instruction reset to Blueprint v4 (2026-10-23)
 - Changed (documentation and saved project memory only): added SOURCE_OF_TRUTH.md (Blueprint v4, decision date 2026-10-23, order of authority, change control). Put the approved v4 rules at the top of PROJECT_RULES.md, DESIGN_RULES.md and README.md and moved their old content under a labeled "Historical record" section. Reworded conflicting lines in AGENTS.md and supabase/AGENTS.md; old fee and guest-fee lines are labeled pre-v4 implementation status. roadmap.md now points to the Prompt 1–17 sequence with older items labeled historical. Added historical banners to FEATURE_INVENTORY, LAUNCH_REVIEW, SECURITY_NOTES, DEAD_CLICKS, DESIGN_AUDIT, MOBILE_AUDIT and archived plans. Updated saved memories for brand, pricing, billing, launch, homepage and core rules (Spanish launch, 5% fee, v4 palette).
 - No product behavior, screen, schema, business data, provider setting or feature flag changed. No application code, styles, migrations or package files were edited.

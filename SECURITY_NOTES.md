@@ -22,3 +22,8 @@ Reviewed October 2026. Every open scanner note is either fixed or listed here wi
 - No secret keys in front-end code; all provider keys are read in server functions.
 - Admin actions are checked on the server (has_role) and audited.
 - Rate limits: RSVP (database, 10/min), assistant (monthly plan quota), reports (custom database limit, five per rolling minute per signed-in person or guest IP; transaction advisory lock prevents concurrent requests exceeding the limit).
+
+## Update — Prompt 2 foundation (2026-10-23, active)
+- Team leaders no longer read guest RSVPs, answers, waiver records or event outbox; only hosts and assigned co-hosts do. Text-invite candidates limited to the caller's own hosted/co-hosted events.
+- Signed-out callers can no longer run 19 functions (10 trigger-only, 9 signed-in-only). 58 public-callable security-definer functions remain, mostly guest RPCs; the full allowlist review is pending.
+- New versioned fee, price, consent, refund and payout policy tables; orders ledger, entitlements and provider event log exist but are not yet used by checkout.

@@ -108,3 +108,8 @@ Specifics:
 8. Reminders are off by default; hosts assume guests are reminded.
 9. No Help or Safety page to turn to.
 10. No People list yet, so it is hard to see who came back or who is slipping.
+
+## Update — Prompt 2 foundation (2026-10-23, active)
+- Team leaders no longer read guest RSVPs, answers, waiver records or event outbox; only hosts and assigned co-hosts do. Text-invite candidates limited to the caller's own hosted/co-hosted events.
+- Signed-out callers can no longer run 19 functions (10 trigger-only, 9 signed-in-only). 58 public-callable security-definer functions remain, mostly guest RPCs; the full allowlist review is pending.
+- New versioned fee, price, consent, refund and payout policy tables; orders ledger, entitlements and provider event log exist but are not yet used by checkout.
