@@ -26,7 +26,6 @@ export function LandingPage() {
     <main id="main-content">
       <Hero gatherings={gatherings} />
       <QueryFeedback />
-      <HomepagePaths />
       <HowItWorks />
       <HostTools />
       <CategoryRow selected={category} onSelect={setCategory} />
@@ -122,22 +121,14 @@ function ThisWeek({ gatherings, category }: { gatherings: FeedGathering[]; categ
   </section>;
 }
 
-function HomepagePaths() {
-  const { t } = useTranslation();
-  return <section className="gw-home-paths gw-band gw-band-white"><div className="gw-container gw-home-path-grid">
-    <div><h2>{t('landing.hostFirst.host')}</h2><p>{t('landing.hostFirst.hostBody')}</p><Button asChild className="gw-btn gw-btn-lg"><Link to="/login" search={{ intent: 'host' }}>{t('landing.hostFirst.start')}<GwIcon name="ArrowRight" /></Link></Button></div>
-    <div><h2>{t('landing.hostFirst.attend')}</h2><p>{t('landing.hostFirst.attendBody')}</p><Button asChild variant="secondary" className="gw-btn gw-btn-lg"><Link to="/discover" search={{ near: 1 }}>{t('landing.hostFirst.find')}<GwIcon name="MapPin" /></Link></Button></div>
-  </div></section>;
-}
-
 function HowItWorks() {
   const { t } = useTranslation();
   const steps = [['create', 'CalendarPlus'], ['share', 'Link2'], ['checkin', 'QrCode'], ['followup', 'MessageCircle']] as const;
-  return <section className="gw-section gw-container gw-band gw-band-white" id="how-it-works" aria-labelledby="how-title">
+  return <section className="gw-home-how gw-band gw-band-white" id="how-it-works" aria-labelledby="how-title"><div className="gw-container">
     <span className="gw-label">{t('landing.hostFirst.howLabel')}</span>
     <h2 id="how-title" className="gw-display gw-h2">{t('landing.hostFirst.howTitle')}</h2>
-    <ol className="gw-home-steps">{steps.map(([key, icon], i) => <li key={key}><span className="gw-home-tool-icon"><GwIcon name={icon} variant="marketing" size={24} /></span><span className="gw-how-num">0{i + 1}</span><h3>{t(`landing.hostFirst.steps.${key}`)}</h3></li>)}</ol>
-  </section>;
+    <ol className="gw-home-steps">{steps.map(([key, icon], i) => <li key={key}><span className="gw-home-tool-icon" aria-hidden="true"><GwIcon name={icon} variant="marketing" size={20} /></span><div><span className="gw-how-num" aria-hidden="true">0{i + 1}</span><h3>{t(`landing.hostFirst.steps.${key}`)}</h3></div></li>)}</ol>
+  </div></section>;
 }
 
 function HostTools() {
@@ -152,11 +143,11 @@ function HostTools() {
     { key: 'sms', icon: 'MessageSquare', premium: true }, { key: 'email', icon: 'Mail', premium: true },
     { key: 'calling', icon: 'Phone', premium: true },
   ];
-  return <section className="gw-section gw-container" aria-labelledby="host-tools-title">
+  return <section className="gw-home-tool-section gw-band gw-band-canvas" aria-labelledby="host-tools-title"><div className="gw-container">
     <h2 id="host-tools-title" className="gw-display gw-h2">{t('landing.hostFirst.toolsTitle')}</h2>
-    <ul className="gw-home-tools">{tools.map(tool => <li key={tool.key}><span className="gw-home-tool-icon"><GwIcon name={tool.icon} variant="marketing" size={24} /></span><div><h3>{t(`landing.hostFirst.tools.${tool.key}`)}</h3>{tool.premium ? <span className="gw-home-tool-tag">{t('landing.hostFirst.premiumSoon')}</span> : tool.paid ? <span className="gw-home-tool-tag">{t('landing.hostFirst.paidSoon')}</span> : tool.key === 'reminders' ? <span className="gw-home-tool-tag">{t('landing.hostFirst.deliverySoon')}</span> : null}</div></li>)}</ul>
+    <ul className="gw-home-tools">{tools.map(tool => <li key={tool.key}><span className="gw-home-tool-icon" aria-hidden="true"><GwIcon name={tool.icon} variant="marketing" size={20} /></span><div><h3>{t(`landing.hostFirst.tools.${tool.key}`)}</h3>{tool.premium ? <span className="gw-home-tool-tag">{t('landing.hostFirst.premiumSoon')}</span> : tool.paid ? <span className="gw-home-tool-tag">{t('landing.hostFirst.paidSoon')}</span> : tool.key === 'reminders' ? <span className="gw-home-tool-tag">{t('landing.hostFirst.deliverySoon')}</span> : null}</div></li>)}</ul>
     <p className="gw-home-studio">{t('landing.hostFirst.studios')}</p>
-  </section>;
+  </div></section>;
 }
 
 function HostBand() {
