@@ -38,7 +38,7 @@ export const planSettingsQuery = queryOptions({
     return Object.fromEntries((data ?? []).map(r => [r.plan, { ...r, fee_percent: Number(r.fee_percent), service_fee_percent: Number(r.service_fee_percent) }])) as Record<PlanId, PlanSetting>;
   },
 });
-export const LICENSES = [{ id: 'team25' as const, cents: 19900, seats: 25 }, { id: 'team100' as const, cents: 49900, seats: 100 }];
+export { LICENSES } from './license-prices';
 
 export const planStatusQuery = (userId: string) => queryOptions({
   queryKey: ['plan-status', userId],

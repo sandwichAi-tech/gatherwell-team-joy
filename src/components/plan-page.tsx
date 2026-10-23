@@ -26,6 +26,7 @@ import { earningsQuery, formatMoney, formatStorage, LICENSES, licenseQuery, paym
 import { openBillingPortal, refundPayments, schedulePlanChange, startConnectOnboarding, startLicenseCheckout, startPlanCheckout } from '@/lib/billing.functions';
 import { getStripeEnvironment, paymentsTokenPresent } from '@/lib/stripe';
 import { useInlineCheckout } from '@/components/inline-checkout';
+import { PaymentTestModeBanner } from '@/components/payment-test-mode-banner';
 
 const fmtDate = (iso: string, lang: string) => new Date(iso).toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
@@ -143,6 +144,7 @@ export function PlanPage() {
   };
 
   return <>
+    <PaymentTestModeBanner />
     <Back />
     <div className="page-heading"><div><span className="eyebrow">{t('billing.eyebrow')}</span><h1>{t('billing.title')}</h1></div></div>
     {st.status === 'past_due' && <div className="plan-banner" role="alert"><AlertCircle />{t('billing.pastDue')}<Button variant="link" onClick={() => void gate.run(() => portal({ data: { origin, environment: getStripeEnvironment() } }), { newTab: true })}>{t('billing.updateCard')}</Button></div>}
@@ -271,6 +273,7 @@ export function SeatsPage() {
   };
 
   return <>
+    <PaymentTestModeBanner />
     <Back to="/plan" />
     <div className="page-heading"><div><span className="eyebrow">{ws?.name}</span><h1>{t('billing.seats')}</h1></div></div>
     {active ? <section className="panel">

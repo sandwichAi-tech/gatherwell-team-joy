@@ -8,7 +8,7 @@ export async function promoFor(sb: { rpc: (fn: any, args?: any) => any }, code: 
   const { data } = await sb.rpc('check_promo', { _code: c, _kind: kind, _target: target, _buyer: buyer });
   return (data as PromoCheck | null) ?? { ok: false, error: 'invalid' };
 }
-import { LICENSES } from './billing';
+import { LICENSES } from './license-prices';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import type { StripeEnv } from '@/lib/stripe.server';
