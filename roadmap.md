@@ -1,3 +1,7 @@
+# Walkthrough 1.3 — Event Blueprints (October 23)
+- [ ] Reuse the existing blueprint library/editor; add Team and Events entry points, full defaults, host save-as, edit/delete and reliable creation prefill.
+- [ ] Test create → use → event and event → save as blueprint on phone, plus desktop controls; update CHANGELOG.md.
+
 # Walkthrough 1.1 — Dead-click audit (October 23)
 - [x] Audit public and signed-in screens at phone and desktop sizes; saved DEAD_CLICKS.md: 27 actionable findings, seven unfinished/service-dependent groups, source coverage of all 59 content-route patterns, 120 page inspections and 48 menu/sheet/tab observations. Report only: no app code changed; transaction/role/private-token limits and existing calendar read provisioning documented.
 
