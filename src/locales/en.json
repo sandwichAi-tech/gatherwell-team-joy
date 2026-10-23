@@ -1118,6 +1118,8 @@
     "recipes": "Recipes",
     "manage": "Manage Resources",
     "noResources": "No resources to show yet.",
+    "recipePage": "Recipe",
+    "lessonPage": "Lesson",
     "manageText": "Build tracks, schedule live sessions and share recipes with your team.",
     "continue": "Continue",
     "start": "Start",

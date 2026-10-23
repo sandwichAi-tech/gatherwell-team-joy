@@ -1118,6 +1118,8 @@
     "recipes": "Recetas",
     "manage": "Administrar Recursos",
     "noResources": "Aún no hay recursos para mostrar.",
+    "recipePage": "Receta",
+    "lessonPage": "Lección",
     "manageText": "Crea rutas, programa sesiones en vivo y comparte recetas con tu equipo.",
     "continue": "Continuar",
     "start": "Empezar",
