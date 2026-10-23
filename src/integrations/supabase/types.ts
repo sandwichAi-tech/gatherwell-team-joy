@@ -819,6 +819,80 @@ export type Database = {
         }
         Relationships: []
       }
+      config_versions: {
+        Row: {
+          changed_by: string | null
+          config_key: string
+          created_at: string
+          id: number
+          new_value: Json | null
+          old_value: Json | null
+          reason: string | null
+        }
+        Insert: {
+          changed_by?: string | null
+          config_key: string
+          created_at?: string
+          id?: never
+          new_value?: Json | null
+          old_value?: Json | null
+          reason?: string | null
+        }
+        Update: {
+          changed_by?: string | null
+          config_key?: string
+          created_at?: string
+          id?: never
+          new_value?: Json | null
+          old_value?: Json | null
+          reason?: string | null
+        }
+        Relationships: []
+      }
+      consent_text_versions: {
+        Row: {
+          body: string
+          body_sha256: string
+          created_at: string
+          effective_from: string
+          id: string
+          kind: string
+          locale: string
+          team_id: string | null
+          version: number
+        }
+        Insert: {
+          body: string
+          body_sha256: string
+          created_at?: string
+          effective_from?: string
+          id?: string
+          kind: string
+          locale: string
+          team_id?: string | null
+          version: number
+        }
+        Update: {
+          body?: string
+          body_sha256?: string
+          created_at?: string
+          effective_from?: string
+          id?: string
+          kind?: string
+          locale?: string
+          team_id?: string | null
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consent_text_versions_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       daily_briefs: {
         Row: {
           created_at: string
@@ -970,6 +1044,83 @@ export type Database = {
           reason?: string
         }
         Relationships: []
+      }
+      entitlements: {
+        Row: {
+          created_at: string
+          ends_at: string | null
+          event_id: string | null
+          id: string
+          kind: string
+          offer_id: string | null
+          order_id: string | null
+          revoke_reason: string | null
+          revoked_at: string | null
+          source: string
+          starts_at: string
+          track_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          ends_at?: string | null
+          event_id?: string | null
+          id?: string
+          kind: string
+          offer_id?: string | null
+          order_id?: string | null
+          revoke_reason?: string | null
+          revoked_at?: string | null
+          source: string
+          starts_at?: string
+          track_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          ends_at?: string | null
+          event_id?: string | null
+          id?: string
+          kind?: string
+          offer_id?: string | null
+          order_id?: string | null
+          revoke_reason?: string | null
+          revoked_at?: string | null
+          source?: string
+          starts_at?: string
+          track_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entitlements_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entitlements_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entitlements_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entitlements_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "tracks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       event_checklists: {
         Row: {
@@ -1471,6 +1622,45 @@ export type Database = {
           key?: string
           updated_at?: string
           value?: string | null
+        }
+        Relationships: []
+      }
+      fee_rules: {
+        Row: {
+          applies_to: string[]
+          cap_cents: number | null
+          created_at: string
+          effective_from: string
+          effective_to: string | null
+          fixed_cents: number
+          id: string
+          is_legacy: boolean
+          note: string | null
+          percent: number
+        }
+        Insert: {
+          applies_to: string[]
+          cap_cents?: number | null
+          created_at?: string
+          effective_from: string
+          effective_to?: string | null
+          fixed_cents?: number
+          id: string
+          is_legacy?: boolean
+          note?: string | null
+          percent: number
+        }
+        Update: {
+          applies_to?: string[]
+          cap_cents?: number | null
+          created_at?: string
+          effective_from?: string
+          effective_to?: string | null
+          fixed_cents?: number
+          id?: string
+          is_legacy?: boolean
+          note?: string | null
+          percent?: number
         }
         Relationships: []
       }
@@ -2274,6 +2464,38 @@ export type Database = {
           },
         ]
       }
+      offer_managers: {
+        Row: {
+          assigned_by: string | null
+          created_at: string
+          offer_id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          assigned_by?: string | null
+          created_at?: string
+          offer_id: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          assigned_by?: string | null
+          created_at?: string
+          offer_id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_managers_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       offer_purchases: {
         Row: {
           amount_cents: number
@@ -2413,6 +2635,194 @@ export type Database = {
           },
         ]
       }
+      order_items: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          item_type: string
+          order_id: string
+          quantity: number
+          unit_cents: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          item_type: string
+          order_id: string
+          quantity?: number
+          unit_cents: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          item_type?: string
+          order_id?: string
+          quantity?: number
+          unit_cents?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          buyer_user_id: string | null
+          connected_account_id: string | null
+          created_at: string
+          currency: string
+          discount_cents: number
+          environment: string | null
+          event_id: string | null
+          fee_rule_id: string
+          gross_cents: number
+          host_id: string | null
+          id: string
+          idempotency_key: string
+          legacy_payment_id: string | null
+          offer_id: string | null
+          offering_type: string
+          platform_fee_cents: number
+          price_version_id: string | null
+          processor_fee_cents: number | null
+          promo_id: string | null
+          refund_policy_text: string | null
+          refund_policy_version_id: string | null
+          rsvp_id: string | null
+          status: string
+          stripe_checkout_session_id: string | null
+          stripe_payment_intent_id: string | null
+          tax_cents: number
+          track_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          buyer_user_id?: string | null
+          connected_account_id?: string | null
+          created_at?: string
+          currency?: string
+          discount_cents?: number
+          environment?: string | null
+          event_id?: string | null
+          fee_rule_id: string
+          gross_cents: number
+          host_id?: string | null
+          id?: string
+          idempotency_key: string
+          legacy_payment_id?: string | null
+          offer_id?: string | null
+          offering_type: string
+          platform_fee_cents: number
+          price_version_id?: string | null
+          processor_fee_cents?: number | null
+          promo_id?: string | null
+          refund_policy_text?: string | null
+          refund_policy_version_id?: string | null
+          rsvp_id?: string | null
+          status?: string
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          tax_cents?: number
+          track_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          buyer_user_id?: string | null
+          connected_account_id?: string | null
+          created_at?: string
+          currency?: string
+          discount_cents?: number
+          environment?: string | null
+          event_id?: string | null
+          fee_rule_id?: string
+          gross_cents?: number
+          host_id?: string | null
+          id?: string
+          idempotency_key?: string
+          legacy_payment_id?: string | null
+          offer_id?: string | null
+          offering_type?: string
+          platform_fee_cents?: number
+          price_version_id?: string | null
+          processor_fee_cents?: number | null
+          promo_id?: string | null
+          refund_policy_text?: string | null
+          refund_policy_version_id?: string | null
+          rsvp_id?: string | null
+          status?: string
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          tax_cents?: number
+          track_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_fee_rule_id_fkey"
+            columns: ["fee_rule_id"]
+            isOneToOne: false
+            referencedRelation: "fee_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_legacy_payment_id_fkey"
+            columns: ["legacy_payment_id"]
+            isOneToOne: true
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_price_version_id_fkey"
+            columns: ["price_version_id"]
+            isOneToOne: false
+            referencedRelation: "price_versions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_refund_policy_version_id_fkey"
+            columns: ["refund_policy_version_id"]
+            isOneToOne: false
+            referencedRelation: "refund_policy_versions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_rsvp_id_fkey"
+            columns: ["rsvp_id"]
+            isOneToOne: false
+            referencedRelation: "rsvps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "tracks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount_cents: number
@@ -2527,6 +2937,90 @@ export type Database = {
           },
         ]
       }
+      payout_holds: {
+        Row: {
+          amount_cents: number | null
+          created_at: string
+          id: string
+          order_id: string
+          payout_policy_version_id: string
+          reason: string
+          release_after: string | null
+          released_at: string | null
+        }
+        Insert: {
+          amount_cents?: number | null
+          created_at?: string
+          id?: string
+          order_id: string
+          payout_policy_version_id: string
+          reason: string
+          release_after?: string | null
+          released_at?: string | null
+        }
+        Update: {
+          amount_cents?: number | null
+          created_at?: string
+          id?: string
+          order_id?: string
+          payout_policy_version_id?: string
+          reason?: string
+          release_after?: string | null
+          released_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payout_holds_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payout_holds_payout_policy_version_id_fkey"
+            columns: ["payout_policy_version_id"]
+            isOneToOne: false
+            referencedRelation: "payout_policy_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payout_policy_versions: {
+        Row: {
+          applies_to: string
+          created_at: string
+          effective_from: string
+          effective_to: string | null
+          id: string
+          is_configured: boolean
+          note: string | null
+          release_offset_hours: number | null
+          release_trigger: string
+        }
+        Insert: {
+          applies_to: string
+          created_at?: string
+          effective_from: string
+          effective_to?: string | null
+          id: string
+          is_configured?: boolean
+          note?: string | null
+          release_offset_hours?: number | null
+          release_trigger: string
+        }
+        Update: {
+          applies_to?: string
+          created_at?: string
+          effective_from?: string
+          effective_to?: string | null
+          id?: string
+          is_configured?: boolean
+          note?: string | null
+          release_offset_hours?: number | null
+          release_trigger?: string
+        }
+        Relationships: []
+      }
       personal_bests: {
         Row: {
           created_at: string
@@ -2557,6 +3051,33 @@ export type Database = {
           unit?: string
           user_id?: string
           value?: number
+        }
+        Relationships: []
+      }
+      plan_limit_versions: {
+        Row: {
+          created_at: string
+          effective_from: string
+          effective_to: string | null
+          id: string
+          limits: Json
+          plan: string
+        }
+        Insert: {
+          created_at?: string
+          effective_from: string
+          effective_to?: string | null
+          id: string
+          limits?: Json
+          plan: string
+        }
+        Update: {
+          created_at?: string
+          effective_from?: string
+          effective_to?: string | null
+          id?: string
+          limits?: Json
+          plan?: string
         }
         Relationships: []
       }
@@ -2620,6 +3141,42 @@ export type Database = {
           key?: string
           params?: Json
           teams?: number
+        }
+        Relationships: []
+      }
+      price_versions: {
+        Row: {
+          amount_cents: number
+          billing_interval: string
+          created_at: string
+          currency: string
+          effective_from: string
+          effective_to: string | null
+          id: string
+          plan: string
+          stripe_lookup_key: string | null
+        }
+        Insert: {
+          amount_cents: number
+          billing_interval: string
+          created_at?: string
+          currency?: string
+          effective_from: string
+          effective_to?: string | null
+          id: string
+          plan: string
+          stripe_lookup_key?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          billing_interval?: string
+          created_at?: string
+          currency?: string
+          effective_from?: string
+          effective_to?: string | null
+          id?: string
+          plan?: string
+          stripe_lookup_key?: string | null
         }
         Relationships: []
       }
@@ -2824,6 +3381,48 @@ export type Database = {
         }
         Relationships: []
       }
+      provider_events: {
+        Row: {
+          attempts: number
+          environment: string
+          error: string | null
+          event_type: string
+          id: string
+          payload_sha256: string | null
+          processed_at: string | null
+          provider: string
+          provider_event_id: string
+          received_at: string
+          status: string
+        }
+        Insert: {
+          attempts?: number
+          environment: string
+          error?: string | null
+          event_type: string
+          id?: string
+          payload_sha256?: string | null
+          processed_at?: string | null
+          provider: string
+          provider_event_id: string
+          received_at?: string
+          status?: string
+        }
+        Update: {
+          attempts?: number
+          environment?: string
+          error?: string | null
+          event_type?: string
+          id?: string
+          payload_sha256?: string | null
+          processed_at?: string | null
+          provider?: string
+          provider_event_id?: string
+          received_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
       push_subscriptions: {
         Row: {
           auth: string
@@ -2975,6 +3574,96 @@ export type Database = {
             columns: ["rsvp_id"]
             isOneToOne: true
             referencedRelation: "rsvps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      refund_policy_versions: {
+        Row: {
+          applies_to: string
+          created_at: string
+          effective_from: string
+          effective_to: string | null
+          id: string
+          rules: Json
+          summary_en: string
+          summary_es: string
+        }
+        Insert: {
+          applies_to: string
+          created_at?: string
+          effective_from: string
+          effective_to?: string | null
+          id: string
+          rules: Json
+          summary_en: string
+          summary_es: string
+        }
+        Update: {
+          applies_to?: string
+          created_at?: string
+          effective_from?: string
+          effective_to?: string | null
+          id?: string
+          rules?: Json
+          summary_en?: string
+          summary_es?: string
+        }
+        Relationships: []
+      }
+      refunds: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          id: string
+          idempotency_key: string
+          order_id: string
+          platform_fee_refunded_cents: number
+          reason: string
+          refund_policy_version_id: string | null
+          requested_by: string | null
+          status: string
+          stripe_refund_id: string | null
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          id?: string
+          idempotency_key: string
+          order_id: string
+          platform_fee_refunded_cents?: number
+          reason: string
+          refund_policy_version_id?: string | null
+          requested_by?: string | null
+          status?: string
+          stripe_refund_id?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          id?: string
+          idempotency_key?: string
+          order_id?: string
+          platform_fee_refunded_cents?: number
+          reason?: string
+          refund_policy_version_id?: string | null
+          requested_by?: string | null
+          status?: string
+          stripe_refund_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refunds_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_refund_policy_version_id_fkey"
+            columns: ["refund_policy_version_id"]
+            isOneToOne: false
+            referencedRelation: "refund_policy_versions"
             referencedColumns: ["id"]
           },
         ]
@@ -3796,6 +4485,38 @@ export type Database = {
           },
         ]
       }
+      track_managers: {
+        Row: {
+          assigned_by: string | null
+          created_at: string
+          role: string
+          track_id: string
+          user_id: string
+        }
+        Insert: {
+          assigned_by?: string | null
+          created_at?: string
+          role?: string
+          track_id: string
+          user_id: string
+        }
+        Update: {
+          assigned_by?: string | null
+          created_at?: string
+          role?: string
+          track_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "track_managers_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "tracks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tracks: {
         Row: {
           cover_style: number
@@ -4213,6 +4934,10 @@ export type Database = {
     }
     Functions: {
       accept_founding: { Args: never; Returns: undefined }
+      active_fee_rule: {
+        Args: { _at?: string; _offering_type: string }
+        Returns: string
+      }
       add_walk_in: {
         Args: {
           _email: string
@@ -4265,6 +4990,10 @@ export type Database = {
         Args: { _team: string; _user: string }
         Returns: undefined
       }
+      calc_platform_fee_cents: {
+        Args: { _net_cents: number; _rule: string }
+        Returns: number
+      }
       calendar_feed: {
         Args: { _token: string }
         Returns: {
@@ -4278,6 +5007,18 @@ export type Database = {
           title: string
           updated: string
         }[]
+      }
+      can_access_event_participants: {
+        Args: { _event: string }
+        Returns: boolean
+      }
+      can_access_offer_participants: {
+        Args: { _offer: string }
+        Returns: boolean
+      }
+      can_access_track_participants: {
+        Args: { _track: string }
+        Returns: boolean
       }
       can_edit_track: { Args: { _track: string }; Returns: boolean }
       can_join_conversation: { Args: { _event: string }; Returns: boolean }
@@ -4554,6 +5295,10 @@ export type Database = {
         Returns: Json
       }
       has_blocked_claim: { Args: { _text: string }; Returns: boolean }
+      has_entitlement: {
+        Args: { _kind: string; _target: string }
+        Returns: boolean
+      }
       has_offer_access: {
         Args: { _offer: string; _uid: string }
         Returns: boolean
