@@ -21,6 +21,7 @@ import { TemplateEditor, type TemplateDraft } from '@/components/templates';
 import { supabase } from '@/integrations/supabase/client';
 import { initialsOf, mediaUrl, teamsQuery } from '@/lib/account';
 import { guestSummaryQuery, placeOf, seriesQuery, shareLink } from '@/lib/gatherings';
+import { blueprintFromEvent } from '@/lib/blueprint-defaults';
 import { eventDetailQuery, type ChecklistItem } from '@/lib/templates';
 import { gatherwellHead } from '@/lib/gatherwell-head';
 import { storyImage } from '@/lib/guest';
@@ -122,9 +123,7 @@ function EventDetailPage() {
           {event.status !== 'cancelled' && <Button asChild variant="secondary"><Link to="/gathering/$id/edit" params={{ id }}><Pencil />{t('gathering.edit')}</Link></Button>}
           <Button asChild variant="secondary"><Link to="/gathering/new" search={{ from: id }}><CopyPlus />{t('gathering.duplicate')}</Link></Button>
           {event.status === 'published' && <Button variant="secondary" onClick={() => setSheet('share')}><Share2 />{t('gathering.share')}</Button>}
-          {isHost && leadsTeam && <Button variant="secondary" onClick={() => setDraft({ title: event.title, description_en: event.description_en, description_es: event.description_es, cover_url: event.cover_url,
-            default_duration_minutes: event.ends_at ? Math.max(5, Math.round((new Date(event.ends_at).getTime() - start.getTime()) / 60000)) : 60, default_capacity: event.capacity,
-            visibility_default: event.visibility, checklist: checklist?.map(item => item.label) ?? [], is_published: false })}><Save />{t('templates.saveAs')}</Button>}
+          {isHost && <Button variant="secondary" onClick={() => setDraft(blueprintFromEvent(event, checklist?.map(item => item.label) ?? []))}><Save />{t('templates.saveAs')}</Button>}
           {event.status === 'published' && <Button variant="ghost" className="danger-text" onClick={() => setSheet('cancel')}><Ban />{t('gathering.cancel')}</Button>}
           {event.status === 'draft' && <Button variant="ghost" className="danger-text" onClick={() => setSheet('delete')}><Trash2 />{t('gathering.deleteDraft')}</Button>}
         </div> : event.status === 'published' && event.visibility === 'public' && <div className="manage-actions"><Button asChild variant="secondary"><Link to="/e/$id" params={{ id: event.id }}>{t('teamSpace.openEvent')}<ArrowRight /></Link></Button></div>}
@@ -176,6 +175,6 @@ function EventDetailPage() {
     <ResponsiveSheet open={sheet === 'delete'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.deleteTitle')} description={t('gathering.deleteText')}>
       <div className="confirm-actions"><Button variant="secondary" onClick={() => setSheet(null)}>{t('gathering.keep')}</Button><Button className="danger-button" disabled={saving} onClick={remove}>{t('gathering.deleteDraft')}</Button></div>
     </ResponsiveSheet>
-    {leadsTeam && <TemplateEditor draft={draft} teamId={event.team_id} userId={userId} onClose={() => setDraft(null)} />}
+    {isHost && <TemplateEditor draft={draft} teamId={event.team_id} userId={userId} onClose={() => setDraft(null)} />}
   </>;
 }

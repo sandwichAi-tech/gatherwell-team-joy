@@ -135,6 +135,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
     <ComingUp teamId={teamId} lang={lang} onOpen={setOpenEvent} />
     {canHost && <section className="panel"><div className="section-heading"><h2>{t('waiver.hostTools')}</h2></div><button type="button" className="settings-row" onClick={() => setWaiverOpen(true)}><FileText className="settings-icon" /><span className="settings-label">{t('waiver.manage')}</span><ChevronRight className="settings-chevron" /></button></section>}
     <WaiverEditorSheet teamId={teamId} open={waiverOpen} onClose={() => setWaiverOpen(false)} />
+    <Button asChild variant="secondary" className="mb-4"><Link to="/blueprints">{t('templates.heading')}<ArrowRight /></Link></Button>
     <FromYourLeader teamId={teamId} role={workspace.role} />
     <ChallengesSection />
 
@@ -153,7 +154,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
     {!isLeader && <section className="panel"><button type="button" className="settings-row" onClick={() => setSheet('members')}><UsersRound className="settings-icon" /><span className="settings-label">{t('teamSpace.members')}</span><ChevronRight className="settings-chevron" /></button></section>}
 
     {(tree.length > 1 || canCreateSub) && <SubTeams teamId={teamId} canCreate={canCreateSub} isLeader={isLeader} allowHosts={!!team?.allow_host_subteams} />}
-    {isLeader && <TemplatesSection teamId={teamId} userId={userId} />}
+    {canHost && <TemplatesSection teamId={teamId} userId={userId} />}
     <TeamCalendar teamId={teamId} lang={lang} onOpen={setOpenEvent} />
     <WinsFeed teamId={teamId} userId={userId} lang={lang} isLeader={isLeader} />
 

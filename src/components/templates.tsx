@@ -6,7 +6,7 @@ import { CATEGORIES, isCategory } from '@/lib/landing';
 import { confirmAction } from '@/components/confirm-dialog';
 import { useTranslateFill } from '@/lib/assistant-client';
 import { useEffect, useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -153,7 +153,7 @@ export function TemplatesSection({ teamId, userId }: { teamId: string; userId: s
     toast.success(t('templates.copied')); if (row) setEditing(toDraft(row));
   };
   return <section className="panel">
-    <div className="section-heading"><h2><Button asChild variant="link"><a href="/blueprints">{t('templates.heading')}</a></Button></h2><Button onClick={() => setEditing({ checklist: [], default_duration_minutes: 60, visibility_default: 'team' })}><Plus />{t('templates.new')}</Button></div>
+    <div className="section-heading"><h2><Button asChild variant="link"><Link to="/blueprints">{t('templates.heading')}</Link></Button></h2><Button onClick={() => setEditing({ checklist: [], default_duration_minutes: 60, visibility_default: 'team' })}><Plus />{t('templates.new')}</Button></div>
     {own.length ? <div className="template-grid">{own.map(tpl => <TemplateCard key={tpl.id} template={tpl}><Button size="sm" variant="secondary" onClick={() => setEditing(toDraft(tpl))}><Pencil />{t('templates.edit')}</Button><Button size="sm" onClick={() => void navigate({ to: '/gathering/new', search: { template: tpl.id } })}>{t('templates.useThis')}</Button></TemplateCard>)}</div>
       : <EmptyState compact icon="Layers" text={t('templates.empty')} />}
     {starters.length > 0 && <><h3 className="subsection-title">{t('templates.starters')}</h3>

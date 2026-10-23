@@ -44,7 +44,7 @@ export function EventsPage({ tab }: { tab: EventsTab }) {
 
   return <>
     <div className="page-heading"><div><span className="eyebrow">{t('events.eyebrow')}</span><h1>{t('events.title')}</h1><p>{t('events.liveSentence')}</p></div>
-      {canCreate && <Button asChild className="page-create"><Link to="/gathering/new"><Plus />{t('gathering.create')}</Link></Button>}</div>
+      <div className="blueprint-page-actions"><Button asChild variant="secondary"><Link to="/blueprints">{t('templates.heading')}</Link></Button>{canCreate && <Button asChild className="page-create"><Link to="/gathering/new"><Plus />{t('gathering.create')}</Link></Button>}</div></div>
     <div className="insights-filters">
       <div className="segmented" role="tablist" aria-label={t('events.title')}>{(['upcoming', 'hosting', 'past'] as const).map(k => <Button key={k} role="tab" variant="ghost" aria-selected={tab === k} className={tab === k ? 'selected' : ''} onClick={() => setTab(k)}>{t(`events.tabs.${k}`)}</Button>)}</div>
       <div className="segmented" role="group" aria-label={t('events.view')}>

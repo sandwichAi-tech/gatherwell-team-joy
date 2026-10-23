@@ -1,3 +1,4 @@
+import { blueprintDefaults } from '@/lib/blueprint-defaults';
 import { useFeature } from '@/lib/feature-flags';
 import { RefundSelect } from '@/components/refund-line';
 import { asRefundPolicy, type RefundPolicy } from '@/lib/refunds';
@@ -72,9 +73,11 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (ready) return;
     if (templateId) {
       const tp = templates.find(x => x.id === templateId); if (!tp) return;
+      const defaults = blueprintDefaults(tp);
+      setCategory(defaults.category); setCategoryLabel(defaults.categoryLabel); setPlace(defaults.mode); setPrice(defaults.priceCents ? String(defaults.priceCents / 100) : ''); setCoverStyle(defaults.coverStyle);
       setTpl({ id: tp.id, title: tp.title }); setTitle(tp.title); setCoverPath(tp.cover_url); setDescEn(tp.description_en ?? ''); setDescEs(tp.description_es ?? '');
       setDuration(tp.default_duration_minutes); setCustomDuration(!DURATIONS.includes(tp.default_duration_minutes as 60)); setCapacity(tp.default_capacity ? String(tp.default_capacity) : '');
-      setVisibility(tp.visibility_default === 'team' ? 'team' : 'public'); setStart(toLocalInput(datePresets()[1]!.date)); setReady(true); return;
+      setVisibility(defaults.visibility); setStart(''); setReady(true); return;
     }
     if (sourceId) {
       if (!source) return; const e = source.event;
@@ -163,6 +166,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
 
   const submit = async (publish: boolean) => {
     setTried(true); if (!valid) { toast.error(t('gathering.fixFields')); return; }
+    if (priceCents && visibility === 'team') { toast.error(t('templates.teamFree')); return; }
     if (priceCents && publish && !canSell) { toast.error(t('billing.payoutsRequired')); return; }
     setBusy(true);
     if (editing) {
@@ -219,7 +223,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         {tpl && <span className="chip">{t('gathering.fromTemplate', { title: tpl.title })}</span>}
       </header>
 
-      {!editing && !templateId && !fromId && (() => { const list = templates.filter(x => x.is_published).slice(0, 8); return list.length > 0 && <section className="form-section blueprint-pick" aria-label={t('templates.startFrom')}>
+      {!editing && !templateId && !fromId && (() => { const list = templates.filter(x => x.is_published || x.created_by === userId).slice(0, 8); return list.length > 0 && <section className="form-section blueprint-pick" aria-label={t('templates.startFrom')}>
         <span className="field-label">{t('templates.startFrom')}</span>
         <div className="chip-row">{list.map(x => <button key={x.id} type="button" className="preset-chip" onClick={() => void navigate({ to: '/gathering/new', search: { template: x.id } })}>{x.title}</button>)}</div>
         <small className="field-hint">{t('templates.orScratch')}</small>
