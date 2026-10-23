@@ -287,7 +287,17 @@
     "legalNote": "Al continuar confirmas que tienes 18 años o más.",
     "error": "Algo salió mal. Inténtalo de nuevo.",
     "invalidEmail": "Escribe un correo válido.",
-    "joiningTeam": "Te estás uniendo a {{team}}."
+    "joiningTeam": "Te estás uniendo a {{team}}.",
+    "adminTitle": "Acceso de administración",
+    "adminSubtitle": "Entra a tu consola de administración de ZoheeWell.",
+    "password": "Contraseña",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "adminSignIn": "Entrar a administración",
+    "signingIn": "Entrando…",
+    "passwordError": "El correo o la contraseña son incorrectos. Inténtalo de nuevo.",
+    "adminOnly": "Esta cuenta no tiene acceso de administración.",
+    "regularSignIn": "Volver al inicio de sesión"
   },
   "onboarding": {
     "back": "Atrás",

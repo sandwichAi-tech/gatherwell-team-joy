@@ -1,4 +1,5 @@
 # Team feedback — October 21
+- [ ] Add password-based admin sign-in and verify existing administrator access without email delivery
 - [x] Compact leader insights card on Home; Insights shortcut at top of Team
 - [x] Say "event" instead of "gathering" everywhere (English + Spanish)
 - [x] Rename team templates to Event blueprints with a clear explainer

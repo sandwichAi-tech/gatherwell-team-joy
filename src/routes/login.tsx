@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { Mail } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -71,5 +71,6 @@ function LoginPage() {
     </form>
     {error && <p className="field-error" role="alert">{error}</p>}
     <p className="auth-note">{t('auth.legalNote')}</p>
+    <Button asChild variant="link" className="auth-link"><Link to="/admin-login">{t('auth.adminTitle')}</Link></Button>
   </AuthFrame>;
 }

@@ -287,7 +287,17 @@
     "legalNote": "By continuing you confirm you are 18 or older.",
     "error": "Something went wrong. Please try again.",
     "invalidEmail": "Enter a valid email address.",
-    "joiningTeam": "You're joining {{team}}."
+    "joiningTeam": "You're joining {{team}}.",
+    "adminTitle": "Admin sign in",
+    "adminSubtitle": "Sign in to your ZoheeWell admin console.",
+    "password": "Password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "adminSignIn": "Sign in to admin",
+    "signingIn": "Signing in…",
+    "passwordError": "Email or password is incorrect. Please try again.",
+    "adminOnly": "This account does not have admin access.",
+    "regularSignIn": "Back to regular sign in"
   },
   "onboarding": {
     "back": "Back",
