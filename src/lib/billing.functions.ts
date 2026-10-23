@@ -50,6 +50,8 @@ export const startPlanCheckout = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ plan: z.enum(['growth', 'pro']), origin, lang: z.enum(['en', 'es']), environment }).parse(d))
   .handler(async ({ data, context }): Promise<CheckoutResult> => {
+    const { data: adult } = await context.supabase.rpc('is_adult', {});
+    if (!adult) return { ok: false, error: 'adult_required' };
     const { createStripeClient, getStripeErrorMessage } = await import('@/lib/stripe.server');
     try {
       const { data: ps } = await context.supabase.from('plan_settings').select('monthly_price').eq('plan', data.plan).maybeSingle();
@@ -100,6 +102,8 @@ export const startLicenseCheckout = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ teamId: z.string().uuid(), tier: z.enum(['team25', 'team100']), origin, lang: z.enum(['en', 'es']), environment }).parse(d))
   .handler(async ({ data, context }): Promise<CheckoutResult> => {
+    const { data: adult } = await context.supabase.rpc('is_adult', {});
+    if (!adult) return { ok: false, error: 'adult_required' };
     const { createStripeClient, getStripeErrorMessage } = await import('@/lib/stripe.server');
     try {
       const { data: ok } = await context.supabase.rpc('is_team_member', { _team_id: data.teamId, _roles: ['leader'] });
@@ -279,6 +283,8 @@ export const startChallengeCheckout = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ challengeId: z.string().uuid(), origin, lang: z.enum(['en', 'es']), promo: z.string().max(20).optional().default('') }).parse(d))
   .handler(async ({ data, context }): Promise<Result> => {
+    const { data: adult } = await context.supabase.rpc('is_adult', {});
+    if (!adult) return { ok: false, error: 'adult_required' };
     const { stripe, stripeKey } = await import('./billing/stripe.server');
     if (!stripeKey()) return notConnected;
     const { data: c } = await context.supabase.from('challenges').select('id, title_en, title_es, created_by, is_paid, price_cents').eq('id', data.challengeId).maybeSingle();
