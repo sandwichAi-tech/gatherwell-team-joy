@@ -3,7 +3,7 @@ import { trackEvent } from '@/lib/analytics';
 import { ListSkeleton } from '@/components/launch-states';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -14,13 +14,12 @@ import { Input } from '@/components/ui/input';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { myCohostedEventIds } from '@/components/cohosts';
 import { supabase } from '@/integrations/supabase/client';
-import { firstName, profileQuery, workspaceQuery } from '@/lib/account';
+import { workspaceQuery } from '@/lib/account';
+import { dailyBriefQuery } from '@/lib/daily-brief-query';
 import { hasBlockedClaim } from '@/lib/recognition';
-import { getDailyBrief, prepareFollowupsNow, sendFollowup, suggestRewrite, summarizeLesson } from '@/lib/smart.functions';
+import { prepareFollowupsNow, sendFollowup, suggestRewrite, summarizeLesson } from '@/lib/smart.functions';
 
 const useLang = () => { const { i18n } = useTranslation(); return (i18n.resolvedLanguage === 'es' ? 'es' : 'en') as 'en' | 'es'; };
-const localDay = () => new Intl.DateTimeFormat('en-CA').format(new Date());
-const tz = () => Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Los_Angeles';
 
 /* ---------------- Claims guard ---------------- */
 
@@ -48,19 +47,24 @@ export function ClaimGuard({ text, onUse, lang: forced }: { text: string; onUse:
 /* ---------------- Home: daily brief ---------------- */
 
 export function DailyBriefCard() {
-  const { t } = useTranslation(); const lang = useLang(); const { userId } = useGatherwell(); const qc = useQueryClient();
-  const { data: profile } = useQuery(profileQuery(userId));
-  const fn = useServerFn(getDailyBrief); const day = localDay();
-  const { data } = useQuery({ queryKey: ['daily-brief', userId, day, lang], queryFn: () => fn({ data: { lang, today: day, tz: tz(), name: firstName(profile?.full_name) ?? '' } }), staleTime: 10 * 60_000 });
-  if (!data || data.dismissed || !data.lines.length) return null;
-  const dismiss = async () => {
-    qc.setQueryData(['daily-brief', userId, day, lang], { ...data, dismissed: true });
-    await supabase.from('daily_briefs').update({ dismissed: true }).match({ user_id: userId, day });
-  };
-  return <section className="panel brief-card" aria-labelledby="brief-h">
-    <div className="section-heading"><div><span className="eyebrow">{t('smart.brief.eyebrow')}</span><h2 id="brief-h">{t('smart.brief.title')}</h2></div>
-      <div className="brief-tools">{data.preview && <span className="chip quiet-chip">{t('assistant.previewMode')}</span>}<Button variant="ghost" size="icon" aria-label={t('smart.brief.dismiss')} onClick={dismiss}><X /></Button></div></div>
-    <ul className="brief-lines">{data.lines.map(l => <li key={l.key}>{l.link ? <a href={l.link}>{l.text}<ArrowRight /></a> : <span>{l.text}</span>}</li>)}</ul>
+  const { t } = useTranslation(); const lang = useLang(); const { userId } = useGatherwell();
+  const { data } = useSuspenseQuery(dailyBriefQuery(userId, lang));
+  const text = (line: typeof data.lines[number]) => t(`smart.brief.${line.label}`, {
+    ...line.values,
+    when: typeof line.values.when === 'string' ? new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' }).format(new Date(line.values.when)) : '',
+    place: line.values.place ? ` · ${line.values.place}` : '',
+  });
+  return <section className="brief-card morning-brief" aria-labelledby="brief-h">
+    <div className="section-heading"><div><span className="eyebrow">{t('smart.brief.eyebrow')}</span><h2 id="brief-h">{t('smart.brief.title')}</h2></div></div>
+    {data.lines.length ? <ul className="brief-lines">{data.lines.map(line => {
+      const content = <>{text(line)}<ArrowRight /></>;
+      return <li key={line.key}>{line.target === 'team' ? <Link to="/team/insights">{content}</Link>
+        : line.target === 'resource' ? line.values.kind === 'recipe' ? <Link to="/learn/recipe/$id" params={{ id: line.id ?? '' }}>{content}</Link>
+          : line.values.kind === 'track' ? <Link to="/learn/track/$id" params={{ id: line.id ?? '' }}>{content}</Link>
+          : <Link to="/learn/lesson/$id" params={{ id: line.id ?? '' }}>{content}</Link>
+        : line.target === 'attending' ? <Link to="/e/$id" params={{ id: line.id ?? '' }}>{content}</Link>
+        : <Link to="/event/$id" params={{ id: line.id ?? '' }}>{content}</Link>}</li>;
+    })}</ul> : <div className="brief-empty"><p>{t('smart.brief.empty')}</p><Button asChild><Link to="/gathering/new">{t('smart.brief.create')}<ArrowRight /></Link></Button></div>}
   </section>;
 }
 

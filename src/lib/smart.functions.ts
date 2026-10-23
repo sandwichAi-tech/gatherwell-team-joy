@@ -1,6 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
+import { buildMorningBrief, type BriefEvent } from '@/lib/morning-brief';
 
 const lang = z.enum(['en', 'es']);
 type Sb = { rpc: (fn: any, args?: any) => any };
@@ -104,69 +105,52 @@ export const summarizeLesson = createServerFn({ method: 'POST' })
     return { ok: true as const, teamId, summary: sampleSummary(source, lesson.title_en), preview: true };
   });
 
-/** Today's calm brief: gatherings today, follow-ups waiting, a lesson, a teammate to celebrate, one next step. */
+/** Personal, deterministic brief. All reads run as the caller; no AI or stored daily snapshots. */
 export const getDailyBrief = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ lang, today: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), tz: z.string().max(64), name: z.string().max(80) }).parse(d))
+  .inputValidator((d: unknown) => z.object({ lang, tz: z.string().min(1).max(64) }).parse(d))
   .handler(async ({ data, context }) => {
-    const sb = context.supabase; const uid = context.userId; const es = data.lang === 'es';
-    const { data: saved } = await sb.from('daily_briefs').select('lines, preview, dismissed, language, created_at').eq('user_id', uid).eq('day', data.today).maybeSingle();
-    if (saved && (saved.dismissed || (!saved.preview && saved.language === data.lang && Date.now() - new Date(saved.created_at).getTime() < 2 * 36e5))) return { lines: saved.dismissed ? [] : saved.lines as { key: string; text: string; link: string | null }[], preview: saved.preview, dismissed: saved.dismissed };
-
-    const { data: prof } = await sb.from('profiles').select('active_team_id').eq('id', uid).maybeSingle();
-    const team = prof?.active_team_id;
-    const fmtTime = (iso: string) => new Intl.DateTimeFormat(es ? 'es-MX' : 'en-US', { hour: 'numeric', minute: '2-digit', timeZone: data.tz || 'America/Los_Angeles' }).format(new Date(iso));
-    const dayOf = (iso: string) => new Intl.DateTimeFormat('en-CA', { timeZone: data.tz || 'America/Los_Angeles' }).format(new Date(iso));
-    const lines: { key: string; text: string; link: string | null }[] = [];
-
-    if (team) {
-      const from = new Date(Date.now() - 36e5 * 14).toISOString(); const to = new Date(Date.now() + 36e5 * 38).toISOString();
-      const { data: evs } = await sb.from('events').select('id, title, starts_at').eq('team_id', team).neq('status', 'cancelled').neq('visibility', 'draft').gte('starts_at', from).lte('starts_at', to).order('starts_at').limit(5);
-      const today = (evs ?? []).filter(e => dayOf(e.starts_at) === data.today);
-      if (today.length) lines.push({ key: 'today', text: es ? `Hoy: ${today[0]!.title} a las ${fmtTime(today[0]!.starts_at)}${today.length > 1 ? ` y ${today.length - 1} más` : ''}.` : `Today: ${today[0]!.title} at ${fmtTime(today[0]!.starts_at)}${today.length > 1 ? ` and ${today.length - 1} more` : ''}.`, link: `/event/${today[0]!.id}` });
+    const sb = context.supabase, uid = context.userId;
+    try { new Intl.DateTimeFormat('en-US', { timeZone: data.tz }).format(); } catch { throw new Error('Invalid timezone'); }
+    const now = new Date().toISOString();
+    const from = new Date(Date.now() - 8 * 864e5).toISOString();
+    const checked = <T,>(result: { data: T; error: { message: string } | null }): T => {
+      if (result.error) throw new Error('Could not load your morning brief');
+      return result.data;
+    };
+    const memberships = checked(await sb.from('team_members').select('team_id, role').eq('user_id', uid)) ?? [];
+    const leaderTeams = new Set(memberships.filter(m => m.role === 'leader').map(m => m.team_id));
+    for (const root of [...leaderTeams]) {
+      const tree = checked(await sb.rpc('team_tree', { _root: root }));
+      for (const node of tree ?? []) leaderTeams.add(node.id);
     }
-    const { count: waiting } = await sb.from('followup_drafts').select('id', { count: 'exact', head: true }).eq('host_id', uid).in('status', ['draft', 'approved']);
-    if (waiting) lines.push({ key: 'followups', text: es ? `${waiting} ${waiting === 1 ? 'seguimiento listo' : 'seguimientos listos'} para revisar.` : `${waiting} follow-up${waiting === 1 ? '' : 's'} ready to review.`, link: '/followups' });
-    {
-      const { data: hits } = await sb.from('event_plan_waitlist').select('event_id, events!inner(host_id, starts_at, status)').eq('events.host_id', uid).eq('events.status', 'published').gte('events.starts_at', new Date().toISOString());
-      const ids = (hits ?? []).map(h => h.event_id);
-      if (ids.length) {
-        const { count } = await sb.from('rsvps').select('id', { count: 'exact', head: true }).in('event_id', ids).eq('status', 'waitlist');
-        const n = count ?? 0;
-        if (n) lines.unshift({ key: 'plan_waitlist', text: es ? `${n} ${n === 1 ? 'persona está esperando' : 'personas están esperando'}. Mejora tu plan para darles la bienvenida.` : `${n} ${n === 1 ? 'guest is' : 'guests are'} waiting. Upgrade to welcome them.`, link: '/plan' });
-      }
-    }
-    if (team) {
-      const { data: tracks } = await sb.from('tracks').select('id, is_start_here, sort_order, lessons(id, title_en, title_es, sort_order)').eq('team_id', team).eq('is_published', true).order('is_start_here', { ascending: false }).order('sort_order').limit(6);
-      const { data: done } = await sb.from('lesson_progress').select('lesson_id').eq('user_id', uid);
-      const doneSet = new Set((done ?? []).map(d => d.lesson_id));
-      const lesson = (tracks ?? []).flatMap(t => [...((t as any).lessons ?? [])].sort((a: any, b: any) => a.sort_order - b.sort_order)).find((l: any) => !doneSet.has(l.id)) as { id: string; title_en: string; title_es: string | null } | undefined;
-      if (lesson && lines.length < 4) lines.push({ key: 'lesson', text: es ? `Una lección para hoy: ${lesson.title_es || lesson.title_en}.` : `One lesson to watch: ${lesson.title_en}.`, link: `/learn/lesson/${lesson.id}` });
-      const { data: act } = await sb.from('activity').select('actor_id, type').eq('team_id', team).neq('actor_id', uid).gte('created_at', new Date(Date.now() - 7 * 864e5).toISOString()).order('created_at', { ascending: false }).limit(20);
-      const pick = (act ?? []).find(a => a.actor_id && /badge|check|host|challenge|lesson|milestone/.test(a.type)) ?? (act ?? []).find(a => a.actor_id);
-      if (pick?.actor_id && lines.length < 4) {
-        const { data: p } = await sb.from('profiles').select('full_name').eq('id', pick.actor_id).maybeSingle();
-        const n = (p?.full_name ?? '').split(/\s+/)[0];
-        if (n) lines.push({ key: 'celebrate', text: es ? `Celebra a ${n}: estuvo muy activa esta semana.` : `Celebrate ${n}: they showed up this week.`, link: '/team' });
-      }
-    }
-    const step = waiting ? (es ? 'Siguiente paso: envía tus seguimientos mientras la reunión está fresca.' : 'Next step: send your follow-ups while the gathering is fresh.')
-      : lines.some(l => l.key === 'today') ? (es ? 'Siguiente paso: comparte el enlace una vez más antes de empezar.' : 'Next step: share the link one more time before you start.')
-      : (es ? 'Siguiente paso: invita a una persona a tu próxima reunión.' : 'Next step: invite one person to your next gathering.');
-    lines.push({ key: 'step', text: step, link: waiting ? '/followups' : '/events' });
-    let out = lines.slice(-4).length === lines.length ? lines : [...lines.slice(0, 3), lines[lines.length - 1]!];
-    let preview = true;
-    const key = process.env['ANTHROPIC_API_KEY'];
-    if (key && await underLimit(sb)) {
-      try {
-        const { claudeBrief } = await import('@/lib/ai/smart.server');
-        const r = await claudeBrief(key, out, data.lang, data.name);
-        out = r.lines; preview = false;
-        await record(sb, 'daily_brief', r.input, r.output);
-      } catch (e) { console.error('[brief] failed', e); }
-    }
-    await sb.from('daily_briefs').upsert({ user_id: uid, day: data.today, language: data.lang, lines: out, preview, dismissed: false, created_at: new Date().toISOString() });
-    return { lines: out, preview, dismissed: false };
+    const fields = 'id,host_id,team_id,title,starts_at,location_name,status';
+    const [eventResult, attendingResult, trackResult, lessonResult, recipeResult, flagResult] = await Promise.all([
+      sb.from('events').select(fields).eq('status', 'published').gte('starts_at', from).order('starts_at'),
+      sb.from('rsvps').select(`checkin_code,event:events(${fields})`).eq('user_id', uid).eq('status', 'going'),
+      sb.from('tracks').select('id,title_en,title_es,is_published,created_at').eq('is_published', true),
+      sb.from('lessons').select('id,track_id,title_en,title_es,created_at').gte('created_at', from),
+      sb.from('recipes').select('id,title_en,title_es,created_at,created_by,private_owner').eq('is_published', true).gte('created_at', from),
+      sb.from('feature_flags').select('enabled').eq('key', 'feature_learn').maybeSingle(),
+    ]);
+    const events: BriefEvent[] = (checked(eventResult) ?? []).map(e => ({ ...e, going: 0 }));
+    const own = events.filter(e => e.host_id === uid);
+    for (const event of own.filter(e => e.starts_at >= now)) event.going = Number(checked(await sb.rpc('event_going_count', { _event_id: event.id })) ?? 0);
+    const signups = own.length ? checked(await sb.from('rsvps').select('event_id,created_at').in('event_id', own.map(e => e.id)).eq('status', 'going').gte('created_at', from)) ?? [] : [];
+    const hosts = leaderTeams.size ? checked(await sb.from('team_members').select('user_id,team_id').in('team_id', [...leaderTeams]).in('role', ['host', 'leader'])) ?? [] : [];
+    const attending = (checked(attendingResult) ?? []).flatMap(row => row.event ? [{ event: { ...row.event, going: 0 }, code: row.checkin_code }] : []);
+    const tracks = checked(trackResult) ?? [], lessons = checked(lessonResult) ?? [], recipes = checked(recipeResult) ?? [];
+    const enabled = checked(flagResult)?.enabled;
+    const title = (row: { title_en: string; title_es: string | null }) => data.lang === 'es' ? row.title_es || row.title_en : row.title_en;
+    const trackIds = new Set(tracks.map(t => t.id));
+    // A new track appears only if it has a readable lesson, matching the Resources reader library.
+    const lessonTracks = new Set(lessons.map(l => l.track_id));
+    const resources = enabled ? [
+      ...tracks.filter(t => lessonTracks.has(t.id) && t.created_at >= from).map(t => ({ id: t.id, title: title(t), created_at: t.created_at, kind: 'track' as const })),
+      ...lessons.filter(l => trackIds.has(l.track_id)).map(l => ({ id: l.id, title: title(l), created_at: l.created_at, kind: 'lesson' as const })),
+      ...recipes.filter(r => r.created_by !== uid && r.private_owner !== uid).map(r => ({ id: r.id, title: title(r), created_at: r.created_at, kind: 'recipe' as const })),
+    ] : [];
+    return { lines: buildMorningBrief({ userId: uid, now, timezone: data.tz, events, attending, signups, leaderTeams: [...leaderTeams], hosts, resources }) };
   });
 
 /** Bilingual share caption (English then Spanish). Claude when the key exists, otherwise a warm preview caption. */
