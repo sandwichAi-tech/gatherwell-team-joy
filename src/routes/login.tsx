@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { AuthFrame, pageHead } from '@/components/auth-frame';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable';
-import { clearPendingInvite, pendingInvite } from '@/lib/account';
+import { pendingInvite } from '@/lib/account';
 import { rememberNext, safeReturnPath, takeNext } from '@/lib/return-to';
 
 type LoginSearch = { intent?: 'host'; next?: string; i?: string };
