@@ -7,8 +7,8 @@ import { EmptyState } from '@/components/launch-states';
 import { ReferralCard } from '@/components/network-share';
 import { WelcomeRewardsCard } from '@/components/welcome';
 import { trackEvent } from '@/lib/analytics';
-import { useState, type ReactNode } from 'react';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { useEffect, useState, type ReactNode } from 'react';
+import { Link, useLocation, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +23,30 @@ import { workspaceQuery } from '@/lib/account';
 import { rosterQuery } from '@/lib/team';
 import { isAdminQuery } from '@/lib/site-media';
 import { earningsQuery, formatMoney, formatStorage, LICENSES, licenseQuery, paymentsStatusQuery, PLANS, PRO_FEATURES, planSettingsQuery, planStatusQuery, type PlanId } from '@/lib/billing';
-import { openBillingPortal, refundPayments, startConnectOnboarding, startLicenseCheckout, startPlanCheckout } from '@/lib/billing.functions';
+import { openBillingPortal, refundPayments, schedulePlanChange, startConnectOnboarding, startLicenseCheckout, startPlanCheckout } from '@/lib/billing.functions';
+import { getStripeEnvironment, paymentsTokenPresent } from '@/lib/stripe';
+import { useInlineCheckout } from '@/components/inline-checkout';
+
+const fmtDate = (iso: string, lang: string) => new Date(iso).toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+/** App errors with their own wording; anything else is the provider's message. */
+const CHECKOUT_ERRORS = ['already_on_plan', 'already_on_license', 'price_mismatch', 'price_not_found', 'founding_free', 'no_subscription', 'no_period_end'];
+
+/** Says so once when the provider returns after a paid checkout. */
+function useCheckoutNotice() {
+  const { t } = useTranslation();
+  const qc = useQueryClient();
+  const location = useLocation();
+  const done = new URLSearchParams(location.searchStr).get('checkout') === 'done';
+  useEffect(() => {
+    if (!done) return;
+    toast.success(t('billing.checkoutDone'));
+    void qc.invalidateQueries({ queryKey: ['plan-status'] });
+    const url = new URL(window.location.href);
+    url.searchParams.delete('checkout'); url.searchParams.delete('session_id');
+    window.history.replaceState({}, '', url.toString());
+  }, [done, t, qc]);
+}
 
 export function NotConnectedSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   const { t } = useTranslation();
@@ -39,17 +62,23 @@ export function usePaymentGate() {
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const { t } = useTranslation();
-  const run = async (fn: () => Promise<{ ok: boolean; url?: string; error?: string }>) => {
-    if (!data?.connected) { setOpen(true); return; }
+  const { openCheckout, element } = useInlineCheckout();
+  const ready = !!data?.connected && paymentsTokenPresent();
+  const run = async (fn: () => Promise<{ ok: boolean; url?: string; clientSecret?: string; error?: string }>, opts?: { newTab?: boolean }) => {
+    if (!ready) { setOpen(true); return; }
     setBusy(true);
     try {
       const r = await fn();
-      if (r.ok && r.url) { window.location.href = r.url; return; }
-      if (r.error === 'not_connected') setOpen(true); else toast.error(t('billing.error'));
+      // Inline form: hand the captured secret to the provider's own checkout.
+      if (r.ok && r.clientSecret) { const secret = r.clientSecret; openCheckout(async () => secret); return; }
+      if (r.ok && r.url) { if (opts?.newTab) window.open(r.url, '_blank', 'noopener'); else window.location.href = r.url; return; }
+      if (r.ok) return; // the caller already reported its own outcome
+      if (r.error === 'not_connected') setOpen(true);
+      else toast.error(CHECKOUT_ERRORS.includes(r.error ?? '') ? t(`billing.checkoutError_${r.error}`) : r.error || t('billing.error'));
     } catch { toast.error(t('billing.error')); }
     setBusy(false);
   };
-  return { run, busy, connected: !!data?.connected, sheet: <NotConnectedSheet open={open} onOpenChange={setOpen} /> };
+  return { run, busy, connected: ready, sheet: <><NotConnectedSheet open={open} onOpenChange={setOpen} />{element}</> };
 }
 
 export function UpgradeSheet({ open, onOpenChange, reason }: { open: boolean; onOpenChange: (o: boolean) => void; reason: 'gatherings' | 'storage' | 'guests' }) {
@@ -83,11 +112,14 @@ export function PlanPage() {
   const { data: settings } = useQuery(planSettingsQuery);
   const [downgrade, setDowngrade] = useState<PlanId | null>(null);
   const gate = usePaymentGate();
+  useCheckoutNotice();
   const checkout = useServerFn(startPlanCheckout);
   const license = useServerFn(startLicenseCheckout);
   const portal = useServerFn(openBillingPortal);
   const connect = useServerFn(startConnectOnboarding);
+  const schedule = useServerFn(schedulePlanChange);
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
+  const rank: Record<PlanId, number> = { free: 0, growth: 1, pro: 2 };
   if (!st || !settings) return <p className="auth-subtitle">{t('publicEvent.loading')}</p>;
   const current = st.plan;
   const lim = st.limits;
@@ -95,9 +127,16 @@ export function PlanPage() {
 
   const choose = (id: PlanId) => {
     if (id === st.own_plan && st.legacy_price_cents === null) return;
-    if (id === 'free') { setDowngrade(id); return; }
-    trackEvent('upgrade_clicked', { plan: id }); void gate.run(() => checkout({ data: { plan: id === 'growth' ? 'growth' : 'pro', origin, lang } }));
+    // Moving down keeps what they paid for, so it is scheduled for the month end.
+    if (id === 'free' || rank[id] < rank[st.own_plan]) { setDowngrade(id); return; }
+    trackEvent('upgrade_clicked', { plan: id });
+    void gate.run(() => checkout({ data: { plan: id === 'growth' ? 'growth' : 'pro', origin, lang, environment: getStripeEnvironment() } }));
   };
+  const runScheduled = (target: PlanId) => void gate.run(async () => {
+    const r = await schedule({ data: { target, environment: getStripeEnvironment() } });
+    if (r.ok) { toast.success(t('billing.downgradeScheduled', { date: fmtDate(r.at, lang) })); void qc.invalidateQueries({ queryKey: ['plan-status'] }); return { ok: true }; }
+    return r;
+  });
   const togglePassFee = async (on: boolean) => {
     const { error } = await supabase.rpc('set_pass_fee', { _on: on });
     if (error) toast.error(t('billing.error')); else void qc.invalidateQueries({ queryKey: ['plan-status'] });
@@ -106,7 +145,9 @@ export function PlanPage() {
   return <>
     <Back />
     <div className="page-heading"><div><span className="eyebrow">{t('billing.eyebrow')}</span><h1>{t('billing.title')}</h1></div></div>
-    {st.status === 'past_due' && <div className="plan-banner" role="alert"><AlertCircle />{t('billing.pastDue')}<Button variant="link" onClick={() => void gate.run(() => portal({ data: { origin } }))}>{t('billing.updateCard')}</Button></div>}
+    {st.status === 'past_due' && <div className="plan-banner" role="alert"><AlertCircle />{t('billing.pastDue')}<Button variant="link" onClick={() => void gate.run(() => portal({ data: { origin, environment: getStripeEnvironment() } }), { newTab: true })}>{t('billing.updateCard')}</Button></div>}
+    {st.cancel_at_period_end && st.renews_at && <div className="plan-banner" role="status"><AlertCircle />{t('billing.cancelsOn', { date: fmtDate(st.renews_at, lang) })}</div>}
+    {st.pending_plan && st.pending_plan_at && <div className="plan-banner" role="status"><AlertCircle />{t('billing.pendingSwitch', { plan: t(`billing.name_${st.pending_plan}`), date: fmtDate(st.pending_plan_at, lang) })}</div>}
 
     <section className="panel plan-current">
       <div><span className="eyebrow">{t('billing.current')}</span><h2>{st.source === 'license' ? t('billing.licensePlan', { leader: st.leader || st.team || '' }) : t(`billing.plan_${current}`)}</h2>
@@ -159,7 +200,7 @@ export function PlanPage() {
         <h3>{t('billing.name_team')}</h3>
         <p className="auth-subtitle">{t('billing.teamText')}</p>
         {LICENSES.map(l => <div key={l.id} className="plan-license-row"><span><strong>{t(`billing.${l.id}`)}</strong><small>{t('billing.seatsGrowth', { n: l.seats })}</small></span><span className="plan-license-price">{formatMoney(l.cents, lang)}{t('billing.perMonth')}</span>
-          {ws?.role === 'leader' && <Button variant="secondary" disabled={gate.busy} onClick={() => void gate.run(() => license({ data: { teamId: ws.teamId, tier: l.id, origin, lang } }))}>{t('billing.buy')}</Button>}</div>)}
+          {ws?.role === 'leader' && <Button variant="secondary" disabled={gate.busy} onClick={() => void gate.run(() => license({ data: { teamId: ws.teamId, tier: l.id, origin, lang, environment: getStripeEnvironment() } }))}>{t('billing.buy')}</Button>}</div>)}</div>
         <div className="plan-license-row"><span><strong>{t('billing.organization')}</strong><small>{t('billing.orgText')}</small></span><Button asChild variant="secondary"><a href="mailto:help@gatherwell.app">{t('billing.contact')}</a></Button></div>
       </article>
     </div>
@@ -190,7 +231,8 @@ export function PlanPage() {
             <li>{t('billing.fAssistant', { n: l.assistant })}</li>
             <li>{t('billing.fFee', { n: l.fee_pct })}</li></>; })()}
         </ul>
-        <Button className="onboarding-continue" onClick={() => { setDowngrade(null); void gate.run(() => portal({ data: { origin } })); }}>{t('billing.downConfirm')}</Button>
+        <p className="field-hint">{t('billing.downgradeAtMonthEnd')}</p>
+        <Button className="onboarding-continue" disabled={gate.busy} onClick={() => { const target = downgrade!; setDowngrade(null); runScheduled(target); }}>{t('billing.downConfirm')}</Button>
         <Button variant="secondary" onClick={() => setDowngrade(null)}>{t('billing.notNow')}</Button>
       </>}
     </ResponsiveSheet>
@@ -242,7 +284,7 @@ export function SeatsPage() {
     </section> : <section className="panel">
       <EmptyState compact icon="CreditCard" text={t('billing.noLicense')} />
       {LICENSES.map(l => <div key={l.id} className="plan-license-row"><span><strong>{t(`billing.${l.id}`)}</strong><small>{t('billing.seatsGrowth', { n: l.seats })}</small></span><span className="plan-license-price">{formatMoney(l.cents, lang)}{t('billing.perMonth')}</span>
-        <Button disabled={gate.busy} onClick={() => void gate.run(() => license({ data: { teamId, tier: l.id, origin: window.location.origin, lang } }))}>{t('billing.buy')}</Button></div>)}
+        <Button disabled={gate.busy} onClick={() => void gate.run(() => license({ data: { teamId, tier: l.id, origin: window.location.origin, lang, environment: getStripeEnvironment() } }))}>{t('billing.buy')}</Button></div>)}
       {isAdmin && <Button variant="secondary" onClick={() => void grantPreview()}>{t('billing.grantPreview')}</Button>}
     </section>}
     {gate.sheet}
