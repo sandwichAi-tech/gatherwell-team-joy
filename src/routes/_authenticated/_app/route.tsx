@@ -1,11 +1,11 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 import { GatherwellShell } from '@/components/gatherwell-shell';
-import { JOIN_CODE_KEY, profileQuery } from '@/lib/account';
+import { pendingInvite, profileQuery } from '@/lib/account';
 
 export const Route = createFileRoute('/_authenticated/_app')({
   beforeLoad: async ({ context }) => {
     const profile = await context.queryClient.ensureQueryData(profileQuery(context.user.id));
-    if (!profile?.onboarded || localStorage.getItem(JOIN_CODE_KEY)) throw redirect({ to: '/onboarding' });
+    if (!profile?.onboarded || !profile.adult_confirmed_at || pendingInvite()) throw redirect({ to: '/onboarding' });
   },
   component: AppLayout,
 });

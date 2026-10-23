@@ -19,6 +19,7 @@ import { useTranslation } from "react-i18next";
 import i18n, { applySavedLanguage, isServerRenderedMarketing } from "@/lib/i18n";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ListSkeleton } from '@/components/launch-states';
+import { clearPendingInvite } from '@/lib/account';
 import { BrandLogo } from '@/components/brand-logo';
 
 function NotFoundComponent() {

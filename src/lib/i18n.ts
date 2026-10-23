@@ -8,8 +8,8 @@ i18n.use(initReactI18next).init({
   lng: 'en', fallbackLng: 'en', interpolation: { escapeValue: false },
   react: { useSuspense: false },
 });
-/** Spanish is paused for launch; flip to true to bring the language switch back. */
-export const SPANISH_ENABLED = false;
+/** English and Latin American Spanish both launch in beta (Blueprint v4). */
+export const SPANISH_ENABLED: boolean = true;
 if (!SPANISH_ENABLED) i18n.on('languageChanged', l => { if (l !== 'en') void i18n.changeLanguage('en'); });
 export default i18n;
 
