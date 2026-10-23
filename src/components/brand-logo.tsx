@@ -1,7 +1,7 @@
-import plumLogo from '@/assets/logos/ZoheeWell_Logo_Midnight_Plum.svg.asset.json';
+import plumLogo from '@/assets/logos/ZoheeWell_Logo_Adobe_Terracotta_3000px.png.asset.json';
 import ivoryLogo from '@/assets/logos/ZoheeWell_Logo_Warm_Ivory.svg.asset.json';
 
-/** Original supplied artwork; CSS selects the contrast-safe version without changing its colors. */
+/** Original supplied artwork; Terracotta on light backgrounds, Warm Ivory on dark. */
 export function BrandLogo() {
   return <span className="brand-logo" aria-hidden="true">
     <img className="brand-logo-plum" src={plumLogo.url} alt="" width={522} height={105} />
