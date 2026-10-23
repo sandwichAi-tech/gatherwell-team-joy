@@ -61,8 +61,8 @@ function Toolkit() {
     <span className="gw-label">{t('home.tools.label')}</span>
     <h2 id="tools-title" className="gw-display gw-h2">{t('home.tools.title')}</h2>
     <div className="gw-home-groups">{TOOLKIT.map(g => <details key={g.key} className="gw-home-group" open>
-      <summary><span className="gw-home-tool-icon" aria-hidden="true"><GwIcon name={g.icon} variant="marketing" size={20} /></span><span><strong>{t(`home.tools.groups.${g.key}.title`)}</strong><span className="gw-home-group-sum">{t(`home.tools.groups.${g.key}.summary`)}</span></span></summary>
-      <ul>{g.items.map(i => <li key={i.key}>{t(`home.tools.items.${i.key}`)}{(i.soon || g.soon) && <span className="gw-home-tool-tag">{t('home.soon')}</span>}</li>)}</ul>
+      <summary><span className="gw-home-tool-icon" aria-hidden="true"><GwIcon name={g.icon} variant="marketing" size={20} /></span><span><strong>{t(`home.tools.groups.${g.key}.title`)}</strong><span className="gw-home-group-sum">{t(`home.tools.groups.${g.key}.summary`)}</span>{g.soon && <span className="gw-home-tool-tag">{t('home.paymentsSoon')}</span>}</span></summary>
+      <ul>{g.items.map(i => <li key={i.key}>{t(`home.tools.items.${i.key}`)}{i.soon && !g.soon && <span className="gw-home-tool-tag">{t('home.soon')}</span>}</li>)}</ul>
     </details>)}</div>
   </div></section>;
 }
