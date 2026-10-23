@@ -1,3 +1,16 @@
+# ZoheeWell
+
+Life is better together. A mobile-first platform for events, courses, resources, host memberships and community relationships, in English and Latin American Spanish.
+
+Start with SOURCE_OF_TRUTH.md, then PROJECT_RULES.md, DESIGN_RULES.md and AGENTS.md.
+
+
+---
+
+# Historical record — pre Blueprint v4 rules (not active)
+
+> **Historical record — pre Blueprint v4 (2026-10-23).** Not an active instruction. Where anything here conflicts with SOURCE_OF_TRUTH.md, Blueprint v4 wins.
+
 # Team Connect
 
 PROJECT RULES (keep these for the whole project):

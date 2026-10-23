@@ -1,3 +1,5 @@
+> **Historical record — pre Blueprint v4 (2026-10-23).** Not an active instruction. Where anything here conflicts with SOURCE_OF_TRUTH.md, Blueprint v4 wins.
+
 # ZoheeWell — dead-click audit (walkthrough 1.1)
 
 **Date:** October 23, 2026 (UTC)  

@@ -1,3 +1,5 @@
+> **Historical record — pre Blueprint v4 (2026-10-23).** Not an active instruction. Where anything here conflicts with SOURCE_OF_TRUTH.md, Blueprint v4 wins.
+
 # 1.12 — Public pages render on the server (SEO-01)
 
 ## What we found

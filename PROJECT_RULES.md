@@ -1,3 +1,55 @@
+# ZoheeWell project rules — Blueprint v4 (active)
+
+Authority and change control: see SOURCE_OF_TRUTH.md. These rules restate the approved Project Knowledge; if they differ, Project Knowledge and Blueprint v4 win.
+
+## Product
+- ZoheeWell is a mobile-first platform for events, courses, resources, host memberships and community relationships, for wellness hosts, coaches, educators, creators, fitness professionals and community organizers.
+- MLM and direct-selling relationships are an initial acquisition channel, not the public identity. No insider MLM language.
+- "Event" is the visible noun (never "gathering"; internal route/table names may stay).
+- One account can attend and learn, host and teach, and join multiple teams.
+
+## Beta scope (complete; stages sequence work but do not defer features)
+One-time and recurring events, multi-day retreats, tickets, promotions, waitlists, waivers, guardian consent, QR check-in, Apple and Google Wallet, courses, sections, lessons, quizzes, progress, certificates, standalone resources, one-time purchases, host memberships, course subscriptions, teams, discovery, invitations, email, paid SMS, analytics, moderation, English, Spanish, accessibility and support.
+
+## Explicit exclusions
+No public ratings or reviews, participant direct messages, social feed, independent minor accounts, native video or livestream platform, travel booking, automatic host-content translation, MLM downline integration, ticket resale or transfer, paid discovery ranking, or autonomous AI publication, messaging or calling.
+
+## Languages
+English and natural Latin American Spanish both launch in beta. Every interface, validation, checkout, consent and transactional message has matched en/es keys. Host content is never auto-translated.
+
+## Commerce
+- Host is seller and merchant of record through Stripe connected accounts.
+- Flat 5% ZoheeWell platform fee on every paid host-generated event, course, resource, membership and course subscription, on every plan including Pro. Free products have no fee. Stripe processing is separate.
+- The old 7% / 2% / 0% ladder, monthly fee caps and the 3% + $0.49 guest fee are retired for future pricing.
+- Planned monthly plans: Free $0, Advanced $49, Pro $99, Team 25 $199, Team 100 $499. Annual billing = two months free. Pricing may change after the pilot (with approval).
+- Founding hosts (personally invited only): six months of complete access from activation, no card, no automatic conversion, 30 days' notice before expiry, 20% off the first paid year if annual is chosen by the end of access; not stackable with the normal annual discount.
+
+## Privacy and trust
+- Collect minimum data. A host or assigned manager sees only participants of offerings they manage; team leadership alone never reveals attendee contacts.
+- Never sell personal data or infer sensitive traits. No health data by default.
+- Separate, unchecked host marketing email and SMS consent; transactional messages only for fulfillment and account needs.
+- Accounts, hosts, purchasers and subscribers are 18+. An adult may register a minor for an eligible event with separate guardian consent.
+
+## Content and AI
+- No unsupported health, disease, weight-loss, safety or income claims. Require endorsement and distributor relationship disclosures.
+- AI may draft event copy, course outlines, summaries, quiz questions, emails and Spanish drafts; a host approves before publication or sending. No diagnosis, treatment, sensitive inference or autonomous calls.
+
+## Engineering
+- Preserve working infrastructure; map approved concepts to the existing schema before adding tables.
+- Reversible migrations, RLS on every private table, server validation, idempotent provider webhooks, versioned money and consent rules, private storage, signed file access, audit logs.
+- Client state never establishes payment, entitlement, permission, consent or attendance. Secrets stay server-side.
+- Never present a simulated email, SMS, payment, wallet pass or AI action as completed. Screens show real data or honest empty states, never sample activity.
+
+## Quality (every change)
+Phone-first, 48px primary targets, WCAG 2.2 AA, tests, two-account data-isolation check, mobile and desktop review, accessibility review, CHANGELOG.md entry (version, date, changed, tested, unverified).
+
+
+---
+
+# Historical record — pre Blueprint v4 rules (not active)
+
+> **Historical record — pre Blueprint v4 (2026-10-23).** Not an active instruction. Where anything here conflicts with SOURCE_OF_TRUTH.md, Blueprint v4 wins.
+
 # ZoheeWell rules (October 2026) — these override older sections
 - Product: ZoheeWell is the event and resource platform for wellness hosts, built first for wellness MLM distributors and their teams. Like Eventbrite, but simpler and cleaner, for wellness, health and fitness.
 - Four lanes, and every screen makes clear which one you're in: Events, Resources, Public host page, Attendee experience.

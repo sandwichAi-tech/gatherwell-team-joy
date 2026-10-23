@@ -1,3 +1,5 @@
+> **Historical record — pre Blueprint v4 (2026-10-23).** Not an active instruction. Where anything here conflicts with SOURCE_OF_TRUTH.md, Blueprint v4 wins.
+
 # Gatherwell — D1 Premium Design Audit
 
 **Date:** 6 October 2026 · **Deliverable:** Step 1, report before fixes · **Status:** audit complete; no visual implementation performed.
