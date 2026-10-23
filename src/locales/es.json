@@ -704,7 +704,7 @@
     "down": "−{{count}} vs. periodo anterior",
     "chart": "Asistencias por semana",
     "topHosts": "Mejores anfitriones",
-    "hostLine": "{{gatherings}} reuniones · {{checkins}} asistencias",
+    "hostLine": "{{events}} eventos · {{checkins}} asistencias",
     "noHosts": "Todavía no hay reuniones en este periodo.",
     "shout": "Dar un reconocimiento",
     "shoutTitle": "Reconocimiento para {{name}}",
