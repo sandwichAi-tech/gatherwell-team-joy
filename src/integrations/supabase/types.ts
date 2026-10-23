@@ -275,11 +275,14 @@ export type Database = {
       billing_accounts: {
         Row: {
           billing_period: string | null
+          cancel_at_period_end: boolean
           connect_account_id: string | null
           connect_status: string
           created_at: string
           legacy_price_cents: number | null
           pass_fee: boolean
+          pending_plan: string | null
+          pending_plan_at: string | null
           plan: string
           renews_at: string | null
           status: string
@@ -290,11 +293,14 @@ export type Database = {
         }
         Insert: {
           billing_period?: string | null
+          cancel_at_period_end?: boolean
           connect_account_id?: string | null
           connect_status?: string
           created_at?: string
           legacy_price_cents?: number | null
           pass_fee?: boolean
+          pending_plan?: string | null
+          pending_plan_at?: string | null
           plan?: string
           renews_at?: string | null
           status?: string
@@ -305,11 +311,14 @@ export type Database = {
         }
         Update: {
           billing_period?: string | null
+          cancel_at_period_end?: boolean
           connect_account_id?: string | null
           connect_status?: string
           created_at?: string
           legacy_price_cents?: number | null
           pass_fee?: boolean
+          pending_plan?: string | null
+          pending_plan_at?: string | null
           plan?: string
           renews_at?: string | null
           status?: string
@@ -3459,6 +3468,7 @@ export type Database = {
       }
       team_licenses: {
         Row: {
+          cancel_at_period_end: boolean
           created_at: string
           is_preview: boolean
           leader_id: string
@@ -3472,6 +3482,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          cancel_at_period_end?: boolean
           created_at?: string
           is_preview?: boolean
           leader_id: string
@@ -3485,6 +3496,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          cancel_at_period_end?: boolean
           created_at?: string
           is_preview?: boolean
           leader_id?: string

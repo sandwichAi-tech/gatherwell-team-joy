@@ -10,6 +10,10 @@ export type PlanStatus = {
   plan: PlanId; source: 'own' | 'license' | 'founding'; leader?: string | null; team?: string | null; limits: Limits;
   own_plan: PlanId; billing_period: 'month' | 'year' | null; status: 'active' | 'past_due' | 'canceled' | 'trialing'; renews_at: string | null;
   has_customer: boolean; connect_status: 'not_started' | 'pending' | 'active'; pass_fee: boolean;
+  /** Set once the person cancels: paid access runs to renews_at. */
+  cancel_at_period_end?: boolean;
+  /** Plan that starts at pending_plan_at from a scheduled switch, or null. */
+  pending_plan?: PlanId | null; pending_plan_at?: string | null;
   legacy_price_cents: number | null; fees_month: number; sales_month: number; no_limits_until: string | null;
   founding: { start_date: string | null; free_until: string | null; rate_cents: number; in_window: boolean; pending_start: boolean } | null;
   usage: { gatherings: number; largest_guests: number; storage_bytes: number; assistant: number };
@@ -34,7 +38,7 @@ export const planSettingsQuery = queryOptions({
     return Object.fromEntries((data ?? []).map(r => [r.plan, { ...r, fee_percent: Number(r.fee_percent), service_fee_percent: Number(r.service_fee_percent) }])) as Record<PlanId, PlanSetting>;
   },
 });
-export const LICENSES = [{ id: 'team25' as const, cents: 19900, seats: 25 }, { id: 'team100' as const, cents: 49900, seats: 100 }];
+export { LICENSES } from './license-prices';
 
 export const planStatusQuery = (userId: string) => queryOptions({
   queryKey: ['plan-status', userId],
@@ -51,7 +55,7 @@ export const licenseQuery = (teamId: string) => queryOptions({
   queryKey: ['license', teamId],
   queryFn: async () => {
     const [{ data: lic }, { data: seats }] = await Promise.all([
-      supabase.from('team_licenses').select('tier, seats, status, is_preview, renews_at').eq('team_id', teamId).maybeSingle(),
+      supabase.from('team_licenses').select('tier, seats, status, is_preview, renews_at, cancel_at_period_end').eq('team_id', teamId).maybeSingle(),
       supabase.from('license_seats').select('user_id').eq('team_id', teamId),
     ]);
     return { license: lic, seats: new Set((seats ?? []).map(s => s.user_id)) };

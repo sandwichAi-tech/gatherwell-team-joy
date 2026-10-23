@@ -138,8 +138,8 @@
 # Payments — October 23
 - [x] Enable built-in payments; test environment created
 - [x] Add the four plans already in the app to the payment provider: Pro $99/mo, Advanced $49/mo, Team 25 $199/mo, Team 100 $499/mo (each with a software-subscription tax code)
-- [ ] Confirm purchase / cancel / upgrade / downgrade behaviour with Nick, then keep or change it
-- [ ] Point checkout and the payment notifications at the new connection so checkout actually runs (currently they read keys from an older setup that is not configured)
-- [ ] Switch checkout to the inline payment form with tax and compliance handling turned on
-- [ ] Add the test-mode notice so preview buyers know no real money moves
-- [ ] Verify a real test purchase end to end and read the result back in the app
+- [x] Confirm purchase / cancel / upgrade / downgrade behaviour with Nick: cancel keeps access to month end, downgrade applies at month end, failed payment keeps access while it retries, only plans and team licenses are sold for now
+- [x] Point checkout and the payment notifications at the new connection so checkout actually runs
+- [x] Switch checkout to the inline payment form with tax and compliance handling turned on
+- [x] Add the test-mode notice so preview buyers know no real money moves
+- [ ] Verify a real test purchase end to end and read the result back in the app — automated card entry stopped at "Processing" with nothing recorded, so this needs a person paying in the preview with 4242 4242 4242 4242
