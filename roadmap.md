@@ -1,3 +1,7 @@
+# Walkthrough 1.6 — Personal morning brief (October 23)
+- [ ] Reuse Home’s brief with real user-scoped hosting, attending, leader-team and new-resource lines; hide empty lines and provide Create an event fallback.
+- [ ] Test rules and tappable destinations; compare two signed-in accounts and document verification in CHANGELOG.md.
+
 # Walkthrough 1.4 — Resources (October 23)
 - [x] Enable existing Learn for everyone, rename navigation/page labels to Resources, keep internal routes, and hide empty/broken entries; documented in CHANGELOG.md, 21 targeted checks passed.
 - [ ] Verify normal-account main navigation on phone/desktop and recipe interactions — waits on a non-admin preview sign-in; explicit-account sign-in permission declined. No existing tracks/lessons to exercise.
