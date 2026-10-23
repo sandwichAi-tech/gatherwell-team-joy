@@ -62,7 +62,7 @@ export function LandingNav() {
     <div className="gw-nav-inner">
       <LandingLogo />
       <nav className="gw-nav-links" aria-label={t('landing.nav.main')}>
-        <Link to="/hosts" className="gw-nav-link">{t('home.nav.hosts')}</Link>
+        <a href="/#for-hosts" className="gw-nav-link">{t('home.nav.hosts')}</a>
         <a href="/#tools" className="gw-nav-link">{t('home.nav.tools')}</a>
         <Link to="/pricing" className="gw-nav-link">{t('marketing.navPricing')}</Link>
         <Link to="/discover" className="gw-nav-link">{t('home.nav.explore')}</Link>
@@ -78,7 +78,7 @@ export function LandingNav() {
     {open && <div ref={sheetRef} className={`gw-menu-sheet ${closing ? 'is-closing' : ''}`} role="dialog" aria-modal="true" aria-label={t('landing.nav.main')}>
       <div className="gw-menu-top"><LandingLogo /><button type="button" className="gw-icon-btn" aria-label={t('landing.nav.close')} onClick={() => setOpen(false)} autoFocus><GwIcon name="X" size={24} /></button></div>
       <nav className="gw-menu-links">
-        <Link to="/hosts" onClick={() => setOpen(false)}>{t('home.nav.hosts')}</Link>
+        <a href="/#for-hosts" onClick={() => setOpen(false)}>{t('home.nav.hosts')}</a>
         <a href="/#tools" onClick={() => setOpen(false)}>{t('home.nav.tools')}</a>
         <Link to="/pricing" onClick={() => setOpen(false)}>{t('marketing.navPricing')}</Link>
         <Link to="/discover" onClick={() => setOpen(false)}>{t('home.nav.explore')}</Link>

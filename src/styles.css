@@ -2140,3 +2140,7 @@ a.gw-cat-chip:hover{background:#fff}
 .gw-home .gw-hero{min-height:0}
 .gw-home .gw-home-hero{padding-bottom:16px}
 .gw-home .gw-home-hero+*{margin-top:0}
+.gw-home-anchor{scroll-margin-top:72px}
+.gw-home [aria-disabled="true"]{opacity:.7;cursor:not-allowed}
+.gw-home a:focus-visible,.gw-home button:focus-visible{outline:3px solid var(--ring);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.gw-home *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}

@@ -177,7 +177,10 @@
       "invite": "Invita a un anfitrión",
       "create": "Crea un evento",
       "inviteTitle": "Organiza en ZoheeWell",
-      "copied": "Enlace copiado."
+      "copied": "Enlace copiado.",
+      "shared": "Gracias por compartir ZoheeWell.",
+      "manual": "Copia este enlace para compartir:",
+      "inviteText": "Organiza tus eventos y cursos en ZoheeWell."
     },
     "pricing": {
       "label": "Precios",

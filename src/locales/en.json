@@ -177,7 +177,10 @@
       "invite": "Invite a host",
       "create": "Create an event",
       "inviteTitle": "Host on ZoheeWell",
-      "copied": "Link copied."
+      "copied": "Link copied.",
+      "shared": "Thanks for sharing ZoheeWell.",
+      "manual": "Copy this link to share:",
+      "inviteText": "Host your events and courses on ZoheeWell."
     },
     "pricing": {
       "label": "Pricing",
