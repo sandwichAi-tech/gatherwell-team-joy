@@ -704,7 +704,7 @@
     "down": "−{{count}} vs. previous period",
     "chart": "Check-ins per week",
     "topHosts": "Top hosts",
-    "hostLine": "{{events}} events · {{checkins}} check-ins",
+    "hostLine": "{{gatherings}} events · {{checkins}} check-ins",
     "noHosts": "No events hosted in this period yet.",
     "shout": "Send a shout-out",
     "shoutTitle": "Shout-out for {{name}}",
