@@ -27,7 +27,8 @@ export function buildMorningBrief(input: BriefInput): BriefLine[] {
   if (next) lines.push({ key: 'hosting', label: 'hosting', values: { title: next.title, when: next.starts_at, place: next.location_name ?? '', count: next.going }, target: 'event', id: next.id });
   const ownedIds = new Set(input.events.filter(e => e.host_id === userId && e.status === 'published').map(e => e.id));
   const recent = input.signups.filter(r => ownedIds.has(r.event_id) && r.created_at <= now && briefDay(r.created_at, timezone) >= yesterday);
-  if (recent.length) lines.push({ key: 'signups', label: 'signups', values: { count: recent.length }, target: 'event', id: recent[0]?.event_id });
+  const firstSignup = recent[0];
+  if (firstSignup) lines.push({ key: 'signups', label: 'signups', values: { count: recent.length }, target: 'event', id: firstSignup.event_id });
   for (const e of own.filter(e => inWeek(e) && e.going === 0)) lines.push({ key: `share-${e.id}`, label: 'share', values: { title: e.title }, target: 'event', id: e.id });
   const attendance = input.attending.filter(r => r.event.status === 'published' && r.event.starts_at >= now && r.event.host_id !== userId).sort((a, b) => a.event.starts_at.localeCompare(b.event.starts_at))[0];
   if (attendance) lines.push({ key: 'attending', label: attendance.code ? 'attendingCode' : 'attending', values: { title: attendance.event.title, when: attendance.event.starts_at, code: attendance.code ?? '' }, target: 'attending', id: attendance.event.id });
