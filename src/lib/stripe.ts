@@ -7,7 +7,7 @@ import { loadStripe, Stripe } from '@stripe/stripe-js';
 // has no cross-tree imports. Structurally identical to the server StripeEnv.
 export type StripeEnv = 'sandbox' | 'live';
 
-const clientToken = import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN;
+const clientToken = import.meta.env['VITE_PAYMENTS_CLIENT_TOKEN'] as string | undefined;
 
 function paymentsEnvironment(): StripeEnv {
   if (clientToken?.startsWith('pk_test_')) return 'sandbox';

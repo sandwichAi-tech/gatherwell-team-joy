@@ -6,7 +6,7 @@ import type Stripe from 'stripe';
 
 export async function resolveOrCreateCustomer(
   stripe: Stripe,
-  options: { email?: string; userId?: string },
+  options: { email?: string | undefined; userId?: string | undefined },
 ): Promise<string> {
   // userId is interpolated into a search query string below; reject anything
   // that could break out of the quoted value.
@@ -18,13 +18,16 @@ export async function resolveOrCreateCustomer(
       query: `metadata['userId']:'${options.userId}'`,
       limit: 1,
     });
-    if (found.data.length) return found.data[0].id;
+    const byUserId = found.data[0];
+    if (byUserId) return byUserId.id;
   }
   if (options.email) {
     const existing = await stripe.customers.list({ email: options.email, limit: 1 });
-    if (existing.data.length) {
-      const customer = existing.data[0];
-      if (options.userId && customer.metadata?.userId !== options.userId) {
+    const customer = existing.data[0];
+    if (customer) {
+      // Backfill the link on a customer that was found by email alone, so this
+      // user is searchable by userId from now on.
+      if (options.userId && customer.metadata?.['userId'] !== options.userId) {
         await stripe.customers.update(customer.id, {
           metadata: { ...customer.metadata, userId: options.userId },
         });
