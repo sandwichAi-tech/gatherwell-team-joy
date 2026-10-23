@@ -121,3 +121,4 @@ Specifics:
 ## Public homepage (v0.13)
 - Host-first homepage: live. Discovery: real public upcoming events only, fixture titles excluded; empty state live.
 - Notify me (area alerts): coming soon (Prompt 8). Payments, paid SMS, Wallet, payouts, quizzes, certificates: labelled coming soon on home.
+- Public pricing (/pricing, /hosts, /studios): Blueprint v4 plans live as display; paid checkout Setup required; payouts Coming soon.

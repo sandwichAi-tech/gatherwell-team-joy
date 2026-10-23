@@ -198,7 +198,7 @@
       "twoMonths": "Annual billing gives you two months free.",
       "pilot": "Pricing may change after the pilot.",
       "foundingTitle": "Founding hosts",
-      "founding": "By personal invitation only: six months of complete access, no card and no automatic conversion. We give 30 days’ notice before access ends, plus 20% off your first paid year if you choose annual billing. Not combined with the annual discount.",
+      "founding": "By personal invitation only: six months of complete access from activation, with no card and no automatic conversion. We give 30 days’ notice before access ends. If you choose annual billing by the end of access, you get 20% off your first paid year. This offer does not stack with the normal annual discount.",
       "see": "See full pricing"
     },
     "trust": {
@@ -231,7 +231,10 @@
     "final": {
       "title": "Ready to bring people together?"
     },
-    "paymentsSoon": "Payments coming soon"
+    "paymentsSoon": "Payments coming soon",
+    "footer": {
+      "hostTools": "Host tools"
+    }
   },
   "events": {
     "title": "Events",
@@ -3451,7 +3454,7 @@
     ],
     "pricingLabel": "Simple plans",
     "pricingTitle": "Start free. Grow at your own pace.",
-    "pricingSub": "Guests can RSVP for free. Choose the tools and room your hosting needs.",
+    "pricingSub": "Start free and choose a plan when you are ready. Prices are in US dollars.",
     "from": "From {{price}}",
     "usd": "All prices in USD.",
     "licenseNote": "Team Licenses are billed monthly. Each member you assign gets the Advanced plan.",
@@ -4443,5 +4446,40 @@
     "guardianConsentRequired": "Guardian consent is required to register a child.",
     "deliverySetup": "Email delivery isn’t set up yet, so no message was sent.",
     "linkExpired": "That link has expired or was already used. Sign in again to continue."
+  },
+  "pricingV4": {
+    "sub": "Start free and choose a plan when you are ready. Prices are in US dollars.",
+    "plansLabel": "Plans",
+    "freeForever": "Free to start",
+    "setupRequired": "Setup required",
+    "checkoutNote": "Paid plan checkout is not open yet. You can start on Free today.",
+    "feeTitle": "Platform fee",
+    "payoutsNote": "Payouts to hosts are coming soon.",
+    "annualTitle": "Annual billing",
+    "desc": {
+      "free": "Host free events and get started.",
+      "advanced": "More tools for growing hosts.",
+      "pro": "Everything for busy, established hosts.",
+      "team25": "For teams of up to 25 hosts.",
+      "team100": "For teams of up to 100 hosts."
+    },
+    "faq": [
+      {
+        "q": "What is the platform fee?",
+        "a": "A flat 5% ZoheeWell platform fee applies to paid sales you make on any plan. Free offerings have no platform fee. Stripe processing is separate."
+      },
+      {
+        "q": "How does annual billing work?",
+        "a": "Annual billing costs 10 times the monthly price, so you get two months free."
+      },
+      {
+        "q": "Can guests join for free?",
+        "a": "Yes. Guests never need a plan. Hosts decide whether an offering is free or paid."
+      },
+      {
+        "q": "Can pricing change?",
+        "a": "Yes. Pricing may change after the pilot. We will tell you before any change affects you."
+      }
+    ]
   }
 }

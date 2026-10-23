@@ -186,4 +186,5 @@ Active work follows the approved Prompt 1–17 sequence in the ZoheeWell Beta Pr
 
 - [x] Host-first public homepage (v0.13)
 - [ ] Area alerts for Notify me (Prompt 8)
-- [ ] Align /pricing page with Blueprint v4 plans (still on older plan setup)
+- [x] Align /pricing page with Blueprint v4 plans (v0.14)
+- [ ] Align signed-in plan screen with Blueprint v4 plans
