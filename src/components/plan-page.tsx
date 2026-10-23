@@ -200,7 +200,7 @@ export function PlanPage() {
         <h3>{t('billing.name_team')}</h3>
         <p className="auth-subtitle">{t('billing.teamText')}</p>
         {LICENSES.map(l => <div key={l.id} className="plan-license-row"><span><strong>{t(`billing.${l.id}`)}</strong><small>{t('billing.seatsGrowth', { n: l.seats })}</small></span><span className="plan-license-price">{formatMoney(l.cents, lang)}{t('billing.perMonth')}</span>
-          {ws?.role === 'leader' && <Button variant="secondary" disabled={gate.busy} onClick={() => void gate.run(() => license({ data: { teamId: ws.teamId, tier: l.id, origin, lang, environment: getStripeEnvironment() } }))}>{t('billing.buy')}</Button>}</div>)}</div>
+          {ws?.role === 'leader' && <Button variant="secondary" disabled={gate.busy} onClick={() => void gate.run(() => license({ data: { teamId: ws.teamId, tier: l.id, origin, lang, environment: getStripeEnvironment() } }))}>{t('billing.buy')}</Button>}</div>)}
         <div className="plan-license-row"><span><strong>{t('billing.organization')}</strong><small>{t('billing.orgText')}</small></span><Button asChild variant="secondary"><a href="mailto:help@gatherwell.app">{t('billing.contact')}</a></Button></div>
       </article>
     </div>
