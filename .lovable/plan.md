@@ -1,73 +1,86 @@
-# Prompt 3 — Identity, onboarding, language and account modes (plan)
+# Host-first public homepage (/) — plan
 
-Note: the sandbox HEAD is `3a664cf27e03536f09a8dd496fff1fbb1bb9d8fe`, not `8715a90…`. The build turn will diff against 8715a90 first and stop if they conflict.
+Base: commit ede46f0. Preserve the signed-in host dashboard/layout work and the recent compact steps/tools density. Changes are limited to the public homepage, its header, copy, and tests. No schema changes expected.
 
-## 1. Verified inventory (read this turn)
-- `/login` (src/routes/login.tsx): Google via Lovable OAuth plus email magic link (`signInWithOtp`, `emailRedirectTo` = `/login?intent=host`). Only `intent=host` survives; every other destination is lost (after = `/home` or `/gathering/new`).
-- `/_authenticated/route.tsx`: signed-out users redirect to `/login` with no return target.
-- `/_authenticated/_app/route.tsx`: sends to `/onboarding` if not onboarded or if a pending join code is in localStorage.
-- `/join/$code`: `get_team_invite` RPC, then stores the code and inviter in localStorage; signed-in users go to onboarding, which calls `join_team_by_code` and clears the keys.
-- `/i/$code`, `/r/$code`, `/e/$id` (guest RSVP via `rsvp_event_full`, `?k=` token), `/l`, `/t`, `/h`, `/offer/$id`, `/admin-login`, `/verify`, `/start`.
-- Onboarding steps: name, place, role (`guest|leader|host|member` saved to `profiles.role_intent`), team. Not checked: age.
-- `profiles` has no age or birth-date field. `rsvps` keeps guest_name/email/phone with a nullable user_id. `orders.buyer_user_id` is nullable. `entitlements.user_id` is required. `offer_purchases.user_id` exists.
-- `SPANISH_ENABLED = false` in src/lib/i18n.ts. en.json and es.json exist.
+## 1. Audit of current homepage (src/components/landing/landing-page.tsx)
 
-## 2. Conflicts and duplicate-identity risks
-- `role_intent` acts as a lasting account type. Blueprint v4 asks for view modes instead.
-- Return destinations are dropped at login, so course, resource, membership and event links fail to resume.
-- If a guest verifies later, the RSVP and order stay unlinked by email. A new RSVP for the same event can be made under user_id, which creates a duplicate.
-- The localStorage invite can go stale across accounts on a shared device.
-- Spanish is turned off.
+Current order: Hero → HowItWorks (4 steps) → HostTools (15 rows) → CategoryRow → ThisWeek feed → WhoItsFor → HostBand → LeadersBand → Testimonials.
 
-## 3. Schema changes (additive, reversible, one migration)
-- `profiles`: add `adult_confirmed_at timestamptz` and `view_mode text default 'attending'` (values attending|hosting). Mark `role_intent` as deprecated with a comment and keep it.
-- `auth_intents` table: id, token_hash, kind (event|course|resource|membership|team|offer), target_id, step, email_hash, expires_at (30 min), consumed_at. Server-only grants, RLS on, no client select.
-- `claim_guest_records()` security definer: runs only on the caller's verified email (`auth.jwt()->>'email'` plus `email_confirmed_at`). It is idempotent and returns counts.
-- `confirm_adult(_attest boolean)`, plus checks in `create_gathering*`, `create_team`, checkout and subscription functions that require `adult_confirmed_at`.
-- Unique partial index: rsvps(event_id, user_id) where user_id is not null and status is not cancelled. A pre-check confirms there are no existing violations first.
-- Rollback: drop the new function, index and table, and the columns nulled and ignored. No existing rows are rewritten.
+| Section | Decision | Reason |
+|---|---|---|
+| Hero | Keep structure, rewrite copy/CTAs | Needs Blueprint v4 headline; hero visual currently falls back to sample cards on preview hosts — switch to supplied brand photo when no real events |
+| Social proof line ("N showed up") | Remove | Counts on a marketing page read as unverified claims |
+| HowItWorks | Keep, rewrite to Create → Share or sell → Run or teach → Learn and grow | Already compact |
+| HostTools (15 flat rows) | Replace with 6 outcome groups | Removes the repetitive wall |
+| CategoryRow + ThisWeek | Merge into one "Explore" discovery section | Real data only; honest empty state |
+| WhoItsFor | Replace with Audience strip | Remove any MLM/team-leader framing |
+| HostBand | Remove | Repeats hero CTA |
+| LeadersBand | Remove | Team-leader identity is not public positioning; teams are covered under Grow and manage |
+| Testimonials | Remove from homepage | No fake/unverified quotes; data path stays for later |
+| StickyFindBar | Replace with a sticky "Start hosting" bar on phones only after hero scrolls out | Host-first conversion |
 
-## 4. Redirect and deep-link safety
-- A single `src/lib/return-to.ts` handles `?next=`. It allows only same-origin relative paths that match a small set of routes (`/e/`, `/l/`, `/t/`, `/h/`, `/offer/`, `/learn/`, `/join/`, `/i/`, `/r/`, `/event/`, `/home`, `/gathering/new`). It rejects `//`, schemes, backslashes, encoded control characters and paths longer than 512. Anything else falls back to `/home`.
-- `_authenticated` adds `?next=` on redirect. The login magic link and OAuth `redirect_uri` stay `/login?next=…`, and `next` is re-validated after sign-in. Onboarding resumes `next` when it finishes.
-- Unit tests cover the allowlist and attack strings.
+## 2. New section structure and copy (EN / ES)
 
-## 5. Guest claim and merge rules
-- Claims happen only after the email is verified and only for an exact lowercase match.
-- RSVPs: set user_id where it is null. If the user already has one for the same event, keep the earlier one, cancel the duplicate and move its waiver link and answers.
-- Orders: set buyer_user_id where it is null. Never create new orders.
-- Entitlements: create them from claimed paid orders using the idempotency key. Unique constraints stop duplicates.
-- Consents and waivers: keep them as recorded and only link them. Marketing consent is never inferred.
-- Subscriptions: already require an account, so nothing is claimed.
-- One auth user gives one profile (existing trigger). Google and email for the same address resolve to one user under the backend's identity linking. This will be tested and reported as unverified if it can't be proven.
+1. Header (landing-chrome.tsx): official BrandLogo · For Hosts (/hosts) · Tools (#tools on /) · Pricing (/pricing) · Explore (/discover) · Sign in (/login) · Start hosting (/login?intent=host, primary) · EN/ES toggle. Mobile: logo + Start hosting + menu sheet (existing focus trap) with all links and language.
+2. Hero
+   - Label: "Life is better together." / "La vida es mejor juntos."
+   - H1: "Host events, courses, retreats, and communities—all in one place." / "Organiza eventos, cursos, retiros y comunidades, todo en un solo lugar."
+   - Lede: "ZoheeWell helps you create, sell, invite, run, teach, and grow—with one simple account." / "ZoheeWell te ayuda a crear, vender, invitar, operar, enseñar y crecer, con una sola cuenta."
+   - CTAs: Start hosting → /login?intent=host · Explore ZoheeWell → /discover
+   - Visual: supplied site_media hero photo via BrandImage; real upcoming event cards only when present.
+3. Host toolkit (id="tools"): heading "Everything you need to host" / "Todo lo que necesitas para organizar". Six outcome cards, each title + one-line summary + short inline list (no per-feature cards); on phones an accordion-style disclosure (native details/summary, keyboard-accessible).
+   - Create / Crear — one-time and recurring events, retreats, virtual and hybrid.
+   - Sell / Vender — tickets, tiers, add-ons, promo codes, courses, resources, memberships, subscriptions.
+   - Invite and communicate / Invitar y comunicar — links, QR, email, paid SMS, reminders, updates.
+   - Run / Operar — capacity, waitlists, waivers, guardian consent, check-in, Wallet tickets, attendance.
+   - Teach and share / Enseñar y compartir — sections, lessons, video/embed/files/text, quizzes, progress, certificates, downloads.
+   - Grow and manage / Crecer y administrar — public host profile, teams and roles, analytics, payouts, exports, moderation, support.
+   - Items not yet live carry a small "Coming soon" / "Próximamente" tag (see section 6). No checkmarks implying availability.
+4. How hosting works: Create → Share or sell → Run or teach → Learn and grow (Crear → Compartir o vender → Operar o enseñar → Aprender y crecer), one line each.
+5. Who hosts on ZoheeWell / Quiénes organizan en ZoheeWell: wellness professionals, coaches, educators, fitness leaders, retreat organizers, creators, community organizations — single wrapped chip row, no photos of fake people.
+6. For attendees and learners / Para asistentes y estudiantes: discover, register or purchase, manage tickets, learn, download resources, join memberships, return to saved experiences — compact 2-column list + link "Explore events and learning" → /discover.
+7. Explore (real discovery): up to 6 upcoming cards + "See all" → /discover. Empty state: "Events are coming soon to your area" / "Pronto habrá eventos en tu zona" with Notify me, Invite a host, Create an event.
+8. Pricing summary: five plans in a horizontal scroll on phones, row on desktop; "Annual billing: two months free"; "Pricing may change after the pilot"; "5% ZoheeWell platform fee on paid sales you make. Free offerings have no fee. Stripe processing is separate."; founding-host note (by personal invitation: six months complete access, no card, no automatic conversion, 30 days' notice, 20% off first paid annual year, not combined with the annual discount). Link → /pricing.
+9. Trust and support: privacy (minimum data, hosts see only their participants, never sold), English and Spanish, accessibility, clear consent, host support vs. platform support, honest setup states.
+10. Final split CTA: Start hosting / Explore events and learning.
 
-## 6. 18+ and guardians
-- Signup, hosting, purchases and subscriptions require an unchecked "I am 18 or older" confirmation, recorded with a time and a consent version. No birth date is stored (minimum data).
-- Guardian path: on eligible events (new `events.allows_minors boolean default false`), the adult registers and adds a minor's first name and age band only. A separate unchecked guardian consent is stored against the adult's RSVP. Minors never get accounts or emails.
+## 3. Real-data rules and destinations
 
-## 7. Three starts and view modes
-- After first sign-in: Find something (`/discover`), Create something (`/gathering/new` after the 18+ check), I have an invitation (code entry leading to `/join`).
-- A Hosting / Attending & Learning switch in the shell and on Me saves `view_mode`. It changes the default tabs only and never changes permissions. One profile throughout, with multiple teams through the existing `active_team_id`.
+- Homepage discovery uses list_public_gatherings with `_include_samples: false` always on / (today it includes samples on preview hosts). Real rows already require status='published' AND visibility='public' and upcoming time.
+- Additional client guard in a pure tested filter `homepageOfferings()`: drop isSample, drop rows with a test/fixture marker if present, drop past events. Courses/resources/memberships shown only if an existing public listed read exists; otherwise the section shows events only (no new RPC unless already present — to confirm during build).
+- Hero never renders sample cards; falls back to the brand photo.
+- Empty-state actions: Notify me → /login?next=/discover&intent=notify (reuses follow/notify path if present, otherwise sign-in then /discover; no claim that a notification is scheduled); Invite a host → native share / copy of /hosts link; Create an event → /login?intent=host.
+- All next paths go through src/lib/return-to.ts.
 
-## 8. Language
-- Set `SPANISH_ENABLED=true` and restore the switch everywhere.
-- Add matched keys for onboarding, verification, validation, consent, guardian, invitations, recovery, setup-required, and the auth and transactional email templates.
-- A key-parity test makes the build fail on missing or extra keys. A 35% text-expansion check runs at 360px.
+## 4. Mobile behavior
 
-## 9. Truthful delivery
-- The magic link or code says "sent" only when the auth call succeeds. Transactional messages go through the outbox. A simulated or setup-required status shows "Email delivery isn't set up yet" and never "sent". Guest one-time codes use the backend's email OTP, with no custom code system.
+Phone-first single column at 360–430px; 48px primary targets; toolkit as disclosures; pricing horizontal scroll with snap and visible focus; sticky Start hosting bar after hero (hidden when menu open, respects safe-area); 200% zoom without horizontal scroll; prefers-reduced-motion disables hero animation (LiveStack) and smooth scroll.
 
-## 10. Tests and gates
-- Vitest: return-to, key parity, claim rule mapper, 18+ gating mapper, view-mode default.
-- Database: claim and guardian cases added to the disposable-copy SQL artifact (not run against production).
-- Playwright at 390px and 1440px, EN and ES: deep links for an event, course, resource, membership and team through login and onboarding; keyboard-only path; focus after errors; invalid code; expired link; recovery; two-account isolation (Scott and Nick).
-- Full suite, linter, row counts before and after, no destructive SQL, CHANGELOG v0.x, AGENTS.md rule updates.
-- Provider-dependent and reported separately: real email or OTP delivery, Google linking with the same email, and Stripe purchase after verification.
+## 5. SEO
 
-## Files expected to change
-src/routes/login.tsx, src/routes/_authenticated/route.tsx, src/routes/_authenticated/_app/route.tsx, src/routes/_authenticated/onboarding.tsx, src/routes/join.$code.tsx, src/routes/e.$id.tsx, src/routes/l.$slug.tsx, src/routes/offer pages, src/routes/_authenticated/_app/me.tsx, GatherwellShell, src/lib/i18n.ts, src/lib/return-to.ts (new), src/lib/claim.ts (new), src/locales/en.json, src/locales/es.json, auth email templates, one new migration, tests/*, tests/database/*, CHANGELOG.md, AGENTS.md, supabase/AGENTS.md.
+Update `landing.meta.homeTitle/home` (EN; SSR English) to host-first copy; keep og:type/twitter:card and site_media og image. Add Organization + WebSite JSON-LD only — no AggregateRating, Review, or offer counts.
 
-## Assumptions to confirm
-- Attestation (checkbox) is enough for 18+; no birth date.
-- Guardian minors are stored as first name and age band only.
-- `allows_minors` defaults to off for all existing events.
+## 6. Built now vs. provider-dependent (never presented as live)
+
+Built now: entire page, copy, real discovery and empty state, routing, pricing display, language toggle.
+Tagged "Coming soon" or "Setup required" until verified: paid SMS, Apple/Google Wallet, Stripe Connect payouts and paid checkout (sandbox stalled), email delivery at scale, analytics exports if not shipped. Final list confirmed against FEATURE_INVENTORY.md during build.
+
+## Technical details
+
+Files expected to change:
+- src/components/landing/landing-page.tsx (rewrite sections)
+- src/components/landing/landing-chrome.tsx (header links, mobile sticky host bar)
+- src/components/landing/marketing-pages.tsx (retire WhoItsFor use on home)
+- src/lib/landing.ts (no samples on home; `homepageOfferings` filter)
+- src/lib/homepage.ts (new: toolkit groups, plan list from the existing pricing source, availability tags)
+- src/locales/en.json, src/locales/es.json (new `home.*` keys; remove dead landing keys)
+- src/routes/index.tsx (head copy, JSON-LD)
+- src/styles.css (scoped gw-home-* rules only)
+- CHANGELOG.md, FEATURE_INVENTORY.md, roadmap.md, mem://design/homepage-density
+
+Tests (vitest):
+- homepage.test.ts: samples/past/non-public excluded; empty list → empty state; plan prices exactly 0/49/99/199/499; fee text is 5%; no "7%", "2%", "0.49", "3%" strings in en/es home keys.
+- locale-parity.test.ts already covers new keys and interpolation.
+- CTA routing: Start hosting → /login?intent=host, Explore → /discover, all next values pass isSafeReturnPath.
+- Playwright (no credentials) at 360, 390, 768, 1440 and 200% zoom, EN and ES: no horizontal overflow, single h1, landmark/heading order, keyboard tab order through header, menu sheet, toolkit disclosures and CTAs with visible focus, reduced-motion check, empty discovery state, no runtime errors.
+- Full suite + build must pass; row counts unchanged (no data writes).
