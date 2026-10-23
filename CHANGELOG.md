@@ -1,5 +1,12 @@
 # ZoheeWell Change Log
 
+## v0.13 — Host-first public homepage (2026-10-23)
+- Rebuilt / around hosts: new headline, six-outcome toolkit, four-step workflow, audience, attendee section, real-only discovery with honest empty state (Notify me / Invite a host / Create an event), Blueprint v4 pricing summary (5% fee, founding-host offer), trust section, final split CTA.
+- Header: For Hosts, Tools, Pricing, Explore, Sign in, Start hosting, EN/ES. Removed social-proof count, host band mock phone, leaders band, testimonials and sample cards from home.
+- Not live and labelled: payments, paid SMS, Wallet, payouts, quizzes, certificates.
+- Tests: src/lib/homepage.test.ts (12). Verified at 360px and 1440px in EN/ES, no overflow or errors.
+- Unverified: hero photo did not load in the sandbox (brand fallback shown); keyboard/screen-reader pass and 200% zoom not run.
+
 ## v0.12 — Prompt 3: identity, onboarding, language and account modes (2026-10-23)
 - Database (0051_v4_identity_onboarding_account_modes.sql, additive): profiles.adult_confirmed_at / adult_consent_version_id / view_mode; consent kind `adult` plus adult and guardian v1 texts (en/es, 4 config rows); events.allows_minors (default false, 0 events enabled); rsvps merged_into_rsvp_id / merged_at / minor_first_name / minor_age_band / guardian consent fields; one-active-RSVP-per-user-per-event unique index; auth_intents (hashed, 30-minute, single-use, service-only table); guest_claims audit log; functions is_adult, confirm_adult, create/consume/cleanup_auth_intent, is_safe_return_path, claim_guest_records; triggers enforcing 18+ on team creation, event create/publish and offer creation, and guardian rules on RSVPs.
 - App: sign-in keeps the intended page (`?next=` strict allowlist, or a single-use intent token in emailed links; Google return remembered for 30 minutes in the same tab). Protected pages send signed-out visitors to sign-in with the return path. Onboarding adds an unchecked 18+ confirmation (existing accounts confirm once) and three starts: Find something / Create something / I have an invitation, then resumes the saved page. Saved invite codes expire after 24 hours and clear on sign-out, invalid code, success and a new "Not now" button. Guest record claiming runs after sign-in for the verified email only. Plan, license, challenge and offer checkouts and paid guest tickets require 18+ on the server; guest tickets add the checkbox. Me's view switch now also records Hosting / Attending & Learning as a view only. English and Latin American Spanish are both on.

@@ -34,22 +34,201 @@
     "previewNote": "Vista de ejemplo. Esta acción aún no está conectada."
   },
   "home": {
-    "eyebrow": "TU COMUNIDAD, CONECTADA",
-    "greeting": "Buenos días, {{name}}.",
-    "subtitle": "Un poco de conexión hace la diferencia. Así va tu comunidad esta semana.",
-    "upcoming": "Lo que viene",
-    "viewAll": "Todas las reuniones",
-    "pulse": "Actividad de la comunidad",
-    "networkLabel": "MEJOR, EN COMUNIDAD",
-    "networkTitle": "Tu comunidad va más allá de tu calendario.",
-    "networkText": "Descubre eventos de anfitriones de confianza e invita a tu gente.",
-    "networkAction": "Explorar tu red",
-    "followTitle": "Un detalle personal hace la diferencia",
-    "followSubtitle": "Algunas personas con quienes reconectar esta semana.",
-    "followChip": "3 contactos pendientes",
-    "followAction": "Contactar",
-    "viewDetails": "Ver detalles",
-    "statsLabel": "Tu equipo en números"
+    "meta": {
+      "title": "ZoheeWell · Organiza eventos, cursos, retiros y comunidades",
+      "description": "Crea, vende, invita, opera, enseña y crece en un solo lugar. Empieza gratis en ZoheeWell o explora eventos y aprendizaje cerca de ti."
+    },
+    "nav": {
+      "hosts": "Para anfitriones",
+      "tools": "Herramientas",
+      "explore": "Explorar"
+    },
+    "cta": {
+      "start": "Empieza a organizar",
+      "explore": "Explora ZoheeWell",
+      "exploreAll": "Explora eventos y aprendizaje"
+    },
+    "soon": "Próximamente",
+    "hero": {
+      "tagline": "La vida es mejor juntos.",
+      "title": "Organiza eventos, cursos, retiros y comunidades, todo en un solo lugar.",
+      "lede": "ZoheeWell te ayuda a crear, vender, invitar, operar, enseñar y crecer, con una sola cuenta."
+    },
+    "tools": {
+      "label": "Herramientas para anfitriones",
+      "title": "Todo lo que necesitas para organizar",
+      "groups": {
+        "create": {
+          "title": "Crear",
+          "summary": "Eventos y retiros a tu manera."
+        },
+        "sell": {
+          "title": "Vender",
+          "summary": "Boletos, cursos y membresías."
+        },
+        "invite": {
+          "title": "Invitar y comunicar",
+          "summary": "Llega a tu gente."
+        },
+        "run": {
+          "title": "Operar",
+          "summary": "Todo fluye el día del evento."
+        },
+        "teach": {
+          "title": "Enseñar y compartir",
+          "summary": "Cursos y recursos."
+        },
+        "grow": {
+          "title": "Crecer y administrar",
+          "summary": "Tu perfil, tu equipo y tus resultados."
+        }
+      },
+      "items": {
+        "oneTime": "Eventos únicos",
+        "recurring": "Eventos recurrentes",
+        "retreats": "Retiros de varios días",
+        "virtual": "Virtuales e híbridos",
+        "tickets": "Boletos",
+        "tiers": "Tipos de boleto",
+        "addOns": "Complementos",
+        "promo": "Códigos promocionales",
+        "courses": "Cursos",
+        "resources": "Recursos",
+        "memberships": "Membresías",
+        "subscriptions": "Suscripciones",
+        "links": "Enlaces para compartir",
+        "qr": "Códigos QR",
+        "email": "Correo",
+        "sms": "SMS de pago",
+        "reminders": "Recordatorios",
+        "updates": "Avisos",
+        "capacity": "Cupo",
+        "waitlists": "Listas de espera",
+        "waivers": "Exenciones",
+        "guardian": "Consentimiento del tutor",
+        "checkin": "Registro de llegada",
+        "wallet": "Boletos en Wallet",
+        "attendance": "Asistencia",
+        "sections": "Secciones",
+        "lessons": "Lecciones",
+        "media": "Video, contenido incrustado, archivos y texto",
+        "quizzes": "Cuestionarios",
+        "progress": "Progreso",
+        "certificates": "Certificados",
+        "downloads": "Descargas",
+        "profile": "Perfil público de anfitrión",
+        "teams": "Equipos y roles",
+        "analytics": "Estadísticas",
+        "payouts": "Pagos a anfitriones",
+        "exports": "Exportaciones",
+        "moderation": "Moderación",
+        "support": "Soporte"
+      }
+    },
+    "steps": {
+      "title": "Cómo funciona",
+      "create": {
+        "title": "Crear",
+        "body": "Prepara un evento, retiro, curso o recurso."
+      },
+      "share": {
+        "title": "Compartir o vender",
+        "body": "Envía un enlace o código QR, gratis o de pago."
+      },
+      "run": {
+        "title": "Operar o enseñar",
+        "body": "Registra la llegada o guía a tu grupo por las lecciones."
+      },
+      "grow": {
+        "title": "Aprender y crecer",
+        "body": "Ve qué funcionó y planea lo que sigue."
+      }
+    },
+    "audience": {
+      "title": "Hecho para quienes reúnen a otros",
+      "items": {
+        "wellness": "Profesionales del bienestar",
+        "coaches": "Coaches",
+        "educators": "Educadores",
+        "fitness": "Líderes de fitness",
+        "retreats": "Organizadores de retiros",
+        "creators": "Creadores",
+        "community": "Organizaciones comunitarias"
+      }
+    },
+    "attend": {
+      "label": "Para asistentes y estudiantes",
+      "title": "Encuentra algo bueno para unirte",
+      "items": {
+        "discover": "Descubre eventos y cursos",
+        "register": "Regístrate o compra",
+        "tickets": "Administra tus boletos",
+        "learn": "Aprende a tu ritmo",
+        "downloads": "Descarga recursos",
+        "memberships": "Únete a membresías",
+        "saved": "Vuelve a lo que guardaste"
+      }
+    },
+    "explore": {
+      "title": "Pasando en ZoheeWell",
+      "seeAll": "Ver todo",
+      "empty": "Pronto habrá eventos en tu zona",
+      "notify": "Avísame",
+      "invite": "Invita a un anfitrión",
+      "create": "Crea un evento",
+      "inviteTitle": "Organiza en ZoheeWell",
+      "copied": "Enlace copiado."
+    },
+    "pricing": {
+      "label": "Precios",
+      "title": "Empieza gratis. Crece cuando estés listo.",
+      "perMonth": "/mes",
+      "annual": "${{price}}/año con pago anual",
+      "plans": {
+        "free": "Gratis",
+        "advanced": "Avanzado",
+        "pro": "Pro",
+        "team25": "Equipo 25",
+        "team100": "Equipo 100"
+      },
+      "fee": "Se aplica una tarifa de plataforma de ZoheeWell del {{pct}}% a tus ventas pagadas. Lo gratuito no tiene tarifa. El procesamiento de Stripe es aparte.",
+      "twoMonths": "Con el pago anual obtienes dos meses gratis.",
+      "pilot": "Los precios pueden cambiar después del piloto.",
+      "foundingTitle": "Anfitriones fundadores",
+      "founding": "Solo por invitación personal: seis meses de acceso completo, sin tarjeta y sin cambio automático a un plan de pago. Avisamos con 30 días de anticipación antes de que termine el acceso, y ofrecemos 20% de descuento en tu primer año de pago si eliges el pago anual. No se combina con el descuento anual.",
+      "see": "Ver todos los precios"
+    },
+    "trust": {
+      "title": "Construido con confianza",
+      "privacy": {
+        "title": "Privacidad primero",
+        "body": "Recopilamos solo lo necesario, cada anfitrión ve solo a sus participantes y nunca vendemos datos personales."
+      },
+      "language": {
+        "title": "Inglés y español",
+        "body": "Cada pantalla funciona en inglés y en español latinoamericano."
+      },
+      "access": {
+        "title": "Accesible",
+        "body": "Diseñado para teléfonos, teclados y lectores de pantalla."
+      },
+      "consent": {
+        "title": "Consentimiento claro",
+        "body": "Los mensajes de marketing siempre son opcionales y fáciles de detener."
+      },
+      "support": {
+        "title": "Dos tipos de soporte",
+        "body": "Los anfitriones apoyan a sus invitados; ZoheeWell apoya a los anfitriones y la plataforma."
+      },
+      "honest": {
+        "title": "Estado honesto",
+        "body": "Si algo todavía se está configurando, te lo decimos."
+      }
+    },
+    "final": {
+      "title": "¿Listo para reunir a tu gente?"
+    },
+    "paymentsSoon": "Pagos próximamente"
   },
   "events": {
     "title": "Reuniones",

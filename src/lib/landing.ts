@@ -49,11 +49,11 @@ function nextOccurrence(dow: number, time: string) {
   return d;
 }
 
-export const publicGatheringsQuery = (lang: 'en' | 'es') => queryOptions({
-  queryKey: ['public-gatherings', lang, isPreviewHost()],
+export const publicGatheringsQuery = (lang: 'en' | 'es', includeSamples: boolean = isPreviewHost()) => queryOptions({
+  queryKey: ['public-gatherings', lang, includeSamples],
   staleTime: 60_000,
   queryFn: async (): Promise<FeedGathering[]> => {
-    const { data, error } = await supabase.rpc('list_public_gatherings', { _include_samples: isPreviewHost(), _days: 14, _limit: 48 });
+    const { data, error } = await supabase.rpc('list_public_gatherings', { _include_samples: includeSamples, _days: 14, _limit: 48 });
     if (error) throw error;
     const payload = (data ?? { real: [], samples: [] }) as unknown as { real: RawReal[]; samples: RawSample[] };
     const real = payload.real.map((r): FeedGathering => ({
