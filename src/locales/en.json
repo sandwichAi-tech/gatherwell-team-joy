@@ -1570,6 +1570,24 @@
       "close": "Close menu",
       "main": "Main"
     },
+    "hostFirst": {
+      "intro": "Create welcoming events, bring your people together, and keep the connection going.",
+      "host": "Host",
+      "hostBody": "Bring your community together, your way.",
+      "attend": "Attend",
+      "attendBody": "Find something nearby. Meet your people.",
+      "start": "Start hosting for free",
+      "find": "Find an event near you",
+      "howLabel": "From first idea to next time",
+      "howTitle": "Hosting, in four simple steps",
+      "steps": { "create": "Create your event", "share": "Share your link", "checkin": "Check people in", "followup": "Follow up" },
+      "toolsTitle": "Everything a host needs",
+      "tools": { "pages": "Event pages", "tickets": "Free and paid tickets", "weekly": "Weekly events", "blueprints": "Event blueprints", "guests": "Guest list", "csv": "CSV export", "checkin": "QR check-in", "reminders": "Reminders", "waivers": "Waivers", "resources": "Resources, free or paid", "hostPage": "Public host page", "team": "Team tools", "sms": "SMS campaigns", "email": "Email campaigns to your whole list", "calling": "AI calling assistant" },
+      "premiumSoon": "Premium · Coming soon",
+      "paidSoon": "Paid · Coming soon",
+      "deliverySoon": "Delivery · Coming soon",
+      "studios": "Your booking software runs the front desk. ZoheeWell builds the community beyond your four walls."
+    },
     "hero": {
       "label": "Wellness, in real life",
       "h1A_before": "Life is ",

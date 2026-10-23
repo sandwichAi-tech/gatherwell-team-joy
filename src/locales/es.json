@@ -1570,6 +1570,24 @@
       "close": "Cerrar menú",
       "main": "Principal"
     },
+    "hostFirst": {
+      "intro": "Crea eventos donde todos se sientan bienvenidos, reúne a tu gente y mantén la conexión.",
+      "host": "Organiza",
+      "hostBody": "Reúne a tu comunidad, a tu manera.",
+      "attend": "Asiste",
+      "attendBody": "Encuentra un plan cerca de ti. Conoce a tu gente.",
+      "start": "Empieza a organizar gratis",
+      "find": "Encuentra un evento cerca de ti",
+      "howLabel": "De la primera idea al próximo encuentro",
+      "howTitle": "Organiza en cuatro pasos sencillos",
+      "steps": { "create": "Crea tu evento", "share": "Comparte tu enlace", "checkin": "Registra la llegada", "followup": "Mantén el contacto" },
+      "toolsTitle": "Todo lo que necesitas para organizar",
+      "tools": { "pages": "Páginas de eventos", "tickets": "Entradas gratis y de pago", "weekly": "Eventos semanales", "blueprints": "Plantillas de eventos", "guests": "Lista de invitados", "csv": "Exportación a CSV", "checkin": "Registro con QR", "reminders": "Recordatorios", "waivers": "Acuerdos de responsabilidad", "resources": "Recursos gratis o de pago", "hostPage": "Página pública del organizador", "team": "Herramientas de equipo", "sms": "Campañas por SMS", "email": "Campañas por correo para toda tu lista", "calling": "Asistente de llamadas con IA" },
+      "premiumSoon": "Premium · Próximamente",
+      "paidSoon": "De pago · Próximamente",
+      "deliverySoon": "Envío · Próximamente",
+      "studios": "Tu software de reservas se encarga de la recepción. ZoheeWell crea comunidad más allá de tus cuatro paredes."
+    },
     "hero": {
       "label": "Bienestar, en la vida real",
       "h1A_before": "Planes que te hacen ",

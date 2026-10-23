@@ -1,3 +1,7 @@
+# Walkthrough 2.1 — Host-first homepage (October 23)
+- [x] Kept current look and headline; Host / Attend paths, four hosting steps, all tools and coming-soon premium outreach added. Phone 390px / desktop 1440px links/layout checked; 17 routing tests passed and CHANGELOG.md updated.
+- [ ] Future Retell AI outbound calling and Twilio text verification/notifications — awaiting a separate setup scope and service connections; no sends in this homepage-only step.
+
 # Walkthrough 1.6 — Personal morning brief (October 23)
 - [x] Reuse Home’s brief with real user-scoped hosting, attending, leader-team and new-resource lines; hide empty lines and provide Create an event fallback.
 - [x] 24 checks passed; Scott/Nick signed-in briefs differed and real team counts matched Cloud. Team links opened populated Insights; phone/desktop text fit. CHANGELOG.md records definitions and unpopulated hosting/attending/resource browser limits.

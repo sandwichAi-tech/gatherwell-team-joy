@@ -2065,3 +2065,24 @@ a.gw-cat-chip:hover{background:#fff}
 .template-actions{flex-wrap:wrap;margin-top:auto;padding-top:12px}
 .template-actions button,.template-actions a{min-height:48px}
 .template-meta{flex-wrap:wrap}
+
+/* Host-first homepage: unframed paths, four steps and an honest tool inventory. */
+.gw-home-paths{padding:40px 0}
+.gw-home-path-grid{display:grid;gap:32px}
+.gw-home-path-grid>div{min-width:0}
+.gw-home-path-grid h2{font-size:28px;font-weight:700}
+.gw-home-path-grid p{color:var(--body);font-size:16px;margin:8px 0 20px}
+.gw-home-path-grid .gw-btn{min-height:52px;width:100%;white-space:normal;text-align:center}
+.gw-home-steps{display:grid;gap:32px;list-style:none;padding:0;margin:32px 0 0}
+.gw-home-steps li{min-width:0}
+.gw-home-steps h3{font-size:20px;font-weight:600;margin-top:8px}
+.gw-home-tool-icon{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;flex-shrink:0;background:var(--secondary);color:var(--lavender);border-radius:8px}
+.gw-home-tools{display:grid;gap:0 32px;list-style:none;padding:0;margin:32px 0 0}
+.gw-home-tools li{display:flex;align-items:flex-start;gap:16px;padding:24px 0;border-bottom:1px solid var(--border);min-width:0}
+.gw-home-tools li>div{min-width:0}
+.gw-home-tools h3{font-size:17px;font-weight:600;line-height:1.5}
+.gw-home-tool-tag{display:inline-block;color:var(--body);background:var(--secondary);padding:4px 8px;border-radius:4px;margin-top:8px;font-size:13px;font-weight:500}
+.gw-home-studio{font-size:20px;line-height:1.6;max-width:800px;margin:48px 0 0;padding-top:32px;border-top:1px solid var(--border);color:var(--body)}
+@media(min-width:640px){.gw-home-path-grid,.gw-home-tools{grid-template-columns:repeat(2,minmax(0,1fr))}.gw-home-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.gw-home-path-grid>div+div{border-left:1px solid var(--border);padding-left:32px}.gw-home-path-grid .gw-btn{width:auto}}
+@media(min-width:1024px){.gw-home-steps{grid-template-columns:repeat(4,minmax(0,1fr))}.gw-home-tools{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:639px){.gw-landing .gw-hero{padding-top:32px}.gw-landing .gw-hero-ctas{margin-top:24px}.gw-landing .gw-hero-ctas .gw-btn{flex:0 0 auto;width:100%;min-height:52px;white-space:normal;text-align:center}.gw-home-path-grid>div+div{border-top:1px solid var(--border);padding-top:32px}.gw-home-steps{grid-template-columns:repeat(2,minmax(0,1fr));gap:32px 16px}.gw-home-steps h3{font-size:17px}}
