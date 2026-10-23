@@ -7,9 +7,18 @@ import { Input } from '@/components/ui/input';
 import { AuthFrame, pageHead } from '@/components/auth-frame';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable';
-import { JOIN_CODE_KEY } from '@/lib/account';
+import { clearPendingInvite, pendingInvite } from '@/lib/account';
+import { rememberNext, safeReturnPath, takeNext } from '@/lib/return-to';
 
-export const Route = createFileRoute('/login')({ validateSearch: (s: Record<string, unknown>): { intent?: 'host' } => (s['intent'] === 'host' ? { intent: 'host' } : {}), head: () => pageHead('auth.title', 'meta.login'), component: LoginPage });
+type LoginSearch = { intent?: 'host'; next?: string; i?: string };
+export const Route = createFileRoute('/login')({
+  validateSearch: (s: Record<string, unknown>): LoginSearch => ({
+    ...(s['intent'] === 'host' ? { intent: 'host' as const } : {}),
+    ...(typeof s['next'] === 'string' && safeReturnPath(s['next']) ? { next: s['next'] as string } : {}),
+    ...(typeof s['i'] === 'string' && /^[0-9a-f]{48}$/.test(s['i'] as string) ? { i: s['i'] as string } : {}),
+  }),
+  head: () => pageHead('auth.title', 'meta.login'), component: LoginPage,
+});
 
 function GoogleMark() {
   return <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.7z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5H1.3v3.1A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 0 1 0-4.6V6.6H1.3a12 12 0 0 0 0 10.8l4-3.1z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.3 6.6l4 3.1c.9-2.9 3.6-4.9 6.7-4.9z"/></svg>;
@@ -18,9 +27,9 @@ function GoogleMark() {
 function LoginPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { intent } = Route.useSearch();
-  const after = intent === 'host' ? '/gathering/new' : '/home';
-  const back = `${typeof window === 'undefined' ? '' : window.location.origin}/login${intent ? `?intent=${intent}` : ''}`;
+  const { intent, next, i: intentToken } = Route.useSearch();
+  const [dest, setDest] = useState<string>(next ?? (intent === 'host' ? '/gathering/new' : '/home'));
+  const origin = typeof window === 'undefined' ? '' : window.location.origin;
   const [email, setEmail] = useState('');
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -28,12 +37,36 @@ function LoginPage() {
   const [team, setTeam] = useState<string | null>(null);
 
   useEffect(() => {
-    const code = localStorage.getItem(JOIN_CODE_KEY);
-    if (code) void supabase.rpc('get_team_invite', { _code: code }).then(({ data }) => setTeam(data?.[0]?.team_name ?? null));
-    void supabase.auth.getUser().then(({ data }) => { if (data.user) void navigate({ to: after, replace: true }); });
-    const { data } = supabase.auth.onAuthStateChange((event, session) => { if (event === 'SIGNED_IN' && session) void navigate({ to: after, replace: true }); });
-    return () => data.subscription.unsubscribe();
-  }, [navigate, after]);
+    let cancelled = false;
+    const go = async () => {
+      // Resolve the intended step: single-use server intent, then same-tab memory, then search.
+      let target = dest;
+      if (intentToken) {
+        const { data } = await supabase.rpc('consume_auth_intent', { _token: intentToken });
+        const p = safeReturnPath(data); if (p) target = p;
+      } else { const p = takeNext(); if (p) target = p; }
+      if (cancelled) return;
+      setDest(target);
+      const finish = async (userId: string) => {
+        // Invitation codes saved by a different account on this device are discarded.
+        const owner = sessionStorage.getItem('zw-invite-owner');
+        if (owner && owner !== userId) clearPendingInvite();
+        void supabase.rpc('claim_guest_records');
+        rememberNext(target); // onboarding resumes here if the app gate sends them there first
+        await navigate({ href: target, replace: true });
+      };
+      const { data } = await supabase.auth.getUser();
+      if (data.user) { await finish(data.user.id); return; }
+      const code = pendingInvite();
+      if (code) void supabase.rpc('get_team_invite', { _code: code }).then(({ data: inv }) => setTeam(inv?.[0]?.team_name ?? null));
+      const sub = supabase.auth.onAuthStateChange((event, session) => { if (event === 'SIGNED_IN' && session) void finish(session.user.id); });
+      cleanup = () => sub.data.subscription.unsubscribe();
+    };
+    let cleanup = () => {};
+    void go();
+    return () => { cancelled = true; cleanup(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const google = async () => {
     setError(null);
