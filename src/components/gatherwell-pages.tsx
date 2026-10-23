@@ -84,15 +84,15 @@ export function HomePage() {
   const { t } = useTranslation(); const { openCreate, openDetail, openPlaceholder } = useGatherwell(); const { profile } = useAccount();
   const guest = profile?.role_intent === 'guest';
   const { userId } = useGatherwell();
-  if (guest) return <><div className="greeting page-heading"><div><h1>{t('home.greeting', { name: firstName(profile?.full_name) || t('common.name') })}</h1></div></div><CustomerHome userId={userId} /></>;
+  if (guest) return <><div className="greeting page-heading"><div><h1>{t('home.greeting', { name: firstName(profile?.full_name) || t('common.name') })}</h1></div></div><DailyBriefCard /><CustomerHome userId={userId} /></>;
   const stats = [{ key: 'members', Icon: UsersRound }, { key: 'events', Icon: CalendarDays }, { key: 'attendance', Icon: Repeat2 }, { key: 'checkins', Icon: CircleCheck }] as const;
   return <>
     <MobileTeamSwitcher />
     <div className="greeting page-heading"><div><span className="eyebrow">{t('home.eyebrow')}</span><h1>{t('home.greeting', { name: firstName(profile?.full_name) || t('common.name') })}</h1><p>{t('home.subtitle')}</p></div><Button className="page-create" onClick={openCreate}><Plus />{t('common.create')}</Button></div>
+    <DailyBriefCard />
     <HomeRealData />
     {!guest && <FoundingCommitmentsCard />}
     {!guest && <CoachLaunchCard />}
-    {!guest && <DailyBriefCard />}
     {!guest && <PlaybookCard context="brief" compact />}
     <FollowupsHomeCard />
     <MemberPlanCard />
