@@ -39,5 +39,6 @@
 - Profile and offer covers use uploader-owned private media paths and the shared crop input; public host covers are signed server-side only after resolving the host slug, never from caller-supplied paths.
 - Day-60 scoreboard: raw counts come only from admin_day60(); targets and the go/adjust/rethink verdict are evaluated in src/lib/day60.ts so thresholds live in one tested place.
 - Parked features are gated by feature_* flags via src/lib/feature-flags.tsx; admins always see them and off routes throw notFound, so launch scope changes from /admin?tab=flags.
+- Resources reuses the existing /learn routes and feature_learn gate; reader lists omit zero-lesson tracks and empty sections while management retains them for editing, avoiding duplicate content systems.
 - Admin password sign-in uses the public /admin-login page and existing Cloud Auth accounts; getAdminAccess validates the authenticated role before navigation, while every admin data handler retains its own role check, so the sign-in screen never grants privileges.
 - Event Blueprints reuse templates, TemplateEditor and the existing template-attributed event creation path; shared blueprint-defaults maps all reusable fields and excludes dates/places, while host-own RLS enables save/edit/delete without exposing other hosts' drafts.
