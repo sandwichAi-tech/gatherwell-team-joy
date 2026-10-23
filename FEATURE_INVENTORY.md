@@ -117,3 +117,7 @@ Specifics:
 ## Identity and onboarding (Prompt 3)
 - Built: deep-link return through sign-in and onboarding, 18+ attestation, three starts, view switch, invite expiry, guest claim, Spanish on, server 18+ on checkout.
 - Database only (no screen yet): guardian child registration, host allows_minors toggle.
+
+## Public homepage (v0.13)
+- Host-first homepage: live. Discovery: real public upcoming events only, fixture titles excluded; empty state live.
+- Notify me (area alerts): coming soon (Prompt 8). Payments, paid SMS, Wallet, payouts, quizzes, certificates: labelled coming soon on home.

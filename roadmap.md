@@ -183,3 +183,7 @@ Active work follows the approved Prompt 1–17 sequence in the ZoheeWell Beta Pr
 - [x] Switch checkout to the inline payment form with tax and compliance handling turned on
 - [x] Add the test-mode notice so preview buyers know no real money moves
 - [ ] Verify a real test purchase end to end and read the result back in the app — automated card entry stopped at "Processing" with nothing recorded, so this needs a person paying in the preview with 4242 4242 4242 4242
+
+- [x] Host-first public homepage (v0.13)
+- [ ] Area alerts for Notify me (Prompt 8)
+- [ ] Align /pricing page with Blueprint v4 plans (still on older plan setup)

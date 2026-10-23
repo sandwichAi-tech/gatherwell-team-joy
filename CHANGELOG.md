@@ -5,7 +5,9 @@
 - Header: For Hosts, Tools, Pricing, Explore, Sign in, Start hosting, EN/ES. Removed social-proof count, host band mock phone, leaders band, testimonials and sample cards from home.
 - Not live and labelled: payments, paid SMS, Wallet, payouts, quizzes, certificates.
 - Tests: src/lib/homepage.test.ts (12). Verified at 360px and 1440px in EN/ES, no overflow or errors.
-- Unverified: hero photo did not load in the sandbox (brand fallback shown); keyboard/screen-reader pass and 200% zoom not run.
+- Corrections: For Hosts scrolls to /#for-hosts (toolkit + steps), not /hosts. Notify me is labelled Coming soon (no alert storage yet; Prompt 8). Invite a host uses native share or copy with a polite live confirmation and a manual-link fallback. No locale keys deleted.
+- Verified: 23 files / 155 tests; build OK; Playwright at 360/390/768/1440 EN+ES and 640px@2x reduced motion (200% zoom): one h1, one main, no overflow, no buttons under 48px, no ratings/old fees, 5% present, keyboard tab order with visible focus, menu Escape closes, CTAs route correctly. Discovery showed the empty state: the only public upcoming row is "Sunset walk (test delete)", excluded as a fixture.
+- Unverified: hero brand photo loads in the sandbox only as the brand fallback; screen-reader pass; native share sheet on real phones.
 
 ## v0.12 — Prompt 3: identity, onboarding, language and account modes (2026-10-23)
 - Database (0051_v4_identity_onboarding_account_modes.sql, additive): profiles.adult_confirmed_at / adult_consent_version_id / view_mode; consent kind `adult` plus adult and guardian v1 texts (en/es, 4 config rows); events.allows_minors (default false, 0 events enabled); rsvps merged_into_rsvp_id / merged_at / minor_first_name / minor_age_band / guardian consent fields; one-active-RSVP-per-user-per-event unique index; auth_intents (hashed, 30-minute, single-use, service-only table); guest_claims audit log; functions is_adult, confirm_adult, create/consume/cleanup_auth_intent, is_safe_return_path, claim_guest_records; triggers enforcing 18+ on team creation, event create/publish and offer creation, and guardian rules on RSVPs.
