@@ -13,4 +13,4 @@ export const Route = createFileRoute('/_authenticated/_app/blueprints')({
   },
   component: Page,
 });
-function Page() { const { create } = Route.useSearch(); return <BlueprintsPage create={create} />; }
+function Page() { const { create } = Route.useSearch(); return <BlueprintsPage create={create ?? false} />; }
