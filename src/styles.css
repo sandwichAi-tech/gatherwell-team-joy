@@ -2066,23 +2066,22 @@ a.gw-cat-chip:hover{background:#fff}
 .template-actions button,.template-actions a{min-height:48px}
 .template-meta{flex-wrap:wrap}
 
-/* Host-first homepage: unframed paths, four steps and an honest tool inventory. */
-.gw-home-paths{padding:40px 0}
-.gw-home-path-grid{display:grid;gap:32px}
-.gw-home-path-grid>div{min-width:0}
-.gw-home-path-grid h2{font-size:28px;font-weight:700}
-.gw-home-path-grid p{color:var(--body);font-size:16px;margin:8px 0 20px}
-.gw-home-path-grid .gw-btn{min-height:52px;width:100%;white-space:normal;text-align:center}
-.gw-home-steps{display:grid;gap:32px;list-style:none;padding:0;margin:32px 0 0}
-.gw-home-steps li{min-width:0}
-.gw-home-steps h3{font-size:20px;font-weight:600;margin-top:8px}
-.gw-home-tool-icon{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;flex-shrink:0;background:var(--secondary);color:var(--lavender);border-radius:8px}
-.gw-home-tools{display:grid;gap:0 32px;list-style:none;padding:0;margin:32px 0 0}
-.gw-home-tools li{display:flex;align-items:flex-start;gap:16px;padding:24px 0;border-bottom:1px solid var(--border);min-width:0}
+/* Host-first homepage: one CTA pair, compact steps and a scannable tool inventory. */
+.gw-home-how,.gw-home-tool-section{padding:32px 0}
+.gw-landing .gw-home-how .gw-h2,.gw-landing .gw-home-tool-section .gw-h2{font-size:28px;line-height:1.25;letter-spacing:0;margin:0;text-wrap:balance}
+.gw-home-how .gw-label{margin-bottom:8px;letter-spacing:0}
+.gw-home-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 16px;list-style:none;padding:0;margin:24px 0 0}
+.gw-home-steps li{display:grid;grid-template-columns:32px minmax(0,1fr);align-items:center;gap:10px;min-width:0}
+.gw-home-steps li>div{min-width:0}
+.gw-home-steps .gw-how-num{display:block;font-size:12px;line-height:1.4;letter-spacing:0;margin:0 0 2px;color:var(--body)}
+.gw-home-steps h3{font-size:15px;line-height:1.4;font-weight:600;margin:0;overflow-wrap:anywhere}
+.gw-home-tool-icon{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;flex-shrink:0;background:var(--secondary);color:var(--primary);border-radius:8px}
+.gw-home-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px;list-style:none;padding:0;margin:20px 0 0}
+.gw-home-tools li{display:grid;grid-template-columns:24px minmax(0,1fr);align-content:start;align-items:start;gap:8px;padding:12px 0;border-bottom:1px solid var(--border);min-width:0}
+.gw-home-tools .gw-home-tool-icon{width:24px;height:24px;background:transparent;border-radius:0}
 .gw-home-tools li>div{min-width:0}
-.gw-home-tools h3{font-size:17px;font-weight:600;line-height:1.5}
-.gw-home-tool-tag{display:inline-block;color:var(--body);background:var(--secondary);padding:4px 8px;border-radius:4px;margin-top:8px;font-size:13px;font-weight:500}
-.gw-home-studio{font-size:20px;line-height:1.6;max-width:800px;margin:48px 0 0;padding-top:32px;border-top:1px solid var(--border);color:var(--body)}
-@media(min-width:640px){.gw-home-path-grid,.gw-home-tools{grid-template-columns:repeat(2,minmax(0,1fr))}.gw-home-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.gw-home-path-grid>div+div{border-left:1px solid var(--border);padding-left:32px}.gw-home-path-grid .gw-btn{width:auto}}
-@media(min-width:1024px){.gw-home-steps{grid-template-columns:repeat(4,minmax(0,1fr))}.gw-home-tools{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:639px){.gw-landing .gw-hero{padding-top:32px}.gw-landing .gw-hero-ctas{margin-top:24px}.gw-landing .gw-hero-ctas .gw-btn{flex:0 0 auto;width:100%;min-height:52px;white-space:normal;text-align:center}.gw-home-path-grid>div+div{border-top:1px solid var(--border);padding-top:32px}.gw-home-steps{grid-template-columns:repeat(2,minmax(0,1fr));gap:32px 16px}.gw-home-steps h3{font-size:17px}}
+.gw-home-tools h3{font-size:14px;font-weight:600;line-height:1.5;margin:0;overflow-wrap:anywhere}
+.gw-home-tool-tag{display:block;color:var(--body);margin-top:3px;font-size:12px;font-weight:500;line-height:1.5}
+.gw-home-studio{font-size:15px;line-height:1.6;max-width:800px;margin:20px 0 0;color:var(--body)}
+@media(min-width:768px){.gw-home-how,.gw-home-tool-section{padding:40px 0}.gw-home-steps{grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}.gw-home-tools{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:32px}.gw-home-tools h3{font-size:15px}.gw-home-steps h3{font-size:16px}}
+@media(max-width:639px){.gw-landing .gw-hero{padding-top:32px}.gw-landing .gw-hero-ctas{margin-top:24px}.gw-landing .gw-hero-ctas .gw-btn{flex:0 0 auto;width:100%;min-height:52px;white-space:normal;text-align:center}}
