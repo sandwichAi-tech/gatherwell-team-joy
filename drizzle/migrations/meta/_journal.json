@@ -358,6 +358,13 @@
       "when": 1792794983528,
       "tag": "0050_v4_require_verified_waiver_snapshots",
       "breakpoints": true
+    },
+    {
+      "idx": 51,
+      "version": "7",
+      "when": 1792795994800,
+      "tag": "0051_v4_identity_onboarding_account_modes",
+      "breakpoints": true
     }
   ]
 }
