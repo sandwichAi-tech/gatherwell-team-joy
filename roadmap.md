@@ -5,7 +5,7 @@ Active work follows the approved Prompt 1–17 sequence in the ZoheeWell Beta Pr
 - [x] Prompt 0 — Read-only audit of commit fe1db59
 - [x] Prompt 1 — Install source of truth and remove rule conflicts (documentation only)
 - [ ] Prompts 2–17 — per Blueprint v4, each requires its own approval
-- [ ] Prompt 2 correction — order/entitlement integrity, consent snapshots, flag audit, evidence and automated checks
+- [x] Prompt 2 correction — applied 0049/0050, consent 7/7 verified, evidence recorded, 96 existing tests pass, counts/flags unchanged
 - [ ] Disposable-copy SQL role regression — requires an isolated writable database copy; never run on production
 
 

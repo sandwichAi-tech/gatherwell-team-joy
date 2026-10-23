@@ -112,5 +112,53 @@ DO $$ BEGIN
  IF (SELECT count(*) FROM public.rsvps WHERE event_id=(SELECT id FROM fixtures WHERE label='event'))<>2 THEN RAISE EXCEPTION 'Rows lost'; END IF;
  IF NOT EXISTS (SELECT 1 FROM public.waiver_acceptances w JOIN public.consent_text_versions c ON c.id=w.consent_text_version_id WHERE w.rsvp_id=(SELECT id FROM fixtures WHERE label='rsvp') AND c.locale='es' AND w.accepted_body_sha256=encode(sha256(convert_to('Consentimiento aislado','UTF8')),'hex')) THEN RAISE EXCEPTION 'Spanish snapshot mismatch'; END IF;
 END $$;
+-- Integrity rules: concrete valid/invalid writes, all rolled back with this test.
+DO $$ DECLARE o public.orders%ROWTYPE; x public.entitlements%ROWTYPE; BEGIN
+ SELECT * INTO o FROM public.orders WHERE id=(SELECT id FROM fixtures WHERE label='order');
+ -- Same idempotency key is permitted in another environment.
+ o.id:=gen_random_uuid(); o.environment:='live'; INSERT INTO public.orders SELECT o.*;
+ BEGIN
+   o.id:=gen_random_uuid(); INSERT INTO public.orders SELECT o.*;
+   RAISE EXCEPTION 'Duplicate environment/key was accepted';
+ EXCEPTION WHEN unique_violation THEN NULL; END;
+ BEGIN
+   o.id:=gen_random_uuid(); o.idempotency_key:=o.id::text; o.environment:=NULL; INSERT INTO public.orders SELECT o.*;
+   RAISE EXCEPTION 'Null environment was accepted';
+ EXCEPTION WHEN check_violation THEN NULL; END;
+ o.environment:='sandbox';
+ BEGIN
+   o.host_id:=NULL; INSERT INTO public.orders SELECT o.*;
+   RAISE EXCEPTION 'Hostless course was accepted';
+ EXCEPTION WHEN check_violation THEN NULL; END;
+ o.host_id:=(SELECT id FROM actors WHERE label='host');
+ BEGIN
+   o.event_id:=(SELECT id FROM fixtures WHERE label='event'); INSERT INTO public.orders SELECT o.*;
+   RAISE EXCEPTION 'Course with event target was accepted';
+ EXCEPTION WHEN check_violation THEN NULL; END;
+ SELECT * INTO x FROM public.entitlements WHERE id=(SELECT id FROM fixtures WHERE label='entitlement');
+ BEGIN
+   x.id:=gen_random_uuid(); x.track_id:=NULL; INSERT INTO public.entitlements SELECT x.*;
+   RAISE EXCEPTION 'Targetless course entitlement was accepted';
+ EXCEPTION WHEN check_violation THEN NULL; END;
+ -- Buyer is optional for guest checkout.
+ o.event_id:=NULL; o.id:=gen_random_uuid(); o.idempotency_key:=o.id::text; o.buyer_user_id:=NULL;
+ INSERT INTO public.orders SELECT o.*;
+END $$;
+-- Hash supplied on an update must be ignored, retaining the original snapshot.
+UPDATE public.waiver_acceptances SET accepted_body_sha256='client-chosen-invalid-hash' WHERE rsvp_id=(SELECT id FROM fixtures WHERE label='rsvp');
+DO $$ BEGIN
+ IF EXISTS (SELECT 1 FROM public.waiver_acceptances WHERE rsvp_id=(SELECT id FROM fixtures WHERE label='rsvp') AND accepted_body_sha256='client-chosen-invalid-hash') THEN RAISE EXCEPTION 'Client chose hash'; END IF;
+END $$;
+SELECT set_config('app.config_reason','isolated regression',true),set_config('app.config_source','disposable_sql_test',true);
+SELECT set_config('request.jwt.claims',json_build_object('sub',id,'role','authenticated')::text,true) FROM actors WHERE label='host';
+INSERT INTO public.feature_flags(key,enabled) SELECT 'rls-'||id,false FROM fixtures WHERE label='team';
+UPDATE public.feature_flags SET enabled=true WHERE key=(SELECT 'rls-'||id FROM fixtures WHERE label='team');
+DELETE FROM public.feature_flags WHERE key=(SELECT 'rls-'||id FROM fixtures WHERE label='team');
+DO $$ DECLARE n int; BEGIN
+ SELECT count(*) INTO n FROM public.config_versions WHERE config_key=(SELECT 'feature_flags.rls-'||id FROM fixtures WHERE label='team') AND changed_by=(SELECT id FROM actors WHERE label='host') AND reason='isolated regression' AND source='disposable_sql_test';
+ IF n<>3 THEN RAISE EXCEPTION 'Expected insert/update/delete audits, got %',n; END IF;
+ IF NOT EXISTS (SELECT 1 FROM public.config_versions WHERE config_key=(SELECT 'feature_flags.rls-'||id FROM fixtures WHERE label='team') AND old_value->>'enabled'='false' AND new_value->>'enabled'='true') THEN RAISE EXCEPTION 'Old/new flag snapshot missing'; END IF;
+ IF has_table_privilege('authenticated','public.config_versions','INSERT') OR has_table_privilege('authenticated','public.config_versions','UPDATE') OR has_table_privilege('authenticated','public.config_versions','DELETE') THEN RAISE EXCEPTION 'Client audit write grant'; END IF;
+END $$;
 ROLLBACK;
 \echo 'Disposable-copy role regression passed; all fixtures rolled back.'
