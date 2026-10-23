@@ -1,5 +1,5 @@
 # Walkthrough 2.1 — Host-first homepage (October 23)
-- [ ] Keep current look and headline, lead Host / Attend paths, reuse hosting explainer and list every host tool with coming-soon premium outreach; check 390px / 1440px and add change log.
+- [x] Kept current look and headline; Host / Attend paths, four hosting steps, all tools and coming-soon premium outreach added. Phone 390px / desktop 1440px links/layout checked; 17 routing tests passed and CHANGELOG.md updated.
 - [ ] Future Retell AI outbound calling and Twilio text verification/notifications — awaiting a separate setup scope and service connections; no sends in this homepage-only step.
 
 # Walkthrough 1.6 — Personal morning brief (October 23)

@@ -12,6 +12,7 @@
 ## Gatherwell architecture
 - Render brand artwork through BrandLogo using original CDN-backed SVGs and theme-aware variants; keep photography in BrandImage so logos retain exact supplied colors without photo grading.
 - Marketing icons use the shared GwIcon marketing variant: duotone silhouettes with scoped contour reinforcement, preserving signed-in icon weights.
+- Keep homepage hosting paths, steps and tool inventory inside the existing landing page and reuse login intent/discovery routes; marketing additions must not enable provider delivery or paid event checkout.
 - Keep enduring product requirements in PROJECT_RULES.md; apply them to all future work.
 - Use react-i18next with matched English and Latin American Spanish JSON resources for all visible and accessible copy, so language changes stay instant and complete.
 - Keep shared navigation, settings, and sheets in GatherwellShell around the root Outlet; use separate leaf routes for the five tabs so deep links work.
