@@ -218,9 +218,11 @@ export const startConnectOnboarding = createServerFn({ method: 'POST' })
 export const startTicketCheckout = createServerFn({ method: 'POST' })
   .inputValidator((d: unknown) => z.object({
     eventId: z.string().uuid(), first: z.string().trim().min(1).max(60), last: z.string().trim().max(60), phone: z.string().trim().max(30), email: z.string().trim().email().max(200),
-    plusOnes: z.number().int().min(0).max(3), sms: z.boolean(), mail: z.boolean(), lang: z.enum(['en', 'es']), origin, waiverName: z.string().trim().max(120).optional().default(''), promo: z.string().max(20).optional().default(''),
+    plusOnes: z.number().int().min(0).max(3), sms: z.boolean(), mail: z.boolean(), lang: z.enum(['en', 'es']), origin, waiverName: z.string().trim().max(120).optional().default(''), promo: z.string().max(20).optional().default(''), adult: z.boolean().optional().default(false),
   }).parse(d))
   .handler(async ({ data }): Promise<Result> => {
+    // Purchasers must be adults; the unchecked attestation is required server-side.
+    if (data.adult !== true) return { ok: false, error: 'adult_required' };
     const { stripe, stripeKey } = await import('./billing/stripe.server');
     const { getRequestHeader } = await import('@tanstack/react-start/server');
     const waiverIp = (getRequestHeader('cf-connecting-ip') ?? getRequestHeader('x-forwarded-for') ?? '').split(',')[0]!.trim().slice(0, 64);
