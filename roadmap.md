@@ -1,3 +1,19 @@
+# Roadmap
+
+Active work follows the approved Prompt 1–17 sequence in the ZoheeWell Beta Product Blueprint and Lovable Build Plan v4 (see SOURCE_OF_TRUTH.md).
+
+- [x] Prompt 0 — Read-only audit of commit fe1db59
+- [x] Prompt 1 — Install source of truth and remove rule conflicts (documentation only)
+- [ ] Prompts 2–17 — per Blueprint v4, each requires its own approval
+
+
+
+---
+
+# Historical record — pre Blueprint v4 rules (not active)
+
+> **Historical record — pre Blueprint v4 (2026-10-23).** Not an active instruction. Where anything here conflicts with SOURCE_OF_TRUTH.md, Blueprint v4 wins.
+
 # Walkthrough 2.1 — Host-first homepage (October 23)
 - [x] Kept current look and headline; Host / Attend paths, four hosting steps, all tools and coming-soon premium outreach added. Phone 390px / desktop 1440px links/layout checked; 17 routing tests passed and CHANGELOG.md updated.
 - [ ] Future Retell AI outbound calling and Twilio text verification/notifications — awaiting a separate setup scope and service connections; no sends in this homepage-only step.

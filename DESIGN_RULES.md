@@ -1,3 +1,25 @@
+# ZoheeWell design rules — Blueprint v4 (active)
+
+Authority: SOURCE_OF_TRUTH.md. Below Project Knowledge and PROJECT_RULES.md.
+
+- **Tagline:** Life is better together.
+- **Font:** Noto Sans.
+- **Colors:** Midnight Plum #302338, Adobe Terracotta #C78E76, Warm Concrete #D8D0C6, Warm Ivory #F8F5F0. Implement as semantic CSS tokens with an accessible dark theme; no hard-coded color utilities in components. Every pairing meets WCAG 2.2 AA.
+- **Logo:** use only supplied official logo assets, rendered through BrandLogo without recoloring or effects.
+- **Imagery:** genuine, inclusive community photography through BrandImage.
+- **Voice:** warm, clear, encouraging, useful. No hype, unsupported health claims, income claims or insider MLM language. No emoji.
+- **Icons:** Phosphor via GwIcon only.
+- **Layout:** phone first; 48px primary targets; clear pressed, selected, busy, empty and error states; reduced motion respected.
+
+Current code still uses the pre-v4 palette tokens until the approved brand prompt changes them; that is status, not a rule.
+
+
+---
+
+# Historical record — pre Blueprint v4 rules (not active)
+
+> **Historical record — pre Blueprint v4 (2026-10-23).** Not an active instruction. Where anything here conflicts with SOURCE_OF_TRUTH.md, Blueprint v4 wins.
+
 # Gatherwell design rules
 
 These rules permanently replace all earlier visual and tone instructions in PROJECT_RULES.md. Every future change must follow this file. Product, bilingual, privacy and frontend-only requirements remain in force.

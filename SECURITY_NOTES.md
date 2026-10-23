@@ -1,3 +1,5 @@
+> **Historical record — pre Blueprint v4 (2026-10-23).** Not an active instruction. Where anything here conflicts with SOURCE_OF_TRUTH.md, Blueprint v4 wins.
+
 # Security notes
 
 Reviewed October 2026. Every open scanner note is either fixed or listed here with why it stays.

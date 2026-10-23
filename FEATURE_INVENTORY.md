@@ -1,3 +1,5 @@
+> **Historical record — pre Blueprint v4 (2026-10-23).** Not an active instruction. Where anything here conflicts with SOURCE_OF_TRUTH.md, Blueprint v4 wins.
+
 # Gatherwell Feature Inventory
 
 Snapshot: 2026-10-16. Status comes from reading the source plus spot checks. It is not a full click-through test.

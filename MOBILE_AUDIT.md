@@ -1,3 +1,5 @@
+> **Historical record — pre Blueprint v4 (2026-10-23).** Not an active instruction. Where anything here conflicts with SOURCE_OF_TRUTH.md, Blueprint v4 wins.
+
 # Gatherwell — detailed mobile audit
 **Review date:** October 10, 2026  
 **Scope:** Alignment, overlapping content, bilingual fit, phone navigation, forms, popups, touch targets, and consistency.  
