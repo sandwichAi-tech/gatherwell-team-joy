@@ -2038,3 +2038,13 @@ a.gw-cat-chip:hover{background:#fff}
 .gw-phone .gw-phone-stats b,.gw-phone .tabular{color:#1C1726}
 .gw-phone .gw-mini-avatar.tone-0{background:#EFEBF6;color:#5B4378}
 .gw-landing .gw-mini-avatar.tone-0,.dark .gw-landing .gw-mini-avatar.tone-0{background:#EFEBF6;color:#5B4378}
+
+/* Inline payment form: the provider's own checkout, sized to the sheet it sits in. */
+.gw-inline-checkout { min-height: 260px; }
+.gw-inline-checkout [data-testid="embedded-checkout-container"] { min-height: 260px; }
+
+/* Payment state notices (test mode, not yet configured). */
+.gw-pay-banner { padding: 8px 14px; font-size: 13px; line-height: 1.45; text-align: center; }
+.gw-pay-banner--test { background: color-mix(in oklab, #f4c7a1 40%, var(--background)); color: var(--foreground); border-bottom: 1px solid var(--border); }
+.gw-pay-banner--off { background: color-mix(in oklab, #35263f 8%, var(--background)); color: var(--foreground); border-bottom: 1px solid var(--border); }
+.gw-pay-banner a { color: inherit; font-weight: 600; text-underline-offset: 2px; }
