@@ -208,7 +208,7 @@ function Onboarding() {
     {step === 'adult' && <>
       <h1 className="onboarding-title">{t('identity.adultTitle')}</h1>
       <p className="auth-subtitle">{t('identity.adultText')}</p>
-      <label className="consent-check" htmlFor="adult-attest">
+      <label className="check-row consent-check" htmlFor="adult-attest">
         <input id="adult-attest" type="checkbox" checked={adultChecked} onChange={e => setAdultChecked(e.target.checked)} aria-describedby="adult-note" />
         <span>{t('identity.adultCheck')}</span>
       </label>
