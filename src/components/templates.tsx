@@ -1,6 +1,9 @@
 import { CropFileInput } from '@/components/image-crop';
 import { EmptyState } from '@/components/launch-states';
 import { ClaimGuard } from '@/components/smart';
+import { GatheringCover } from '@/components/gathering-cover';
+import { CATEGORIES, isCategory } from '@/lib/landing';
+import { confirmAction } from '@/components/confirm-dialog';
 import { useTranslateFill } from '@/lib/assistant-client';
 import { useEffect, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
@@ -34,11 +37,11 @@ export function TemplateCard({ template, children }: { template: Template; child
   const cover = useSignedUrl(template.cover_url);
   const description = i18n.resolvedLanguage === 'es' ? template.description_es || template.description_en : template.description_en || template.description_es;
   return <article className="template-card">
-    <div className="template-cover" style={cover ? { backgroundImage: `url(${cover})` } : undefined}>{!cover && <span className="team-cover-initial">{(template.title.trim()[0] ?? 'T').toUpperCase()}</span>}</div>
+    <GatheringCover path={template.cover_url} style={template.cover_style} title={template.title} className="blueprint-cover" />
     <div className="template-body">
       <div className="template-meta">{template.team_id ? <span className={`chip ${template.is_published ? 'published-chip' : ''}`}>{t(template.is_published ? 'templates.published' : 'templates.draft')}</span> : <span className="chip">{t('templates.starter')}</span>}
-        {template.team_id && <span className="template-count">{t('templates.launched', { count: template.launches_count })}</span>}</div>
-      <h3>{template.title}</h3>{description && <p>{description}</p>}
+        <span className="template-count">{t('templates.used', { count: template.launches_count })}</span></div>
+      <h3>{template.title}</h3><span className="template-count">{template.category === 'more' ? template.category_label || t('marketing.other') : t(`landing.cat.${template.category}`)} · {t(template.default_mode === 'online' ? 'map.online' : 'map.person')}</span>{description && <p>{description}</p>}
       {children && <div className="template-actions">{children}</div>}
     </div>
   </article>;
@@ -89,66 +92,45 @@ export function LaunchSheet({ template, teamId, onClose }: { template: Template 
   </ResponsiveSheet>;
 }
 
-export type TemplateDraft = Partial<Pick<Template, 'id' | 'title' | 'description_en' | 'description_es' | 'cover_url' | 'default_duration_minutes' | 'default_capacity' | 'visibility_default' | 'invite_script_en' | 'invite_script_es' | 'followup_script_en' | 'followup_script_es' | 'is_published'>> & { checklist?: string[] };
+export type TemplateDraft = Partial<Template> & { checklist?: string[] };
 
 export function TemplateEditor({ draft, teamId, userId, onClose }: { draft: TemplateDraft | null; teamId: string; userId: string; onClose: () => void }) {
   const { t } = useTranslation(); const queryClient = useQueryClient();
-  const empty = { title: '', description_en: '', description_es: '', duration: '60', capacity: '', visibility: 'team' as 'team' | 'public', invite_en: '', invite_es: '', follow_en: '', follow_es: '', published: false };
-  const [f, setF] = useState(empty); const [items, setItems] = useState<string[]>([]); const [newItem, setNewItem] = useState('');
+  const [f, setF] = useState({ title: '', description: '', duration: '60', capacity: '', category: 'more', categoryLabel: '', mode: 'person', price: '', visibility: 'public' });
   const [file, setFile] = useState<File | null>(null); const [preview, setPreview] = useState<string | null>(null); const [busy, setBusy] = useState(false);
-  const cover = useSignedUrl(draft?.cover_url);
   useEffect(() => {
     if (!draft) return;
-    setF({ title: draft.title ?? '', description_en: draft.description_en ?? '', description_es: draft.description_es ?? '', duration: String(draft.default_duration_minutes ?? 60), capacity: draft.default_capacity ? String(draft.default_capacity) : '',
-      visibility: draft.visibility_default === 'public' ? 'public' : 'team', invite_en: draft.invite_script_en ?? '', invite_es: draft.invite_script_es ?? '', follow_en: draft.followup_script_en ?? '', follow_es: draft.followup_script_es ?? '', published: !!draft.is_published });
-    setItems(draft.checklist ?? []); setNewItem(''); setFile(null); setPreview(null);
+    setF({ title: draft.title ?? '', description: draft.description_en ?? '', duration: String(draft.default_duration_minutes ?? 60), capacity: draft.default_capacity ? String(draft.default_capacity) : '', category: draft.category ?? 'more', categoryLabel: draft.category_label ?? '', mode: draft.default_mode ?? 'person', price: draft.default_price_cents ? String(draft.default_price_cents / 100) : '', visibility: draft.visibility_default === 'team' ? 'team' : 'public' });
+    setFile(null); setPreview(null);
   }, [draft]);
-  const set = (key: keyof typeof empty) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF({ ...f, [key]: e.target.value });
-  const move = (i: number, d: number) => setItems(list => { const next = [...list]; const [x] = next.splice(i, 1); next.splice(i + d, 0, x!); return next; });
-  const tr = useTranslateFill();
+  const valid = !!f.title.trim() && Number(f.duration) >= 5 && Number(f.duration) <= 1440 && (!f.capacity || Number(f.capacity) >= 1) && (!f.price || (Number(f.price) >= 0 && Number(f.price) <= 1000));
   const save = async () => {
-    if (!f.title.trim()) return; setBusy(true);
+    if (!draft || !valid) return;
+    setBusy(true);
     try {
-      const cover_url = file ? await uploadMedia(userId, file, 'cover') : draft?.cover_url ?? null;
-      const duration = Math.min(1440, Math.max(5, parseInt(f.duration, 10) || 60)); const cap = parseInt(f.capacity, 10);
-      const row = { title: f.title.trim(), description_en: f.description_en.trim() || null, description_es: f.description_es.trim() || null, cover_url, default_duration_minutes: duration,
-        default_capacity: cap > 0 ? cap : null, visibility_default: f.visibility, checklist: items, invite_script_en: f.invite_en.trim() || null, invite_script_es: f.invite_es.trim() || null,
-        followup_script_en: f.follow_en.trim() || null, followup_script_es: f.follow_es.trim() || null, is_published: f.published };
-      const { error } = draft?.id ? await supabase.from('templates').update(row).eq('id', draft.id) : await supabase.from('templates').insert({ ...row, team_id: teamId, created_by: userId });
-      if (error) throw error;
-      toast.success(t('templates.saved')); await queryClient.invalidateQueries({ queryKey: ['templates'] }); await queryClient.invalidateQueries({ queryKey: teamKey(teamId) }); onClose();
+      const cover_url = file ? await uploadMedia(userId, file, 'cover') : draft.cover_url ?? null;
+      const row = { title: f.title.trim(), description_en: f.description.trim() || null, description_es: draft.description_es ?? (f.description.trim() || null),
+        category: isCategory(f.category) ? f.category : 'more', category_label: f.categoryLabel.trim() || null, default_mode: f.mode,
+        default_duration_minutes: Number(f.duration), default_capacity: f.capacity ? Number(f.capacity) : null,
+        default_price_cents: f.visibility === 'team' ? 0 : Math.round(Number(f.price || 0) * 100), visibility_default: f.visibility,
+        cover_url, cover_style: draft.cover_style ?? 0, checklist: draft.checklist ?? [], is_published: true };
+      const result = draft.id ? await supabase.from('templates').update(row).eq('id', draft.id).select('id').single() : await supabase.from('templates').insert({ ...row, team_id: teamId, created_by: userId }).select('id').single();
+      if (result.error) throw result.error;
+      toast.success(t('templates.saved')); await queryClient.invalidateQueries({ queryKey: ['templates'] }); onClose();
     } catch (error) { toast.error(errText(t, error)); }
-    setBusy(false);
+    finally { setBusy(false); }
   };
-  const shown = preview ?? cover;
-  const bilingual = (label: string, en: keyof typeof empty, es: keyof typeof empty, rows = 3) => <div className="bilingual">
-    <div className="form-field"><label className="field-label" htmlFor={`tpl-${en}`}>{label} · EN</label><Textarea id={`tpl-${en}`} rows={rows} className="field-textarea" maxLength={2000} value={f[en] as string} onChange={set(en)} /><ClaimGuard text={f[en] as string} lang="en" onUse={v => setF(x => ({ ...x, [en]: v }))} /></div>
-    <div className="form-field"><div className="label-row"><label className="field-label" htmlFor={`tpl-${es}`}>{label} · ES</label><button type="button" className="translate-button" disabled={tr.busy} onClick={() => tr.run(f[en] as string, f[es] as string, v => setF(x => ({ ...x, [en]: v })), v => setF(x => ({ ...x, [es]: v })))}><Languages />{tr.busy ? t('assistant.translating') : t('templates.translate')}</button></div><Textarea id={`tpl-${es}`} rows={rows} className="field-textarea" maxLength={2000} value={f[es] as string} onChange={set(es)} /><ClaimGuard text={f[es] as string} lang="es" onUse={v => setF(x => ({ ...x, [es]: v }))} /></div>
-  </div>;
-  return <ResponsiveSheet open={!!draft} onOpenChange={o => !o && onClose()} title={draft?.id ? t('templates.editTitle') : t('templates.newTitle')}>
+  return <ResponsiveSheet open={!!draft} onOpenChange={o => { if (!o && !busy) onClose(); }} title={t(draft?.id ? 'templates.editTitle' : 'templates.newTitle')} footer={<Button className="w-full" disabled={busy || !valid} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>}>
     <div className="edit-form">
-      <div className="form-field"><label className="field-label" htmlFor="tpl-title">{t('templates.title')}</label><Input id="tpl-title" className="field-input" maxLength={120} value={f.title} onChange={set('title')} /></div>
-      <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
-        <div className="cover-edit" style={shown ? { backgroundImage: `url(${shown})` } : undefined}>{!shown && <span className="team-cover-initial">{(f.title.trim()[0] ?? 'T').toUpperCase()}</span>}</div>
-        <label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={r => { setFile(r.file); setPreview(r.previewUrl); }} /></label></div>
-      {bilingual(t('templates.description'), 'description_en', 'description_es')}
-      <div className="choice-pair">
-        <div className="form-field"><label className="field-label" htmlFor="tpl-duration">{t('templates.duration')}</label><Input id="tpl-duration" type="number" min={5} max={1440} className="field-input" value={f.duration} onChange={set('duration')} /></div>
-        <div className="form-field"><label className="field-label" htmlFor="tpl-capacity">{t('templates.capacity')}</label><Input id="tpl-capacity" type="number" min={1} className="field-input" placeholder={t('templates.noLimit')} value={f.capacity} onChange={set('capacity')} /></div>
-      </div>
-      <div className="form-field"><span className="field-label">{t('templates.visibility')}</span>
-        <div className="choice-pair">{(['team', 'public'] as const).map(v => <button type="button" key={v} className={`choice-card ${f.visibility === v ? 'is-selected' : ''}`} aria-pressed={f.visibility === v} onClick={() => setF({ ...f, visibility: v })}><strong>{t(`teamSpace.visibility.${v}`)}</strong></button>)}</div></div>
-      <div className="form-field"><span className="field-label">{t('templates.checklist')}</span>
-        <ol className="checklist-editor">{items.map((item, i) => <li key={`${item}-${i}`}><span>{item}</span>
-          <Button variant="ghost" size="icon" disabled={i === 0} aria-label={t('templates.moveUp')} onClick={() => move(i, -1)}><ArrowUp /></Button>
-          <Button variant="ghost" size="icon" disabled={i === items.length - 1} aria-label={t('templates.moveDown')} onClick={() => move(i, 1)}><ArrowDown /></Button>
-          <Button variant="ghost" size="icon" aria-label={t('teamSpace.delete')} onClick={() => setItems(items.filter((_, j) => j !== i))}><Trash2 /></Button></li>)}</ol>
-        <form className="inline-form" onSubmit={e => { e.preventDefault(); if (newItem.trim()) { setItems([...items, newItem.trim().slice(0, 140)]); setNewItem(''); } }}>
-          <Input className="field-input" placeholder={t('templates.addItem')} aria-label={t('templates.addItem')} value={newItem} onChange={e => setNewItem(e.target.value)} /><Button variant="secondary" disabled={!newItem.trim()}><Plus />{t('templates.add')}</Button></form></div>
-      {bilingual(t('templates.inviteScript'), 'invite_en', 'invite_es')}
-      {bilingual(t('templates.followupScript'), 'follow_en', 'follow_es')}
-      <label className="switch-row"><Switch checked={f.published} onCheckedChange={v => setF({ ...f, published: v })} /><span><strong>{t('templates.publishToggle')}</strong><small>{t('templates.publishToggleText')}</small></span></label>
-      <Button className="onboarding-continue" disabled={busy || !f.title.trim()} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
+      <div className="form-field"><label htmlFor="tpl-title" className="field-label">{t('templates.title')}</label><Input id="tpl-title" value={f.title} maxLength={120} onChange={e => setF({ ...f, title: e.target.value })} /></div>
+      <div className="form-field"><label htmlFor="tpl-type" className="field-label">{t('templates.type')}</label><select id="tpl-type" className="field-input" value={f.category} onChange={e => setF({ ...f, category: e.target.value })}>{CATEGORIES.map(c => <option key={c} value={c}>{t(c === 'more' ? 'marketing.other' : `landing.cat.${c}`)}</option>)}</select></div>
+      {f.category === 'more' && <div className="form-field"><label htmlFor="tpl-custom-type" className="field-label">{t('marketing.customCategory')}</label><Input id="tpl-custom-type" value={f.categoryLabel} maxLength={60} onChange={e => setF({ ...f, categoryLabel: e.target.value })} /></div>}
+      <div className="form-field"><label htmlFor="tpl-description" className="field-label">{t('templates.description')}</label><Textarea id="tpl-description" value={f.description} maxLength={2000} rows={4} onChange={e => setF({ ...f, description: e.target.value })} /><ClaimGuard text={f.description} lang="en" onUse={description => setF(x => ({ ...x, description }))} /></div>
+      <div className="choice-pair"><div className="form-field"><label htmlFor="tpl-duration" className="field-label">{t('templates.duration')}</label><Input id="tpl-duration" type="number" min={5} max={1440} value={f.duration} onChange={e => setF({ ...f, duration: e.target.value })} /></div><div className="form-field"><label htmlFor="tpl-capacity" className="field-label">{t('templates.capacity')}</label><Input id="tpl-capacity" type="number" min={1} placeholder={t('templates.noLimit')} value={f.capacity} onChange={e => setF({ ...f, capacity: e.target.value })} /></div></div>
+      <div className="segmented full" role="group" aria-label={t('gathering.place')}>{(['person', 'online'] as const).map(mode => <Button key={mode} variant="ghost" aria-pressed={f.mode === mode} className={f.mode === mode ? 'selected' : ''} onClick={() => setF({ ...f, mode })}>{t(`map.${mode}`)}</Button>)}</div>
+      <div className="form-field"><label htmlFor="tpl-visibility" className="field-label">{t('templates.visibility')}</label><select id="tpl-visibility" className="field-input" value={f.visibility} onChange={e => setF({ ...f, visibility: e.target.value, price: e.target.value === 'team' ? '' : f.price })}><option value="public">{t('gathering.vis.public')}</option><option value="team">{t('gathering.vis.team')}</option></select></div>
+      <div className="form-field"><label htmlFor="tpl-price" className="field-label">{t('billing.price')}</label><Input id="tpl-price" type="number" min={0} max={1000} step="0.01" disabled={f.visibility === 'team'} value={f.price} placeholder="$0" onChange={e => setF({ ...f, price: e.target.value })} /><small className="field-hint">{t(f.visibility === 'team' ? 'templates.teamFree' : 'templates.priceStored')}</small></div>
+      <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>{preview ? <img src={preview} alt={f.title} className="blueprint-editor-cover" /> : <GatheringCover path={draft?.cover_url} style={draft?.cover_style} title={f.title} className="blueprint-editor-cover" />}<label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={r => { setFile(r.file); setPreview(r.previewUrl); }} /></label></div>
     </div>
   </ResponsiveSheet>;
 }
@@ -162,6 +144,7 @@ export function TemplatesSection({ teamId, userId }: { teamId: string; userId: s
   const [editing, setEditing] = useState<TemplateDraft | null>(null);
   const own = data.filter(tpl => tpl.team_id === teamId);
   const starters = data.filter(tpl => !tpl.team_id);
+  const navigate = useNavigate();
   const copy = async (tpl: Template) => {
     const { data: id, error } = await supabase.rpc('copy_starter_template', { _template: tpl.id, _team: teamId });
     if (error) { toast.error(errText(t, error)); return; }
@@ -170,11 +153,11 @@ export function TemplatesSection({ teamId, userId }: { teamId: string; userId: s
     toast.success(t('templates.copied')); if (row) setEditing(toDraft(row));
   };
   return <section className="panel">
-    <div className="section-heading"><h2>{t('templates.heading')}</h2><Button onClick={() => setEditing({ checklist: [], default_duration_minutes: 60, visibility_default: 'team' })}><Plus />{t('templates.new')}</Button></div>
-    {own.length ? <div className="template-grid">{own.map(tpl => <TemplateCard key={tpl.id} template={tpl}><Button size="sm" variant="secondary" onClick={() => setEditing(toDraft(tpl))}><Pencil />{t('templates.edit')}</Button></TemplateCard>)}</div>
+    <div className="section-heading"><h2><Button asChild variant="link"><a href="/blueprints">{t('templates.heading')}</a></Button></h2><Button onClick={() => setEditing({ checklist: [], default_duration_minutes: 60, visibility_default: 'team' })}><Plus />{t('templates.new')}</Button></div>
+    {own.length ? <div className="template-grid">{own.map(tpl => <TemplateCard key={tpl.id} template={tpl}><Button size="sm" variant="secondary" onClick={() => setEditing(toDraft(tpl))}><Pencil />{t('templates.edit')}</Button><Button size="sm" onClick={() => void navigate({ to: '/gathering/new', search: { template: tpl.id } })}>{t('templates.useThis')}</Button></TemplateCard>)}</div>
       : <EmptyState compact icon="Layers" text={t('templates.empty')} />}
     {starters.length > 0 && <><h3 className="subsection-title">{t('templates.starters')}</h3>
-      <div className="template-grid">{starters.map(tpl => <TemplateCard key={tpl.id} template={tpl}><Button size="sm" variant="secondary" onClick={() => copy(tpl)}><Copy />{t('templates.useThis')}</Button></TemplateCard>)}</div></>}
+      <div className="template-grid">{starters.map(tpl => <TemplateCard key={tpl.id} template={tpl}><Button size="sm" variant="secondary" onClick={() => void navigate({ to: '/gathering/new', search: { template: tpl.id } })}><Copy />{t('templates.useThis')}</Button></TemplateCard>)}</div></>}
     <TemplateEditor draft={editing} teamId={teamId} userId={userId} onClose={() => setEditing(null)} />
   </section>;
 }
