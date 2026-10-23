@@ -362,7 +362,8 @@
     "text": "Sign in to join your team. It takes under a minute.",
     "cta": "Join the team",
     "invalid": "This invite link isn't valid. Ask your leader for a new one.",
-    "loading": "Checking your invite…"
+    "loading": "Checking your invite…",
+    "cancel": "Not now"
   },
   "next": {
     "label": "DO THIS NEXT",
@@ -1580,9 +1581,30 @@
       "find": "Find an event near you",
       "howLabel": "From first idea to next time",
       "howTitle": "Hosting, in four simple steps",
-      "steps": { "create": "Create your event", "share": "Share your link", "checkin": "Check people in", "followup": "Follow up" },
+      "steps": {
+        "create": "Create your event",
+        "share": "Share your link",
+        "checkin": "Check people in",
+        "followup": "Follow up"
+      },
       "toolsTitle": "Everything a host needs",
-      "tools": { "pages": "Event pages", "tickets": "Free and paid tickets", "weekly": "Weekly events", "blueprints": "Event blueprints", "guests": "Guest list", "csv": "CSV export", "checkin": "QR check-in", "reminders": "Reminders", "waivers": "Waivers", "resources": "Resources, free or paid", "hostPage": "Public host page", "team": "Team tools", "sms": "SMS campaigns", "email": "Email campaigns to your whole list", "calling": "AI calling assistant" },
+      "tools": {
+        "pages": "Event pages",
+        "tickets": "Free and paid tickets",
+        "weekly": "Weekly events",
+        "blueprints": "Event blueprints",
+        "guests": "Guest list",
+        "csv": "CSV export",
+        "checkin": "QR check-in",
+        "reminders": "Reminders",
+        "waivers": "Waivers",
+        "resources": "Resources, free or paid",
+        "hostPage": "Public host page",
+        "team": "Team tools",
+        "sms": "SMS campaigns",
+        "email": "Email campaigns to your whole list",
+        "calling": "AI calling assistant"
+      },
       "premiumSoon": "Premium · Coming soon",
       "paidSoon": "Paid · Coming soon",
       "deliverySoon": "Delivery · Coming soon",
@@ -4209,5 +4231,35 @@
     "7d": "Full refund until 7 days before",
     "none": "No refunds",
     "hostCancels": "If the host cancels, everyone gets a full refund."
+  },
+  "identity": {
+    "adultTitle": "One quick check",
+    "adultText": "ZoheeWell accounts, hosting, purchases and subscriptions are for adults.",
+    "adultCheck": "I am 18 or older",
+    "adultNote": "We record the time you confirm. We never ask for your birth date.",
+    "adultRequired": "Please confirm you are 18 or older to continue.",
+    "startTitle": "How would you like to start?",
+    "start_find": "Find something",
+    "start_findText": "Events, courses and resources near you",
+    "start_create": "Create something",
+    "start_createText": "Host an event or start a team",
+    "start_invite": "I have an invitation",
+    "start_inviteText": "Join a team with a code or link",
+    "viewMode": "View",
+    "viewHosting": "Hosting",
+    "viewAttending": "Attending & Learning",
+    "viewNote": "Switching views changes what you see first. It never changes what you can do.",
+    "guardianTitle": "Registering a child?",
+    "guardianFirst": "Child’s first name",
+    "guardianAge": "Age range",
+    "age_under_5": "Under 5",
+    "age_5_12": "5 to 12",
+    "age_13_17": "13 to 17",
+    "guardianConsent": "I am this child’s parent or legal guardian, I am 18 or older, and I consent to registering them.",
+    "minorsNotAllowed": "This event is for adults only.",
+    "minorIncomplete": "Add the child’s first name and age range.",
+    "guardianConsentRequired": "Guardian consent is required to register a child.",
+    "deliverySetup": "Email delivery isn’t set up yet, so no message was sent.",
+    "linkExpired": "That link has expired or was already used. Sign in again to continue."
   }
 }
