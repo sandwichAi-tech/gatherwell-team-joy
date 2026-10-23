@@ -2017,5 +2017,5 @@ a.gw-cat-chip:hover{background:#fff}
 .gw-landing .gw-cat.is-on .gw-cat-circle,.dark .gw-landing .gw-cat.is-on .gw-cat-circle{background:#35263F;border-color:#35263F;box-shadow:0 0 0 3px var(--background),0 0 0 5px #F4C7A1,0 10px 22px -10px rgba(53,38,63,.6);transform:none}
 .gw-landing .gw-cat.is-on .gw-cat-circle svg.gw-icon,.gw-landing .gw-cat.is-on .gw-cat-circle .gw-icon{color:#fff!important}
 .gw-landing .gw-cat.is-on .gw-cat-circle svg *{opacity:1}
-.gw-landing .gw-cat.is-on .gw-cat-label{color:var(--plum);font-weight:800}
+.gw-landing .gw-cat.is-on .gw-cat-label{color:var(--foreground);font-weight:800}
 .gw-landing .gw-cat-row{padding:10px 8px 14px}
