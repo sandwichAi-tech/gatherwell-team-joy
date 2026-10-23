@@ -1,5 +1,5 @@
 # Walkthrough 1.1 — Dead-click audit (October 23)
-- [ ] Audit public and signed-in screens at phone and desktop sizes; save DEAD_CLICKS.md with evidence, wire/remove recommendations and explicit coverage limits. Report only: no app or backend changes.
+- [x] Audit public and signed-in screens at phone and desktop sizes; saved DEAD_CLICKS.md: 27 actionable findings, seven unfinished/service-dependent groups, source coverage of all 59 content-route patterns, 120 page inspections and 48 menu/sheet/tab observations. Report only: no app code changed; transaction/role/private-token limits and existing calendar read provisioning documented.
 
 # Team feedback — October 21
 - [x] Add password-based admin sign-in; existing administrator password set securely, wrong password rejected, real Admin > Mail loaded and session retained after reload; temporary setup secret removed

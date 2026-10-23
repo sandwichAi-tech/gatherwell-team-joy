@@ -2,7 +2,7 @@
 
 **Date:** October 23, 2026 (UTC)  
 **Scope:** report only, following the October 2026 section at the top of PROJECT_RULES.md.  
-**Changes:** no application code, configuration, feature flags, payment setup or business records changed. Only this report, the roadmap and change log were updated.
+**Changes:** no application code, configuration, feature flags or payment setup changed; no explicit business-changing actions were submitted. Only this report, the roadmap and change log were edited. Opening Calendar feed invokes the existing get-or-create feed function, which can provision missing calendar links; normal app reads/analytics may also update bookkeeping. This was not a transactionally read-only browser session.
 
 ## Summary
 
@@ -158,4 +158,4 @@ Browser records: `/tmp/browser/dead-clicks/pages.json`, `details.json`, `actions
 
 **Not claimed:** every individual button was executed; every dynamic record/status tested; ordinary-member/host/cohost/leader role matrix verified; valid invite/RSVP/email-token flows completed; account creation, real delivery, payment, role changes, deletion, publishing or check-in tested. Read-only audit intentionally avoids those writes. Native sharing, clipboard denial, camera permission, downloads, installed mail/calendar clients and external site availability are source-only.
 
-Every route pattern was inventoried and source-reviewed, but large multi-file reviews cannot certify every nested branch defect-free. A complete transactional end-to-end beta test remains separate work. No tests were added or run because no application behavior changed.
+Every route pattern was inventoried and source-reviewed, but large multi-file reviews cannot certify every nested branch defect-free. A complete transactional end-to-end beta test remains separate work. No tests were added or run because no application behavior changed. Existing CalendarFeedPanel calls `my_calendar_feeds`, whose implementation inserts missing personal/team feed rows (`src/components/follow.tsx:121`; migration `20261006225823_59a5be77-23f6-49e0-abad-f752bb564d63.sql:131–142`). No links were reset, copied externally or exposed in this report.
