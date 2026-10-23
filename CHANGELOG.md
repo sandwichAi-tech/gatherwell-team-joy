@@ -1,5 +1,10 @@
 # ZoheeWell Change Log
 
+## v0.4 — Event Blueprints work across Team and Events (2026-10-23)
+- Changed: reused the existing template library and editor for a dedicated Event Blueprints screen linked from Team and Events. Cards show cover, title, type and usage. New/Edit opens the blueprint editor; deletion is confirmed. Type, description, length, capacity, in-person/online mode, price and cover carry into event creation, leaving date/time/place to the host. Save as blueprint is available to the event creator, not only team leaders; host-owned edits/deletes are protected. The Start from a blueprint row remains. Team-only defaults stay free; storing a price does not enable paid ticket checkout.
+- Tested: 10 targeted checks passed; real create → prefilled draft event → Save as blueprint, edit, usage count and delete passed at 375px phone and 1440px desktop. Team/Events links passed; latest preview build OK. All test-only blueprints and draft events were removed through the UI, with zero remaining confirmed by read-back.
+- Unverified: real-device camera/photo cropping in this pass, paid event publication/checkout, and a separate non-leader host account. Ownership/default rules have automated coverage; browser checks used the existing administrator/leader account.
+
 ## v0.3 — Walkthrough dead-click audit, report only (2026-10-23)
 - Changed: added DEAD_CLICKS.md with 27 actionable findings, seven unfinished/service-dependent groups, current parked-feature behavior, wire/remove recommendations and evidence limits. Updated roadmap. No app code, provider setup or feature flags changed; no explicit save/send/publish/charge/check-in actions submitted.
 - Checked: all 59 content-route patterns inventoried/source-reviewed; 120 phone/desktop page inspections, 48 menu/sheet/tab observations and public RSVP navigation to the guest form without submission. All twelve Admin tabs inspected at both sizes. Latest preview status: build OK.
