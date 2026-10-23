@@ -15,7 +15,7 @@ const ts = (s?: number | null) => (s ? new Date(s * 1000).toISOString() : null);
 export type PaymentEvent = { id: string; type: string; data: { object: any } };
 
 /** True only when the subscription is truly over — not merely flagged to cancel. */
-function isFinished(type: string, sub: any): boolean {
+export function isFinished(type: string, sub: any): boolean {
   if (type.endsWith('deleted')) return true;
   if (sub.cancel_at_period_end && sub.status === 'active') return false;
   return sub.status === 'canceled' || sub.status === 'incomplete_expired' || sub.status === 'unpaid';
