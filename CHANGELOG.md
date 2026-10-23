@@ -1,5 +1,12 @@
 # ZoheeWell Change Log
 
+## v0.14 — Public pricing aligned with Blueprint v4 (2026-10-23)
+- /pricing rebuilt: Free $0, Advanced $49, Pro $99, Team 25 $199, Team 100 $499 monthly; annual 10x (two months free); pilot note; flat 5% fee, free has no fee, Stripe separate; founding offer in full. Paid plans labelled Setup required; payouts Coming soon. New FAQ.
+- /hosts and /studios plan previews now use the same approved plans; old fee ladder, caps and guest service fee removed from public pages. Signed-in plan screen and billing records untouched.
+- Footer "Host tools" now goes to /#for-hosts.
+- Tests: src/lib/pricing-public.test.ts (8); suite 24 files / 163 passed; type check clean. Playwright /pricing at 360/390/768/1440 EN+ES and 640@2x reduced motion: one h1, no overflow, 48px buttons, all prices and annual values, 5%, no old fees; keyboard focus visible; Start hosting → /login?intent=host; footer → /#for-hosts.
+- Unverified: screen reader pass; signed-in plan screen still shows older plan setup.
+
 ## v0.13 — Host-first public homepage (2026-10-23)
 - Rebuilt / around hosts: new headline, six-outcome toolkit, four-step workflow, audience, attendee section, real-only discovery with honest empty state (Notify me / Invite a host / Create an event), Blueprint v4 pricing summary (5% fee, founding-host offer), trust section, final split CTA.
 - Header: For Hosts, Tools, Pricing, Explore, Sign in, Start hosting, EN/ES. Removed social-proof count, host band mock phone, leaders band, testimonials and sample cards from home.
