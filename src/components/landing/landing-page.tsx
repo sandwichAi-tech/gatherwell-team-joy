@@ -50,7 +50,7 @@ function Hero() {
           <Link to="/discover" className="gw-btn gw-btn-secondary gw-btn-lg" onClick={() => track('hero_find_click', { variant: 'hero' })}>{t('home.cta.explore')}</Link>
         </div>
       </div>
-      <div className="gw-hero-visual"><BrandImage slot="host_band" alt="" className="gw-home-hero-photo" aspect={4 / 3} sizes="(min-width: 1024px) 520px, 100vw" priority /></div>
+      <div className="gw-home-hero-media"><BrandImage slot="host_band" alt="" className="gw-home-hero-photo" aspect={4 / 3} sizes="(min-width: 1024px) 520px, 100vw" priority /></div>
     </div>
   </section>;
 }

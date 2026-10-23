@@ -2134,3 +2134,7 @@ a.gw-cat-chip:hover{background:#fff}
 .gw-home .gw-hero-visual{display:block;width:100%}
 .gw-home-hero-photo{display:block;width:100%;max-width:560px;margin-inline:auto}
 .gw-home-hero-photo img{width:100%;height:100%;object-fit:cover}
+.gw-home-hero-media{width:100%}
+.gw-home-hero-media .brand-image{position:relative;overflow:hidden}
+.gw-home-hero-media .brand-image img{position:absolute;inset:0}
+.gw-home .gw-hero{min-height:0}
