@@ -2017,5 +2017,24 @@ a.gw-cat-chip:hover{background:#fff}
 .gw-landing .gw-cat.is-on .gw-cat-circle,.dark .gw-landing .gw-cat.is-on .gw-cat-circle{background:#35263F;border-color:#35263F;box-shadow:0 0 0 3px var(--background),0 0 0 5px #F4C7A1,0 10px 22px -10px rgba(53,38,63,.6);transform:none}
 .gw-landing .gw-cat.is-on .gw-cat-circle svg.gw-icon,.gw-landing .gw-cat.is-on .gw-cat-circle .gw-icon{color:#fff!important}
 .gw-landing .gw-cat.is-on .gw-cat-circle svg *{opacity:1}
-.gw-landing .gw-cat.is-on .gw-cat-label{color:var(--plum);font-weight:800}
+.gw-landing .gw-cat.is-on .gw-cat-label{color:var(--foreground);font-weight:800}
 .gw-landing .gw-cat-row{padding:10px 8px 14px}
+
+/* Brand contrast pass: every text/background pair meets WCAG AA in light and dark */
+:root{--success-text:#1F7A50;--chip-bg:rgba(255,255,255,.92);--chip-ink:#35263F;--chip-border:rgba(232,227,236,.95)}
+.dark{--success-text:#72CDA2;--chip-bg:rgba(42,32,49,.92);--chip-ink:#F7F7F9;--chip-border:rgba(59,51,69,.95)}
+.gw-cat-chip{background:var(--chip-bg);color:var(--chip-ink);border-color:var(--chip-border)}
+.gw-cat-chip .gw-icon,.gw-landing .gw-cat-chip svg.gw-icon-marketing{color:var(--chip-ink)}
+.gw-mini-avatar{color:#5B4378}
+.gw-phone-stats div{background:var(--muted)}
+.gw-phone-stats span{color:var(--muted-foreground)}
+.gw-phone-list em{color:var(--success-text)}
+.gw-phone-list li .gw-mini-avatar{border-color:var(--card)}
+.gw-landing .gw-pay-table,.gw-landing .gw-pay-card{background:var(--card);color:var(--foreground)}
+.gw-landing .gw-pay-table tbody th,.gw-landing .gw-pay-card dt{color:var(--muted-foreground)}
+.gw-landing .gw-pay-table th,.gw-landing .gw-pay-table td{border-bottom-color:var(--border)}
+.stat-card p.positive-change{color:var(--success-text)}
+.gw-phone,.dark .gw-phone{--card:#FFFFFF;--muted:#F7F0F0;--muted-foreground:#6A5D74;--success-text:#1F7A50;--foreground:#1C1726}
+.gw-phone .gw-phone-stats b,.gw-phone .tabular{color:#1C1726}
+.gw-phone .gw-mini-avatar.tone-0{background:#EFEBF6;color:#5B4378}
+.gw-landing .gw-mini-avatar.tone-0,.dark .gw-landing .gw-mini-avatar.tone-0{background:#EFEBF6;color:#5B4378}
