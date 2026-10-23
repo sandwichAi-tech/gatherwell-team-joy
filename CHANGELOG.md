@@ -1,5 +1,11 @@
 # ZoheeWell Change Log
 
+## v0.11 — Compact homepage hosting sections (2026-10-23)
+- Removed the immediately repeated Host/Attend block; the original first-screen buttons, headline and destinations remain. Kept all four hosting steps, all 15 host tools, the studio line and existing service-availability labels.
+- Tightened section spacing, aligned step numbers beside their icons, and changed the tool inventory to compact icon/text rows: two columns on phones, three on desktop. No product rules, data, providers, flags, translations or signed-in screens changed.
+- Verified: 390px and 1440px public homepage screenshots; no horizontal overflow or browser runtime errors; four steps and 15 tools; exactly one of each primary CTA; Host opens /login?intent=host and Attend opens /discover?near=1. All 19 test files / 96 tests passed; preview build OK. Reviewed visible heading hierarchy, wrapping, decorative icon semantics and preserved 52px phone CTA targets.
+- Unverified: Spanish browser rendering (existing language pause left untouched), two-account data isolation (no authenticated/data paths changed), full automated WCAG audit, and real-device checks. Existing missing-photo fallbacks remain outside this layout-only change.
+
 ## v0.10 — Prompt 2 corrective hardening and attributed access evidence (2026-10-23)
 - Applied: 0049_v4_corrective_integrity_consent_flag_audit.sql and 0050_v4_require_verified_waiver_snapshots.sql. Required future order environment, scoped idempotency to environment/key, validated exact offering and entitlement target rules, added 7 safe profile FKs (zero orphans), required future host IDs with history-preserving profile anonymization, and extended track participant access to linked-offer hosts without granting leadership access. Kept redundant historical entitlement check rather than removing it.
 - Consent: 7 existing acceptances -> 7 linked exact text versions/hashes, 0 unmatched; all current RSVP locales en. NOT NULL applied in 0050 only after successful read-back. Added server-owned snapshot, waiver-version capture and referenced-text immutability triggers. Feature changes now append old/new/actor/reason/source/time; no flag values changed and no audit rows inserted by this work.
