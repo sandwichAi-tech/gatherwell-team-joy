@@ -5,6 +5,7 @@ import { LandingFrame, StickyFindBar } from './landing-chrome';
 import { PlanCardBody } from '@/components/plan-features';
 import { paymentsStatusQuery, PLANS, PRO_FEATURES, LICENSES, formatMoney, formatStorage, planSettingsQuery } from '@/lib/billing';
 import { useQuery } from '@tanstack/react-query';
+import { ApprovedPlans, FeeAndFounding, StartHostingLink } from './approved-pricing';
 
 const BENEFIT_ICONS: GwIconName[] = ['CalendarPlus', 'Link2', 'BellRing', 'QrCode', 'BookOpen', 'UsersRound'];
 const STEP_ICONS: GwIconName[] = ['CalendarPlus', 'Share2', 'QrCode', 'MessageCircle'];
@@ -68,9 +69,9 @@ export function HostsPage() {
  <WhoItsFor/>
  <section className="gw-band gw-band-canvas gw-marketing-section"><div className="gw-container"><span className="gw-label">{t('marketing.howHostSub')}</span><h2 className="gw-display gw-h2">{t('marketing.howHostTitle')}</h2><ol className="gw-host-steps">{steps.map((s,i)=><li key={s.title}><span className="gw-marketing-tile"><GwIcon name={STEP_ICONS[i]!} variant="marketing" size={32}/></span><span className="gw-how-num">{String(i+1).padStart(2,'0')}</span><h3>{s.title}</h3><p>{s.body}</p></li>)}</ol></div></section>
  <section className="gw-host-band gw-leader-marketing"><div className="gw-container"><span className="gw-label on-dark">{t('marketing.leaderLabel')}</span><h2 className="gw-display gw-h2">{t('marketing.leaderTitle')}</h2><p>{t('marketing.leaderBody')}</p><div className="gw-leader-pills">{(t('marketing.leaderFeatures',{returnObjects:true}) as string[]).map(f=><span key={f}><GwIcon name="Check" size={20}/>{f}</span>)}</div><StartLink secondary/></div></section>
- <section className="gw-band gw-band-white gw-marketing-section"><div className="gw-container"><span className="gw-label">{t('marketing.pricingLabel')}</span><h2 className="gw-display gw-h2">{t('marketing.pricingTitle')}</h2><PricingCards preview/><Link to="/pricing" className="gw-see-all">{t('marketing.seePricing')}<GwIcon name="ArrowRight" size={20}/></Link></div></section><Faq kind="hostFaq"/><section className="gw-band gw-band-canvas gw-marketing-section gw-final-host"><div className="gw-container"><h2 className="gw-display gw-h2">{t('marketing.finalTitle')}</h2><p>{t('marketing.finalBody')}</p><StartLink/></div></section></main><StickyFindBar heroId="hosts-hero" mode="host"/></LandingFrame>;
+ <section className="gw-band gw-band-white gw-marketing-section"><div className="gw-container"><span className="gw-label">{t('marketing.pricingLabel')}</span><h2 className="gw-display gw-h2">{t('marketing.pricingTitle')}</h2><ApprovedPlans/><Link to="/pricing" className="gw-see-all">{t('marketing.seePricing')}<GwIcon name="ArrowRight" size={20}/></Link></div></section><Faq kind="hostFaq"/><section className="gw-band gw-band-canvas gw-marketing-section gw-final-host"><div className="gw-container"><h2 className="gw-display gw-h2">{t('marketing.finalTitle')}</h2><p>{t('marketing.finalBody')}</p><StartLink/></div></section></main><StickyFindBar heroId="hosts-hero" mode="host"/></LandingFrame>;
 }
-export function PricingPage(){const {t}=useTranslation();return <LandingFrame><main id="main-content"><section className="gw-hero gw-pricing-hero"><div className="gw-aurora" aria-hidden="true"><span className="gw-blob gw-blob-lav"/><span className="gw-blob gw-blob-peach"/></div><div className="gw-container"><span className="gw-label">{t('marketing.pricingLabel')}</span><h1 className="gw-display">{t('marketing.pricingTitle')}</h1><p className="gw-lede">{t('marketing.pricingSub')}</p></div></section><section className="gw-container gw-marketing-section"><PricingCards/></section><WhatYouPay/><Faq kind="pricingFaq"/><section className="gw-band gw-band-canvas gw-marketing-section gw-final-host"><div className="gw-container"><h2 className="gw-display gw-h2">{t('marketing.finalTitle')}</h2><StartLink/></div></section></main></LandingFrame>;}
+export function PricingPage(){const {t}=useTranslation();const faq=t('pricingV4.faq',{returnObjects:true}) as {q:string;a:string}[];return <LandingFrame><main id="main-content" className="gw-home"><section className="gw-hero gw-pricing-hero" aria-labelledby="pricing-h1"><div className="gw-container"><span className="gw-label">{t('home.pricing.label')}</span><h1 id="pricing-h1" className="gw-display">{t('home.pricing.title')}</h1><p className="gw-lede">{t('pricingV4.sub')}</p><div className="gw-final-ctas"><StartHostingLink/></div></div></section><section className="gw-container gw-marketing-section" aria-label={t('pricingV4.plansLabel')}><ApprovedPlans/></section><section className="gw-container gw-marketing-section"><FeeAndFounding/></section><section className="gw-band gw-band-white gw-marketing-section"><div className="gw-container gw-faq"><h2 className="gw-display gw-h2">{t('marketing.faqTitle')}</h2><div>{faq.map(item=><details key={item.q}><summary>{item.q}<GwIcon name="ChevronDown" size={20}/></summary><p>{item.a}</p></details>)}</div></div></section><section className="gw-band gw-band-canvas gw-marketing-section gw-final-host"><div className="gw-container gw-home-final"><h2 className="gw-display gw-h2">{t('home.final.title')}</h2><div className="gw-final-ctas"><StartHostingLink/><Link to="/discover" className="gw-btn gw-btn-secondary gw-btn-lg">{t('home.cta.exploreAll')}</Link></div></div></section></main></LandingFrame>;}
 const WHO_ICONS: GwIconName[] = ['Sparkles', 'Clock', 'HandHeart', 'Trophy', 'Home', 'GraduationCap'];
 export function WhoItsFor() {
  const { t } = useTranslation(); const items = t('marketing.who', { returnObjects: true }) as { title: string; body: string }[];
@@ -78,17 +79,8 @@ export function WhoItsFor() {
 }
 const STUDIO_ICONS: GwIconName[] = ['Link2', 'UsersRound', 'Languages'];
 function StudiosPricing() {
- const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
- const { data: settings } = useQuery(planSettingsQuery);
- return <div className="gw-pricing-content">
-  <div className="gw-public-plans">
-   {PLANS.map(plan => <article key={plan.id} className={"gw-public-plan"}>
-    <PlanCardBody id={plan.id} setting={settings?.[plan.id]} tagClass="gw-plan-tag" priceClass="gw-public-price" feeClass="gw-plan-fee"/>
-    <p className="gw-fine">{t('billing.cardNote')}</p>
-   </article>)}
-  </div>
-  <div className="gw-final-ctas"><StartLink label={t('marketing.studios.startCta')} /><Link to="/pricing" className="gw-btn gw-btn-secondary gw-btn-lg">{t('marketing.seePricing')}</Link></div>
- </div>;
+ const { t } = useTranslation();
+ return <div className="gw-pricing-content"><ApprovedPlans /><div className="gw-final-ctas"><StartLink label={t('marketing.studios.startCta')} /><Link to="/pricing" className="gw-btn gw-btn-secondary gw-btn-lg">{t('marketing.seePricing')}</Link></div></div>;
 }
 export function StudiosPage() {
  const { t } = useTranslation();

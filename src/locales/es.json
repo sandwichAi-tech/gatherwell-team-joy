@@ -198,7 +198,7 @@
       "twoMonths": "Con el pago anual obtienes dos meses gratis.",
       "pilot": "Los precios pueden cambiar después del piloto.",
       "foundingTitle": "Anfitriones fundadores",
-      "founding": "Solo por invitación personal: seis meses de acceso completo, sin tarjeta y sin cambio automático a un plan de pago. Avisamos con 30 días de anticipación antes de que termine el acceso, y ofrecemos 20% de descuento en tu primer año de pago si eliges el pago anual. No se combina con el descuento anual.",
+      "founding": "Solo por invitación personal: seis meses de acceso completo desde la activación, sin tarjeta y sin cambio automático a un plan de pago. Avisamos con 30 días de anticipación antes de que termine el acceso. Si eliges el pago anual antes de que termine el acceso, obtienes 20% de descuento en tu primer año de pago. Esta oferta no se combina con el descuento anual normal.",
       "see": "Ver todos los precios"
     },
     "trust": {
@@ -231,7 +231,10 @@
     "final": {
       "title": "¿Listo para reunir a tu gente?"
     },
-    "paymentsSoon": "Pagos próximamente"
+    "paymentsSoon": "Pagos próximamente",
+    "footer": {
+      "hostTools": "Herramientas para anfitriones"
+    }
   },
   "events": {
     "title": "Reuniones",
@@ -3451,7 +3454,7 @@
     ],
     "pricingLabel": "Planes sencillos",
     "pricingTitle": "Empieza gratis. Crece a tu ritmo.",
-    "pricingSub": "Tus invitados pueden confirmar gratis. Elige las herramientas y el espacio que necesitas.",
+    "pricingSub": "Empieza gratis y elige un plan cuando estés listo. Precios en dólares estadounidenses.",
     "from": "Desde {{price}}",
     "usd": "Todos los precios están en USD.",
     "licenseNote": "Las Licencias de equipo se cobran mensualmente. Cada miembro que asignes recibe el plan Avanzado.",
@@ -4443,5 +4446,40 @@
     "guardianConsentRequired": "Se necesita el consentimiento del tutor para inscribir a un menor.",
     "deliverySetup": "El envío de correos aún no está configurado, así que no se envió ningún mensaje.",
     "linkExpired": "Ese enlace venció o ya se usó. Vuelve a iniciar sesión para continuar."
+  },
+  "pricingV4": {
+    "sub": "Empieza gratis y elige un plan cuando estés listo. Precios en dólares estadounidenses.",
+    "plansLabel": "Planes",
+    "freeForever": "Gratis para empezar",
+    "setupRequired": "Configuración pendiente",
+    "checkoutNote": "El pago de planes todavía no está disponible. Puedes empezar hoy con el plan Gratis.",
+    "feeTitle": "Tarifa de plataforma",
+    "payoutsNote": "Los pagos a anfitriones estarán disponibles próximamente.",
+    "annualTitle": "Pago anual",
+    "desc": {
+      "free": "Organiza eventos gratuitos y empieza.",
+      "advanced": "Más herramientas para anfitriones en crecimiento.",
+      "pro": "Todo para anfitriones con mucha actividad.",
+      "team25": "Para equipos de hasta 25 anfitriones.",
+      "team100": "Para equipos de hasta 100 anfitriones."
+    },
+    "faq": [
+      {
+        "q": "¿Cuál es la tarifa de plataforma?",
+        "a": "Se aplica una tarifa fija de plataforma de ZoheeWell del 5% a tus ventas pagadas en cualquier plan. Lo gratuito no tiene tarifa de plataforma. El procesamiento de Stripe es aparte."
+      },
+      {
+        "q": "¿Cómo funciona el pago anual?",
+        "a": "El pago anual cuesta 10 veces el precio mensual, así que obtienes dos meses gratis."
+      },
+      {
+        "q": "¿Los invitados pueden unirse gratis?",
+        "a": "Sí. Los invitados nunca necesitan un plan. Cada anfitrión decide si lo que ofrece es gratis o de pago."
+      },
+      {
+        "q": "¿Pueden cambiar los precios?",
+        "a": "Sí. Los precios pueden cambiar después del piloto. Te avisaremos antes de que algún cambio te afecte."
+      }
+    ]
   }
 }
