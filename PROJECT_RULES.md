@@ -1,3 +1,17 @@
+# ZoheeWell rules (October 2026) — these override older sections
+- Product: ZoheeWell is the event and resource platform for wellness hosts, built first for wellness MLM distributors and their teams. Like Eventbrite, but simpler and cleaner, for wellness, health and fitness.
+- Four lanes, and every screen makes clear which one you're in: Events, Resources, Public host page, Attendee experience.
+- One login for everyone. You become a host the moment you create something; you stay an attendee for other people's events.
+- Hosts first: lead with "create an event".
+- Brand: name ZoheeWell; tagline "Life is better together."; Noto Sans; Deep Plum #35263F, Soft Peach #F4C7A1, Cloud #F7F0F0, Mist #E8E3EC; supplied Adobe Terracotta logo on light, Warm Ivory on dark (BrandLogo). No emoji. Mobile first; 48px touch targets; clear pressed, selected, busy, empty and error states.
+- Display is English for now (SPANISH_ENABLED stays false), but every new string gets both en.json and es.json entries.
+- Visible word is "Event". Keep internal names like gathering-form and /gathering/new.
+- Safe modes: Stripe, Resend, Mailgun and Twilio stay in their existing simulated / "not connected" paths until the owner says otherwise. Never show a simulated message as sent or a test payment as real.
+- Guardrails for MLM hosts (strictest common rule across companies): no product sales through ZoheeWell (an external Shop link is fine); no health, weight-loss or income claims; Team resources and team-only events are always free; only Customer resources and events open to the public can be paid; referral rewards never pay between people in the same team hierarchy and never apply to team-only events; recognition is for showing up and contributing, never sales or recruiting.
+- Data: a host's attendee list belongs to that host; leaders see counts and activity, never guests' contact details; we never sell or share data.
+- Admin dashboard work waits until the host and attendee flows are done.
+- After every change, add a CHANGELOG.md entry: version, date, what changed, what was tested, what's unverified.
+
 DESIGN RESET: DESIGN_RULES.md replaces all earlier visual, typography, layout, sample-content and tone instructions below. Preserve the product, safety, bilingual and frontend-only requirements.
 
 PROJECT RULES (keep these for the whole project):
