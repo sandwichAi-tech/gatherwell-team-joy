@@ -50,6 +50,8 @@ export const startPlanCheckout = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ plan: z.enum(['growth', 'pro']), origin, lang: z.enum(['en', 'es']), environment }).parse(d))
   .handler(async ({ data, context }): Promise<CheckoutResult> => {
+    const { data: adult } = await context.supabase.rpc('is_adult', {});
+    if (!adult) return { ok: false, error: 'adult_required' };
     const { createStripeClient, getStripeErrorMessage } = await import('@/lib/stripe.server');
     try {
       const { data: ps } = await context.supabase.from('plan_settings').select('monthly_price').eq('plan', data.plan).maybeSingle();
@@ -100,6 +102,8 @@ export const startLicenseCheckout = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ teamId: z.string().uuid(), tier: z.enum(['team25', 'team100']), origin, lang: z.enum(['en', 'es']), environment }).parse(d))
   .handler(async ({ data, context }): Promise<CheckoutResult> => {
+    const { data: adult } = await context.supabase.rpc('is_adult', {});
+    if (!adult) return { ok: false, error: 'adult_required' };
     const { createStripeClient, getStripeErrorMessage } = await import('@/lib/stripe.server');
     try {
       const { data: ok } = await context.supabase.rpc('is_team_member', { _team_id: data.teamId, _roles: ['leader'] });
@@ -214,9 +218,11 @@ export const startConnectOnboarding = createServerFn({ method: 'POST' })
 export const startTicketCheckout = createServerFn({ method: 'POST' })
   .inputValidator((d: unknown) => z.object({
     eventId: z.string().uuid(), first: z.string().trim().min(1).max(60), last: z.string().trim().max(60), phone: z.string().trim().max(30), email: z.string().trim().email().max(200),
-    plusOnes: z.number().int().min(0).max(3), sms: z.boolean(), mail: z.boolean(), lang: z.enum(['en', 'es']), origin, waiverName: z.string().trim().max(120).optional().default(''), promo: z.string().max(20).optional().default(''),
+    plusOnes: z.number().int().min(0).max(3), sms: z.boolean(), mail: z.boolean(), lang: z.enum(['en', 'es']), origin, waiverName: z.string().trim().max(120).optional().default(''), promo: z.string().max(20).optional().default(''), adult: z.boolean().optional().default(false),
   }).parse(d))
   .handler(async ({ data }): Promise<Result> => {
+    // Purchasers must be adults; the unchecked attestation is required server-side.
+    if (data.adult !== true) return { ok: false, error: 'adult_required' };
     const { stripe, stripeKey } = await import('./billing/stripe.server');
     const { getRequestHeader } = await import('@tanstack/react-start/server');
     const waiverIp = (getRequestHeader('cf-connecting-ip') ?? getRequestHeader('x-forwarded-for') ?? '').split(',')[0]!.trim().slice(0, 64);
@@ -279,6 +285,8 @@ export const startChallengeCheckout = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ challengeId: z.string().uuid(), origin, lang: z.enum(['en', 'es']), promo: z.string().max(20).optional().default('') }).parse(d))
   .handler(async ({ data, context }): Promise<Result> => {
+    const { data: adult } = await context.supabase.rpc('is_adult', {});
+    if (!adult) return { ok: false, error: 'adult_required' };
     const { stripe, stripeKey } = await import('./billing/stripe.server');
     if (!stripeKey()) return notConnected;
     const { data: c } = await context.supabase.from('challenges').select('id, title_en, title_es, created_by, is_paid, price_cents').eq('id', data.challengeId).maybeSingle();

@@ -19,6 +19,7 @@ import { useTranslation } from "react-i18next";
 import i18n, { applySavedLanguage, isServerRenderedMarketing } from "@/lib/i18n";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ListSkeleton } from '@/components/launch-states';
+import { clearPendingInvite } from '@/lib/account';
 import { BrandLogo } from '@/components/brand-logo';
 
 function NotFoundComponent() {
@@ -139,6 +140,8 @@ function RootComponent() {
     applyLanguage(); i18n.on("languageChanged", applyLanguage);
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+      // A saved invite or return path never carries over to a different account on this device.
+      if (event === "SIGNED_OUT") { clearPendingInvite(); try { sessionStorage.removeItem("zw-next"); } catch { /* storage unavailable */ } }
       void router.invalidate();
       if (event !== "SIGNED_OUT") void queryClient.invalidateQueries();
     });

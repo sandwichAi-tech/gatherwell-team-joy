@@ -2,6 +2,26 @@ import { queryOptions } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 export const JOIN_CODE_KEY = 'gatherwell-join-code';
+/** When the pending invite was saved; the code is a short-lived convenience, never authority. */
+export const JOIN_AT_KEY = 'gatherwell-join-at';
+export const JOIN_TTL_MS = 24 * 60 * 60 * 1000;
+
+/** Pending invite code if still fresh; clears expired or malformed entries. */
+export function pendingInvite(now = Date.now()): string | null {
+  try {
+    const code = localStorage.getItem(JOIN_CODE_KEY);
+    if (!code) return null;
+    const at = Number(localStorage.getItem(JOIN_AT_KEY) ?? 0);
+    if (!at || now - at > JOIN_TTL_MS) { clearPendingInvite(); return null; }
+    return code;
+  } catch { return null; }
+}
+export function savePendingInvite(code: string, now = Date.now()) {
+  localStorage.setItem(JOIN_CODE_KEY, code); localStorage.setItem(JOIN_AT_KEY, String(now));
+}
+export function clearPendingInvite() {
+  try { localStorage.removeItem(JOIN_CODE_KEY); localStorage.removeItem(JOIN_AT_KEY); localStorage.removeItem('gatherwell-join-by'); } catch { /* storage unavailable */ }
+}
 
 export type Workspace = TeamMembership | null;
 

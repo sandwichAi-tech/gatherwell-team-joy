@@ -183,7 +183,8 @@ export function MePage() {
 
   // Customers and hosts share one login; the mode lives on role_intent.
   const switchMode = async (mode: 'host' | 'guest') => {
-    const update = mode === 'host' ? { role_intent: 'host', onboarded: false } : { role_intent: 'guest' };
+    // View mode only changes what shows first; permissions come from team roles and event assignments.
+    const update = mode === 'host' ? { role_intent: 'host', view_mode: 'hosting', onboarded: false } : { role_intent: 'guest', view_mode: 'attending' };
     const { error } = await supabase.from('profiles').update(update).eq('id', userId);
     if (error) { toast.error(t('profile.saveError')); return; }
     await queryClient.invalidateQueries({ queryKey: ['profile', userId] });
@@ -256,6 +257,7 @@ export function MePage() {
       {profile?.role_intent === 'guest'
         ? row('CalendarHeart', t('customerHome.startHosting'), () => void switchMode('host'))
         : row('Compass', t('customerHome.switchAttending'), () => void switchMode('guest'))}
+      <p className="auth-note">{t('identity.viewNote')}</p>
     </SettingsGroup>
     <SettingsGroup title={t('profile.groupActivity')}>
       <Link className="settings-row" to="/progress"><GwFeatureTile name="Flame" size={24} className="settings-tile" /><span className="settings-label">{t('progress.title')}</span><ChevronRight className="settings-chevron" /></Link>

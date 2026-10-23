@@ -7,6 +7,8 @@ Active work follows the approved Prompt 1–17 sequence in the ZoheeWell Beta Pr
 - [ ] Prompts 2–17 — per Blueprint v4, each requires its own approval
 - [x] Prompt 2 correction — applied 0049/0050, consent 7/7 verified, evidence recorded, 96 existing tests pass, counts/flags unchanged
 - [ ] Disposable-copy SQL role regression — requires an isolated writable database copy; never run on production
+- [x] Prompt 3 — identity, onboarding, language, account modes (see CHANGELOG v0.12)
+- [ ] Prompt 3 follow-up — guardian form on event page + host allows_minors toggle; signed-in browser and email-delivery checks need a session and real email
 - [x] Homepage density fix — removed immediate duplicate Host/Attend section; compact four-step and 15-tool layouts verified at 390px/1440px, both CTAs work, 96 tests pass; verification limits in CHANGELOG.md.
 
 

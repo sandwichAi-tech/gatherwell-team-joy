@@ -113,3 +113,7 @@ Specifics:
 - Team leaders no longer read guest RSVPs, answers, waiver records or event outbox; only hosts and assigned co-hosts do. Text-invite candidates limited to the caller's own hosted/co-hosted events.
 - Signed-out callers can no longer run 19 functions (10 trigger-only, 9 signed-in-only). 58 public-callable security-definer functions remain, mostly guest RPCs; the full allowlist review is pending.
 - New versioned fee, price, consent, refund and payout policy tables; orders ledger, entitlements and provider event log exist but are not yet used by checkout.
+
+## Identity and onboarding (Prompt 3)
+- Built: deep-link return through sign-in and onboarding, 18+ attestation, three starts, view switch, invite expiry, guest claim, Spanish on, server 18+ on checkout.
+- Database only (no screen yet): guardian child registration, host allows_minors toggle.

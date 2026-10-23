@@ -194,6 +194,33 @@ export type Database = {
         }
         Relationships: []
       }
+      auth_intents: {
+        Row: {
+          consumed_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          path: string
+          token_hash: string
+        }
+        Insert: {
+          consumed_at?: string | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          path: string
+          token_hash: string
+        }
+        Update: {
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          path?: string
+          token_hash?: string
+        }
+        Relationships: []
+      }
       badges: {
         Row: {
           available_from: string | null
@@ -1416,6 +1443,7 @@ export type Database = {
       events: {
         Row: {
           address: string | null
+          allows_minors: boolean
           capacity: number | null
           category: string | null
           category_label: string | null
@@ -1468,6 +1496,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          allows_minors?: boolean
           capacity?: number | null
           category?: string | null
           category_label?: string | null
@@ -1520,6 +1549,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          allows_minors?: boolean
           capacity?: number | null
           category?: string | null
           category_label?: string | null
@@ -1860,6 +1890,51 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      guest_claims: {
+        Row: {
+          action: string
+          canonical_rsvp_id: string | null
+          created_at: string
+          id: string
+          orders_linked: number
+          rsvp_id: string
+          user_id: string
+        }
+        Insert: {
+          action: string
+          canonical_rsvp_id?: string | null
+          created_at?: string
+          id?: string
+          orders_linked?: number
+          rsvp_id: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          canonical_rsvp_id?: string | null
+          created_at?: string
+          id?: string
+          orders_linked?: number
+          rsvp_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guest_claims_canonical_rsvp_id_fkey"
+            columns: ["canonical_rsvp_id"]
+            isOneToOne: false
+            referencedRelation: "rsvps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guest_claims_rsvp_id_fkey"
+            columns: ["rsvp_id"]
+            isOneToOne: true
+            referencedRelation: "rsvps"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       host_of_month: {
         Row: {
@@ -3221,6 +3296,8 @@ export type Database = {
       profiles: {
         Row: {
           active_team_id: string | null
+          adult_confirmed_at: string | null
+          adult_consent_version_id: string | null
           avatar_url: string | null
           bio: string | null
           city: string | null
@@ -3238,9 +3315,12 @@ export type Database = {
           role_intent: string | null
           shop_url: string | null
           slug: string | null
+          view_mode: string
         }
         Insert: {
           active_team_id?: string | null
+          adult_confirmed_at?: string | null
+          adult_consent_version_id?: string | null
           avatar_url?: string | null
           bio?: string | null
           city?: string | null
@@ -3258,9 +3338,12 @@ export type Database = {
           role_intent?: string | null
           shop_url?: string | null
           slug?: string | null
+          view_mode?: string
         }
         Update: {
           active_team_id?: string | null
+          adult_confirmed_at?: string | null
+          adult_consent_version_id?: string | null
           avatar_url?: string | null
           bio?: string | null
           city?: string | null
@@ -3278,6 +3361,7 @@ export type Database = {
           role_intent?: string | null
           shop_url?: string | null
           slug?: string | null
+          view_mode?: string
         }
         Relationships: [
           {
@@ -3285,6 +3369,13 @@ export type Database = {
             columns: ["active_team_id"]
             isOneToOne: false
             referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_adult_consent_version_id_fkey"
+            columns: ["adult_consent_version_id"]
+            isOneToOne: false
+            referencedRelation: "consent_text_versions"
             referencedColumns: ["id"]
           },
         ]
@@ -3855,12 +3946,18 @@ export type Database = {
           event_id: string
           group_id: string | null
           group_name: string | null
+          guardian_consent_at: string | null
+          guardian_consent_version_id: string | null
           guest_email: string | null
           guest_name: string | null
           guest_phone: string | null
           id: string
           is_walk_in: boolean
           language: string
+          merged_at: string | null
+          merged_into_rsvp_id: string | null
+          minor_age_band: string | null
+          minor_first_name: string | null
           plus_ones: number
           small_group: string | null
           sms_opt_in: boolean
@@ -3877,12 +3974,18 @@ export type Database = {
           event_id: string
           group_id?: string | null
           group_name?: string | null
+          guardian_consent_at?: string | null
+          guardian_consent_version_id?: string | null
           guest_email?: string | null
           guest_name?: string | null
           guest_phone?: string | null
           id?: string
           is_walk_in?: boolean
           language?: string
+          merged_at?: string | null
+          merged_into_rsvp_id?: string | null
+          minor_age_band?: string | null
+          minor_first_name?: string | null
           plus_ones?: number
           small_group?: string | null
           sms_opt_in?: boolean
@@ -3899,12 +4002,18 @@ export type Database = {
           event_id?: string
           group_id?: string | null
           group_name?: string | null
+          guardian_consent_at?: string | null
+          guardian_consent_version_id?: string | null
           guest_email?: string | null
           guest_name?: string | null
           guest_phone?: string | null
           id?: string
           is_walk_in?: boolean
           language?: string
+          merged_at?: string | null
+          merged_into_rsvp_id?: string | null
+          minor_age_band?: string | null
+          minor_first_name?: string | null
           plus_ones?: number
           small_group?: string | null
           sms_opt_in?: boolean
@@ -3925,6 +4034,20 @@ export type Database = {
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rsvps_guardian_consent_version_id_fkey"
+            columns: ["guardian_consent_version_id"]
+            isOneToOne: false
+            referencedRelation: "consent_text_versions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rsvps_merged_into_rsvp_id_fkey"
+            columns: ["merged_into_rsvp_id"]
+            isOneToOne: false
+            referencedRelation: "rsvps"
             referencedColumns: ["id"]
           },
         ]
@@ -5145,6 +5268,7 @@ export type Database = {
         Args: { _buyer?: string; _code: string; _kind: string; _target: string }
         Returns: Json
       }
+      claim_guest_records: { Args: never; Returns: Json }
       claim_outbox: {
         Args: { _limit?: number }
         Returns: {
@@ -5161,6 +5285,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      cleanup_auth_intents: { Args: never; Returns: number }
       coach_checklist: { Args: never; Returns: Json }
       coach_trust: { Args: { _host: string }; Returns: Json }
       comment_feed: { Args: { _event: string; _topic: string }; Returns: Json }
@@ -5173,10 +5298,13 @@ export type Database = {
         Returns: Json
       }
       compute_playbook: { Args: never; Returns: number }
+      confirm_adult: { Args: { _attest: boolean }; Returns: undefined }
+      consume_auth_intent: { Args: { _token: string }; Returns: string }
       copy_starter_template: {
         Args: { _team: string; _template: string }
         Returns: string
       }
+      create_auth_intent: { Args: { _path: string }; Returns: string }
       create_event_badge: {
         Args: {
           _event: string
@@ -5391,11 +5519,13 @@ export type Database = {
         Args: { _category: string; _title: string }
         Returns: string
       }
+      is_adult: { Args: { _uid?: string }; Returns: boolean }
       is_connected: { Args: { _a: string; _b: string }; Returns: boolean }
       is_event_cohost: { Args: { _event: string }; Returns: boolean }
       is_founding_coach: { Args: { _uid: string }; Returns: boolean }
       is_host_anywhere: { Args: { _u: string }; Returns: boolean }
       is_member_of: { Args: { _team: string; _user: string }; Returns: boolean }
+      is_safe_return_path: { Args: { _p: string }; Returns: boolean }
       is_team_member: {
         Args: { _roles: string[]; _team_id: string }
         Returns: boolean

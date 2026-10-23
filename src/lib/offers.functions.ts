@@ -11,6 +11,8 @@ export const startOfferCheckout = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ offerId: z.string().uuid(), origin, lang: z.enum(['en', 'es']), promo: z.string().max(20).optional().default('') }).parse(d))
   .handler(async ({ data, context }): Promise<Result> => {
+    const { data: adult } = await context.supabase.rpc('is_adult', {});
+    if (!adult) return { ok: false, error: 'adult_required' };
     const { data: o } = await context.supabase.from('offers').select('id, host_id, kind, title_en, title_es, price_cents, status, refund_policy').eq('id', data.offerId).maybeSingle();
     if (!o || o.status !== 'published') return { ok: false, error: 'not_open' };
     if (!o.price_cents) return { ok: false, error: 'free' };

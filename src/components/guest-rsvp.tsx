@@ -75,7 +75,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
   const [contact, setContact] = useState<'email' | 'phone'>('email');
   const [busy, setBusy] = useState(false); const [error, setError] = useState<string | null>(null);
   const [price, setPrice] = useState<{ price_cents: number; pass_fee: boolean; fee_pct: number; cover_service_fee?: boolean; service_fee_percent?: number; service_fee_fixed?: number; refund_policy?: string } | null>(null);
-  const { data: waiver } = useEventWaiver(intent ? event.id : undefined); const [wName, setWName] = useState(''); const [wOk, setWOk] = useState(false);
+  const { data: waiver } = useEventWaiver(intent ? event.id : undefined); const [wName, setWName] = useState(''); const [wOk, setWOk] = useState(false); const [adult, setAdult] = useState(false);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const gate = usePaymentGate(); const checkout = useServerFn(startTicketCheckout);
   const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
@@ -108,7 +108,8 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
     const consent = rsvpReminderConsent(form);
     if (paid) {
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim())) { setError(t('guest.errors.invalid_email')); return; }
-      await gate.run(() => checkout({ data: { eventId: event.id, first: form.first.trim(), last: form.last.trim(), phone: form.phone.trim(), email: form.email.trim(), plusOnes: form.plus, sms: consent.sms, mail: consent.mail, lang, origin: window.location.origin, waiverName, promo: promo?.code ?? '' } }));
+      if (!adult) { setError(t('identity.adultRequired')); return; }
+      await gate.run(() => checkout({ data: { eventId: event.id, first: form.first.trim(), last: form.last.trim(), phone: form.phone.trim(), email: form.email.trim(), plusOnes: form.plus, sms: consent.sms, mail: consent.mail, lang, origin: window.location.origin, waiverName, promo: promo?.code ?? '', adult } }));
       return;
     }
     setBusy(true); setError(null);
@@ -154,6 +155,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
         <div className="is-total"><dt>{t('billing.total')}</dt><dd className="tabular-nums">{formatMoney(total, lang)}</dd></div>
         {price.cover_service_fee && <p className="guest-hint">{t('billing.allInPrice')}</p>}
       </dl>}
+      {paid && price && <label className="check-row consent-check"><input type="checkbox" checked={adult} onChange={e => setAdult(e.target.checked)} /><span>{t('identity.adultCheck')}</span></label>}
       {paid && price && <PromoField kind="gathering" target={event.id} buyer={form.email.trim()} discountCents={discount} value={promo} onChange={setPromo} />}
       {error && <p className="field-error" role="alert">{error}</p>}
     </form>

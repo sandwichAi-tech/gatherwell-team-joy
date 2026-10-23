@@ -59,3 +59,10 @@ The requester supplied the following results after commit ac2eef3c5d5ff7138522b8
 - Created-only SQL role, invalid-order/entitlement, FK deletion/anonymization, future acceptance/flag trigger, and service-role behavior need execution against a disposable copy. No browser, mobile/desktop, accessibility, payment or provider flow was exercised; this change has no presentation code.
 - SOURCE_OF_TRUTH.md and active rule documents unchanged. Dedicated hosted Project Knowledge field was not fetched in this turn; supplied Project Knowledge remains the controlling context, not newly API-verified.
 - Forward repair is preferred: append corrective functions/constraints if copy testing discovers an issue. Preserve all consent snapshots and economic rows. Do not reset data or edit applied migration history; restoring global key uniqueness requires first inspecting cross-environment duplicate keys and must not delete orders.
+
+## Prompt 3 — identity (2026-10-23)
+- Return paths: src/lib/return-to.ts and public.is_safe_return_path() share one allowlist; schemes, //, backslashes, %-encoding, controls, `..`, `#`, >512 chars and unlisted routes are rejected.
+- auth_intents stores only SHA-256 of a random 48-hex token; 30-minute expiry, single use, expired rows purged on each create (cleanup_auth_intents() for jobs). No raw tokens or emails are logged.
+- claim_guest_records() reads the verified email from auth.users for auth.uid(), takes an advisory lock, touches only user_id-null unmerged rows, never deletes, logs every claim/merge in guest_claims, and creates no orders or entitlements.
+- 18+ is enforced by triggers (teams, events create/publish, offers) and in checkout server functions; service jobs (no auth.uid()) are exempt.
+- Known gap: is_adult(uuid) lets a signed-in user check another user's adult flag (boolean only).

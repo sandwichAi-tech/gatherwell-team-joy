@@ -15,11 +15,13 @@ import { Input } from '@/components/ui/input';
 import { LanguageToggle, pageHead, setLanguage } from '@/components/auth-frame';
 import { supabase } from '@/integrations/supabase/client';
 import { JOIN_BY_KEY } from '@/lib/recognition';
-import { JOIN_CODE_KEY, initialsOf, joinLink, parseJoinCode, profileQuery, uploadMedia, workspaceQuery } from '@/lib/account';
+import { takeNext } from '@/lib/return-to';
+import { clearPendingInvite, pendingInvite, initialsOf, joinLink, parseJoinCode, profileQuery, uploadMedia, workspaceQuery } from '@/lib/account';
 
 export const Route = createFileRoute('/_authenticated/onboarding')({ head: () => pageHead('onboarding.nameTitle', 'meta.onboarding'), component: Onboarding });
 
-type Step = 'name' | 'place' | 'role' | 'team';
+type Step = 'adult' | 'start' | 'name' | 'place' | 'role' | 'team';
+type Start = 'find' | 'create' | 'invite';
 type Role = 'guest' | 'leader' | 'host' | 'member';
 
 function Onboarding() {
@@ -43,6 +45,8 @@ function Onboarding() {
   const [joined, setJoined] = useState<{ team: string; leader: string | null } | null>(null);
   const [created, setCreated] = useState<{ team: string; joinCode: string } | null>(null);
   const [finishing, setFinishing] = useState(false);
+  const [adultChecked, setAdultChecked] = useState(false);
+  const [start, setStart] = useState<Start | null>(null);
   const started = useRef(false);
 
   useEffect(() => {
@@ -50,14 +54,14 @@ function Onboarding() {
     void (async () => {
       const profile = await queryClient.fetchQuery(profileQuery(user.id));
       const workspace = await queryClient.fetchQuery(workspaceQuery(user.id));
-      const pending = localStorage.getItem(JOIN_CODE_KEY);
-      if (profile?.onboarded && !pending) { void navigate({ to: '/home', replace: true }); return; }
+      const pending = pendingInvite();
+      if (profile?.onboarded && !pending && profile.adult_confirmed_at) { void navigate({ to: '/home', replace: true }); return; }
       let joinedTeam: { team: string; leader: string | null } | null = null;
       if (pending) {
         const { data: invite } = await supabase.rpc('get_team_invite', { _code: pending });
         const by = localStorage.getItem(JOIN_BY_KEY);
         const { error: joinError } = await supabase.rpc('join_team_by_code', { _code: pending, _role: profile?.role_intent === 'host' ? 'host' : 'member', ...(by ? { _by: by } : {}) });
-        localStorage.removeItem(JOIN_CODE_KEY); localStorage.removeItem(JOIN_BY_KEY);
+        clearPendingInvite();
         if (!joinError && invite?.[0]) joinedTeam = { team: invite[0].team_name, leader: invite[0].leader_name };
         await queryClient.invalidateQueries({ queryKey: ['workspace', user.id] });
       }
@@ -65,6 +69,8 @@ function Onboarding() {
       setCity(profile?.city ?? '');
       setRole((profile?.role_intent as Role | null) ?? null);
       const list: Step[] = [];
+      if (!profile?.adult_confirmed_at) list.push('adult');
+      if (!profile?.role_intent && !joinedTeam) list.push('start');
       if (!profile?.full_name) list.push('name');
       if (!profile?.city) list.push('place');
       if (!profile?.role_intent) list.push('role');
@@ -81,12 +87,13 @@ function Onboarding() {
     const { error: e } = await supabase.from('profiles').update({ onboarded: true }).eq('id', user.id);
     if (e) { setFinishing(false); setError(t('onboarding.error')); return; }
     trackEvent('signup'); trackEvent('onboarding_complete');
-    localStorage.removeItem(JOIN_CODE_KEY);
+    clearPendingInvite();
     // Mark the cached profile onboarded so the app gate lets Home through immediately.
     queryClient.setQueryData(profileQuery(user.id).queryKey, p => (p ? { ...p, onboarded: true } : p));
     await queryClient.invalidateQueries({ queryKey: ['workspace', user.id] }).catch(() => null);
-    const dest = role === 'host' || role === 'leader' ? '/start' : '/home';
-    try { await navigate({ to: dest, replace: true }); } catch { window.location.assign(dest); }
+    // Resume the deep link that started sign-in; otherwise use the chosen start.
+    const dest = takeNext() ?? (role === 'host' || role === 'leader' ? '/start' : start === 'find' ? '/discover' : '/home');
+    try { await navigate({ href: dest, replace: true }); } catch { window.location.assign(dest); }
     void queryClient.invalidateQueries();
   }
 
@@ -97,13 +104,27 @@ function Onboarding() {
   useEffect(() => { if (step === 'team' && role === 'host' && !teamName) setTeamName(name.trim()); }, [step, role, name, teamName]);
   const total = steps?.length ?? 0;
   const atEnd = !!steps && index >= total;
-  const canContinue = step === 'name' ? name.trim().length > 1 : step === 'place' ? city.trim().length > 0 : step === 'role' ? !!role : step === 'team' ? (creating ? teamName.trim().length > 0 : parseJoinCode(code).length >= 6) : true;
+  const canContinue = step === 'adult' ? adultChecked : step === 'start' ? !!start : step === 'name' ? name.trim().length > 1 : step === 'place' ? city.trim().length > 0 : step === 'role' ? !!role : step === 'team' ? (creating ? teamName.trim().length > 0 : parseJoinCode(code).length >= 6) : true;
 
   const next = async () => {
     if (!step || !canContinue) return;
     setBusy(true); setError(null);
     try {
-      if (step === 'name') {
+      if (step === 'adult') {
+        const { error: e } = await supabase.rpc('confirm_adult', { _attest: adultChecked }); if (e) throw e;
+      } else if (step === 'start' && start) {
+        if (start !== 'create') {
+          const chosen: Role = start === 'find' ? 'guest' : 'member';
+          setRole(chosen);
+          const { error: e } = await supabase.from('profiles').update({ role_intent: chosen }).eq('id', user.id); if (e) throw e;
+          const rest = steps!.filter((s, i) => i <= index || (s !== 'role' && (start === 'invite' || s !== 'team')));
+          if (start === 'invite' && !rest.includes('team')) rest.push('team');
+          setSteps(rest);
+          await queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
+          if (index + 1 >= rest.length) { setBusy(false); await finish(); return; }
+          setIndex(index + 1); setBusy(false); return;
+        }
+      } else if (step === 'name') {
         const { error: e } = await supabase.from('profiles').update({ full_name: name.trim() }).eq('id', user.id); if (e) throw e;
         if (photo) {
           try {
@@ -179,9 +200,24 @@ function Onboarding() {
 
   if (atEnd) return shell(<p className="auth-subtitle">{t('onboarding.saving')}</p>, false);
 
-  const roles = [{ key: 'guest', Icon: Compass }, { key: 'leader', Icon: Crown }, { key: 'host', Icon: CalendarHeart }, { key: 'member', Icon: UsersRound }] as const;
+  const allRoles = [{ key: 'guest', Icon: Compass }, { key: 'leader', Icon: Crown }, { key: 'host', Icon: CalendarHeart }, { key: 'member', Icon: UsersRound }] as const;
+  const roles = start === 'create' ? allRoles.filter(r => r.key === 'host' || r.key === 'leader') : allRoles;
+  const starts = [{ key: 'find', Icon: Compass }, { key: 'create', Icon: CalendarHeart }, { key: 'invite', Icon: UsersRound }] as const;
 
   return shell(<>
+    {step === 'adult' && <>
+      <h1 className="onboarding-title">{t('identity.adultTitle')}</h1>
+      <p className="auth-subtitle">{t('identity.adultText')}</p>
+      <label className="check-row consent-check" htmlFor="adult-attest">
+        <input id="adult-attest" type="checkbox" checked={adultChecked} onChange={e => setAdultChecked(e.target.checked)} aria-describedby="adult-note" />
+        <span>{t('identity.adultCheck')}</span>
+      </label>
+      <p id="adult-note" className="auth-note">{t('identity.adultNote')}</p>
+    </>}
+    {step === 'start' && <>
+      <h1 className="onboarding-title">{t('identity.startTitle')}</h1>
+      <div className="choice-list">{starts.map(({ key, Icon }) => <button key={key} type="button" className={`choice-card role-card ${start === key ? 'is-selected' : ''}`} aria-pressed={start === key} onClick={() => setStart(key)}><span className="creation-icon"><Icon /></span><span><strong>{t(`identity.start_${key}`)}</strong><small>{t(`identity.start_${key}Text`)}</small></span>{start === key && <Check className="choice-check" />}</button>)}</div>
+    </>}
     {step === 'name' && <>
       <h1 className="onboarding-title">{t('onboarding.nameTitle')}</h1>
       <label className="field-label" htmlFor="full-name">{t('onboarding.nameLabel')}</label>

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { AuthFrame, pageHead } from '@/components/auth-frame';
 import { supabase } from '@/integrations/supabase/client';
-import { JOIN_CODE_KEY, initialsOf, parseJoinCode } from '@/lib/account';
+import { clearPendingInvite, initialsOf, parseJoinCode, savePendingInvite } from '@/lib/account';
 import { JOIN_BY_KEY } from '@/lib/recognition';
 import { publicShareImage } from '@/lib/public-media.functions';
 import { RetryState } from '@/components/launch-states';
@@ -28,8 +28,8 @@ function JoinPage() {
     const clean = parseJoinCode(code);
     void supabase.rpc('get_team_invite', { _code: clean }).then(async ({ data }) => {
       const invite = data?.[0];
-      if (!invite) { setState('invalid'); return; }
-      localStorage.setItem(JOIN_CODE_KEY, clean);
+      if (!invite) { clearPendingInvite(); setState('invalid'); return; }
+      savePendingInvite(clean);
       const by = new URLSearchParams(window.location.search).get('by');
       if (by && /^[0-9a-f-]{36}$/i.test(by)) localStorage.setItem(JOIN_BY_KEY, by); else localStorage.removeItem(JOIN_BY_KEY);
       const { data: auth } = await supabase.auth.getUser();
@@ -47,6 +47,7 @@ function JoinPage() {
       {state.leader && <div className="leader-line"><span className="initial-avatar">{initialsOf(state.leader)}</span><span>{t('join.led', { name: state.leader })}</span></div>}
       <p className="auth-subtitle">{t('join.text')}</p>
       <Button asChild className="auth-button"><Link to="/login">{t('join.cta')}</Link></Button>
+      <Button variant="link" className="auth-link" onClick={() => { clearPendingInvite(); void navigate({ to: '/' }); }}>{t('join.cancel')}</Button>
     </>}
   </AuthFrame>;
 }
