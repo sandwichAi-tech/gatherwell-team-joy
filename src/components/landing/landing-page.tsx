@@ -12,15 +12,17 @@ import { GatheringCard } from '@/components/landing/gathering-card';
 import { LandingFrame, StickyFindBar } from '@/components/landing/landing-chrome';
 import { publicGatheringsQuery, track } from '@/lib/landing';
 import { QueryFeedback } from '@/components/launch-states';
-import { ATTENDEE, AUDIENCES, HOME_PLANS, PLATFORM_FEE_PERCENT, STEPS, TOOLKIT, annualPrice, homepageOfferings } from '@/lib/homepage';
+import { NOTIFY_ME_LIVE, ATTENDEE, AUDIENCES, HOME_PLANS, PLATFORM_FEE_PERCENT, STEPS, TOOLKIT, annualPrice, homepageOfferings } from '@/lib/homepage';
 
 export function LandingPage() {
   return <LandingFrame>
     <main id="main-content" className="gw-home">
       <Hero />
       <QueryFeedback />
-      <Toolkit />
-      <Steps />
+      <div id="for-hosts" className="gw-home-anchor">
+        <Toolkit />
+        <Steps />
+      </div>
       <Audience />
       <Attendees />
       <Explore />
@@ -99,10 +101,13 @@ function Explore() {
   const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
   const { data = [] } = useQuery(publicGatheringsQuery(lang, false));
   const list = homepageOfferings(data);
-  const [copied, setCopied] = useState(false);
+  const [status, setStatus] = useState<'' | 'shared' | 'copied' | 'manual'>('');
   const invite = async () => {
-    const url = `${window.location.origin}/hosts`;
-    try { if (navigator.share) await navigator.share({ title: t('home.explore.inviteTitle'), url }); else { await navigator.clipboard.writeText(url); setCopied(true); } } catch { /* user cancelled */ }
+    const url = `${window.location.origin}/`;
+    try {
+      if (navigator.share) { await navigator.share({ title: t('home.explore.inviteTitle'), text: t('home.explore.inviteText'), url }); setStatus('shared'); return; }
+      await navigator.clipboard.writeText(url); setStatus('copied');
+    } catch (e) { if ((e as Error)?.name !== 'AbortError') setStatus('manual'); }
   };
   return <section className="gw-home-sec gw-band gw-band-canvas" aria-labelledby="explore-title"><div className="gw-container">
     <div className="gw-section-head"><h2 id="explore-title" className="gw-display gw-h2">{t('home.explore.title')}</h2>
@@ -110,11 +115,11 @@ function Explore() {
     {list.length ? <div className="gw-feed">{list.map(g => <GatheringCard key={g.id} g={g} near={null} showRsvp className="gw-feed-card" />)}</div>
       : <div className="gw-empty gw-home-empty"><p><strong>{t('home.explore.empty')}</strong></p>
         <div className="gw-final-ctas">
-          <Link to="/login" search={{ next: '/discover' }} className="gw-btn gw-btn-secondary">{t('home.explore.notify')}</Link>
+          {NOTIFY_ME_LIVE ? null : <button type="button" className="gw-btn gw-btn-secondary" aria-disabled="true" aria-describedby="notify-soon" onClick={e => e.preventDefault()}>{t('home.explore.notify')}<span id="notify-soon" className="gw-home-tool-tag">{t('home.soon')}</span></button>}
           <button type="button" className="gw-btn gw-btn-secondary" onClick={() => void invite()}>{t('home.explore.invite')}</button>
           <Link to="/login" search={{ intent: 'host' }} className="gw-btn gw-btn-primary">{t('home.explore.create')}</Link>
         </div>
-        <p className="gw-fine" role="status">{copied ? t('home.explore.copied') : ''}</p>
+        <p className="gw-fine" role="status" aria-live="polite">{status === 'manual' ? `${t('home.explore.manual')} ${typeof window !== 'undefined' ? window.location.origin : ''}/` : status ? t(`home.explore.${status}`) : ''}</p>
       </div>}
   </div></section>;
 }

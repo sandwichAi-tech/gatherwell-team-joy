@@ -33,8 +33,11 @@ export function homepageOfferings(list: FeedGathering[], now = new Date(), limit
     .slice(0, limit);
 }
 
+/** No area-alert storage exists yet (planned for Prompt 8), so Notify me is labelled Coming soon. */
+export const NOTIFY_ME_LIVE = false;
+
 export const HOME_CTAS = {
   startHosting: { to: '/login', search: { intent: 'host' } },
   explore: { to: '/discover', search: {} },
-  notify: { to: '/login', search: { next: '/discover' } },
+  createEvent: { to: '/login', search: { intent: 'host' } },
 } as const;

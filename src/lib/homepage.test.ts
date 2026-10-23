@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import en from '@/locales/en.json';
 import es from '@/locales/es.json';
-import { HOME_CTAS, HOME_PLANS, PLATFORM_FEE_PERCENT, annualPrice, homepageOfferings } from './homepage';
+import { NOTIFY_ME_LIVE, HOME_CTAS, HOME_PLANS, PLATFORM_FEE_PERCENT, annualPrice, homepageOfferings } from './homepage';
 import { safeReturnPath } from './return-to';
 import type { FeedGathering } from './landing';
 
@@ -36,5 +36,8 @@ describe('homepage pricing', () => {
 describe('homepage CTAs', () => {
   it('Start hosting goes to host sign-in', () => expect(HOME_CTAS.startHosting).toEqual({ to: '/login', search: { intent: 'host' } }));
   it('Explore goes to discover', () => expect(HOME_CTAS.explore.to).toBe('/discover'));
-  it('Notify next path is allowlisted', () => expect(safeReturnPath(HOME_CTAS.notify.search.next)).toBeTruthy());
+  it('Create an event goes to host sign-in', () => expect(HOME_CTAS.createEvent).toEqual({ to: '/login', search: { intent: 'host' } }));
+  it('Notify me is not live (no alert storage yet)', () => expect(NOTIFY_ME_LIVE).toBe(false));
+  it('next paths are allowlisted', () => expect(safeReturnPath('/discover')).toBe('/discover'));
+  it('empty-state copy exists in both languages', () => { expect(en.home.explore.empty).toBe('Events are coming soon to your area'); expect(es.home.explore.empty).toBeTruthy(); });
 });
