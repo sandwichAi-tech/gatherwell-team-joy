@@ -47,19 +47,16 @@ function LoginPage() {
       } else { const p = takeNext(); if (p) target = p; }
       if (cancelled) return;
       setDest(target);
-      const finish = async (userId: string) => {
-        // Invitation codes saved by a different account on this device are discarded.
-        const owner = sessionStorage.getItem('zw-invite-owner');
-        if (owner && owner !== userId) clearPendingInvite();
+      const finish = async () => {
         void supabase.rpc('claim_guest_records');
         rememberNext(target); // onboarding resumes here if the app gate sends them there first
         await navigate({ href: target, replace: true });
       };
       const { data } = await supabase.auth.getUser();
-      if (data.user) { await finish(data.user.id); return; }
+      if (data.user) { await finish(); return; }
       const code = pendingInvite();
       if (code) void supabase.rpc('get_team_invite', { _code: code }).then(({ data: inv }) => setTeam(inv?.[0]?.team_name ?? null));
-      const sub = supabase.auth.onAuthStateChange((event, session) => { if (event === 'SIGNED_IN' && session) void finish(session.user.id); });
+      const sub = supabase.auth.onAuthStateChange((event, session) => { if (event === 'SIGNED_IN' && session) void finish(); });
       cleanup = () => sub.data.subscription.unsubscribe();
     };
     let cleanup = () => {};
@@ -70,7 +67,8 @@ function LoginPage() {
 
   const google = async () => {
     setError(null);
-    const result = await lovable.auth.signInWithOAuth('google', { redirect_uri: back });
+    rememberNext(dest);
+    const result = await lovable.auth.signInWithOAuth('google', { redirect_uri: `${origin}/login` });
     if (result.error) setError(t('auth.error'));
   };
 
@@ -79,8 +77,15 @@ function LoginPage() {
     const value = email.trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) { setError(t('auth.invalidEmail')); return; }
     setBusy(true); setError(null);
+    // The emailed link carries only a hashed, single-use, 30-minute intent token — never the raw path.
+    let back = `${origin}/login`;
+    if (dest !== '/home') {
+      const { data: token } = await supabase.rpc('create_auth_intent', { _path: dest });
+      back = token ? `${origin}/login?i=${token}` : `${origin}/login?next=${encodeURIComponent(dest)}`;
+    }
     const { error: err } = await supabase.auth.signInWithOtp({ email: value, options: { emailRedirectTo: back } });
     setBusy(false);
+    // Only show "check your email" once the sign-in service accepted the request.
     if (err) setError(t('auth.error')); else setSentTo(value);
   };
 
