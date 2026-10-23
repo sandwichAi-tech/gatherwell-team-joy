@@ -1,15 +1,15 @@
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { BrandImage } from '@/components/brand-image';
-import { CATEGORY_ICONS, GwIcon } from '@/components/gw-icon';
-import { AvatarStack, GatheringCard, RsvpButton, type Coords } from '@/components/landing/gathering-card';
+import { CATEGORY_ICONS, GwIcon, type GwIconName } from '@/components/gw-icon';
+import { AvatarStack, GatheringCard, type Coords } from '@/components/landing/gathering-card';
 import { StaticHeroStack, type HeroItem } from '@/components/landing/hero-stack';
 import { LandingFrame, StickyFindBar } from '@/components/landing/landing-chrome';
 import { LocationFilter, sortForFeed } from '@/components/landing/location-filter';
-import { CATEGORIES, distanceKm, HERO_SLOTS, inNextDays, pickH1Variant, featureFlagsQuery, publicGatheringsQuery, socialProofQuery, testimonialsQuery, track, type Category, type FeedGathering, type H1Variant } from '@/lib/landing';
+import { CATEGORIES, distanceKm, HERO_SLOTS, inNextDays, featureFlagsQuery, publicGatheringsQuery, socialProofQuery, testimonialsQuery, track, type Category, type FeedGathering } from '@/lib/landing';
 import { QueryFeedback } from '@/components/launch-states';
 import { Button } from '@/components/ui/button';
 import { WhoItsFor } from '@/components/landing/marketing-pages';
@@ -26,9 +26,11 @@ export function LandingPage() {
     <main id="main-content">
       <Hero gatherings={gatherings} />
       <QueryFeedback />
+      <HomepagePaths />
+      <HowItWorks />
+      <HostTools />
       <CategoryRow selected={category} onSelect={setCategory} />
       <ThisWeek gatherings={gatherings} category={category} />
-      <HowItWorks />
       <WhoItsFor />
       <HostBand />
       <LeadersBand />
@@ -38,21 +40,13 @@ export function LandingPage() {
   </LandingFrame>;
 }
 
-function Headline({ variant }: { variant: H1Variant }) {
+function Headline() {
   const { t } = useTranslation();
-  if (variant !== 'A') return <h1 className="gw-display gw-hero-h1">{t(`landing.hero.h1${variant}`)}</h1>;
   return <h1 className="gw-display gw-hero-h1">{t('landing.hero.h1A_before')}<em className="gw-accent">{t('landing.hero.h1A_accent')}</em>{t('landing.hero.h1A_after')}</h1>;
 }
 
 function Hero({ gatherings }: { gatherings: FeedGathering[] }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  // Server and first browser render share variant A; the rotating pick applies after hydration.
-  const [picked, setPicked] = useState<H1Variant>('A');
-  useEffect(() => { setPicked(pickH1Variant()); }, []);
-  const { data: flags } = useQuery(featureFlagsQuery());
-  const forced = flags?.['landing_headline'];
-  const variant: H1Variant = forced?.enabled && ['A', 'B', 'C', 'D'].includes(forced.value ?? '') ? forced.value as H1Variant : picked;
   const { data: showedUp = 0 } = useQuery(socialProofQuery());
   const [animate, setAnimate] = useState(false);
   useEffect(() => { const id = window.requestAnimationFrame(() => setAnimate(true)); return () => window.cancelAnimationFrame(id); }, []);
@@ -72,11 +66,11 @@ function Hero({ gatherings }: { gatherings: FeedGathering[] }) {
     <div className="gw-container gw-hero-grid">
       <div className="gw-hero-copy">
         <span className="gw-label">{t('landing.hero.label')}</span>
-        <Headline variant={variant} />
-        <p className="gw-lede">{t('landing.hero.sub')}</p>
+        <Headline />
+        <p className="gw-lede">{t('landing.hostFirst.intro')}</p>
         <div className="gw-hero-ctas">
-          <button type="button" className="gw-btn gw-btn-primary gw-btn-lg" onClick={() => { track('hero_find_click', { variant }); void navigate({ to: '/discover', search: { near: 1 } }); }}>{t('landing.hero.find')}<GwIcon name="ArrowRight" size={18} /></button>
-          <Link to="/hosts" className="gw-btn gw-btn-secondary gw-btn-lg" onClick={() => track('hero_host_click', { variant })}>{t('landing.hero.host')}</Link>
+          <Button asChild className="gw-btn gw-btn-lg"><Link to="/login" search={{ intent: 'host' }} onClick={() => track('hero_host_click', { variant: 'A' })}>{t('landing.hostFirst.start')}<GwIcon name="ArrowRight" size={18} /></Link></Button>
+          <Button asChild variant="secondary" className="gw-btn gw-btn-lg"><Link to="/discover" search={{ near: 1 }} onClick={() => track('hero_find_click', { variant: 'A' })}>{t('landing.hostFirst.find')}</Link></Button>
         </div>
         {showedUp >= 50 && <p className="gw-proof">{initials.length > 0 && <AvatarStack letters={initials} size={32} />}<span>{t('landing.hero.proof', { count: showedUp })}</span></p>}
       </div>
@@ -128,18 +122,40 @@ function ThisWeek({ gatherings, category }: { gatherings: FeedGathering[]; categ
   </section>;
 }
 
+function HomepagePaths() {
+  const { t } = useTranslation();
+  return <section className="gw-home-paths gw-band gw-band-white"><div className="gw-container gw-home-path-grid">
+    <div><h2>{t('landing.hostFirst.host')}</h2><p>{t('landing.hostFirst.hostBody')}</p><Button asChild className="gw-btn gw-btn-lg"><Link to="/login" search={{ intent: 'host' }}>{t('landing.hostFirst.start')}<GwIcon name="ArrowRight" /></Link></Button></div>
+    <div><h2>{t('landing.hostFirst.attend')}</h2><p>{t('landing.hostFirst.attendBody')}</p><Button asChild variant="secondary" className="gw-btn gw-btn-lg"><Link to="/discover" search={{ near: 1 }}>{t('landing.hostFirst.find')}<GwIcon name="MapPin" /></Link></Button></div>
+  </div></section>;
+}
+
 function HowItWorks() {
-  const { t, i18n } = useTranslation();
-  const demo: FeedGathering = { id: 'demo', isSample: true, hero: false, title: t('landing.hero.photoTitle_run'), startsAt: new Date(), category: 'run', locationName: null, isOnline: false, lat: null, lng: null, capacity: null, going: 14, goingNames: [], initials: ['M', 'J', 'S'], hostName: 'Nick C.' };
-  const [rsvpKey, setRsvpKey] = useState(0);
+  const { t } = useTranslation();
+  const steps = [['create', 'CalendarPlus'], ['share', 'Link2'], ['checkin', 'QrCode'], ['followup', 'MessageCircle']] as const;
   return <section className="gw-section gw-container gw-band gw-band-white" id="how-it-works" aria-labelledby="how-title">
-    <span className="gw-label">{t('landing.how.label')}</span>
-    <h2 id="how-title" className="gw-display gw-h2">{t('landing.how.title')}</h2>
-    <ol className="gw-how">
-      <li><div className="gw-vignette"><div className="gw-mini-card"><span className="gw-mini-icon"><GwIcon name="PersonSimpleRun" variant="marketing" size={22} /></span><div><strong>{t('landing.catOne.run')}</strong><span>{new Intl.DateTimeFormat(i18n.resolvedLanguage === 'es' ? 'es-MX' : 'en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' }).format(new Date(2026, 9, 10, 7))}</span></div><AvatarStack letters={['M', 'J', 'S']} size={22} /></div></div><span className="gw-how-num">01</span><h3>{t('landing.how.s1t')}</h3><p>{t('landing.how.s1b')}</p></li>
-      <li><div className="gw-vignette" onMouseEnter={() => setRsvpKey(k => k + 1)}><RsvpButton key={rsvpKey} g={demo} /></div><span className="gw-how-num">02</span><h3>{t('landing.how.s2t')}</h3><p>{t('landing.how.s2b')}</p></li>
-      <li><div className="gw-vignette"><div className="gw-checkin"><span className="gw-checkin-icon"><GwIcon name="Check" variant="marketing" size={20} /></span><div><strong>{t('landing.how.checkedIn')}</strong><span>{t('landing.how.checkedInSub')}</span></div></div></div><span className="gw-how-num">03</span><h3>{t('landing.how.s3t')}</h3><p>{t('landing.how.s3b')}</p></li>
-    </ol>
+    <span className="gw-label">{t('landing.hostFirst.howLabel')}</span>
+    <h2 id="how-title" className="gw-display gw-h2">{t('landing.hostFirst.howTitle')}</h2>
+    <ol className="gw-home-steps">{steps.map(([key, icon], i) => <li key={key}><span className="gw-home-tool-icon"><GwIcon name={icon} variant="marketing" size={24} /></span><span className="gw-how-num">0{i + 1}</span><h3>{t(`landing.hostFirst.steps.${key}`)}</h3></li>)}</ol>
+  </section>;
+}
+
+function HostTools() {
+  const { t } = useTranslation();
+  const tools: { key: string; icon: GwIconName; paid?: boolean; premium?: boolean }[] = [
+    { key: 'pages', icon: 'CalendarDays' }, { key: 'tickets', icon: 'CreditCard', paid: true },
+    { key: 'weekly', icon: 'Repeat' }, { key: 'blueprints', icon: 'Layers' },
+    { key: 'guests', icon: 'UsersRound' }, { key: 'csv', icon: 'Download' },
+    { key: 'checkin', icon: 'QrCode' }, { key: 'reminders', icon: 'Bell' },
+    { key: 'waivers', icon: 'ShieldCheck' }, { key: 'resources', icon: 'BookOpen', paid: true },
+    { key: 'hostPage', icon: 'Globe2' }, { key: 'team', icon: 'Network' },
+    { key: 'sms', icon: 'MessageSquare', premium: true }, { key: 'email', icon: 'Mail', premium: true },
+    { key: 'calling', icon: 'Phone', premium: true },
+  ];
+  return <section className="gw-section gw-container" aria-labelledby="host-tools-title">
+    <h2 id="host-tools-title" className="gw-display gw-h2">{t('landing.hostFirst.toolsTitle')}</h2>
+    <ul className="gw-home-tools">{tools.map(tool => <li key={tool.key}><span className="gw-home-tool-icon"><GwIcon name={tool.icon} variant="marketing" size={24} /></span><div><h3>{t(`landing.hostFirst.tools.${tool.key}`)}</h3>{tool.premium ? <span className="gw-home-tool-tag">{t('landing.hostFirst.premiumSoon')}</span> : tool.paid ? <span className="gw-home-tool-tag">{t('landing.hostFirst.paidSoon')}</span> : tool.key === 'reminders' ? <span className="gw-home-tool-tag">{t('landing.hostFirst.deliverySoon')}</span> : null}</div></li>)}</ul>
+    <p className="gw-home-studio">{t('landing.hostFirst.studios')}</p>
   </section>;
 }
 
