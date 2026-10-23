@@ -2018,3 +2018,4 @@ a.gw-cat-chip:hover{background:#fff}
 .gw-landing .gw-cat.is-on .gw-cat-circle svg.gw-icon,.gw-landing .gw-cat.is-on .gw-cat-circle .gw-icon{color:#fff!important}
 .gw-landing .gw-cat.is-on .gw-cat-circle svg *{opacity:1}
 .gw-landing .gw-cat.is-on .gw-cat-label{color:var(--plum);font-weight:800}
+.gw-landing .gw-cat-row{padding:10px 8px 14px}
