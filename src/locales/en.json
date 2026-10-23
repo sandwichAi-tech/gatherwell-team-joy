@@ -1818,7 +1818,20 @@
     "brief": {
       "eyebrow": "Today",
       "title": "Your morning brief",
-      "dismiss": "Hide for today"
+      "dismiss": "Hide for today",
+      "hosting": "Hosting: {{title}} · {{when}}{{place}} · {{count}} going",
+      "signups_one": "1 new sign-up since yesterday · View your guest list",
+      "signups_other": "{{count}} new sign-ups since yesterday · View your guest list",
+      "share": "{{title}} has no sign-ups yet · Share your link",
+      "attending": "Going to: {{title}} · {{when}}",
+      "attendingCode": "Going to: {{title}} · {{when}} · Check-in code {{code}}",
+      "teamEvents_one": "Your team has 1 event this week",
+      "teamEvents_other": "Your team has {{count}} events this week",
+      "quietHosts_one": "1 team host has nothing scheduled",
+      "quietHosts_other": "{{count}} team hosts have nothing scheduled",
+      "resource": "New resource: {{title}}",
+      "empty": "Nothing on today. Create an event",
+      "create": "Create an event"
     },
     "followups": {
       "eyebrow": "Follow-ups",
