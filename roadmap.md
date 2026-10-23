@@ -1,3 +1,7 @@
+# Walkthrough 1.4 — Resources (October 23)
+- [ ] Enable existing Learn for everyone, rename navigation/page labels to Resources, keep internal routes, and hide empty/broken entries.
+- [ ] Verify normal-account main navigation on phone/desktop, existing content access, and document hidden sections in CHANGELOG.md.
+
 # Walkthrough 1.3 — Event Blueprints (October 23)
 - [x] Reuse the existing blueprint library/editor; added Team and Events entry points, full defaults, host save-as, edit/delete and reliable creation prefill.
 - [x] Real create → use → draft event and event → save as blueprint passed at phone and desktop sizes; edit/delete/usage/navigation verified, 10 checks passed, CHANGELOG.md updated. Test records removed. Separate non-leader host, physical-device photo upload and paid checkout not exercised.
