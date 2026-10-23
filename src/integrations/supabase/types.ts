@@ -4725,8 +4725,8 @@ export type Database = {
       waiver_acceptances: {
         Row: {
           accepted_at: string
-          accepted_body_sha256: string | null
-          consent_text_version_id: string | null
+          accepted_body_sha256: string
+          consent_text_version_id: string
           event_id: string
           full_name: string
           ip: string | null
@@ -4737,8 +4737,8 @@ export type Database = {
         }
         Insert: {
           accepted_at?: string
-          accepted_body_sha256?: string | null
-          consent_text_version_id?: string | null
+          accepted_body_sha256: string
+          consent_text_version_id: string
           event_id: string
           full_name: string
           ip?: string | null
@@ -4749,8 +4749,8 @@ export type Database = {
         }
         Update: {
           accepted_at?: string
-          accepted_body_sha256?: string | null
-          consent_text_version_id?: string | null
+          accepted_body_sha256?: string
+          consent_text_version_id?: string
           event_id?: string
           full_name?: string
           ip?: string | null

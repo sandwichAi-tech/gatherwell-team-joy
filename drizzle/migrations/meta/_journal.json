@@ -351,6 +351,13 @@
       "when": 1792794930705,
       "tag": "0049_v4_corrective_integrity_consent_flag_audit",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1792794983528,
+      "tag": "0050_v4_require_verified_waiver_snapshots",
+      "breakpoints": true
     }
   ]
 }
