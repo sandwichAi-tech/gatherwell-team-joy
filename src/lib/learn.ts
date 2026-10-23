@@ -34,6 +34,9 @@ export const learnQuery = (userId: string) => queryOptions({
 });
 
 export const lessonsOf = (data: LearnData, trackId: string) => data.lessons.filter(l => l.track_id === trackId);
+/** Empty tracks stay editable in management, but are not offered to readers. */
+export const populatedTracks = (tracks: Track[], lessons: Pick<Lesson, 'track_id'>[]) =>
+  tracks.filter(track => lessons.some(lesson => lesson.track_id === track.id));
 export function trackStats(data: LearnData, trackId: string) {
   const list = lessonsOf(data, trackId);
   const done = list.filter(l => data.done.has(l.id)).length;
