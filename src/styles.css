@@ -762,9 +762,11 @@ ul.order-list li{grid-template-columns:minmax(0,1fr) auto}
 .gw-cat-row::-webkit-scrollbar{display:none}
 .gw-cat{display:flex;flex-direction:column;align-items:center;gap:8px;scroll-snap-align:start;flex-shrink:0;width:80px;border-radius:16px}
 .gw-cat-circle{display:grid;place-items:center;width:72px;height:72px;border-radius:50%;border:1.5px solid transparent;background:linear-gradient(var(--card),var(--card)) padding-box,linear-gradient(135deg,#7A5FA8,#F3C6A5) border-box;transition:transform .18s ease-out,background .18s ease-out}
-.gw-cat:hover .gw-cat-circle{transform:translateY(-2px)}
+@media (hover:hover) and (pointer:fine){.gw-cat:hover .gw-cat-circle{transform:translateY(-2px)}}
 .gw-cat.is-on .gw-cat-circle{background:linear-gradient(#2F2340,#2F2340) padding-box,linear-gradient(#2F2340,#2F2340) border-box}
 .gw-cat.is-on .gw-icon{color:#fff!important}
+.gw-cat{touch-action:manipulation;-webkit-tap-highlight-color:transparent;cursor:pointer}
+.gw-cat:active .gw-cat-circle{transform:scale(.96)}
 .gw-cat-label{font-size:13px;font-weight:600;color:var(--foreground);text-align:center;line-height:1.25}
 
 /* Sections */
@@ -1462,7 +1464,7 @@ button { white-space:normal; }
 .gw-landing .gw-cat{width:96px;gap:12px}
 .gw-landing .gw-cat-circle{width:88px;height:88px;border:2px solid transparent;background:linear-gradient(#EFEBF6,#EFEBF6) padding-box,linear-gradient(135deg,rgba(122,95,168,.55),rgba(243,198,165,.8)) border-box;transition:transform .18s ease-out,background .18s ease-out,box-shadow .18s ease-out}
 .gw-landing .gw-cat-circle .gw-icon{color:var(--plum)}
-.gw-landing .gw-cat:hover .gw-cat-circle{transform:translateY(-2px);background:linear-gradient(#EFEBF6,#EFEBF6) padding-box,linear-gradient(135deg,#7A5FA8,#F3C6A5) border-box;box-shadow:0 8px 20px -8px rgba(122,95,168,.45)}
+@media (hover:hover) and (pointer:fine){.gw-landing .gw-cat:hover .gw-cat-circle{transform:translateY(-2px);background:linear-gradient(#EFEBF6,#EFEBF6) padding-box,linear-gradient(135deg,#7A5FA8,#F3C6A5) border-box;box-shadow:0 8px 20px -8px rgba(122,95,168,.45)}}
 .gw-landing .gw-cat.is-on .gw-cat-circle{background:linear-gradient(#2F2340,#2F2340) padding-box,linear-gradient(135deg,#7A5FA8,#F3C6A5) border-box}
 .gw-landing .gw-cat-label{font-size:14px;font-weight:600}
 .dark .gw-landing .gw-cat-circle{background:linear-gradient(var(--secondary),var(--secondary)) padding-box,linear-gradient(135deg,#7A5FA8,#F3C6A5) border-box}
