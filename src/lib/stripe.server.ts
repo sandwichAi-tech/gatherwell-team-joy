@@ -135,3 +135,13 @@ export async function verifyWebhook(req: Request, env: StripeEnv): Promise<{ typ
 
   return JSON.parse(body);
 }
+
+/**
+ * When the current paid month ends. Newer API versions put the period on the
+ * subscription item; older payloads keep it on the subscription itself, so
+ * both are read.
+ */
+export function subscriptionPeriodEnd(sub: unknown): number | null {
+  const s = sub as { current_period_end?: number; items?: { data?: Array<{ current_period_end?: number }> } };
+  return s.items?.data?.[0]?.current_period_end ?? s.current_period_end ?? null;
+}

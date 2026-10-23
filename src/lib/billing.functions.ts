@@ -70,12 +70,12 @@ export const startPlanCheckout = createServerFn({ method: 'POST' })
         // A founding rate is a personal price, so it is quoted inline rather than from the catalog.
         lineItem = { quantity: 1, price_data: { currency: 'usd', unit_amount: founding.rate_cents, recurring: { interval: 'month' }, product_data: { name } } };
       } else {
-        const prices = await stripe.prices.list({ lookup_keys: [PLAN_PRICE_KEYS[data.plan]] });
-        if (!prices.data.length) return { ok: false, error: 'price_not_found' };
+        const listed = (await stripe.prices.list({ lookup_keys: [PLAN_PRICE_KEYS[data.plan]] })).data[0];
+        if (!listed) return { ok: false, error: 'price_not_found' };
         // The catalog and plan_settings must agree, or the app would show one
         // price and charge another.
-        if (prices.data[0].unit_amount !== ps.monthly_price) return { ok: false, error: 'price_mismatch' };
-        lineItem = { price: prices.data[0].id, quantity: 1 };
+        if (listed.unit_amount !== ps.monthly_price) return { ok: false, error: 'price_mismatch' };
+        lineItem = { price: listed.id, quantity: 1 };
       }
 
       const session = await stripe.checkout.sessions.create({
@@ -134,7 +134,7 @@ export const schedulePlanChange = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ target: z.enum(['growth', 'pro', 'free']), environment }).parse(d))
   .handler(async ({ data, context }): Promise<{ ok: true; at: string } | { ok: false; error: string }> => {
-    const { createStripeClient, getStripeErrorMessage } = await import('@/lib/stripe.server');
+    const { createStripeClient, getStripeErrorMessage, subscriptionPeriodEnd } = await import('@/lib/stripe.server');
     try {
       const { data: b } = await context.supabase.from('billing_accounts').select('plan, stripe_subscription_id, renews_at, status').eq('user_id', context.userId).maybeSingle();
       if (!b?.stripe_subscription_id || b.plan === 'free') return { ok: false, error: 'no_subscription' };
@@ -144,21 +144,25 @@ export const schedulePlanChange = createServerFn({ method: 'POST' })
       const sub = await stripe.subscriptions.retrieve(b.stripe_subscription_id);
       const currentPrice = sub.items?.data?.[0]?.price?.id;
       if (!currentPrice) return { ok: false, error: 'no_subscription' };
-      const endAt = sub.current_period_end ?? sub.items?.data?.[0]?.current_period_end ?? (b.renews_at ? Math.floor(new Date(b.renews_at).getTime() / 1000) : null);
+      const endAt = subscriptionPeriodEnd(sub) ?? (b.renews_at ? Math.floor(new Date(b.renews_at).getTime() / 1000) : null);
       if (!endAt) return { ok: false, error: 'no_period_end' };
 
       const nextMeta = { kind: 'plan', user_id: context.userId, plan: data.target, period: 'month', userId: context.userId };
-      const nextLine = data.target === 'free'
-        ? []
-        : [{ price: (await stripe.prices.list({ lookup_keys: [PLAN_PRICE_KEYS[data.target]] })).data[0]?.id, metadata: nextMeta }].filter(x => !!x.price);
-      if (data.target !== 'free' && !nextLine.length) return { ok: false, error: 'price_not_found' };
+      let nextPrice: string | null = null;
+      if (data.target !== 'free') {
+        const listed = (await stripe.prices.list({ lookup_keys: [PLAN_PRICE_KEYS[data.target]] })).data[0];
+        if (!listed) return { ok: false, error: 'price_not_found' };
+        nextPrice = listed.id;
+      }
 
       const schedule = await stripe.subscriptionSchedules.create({ from_subscription: sub.id });
+      const current = schedule.phases[0];
+      if (!current) return { ok: false, error: 'no_subscription' };
       await stripe.subscriptionSchedules.update(schedule.id, {
         end_behavior: data.target === 'free' ? 'cancel' : 'release',
         phases: [
-          { start_date: schedule.phases[0].start_date, end_date: endAt, items: [{ price: currentPrice }], metadata: schedule.phases[0].metadata ?? {} },
-          ...(data.target === 'free' ? [] : [{ start_date: endAt, end_date: null, items: nextLine, metadata: nextMeta }]),
+          { start_date: current.start_date, end_date: endAt, items: [{ price: currentPrice }], metadata: current.metadata ?? {} },
+          ...(nextPrice ? [{ start_date: endAt, end_date: null, items: [{ price: nextPrice, metadata: nextMeta }], metadata: nextMeta }] : []),
         ],
       } as never);
 
