@@ -95,7 +95,7 @@ export function CategoryRow({ selected, onSelect }: { selected: Category | null;
     <div className="gw-cat-row" role="group" aria-label={t('landing.cat.rowLabel')}>
       {display.map(c => {
         const on = selected === c;
-        return <button key={c} type="button" className={`gw-cat ${on ? 'is-on' : ''}`} aria-pressed={on} onClick={() => { track('category_click', { category: c }); if (c === 'more') setAllOpen(true); else onSelect(on ? null : c); }}>
+        return <button key={c} type="button" className={`gw-cat ${on ? 'is-on' : ''}`} aria-pressed={on} onClick={() => { if (typeof navigator !== 'undefined' && 'vibrate' in navigator) navigator.vibrate(10); track('category_click', { category: c }); if (c === 'more') setAllOpen(true); else onSelect(on ? null : c); }}>
           <span className="gw-cat-circle"><GwIcon name={CATEGORY_ICONS[c]} variant="marketing" size={32} /></span>
           <span className="gw-cat-label">{t(`landing.cat.${c}`)}</span>
         </button>;
