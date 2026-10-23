@@ -39,3 +39,4 @@
 - Profile and offer covers use uploader-owned private media paths and the shared crop input; public host covers are signed server-side only after resolving the host slug, never from caller-supplied paths.
 - Day-60 scoreboard: raw counts come only from admin_day60(); targets and the go/adjust/rethink verdict are evaluated in src/lib/day60.ts so thresholds live in one tested place.
 - Parked features are gated by feature_* flags via src/lib/feature-flags.tsx; admins always see them and off routes throw notFound, so launch scope changes from /admin?tab=flags.
+- Admin password sign-in uses the public /admin-login page and existing Cloud Auth accounts; getAdminAccess validates the authenticated role before navigation, while every admin data handler retains its own role check, so the sign-in screen never grants privileges.
