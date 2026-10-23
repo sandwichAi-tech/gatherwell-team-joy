@@ -32,6 +32,7 @@ import { Route as LegalDocRouteImport } from './routes/legal.$doc'
 import { Route as RCodeRouteImport } from './routes/r.$code'
 import { Route as TSlugRouteImport } from './routes/t.$slug'
 import { Route as UnsubscribeTokenRouteImport } from './routes/unsubscribe.$token'
+import { Route as AuthenticatedAppBlueprintsRouteImport } from './routes/_authenticated/_app/blueprints'
 import { Route as AuthenticatedAppCirclesRouteImport } from './routes/_authenticated/_app/circles'
 import { Route as AuthenticatedAppEarningsRouteImport } from './routes/_authenticated/_app/earnings'
 import { Route as AuthenticatedAppEventsRouteImport } from './routes/_authenticated/_app/events'
@@ -187,6 +188,12 @@ const UnsubscribeTokenRoute = UnsubscribeTokenRouteImport.update({
   path: '/unsubscribe/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAppBlueprintsRoute =
+  AuthenticatedAppBlueprintsRouteImport.update({
+    id: '/blueprints',
+    path: '/blueprints',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppCirclesRoute = AuthenticatedAppCirclesRouteImport.update({
   id: '/circles',
   path: '/circles',
@@ -434,6 +441,7 @@ export interface FileRoutesByFullPath {
   '/r/$code': typeof RCodeRoute
   '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
+  '/blueprints': typeof AuthenticatedAppBlueprintsRoute
   '/circles': typeof AuthenticatedAppCirclesRoute
   '/earnings': typeof AuthenticatedAppEarningsRoute
   '/events': typeof AuthenticatedAppEventsRoute
@@ -498,6 +506,7 @@ export interface FileRoutesByTo {
   '/r/$code': typeof RCodeRoute
   '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
+  '/blueprints': typeof AuthenticatedAppBlueprintsRoute
   '/circles': typeof AuthenticatedAppCirclesRoute
   '/earnings': typeof AuthenticatedAppEarningsRoute
   '/events': typeof AuthenticatedAppEventsRoute
@@ -565,6 +574,7 @@ export interface FileRoutesById {
   '/r/$code': typeof RCodeRoute
   '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
+  '/_authenticated/_app/blueprints': typeof AuthenticatedAppBlueprintsRoute
   '/_authenticated/_app/circles': typeof AuthenticatedAppCirclesRoute
   '/_authenticated/_app/earnings': typeof AuthenticatedAppEarningsRoute
   '/_authenticated/_app/events': typeof AuthenticatedAppEventsRoute
@@ -631,6 +641,7 @@ export interface FileRouteTypes {
     | '/r/$code'
     | '/t/$slug'
     | '/unsubscribe/$token'
+    | '/blueprints'
     | '/circles'
     | '/earnings'
     | '/events'
@@ -695,6 +706,7 @@ export interface FileRouteTypes {
     | '/r/$code'
     | '/t/$slug'
     | '/unsubscribe/$token'
+    | '/blueprints'
     | '/circles'
     | '/earnings'
     | '/events'
@@ -761,6 +773,7 @@ export interface FileRouteTypes {
     | '/r/$code'
     | '/t/$slug'
     | '/unsubscribe/$token'
+    | '/_authenticated/_app/blueprints'
     | '/_authenticated/_app/circles'
     | '/_authenticated/_app/earnings'
     | '/_authenticated/_app/events'
@@ -998,6 +1011,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/unsubscribe/$token'
       preLoaderRoute: typeof UnsubscribeTokenRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/_app/blueprints': {
+      id: '/_authenticated/_app/blueprints'
+      path: '/blueprints'
+      fullPath: '/blueprints'
+      preLoaderRoute: typeof AuthenticatedAppBlueprintsRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
     }
     '/_authenticated/_app/circles': {
       id: '/_authenticated/_app/circles'
@@ -1290,6 +1310,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAppRouteRouteChildren {
+  AuthenticatedAppBlueprintsRoute: typeof AuthenticatedAppBlueprintsRoute
   AuthenticatedAppCirclesRoute: typeof AuthenticatedAppCirclesRoute
   AuthenticatedAppEarningsRoute: typeof AuthenticatedAppEarningsRoute
   AuthenticatedAppEventsRoute: typeof AuthenticatedAppEventsRoute
@@ -1326,6 +1347,7 @@ interface AuthenticatedAppRouteRouteChildren {
 }
 
 const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
+  AuthenticatedAppBlueprintsRoute: AuthenticatedAppBlueprintsRoute,
   AuthenticatedAppCirclesRoute: AuthenticatedAppCirclesRoute,
   AuthenticatedAppEarningsRoute: AuthenticatedAppEarningsRoute,
   AuthenticatedAppEventsRoute: AuthenticatedAppEventsRoute,
