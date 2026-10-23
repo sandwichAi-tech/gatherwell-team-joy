@@ -1,6 +1,6 @@
 // Renders nothing with a live token. When the token is missing (a build shipped
 // before go-live finished) it tells the customer checkout is not open yet.
-const clientToken = import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN;
+const clientToken = import.meta.env['VITE_PAYMENTS_CLIENT_TOKEN'] as string | undefined;
 
 export function PaymentTestModeBanner() {
   if (!clientToken) {
