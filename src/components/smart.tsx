@@ -59,6 +59,7 @@ export function DailyBriefCard() {
     {data.lines.length ? <ul className="brief-lines">{data.lines.map(line => {
       const content = <>{text(line)}<ArrowRight /></>;
       return <li key={line.key}>{line.target === 'team' ? <Link to="/team/insights">{content}</Link>
+        : line.label === 'signups' ? <Link to="/event/$id/guests" params={{ id: line.id ?? '' }}>{content}</Link>
         : line.target === 'resource' ? line.values['kind'] === 'recipe' ? <Link to="/learn/recipe/$id" params={{ id: line.id ?? '' }}>{content}</Link>
           : line.values['kind'] === 'track' ? <Link to="/learn/track/$id" params={{ id: line.id ?? '' }}>{content}</Link>
           : <Link to="/learn/lesson/$id" params={{ id: line.id ?? '' }}>{content}</Link>
