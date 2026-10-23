@@ -1,6 +1,6 @@
 # Walkthrough 1.4 — Resources (October 23)
-- [ ] Enable existing Learn for everyone, rename navigation/page labels to Resources, keep internal routes, and hide empty/broken entries.
-- [ ] Verify normal-account main navigation on phone/desktop, existing content access, and document hidden sections in CHANGELOG.md.
+- [x] Enable existing Learn for everyone, rename navigation/page labels to Resources, keep internal routes, and hide empty/broken entries; documented in CHANGELOG.md, 21 targeted checks passed.
+- [ ] Verify normal-account main navigation on phone/desktop and recipe interactions — waits on a non-admin preview sign-in; explicit-account sign-in permission declined. No existing tracks/lessons to exercise.
 
 # Walkthrough 1.3 — Event Blueprints (October 23)
 - [x] Reuse the existing blueprint library/editor; added Team and Events entry points, full defaults, host save-as, edit/delete and reliable creation prefill.
@@ -16,7 +16,7 @@
 - [x] Rename team templates to Event blueprints with a clear explainer
 - [x] Challenge form: one title/description in the creator's language (copied to the other)
 - [x] Hosts and leaders can edit their own liability waiver from Team
-- [ ] Reorganize Learn into Resources (guides, downloads, replays; recipes as a tag) and move customer challenges there — waits on your go-ahead, Learn is parked in launch mode
+- [ ] Section 7: reorganize Resources (guides, downloads, replays; recipes as a tag) and move customer challenges there — navigation restored in Section 1.4; content reorganization deferred
 - [x] Show blueprints inside the New event form
 
 # AD2 — Admin message retry
