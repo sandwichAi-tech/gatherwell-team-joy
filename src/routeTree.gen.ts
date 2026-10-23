@@ -64,6 +64,7 @@ import { Route as ApiPublicCalendarTokenRouteImport } from './routes/api/public/
 import { Route as ApiPublicEmailMailgunRouteImport } from './routes/api/public/email/mailgun'
 import { Route as ApiPublicEmailResendRouteImport } from './routes/api/public/email/resend'
 import { Route as ApiPublicOutboxProcessRouteImport } from './routes/api/public/outbox/process'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicSmsInboundRouteImport } from './routes/api/public/sms/inbound'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe/webhook'
 import { Route as AuthenticatedAppEventIdCheckinRouteImport } from './routes/_authenticated/_app/event_.$id.checkin'
@@ -358,6 +359,12 @@ const ApiPublicOutboxProcessRoute = ApiPublicOutboxProcessRouteImport.update({
   path: '/api/public/outbox/process',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicSmsInboundRoute = ApiPublicSmsInboundRouteImport.update({
   id: '/api/public/sms/inbound',
   path: '/api/public/sms/inbound',
@@ -458,6 +465,7 @@ export interface FileRoutesByFullPath {
   '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
   '/api/public/email/resend': typeof ApiPublicEmailResendRoute
   '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/sms/inbound': typeof ApiPublicSmsInboundRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
   '/admin/': typeof AuthenticatedAppAdminIndexRoute
@@ -521,6 +529,7 @@ export interface FileRoutesByTo {
   '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
   '/api/public/email/resend': typeof ApiPublicEmailResendRoute
   '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/sms/inbound': typeof ApiPublicSmsInboundRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
   '/admin': typeof AuthenticatedAppAdminIndexRoute
@@ -587,6 +596,7 @@ export interface FileRoutesById {
   '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
   '/api/public/email/resend': typeof ApiPublicEmailResendRoute
   '/api/public/outbox/process': typeof ApiPublicOutboxProcessRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/sms/inbound': typeof ApiPublicSmsInboundRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
   '/_authenticated/_app/admin/': typeof AuthenticatedAppAdminIndexRoute
@@ -652,6 +662,7 @@ export interface FileRouteTypes {
     | '/api/public/email/mailgun'
     | '/api/public/email/resend'
     | '/api/public/outbox/process'
+    | '/api/public/payments/webhook'
     | '/api/public/sms/inbound'
     | '/api/public/stripe/webhook'
     | '/admin/'
@@ -715,6 +726,7 @@ export interface FileRouteTypes {
     | '/api/public/email/mailgun'
     | '/api/public/email/resend'
     | '/api/public/outbox/process'
+    | '/api/public/payments/webhook'
     | '/api/public/sms/inbound'
     | '/api/public/stripe/webhook'
     | '/admin'
@@ -780,6 +792,7 @@ export interface FileRouteTypes {
     | '/api/public/email/mailgun'
     | '/api/public/email/resend'
     | '/api/public/outbox/process'
+    | '/api/public/payments/webhook'
     | '/api/public/sms/inbound'
     | '/api/public/stripe/webhook'
     | '/_authenticated/_app/admin/'
@@ -818,6 +831,7 @@ export interface RootRouteChildren {
   ApiPublicEmailMailgunRoute: typeof ApiPublicEmailMailgunRoute
   ApiPublicEmailResendRoute: typeof ApiPublicEmailResendRoute
   ApiPublicOutboxProcessRoute: typeof ApiPublicOutboxProcessRoute
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   ApiPublicSmsInboundRoute: typeof ApiPublicSmsInboundRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
 }
@@ -1209,6 +1223,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicOutboxProcessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/sms/inbound': {
       id: '/api/public/sms/inbound'
       path: '/api/public/sms/inbound'
@@ -1385,6 +1406,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicEmailMailgunRoute: ApiPublicEmailMailgunRoute,
   ApiPublicEmailResendRoute: ApiPublicEmailResendRoute,
   ApiPublicOutboxProcessRoute: ApiPublicOutboxProcessRoute,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   ApiPublicSmsInboundRoute: ApiPublicSmsInboundRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
 }

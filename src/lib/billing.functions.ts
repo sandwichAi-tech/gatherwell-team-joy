@@ -10,76 +10,178 @@ export async function promoFor(sb: { rpc: (fn: any, args?: any) => any }, code: 
 }
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
+import type { StripeEnv } from '@/lib/stripe.server';
 
 const origin = z.string().url().refine(u => /^https:\/\//.test(u) || /^http:\/\/localhost(:\d+)?/.test(u));
+const environment = z.enum(['sandbox', 'live']);
 type Result = { ok: true; url: string } | { ok: false; error: string };
+/** Inline checkout: the client mounts the provider's own payment form with this. */
+type CheckoutResult = { ok: true; clientSecret: string; returnUrl: string } | { ok: false; error: string };
 const notConnected: Result = { ok: false, error: 'not_connected' };
 
-/** Public: is Stripe connected? Never returns the key. */
-export const getPaymentsStatus = createServerFn({ method: 'GET' }).handler(async () => ({ connected: !!process.env['STRIPE_SECRET_KEY'] }));
+/** Plans the app sells, mapped to the catalog price created for each. */
+const PLAN_PRICE_KEYS = { growth: 'advanced_monthly', pro: 'pro_monthly' } as const;
+const LICENSE_PRICE_KEYS = { team25: 'team25_monthly', team100: 'team100_monthly' } as const;
+const LICENSE_SEATS = { team25: 25, team100: 100 } as const;
 
-async function ensureCustomer(userId: string, email: string | undefined) {
+/** Public: is a payment connection configured? Never returns a key. */
+export const getPaymentsStatus = createServerFn({ method: 'GET' }).handler(async () => ({
+  connected: !!process.env['STRIPE_SANDBOX_API_KEY'] || !!process.env['STRIPE_LIVE_API_KEY'],
+}));
+
+async function ensureCustomer(userId: string, email: string | undefined, env: StripeEnv) {
   const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
-  const { stripe } = await import('./billing/stripe.server');
+  const { createStripeClient } = await import('@/lib/stripe.server');
+  const { resolveOrCreateCustomer } = await import('@/lib/billing/customer.server');
   const { data: b } = await supabaseAdmin.from('billing_accounts').select('stripe_customer_id').eq('user_id', userId).maybeSingle();
   if (b?.stripe_customer_id) return b.stripe_customer_id;
-  const c = await stripe<{ id: string }>('customers', { email, metadata: { user_id: userId } });
-  await supabaseAdmin.from('billing_accounts').upsert({ user_id: userId, stripe_customer_id: c.id }, { onConflict: 'user_id' });
-  return c.id;
+  const c = await resolveOrCreateCustomer(createStripeClient(env), { email, userId });
+  await supabaseAdmin.from('billing_accounts').upsert({ user_id: userId, stripe_customer_id: c }, { onConflict: 'user_id' });
+  return c;
 }
 
+/**
+ * Starts paying for a host plan. The provider's payment form is mounted inline
+ * with the returned secret; the account is activated by the payment webhook, so
+ * a closed tab never leaves a paid plan half-applied.
+ */
 export const startPlanCheckout = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ plan: z.enum(['growth', 'pro']), origin, lang: z.enum(['en', 'es']) }).parse(d))
-  .handler(async ({ data, context }): Promise<Result> => {
-    const { stripe, stripeKey } = await import('./billing/stripe.server');
-    if (!stripeKey()) return notConnected;
-    const { data: ps } = await context.supabase.from('plan_settings').select('monthly_price').eq('plan', data.plan).maybeSingle();
-    if (!ps?.monthly_price) return { ok: false, error: 'failed' };
-    // Founding coaches: free during the window, then the founding rate, locked while they stay on Pro.
-    const { data: st } = await context.supabase.rpc('my_plan_status');
-    const founding = data.plan === 'pro' ? (st as { founding?: { in_window: boolean; rate_cents: number } | null } | null)?.founding : null;
-    if (founding?.in_window) return { ok: false, error: 'founding_free' };
-    const price = founding ? founding.rate_cents : ps.monthly_price;
-    const customer = await ensureCustomer(context.userId, context.claims.email as string | undefined);
-    const meta = { kind: 'plan', user_id: context.userId, plan: data.plan, period: 'month', ...(founding ? { founding_rate: String(founding.rate_cents) } : {}) };
-    const s = await stripe<{ url: string }>('checkout/sessions', {
-      mode: 'subscription', customer, locale: data.lang === 'es' ? 'es-419' : 'en',
-      line_items: [{ quantity: 1, price_data: { currency: 'usd', unit_amount: price, recurring: { interval: 'month' }, product_data: { name: founding ? 'ZoheeWell Pro (Founding)' : data.plan === 'growth' ? 'ZoheeWell Advanced' : 'ZoheeWell Pro' } } }],
-      subscription_data: { metadata: meta }, metadata: meta,
-      success_url: `${data.origin}/plan?checkout=done`, cancel_url: `${data.origin}/plan`,
-    });
-    return { ok: true, url: s.url };
+  .inputValidator((d: unknown) => z.object({ plan: z.enum(['growth', 'pro']), origin, lang: z.enum(['en', 'es']), environment }).parse(d))
+  .handler(async ({ data, context }): Promise<CheckoutResult> => {
+    const { createStripeClient, getStripeErrorMessage } = await import('@/lib/stripe.server');
+    try {
+      const { data: ps } = await context.supabase.from('plan_settings').select('monthly_price').eq('plan', data.plan).maybeSingle();
+      if (!ps?.monthly_price) return { ok: false, error: 'failed' };
+      // Founding coaches: free during the window, then the founding rate, locked while they stay on Pro.
+      const { data: st } = await context.supabase.rpc('my_plan_status');
+      const status = st as { own_plan?: string; founding?: { in_window: boolean; rate_cents: number } | null } | null;
+      if (status?.own_plan === data.plan) return { ok: false, error: 'already_on_plan' };
+      const founding = data.plan === 'pro' ? status?.founding ?? null : null;
+      if (founding?.in_window) return { ok: false, error: 'founding_free' };
+
+      const stripe = createStripeClient(data.environment);
+      const customer = await ensureCustomer(context.userId, context.claims.email as string | undefined, data.environment);
+      const meta = { kind: 'plan', user_id: context.userId, plan: data.plan, period: 'month', userId: context.userId, ...(founding ? { founding_rate: String(founding.rate_cents) } : {}) };
+      const name = founding ? 'ZoheeWell Pro (Founding)' : data.plan === 'growth' ? 'ZoheeWell Advanced' : 'ZoheeWell Pro';
+
+      let lineItem: Record<string, unknown>;
+      if (founding) {
+        // A founding rate is a personal price, so it is quoted inline rather than from the catalog.
+        lineItem = { quantity: 1, price_data: { currency: 'usd', unit_amount: founding.rate_cents, recurring: { interval: 'month' }, product_data: { name } } };
+      } else {
+        const prices = await stripe.prices.list({ lookup_keys: [PLAN_PRICE_KEYS[data.plan]] });
+        if (!prices.data.length) return { ok: false, error: 'price_not_found' };
+        // The catalog and plan_settings must agree, or the app would show one
+        // price and charge another.
+        if (prices.data[0].unit_amount !== ps.monthly_price) return { ok: false, error: 'price_mismatch' };
+        lineItem = { price: prices.data[0].id, quantity: 1 };
+      }
+
+      const session = await stripe.checkout.sessions.create({
+        line_items: [lineItem], mode: 'subscription', ui_mode: 'embedded_page',
+        return_url: `${data.origin}/plan?checkout=done&session_id={CHECKOUT_SESSION_ID}`,
+        customer, locale: data.lang === 'es' ? 'es-419' : 'en',
+        // Seller is in the United States and the product is software, so the
+        // provider also handles tax, fraud, disputes and transaction support.
+        managed_payments: { enabled: true },
+        metadata: meta, subscription_data: { metadata: meta },
+      } as never);
+      if (!session.client_secret) return { ok: false, error: 'no_client_secret' };
+      return { ok: true, clientSecret: session.client_secret, returnUrl: `${data.origin}/plan` };
+    } catch (error) {
+      return { ok: false, error: getStripeErrorMessage(error) };
+    }
   });
 
+/** Starts paying for a team seat license; a leader only. */
 export const startLicenseCheckout = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ teamId: z.string().uuid(), tier: z.enum(['team25', 'team100']), origin, lang: z.enum(['en', 'es']) }).parse(d))
-  .handler(async ({ data, context }): Promise<Result> => {
-    const { data: ok } = await context.supabase.rpc('is_team_member', { _team_id: data.teamId, _roles: ['leader'] });
-    if (!ok) return { ok: false, error: 'forbidden' };
-    const { stripe, stripeKey, LICENSE_PRICES } = await import('./billing/stripe.server');
-    if (!stripeKey()) return notConnected;
-    const customer = await ensureCustomer(context.userId, context.claims.email as string | undefined);
-    const meta = { kind: 'license', user_id: context.userId, team_id: data.teamId, tier: data.tier };
-    const s = await stripe<{ url: string }>('checkout/sessions', {
-      mode: 'subscription', customer, locale: data.lang === 'es' ? 'es-419' : 'en',
-      line_items: [{ quantity: 1, price_data: { currency: 'usd', unit_amount: LICENSE_PRICES[data.tier].cents, recurring: { interval: 'month' }, product_data: { name: `ZoheeWell ${data.tier === 'team25' ? 'Team 25' : 'Team 100'}` } } }],
-      subscription_data: { metadata: meta }, metadata: meta,
-      success_url: `${data.origin}/plan/seats?checkout=done`, cancel_url: `${data.origin}/plan/seats`,
-    });
-    return { ok: true, url: s.url };
+  .inputValidator((d: unknown) => z.object({ teamId: z.string().uuid(), tier: z.enum(['team25', 'team100']), origin, lang: z.enum(['en', 'es']), environment }).parse(d))
+  .handler(async ({ data, context }): Promise<CheckoutResult> => {
+    const { createStripeClient, getStripeErrorMessage } = await import('@/lib/stripe.server');
+    try {
+      const { data: ok } = await context.supabase.rpc('is_team_member', { _team_id: data.teamId, _roles: ['leader'] });
+      if (!ok) return { ok: false, error: 'forbidden' };
+      const { data: existing } = await context.supabase.from('team_licenses').select('status').eq('team_id', data.teamId).maybeSingle();
+      if (existing && ['active', 'past_due', 'trialing'].includes(existing.status)) return { ok: false, error: 'already_on_license' };
+
+      const stripe = createStripeClient(data.environment);
+      const customer = await ensureCustomer(context.userId, context.claims.email as string | undefined, data.environment);
+      const prices = await stripe.prices.list({ lookup_keys: [LICENSE_PRICE_KEYS[data.tier]] });
+      if (!prices.data.length) return { ok: false, error: 'price_not_found' };
+      const meta = { kind: 'license', user_id: context.userId, team_id: data.teamId, tier: data.tier, userId: context.userId };
+      const session = await stripe.checkout.sessions.create({
+        line_items: [{ price: prices.data[0].id, quantity: 1 }], mode: 'subscription', ui_mode: 'embedded_page',
+        return_url: `${data.origin}/plan/seats?checkout=done&session_id={CHECKOUT_SESSION_ID}`,
+        customer, locale: data.lang === 'es' ? 'es-419' : 'en',
+        managed_payments: { enabled: true },
+        metadata: meta, subscription_data: { metadata: meta },
+      } as never);
+      if (!session.client_secret) return { ok: false, error: 'no_client_secret' };
+      return { ok: true, clientSecret: session.client_secret, returnUrl: `${data.origin}/plan/seats` };
+    } catch (error) {
+      return { ok: false, error: getStripeErrorMessage(error) };
+    }
   });
 
+/**
+ * Schedules a plan switch for the end of the paid month instead of changing it
+ * now, so nobody loses features they already paid for. Uses a subscription
+ * schedule: the current phase runs to the period end, then the new plan starts.
+ */
+export const schedulePlanChange = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ target: z.enum(['growth', 'pro', 'free']), environment }).parse(d))
+  .handler(async ({ data, context }): Promise<{ ok: true; at: string } | { ok: false; error: string }> => {
+    const { createStripeClient, getStripeErrorMessage } = await import('@/lib/stripe.server');
+    try {
+      const { data: b } = await context.supabase.from('billing_accounts').select('plan, stripe_subscription_id, renews_at, status').eq('user_id', context.userId).maybeSingle();
+      if (!b?.stripe_subscription_id || b.plan === 'free') return { ok: false, error: 'no_subscription' };
+      if (b.plan === data.target) return { ok: false, error: 'already_on_plan' };
+
+      const stripe = createStripeClient(data.environment);
+      const sub = await stripe.subscriptions.retrieve(b.stripe_subscription_id);
+      const currentPrice = sub.items?.data?.[0]?.price?.id;
+      if (!currentPrice) return { ok: false, error: 'no_subscription' };
+      const endAt = sub.current_period_end ?? sub.items?.data?.[0]?.current_period_end ?? (b.renews_at ? Math.floor(new Date(b.renews_at).getTime() / 1000) : null);
+      if (!endAt) return { ok: false, error: 'no_period_end' };
+
+      const nextMeta = { kind: 'plan', user_id: context.userId, plan: data.target, period: 'month', userId: context.userId };
+      const nextLine = data.target === 'free'
+        ? []
+        : [{ price: (await stripe.prices.list({ lookup_keys: [PLAN_PRICE_KEYS[data.target]] })).data[0]?.id, metadata: nextMeta }].filter(x => !!x.price);
+      if (data.target !== 'free' && !nextLine.length) return { ok: false, error: 'price_not_found' };
+
+      const schedule = await stripe.subscriptionSchedules.create({ from_subscription: sub.id });
+      await stripe.subscriptionSchedules.update(schedule.id, {
+        end_behavior: data.target === 'free' ? 'cancel' : 'release',
+        phases: [
+          { start_date: schedule.phases[0].start_date, end_date: endAt, items: [{ price: currentPrice }], metadata: schedule.phases[0].metadata ?? {} },
+          ...(data.target === 'free' ? [] : [{ start_date: endAt, end_date: null, items: nextLine, metadata: nextMeta }]),
+        ],
+      } as never);
+
+      await context.supabase.from('billing_accounts').update({ pending_plan: data.target, pending_plan_at: new Date(endAt * 1000).toISOString() }).eq('user_id', context.userId);
+      return { ok: true, at: new Date(endAt * 1000).toISOString() };
+    } catch (error) {
+      return { ok: false, error: getStripeErrorMessage(error) };
+    }
+  });
+
+/** Hosted billing page where a person cancels, updates a card or sees invoices. */
 export const openBillingPortal = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ origin }).parse(d))
+  .inputValidator((d: unknown) => z.object({ origin, environment }).parse(d))
   .handler(async ({ data, context }): Promise<Result> => {
-    const { stripe, stripeKey } = await import('./billing/stripe.server');
-    if (!stripeKey()) return notConnected;
-    const customer = await ensureCustomer(context.userId, context.claims.email as string | undefined);
-    const s = await stripe<{ url: string }>('billing_portal/sessions', { customer, return_url: `${data.origin}/plan` });
-    return { ok: true, url: s.url };
+    const { createStripeClient, getStripeErrorMessage } = await import('@/lib/stripe.server');
+    try {
+      const customer = await ensureCustomer(context.userId, context.claims.email as string | undefined, data.environment);
+      const portal = await createStripeClient(data.environment).billingPortal.sessions.create({ customer, return_url: `${data.origin}/plan` });
+      return { ok: true, url: portal.url };
+    } catch (error) {
+      return { ok: false, error: getStripeErrorMessage(error) };
+    }
   });
 
 export const startConnectOnboarding = createServerFn({ method: 'POST' })
