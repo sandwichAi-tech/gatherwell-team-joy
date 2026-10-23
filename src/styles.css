@@ -2008,3 +2008,13 @@ a.gw-cat-chip:hover{background:#fff}
 /* Public marketing surfaces stay light in both saved themes. */
 .gw-landing .brand-logo-plum{display:block}
 .gw-landing .brand-logo-ivory{display:none}
+
+/* Round category buttons: solid fill when selected, instant press feedback on touch */
+.gw-landing .gw-cat{outline:none}
+.gw-landing .gw-cat:focus-visible .gw-cat-circle{box-shadow:0 0 0 3px var(--background),0 0 0 5px var(--plum)}
+.gw-landing .gw-cat .gw-cat-circle{transition:transform .12s ease-out,background-color .12s ease-out,box-shadow .12s ease-out}
+.gw-landing .gw-cat:active .gw-cat-circle{transform:scale(.92);background:linear-gradient(#D9CFE6,#D9CFE6) padding-box,linear-gradient(#7A5FA8,#7A5FA8) border-box}
+.gw-landing .gw-cat.is-on .gw-cat-circle,.dark .gw-landing .gw-cat.is-on .gw-cat-circle{background:#35263F;border-color:#35263F;box-shadow:0 0 0 3px var(--background),0 0 0 5px #F4C7A1,0 10px 22px -10px rgba(53,38,63,.6);transform:none}
+.gw-landing .gw-cat.is-on .gw-cat-circle svg.gw-icon,.gw-landing .gw-cat.is-on .gw-cat-circle .gw-icon{color:#fff!important}
+.gw-landing .gw-cat.is-on .gw-cat-circle svg *{opacity:1}
+.gw-landing .gw-cat.is-on .gw-cat-label{color:var(--plum);font-weight:800}
