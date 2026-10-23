@@ -8,6 +8,7 @@ export async function promoFor(sb: { rpc: (fn: any, args?: any) => any }, code: 
   const { data } = await sb.rpc('check_promo', { _code: c, _kind: kind, _target: target, _buyer: buyer });
   return (data as PromoCheck | null) ?? { ok: false, error: 'invalid' };
 }
+import { LICENSES } from './billing';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import type { StripeEnv } from '@/lib/stripe.server';
@@ -108,12 +109,15 @@ export const startLicenseCheckout = createServerFn({ method: 'POST' })
 
       const stripe = createStripeClient(data.environment);
       const customer = await ensureCustomer(context.userId, context.claims.email as string | undefined, data.environment);
-      const prices = await stripe.prices.list({ lookup_keys: [LICENSE_PRICE_KEYS[data.tier]] });
-      if (!prices.data.length) return { ok: false, error: 'price_not_found' };
+      const listed = (await stripe.prices.list({ lookup_keys: [LICENSE_PRICE_KEYS[data.tier]] })).data[0];
+      if (!listed) return { ok: false, error: 'price_not_found' };
+      // The catalog and the price the leader sees must agree, or the app would
+      // show one amount and charge another.
+      const shown = LICENSES.find(l => l.id === data.tier);
+      if (!shown || listed.unit_amount !== shown.cents) return { ok: false, error: 'price_mismatch' };
       const meta = { kind: 'license', user_id: context.userId, team_id: data.teamId, tier: data.tier, userId: context.userId };
       const session = await stripe.checkout.sessions.create({
-        line_items: [{ price: prices.data[0].id, quantity: 1 }], mode: 'subscription', ui_mode: 'embedded_page',
-        return_url: `${data.origin}/plan/seats?checkout=done&session_id={CHECKOUT_SESSION_ID}`,
+        line_items: [{ price: listed.id, quantity: 1 }], mode: 'subscription', ui_mode: 'embedded_page',
         customer, locale: data.lang === 'es' ? 'es-419' : 'en',
         managed_payments: { enabled: true },
         metadata: meta, subscription_data: { metadata: meta },
