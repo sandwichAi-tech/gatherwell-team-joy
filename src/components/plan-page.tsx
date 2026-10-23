@@ -158,7 +158,7 @@ export function PlanPage() {
         <Meter label={t('billing.meterStorage', { used: formatStorage(usedMb, lang), max: formatStorage(lim.storage_mb, lang) })} used={usedMb} max={lim.storage_mb} />
         <Meter label={t('billing.meterAssistant', { used: st.usage.assistant, max: lim.assistant })} used={st.usage.assistant} max={lim.assistant} />
       </div>
-      {st.has_customer && <Button variant="secondary" disabled={gate.busy} onClick={() => void gate.run(() => portal({ data: { origin } }))}><CreditCard />{t('billing.manage')}</Button>}
+      {st.has_customer && <Button variant="secondary" disabled={gate.busy} onClick={() => void gate.run(() => portal({ data: { origin, environment: getStripeEnvironment() } }), { newTab: true })}><CreditCard />{t('billing.manage')}</Button>}
     </section>
 
     {st.source === 'own' && (() => {
