@@ -51,16 +51,16 @@ export function DailyBriefCard() {
   const { data } = useSuspenseQuery(dailyBriefQuery(userId, lang));
   const text = (line: typeof data.lines[number]) => t(`smart.brief.${line.label}`, {
     ...line.values,
-    when: typeof line.values.when === 'string' ? new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' }).format(new Date(line.values.when)) : '',
-    place: line.values.place ? ` · ${line.values.place}` : '',
+    when: typeof line.values['when'] === 'string' ? new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' }).format(new Date(line.values['when'])) : '',
+    place: line.values['place'] ? ` · ${line.values['place']}` : '',
   });
   return <section className="brief-card morning-brief" aria-labelledby="brief-h">
     <div className="section-heading"><div><span className="eyebrow">{t('smart.brief.eyebrow')}</span><h2 id="brief-h">{t('smart.brief.title')}</h2></div></div>
     {data.lines.length ? <ul className="brief-lines">{data.lines.map(line => {
       const content = <>{text(line)}<ArrowRight /></>;
       return <li key={line.key}>{line.target === 'team' ? <Link to="/team/insights">{content}</Link>
-        : line.target === 'resource' ? line.values.kind === 'recipe' ? <Link to="/learn/recipe/$id" params={{ id: line.id ?? '' }}>{content}</Link>
-          : line.values.kind === 'track' ? <Link to="/learn/track/$id" params={{ id: line.id ?? '' }}>{content}</Link>
+        : line.target === 'resource' ? line.values['kind'] === 'recipe' ? <Link to="/learn/recipe/$id" params={{ id: line.id ?? '' }}>{content}</Link>
+          : line.values['kind'] === 'track' ? <Link to="/learn/track/$id" params={{ id: line.id ?? '' }}>{content}</Link>
           : <Link to="/learn/lesson/$id" params={{ id: line.id ?? '' }}>{content}</Link>
         : line.target === 'attending' ? <Link to="/e/$id" params={{ id: line.id ?? '' }}>{content}</Link>
         : <Link to="/event/$id" params={{ id: line.id ?? '' }}>{content}</Link>}</li>;
