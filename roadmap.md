@@ -133,4 +133,13 @@
 - [ ] 7. Load speed on phones (first screen under 2s)
 - [ ] 8. Nick's notes: Learn → Resources, customer challenges, coach templates in picker
 - [ ] 9. Final security scan, publish, beta tester checklist
-- Parked until after beta: paid tickets/plans (Stripe), text messages, AI drafts, team map, People list
+- Parked until after beta: text messages, AI drafts, team map, People list
+
+# Payments — October 23
+- [x] Enable built-in payments; test environment created
+- [x] Add the four plans already in the app to the payment provider: Pro $99/mo, Advanced $49/mo, Team 25 $199/mo, Team 100 $499/mo (each with a software-subscription tax code)
+- [ ] Confirm purchase / cancel / upgrade / downgrade behaviour with Nick, then keep or change it
+- [ ] Point checkout and the payment notifications at the new connection so checkout actually runs (currently they read keys from an older setup that is not configured)
+- [ ] Switch checkout to the inline payment form with tax and compliance handling turned on
+- [ ] Add the test-mode notice so preview buyers know no real money moves
+- [ ] Verify a real test purchase end to end and read the result back in the app
