@@ -119,6 +119,9 @@ export const getDailyBrief = createServerFn({ method: 'POST' })
       return result.data;
     };
     const memberships = checked(await sb.from('team_members').select('team_id, role').eq('user_id', uid)) ?? [];
+    const profile = checked(await sb.from('profiles').select('active_team_id').eq('id', uid).maybeSingle());
+    const leadMembership = memberships.find(m => m.role === 'leader' && m.team_id === profile?.active_team_id) ?? memberships.find(m => m.role === 'leader');
+    const teamName = leadMembership ? checked(await sb.from('teams').select('name').eq('id', leadMembership.team_id).maybeSingle())?.name ?? '' : '';
     const leaderTeams = new Set(memberships.filter(m => m.role === 'leader').map(m => m.team_id));
     for (const root of [...leaderTeams]) {
       const tree = checked(await sb.rpc('team_tree', { _root: root }));
@@ -150,7 +153,7 @@ export const getDailyBrief = createServerFn({ method: 'POST' })
       ...lessons.filter(l => trackIds.has(l.track_id)).map(l => ({ id: l.id, title: title(l), created_at: l.created_at, kind: 'lesson' as const })),
       ...recipes.filter(r => r.created_by !== uid && r.private_owner !== uid).map(r => ({ id: r.id, title: title(r), created_at: r.created_at, kind: 'recipe' as const })),
     ] : [];
-    return { lines: buildMorningBrief({ userId: uid, now, timezone: data.tz, events, attending, signups, leaderTeams: [...leaderTeams], hosts, resources }) };
+    return { lines: buildMorningBrief({ userId: uid, now, timezone: data.tz, events, attending, signups, leaderTeams: [...leaderTeams], teamName, hosts, resources }) };
   });
 
 /** Bilingual share caption (English then Spanish). Claude when the key exists, otherwise a warm preview caption. */

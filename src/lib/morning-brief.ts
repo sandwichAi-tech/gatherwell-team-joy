@@ -4,7 +4,7 @@ export type BriefInput = {
   userId: string; now: string; timezone: string; events: BriefEvent[];
   attending: { event: BriefEvent; code: string | null }[];
   signups: { event_id: string; created_at: string }[];
-  leaderTeams: string[]; hosts: { user_id: string; team_id: string }[];
+  leaderTeams: string[]; teamName?: string; hosts: { user_id: string; team_id: string }[];
   resources: { id: string; title: string; created_at: string; kind: 'track' | 'lesson' | 'recipe' }[];
 };
 export function briefDay(iso: string, timezone: string) {
@@ -34,10 +34,10 @@ export function buildMorningBrief(input: BriefInput): BriefLine[] {
   if (attendance) lines.push({ key: 'attending', label: attendance.code ? 'attendingCode' : 'attending', values: { title: attendance.event.title, when: attendance.event.starts_at, code: attendance.code ?? '' }, target: 'attending', id: attendance.event.id });
   if (input.leaderTeams.length) {
     const teamEvents = input.events.filter(e => e.status === 'published' && e.team_id && input.leaderTeams.includes(e.team_id) && inWeek(e));
-    if (teamEvents.length) lines.push({ key: 'team-events', label: 'teamEvents', values: { count: teamEvents.length }, target: 'team' });
+    if (teamEvents.length) lines.push({ key: 'team-events', label: 'teamEvents', values: { count: teamEvents.length, team: input.teamName ?? '' }, target: 'team' });
     const scheduled = new Set(upcoming.map(e => e.host_id));
     const quiet = new Set(input.hosts.filter(h => input.leaderTeams.includes(h.team_id) && !scheduled.has(h.user_id)).map(h => h.user_id));
-    if (quiet.size) lines.push({ key: 'quiet-hosts', label: 'quietHosts', values: { count: quiet.size }, target: 'team' });
+    if (quiet.size) lines.push({ key: 'quiet-hosts', label: 'quietHosts', values: { count: quiet.size, team: input.teamName ?? '' }, target: 'team' });
   }
   const cutoff = shiftDay(today, -7);
   for (const r of input.resources.filter(r => r.created_at <= now && briefDay(r.created_at, timezone) >= cutoff).sort((a, b) => b.created_at.localeCompare(a.created_at))) {

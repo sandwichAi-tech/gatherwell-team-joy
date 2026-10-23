@@ -1,6 +1,6 @@
 # Walkthrough 1.6 — Personal morning brief (October 23)
-- [ ] Reuse Home’s brief with real user-scoped hosting, attending, leader-team and new-resource lines; hide empty lines and provide Create an event fallback.
-- [ ] Test rules and tappable destinations; compare two signed-in accounts and document verification in CHANGELOG.md.
+- [x] Reuse Home’s brief with real user-scoped hosting, attending, leader-team and new-resource lines; hide empty lines and provide Create an event fallback.
+- [x] 24 checks passed; Scott/Nick signed-in briefs differed and real team counts matched Cloud. Team links opened populated Insights; phone/desktop text fit. CHANGELOG.md records definitions and unpopulated hosting/attending/resource browser limits.
 
 # Walkthrough 1.4 — Resources (October 23)
 - [x] Enable existing Learn for everyone, rename navigation/page labels to Resources, keep internal routes, and hide empty/broken entries; documented in CHANGELOG.md, 21 targeted checks passed.
