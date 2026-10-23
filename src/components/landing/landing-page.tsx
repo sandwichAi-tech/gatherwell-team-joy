@@ -1,4 +1,8 @@
 import { useState } from 'react';
+import { ResponsiveSheet } from '@/components/responsive-sheet';
+import { Button } from '@/components/ui/button';
+import { CATEGORY_ICONS } from '@/components/gw-icon';
+import { CATEGORIES, type Category } from '@/lib/landing';
 import { Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -146,5 +150,25 @@ function FinalCta() {
   return <section className="gw-home-sec gw-band gw-band-white" aria-labelledby="final-title"><div className="gw-container gw-home-final">
     <h2 id="final-title" className="gw-display gw-h2">{t('home.final.title')}</h2>
     <div className="gw-final-ctas"><StartHosting where="final" /><Link to="/discover" className="gw-btn gw-btn-secondary gw-btn-lg">{t('home.cta.exploreAll')}</Link></div>
+  </div></section>;
+}
+
+export function CategoryRow({ selected, onSelect }: { selected: Category | null; onSelect: (c: Category | null) => void }) {
+  const { t } = useTranslation();
+  const [allOpen, setAllOpen] = useState(false);
+  const display: Category[] = ['run', 'fitcamp', 'yoga', 'pilates', 'hike', 'walk', 'pickleball', 'more'];
+  return <section className="gw-band gw-band-white gw-cat-section"><div className="gw-container">
+    <div className="gw-cat-row" role="group" aria-label={t('landing.cat.rowLabel')}>
+      {display.map(c => {
+        const on = selected === c;
+        return <button key={c} type="button" className={`gw-cat ${on ? 'is-on' : ''}`} aria-pressed={on} onClick={() => { track('category_click', { category: c }); if (c === 'more') setAllOpen(true); else onSelect(on ? null : c); }}>
+          <span className="gw-cat-circle"><GwIcon name={CATEGORY_ICONS[c]} variant="marketing" size={32} /></span>
+          <span className="gw-cat-label">{t(`landing.cat.${c}`)}</span>
+        </button>;
+      })}
+    </div>
+    <ResponsiveSheet open={allOpen} onOpenChange={setAllOpen} title={t('marketing.allCategories')} icon="SquaresFour">
+      <div className="gw-category-options">{CATEGORIES.map(c => <Button key={c} variant="secondary" onClick={() => { onSelect(c); setAllOpen(false); track('category_click', { category: c }); }}><GwIcon name={CATEGORY_ICONS[c]} variant="marketing" size={24}/>{t(c === 'more' ? 'marketing.other' : `landing.cat.${c}`)}</Button>)}</div>
+    </ResponsiveSheet>
   </div></section>;
 }
