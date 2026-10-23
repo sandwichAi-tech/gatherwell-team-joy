@@ -6,7 +6,7 @@
     "home": "Home",
     "events": "Events",
     "team": "Team",
-    "learn": "Learn",
+    "learn": "Resources",
     "me": "Me",
     "label": "Main navigation",
     "discover": "Discover",
@@ -81,7 +81,7 @@
     "button": "Invite members"
   },
   "learn": {
-    "title": "Learn",
+    "title": "Resources",
     "eyebrow": "Workspace",
     "heading": "Shared knowledge",
     "sentence": "Tracks, live sessions and recipes from your team.",
@@ -158,7 +158,7 @@
     "home": "Your people, brought together.",
     "events": "Make time for events with your people.",
     "team": "A space for your team to connect and celebrate.",
-    "learn": "Fresh ideas and trainings for your team.",
+    "learn": "Explore tracks, lessons and recipes in ZoheeWell Resources.",
     "me": "Your ZoheeWell profile and preferences.",
     "login": "Sign in to ZoheeWell, the calm home for your team's events.",
     "onboarding": "Set up your ZoheeWell profile.",
@@ -1116,7 +1116,8 @@
     "yourTracks": "Your tracks",
     "live": "Live sessions",
     "recipes": "Recipes",
-    "manage": "Manage Learn",
+    "manage": "Manage Resources",
+    "noResources": "No resources to show yet.",
     "manageText": "Build tracks, schedule live sessions and share recipes with your team.",
     "continue": "Continue",
     "start": "Start",
@@ -1186,7 +1187,7 @@
     "completeEyebrow": "Track complete",
     "completeTitle": "You finished {{title}}",
     "completeText": "Nicely done. Your team will see it in Team wins.",
-    "backToLearn": "Back to Learn",
+    "backToLearn": "Back to Resources",
     "sample": {
       "welcome": {
         "title": "Welcome to the team",
@@ -1252,7 +1253,7 @@
     "started": "Started",
     "finished": "Finished",
     "tooLarge": "That file is too large (200 MB max).",
-    "leadersOnly": "Only leaders can manage Learn.",
+    "leadersOnly": "Only leaders can manage Resources.",
     "tab": {
       "tracks": "Tracks",
       "recipes": "Recipes",
@@ -2287,7 +2288,7 @@
       },
       "help": {
         "template": "Starter templates every team can copy and launch.",
-        "recipe": "Recipes every team sees in Learn.",
+        "recipe": "Recipes every team sees in Resources.",
         "badge": "Badges every team can earn or award. Automatic badges keep their rules.",
         "challenge_type": "Ready-made challenges leaders can start from."
       },
@@ -2360,7 +2361,7 @@
       "name": {
         "landing_headline": "Front page headline",
         "landing_testimonials": "Front page testimonials",
-        "feature_learn": "Learn tracks, lessons and recipes",
+        "feature_learn": "Resources: tracks, lessons and recipes",
         "feature_network": "Network and partner sharing",
         "feature_retreats": "Retreats, trips and courses",
         "feature_badges_limited": "Limited badges and personal bests",
@@ -2767,8 +2768,8 @@
     "priceMonthly": "Monthly price (USD)",
     "feeNote": "Leave at 0 for free. The platform fee for your plan applies to paid offers.",
     "drip": "Days between lessons",
-    "courseHelp": "After saving, link a Learn track to this course. Lessons unlock one by one.",
-    "membershipHelp": "After saving, mark events or Learn tracks as members-only for this Circle.",
+    "courseHelp": "After saving, link a Resources track to this course. Lessons unlock one by one.",
+    "membershipHelp": "After saving, mark events or Resources tracks as members-only for this Circle.",
     "file": "File",
     "uploadFile": "Upload file (PDF)",
     "replaceFile": "Replace file",
