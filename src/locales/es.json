@@ -1818,7 +1818,20 @@
     "brief": {
       "eyebrow": "Hoy",
       "title": "Tu resumen de la mañana",
-      "dismiss": "Ocultar por hoy"
+      "dismiss": "Ocultar por hoy",
+      "hosting": "Organizas: {{title}} · {{when}}{{place}} · {{count}} asistirán",
+      "signups_one": "1 nueva inscripción desde ayer · Ver tu lista de asistentes",
+      "signups_other": "{{count}} nuevas inscripciones desde ayer · Ver tu lista de asistentes",
+      "share": "{{title}} aún no tiene inscripciones · Comparte tu enlace",
+      "attending": "Asistirás a: {{title}} · {{when}}",
+      "attendingCode": "Asistirás a: {{title}} · {{when}} · Código de llegada {{code}}",
+      "teamEvents_one": "Tu equipo tiene 1 evento esta semana",
+      "teamEvents_other": "Tu equipo tiene {{count}} eventos esta semana",
+      "quietHosts_one": "1 anfitrión del equipo no tiene eventos programados",
+      "quietHosts_other": "{{count}} anfitriones del equipo no tienen eventos programados",
+      "resource": "Nuevo recurso: {{title}}",
+      "empty": "No hay nada para hoy. Crea un evento",
+      "create": "Crear un evento"
     },
     "followups": {
       "eyebrow": "Seguimientos",
