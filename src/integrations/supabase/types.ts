@@ -3641,12 +3641,17 @@ export type Database = {
       }
       templates: {
         Row: {
+          category: string
+          category_label: string | null
           checklist: Json
+          cover_style: number
           cover_url: string | null
           created_at: string
           created_by: string | null
           default_capacity: number | null
           default_duration_minutes: number
+          default_mode: string
+          default_price_cents: number
           description_en: string | null
           description_es: string | null
           followup_script_en: string | null
@@ -3663,12 +3668,17 @@ export type Database = {
           visibility_default: string
         }
         Insert: {
+          category?: string
+          category_label?: string | null
           checklist?: Json
+          cover_style?: number
           cover_url?: string | null
           created_at?: string
           created_by?: string | null
           default_capacity?: number | null
           default_duration_minutes?: number
+          default_mode?: string
+          default_price_cents?: number
           description_en?: string | null
           description_es?: string | null
           followup_script_en?: string | null
@@ -3685,12 +3695,17 @@ export type Database = {
           visibility_default?: string
         }
         Update: {
+          category?: string
+          category_label?: string | null
           checklist?: Json
+          cover_style?: number
           cover_url?: string | null
           created_at?: string
           created_by?: string | null
           default_capacity?: number | null
           default_duration_minutes?: number
+          default_mode?: string
+          default_price_cents?: number
           description_en?: string | null
           description_es?: string | null
           followup_script_en?: string | null
