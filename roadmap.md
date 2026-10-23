@@ -1,3 +1,6 @@
+# Walkthrough 1.1 — Dead-click audit (October 23)
+- [ ] Audit public and signed-in screens at phone and desktop sizes; save DEAD_CLICKS.md with evidence, wire/remove recommendations and explicit coverage limits. Report only: no app or backend changes.
+
 # Team feedback — October 21
 - [x] Add password-based admin sign-in; existing administrator password set securely, wrong password rejected, real Admin > Mail loaded and session retained after reload; temporary setup secret removed
 - [x] Compact leader insights card on Home; Insights shortcut at top of Team
