@@ -6,7 +6,7 @@
     "home": "Inicio",
     "events": "Reuniones",
     "team": "Equipo",
-    "learn": "Aprende",
+    "learn": "Recursos",
     "me": "Yo",
     "label": "Navegación principal",
     "discover": "Descubrir",
@@ -81,7 +81,7 @@
     "button": "Invitar miembros"
   },
   "learn": {
-    "title": "Aprende",
+    "title": "Recursos",
     "eyebrow": "Espacio",
     "heading": "Conocimiento compartido",
     "sentence": "Rutas, sesiones en vivo y recetas de tu equipo.",
@@ -158,7 +158,7 @@
     "home": "Tu gente, reunida.",
     "events": "Haz tiempo para reunirte con tu gente.",
     "team": "Un espacio para conectar y celebrar en equipo.",
-    "learn": "Ideas nuevas y talleres para tu equipo.",
+    "learn": "Explora rutas, lecciones y recetas en Recursos de ZoheeWell.",
     "me": "Tu perfil y preferencias de ZoheeWell.",
     "login": "Entra a ZoheeWell, el lugar tranquilo para los eventos de tu equipo.",
     "onboarding": "Configura tu perfil de ZoheeWell.",
@@ -1116,7 +1116,8 @@
     "yourTracks": "Tus rutas",
     "live": "Sesiones en vivo",
     "recipes": "Recetas",
-    "manage": "Administrar Aprende",
+    "manage": "Administrar Recursos",
+    "noResources": "Aún no hay recursos para mostrar.",
     "manageText": "Crea rutas, programa sesiones en vivo y comparte recetas con tu equipo.",
     "continue": "Continuar",
     "start": "Empezar",
@@ -1186,7 +1187,7 @@
     "completeEyebrow": "Ruta completada",
     "completeTitle": "Terminaste {{title}}",
     "completeText": "¡Muy bien! Tu equipo lo verá en Logros del equipo.",
-    "backToLearn": "Volver a Aprende",
+    "backToLearn": "Volver a Recursos",
     "sample": {
       "welcome": {
         "title": "Bienvenida al equipo",
@@ -1252,7 +1253,7 @@
     "started": "Empezaron",
     "finished": "Terminaron",
     "tooLarge": "El archivo es muy grande (máximo 200 MB).",
-    "leadersOnly": "Solo los líderes pueden administrar Aprende.",
+    "leadersOnly": "Solo los líderes pueden administrar Recursos.",
     "tab": {
       "tracks": "Rutas",
       "recipes": "Recetas",
@@ -2287,7 +2288,7 @@
       },
       "help": {
         "template": "Plantillas iniciales que cualquier equipo puede copiar y usar.",
-        "recipe": "Recetas que todos los equipos ven en Aprender.",
+        "recipe": "Recetas que todos los equipos ven en Recursos.",
         "badge": "Insignias que cualquier equipo puede ganar u otorgar. Las automáticas conservan sus reglas.",
         "challenge_type": "Retos listos para que los líderes empiecen desde ahí."
       },
@@ -2360,7 +2361,7 @@
       "name": {
         "landing_headline": "Titular de la página principal",
         "landing_testimonials": "Testimonios en la página principal",
-        "feature_learn": "Rutas, lecciones y recetas",
+        "feature_learn": "Recursos: rutas, lecciones y recetas",
         "feature_network": "Red y compartir con socios",
         "feature_retreats": "Retiros, viajes y cursos",
         "feature_badges_limited": "Insignias limitadas y mejores marcas",
@@ -2767,8 +2768,8 @@
     "priceMonthly": "Precio mensual (USD)",
     "feeNote": "Déjalo en 0 si es gratis. En las ofertas pagadas se aplica la comisión de tu plan.",
     "drip": "Días entre lecciones",
-    "courseHelp": "Después de guardar, vincula un programa de Aprender a este curso. Las lecciones se abren una por una.",
-    "membershipHelp": "Después de guardar, marca reuniones o programas de Aprender como exclusivos de este Círculo.",
+    "courseHelp": "Después de guardar, vincula una ruta de Recursos a este curso. Las lecciones se abren una por una.",
+    "membershipHelp": "Después de guardar, marca reuniones o rutas de Recursos como exclusivas de este Círculo.",
     "file": "Archivo",
     "uploadFile": "Subir archivo (PDF)",
     "replaceFile": "Cambiar archivo",
