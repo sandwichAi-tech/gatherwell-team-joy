@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +18,7 @@ import { rememberNext } from '@/lib/return-to';
 /** Client-only session check; the page server-renders signed-out either way. */
 function useUserId() {
   const [userId, setUserId] = useState('');
-  useState(() => { void supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? '')); });
+  useEffect(() => { void supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? '')); }, []);
   return userId;
 }
 
