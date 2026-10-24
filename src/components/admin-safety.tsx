@@ -46,6 +46,8 @@ export function AdminSafety({ kind }: { kind: SafetyKind }) {
 function SafetyDetail({ row, kind, onClose }: { row: SafetyRow; kind: SafetyKind; onClose: () => void }) {
   const { t } = useTranslation(); const qc = useQueryClient(); const act = useServerFn(actSafety); const account = useServerFn(adminUserAction);
   const [reason, setReason] = useState(''); const [busy, setBusy] = useState(false); const [user, setUser] = useState('');
+  const historyFn = useServerFn(listSafety);
+  const history = useQuery({ queryKey: ['admin', 'safety-history', row.id], queryFn: () => historyFn({ data: { kind: 'audit', q: row.id, state: 'all', page: 0 } }), retry: false });
   const actions: Action['action'][] = kind === 'reports' ? row.state === 'open' ? ['claim', 'escalate', 'resolve', 'dismiss', ...(['event', 'comment', 'photo', 'shoutout'].includes(row.kind) ? ['hide' as const] : [])] : [] : kind === 'offerings' ? row.state === 'published' ? ['unpublish'] : [] : kind === 'communities' ? row.state === 'suspended' ? ['restore'] : [] : ['suspend', 'restore'].filter(a => a === (row.state === 'suspended' ? 'restore' : 'suspend')) as Action['action'][];
   const run = async (action: Action['action'], community = false) => {
     if (!(await confirmAction({ title: t(`safety.action.${action}`), body: `${t('safety.confirm')}\n${reason}`, confirmLabel: t(`safety.action.${action}`), destructive: ['hide', 'unpublish', 'suspend'].includes(action) }))) return;
@@ -67,6 +69,7 @@ function SafetyDetail({ row, kind, onClose }: { row: SafetyRow; kind: SafetyKind
       {kind === 'users' && <p className="muted-copy">{t('safety.accountScope')}</p>}{kind === 'teams' && <p className="muted-copy">{t('safety.teamScope')}</p>}{kind === 'communities' && <p className="muted-copy">{t('safety.communityScope')}</p>}
       <label className="block"><span className="field-label">{t('safety.reason')}</span><Textarea rows={3} maxLength={500} value={reason} onChange={e => setReason(e.target.value)} /></label>
       <p className="muted-copy">{t('safety.notePrivacy')}</p>
+      <section><h3>{t('safety.tabs.audit')}</h3>{history.isPending ? <p role="status">{t('admin.loading')}</p> : history.isError ? <p role="alert">{t('safety.loadError')}</p> : <ul>{history.data.rows.map(h => <li key={h.id} className="py-2"><strong>{h.title}</strong><p>{h.actor || t('safety.unavailable')} · {new Date(h.created_at).toLocaleString()}</p><p>{h.reason}</p></li>)}{!history.data.rows.length && <li>{t('admin.empty')}</li>}</ul>}</section>
       {canCommunity && <section className="space-y-3"><h3>{t('safety.communityTitle')}</h3><p className="muted-copy">{t('safety.communityScope')}</p><label><span className="field-label">{t('safety.userId')}</span><Input value={user} onChange={e => setUser(e.target.value)} /></label><Button variant="destructive" disabled={busy || reason.trim().length < 3 || !/^[0-9a-f-]{36}$/i.test(user)} onClick={() => void run('suspend', true)}>{t('safety.action.suspend')}</Button></section>}
     </div>
   </ResponsiveSheet>;
