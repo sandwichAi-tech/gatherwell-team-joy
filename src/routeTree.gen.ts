@@ -43,6 +43,7 @@ import { Route as AuthenticatedAppFollowingRouteImport } from './routes/_authent
 import { Route as AuthenticatedAppFollowupsRouteImport } from './routes/_authenticated/_app/followups'
 import { Route as AuthenticatedAppHomeRouteImport } from './routes/_authenticated/_app/home'
 import { Route as AuthenticatedAppInboxRouteImport } from './routes/_authenticated/_app/inbox'
+import { Route as AuthenticatedAppInsightsRouteImport } from './routes/_authenticated/_app/insights'
 import { Route as AuthenticatedAppLearnRouteImport } from './routes/_authenticated/_app/learn'
 import { Route as AuthenticatedAppLocationsRouteImport } from './routes/_authenticated/_app/locations'
 import { Route as AuthenticatedAppMeRouteImport } from './routes/_authenticated/_app/me'
@@ -260,6 +261,12 @@ const AuthenticatedAppInboxRoute = AuthenticatedAppInboxRouteImport.update({
   path: '/inbox',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppInsightsRoute =
+  AuthenticatedAppInsightsRouteImport.update({
+    id: '/insights',
+    path: '/insights',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppLearnRoute = AuthenticatedAppLearnRouteImport.update({
   id: '/learn',
   path: '/learn',
@@ -534,6 +541,7 @@ export interface FileRoutesByFullPath {
   '/followups': typeof AuthenticatedAppFollowupsRoute
   '/home': typeof AuthenticatedAppHomeRoute
   '/inbox': typeof AuthenticatedAppInboxRoute
+  '/insights': typeof AuthenticatedAppInsightsRoute
   '/learn': typeof AuthenticatedAppLearnRoute
   '/locations': typeof AuthenticatedAppLocationsRoute
   '/me': typeof AuthenticatedAppMeRoute
@@ -612,6 +620,7 @@ export interface FileRoutesByTo {
   '/followups': typeof AuthenticatedAppFollowupsRoute
   '/home': typeof AuthenticatedAppHomeRoute
   '/inbox': typeof AuthenticatedAppInboxRoute
+  '/insights': typeof AuthenticatedAppInsightsRoute
   '/learn': typeof AuthenticatedAppLearnRoute
   '/locations': typeof AuthenticatedAppLocationsRoute
   '/me': typeof AuthenticatedAppMeRoute
@@ -693,6 +702,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/followups': typeof AuthenticatedAppFollowupsRoute
   '/_authenticated/_app/home': typeof AuthenticatedAppHomeRoute
   '/_authenticated/_app/inbox': typeof AuthenticatedAppInboxRoute
+  '/_authenticated/_app/insights': typeof AuthenticatedAppInsightsRoute
   '/_authenticated/_app/learn': typeof AuthenticatedAppLearnRoute
   '/_authenticated/_app/locations': typeof AuthenticatedAppLocationsRoute
   '/_authenticated/_app/me': typeof AuthenticatedAppMeRoute
@@ -773,6 +783,7 @@ export interface FileRouteTypes {
     | '/followups'
     | '/home'
     | '/inbox'
+    | '/insights'
     | '/learn'
     | '/locations'
     | '/me'
@@ -851,6 +862,7 @@ export interface FileRouteTypes {
     | '/followups'
     | '/home'
     | '/inbox'
+    | '/insights'
     | '/learn'
     | '/locations'
     | '/me'
@@ -931,6 +943,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/followups'
     | '/_authenticated/_app/home'
     | '/_authenticated/_app/inbox'
+    | '/_authenticated/_app/insights'
     | '/_authenticated/_app/learn'
     | '/_authenticated/_app/locations'
     | '/_authenticated/_app/me'
@@ -1251,6 +1264,13 @@ declare module '@tanstack/react-router' {
       path: '/inbox'
       fullPath: '/inbox'
       preLoaderRoute: typeof AuthenticatedAppInboxRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/insights': {
+      id: '/_authenticated/_app/insights'
+      path: '/insights'
+      fullPath: '/insights'
+      preLoaderRoute: typeof AuthenticatedAppInsightsRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
     '/_authenticated/_app/learn': {
@@ -1574,6 +1594,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppFollowupsRoute: typeof AuthenticatedAppFollowupsRoute
   AuthenticatedAppHomeRoute: typeof AuthenticatedAppHomeRoute
   AuthenticatedAppInboxRoute: typeof AuthenticatedAppInboxRoute
+  AuthenticatedAppInsightsRoute: typeof AuthenticatedAppInsightsRoute
   AuthenticatedAppLearnRoute: typeof AuthenticatedAppLearnRoute
   AuthenticatedAppLocationsRoute: typeof AuthenticatedAppLocationsRoute
   AuthenticatedAppMeRoute: typeof AuthenticatedAppMeRoute
@@ -1620,6 +1641,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppFollowupsRoute: AuthenticatedAppFollowupsRoute,
   AuthenticatedAppHomeRoute: AuthenticatedAppHomeRoute,
   AuthenticatedAppInboxRoute: AuthenticatedAppInboxRoute,
+  AuthenticatedAppInsightsRoute: AuthenticatedAppInsightsRoute,
   AuthenticatedAppLearnRoute: AuthenticatedAppLearnRoute,
   AuthenticatedAppLocationsRoute: AuthenticatedAppLocationsRoute,
   AuthenticatedAppMeRoute: AuthenticatedAppMeRoute,

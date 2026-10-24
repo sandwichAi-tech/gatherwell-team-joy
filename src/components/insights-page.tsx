@@ -56,11 +56,7 @@ export function InsightsPage() {
     </section>
 
     <section className="panel">
-      <div className="section-heading">
-        <h2>{t('insights.eventsHeading')}</h2>
-        {analytics.events.length > 0 && <Button variant="secondary" size="sm" onClick={() => downloadCsv('events.csv', [], []) || undefined /* replaced below */} className="hidden" />}
-        {analytics.events.length > 0 && <Button variant="secondary" size="sm" onClick={() => downloadCsv('event-analytics.csv', [], [])} style={{ display: 'none' }} />}
-      </div>
+      <div className="section-heading"><h2>{t('insights.eventsHeading')}</h2></div>
       {analytics.events.length === 0
         ? <EmptyState compact icon="CalendarDays" text={t('insights.eventsEmpty')} />
         : <>
