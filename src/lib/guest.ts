@@ -55,17 +55,11 @@ const stamp = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}
 const placeText = (e: When) => [e.location_name, e.address].filter(Boolean).join(', ');
 
 export function googleCalendarUrl(e: When, details: string) {
-  const p = new URLSearchParams({ action: 'TEMPLATE', text: e.title, dates: `${stamp(new Date(e.starts_at))}/${stamp(endOf(e))}`, details, location: placeText(e) });
-  return `https://calendar.google.com/calendar/render?${p.toString()}`;
+  return googleUrl({ id: '', title: e.title, startsAt: e.starts_at, endsAt: e.ends_at, location: placeText(e), description: details });
 }
 
 export function downloadIcs(e: When & { id: string }, details: string) {
-  const esc = (s: string) => s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/[,;]/g, m => `\\${m}`);
-  const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//ZoheeWell//EN', 'BEGIN:VEVENT', `UID:${e.id}@gatherwell`, `DTSTAMP:${stamp(new Date())}`,
-    `DTSTART:${stamp(new Date(e.starts_at))}`, `DTEND:${stamp(endOf(e))}`, `SUMMARY:${esc(e.title)}`, `DESCRIPTION:${esc(details)}`, `LOCATION:${esc(placeText(e))}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
-  const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
-  const a = document.createElement('a'); a.href = url; a.download = 'gathering.ics'; a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  downloadIcsFile({ id: e.id, title: e.title, startsAt: e.starts_at, endsAt: e.ends_at, location: placeText(e), description: details }, 'gathering.ics');
 }
 
 /** Apple Maps on iPhone/iPad, Google Maps elsewhere — no key needed. */
