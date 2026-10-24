@@ -36,10 +36,10 @@ export function detailsFromEvent(e: SourceEvent): EventDetails {
   return {
     summaryEn: s('summary_en'), summaryEs: s('summary_es'), language: e.language === 'es' ? 'es' : 'en',
     mapUrl: s('map_url'), regOpens: local(e.reg_opens_at), regCloses: local(e.reg_closes_at),
-    waitlist: e.waitlist_enabled !== false, tagsInput: Array.isArray(e.tags) ? (e.tags as string[]).join(', ') : '',
+    waitlist: e.waitlist_enabled !== false, tagsInput: Array.isArray(e['tags']) ? (e['tags'] as string[]).join(', ') : '',
     contactEmail: s('contact_email'), contactPhone: s('contact_phone'),
     accessibility: s('accessibility_notes'), bring: s('what_to_bring'), cancellation: s('cancellation_policy'),
-    allowsMinors: !!e.allows_minors, minAge: e.min_age != null ? String(e.min_age) : '',
+    allowsMinors: !!e.allows_minors, minAge: e['min_age'] != null ? String(e['min_age']) : '',
     tiers: Array.isArray(e['ticket_tiers']) ? (e['ticket_tiers'] as TicketTier[]) : [],
     addons: Array.isArray(e['addons']) ? (e['addons'] as Addon[]) : [],
   };
