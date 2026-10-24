@@ -191,3 +191,4 @@ Active work follows the approved Prompt 1–17 sequence in the ZoheeWell Beta Pr
 - [ ] Configure approved prices in plan_settings and Stripe, then enable paid checkout
 - [x] Host event/retreat builder: full field set, readiness, unpublish/archive, guardian RSVP (v0.16)
 - [ ] Raise test-account gathering limit or use a fresh account to browser-verify create-from-scratch
+- [ ] Registration milestone (in progress): terms consent, ticket tiers, host cancel with reason, My tickets, waitlist/claim browser journeys
