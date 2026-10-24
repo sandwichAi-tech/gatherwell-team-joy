@@ -19,13 +19,25 @@ export const CAROUSEL_SLIDES = [
   { key: 'communities', slot: 'feed_default_walk' },
 ] as const;
 
-/** Blueprint v4 monthly plans (USD). Annual = two months free. */
+/**
+ * Approved public plans (USD, 2026-10-24). Annual = two months free (10x monthly).
+ * feePct is the ZoheeWell platform fee on paid sales; free offerings have no fee and
+ * Stripe processing is separate. seats = builder seats (people who can build or
+ * administer the workspace: owner, admins, hosts, content editors). Limited roles
+ * (check-in staff, moderators, analysts, members, attendees, learners) never consume
+ * a builder seat. Organization is assisted setup ("Contact sales"), not self-service.
+ */
 export const HOME_PLANS = [
-  { id: 'free', monthly: 0 }, { id: 'advanced', monthly: 49 }, { id: 'pro', monthly: 99 },
-  { id: 'team25', monthly: 199 }, { id: 'team100', monthly: 499 },
+  { id: 'free', monthly: 0, feePct: 5, seats: 3 },
+  { id: 'advanced', monthly: 49, feePct: 3, seats: 3 },
+  { id: 'pro', monthly: 99, feePct: 2, seats: 5 },
+  { id: 'team25', monthly: 199, feePct: 1, seats: 25 },
+  { id: 'organization', monthly: 499, feePct: 0.5, seats: 100, contactSales: true, from: true },
 ] as const;
+export type HomePlan = (typeof HOME_PLANS)[number];
 export const annualPrice = (monthly: number) => monthly * 10;
-export const PLATFORM_FEE_PERCENT = 5;
+/** Highest platform fee any plan pays (Free). Used for conservative "up to" estimates. */
+export const MAX_PLATFORM_FEE_PERCENT = 5;
 
 export const HOME_CTAS = {
   startHosting: { to: '/login', search: { intent: 'host' } },

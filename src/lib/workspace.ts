@@ -43,3 +43,14 @@ export function scopeFitsRole(scope: AssignmentScope, role: WorkspaceRole | 'own
 export function isAssignableRole(role: string): role is WorkspaceRole {
   return (WORKSPACE_ROLES as readonly string[]).includes(role);
 }
+
+/**
+ * Builder seats: only people who can build or administer the workspace consume one
+ * (owner plus admin/host/content_editor members). Check-in staff, moderators,
+ * analysts and plain members never consume a builder seat.
+ * Mirrors public.is_builder_workspace_role() in the database.
+ */
+export const BUILDER_ROLES: readonly WorkspaceRole[] = ['admin', 'host', 'content_editor'];
+export function isBuilderRole(role: WorkspaceRole | 'owner' | null | undefined): boolean {
+  return role === 'owner' || (!!role && (BUILDER_ROLES as readonly string[]).includes(role));
+}
