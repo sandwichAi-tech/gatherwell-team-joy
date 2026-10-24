@@ -123,18 +123,31 @@ function PublicEventBody() {
       </div>
       {!!event.cohosts?.length && <div className="guest-cohosts"><span className="guest-label">{t('cohosts.withCohosts')}</span><ul>{event.cohosts.map((c, i) => <li key={i}><span className="initial-avatar">{initialsOf(c.name)}</span><span>{c.name ?? t('teamSpace.someone')}</span></li>)}</ul></div>}
 
-      {event.is_online ? <section className="guest-card"><div className="guest-place"><Video /><div><strong>{t('publicEvent.online')}</strong><p>{t('guest.onlineHidden')}</p></div></div></section>
-        : (event.location_name || event.address) && <section className="guest-card">
+      {event.has_online && <section className="guest-card"><div className="guest-place"><Video /><div><strong>{t('publicEvent.online')}</strong><p>{t('guest.onlineHidden')}</p></div></div></section>}
+      {(event.location_name || event.address) && <section className="guest-card">
           {meta?.staticMap && <img className="guest-map" src={meta.staticMap} alt={t('guest.mapAlt')} loading="lazy" />}
           <div className="guest-place"><MapPin /><div>
             {event.location_name && <strong>{event.location_name}</strong>}
             {event.address && <p>{event.address}</p>}
             {event.meeting_note && <p className="muted">{t('guest.meetingPoint')}: {event.meeting_note}</p>}
           </div></div>
-          {!cancelled && <DirectionsButton event={event} />}
+          <div className="guest-button-row">
+            {!cancelled && <DirectionsButton event={event} />}
+            {event.map_url && <Button asChild variant="secondary"><a href={event.map_url} target="_blank" rel="noopener noreferrer"><MapPin />{t('builder.openMap')}</a></Button>}
+          </div>
         </section>}
 
       {description && <section className="guest-description"><p>{description}</p></section>}
+      {event.accessibility_notes && <section className="guest-card"><strong>{t('builder.accessibility')}</strong><p>{event.accessibility_notes}</p></section>}
+      {event.what_to_bring && <section className="guest-card"><strong>{t('builder.bring')}</strong><p>{event.what_to_bring}</p></section>}
+      <section className="guest-card" aria-label={t('builder.minorsTitle')}>
+        <strong>{t('builder.minorsTitle')}</strong>
+        <p>{event.allows_minors ? (event.min_age != null ? t('builder.minorsMinAge', { age: event.min_age }) : t('builder.minorsWelcome')) : t('builder.adultsOnly')}</p>
+      </section>
+      {(event.cancellation_policy || event.contact_email || event.contact_phone) && <section className="guest-card">
+        {event.cancellation_policy && <><strong>{t('builder.cancellation')}</strong><p>{event.cancellation_policy}</p></>}
+        {(event.contact_email || event.contact_phone) && <><strong>{t('builder.contact')}</strong><p>{[event.contact_email, event.contact_phone].filter(Boolean).join(' · ')}</p></>}
+      </section>}
       {asRetreat(event.retreat) && <RetreatDetails retreat={asRetreat(event.retreat)!} startsAt={event.starts_at} endsAt={event.ends_at} priceCents={price?.price_cents ?? null} />}
 
       <section className="guest-going" aria-live="polite">
