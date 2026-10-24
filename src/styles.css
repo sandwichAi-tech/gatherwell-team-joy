@@ -2222,3 +2222,20 @@ a.gw-cat-chip:hover{background:#fff}
   .certificate-card { border: 3px solid #302338; page-break-inside: avoid; }
   header, nav, footer, .offer-row-actions, .bottom-nav { display: none !important; }
 }
+
+/* Unified discovery catalog */
+.catalog-search { display: flex; align-items: center; gap: 0.5rem; padding: 0 0.875rem; min-height: 48px; border: 1px solid var(--border, #d8d0c6); border-radius: 999px; background: var(--card, #fff); }
+.catalog-search-input { flex: 1; border: 0; background: transparent; min-height: 48px; font: inherit; outline: none; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.chip-row .chip { min-height: 48px; padding: 0 1rem; display: inline-flex; align-items: center; }
+.catalog-dates { gap: 0.75rem; }
+.catalog-date { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; }
+.catalog-date input { min-height: 48px; border: 1px solid var(--border, #d8d0c6); border-radius: 0.75rem; padding: 0 0.75rem; font: inherit; background: var(--card, #fff); }
+.catalog-grid { list-style: none; padding: 0; margin: 0; }
+.catalog-card { position: relative; display: flex; flex-direction: column; }
+.catalog-card-main { display: grid; gap: 0.35rem; text-decoration: none; color: inherit; padding: 1rem; }
+.catalog-card-main .chip { justify-self: start; }
+.catalog-summary { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--muted-foreground, #6b6470); }
+.catalog-meta { color: var(--muted-foreground, #6b6470); }
+.save-chip { position: absolute; top: 0.75rem; right: 0.75rem; min-width: 48px; min-height: 48px; justify-content: center; }
+.switch-row { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 48px; }

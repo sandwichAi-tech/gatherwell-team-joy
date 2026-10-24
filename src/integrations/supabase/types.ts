@@ -2046,6 +2046,33 @@ export type Database = {
           },
         ]
       }
+      host_invites: {
+        Row: {
+          created_at: string
+          id: string
+          inviter_id: string | null
+          recorded_at: string | null
+          signed_up_user_id: string | null
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          inviter_id?: string | null
+          recorded_at?: string | null
+          signed_up_user_id?: string | null
+          token: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          inviter_id?: string | null
+          recorded_at?: string | null
+          signed_up_user_id?: string | null
+          token?: string
+        }
+        Relationships: []
+      }
       host_of_month: {
         Row: {
           awarded_by: string | null
@@ -2407,6 +2434,63 @@ export type Database = {
             referencedColumns: ["team_id"]
           },
         ]
+      }
+      location_alerts: {
+        Row: {
+          categories: string[]
+          city: string | null
+          country: string | null
+          created_at: string
+          frequency: string
+          id: string
+          kinds: string[]
+          label: string | null
+          language: string | null
+          lat: number | null
+          lng: number | null
+          paused: boolean
+          radius_km: number
+          region: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          categories?: string[]
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          frequency?: string
+          id?: string
+          kinds?: string[]
+          label?: string | null
+          language?: string | null
+          lat?: number | null
+          lng?: number | null
+          paused?: boolean
+          radius_km?: number
+          region?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          categories?: string[]
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          frequency?: string
+          id?: string
+          kinds?: string[]
+          label?: string | null
+          language?: string | null
+          lat?: number | null
+          lng?: number | null
+          paused?: boolean
+          radius_km?: number
+          region?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       locations: {
         Row: {
@@ -4762,6 +4846,30 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_offerings: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          target_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          target_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          target_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       saved_recipes: {
         Row: {
           created_at: string
@@ -5978,6 +6086,7 @@ export type Database = {
         Args: { _p: Json; _publish: boolean; _team: string; _weekly: boolean }
         Returns: string
       }
+      create_host_invite: { Args: never; Returns: string }
       create_poll: {
         Args: { _event: string; _options: string[]; _question: string }
         Returns: string
@@ -6011,6 +6120,25 @@ export type Database = {
       delete_comment: { Args: { _id: string }; Returns: undefined }
       delete_my_account: { Args: never; Returns: undefined }
       delete_my_coach_review: { Args: { _host: string }; Returns: undefined }
+      discover_catalog: {
+        Args: {
+          _accessible?: boolean
+          _cat?: string
+          _format?: string
+          _free?: boolean
+          _from?: string
+          _kinds?: string[]
+          _lang?: string
+          _lat?: number
+          _lng?: number
+          _minors?: boolean
+          _q?: string
+          _radius_km?: number
+          _sort?: string
+          _to?: string
+        }
+        Returns: Json
+      }
       due_followup_events: { Args: never; Returns: string[] }
       duplicate_offer: { Args: { _offer: string }; Returns: string }
       effective_plan: { Args: { _uid: string }; Returns: Json }
@@ -6244,6 +6372,7 @@ export type Database = {
         Args: { _action: string; _id: string }
         Returns: undefined
       }
+      my_alert_matches: { Args: never; Returns: Json }
       my_broadcasts: {
         Args: never
         Returns: {
@@ -6416,6 +6545,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      record_host_invite: { Args: { _token: string }; Returns: boolean }
       record_referral: {
         Args: { _code: string; _ref: string }
         Returns: undefined

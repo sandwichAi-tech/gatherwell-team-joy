@@ -126,3 +126,7 @@ Specifics:
 - Signed-in plan screen (v0.15): prospective cards show approved v4 prices and the flat 5% fee; current/legacy subscriptions keep their real recorded status; paid checkout disabled until approved prices are configured in plan_settings and Stripe.
 - Course quizzes (v0.22): host authoring (4 question types, keys, points, reorder, blockers, attempts/cooldown/time limits), server grading + manual short-answer, learner taker with timer/autosave/idempotent submit, progress panels and host completion rules.
 - Certificates (v0.22): host settings, server-verified idempotent issuance, printable card in My learning, public /verify/$number page, host revoke with reason.
+- Unified discovery (v0.23): /discover catalogs published public events, courses, resources, memberships with search, type/category/date/format/free/language/accessibility/family/radius filters, shareable URLs, truthful counts; samples and non-public content excluded server-side.
+- Saved (v0.23): signed-in save/unsave on offerings + /saved list; items that go private drop out automatically.
+- Location alerts (v0.23): coarse-location alerts with pause/resume/delete and in-app matches; email/SMS delivery Setup required.
+- Invite a host (v0.23): opaque attributed share token, recorded once after signup, self-referral rejected.

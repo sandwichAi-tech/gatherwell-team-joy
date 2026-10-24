@@ -31,7 +31,8 @@
     "memberView": "Switch to member view",
     "leaderView": "Switch to leader view",
     "sampleDetails": "Sample details",
-    "previewNote": "Sample preview. This action is not connected yet."
+    "previewNote": "Sample preview. This action is not connected yet.",
+    "save": "Save"
   },
   "home": {
     "meta": {
@@ -4852,5 +4853,107 @@
     "issuedOn": "Issued",
     "expiresOn": "Expires",
     "verifyNote": "Verification shows only the certificate's public details."
+  },
+  "discover": {
+    "filters": "Filters",
+    "searchPlaceholder": "Search events, courses, and resources",
+    "typeLabel": "Offering type",
+    "kind": {
+      "event": "Events",
+      "course": "Courses",
+      "download": "Resources",
+      "membership": "Memberships"
+    },
+    "formatLabel": "Format",
+    "format": {
+      "person": "In person",
+      "online": "Online",
+      "hybrid": "Hybrid"
+    },
+    "free": "Free",
+    "paid": "Paid",
+    "spanish": "En español",
+    "accessible": "Accessibility info",
+    "family": "Family-friendly",
+    "datesLabel": "Date window",
+    "from": "From",
+    "to": "To",
+    "radiusLabel": "Radius",
+    "km": "{{km}} km",
+    "kmAway": "{{km}} km away",
+    "sortLabel": "Sort",
+    "sort": {
+      "soonest": "Soonest",
+      "newest": "Newest",
+      "relevant": "Most relevant"
+    },
+    "activeFilters": "{{count}} filter active",
+    "activeFilters_other": "{{count}} filters active",
+    "clearAll": "Clear all",
+    "count": "{{count}} result",
+    "count_other": "{{count}} results",
+    "online": "Online",
+    "empty": "Nothing matches right now. Try widening your filters.",
+    "emptyLocal": "Events are coming soon to your area.",
+    "onlineInstead": "Online learning is available below."
+  },
+  "saved": {
+    "eyebrow": "Your list",
+    "title": "Saved",
+    "sentence": "Events and learning you bookmarked.",
+    "save": "Save",
+    "unsave": "Remove from saved",
+    "added": "Saved",
+    "removed": "Removed from saved",
+    "emptyTitle": "Nothing saved yet",
+    "empty": "Save events and courses to find them quickly here.",
+    "browse": "Browse discovery",
+    "allGone": "These items are no longer public.",
+    "privateNote": "Saved items that turn private or are cancelled leave this list automatically."
+  },
+  "alerts": {
+    "eyebrow": "Discovery",
+    "title": "Location alerts",
+    "sentence": "Get matched in-app when new offerings appear near a place you choose.",
+    "new": "New alert",
+    "edit": "Edit alert",
+    "delete": "Delete alert",
+    "deleteConfirm": "Delete this alert?",
+    "untitled": "Untitled alert",
+    "anywhere": "Anywhere",
+    "active": "On",
+    "paused": "Paused",
+    "pause": "Pause alert",
+    "resume": "Resume alert",
+    "saved": "Alert saved",
+    "deleted": "Alert deleted",
+    "view": "View",
+    "matchesTitle": "New matches",
+    "emptyTitle": "No alerts yet",
+    "empty": "Create an alert and we'll surface new offerings here as they appear.",
+    "editorText": "Choose a place and what you're interested in. We store only a coarse location.",
+    "label": "Alert name",
+    "labelPlaceholder": "e.g. Weekend yoga nearby",
+    "city": "City",
+    "cityPlaceholder": "City or postal code",
+    "region": "Region / state",
+    "approxLocation": "Approximate location",
+    "coarseNote": "We keep a rounded, approximate point — never exact tracking.",
+    "useMyLocation": "Use my approximate location",
+    "locationSet": "Near {{lat}}, {{lng}}",
+    "clearLocation": "Clear location",
+    "noGeo": "This browser doesn't support location.",
+    "geoDenied": "Location wasn't shared — you can still type a city.",
+    "radius": "Radius",
+    "kinds": "What to include",
+    "language": "Language",
+    "anyLanguage": "Any language",
+    "frequency": "How often",
+    "freq": {
+      "instant": "As soon as it appears",
+      "daily": "Daily",
+      "weekly": "Weekly"
+    },
+    "deliveryNote": "Matches appear in this app. Email and text delivery are Setup required until messaging providers are configured."
   }
 }

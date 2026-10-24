@@ -106,3 +106,9 @@ The requester supplied the following results after commit ac2eef3c5d5ff7138522b8
 - Grading, attempt limits, cooldowns, time limits and prerequisites are enforced in security-definer RPCs; clients cannot set scores. submit_quiz is idempotent per attempt.
 - Certificates: issued only after server-verified completion, idempotent, unguessable ZW-+12-hex numbers; public verification returns only validity, display name, course, issuer, dates and revoked/expired flags — no email or profile data. Revocation keeps history.
 - a11y defect fixed: mounted-but-closed vaul Drawers (assistant, creation sheet) left aria-hidden on the app root, hiding the entire page from assistive tech; both now unmount when closed.
+
+## 2026-10-24 — Discovery, alerts, invites (0070–0071)
+- discover_catalog is security-definer and returns only published+public rows; it strips exact coordinates and host_id, exposing only coarse location_name and distance. Unlisted (invite) and team-only content never appears; direct links still work.
+- saved_offerings and location_alerts are owner-only RLS; alerts store coarse rounded coordinates only, never continuous tracking.
+- host_invites has no client policies: tokens are created and recorded only via security-definer RPCs; recording is idempotent and rejects self-referral. Tokens are opaque 10-char codes, no sequential IDs.
+- Alert delivery is in-app only; no email/SMS is sent or promised until providers and consent are configured.

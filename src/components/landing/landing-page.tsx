@@ -12,6 +12,7 @@ import { GatheringCard } from '@/components/landing/gathering-card';
 import { LandingFrame, StickyFindBar } from '@/components/landing/landing-chrome';
 import { publicGatheringsQuery, track } from '@/lib/landing';
 import { QueryFeedback } from '@/components/launch-states';
+import { hostInviteUrl } from '@/lib/discovery';
 import { NOTIFY_ME_LIVE, ATTENDEE, AUDIENCES, HOME_PLANS, PLATFORM_FEE_PERCENT, STEPS, TOOLKIT, annualPrice, homepageOfferings } from '@/lib/homepage';
 
 export function LandingPage() {
@@ -103,7 +104,7 @@ function Explore() {
   const list = homepageOfferings(data);
   const [status, setStatus] = useState<'' | 'shared' | 'copied' | 'manual'>('');
   const invite = async () => {
-    const url = `${window.location.origin}/`;
+    const url = await hostInviteUrl(window.location.origin);
     try {
       if (navigator.share) { await navigator.share({ title: t('home.explore.inviteTitle'), text: t('home.explore.inviteText'), url }); setStatus('shared'); return; }
       await navigator.clipboard.writeText(url); setStatus('copied');
@@ -115,7 +116,7 @@ function Explore() {
     {list.length ? <div className="gw-feed">{list.map(g => <GatheringCard key={g.id} g={g} near={null} showRsvp className="gw-feed-card" />)}</div>
       : <div className="gw-empty gw-home-empty"><p><strong>{t('home.explore.empty')}</strong></p>
         <div className="gw-final-ctas">
-          {NOTIFY_ME_LIVE ? null : <button type="button" className="gw-btn gw-btn-secondary" aria-disabled="true" aria-describedby="notify-soon" onClick={e => e.preventDefault()}>{t('home.explore.notify')}<span id="notify-soon" className="gw-home-tool-tag">{t('home.soon')}</span></button>}
+          {NOTIFY_ME_LIVE ? <Link to="/alerts" className="gw-btn gw-btn-secondary">{t('home.explore.notify')}</Link> : <button type="button" className="gw-btn gw-btn-secondary" aria-disabled="true" aria-describedby="notify-soon" onClick={e => e.preventDefault()}>{t('home.explore.notify')}<span id="notify-soon" className="gw-home-tool-tag">{t('home.soon')}</span></button>}
           <button type="button" className="gw-btn gw-btn-secondary" onClick={() => void invite()}>{t('home.explore.invite')}</button>
           <Link to="/login" search={{ intent: 'host' }} className="gw-btn gw-btn-primary">{t('home.explore.create')}</Link>
         </div>

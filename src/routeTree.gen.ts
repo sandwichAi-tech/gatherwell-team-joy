@@ -34,6 +34,7 @@ import { Route as RCodeRouteImport } from './routes/r.$code'
 import { Route as TSlugRouteImport } from './routes/t.$slug'
 import { Route as UnsubscribeTokenRouteImport } from './routes/unsubscribe.$token'
 import { Route as VerifyNumberRouteImport } from './routes/verify.$number'
+import { Route as AuthenticatedAppAlertsRouteImport } from './routes/_authenticated/_app/alerts'
 import { Route as AuthenticatedAppBlueprintsRouteImport } from './routes/_authenticated/_app/blueprints'
 import { Route as AuthenticatedAppCirclesRouteImport } from './routes/_authenticated/_app/circles'
 import { Route as AuthenticatedAppEarningsRouteImport } from './routes/_authenticated/_app/earnings'
@@ -48,9 +49,11 @@ import { Route as AuthenticatedAppOffersRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAppPlanRouteImport } from './routes/_authenticated/_app/plan'
 import { Route as AuthenticatedAppProgressRouteImport } from './routes/_authenticated/_app/progress'
 import { Route as AuthenticatedAppPromosRouteImport } from './routes/_authenticated/_app/promos'
+import { Route as AuthenticatedAppSavedRouteImport } from './routes/_authenticated/_app/saved'
 import { Route as AuthenticatedAppStartRouteImport } from './routes/_authenticated/_app/start'
 import { Route as AuthenticatedAppTeamRouteImport } from './routes/_authenticated/_app/team'
 import { Route as AuthenticatedAppVerifyRouteImport } from './routes/_authenticated/_app/verify'
+import { Route as IHostTokenRouteImport } from './routes/i.host.$token'
 import { Route as AuthenticatedAppAdminIndexRouteImport } from './routes/_authenticated/_app/admin.index'
 import { Route as AuthenticatedAppAdminSiteMediaRouteImport } from './routes/_authenticated/_app/admin.site-media'
 import { Route as AuthenticatedAppChallengeIdRouteImport } from './routes/_authenticated/_app/challenge.$id'
@@ -200,6 +203,11 @@ const VerifyNumberRoute = VerifyNumberRouteImport.update({
   path: '/verify/$number',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAppAlertsRoute = AuthenticatedAppAlertsRouteImport.update({
+  id: '/alerts',
+  path: '/alerts',
+  getParentRoute: () => AuthenticatedAppRouteRoute,
+} as any)
 const AuthenticatedAppBlueprintsRoute =
   AuthenticatedAppBlueprintsRouteImport.update({
     id: '/blueprints',
@@ -275,6 +283,11 @@ const AuthenticatedAppPromosRoute = AuthenticatedAppPromosRouteImport.update({
   path: '/promos',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppSavedRoute = AuthenticatedAppSavedRouteImport.update({
+  id: '/saved',
+  path: '/saved',
+  getParentRoute: () => AuthenticatedAppRouteRoute,
+} as any)
 const AuthenticatedAppStartRoute = AuthenticatedAppStartRouteImport.update({
   id: '/start',
   path: '/start',
@@ -289,6 +302,11 @@ const AuthenticatedAppVerifyRoute = AuthenticatedAppVerifyRouteImport.update({
   id: '/verify',
   path: '/verify',
   getParentRoute: () => AuthenticatedAppRouteRoute,
+} as any)
+const IHostTokenRoute = IHostTokenRouteImport.update({
+  id: '/i/host/$token',
+  path: '/i/host/$token',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAppAdminIndexRoute =
   AuthenticatedAppAdminIndexRouteImport.update({
@@ -455,6 +473,7 @@ export interface FileRoutesByFullPath {
   '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/verify/$number': typeof VerifyNumberRoute
+  '/alerts': typeof AuthenticatedAppAlertsRoute
   '/blueprints': typeof AuthenticatedAppBlueprintsRoute
   '/circles': typeof AuthenticatedAppCirclesRoute
   '/earnings': typeof AuthenticatedAppEarningsRoute
@@ -469,9 +488,11 @@ export interface FileRoutesByFullPath {
   '/plan': typeof AuthenticatedAppPlanRoute
   '/progress': typeof AuthenticatedAppProgressRoute
   '/promos': typeof AuthenticatedAppPromosRoute
+  '/saved': typeof AuthenticatedAppSavedRoute
   '/start': typeof AuthenticatedAppStartRoute
   '/team': typeof AuthenticatedAppTeamRoute
   '/verify': typeof AuthenticatedAppVerifyRoute
+  '/i/host/$token': typeof IHostTokenRoute
   '/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/event/$id': typeof AuthenticatedAppEventIdRoute
@@ -522,6 +543,7 @@ export interface FileRoutesByTo {
   '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/verify/$number': typeof VerifyNumberRoute
+  '/alerts': typeof AuthenticatedAppAlertsRoute
   '/blueprints': typeof AuthenticatedAppBlueprintsRoute
   '/circles': typeof AuthenticatedAppCirclesRoute
   '/earnings': typeof AuthenticatedAppEarningsRoute
@@ -536,9 +558,11 @@ export interface FileRoutesByTo {
   '/plan': typeof AuthenticatedAppPlanRoute
   '/progress': typeof AuthenticatedAppProgressRoute
   '/promos': typeof AuthenticatedAppPromosRoute
+  '/saved': typeof AuthenticatedAppSavedRoute
   '/start': typeof AuthenticatedAppStartRoute
   '/team': typeof AuthenticatedAppTeamRoute
   '/verify': typeof AuthenticatedAppVerifyRoute
+  '/i/host/$token': typeof IHostTokenRoute
   '/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/event/$id': typeof AuthenticatedAppEventIdRoute
@@ -592,6 +616,7 @@ export interface FileRoutesById {
   '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/verify/$number': typeof VerifyNumberRoute
+  '/_authenticated/_app/alerts': typeof AuthenticatedAppAlertsRoute
   '/_authenticated/_app/blueprints': typeof AuthenticatedAppBlueprintsRoute
   '/_authenticated/_app/circles': typeof AuthenticatedAppCirclesRoute
   '/_authenticated/_app/earnings': typeof AuthenticatedAppEarningsRoute
@@ -606,9 +631,11 @@ export interface FileRoutesById {
   '/_authenticated/_app/plan': typeof AuthenticatedAppPlanRoute
   '/_authenticated/_app/progress': typeof AuthenticatedAppProgressRoute
   '/_authenticated/_app/promos': typeof AuthenticatedAppPromosRoute
+  '/_authenticated/_app/saved': typeof AuthenticatedAppSavedRoute
   '/_authenticated/_app/start': typeof AuthenticatedAppStartRoute
   '/_authenticated/_app/team': typeof AuthenticatedAppTeamRoute
   '/_authenticated/_app/verify': typeof AuthenticatedAppVerifyRoute
+  '/i/host/$token': typeof IHostTokenRoute
   '/_authenticated/_app/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/_authenticated/_app/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/_authenticated/_app/event/$id': typeof AuthenticatedAppEventIdRoute
@@ -661,6 +688,7 @@ export interface FileRouteTypes {
     | '/t/$slug'
     | '/unsubscribe/$token'
     | '/verify/$number'
+    | '/alerts'
     | '/blueprints'
     | '/circles'
     | '/earnings'
@@ -675,9 +703,11 @@ export interface FileRouteTypes {
     | '/plan'
     | '/progress'
     | '/promos'
+    | '/saved'
     | '/start'
     | '/team'
     | '/verify'
+    | '/i/host/$token'
     | '/admin/site-media'
     | '/challenge/$id'
     | '/event/$id'
@@ -728,6 +758,7 @@ export interface FileRouteTypes {
     | '/t/$slug'
     | '/unsubscribe/$token'
     | '/verify/$number'
+    | '/alerts'
     | '/blueprints'
     | '/circles'
     | '/earnings'
@@ -742,9 +773,11 @@ export interface FileRouteTypes {
     | '/plan'
     | '/progress'
     | '/promos'
+    | '/saved'
     | '/start'
     | '/team'
     | '/verify'
+    | '/i/host/$token'
     | '/admin/site-media'
     | '/challenge/$id'
     | '/event/$id'
@@ -797,6 +830,7 @@ export interface FileRouteTypes {
     | '/t/$slug'
     | '/unsubscribe/$token'
     | '/verify/$number'
+    | '/_authenticated/_app/alerts'
     | '/_authenticated/_app/blueprints'
     | '/_authenticated/_app/circles'
     | '/_authenticated/_app/earnings'
@@ -811,9 +845,11 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/plan'
     | '/_authenticated/_app/progress'
     | '/_authenticated/_app/promos'
+    | '/_authenticated/_app/saved'
     | '/_authenticated/_app/start'
     | '/_authenticated/_app/team'
     | '/_authenticated/_app/verify'
+    | '/i/host/$token'
     | '/_authenticated/_app/admin/site-media'
     | '/_authenticated/_app/challenge/$id'
     | '/_authenticated/_app/event/$id'
@@ -865,6 +901,7 @@ export interface RootRouteChildren {
   TSlugRoute: typeof TSlugRoute
   UnsubscribeTokenRoute: typeof UnsubscribeTokenRoute
   VerifyNumberRoute: typeof VerifyNumberRoute
+  IHostTokenRoute: typeof IHostTokenRoute
   ApiPublicAiFollowupsRoute: typeof ApiPublicAiFollowupsRoute
   ApiPublicCalendarTokenRoute: typeof ApiPublicCalendarTokenRoute
   ApiPublicEmailMailgunRoute: typeof ApiPublicEmailMailgunRoute
@@ -1052,6 +1089,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyNumberRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/_app/alerts': {
+      id: '/_authenticated/_app/alerts'
+      path: '/alerts'
+      fullPath: '/alerts'
+      preLoaderRoute: typeof AuthenticatedAppAlertsRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/blueprints': {
       id: '/_authenticated/_app/blueprints'
       path: '/blueprints'
@@ -1150,6 +1194,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppPromosRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/saved': {
+      id: '/_authenticated/_app/saved'
+      path: '/saved'
+      fullPath: '/saved'
+      preLoaderRoute: typeof AuthenticatedAppSavedRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/start': {
       id: '/_authenticated/_app/start'
       path: '/start'
@@ -1170,6 +1221,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/verify'
       preLoaderRoute: typeof AuthenticatedAppVerifyRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/i/host/$token': {
+      id: '/i/host/$token'
+      path: '/i/host/$token'
+      fullPath: '/i/host/$token'
+      preLoaderRoute: typeof IHostTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/_app/admin/': {
       id: '/_authenticated/_app/admin/'
@@ -1350,6 +1408,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAppRouteRouteChildren {
+  AuthenticatedAppAlertsRoute: typeof AuthenticatedAppAlertsRoute
   AuthenticatedAppBlueprintsRoute: typeof AuthenticatedAppBlueprintsRoute
   AuthenticatedAppCirclesRoute: typeof AuthenticatedAppCirclesRoute
   AuthenticatedAppEarningsRoute: typeof AuthenticatedAppEarningsRoute
@@ -1364,6 +1423,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppPlanRoute: typeof AuthenticatedAppPlanRoute
   AuthenticatedAppProgressRoute: typeof AuthenticatedAppProgressRoute
   AuthenticatedAppPromosRoute: typeof AuthenticatedAppPromosRoute
+  AuthenticatedAppSavedRoute: typeof AuthenticatedAppSavedRoute
   AuthenticatedAppStartRoute: typeof AuthenticatedAppStartRoute
   AuthenticatedAppTeamRoute: typeof AuthenticatedAppTeamRoute
   AuthenticatedAppVerifyRoute: typeof AuthenticatedAppVerifyRoute
@@ -1387,6 +1447,7 @@ interface AuthenticatedAppRouteRouteChildren {
 }
 
 const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
+  AuthenticatedAppAlertsRoute: AuthenticatedAppAlertsRoute,
   AuthenticatedAppBlueprintsRoute: AuthenticatedAppBlueprintsRoute,
   AuthenticatedAppCirclesRoute: AuthenticatedAppCirclesRoute,
   AuthenticatedAppEarningsRoute: AuthenticatedAppEarningsRoute,
@@ -1401,6 +1462,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppPlanRoute: AuthenticatedAppPlanRoute,
   AuthenticatedAppProgressRoute: AuthenticatedAppProgressRoute,
   AuthenticatedAppPromosRoute: AuthenticatedAppPromosRoute,
+  AuthenticatedAppSavedRoute: AuthenticatedAppSavedRoute,
   AuthenticatedAppStartRoute: AuthenticatedAppStartRoute,
   AuthenticatedAppTeamRoute: AuthenticatedAppTeamRoute,
   AuthenticatedAppVerifyRoute: AuthenticatedAppVerifyRoute,
@@ -1465,6 +1527,7 @@ const rootRouteChildren: RootRouteChildren = {
   TSlugRoute: TSlugRoute,
   UnsubscribeTokenRoute: UnsubscribeTokenRoute,
   VerifyNumberRoute: VerifyNumberRoute,
+  IHostTokenRoute: IHostTokenRoute,
   ApiPublicAiFollowupsRoute: ApiPublicAiFollowupsRoute,
   ApiPublicCalendarTokenRoute: ApiPublicCalendarTokenRoute,
   ApiPublicEmailMailgunRoute: ApiPublicEmailMailgunRoute,
