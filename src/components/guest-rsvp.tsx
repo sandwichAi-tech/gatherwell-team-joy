@@ -13,7 +13,7 @@ import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { QRCodeSVG } from 'qrcode.react';
 import { toast } from 'sonner';
-import { Copy, MessageCircle, MessageSquareText, Minus, Navigation, Plus, Video, Send } from '@/components/icons';
+import { Copy, MessageCircle, MessageSquareText, Minus, Navigation, Plus, Video, Send, ShieldCheck } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
