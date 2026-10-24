@@ -104,3 +104,20 @@ export const pauseOfferMembership = createServerFn({ method: 'POST' })
     await supabaseAdmin.from('offer_purchases').update({ paused_until: until?.toISOString() ?? null }).eq('id', p.id);
     return { ok: true as const, until: until?.toISOString() ?? null };
   });
+
+/** Signed download link for one bundle item, only for entitled learners (or the host); 10-minute expiry. */
+export const offerItemDownloadLink = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ itemId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: item } = await context.supabase.from('offer_items' as never)
+      .select('id, offer_id, storage_path, allow_download, is_published, replaced_by').eq('id', data.itemId).maybeSingle() as { data: any };
+    if (!item?.storage_path || !item.is_published || item.replaced_by) return { ok: false as const, error: 'not_found' };
+    if (!item.allow_download) return { ok: false as const, error: 'forbidden' };
+    const { data: access } = await context.supabase.rpc('can_access_offer' as never, { _offer: item.offer_id } as never);
+    if (!access) return { ok: false as const, error: 'forbidden' };
+    const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
+    const { data: s, error } = await supabaseAdmin.storage.from('offer-files').createSignedUrl(item.storage_path, 600, { download: true });
+    if (error || !s) return { ok: false as const, error: 'failed' };
+    return { ok: true as const, url: s.signedUrl };
+  });
