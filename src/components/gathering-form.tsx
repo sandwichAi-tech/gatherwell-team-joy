@@ -167,8 +167,16 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     lat: place === 'person' && coords ? coords.lat : '', lng: place === 'person' && coords ? coords.lng : '',
   });
 
+  const detailsJson = detailsPayload(details);
+  const saveDetails = async (id: string) => {
+    if (!detailsJson) return true;
+    const { error } = await supabase.rpc('update_event_details', { _event: id, _p: detailsJson });
+    if (error) { toast.error(rpcError(t, error)); return false; }
+    return true;
+  };
   const submit = async (publish: boolean) => {
     setTried(true); if (!valid) { toast.error(t('gathering.fixFields')); return; }
+    if (!detailsJson) { toast.error(t('gathering.fixFields')); return; }
     if (priceCents && visibility === 'team') { toast.error(t('templates.teamFree')); return; }
     if (priceCents && publish && !canSell) { toast.error(t('billing.payoutsRequired')); return; }
     setBusy(true);
@@ -178,6 +186,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       setBusy(false);
       if (error) { toast.error(rpcError(t, error)); return; }
       await savePrice(eventId!); await saveTeamReg(eventId!); if (!(await saveRetreat(eventId!))) return;
+      if (!(await saveDetails(eventId!))) return;
       await queryClient.invalidateQueries(); toast.success(t('gathering.saved'));
       void navigate({ to: '/event/$id', params: { id: eventId! } }); return;
     }
@@ -189,6 +198,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (priceCents) await savePrice(data);
     if (teamReg.on) await saveTeamReg(data);
     if (retreatOn && !(await saveRetreat(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
+    if (!(await saveDetails(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
     await queryClient.invalidateQueries();
     if (publish) setDone({ id: data, visibility }); else { toast.success(t('gathering.draftSaved')); void navigate({ to: '/event/$id', params: { id: data } }); }
   };
@@ -264,15 +274,17 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
 
       <section className="form-section">
         <span className="field-label">{t('gathering.place')}</span>
-        <div className="segmented full" role="group" aria-label={t('gathering.place')}>{(['person', 'online'] as const).map(p => <Button key={p} variant="ghost" className={place === p ? 'selected' : ''} aria-pressed={place === p} onClick={() => setPlace(p)}>{p === 'person' ? <MapPin /> : <Globe2 />}{t(`map.${p}`)}</Button>)}</div>
-        {place === 'person' ? <>
+        <div className="segmented full" role="group" aria-label={t('gathering.place')}>{(['person', 'online', 'hybrid'] as const).map(p => <Button key={p} variant="ghost" className={place === p ? 'selected' : ''} aria-pressed={place === p} onClick={() => setPlace(p)}>{p === 'person' ? <MapPin /> : <Globe2 />}{t(`builder.format.${p}`)}</Button>)}</div>
+        {place !== 'online' && <>
           <Input className="field-input" maxLength={160} value={locationName} onChange={e => setLocationName(e.target.value)} placeholder={t('gathering.locationName')} aria-label={t('gathering.locationName')} />
           <Input ref={addressRef} className="field-input" maxLength={300} value={address} onChange={e => { setAddress(e.target.value); setCoords(null); }} placeholder={t('gathering.address')} aria-label={t('gathering.address')} autoComplete="off" />
           {!mapsKey && <p className="not-connected">{t('gathering.addressNote')}</p>}
           <Input className="field-input" maxLength={300} value={note} onChange={e => setNote(e.target.value)} placeholder={t('gathering.note')} aria-label={t('gathering.note')} />
-        </> : <>
+        </>}
+        {place !== 'person' && <>
           <Input type="url" inputMode="url" className="field-input" maxLength={500} value={url} onChange={e => setUrl(e.target.value)} placeholder="https://" aria-label={t('gathering.link')} aria-invalid={urlBad || (tried && !url.trim())} />
           {(urlBad || (tried && !url.trim())) && <p className="field-error">{t('gathering.errors.invalid_url')}</p>}
+          <p className="field-hint">{t('builder.onlinePrivate')}</p>
         </>}
       </section>
 
