@@ -251,9 +251,19 @@ export function OfferPage({ id, paid }: { id: string; paid?: boolean }) {
       </section>
       <ReadinessPanel offerId={offer.id} onEdit={() => setDetailsOpen(true)} />
       {offer.kind !== 'download' ? <CurriculumPanel offer={offer} /> : <BundlePanel offer={offer} />}
+      {offer.kind !== 'download' && <>
+        <QuizPanel offer={offer} />
+        <CertificateSettings offer={offer} />
+        <LearnerProgressPanel offerId={offer.id} />
+      </>}
       <OfferDetailsEditor offer={detailsOpen ? offer : null} onClose={() => setDetailsOpen(false)} />
     </>}
     {offer.kind === 'download' && owned && <BundleReader offerId={offer.id} userId={userId} />}
+    {offer.kind !== 'download' && owned && offer.host_id !== userId && <>
+      <CourseProgressPanel offerId={offer.id} isHost={false} />
+      <LearnerQuizList offerId={offer.id} />
+    </>}
+    {offer.kind !== 'download' && offer.host_id === userId && <CourseProgressPanel offerId={offer.id} isHost />}
   </article>;
 }
 
