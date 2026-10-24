@@ -286,7 +286,7 @@ export function LearnManage({ tab, newType }: { tab: Tab; newType?: string | und
     <div className="page-heading"><div><span className="eyebrow">{t('learn.title')}</span><h1>{t('learnHub.manage')}</h1><p>{t('learnHub.manageText')}</p></div></div>
     <div className="segmented-tabs" role="tablist">{(['tracks', 'recipes', 'progress'] as const).map(k => <button key={k} role="tab" type="button" aria-selected={tab === k} className={tab === k ? 'is-active' : ''} onClick={() => void navigate({ to: '/learn/manage', search: { tab: k }, replace: true })}>{t(`learnHub.tab.${k}`)}</button>)}</div>
     {tab === 'tracks' && <TracksTab teamId={teamId} newType={newType} />}
-    {tab === 'recipes' && <RecipesTab teamId={teamId} openNew={newType === '1'} />}
+    {tab === 'recipes' && <RecipesTab teamId={teamId} openNew={newType === 'recipe'} />}
     {tab === 'progress' && <ProgressTab teamId={teamId} />}
   </>;
 }

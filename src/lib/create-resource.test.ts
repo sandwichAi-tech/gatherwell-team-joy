@@ -20,7 +20,7 @@ describe('type-to-destination mapping', () => {
     expect(createDestination('live')).toEqual({ to: '/learn/manage', search: { tab: 'tracks', new: 'live' } });
   });
   it('routes recipes to the recipe editor and courses/files/bundles to offer editors', () => {
-    expect(createDestination('recipe')).toEqual({ to: '/learn/manage', search: { tab: 'recipes', new: '1' } });
+    expect(createDestination('recipe')).toEqual({ to: '/learn/manage', search: { tab: 'recipes', new: 'recipe' } });
     expect(createDestination('course')).toEqual({ to: '/offers', search: { new: 'course' } });
     expect(createDestination('file')).toEqual({ to: '/offers', search: { new: 'download' } });
     expect(createDestination('bundle')).toEqual({ to: '/offers', search: { new: 'download', mode: 'bundle' } });
