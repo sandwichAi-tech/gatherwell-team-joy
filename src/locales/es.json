@@ -14,7 +14,8 @@
     "progress": "Progreso",
     "updates": "Novedades",
     "inbox": "Mensajes",
-    "support": "Soporte"
+    "support": "Soporte",
+    "insights": "Estadísticas"
   },
   "common": {
     "create": "Crear",
@@ -357,7 +358,8 @@
     "terms": "Términos de ZoheeWell.",
     "privacy": "Privacidad de ZoheeWell.",
     "event": "Un evento en ZoheeWell.",
-    "unsubscribe": "Elige qué correos de ZoheeWell quieres recibir."
+    "unsubscribe": "Elige qué correos de ZoheeWell quieres recibir.",
+    "insights": "Cifras reales de tus eventos, cursos, recursos y ventas."
   },
   "stats": {
     "members": {
@@ -794,7 +796,22 @@
     "sectionAbout": "Sobre ti",
     "sectionContact": "Contacto y enlaces",
     "memberSince": "Miembro desde {{date}}",
-    "manage": "Administrar"
+    "manage": "Administrar",
+    "groupPrivacy": "Privacidad y datos",
+    "privacyData": "Privacidad y datos",
+    "exportData": "Descargar mis datos",
+    "exportDataText": "Un archivo JSON con tu perfil, registros, inscripciones, progreso, compras, seguimientos, mensajes, solicitudes de ayuda y registros de consentimiento. Solo se incluyen tus propios datos.",
+    "exported": "Tu descarga ha comenzado.",
+    "consentHistory": "Historial de consentimientos",
+    "adultConfirmed": "Confirmaste que tienes 18 años o más",
+    "waivers": "Exenciones firmadas",
+    "guardianConsents": "Consentimientos de tutor",
+    "termsAccepted": "Términos aceptados",
+    "marketingPrefs": "Preferencias de correos de marketing",
+    "marketingAllOff": "Todos los correos de marketing desactivados",
+    "consentEmpty": "Aún no hay registros de consentimiento.",
+    "minorLabel": "Menor",
+    "versionLabel": "Versión"
   },
   "teamSpace": {
     "noTeamTitle": "Aún no estás en un equipo",
@@ -990,9 +1007,9 @@
     "onlyYou": "Solo tú"
   },
   "insights": {
-    "eyebrow": "Vista de líder",
-    "title": "Insights",
-    "subtitle": "La actividad de toda tu organización. Solo reuniones, invitados y asistencias.",
+    "eyebrow": "Anfitrión",
+    "title": "Estadísticas",
+    "subtitle": "Números reales de tus propios eventos, ofertas y ventas. Nada es estimado ni de muestra.",
     "leadersOnly": "Los Insights están disponibles para líderes de equipo.",
     "period": "Periodo",
     "periods": {
@@ -1044,7 +1061,37 @@
     "homeLink": "Ver Insights",
     "homeText": "Reuniones, asistencias y mejores anfitriones de tu organización.",
     "mapLink": "Mapa del equipo",
-    "homeShort": "La semana de tu organización de un vistazo"
+    "homeShort": "La semana de tu organización de un vistazo",
+    "registered": "Registrados",
+    "attended": "Con registro de entrada",
+    "waitlisted": "En lista de espera",
+    "cancelled": "Cancelados",
+    "eventsHeading": "Eventos",
+    "eventsEmpty": "Aún no hay eventos. Los conteos de registro y asistencia aparecerán aquí cuando organices uno.",
+    "colEvent": "Evento",
+    "colDate": "Fecha",
+    "attendanceRate": "Asistencia",
+    "offersHeading": "Cursos y recursos",
+    "offersEmpty": "Aún no hay cursos ni recursos. Los conteos de inscripción y finalización aparecerán aquí cuando publiques uno.",
+    "colOffering": "Oferta",
+    "colKind": "Tipo",
+    "enrollments": "Inscripciones",
+    "learnersStarted": "Estudiantes que empezaron",
+    "certificates": "Certificados",
+    "salesHeading": "Ventas",
+    "salesEmpty": "Aún no hay ventas registradas. El pago en línea no está conectado, así que las ofertas gratuitas son el único camino disponible por ahora.",
+    "gross": "Bruto",
+    "platformFees": "Comisiones de plataforma",
+    "feeHint": "Comisión fija del 5% de ZoheeWell sobre ventas pagadas; el procesamiento de Stripe es aparte.",
+    "net": "Neto",
+    "teamHeading": "Equipo: {{team}}",
+    "teamEmpty": "Aún no hay actividad del equipo.",
+    "teamMembers": "Miembros",
+    "teamEvents": "Eventos del equipo",
+    "teamEvents30d": "{{count}} en los últimos 30 días",
+    "teamNote": "Los totales del equipo son solo conteos agregados — nunca nombres ni datos de contacto de invitados.",
+    "exportEvents": "Descargar CSV de eventos",
+    "exportOffers": "Descargar CSV de ofertas"
   },
   "map": {
     "eyebrow": "Vista de líder",
@@ -2587,7 +2634,8 @@
       "verify": "Verificar",
       "founding": "Coaches fundadores",
       "day60": "Día 60",
-      "mail": "Correo"
+      "mail": "Correo",
+      "support": "Ayuda"
     },
     "period": {
       "week": "Esta semana",
@@ -2943,6 +2991,23 @@
         "simulated": "Simulado",
         "failed": "Falló",
         "skipped": "Omitido"
+      }
+    },
+    "support": {
+      "title": "Solicitudes de ayuda",
+      "empty": "No hay solicitudes en este estado.",
+      "requester": "De",
+      "messages": "Mensajes",
+      "replyPlaceholder": "Escribe una respuesta al miembro…",
+      "reply": "Enviar respuesta",
+      "close": "Cerrar solicitud",
+      "replied": "Respuesta enviada. El miembro la verá en su página de Ayuda.",
+      "closedToast": "Solicitud cerrada.",
+      "confirmClose": "¿Cerrar esta solicitud? El miembro puede abrir una nueva cuando quiera.",
+      "filters": {
+        "open": "Abiertas",
+        "answered": "Respondidas",
+        "closed": "Cerradas"
       }
     }
   },
