@@ -5095,6 +5095,94 @@ export type Database = {
         }
         Relationships: []
       }
+      team_audit: {
+        Row: {
+          action: string
+          actor: string | null
+          created_at: string
+          id: number
+          meta: Json
+          target: string | null
+          team_id: string
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          created_at?: string
+          id?: never
+          meta?: Json
+          target?: string | null
+          team_id: string
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          created_at?: string
+          id?: never
+          meta?: Json
+          target?: string | null
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_audit_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_invites: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          created_at: string
+          created_by: string
+          email: string
+          expires_at: string
+          id: string
+          revoked_at: string | null
+          team_id: string
+          token: string
+          workspace_role: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          created_by: string
+          email: string
+          expires_at?: string
+          id?: string
+          revoked_at?: string | null
+          team_id: string
+          token?: string
+          workspace_role?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          created_by?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          revoked_at?: string | null
+          team_id?: string
+          token?: string
+          workspace_role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_invites_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       team_licenses: {
         Row: {
           cancel_at_period_end: boolean
@@ -5154,24 +5242,30 @@ export type Database = {
           invited_by: string | null
           joined_at: string
           role: string
+          suspended_at: string | null
           team_id: string
           user_id: string
+          workspace_role: string
         }
         Insert: {
           custom_badge?: string | null
           invited_by?: string | null
           joined_at?: string
           role?: string
+          suspended_at?: string | null
           team_id: string
           user_id: string
+          workspace_role?: string
         }
         Update: {
           custom_badge?: string | null
           invited_by?: string | null
           joined_at?: string
           role?: string
+          suspended_at?: string | null
           team_id?: string
           user_id?: string
+          workspace_role?: string
         }
         Relationships: [
           {
@@ -5901,6 +5995,7 @@ export type Database = {
     }
     Functions: {
       accept_founding: { Args: never; Returns: undefined }
+      accept_team_invite: { Args: { _token: string }; Returns: Json }
       active_fee_rule: {
         Args: { _at?: string; _offering_type: string }
         Returns: string
@@ -6037,6 +6132,10 @@ export type Database = {
           current_streak: number
           last_date: string
         }[]
+      }
+      change_member_role: {
+        Args: { _role: string; _team: string; _user: string }
+        Returns: undefined
       }
       chat_platform: { Args: { _url: string }; Returns: string }
       check_in_code: { Args: { _code: string; _event: string }; Returns: Json }
@@ -6336,6 +6435,10 @@ export type Database = {
         Args: { _category: string; _title: string }
         Returns: string
       }
+      invite_team_member: {
+        Args: { _email: string; _role?: string; _team: string }
+        Returns: Json
+      }
       is_adult: { Args: { _uid?: string }; Returns: boolean }
       is_connected: { Args: { _a: string; _b: string }; Returns: boolean }
       is_event_cohost: { Args: { _event: string }; Returns: boolean }
@@ -6368,6 +6471,7 @@ export type Database = {
         Returns: string
       }
       leave_free_offer: { Args: { _offer: string }; Returns: undefined }
+      leave_team: { Args: { _team: string }; Returns: undefined }
       list_public_gatherings: {
         Args: { _days?: number; _include_samples?: boolean; _limit?: number }
         Returns: Json
@@ -6602,6 +6706,10 @@ export type Database = {
           status: string
         }[]
       }
+      remove_member: {
+        Args: { _team: string; _user: string }
+        Returns: undefined
+      }
       replace_offer_item: { Args: { _item: string; _p: Json }; Returns: string }
       report_content: {
         Args: { _id: string; _note: string; _reason: string; _type: string }
@@ -6626,6 +6734,7 @@ export type Database = {
         Args: { _cert: string; _reason: string }
         Returns: undefined
       }
+      revoke_team_invite: { Args: { _id: string }; Returns: undefined }
       rsvp_belonging: {
         Args: { _event: string }
         Returns: {
@@ -6809,6 +6918,10 @@ export type Database = {
         Args: { _completed: boolean; _lesson: string }
         Returns: undefined
       }
+      set_member_suspension: {
+        Args: { _suspend: boolean; _team: string; _user: string }
+        Returns: undefined
+      }
       set_pass_fee: { Args: { _on: boolean }; Returns: undefined }
       set_referral_thanks: {
         Args: { _amount: number; _kind: string }
@@ -6840,12 +6953,24 @@ export type Database = {
         Args: { _credentials: Json; _identity: string; _years: number }
         Returns: string
       }
+      team_activity: { Args: { _limit?: number; _team: string }; Returns: Json }
       team_benchmark: { Args: { _root: string }; Returns: Json }
+      team_capability: {
+        Args: { _cap: string; _team: string }
+        Returns: boolean
+      }
       team_featured_gatherings: { Args: { _team: string }; Returns: Json }
       team_insights: {
         Args: { _from: string; _root: string; _scope: string; _to: string }
         Returns: Json
       }
+      team_invites_list: { Args: { _team: string }; Returns: Json }
+      team_log: {
+        Args: { _action: string; _meta?: Json; _target?: string; _team: string }
+        Returns: undefined
+      }
+      team_seat_usage: { Args: { _team: string }; Returns: Json }
+      team_seat_usage_limit: { Args: { _team: string }; Returns: number }
       team_topics: { Args: { _team: string }; Returns: Json }
       team_tree: {
         Args: { _root: string }
@@ -6888,6 +7013,10 @@ export type Database = {
       }
       transfer_leadership: {
         Args: { _team: string; _to: string }
+        Returns: undefined
+      }
+      transfer_ownership: {
+        Args: { _confirm: string; _new_owner: string; _team: string }
         Returns: undefined
       }
       unlock_invite: {
