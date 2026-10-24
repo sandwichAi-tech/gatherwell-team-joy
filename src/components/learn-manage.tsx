@@ -108,7 +108,7 @@ function LessonEditor({ lesson, teamId, onClose, preset }: { lesson: (Partial<Le
   const save = async () => {
     if (!lesson) return; setBusy(true);
     try {
-      const row = { title_en: f.title_en.trim(), title_es: f.title_es.trim(), type: f.type, url: f.type === 'live' ? null : f.url.trim() || null, storage_path: f.type === 'video' || f.type === 'pdf' ? f.storage_path : null,
+      const row = { title_en: f.title_en.trim(), title_es: f.title_es.trim(), type: f.type, url: f.type === 'live' ? null : f.url.trim() || null, storage_path: lessonEditorConfig(f.type).keepsFile ? f.storage_path : null,
         duration_minutes: parseInt(f.duration, 10) > 0 ? Math.min(600, parseInt(f.duration, 10)) : null, live_starts_at: f.type === 'live' && f.live ? new Date(f.live).toISOString() : null,
         replay_url: f.type === 'live' ? f.replay.trim() || null : null, notes_en: f.notes_en.trim() || null, notes_es: f.notes_es.trim() || null };
       let id = lesson.id;
@@ -128,20 +128,24 @@ function LessonEditor({ lesson, teamId, onClose, preset }: { lesson: (Partial<Le
     if (r.error) { toast.error(errMsg(t, r.error)); return; }
     await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose();
   };
-  const fileKind = f.type === 'video' ? 'video/*' : 'application/pdf';
-  return <ResponsiveSheet open={!!lesson} onOpenChange={o => !o && onClose()} title={lesson?.id ? t('learnHub.editLesson') : t('learnHub.newLesson')}>
+  const cfg = lessonEditorConfig(f.type);
+  const uploadLabel = f.type === 'video' ? 'learnHub.uploadVideo' : f.type === 'audio' ? 'learnHub.uploadAudio' : 'learnHub.uploadPdf';
+  const uploadHint = f.type === 'video' ? 'learnHub.videoHint' : f.type === 'audio' ? 'learnHub.audioHint' : 'learnHub.pdfHint';
+  const urlLabel = f.type === 'video' ? 'learnHub.videoLink' : f.type === 'pdf' ? 'learnHub.pdfLink' : f.type === 'audio' ? 'learnHub.audioLink' : 'learnHub.link';
+  return <ResponsiveSheet open={!!lesson} onOpenChange={o => !o && onClose()} title={preset && !lesson?.id ? t(`resources.preset.lesson.${preset}`) : lesson?.id ? t('learnHub.editLesson') : t('learnHub.newLesson')} description={preset && !lesson?.id ? t(`resources.preset.lessonText.${preset}`) : undefined}>
     <div className="edit-form">
       <div className="bilingual"><Field id="ls-en" label={`${t('templates.title')} · EN`}><Input id="ls-en" className="field-input" maxLength={140} value={f.title_en} onChange={set('title_en')} /></Field>
         <Field id="ls-es" label={`${t('templates.title')} · ES`}><Input id="ls-es" className="field-input" maxLength={140} value={f.title_es} onChange={set('title_es')} /></Field></div>
       <TranslatePair pairs={[['title_en', 'title_es'], ['notes_en', 'notes_es']]} f={f} setF={setF} />
-      <div className="form-field"><span className="field-label">{t('learnHub.lessonType')}</span>
-        <div className="type-choices">{(['video', 'pdf', 'link', 'live'] as const).map(ty => <button type="button" key={ty} className={`choice-card ${f.type === ty ? 'is-selected' : ''}`} aria-pressed={f.type === ty} onClick={() => setF({ ...f, type: ty })}><strong>{t(`learnHub.type.${ty}`)}</strong></button>)}</div></div>
-      {(f.type === 'video' || f.type === 'pdf') && <div className="form-field"><span className="field-label">{t(f.type === 'video' ? 'learnHub.uploadVideo' : 'learnHub.uploadPdf')}</span>
-        <label className="file-button"><Upload />{t('learnHub.chooseFile')}<input type="file" accept={fileKind} hidden onChange={e => { const x = e.target.files?.[0]; if (x) void upload(x); }} /></label>
+      {preset && !lesson?.id ? <p className="chip lesson-preset-chip">{t(`learnHub.type.${f.type}`)}</p> :
+        <div className="form-field"><span className="field-label">{t('learnHub.lessonType')}</span>
+          <div className="type-choices">{(['video', 'pdf', 'audio', 'link', 'live'] as const).map(ty => <button type="button" key={ty} className={`choice-card ${f.type === ty ? 'is-selected' : ''}`} aria-pressed={f.type === ty} onClick={() => setF({ ...f, type: ty })}><strong>{t(`learnHub.type.${ty}`)}</strong></button>)}</div></div>}
+      {cfg.uploadAccept && <div className="form-field"><span className="field-label">{t(uploadLabel)}</span>
+        <label className="file-button"><Upload />{t('learnHub.chooseFile')}<input type="file" accept={cfg.uploadAccept} hidden onChange={e => { const x = e.target.files?.[0]; if (x) void upload(x); }} /></label>
         {progress !== null && <div className="upload-progress"><span>{fileName}</span><progress value={progress} max={100} aria-label={t('learnHub.uploading')} /><small>{progress < 100 ? t('learnHub.uploadingPct', { pct: progress }) : t('learnHub.uploaded')}</small></div>}
         {progress === null && f.storage_path && <p className="field-hint">{t('learnHub.fileAttached')} <button type="button" className="text-link" onClick={() => setF({ ...f, storage_path: null })}>{t('learnHub.removeFile')}</button></p>}
-        <p className="field-hint">{t(f.type === 'video' ? 'learnHub.videoHint' : 'learnHub.pdfHint')}</p></div>}
-      {f.type !== 'live' && !f.storage_path && <Field id="ls-url" label={t(f.type === 'video' ? 'learnHub.videoLink' : f.type === 'pdf' ? 'learnHub.pdfLink' : 'learnHub.link')}><Input id="ls-url" type="url" className="field-input" placeholder="https://" value={f.url} onChange={set('url')} /></Field>}
+        <p className="field-hint">{t(uploadHint)}</p></div>}
+      {cfg.showsUrl && !f.storage_path && <Field id="ls-url" label={t(urlLabel)}><Input id="ls-url" type="url" className="field-input" placeholder="https://" value={f.url} onChange={set('url')} /></Field>}
       {f.type === 'live' && <>
         <Field id="ls-live" label={t('learnHub.liveStarts')}><Input id="ls-live" type="datetime-local" className="field-input" value={f.live} onChange={set('live')} /></Field>
         <Field id="ls-meet" label={t('learnHub.meetingLink')}><Input id="ls-meet" type="url" className="field-input" placeholder="https://" value={f.meeting} onChange={set('meeting')} /></Field>
