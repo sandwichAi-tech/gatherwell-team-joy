@@ -161,3 +161,8 @@ The requester supplied the following results after commit ac2eef3c5d5ff7138522b8
 - Boundary checks: 37 admin/anonymous assertions; ordinary, workspace owner/admin/analyst each 15 denials/RLS checks. No role promotion of real users. Four execute-grant rows inspected. Saturation 66 requests: 54 accepted, 12 identical rate_limited/no-data responses, with prior window usage retained.
 - Cleanup exact auth ids/emails zero; all 140 public-table UUID/text/JSON matches zero (including generated audit, notifications, throttle, preferences). Six temporary users were fully removed. Real data was never edited.
 - Final tests 303/303, harness build OK. Focused Support 20/20 and account lifecycle 22/22 browser assertions. Manual screen-reader narration/device checks remain; live Auth outage injection and cross-service atomic rollback cannot be asserted from successful paths. The disposable test was substituted with bounded live role/rollback checks, not silently marked executed.
+
+
+## Resource templates (v0.31)
+- resource_templates: starters (team_id null) readable by signed-in users; team rows readable/deletable only by content builders/leaders of that team. No direct insert/update.
+- use_resource_template / save_resource_template are security-definer, require can_build_resources(team), always create drafts, write team_audit, and never copy storage paths, live/replay links, prices, enrollments, progress or sales. Anonymous execution is revoked.

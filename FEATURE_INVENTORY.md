@@ -30,7 +30,8 @@ Outside accounts not connected yet: email (Resend/Mailgun), text (Twilio), push 
 | /progress | Badges, milestones, goals | Working | No |
 | /circles | Joined Circles | Working; members' space is Unfinished (ME5) | No |
 | /challenge/$id | Challenge check-ins, leaderboard | Working | No |
-| /learn, track, lesson, recipes | Trainings and recipes | Working; some sample tracks remain | No |
+| /learn (Resources), track, lesson, recipes | Events-style Resources tabs/filters, one card system | Working (v0.31) | No |
+| /learn/templates | Resource templates: 6 ZoheeWell starters + team templates, copy to draft | Working (v0.31) | No |
 | /me | Profile, privacy, notifications, language | Working | No |
 | /onboarding | First-run choice: guest or host | Working | No |
 
