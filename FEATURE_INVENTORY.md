@@ -13,10 +13,11 @@ Outside accounts not connected yet: email (Resend/Mailgun), text (Twilio), push 
 ## Guest (no account)
 | Route | What it does | Status | Flag |
 |---|---|---|---|
-| /e/$id | Public gathering page and RSVP (free), waiver, questions, waitlist | Working (confirmation email is simulated) | No |
+| /e/$id | Public gathering page and RSVP (free), waiver, questions, waitlist, terms consent, ticket tiers (paid tiers Setup required) | Working (confirmation email is simulated) | No |
 | /e/$id paid | Ticket checkout | Not connected (Stripe) | No |
 | /i/$code | Invite link that leads to a gathering RSVP | Working | No |
 | /r/$code | Referral link | Working | No |
+| /events?tab=tickets | Signed-in My tickets: status, waitlist position, waiver/terms records, cancel, private join link | Working | No |
 | /join/$code | Join a team from an invite code | Working | No |
 | /unsubscribe/$token | Email preferences and opt-out | Working | No |
 | Text replies IN/OUT/STOP | RSVP by text reply | Not connected (only admin simulation) | No |
