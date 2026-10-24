@@ -36,8 +36,8 @@ export function ApprovedPlans({ headingLevel = 3 }: { headingLevel?: 2 | 3 }) {
         <small>{annual ? t('home.pricing.perYear') : t('home.pricing.perMonth')}</small>
       </p>
       {annual && p.monthly > 0 && <p className="gw-fine">{t('pricingV4.annualSavings', { pct: '16.7' })}</p>}
-      <p className="gw-v4-plan-fee"><GwIcon name="Percent" size={18} />{t('pricingV4.feeLine', { pct: p.feePct })}</p>
-      <p className="gw-v4-plan-seats"><GwIcon name="UsersRound" size={18} />{t('pricingV4.seatsLine', { n: p.seats })}</p>
+      <p className="gw-v4-plan-fee">{t('pricingV4.feeLine', { pct: p.feePct })}</p>
+      <p className="gw-v4-plan-seats">{t('pricingV4.seatsLine', { n: p.seats })}</p>
       {'contactSales' in p && p.contactSales
         ? <a href={CONTACT_SALES_HREF} className="gw-btn gw-btn-secondary gw-btn-block">{t('pricingV4.contactSales')}</a>
         : p.monthly > 0
