@@ -3990,6 +3990,8 @@ export type Database = {
       rsvps: {
         Row: {
           buddy_rsvp_id: string | null
+          cancel_reason: string | null
+          cancelled_by: string | null
           checked_in_at: string | null
           checkin_code: string
           created_at: string
@@ -4017,11 +4019,17 @@ export type Database = {
           small_group: string | null
           sms_opt_in: boolean
           status: string
+          terms_accepted_at: string | null
+          terms_version_id: string | null
+          tier_id: string | null
+          updates_opt_in: boolean
           user_id: string | null
           wants_buddy: boolean
         }
         Insert: {
           buddy_rsvp_id?: string | null
+          cancel_reason?: string | null
+          cancelled_by?: string | null
           checked_in_at?: string | null
           checkin_code?: string
           created_at?: string
@@ -4049,11 +4057,17 @@ export type Database = {
           small_group?: string | null
           sms_opt_in?: boolean
           status?: string
+          terms_accepted_at?: string | null
+          terms_version_id?: string | null
+          tier_id?: string | null
+          updates_opt_in?: boolean
           user_id?: string | null
           wants_buddy?: boolean
         }
         Update: {
           buddy_rsvp_id?: string | null
+          cancel_reason?: string | null
+          cancelled_by?: string | null
           checked_in_at?: string | null
           checkin_code?: string
           created_at?: string
@@ -4081,6 +4095,10 @@ export type Database = {
           small_group?: string | null
           sms_opt_in?: boolean
           status?: string
+          terms_accepted_at?: string | null
+          terms_version_id?: string | null
+          tier_id?: string | null
+          updates_opt_in?: boolean
           user_id?: string | null
           wants_buddy?: boolean
         }
@@ -4111,6 +4129,13 @@ export type Database = {
             columns: ["merged_into_rsvp_id"]
             isOneToOne: false
             referencedRelation: "rsvps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rsvps_terms_version_id_fkey"
+            columns: ["terms_version_id"]
+            isOneToOne: false
+            referencedRelation: "consent_text_versions"
             referencedColumns: ["id"]
           },
         ]
