@@ -2172,3 +2172,17 @@ a.gw-cat-chip:hover{background:#fff}
 .guest-tier-name{font-weight:600}
 .guest-tier-meta{font-size:13px;color:var(--muted);grid-column:2}
 .ticket-card .event-info p{display:flex;align-items:center;gap:6px;margin:2px 0}
+
+/* Content studio + public offering pages */
+.readiness-panel h2 { font-size: 17px; }
+.blocker-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.blocker-list .text-link { min-height: 48px; display: inline-flex; align-items: center; }
+.inline-ok { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--success, #3f7d54); margin-right: 8px; }
+.offer-host-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.row-actions { display: flex; align-items: center; gap: 4px; }
+.public-curriculum { list-style: none; padding: 0; display: grid; gap: 16px; }
+.public-section > strong { display: block; margin-bottom: 6px; }
+.public-section ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.public-lesson { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; min-height: 48px; padding: 8px 0; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.public-lesson small { color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .offer-cover, .learn-cover { transition: none; } }
