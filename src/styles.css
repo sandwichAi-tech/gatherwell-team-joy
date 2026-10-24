@@ -2418,3 +2418,29 @@ a.gw-cat-chip:hover{background:#fff}
 .cover-focal-grid button.is-selected svg{opacity:1;color:var(--primary)}
 .cover-focal-dot{width:10px;height:10px;border-radius:50%;background:var(--muted-foreground);opacity:.5}
 .cover-focal-grid button.is-selected .cover-focal-dot{background:var(--primary);opacity:1}
+
+/* Communications hub (v0.35) */
+.comms-page .page-sub{color:var(--muted-foreground)}
+.comms-tabs{margin-top:12px}
+.comms-tab-hint{margin:8px 2px 16px}
+.comms-setup{margin:12px 0}
+.comms-setup-list{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
+.comms-setup-list li{display:flex;align-items:center;gap:8px}
+.comms-section{display:grid;gap:12px;margin-top:8px}
+.comms-card-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.comms-card-body{margin:6px 0;color:var(--muted-foreground)}
+.comms-card.is-archived{opacity:.65}
+.comms-preview{white-space:pre-line}
+.comms-warning{color:var(--destructive)}
+.comms-status-active{background:var(--accent);color:var(--primary)}
+.comms-status-paused{background:var(--muted)}
+.comms-activity-row{margin:6px 0;font-size:14px}
+.comms-steps{margin:8px 0 0;padding-left:20px;color:var(--muted-foreground)}
+.comms-step-editor{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.comms-step-row{display:flex;align-items:center;gap:8px}
+.comms-step-num{min-width:24px;height:24px;border-radius:50%;background:var(--muted);display:flex;align-items:center;justify-content:center;font-size:13px}
+.comms-step-body{flex:1}
+.comms-step-actions{display:flex;gap:2px}
+.radio-row{display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid var(--border);border-radius:12px;min-height:48px}
+.radio-row input{margin-top:4px;min-width:20px;min-height:20px}
+.stack{display:grid;gap:8px}

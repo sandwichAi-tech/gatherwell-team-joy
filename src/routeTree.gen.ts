@@ -37,6 +37,7 @@ import { Route as VerifyNumberRouteImport } from './routes/verify.$number'
 import { Route as AuthenticatedAppAlertsRouteImport } from './routes/_authenticated/_app/alerts'
 import { Route as AuthenticatedAppBlueprintsRouteImport } from './routes/_authenticated/_app/blueprints'
 import { Route as AuthenticatedAppCirclesRouteImport } from './routes/_authenticated/_app/circles'
+import { Route as AuthenticatedAppCommunicationsRouteImport } from './routes/_authenticated/_app/communications'
 import { Route as AuthenticatedAppEarningsRouteImport } from './routes/_authenticated/_app/earnings'
 import { Route as AuthenticatedAppEventsRouteImport } from './routes/_authenticated/_app/events'
 import { Route as AuthenticatedAppFollowingRouteImport } from './routes/_authenticated/_app/following'
@@ -230,6 +231,12 @@ const AuthenticatedAppCirclesRoute = AuthenticatedAppCirclesRouteImport.update({
   path: '/circles',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppCommunicationsRoute =
+  AuthenticatedAppCommunicationsRouteImport.update({
+    id: '/communications',
+    path: '/communications',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppEarningsRoute =
   AuthenticatedAppEarningsRouteImport.update({
     id: '/earnings',
@@ -549,6 +556,7 @@ export interface FileRoutesByFullPath {
   '/alerts': typeof AuthenticatedAppAlertsRoute
   '/blueprints': typeof AuthenticatedAppBlueprintsRoute
   '/circles': typeof AuthenticatedAppCirclesRoute
+  '/communications': typeof AuthenticatedAppCommunicationsRoute
   '/earnings': typeof AuthenticatedAppEarningsRoute
   '/events': typeof AuthenticatedAppEventsRoute
   '/following': typeof AuthenticatedAppFollowingRoute
@@ -630,6 +638,7 @@ export interface FileRoutesByTo {
   '/alerts': typeof AuthenticatedAppAlertsRoute
   '/blueprints': typeof AuthenticatedAppBlueprintsRoute
   '/circles': typeof AuthenticatedAppCirclesRoute
+  '/communications': typeof AuthenticatedAppCommunicationsRoute
   '/earnings': typeof AuthenticatedAppEarningsRoute
   '/events': typeof AuthenticatedAppEventsRoute
   '/following': typeof AuthenticatedAppFollowingRoute
@@ -714,6 +723,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/alerts': typeof AuthenticatedAppAlertsRoute
   '/_authenticated/_app/blueprints': typeof AuthenticatedAppBlueprintsRoute
   '/_authenticated/_app/circles': typeof AuthenticatedAppCirclesRoute
+  '/_authenticated/_app/communications': typeof AuthenticatedAppCommunicationsRoute
   '/_authenticated/_app/earnings': typeof AuthenticatedAppEarningsRoute
   '/_authenticated/_app/events': typeof AuthenticatedAppEventsRoute
   '/_authenticated/_app/following': typeof AuthenticatedAppFollowingRoute
@@ -797,6 +807,7 @@ export interface FileRouteTypes {
     | '/alerts'
     | '/blueprints'
     | '/circles'
+    | '/communications'
     | '/earnings'
     | '/events'
     | '/following'
@@ -878,6 +889,7 @@ export interface FileRouteTypes {
     | '/alerts'
     | '/blueprints'
     | '/circles'
+    | '/communications'
     | '/earnings'
     | '/events'
     | '/following'
@@ -961,6 +973,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/alerts'
     | '/_authenticated/_app/blueprints'
     | '/_authenticated/_app/circles'
+    | '/_authenticated/_app/communications'
     | '/_authenticated/_app/earnings'
     | '/_authenticated/_app/events'
     | '/_authenticated/_app/following'
@@ -1248,6 +1261,13 @@ declare module '@tanstack/react-router' {
       path: '/circles'
       fullPath: '/circles'
       preLoaderRoute: typeof AuthenticatedAppCirclesRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/communications': {
+      id: '/_authenticated/_app/communications'
+      path: '/communications'
+      fullPath: '/communications'
+      preLoaderRoute: typeof AuthenticatedAppCommunicationsRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
     '/_authenticated/_app/earnings': {
@@ -1628,6 +1648,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppAlertsRoute: typeof AuthenticatedAppAlertsRoute
   AuthenticatedAppBlueprintsRoute: typeof AuthenticatedAppBlueprintsRoute
   AuthenticatedAppCirclesRoute: typeof AuthenticatedAppCirclesRoute
+  AuthenticatedAppCommunicationsRoute: typeof AuthenticatedAppCommunicationsRoute
   AuthenticatedAppEarningsRoute: typeof AuthenticatedAppEarningsRoute
   AuthenticatedAppEventsRoute: typeof AuthenticatedAppEventsRoute
   AuthenticatedAppFollowingRoute: typeof AuthenticatedAppFollowingRoute
@@ -1677,6 +1698,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppAlertsRoute: AuthenticatedAppAlertsRoute,
   AuthenticatedAppBlueprintsRoute: AuthenticatedAppBlueprintsRoute,
   AuthenticatedAppCirclesRoute: AuthenticatedAppCirclesRoute,
+  AuthenticatedAppCommunicationsRoute: AuthenticatedAppCommunicationsRoute,
   AuthenticatedAppEarningsRoute: AuthenticatedAppEarningsRoute,
   AuthenticatedAppEventsRoute: AuthenticatedAppEventsRoute,
   AuthenticatedAppFollowingRoute: AuthenticatedAppFollowingRoute,

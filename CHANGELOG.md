@@ -304,3 +304,10 @@
 - Free public events no longer request paid price data (price_cents now rides in the public event payload; the price lookup only runs for paid events, including the RSVP sheet and confirmation view).
 - Paid policy presets reworded so host-cancellation refunds are attributed to the host, not implied as automatic processing.
 - Cover controls (gradient palette, overlay, focal point, alt text, reset) now use labeled groups with aria-pressed state and descriptive style names in EN/ES; axe-core scan of the section is clean.
+
+## v0.35 — Communications hub (2026-10-24)
+- New signed-in /communications hub (linked from Events) with three areas: Templates (8 bilingual ZoheeWell starters + team templates, variables, preview, duplicate/edit/archive), Automations (registration confirmation, event reminder, event cancellation triggers with timing, draft/active/paused, activity view), and Journeys (ordered wait/send/condition steps with accessible reorder, draft-only until valid).
+- Sending is truthful: DB triggers enqueue rendered messages into the existing notification_outbox (kind 'automation'); email/SMS activation is blocked with "Setup required" until providers are connected — no fake delivery.
+- Server-authoritative RPCs (save/duplicate/archive template, save/status automation, save/status journey, activity) with team_capability('messages') checks, channel/template matching, step validation, and variable rendering; RLS + SELECT-only grants, writes via RPC only.
+- Outbox kind check widened to include 'automation' (migration 0096); custom_message rendering added to the email/SMS renderers.
+- Verified: 383 unit tests, 19 live RPC checks (incl. real RSVP → rendered outbox row), 14 browser checks EN/ES 390/1280; QA fixtures removed. Journeys save/validate/activate but step execution is not wired yet (documented limitation).

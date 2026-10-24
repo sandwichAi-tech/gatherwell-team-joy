@@ -19,7 +19,7 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Use react-i18next with matched English and Latin American Spanish JSON resources for all visible and accessible copy, so language changes stay instant and complete.
 - Keep shared navigation, settings, and sheets in GatherwellShell around the root Outlet; use separate leaf routes for the five tabs so deep links work.
 - localStorage holds only language, theme and a pending invite code (cleared once the join completes); all user data lives in Lovable Cloud with team-scoped RLS.
-- Home-screen installation is manifest-only; the only service worker is public/push-sw.js (push display + click, no caching), registered only after the person turns push on, because offline use was not requested.
+- Home-screen installation is manifest-only; the only service worker is public/push-sw.js (push display + click, no caching), registered only after the person turns push on, (offline not requested).
 - Visual rules live in DESIGN_RULES.md's active Blueprint v4 section; its historical sections are not active.
 - App screens live under _authenticated/_app: the _authenticated gate redirects signed-out visitors to /login, and the _app layout sends anyone not onboarded (or holding a pending invite) to /onboarding before rendering GatherwellShell.
 - Public pages (marketing + GuestShell routes /e, /h, /l, /t, /i, /r) server-render in English and call applySavedLanguage() after hydration; route loaders prefetch public data via prefetchPublic() and the router dehydrates the query cache, so crawlers and link previews see content. Render must stay window-free and deterministic (no Math.random/location in render). AuthFrame surfaces (/login, /join, /terms, /privacy) still use ClientOnly.
@@ -31,11 +31,12 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Provider webhooks live under /api/public/{sms/inbound,email/resend,email/mailgun}, verify signatures, and return 503 until their secrets exist.
 - Icons render only through GwIcon (src/components/gw-icon.tsx, Phosphor); src/components/icons.tsx re-exports named wrappers so call sites stay simple and nothing imports an icon library directly.
 - Photos render only through BrandImage and come from site_media slots (private site-media bucket, signed URLs, anonymous read); only user_roles admins (has_role) can edit them at /admin/site-media.
+- Communications hub (/communications) writes only via 0095 RPCs into notification_outbox; email/SMS activation blocked until provider secrets exist.
 - All AI (assistant + src/lib/ai/*, smart.functions.ts) runs server-side via Claude, model in assistant/config.ts; no key → preview text, not counted. Cards act on confirm.
 - Plans/limits live in billing_accounts, team_licenses, license_seats; effective_plan()+plan_limits() decide limits (triggers, new rows only). Stripe: billing.functions.ts + /api/public/stripe/webhook only; no key → sheet.
 - Platform admin: /admin data and actions go only through src/lib/admin.functions.ts and every action writes admin_audit; reports come from report_content() or the claims trigger.
-- Platform safety lists/actions use caller-scoped admin_safety RPCs for private projections, bounded pagination, throttling and atomic reversible moderation plus audit; account bans remain the existing managed-auth operation and never imply deletion.
-- Account restriction records and their audit commit through a service-only RPC after caller validation; managed-auth failures use checked compensation because Auth and database writes cannot share a transaction.
+- Platform safety uses caller-scoped admin_safety RPCs (bounded, throttled, atomic, audited); bans stay a managed-auth operation and never imply deletion.
+- Account restrictions commit via service-only RPC after caller validation; managed-auth failures use checked compensation (Auth and DB writes share no transaction).
 - Admin retries use admin_retry_message() (atomic requeue + audit); delivery stays in the outbox processor.
 - Follows/calendar: public pages read only via get_public_host/get_public_team; iCal via /api/public/calendar/$token (token is the only credential).
 

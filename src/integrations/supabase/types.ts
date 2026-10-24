@@ -2786,6 +2786,205 @@ export type Database = {
           },
         ]
       }
+      message_automations: {
+        Row: {
+          audience: string
+          channel: string
+          created_at: string
+          created_by: string | null
+          event_id: string | null
+          id: string
+          name: string
+          status: string
+          team_id: string
+          template_id: string | null
+          timing_hours: number
+          trigger: string
+          updated_at: string
+        }
+        Insert: {
+          audience?: string
+          channel?: string
+          created_at?: string
+          created_by?: string | null
+          event_id?: string | null
+          id?: string
+          name: string
+          status?: string
+          team_id: string
+          template_id?: string | null
+          timing_hours?: number
+          trigger: string
+          updated_at?: string
+        }
+        Update: {
+          audience?: string
+          channel?: string
+          created_at?: string
+          created_by?: string | null
+          event_id?: string | null
+          id?: string
+          name?: string
+          status?: string
+          team_id?: string
+          template_id?: string | null
+          timing_hours?: number
+          trigger?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_automations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_automations_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_automations_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "message_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      message_journey_steps: {
+        Row: {
+          config: Json
+          id: string
+          journey_id: string
+          kind: string
+          sort_order: number
+        }
+        Insert: {
+          config?: Json
+          id?: string
+          journey_id: string
+          kind: string
+          sort_order: number
+        }
+        Update: {
+          config?: Json
+          id?: string
+          journey_id?: string
+          kind?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_journey_steps_journey_id_fkey"
+            columns: ["journey_id"]
+            isOneToOne: false
+            referencedRelation: "message_journeys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      message_journeys: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          start_trigger: string
+          status: string
+          team_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          start_trigger?: string
+          status?: string
+          team_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          start_trigger?: string
+          status?: string
+          team_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_journeys_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      message_templates: {
+        Row: {
+          archived: boolean
+          audience: string
+          body: string
+          channel: string
+          created_at: string
+          created_by: string | null
+          id: string
+          language: string
+          name: string
+          subject: string | null
+          team_id: string | null
+          updated_at: string
+          variables: string[]
+        }
+        Insert: {
+          archived?: boolean
+          audience?: string
+          body: string
+          channel?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          language?: string
+          name: string
+          subject?: string | null
+          team_id?: string | null
+          updated_at?: string
+          variables?: string[]
+        }
+        Update: {
+          archived?: boolean
+          audience?: string
+          body?: string
+          channel?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          language?: string
+          name?: string
+          subject?: string | null
+          team_id?: string | null
+          updated_at?: string
+          variables?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_templates_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       network_features: {
         Row: {
           created_at: string
@@ -2878,11 +3077,13 @@ export type Database = {
       notification_outbox: {
         Row: {
           attempts: number
+          automation_id: string | null
           channel: string
           created_at: string
           error: string | null
           event_id: string | null
           id: string
+          journey_step_id: string | null
           kind: string
           language: string
           lesson_id: string | null
@@ -2900,11 +3101,13 @@ export type Database = {
         }
         Insert: {
           attempts?: number
+          automation_id?: string | null
           channel: string
           created_at?: string
           error?: string | null
           event_id?: string | null
           id?: string
+          journey_step_id?: string | null
           kind?: string
           language?: string
           lesson_id?: string | null
@@ -2922,11 +3125,13 @@ export type Database = {
         }
         Update: {
           attempts?: number
+          automation_id?: string | null
           channel?: string
           created_at?: string
           error?: string | null
           event_id?: string | null
           id?: string
+          journey_step_id?: string | null
           kind?: string
           language?: string
           lesson_id?: string | null
@@ -6512,6 +6717,10 @@ export type Database = {
       admin_users: { Args: { _q: string }; Returns: Json }
       ai_usage_status: { Args: never; Returns: Json }
       archive_host_update: { Args: { _id: string }; Returns: undefined }
+      archive_message_template: {
+        Args: { _archived: boolean; _id: string }
+        Returns: undefined
+      }
       assign_license_seat: {
         Args: { _on: boolean; _team: string; _user: string }
         Returns: undefined
@@ -6531,6 +6740,10 @@ export type Database = {
       }
       attendance_export: { Args: { _event: string }; Returns: Json }
       attendance_totals: { Args: { _event: string }; Returns: Json }
+      automation_activity: {
+        Args: { _limit: number; _team: string }
+        Returns: Json
+      }
       award_badge: {
         Args: { _badge: string; _note: string; _team: string; _user: string }
         Returns: undefined
@@ -6767,9 +6980,21 @@ export type Database = {
         Returns: Json
       }
       due_followup_events: { Args: never; Returns: string[] }
+      duplicate_message_template: {
+        Args: { _id: string; _team: string }
+        Returns: string
+      }
       duplicate_offer: { Args: { _offer: string }; Returns: string }
       effective_plan: { Args: { _uid: string }; Returns: Json }
       email_token: { Args: { _email: string; _lang: string }; Returns: string }
+      enqueue_automation_message: {
+        Args: {
+          _auto: Database["public"]["Tables"]["message_automations"]["Row"]
+          _rsvp: Database["public"]["Tables"]["rsvps"]["Row"]
+          _send_after: string
+        }
+        Returns: undefined
+      }
       enqueue_message: {
         Args: {
           _channel: string
@@ -7273,6 +7498,16 @@ export type Database = {
         Args: { _team: string; _user: string }
         Returns: undefined
       }
+      render_message_vars: {
+        Args: {
+          _date: string
+          _event: string
+          _host: string
+          _name: string
+          _text: string
+        }
+        Returns: string
+      }
       replace_offer_item: { Args: { _item: string; _p: Json }; Returns: string }
       reply_contact_thread: {
         Args: { _body: string; _thread: string }
@@ -7461,6 +7696,43 @@ export type Database = {
         }
         Returns: string
       }
+      save_message_automation: {
+        Args: {
+          _audience: string
+          _channel: string
+          _event_id: string
+          _id: string
+          _name: string
+          _team: string
+          _template_id: string
+          _timing_hours: number
+          _trigger: string
+        }
+        Returns: string
+      }
+      save_message_journey: {
+        Args: {
+          _id: string
+          _name: string
+          _start_trigger: string
+          _steps: Json
+          _team: string
+        }
+        Returns: string
+      }
+      save_message_template: {
+        Args: {
+          _audience: string
+          _body: string
+          _channel: string
+          _id: string
+          _language: string
+          _name: string
+          _subject: string
+          _team: string
+        }
+        Returns: string
+      }
       save_quiz_response: {
         Args: {
           _attempt: string
@@ -7498,6 +7770,10 @@ export type Database = {
         Args: { _amount: number; _host: string }
         Returns: number
       }
+      set_automation_status: {
+        Args: { _id: string; _status: string }
+        Returns: undefined
+      }
       set_buddy_wish: {
         Args: { _code: string; _on: boolean }
         Returns: undefined
@@ -7520,6 +7796,10 @@ export type Database = {
       }
       set_event_retreat: {
         Args: { _ends_at: string; _event: string; _retreat: Json }
+        Returns: undefined
+      }
+      set_journey_status: {
+        Args: { _id: string; _status: string }
         Returns: undefined
       }
       set_lesson_progress: {

@@ -65,6 +65,7 @@ function copy(template: string, lang: Lang, p: P): Copy | null {
     case 'rsvp_cancelled_by_host': return { subject: es ? `Registro cancelado: ${title}` : `Registration cancelled: ${title}`, heading: es ? 'Tu registro fue cancelado' : 'Your registration was cancelled', body: [hi, es ? `El anfitrión de ${title} canceló tu registro.` : `The host of ${title} cancelled your registration.`, s(p['reason']), details].filter(Boolean), cta: { label: es ? 'Ver el evento' : 'View the event', url: eventLink(p) }, push: es ? `Registro cancelado: ${title}` : `Registration cancelled: ${title}` };
     case 'rsvp_declined': return { subject: es ? `Sobre tu solicitud: ${title}` : `About your request: ${title}`, heading: es ? 'Esta vez no hubo lugar' : "Not this time", body: [hi, es ? `El anfitrión de ${title} no pudo darte lugar esta vez. Esperamos verte en otra reunión.` : `The host of ${title} couldn't fit you in this time. We hope to see you at another gathering.`], push: es ? `Sin lugar esta vez: ${title}` : `Not this time: ${title}` };
     case 'rsvp_request': return { subject: es ? `Nueva solicitud: ${title}` : `New request: ${title}`, heading: es ? 'Alguien quiere unirse' : 'Someone wants to join', body: [es ? `${s(p['guest'])} pidió unirse a ${title}.` : `${s(p['guest'])} asked to join ${title}.`], cta: { label: es ? 'Revisar' : 'Review', url: `${APP_URL}/event/${s(p['event_id'])}/guests` }, push: es ? `${s(p['guest'])} pidió unirse a ${title}` : `${s(p['guest'])} asked to join ${title}` };
+    case 'custom_message': { const subj = s(p['subject']) || s(p['title']); const cta = p['event_id'] ? { label: es ? 'Ver el evento' : 'View the event', url: eventLink(p) } : undefined; return { subject: subj, heading: subj, body: s(p['body']).split(/\n+/).filter(Boolean), ...(cta ? { cta } : {}), push: s(p['body']).slice(0, 120) }; }
     default: return null;
   }
 }
@@ -100,6 +101,7 @@ export function renderSms(template: string, lang: Lang, p: P) {
   const hi = s(p['name']) ? (es ? `Hola, ${s(p['name'])}. ` : `Hi ${s(p['name'])}, `) : '';
   const host = s(p['host']);
   const lines: Record<string, string> = {
+    custom_message: s(p['body']),
     reminder_24h: es ? `ZoheeWell: mañana es ${title}, ${date}. ${link}` : `ZoheeWell: ${title} is tomorrow, ${date}. ${link}`,
     reminder_2h: es ? `ZoheeWell: ${title} empieza en 2 horas. ${link}` : `ZoheeWell: ${title} starts in 2 hours. ${link}`,
     waitlist_promoted: es ? `ZoheeWell: ¡se liberó un lugar en ${title}! Ya es tuyo. ${link}` : `ZoheeWell: a spot opened at ${title} — you're in. ${link}`,
