@@ -19,7 +19,6 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { X, Camera, Check, Languages, Copy, MessageCircle, MessageSquareText, MapPin, Globe2, Repeat, ChevronRight } from '@/components/icons';
-import { GwIcon } from '@/components/gw-icon';
 import { COVER_OVERLAYS, COVER_FOCALS, clampOverlay, clampFocal } from '@/lib/cover';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
