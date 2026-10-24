@@ -54,7 +54,7 @@ export function PublicOfferPage({ id }: { id: string }) {
   const paid = o.price_cents > 0;
 
   const enroll = async () => {
-    if (!userId) { sessionStorage.setItem('gatherwell-return', `/o/${id}`); void navigate({ to: '/login' }); return; }
+    if (!userId) { rememberNext(`/o/${id}`); void navigate({ to: '/login' }); return; }
     setBusy(true);
     const { error } = await enrollFree(id);
     setBusy(false);
@@ -106,5 +106,3 @@ export function PublicOfferPage({ id }: { id: string }) {
 function pick2(lang: string, en?: string | null, es?: string | null) {
   return (lang === 'es' ? es || en : en || es) || '';
 }
-
-export { Clock as _keepClock };
