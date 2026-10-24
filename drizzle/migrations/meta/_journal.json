@@ -659,6 +659,13 @@
       "when": 1792881570698,
       "tag": "0093_fix_public_event_payload_size",
       "breakpoints": true
+    },
+    {
+      "idx": 94,
+      "version": "7",
+      "when": 1792882217685,
+      "tag": "0094_public_event_price_cents",
+      "breakpoints": true
     }
   ]
 }
