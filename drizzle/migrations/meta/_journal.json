@@ -477,6 +477,13 @@
       "when": 1792815323965,
       "tag": "0067_duplicate_quizzes_as_drafts",
       "breakpoints": true
+    },
+    {
+      "idx": 68,
+      "version": "7",
+      "when": 1792815649562,
+      "tag": "0068_public_offer_quiz_metadata",
+      "breakpoints": true
     }
   ]
 }
