@@ -3876,22 +3876,7 @@
         "title": "Coaches and creators",
         "body": "Share what you teach, online and in person."
       }
-    ],
-    "payTable": {
-      "title": "What you pay",
-      "sub": "Every number, up front. Prices and fees come straight from your plan settings.",
-      "monthly": "Monthly price",
-      "platformFee": "Platform fee on tickets, Circles, courses and challenges",
-      "serviceFee": "Service fee on each card payment, which covers card processing",
-      "whoPays": "Who pays the service fee",
-      "whoPaysValue": "Your guests at checkout, or you",
-      "gatherings": "Events per month",
-      "gatheringsFree": "{{n}} (each date in a series counts); no limit in your first 30 days",
-      "guests": "Guests per event",
-      "guestsFree": "{{n}}; no limit in your first 30 days",
-      "unlimited": "Unlimited",
-      "perMonth": "/month"
-    }
+    ]
   },
   "teamRsvp": {
     "cta": "Register a team ({{min}}–{{max}})",
@@ -4714,33 +4699,6 @@
       "pro": "Everything for busy, established hosts.",
       "team25": "For teams of up to 25 builders.",
       "organization": "For organizations of up to 100 builders, with assisted setup."
-    },
-    "compare": {
-      "title": "Compare plans",
-      "sub": "Every plan includes the full event, course and community toolkit. Plans differ in builder seats and the platform fee on paid sales.",
-      "caption": "Comparison of ZoheeWell plans: builder seats, platform fee, and included features.",
-      "feature": "Feature",
-      "included": "Included",
-      "onPaidSales": "on paid sales",
-      "note_email": "Email support",
-      "note_usage": "Usage priced separately",
-      "note_setup": "Setup required",
-      "footnote": "Paid checkout and payouts are not open yet. SMS and payment processing are provided by third parties and priced separately.",
-      "rows": {
-        "seats": "Builder seats",
-        "fee": "Platform fee",
-        "events": "Events & retreats",
-        "courses": "Courses & resources",
-        "memberships": "Memberships & subscriptions",
-        "tickets": "Ticket tiers & registration",
-        "checkin": "Check-in & waitlists",
-        "roles": "Team roles & invitations",
-        "analytics": "Analytics & reporting",
-        "exports": "Data exports",
-        "support": "Support",
-        "sms": "SMS & messaging",
-        "payments": "Payment processing"
-      }
     },
     "whichPlan": {
       "title": "Which plan is right for me?",

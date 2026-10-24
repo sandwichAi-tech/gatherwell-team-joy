@@ -8,7 +8,6 @@ import { safeReturnPath } from './return-to';
 const src = readFileSync('src/components/landing/marketing-pages.tsx', 'utf8');
 const pricingPage = src.slice(src.indexOf('export function PricingPage'), src.indexOf('\n', src.indexOf('export function PricingPage')));
 const approved = readFileSync('src/components/landing/approved-pricing.tsx', 'utf8');
-const comparison = readFileSync('src/components/landing/plan-comparison.tsx', 'utf8');
 
 describe('public pricing (approved 2026-10-24 model)', () => {
   it('exact monthly prices', () => expect(Object.fromEntries(HOME_PLANS.map(p => [p.id, p.monthly]))).toEqual({ free: 0, advanced: 49, pro: 99, team25: 199, organization: 499 }));
@@ -28,10 +27,9 @@ describe('public pricing (approved 2026-10-24 model)', () => {
       expect(text).not.toMatch(/\b7\s?%|0[.,]49|\bcap\b|tope/i);
     }
   });
-  it('pricing page uses the approved plans, comparison chart and which-plan guide', () => {
+  it('pricing page uses the approved plans and which-plan guide', () => {
     expect(pricingPage).toContain('ApprovedPlans');
     expect(pricingPage).toContain('BuilderSeatExplainer');
-    expect(pricingPage).toContain('PlanComparison');
     expect(pricingPage).toContain('WhichPlan');
     expect(pricingPage).not.toMatch(/PricingCards|WhatYouPay|pricingFaq/);
   });
@@ -57,21 +55,6 @@ describe('public pricing (approved 2026-10-24 model)', () => {
     expect(support).toContain("support.orgSubject");
     expect(en.support.orgSubject).toBeTruthy();
     expect(es.support.orgSubject).toBeTruthy();
-  });
-  it('comparison chart covers the required rows with text, not color alone', () => {
-    for (const k of ['seats', 'fee', 'events', 'courses', 'memberships', 'tickets', 'checkin', 'roles', 'analytics', 'exports', 'support', 'sms', 'payments']) {
-      expect(comparison).toContain(`key: '${k}'`);
-      expect(en.pricingV4.compare.rows[k as keyof typeof en.pricingV4.compare.rows]).toBeTruthy();
-    }
-    expect(comparison).toContain('pricingV4.compare.included');
-    expect(comparison).toContain(`note: 'setup'`);
-    expect(comparison).toContain(`note: 'usage'`);
-  });
-  it('provider-dependent rows are honest in both languages', () => {
-    expect(en.pricingV4.compare.note_setup).toBe('Setup required');
-    expect(en.pricingV4.compare.note_usage).toBe('Usage priced separately');
-    expect(es.pricingV4.compare.note_setup).toBeTruthy();
-    expect(es.pricingV4.compare.note_usage).toBeTruthy();
   });
   it('Start hosting CTA targets host sign-in', () => {
     expect(approved).toContain(`to="/login" search={{ intent: 'host' }}`);
