@@ -13,3 +13,9 @@
 - [ ] Signed-in browser QA for ticket page + check-in (needs injected session)
 - [ ] Screen reader + 200% zoom pass on ticket/calendar surfaces
 - [ ] Wallet provider certificates (UI gated as Setup required)
+
+## Active: v0.25 QA pass (comms + tickets/check-in)
+- [ ] Signed-in browser QA at 390px/1280px: bell, notifications, updates, discussion, moderation, contact host, support, Setup-required gates
+- [ ] Ticket QR/print/calendar; check-in manual/invalid/undo/walk-in boundary, totals/export roles
+- [ ] A11y: keyboard/focus, 200% zoom, reduced motion, 44px targets, no overflow, EN/ES parity
+- [ ] Fix defects + regression tests; clean all ee000010 fixtures; update FEATURE_INVENTORY/CHANGELOG/SECURITY_NOTES
