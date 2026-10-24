@@ -3923,6 +3923,32 @@ export type Database = {
         }
         Relationships: []
       }
+      profile_slug_history: {
+        Row: {
+          created_at: string
+          profile_id: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          profile_id: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          profile_id?: string
+          slug?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_slug_history_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           active_team_id: string | null
@@ -7081,6 +7107,7 @@ export type Database = {
         Returns: undefined
       }
       normalize_phone: { Args: { _p: string }; Returns: string }
+      normalize_profile_slug: { Args: { _raw: string }; Returns: string }
       note_plan_waitlist: { Args: { _event: string }; Returns: undefined }
       notify_announcement: {
         Args: { _announcement: string; _email: boolean; _subteams: boolean }
@@ -7260,9 +7287,11 @@ export type Database = {
         Returns: undefined
       }
       request_ip: { Args: never; Returns: string }
+      reserved_profile_slugs: { Args: never; Returns: string[] }
       reset_calendar_feeds: { Args: never; Returns: Json }
       reset_invite_link: { Args: { _event: string }; Returns: string }
       reset_join_code: { Args: { _team: string }; Returns: string }
+      resolve_host_slug: { Args: { _slug: string }; Returns: string }
       resolve_report: {
         Args: { _action: string; _id: string; _note?: string }
         Returns: undefined
@@ -7483,6 +7512,7 @@ export type Database = {
         Returns: undefined
       }
       set_pass_fee: { Args: { _on: boolean }; Returns: undefined }
+      set_profile_slug: { Args: { _slug: string }; Returns: string }
       set_referral_thanks: {
         Args: { _amount: number; _kind: string }
         Returns: undefined
