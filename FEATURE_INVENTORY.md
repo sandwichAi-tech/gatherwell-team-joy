@@ -119,9 +119,9 @@ Specifics:
 - Built: deep-link return through sign-in and onboarding, 18+ attestation, three starts, view switch, invite expiry, guest claim, Spanish on, server 18+ on checkout.
 - Database only (no screen yet): guardian child registration, host allows_minors toggle.
 
-## Public homepage (v0.13)
-- Host-first homepage: live. Discovery: real public upcoming events only, fixture titles excluded; empty state live.
-- Notify me (area alerts): coming soon (Prompt 8). Payments, paid SMS, Wallet, payouts: labelled coming soon on home.
+## Public homepage (v0.29)
+- Host-first homepage: short hero pitch + marketing carousel (Events/Retreats/Courses/Communities, approved category imagery, manual controls, no auto-advance), three concise host tool cards linking to /hosts, one attendee band, one-line pricing teaser linking to /pricing, single trust line. The homepage renders no event records, so drafts/templates/tests cannot surface there; real discovery lives on /discover.
+- Notify me (area alerts): live on /alerts (v0.23). Payments, paid SMS, Wallet, payouts: labelled coming soon where shown.
 - Public pricing (/pricing, /hosts, /studios): Blueprint v4 plans live as display with the flat 5% fee disclosure; paid checkout Setup required; payouts Coming soon.
 - Signed-in plan screen (v0.15): prospective cards show approved v4 prices and the flat 5% fee; current/legacy subscriptions keep their real recorded status; paid checkout disabled until approved prices are configured in plan_settings and Stripe.
 - Course quizzes (v0.22): host authoring (4 question types, keys, points, reorder, blockers, attempts/cooldown/time limits), server grading + manual short-answer, learner taker with timer/autosave/idempotent submit, progress panels and host completion rules.

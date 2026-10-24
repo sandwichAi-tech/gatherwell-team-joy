@@ -40,8 +40,8 @@
   },
   "home": {
     "meta": {
-      "title": "ZoheeWell · Host events, courses, retreats and communities",
-      "description": "Create, sell, invite, run, teach and grow in one place. Start hosting for free on ZoheeWell, or explore events and learning near you."
+      "title": "ZoheeWell · Bring people together",
+      "description": "Create, sell, and run events, retreats, courses, and memberships—all in one place. Start hosting free on ZoheeWell."
     },
     "nav": {
       "hosts": "For Hosts",
@@ -50,143 +50,63 @@
     },
     "cta": {
       "start": "Start hosting",
-      "explore": "Explore ZoheeWell",
+      "startFree": "Start hosting free",
+      "explore": "Explore what's happening",
       "exploreAll": "Explore events and learning"
     },
     "soon": "Coming soon",
     "hero": {
-      "tagline": "Life is better together.",
-      "title": "Host events, courses, retreats, and communities—all in one place.",
-      "lede": "ZoheeWell helps you create, sell, invite, run, teach, and grow—with one simple account."
+      "eyebrow": "For hosts, creators & community builders",
+      "title": "Bring people together. We'll handle the rest.",
+      "lede": "Create, sell, and run events, retreats, courses, and memberships—all in one place.",
+      "tagline": "Life is better together."
+    },
+    "carousel": {
+      "label": "What you can host on ZoheeWell",
+      "prev": "Previous slide",
+      "next": "Next slide",
+      "slideOf": "{{n}} of {{count}}",
+      "slides": {
+        "events": {
+          "title": "Events",
+          "line": "Fill every seat."
+        },
+        "retreats": {
+          "title": "Retreats",
+          "line": "Multi-day, handled."
+        },
+        "courses": {
+          "title": "Courses",
+          "line": "Teach once, reach many."
+        },
+        "communities": {
+          "title": "Communities",
+          "line": "Keep people coming back."
+        }
+      }
     },
     "tools": {
       "label": "Host toolkit",
       "title": "Everything you need to host",
-      "groups": {
-        "create": {
-          "title": "Create",
-          "summary": "Events and retreats your way."
+      "cards": {
+        "createSell": {
+          "title": "Create & sell",
+          "body": "Events, retreats, tickets, courses and memberships—free or paid."
         },
-        "sell": {
-          "title": "Sell",
-          "summary": "Tickets, courses and memberships."
+        "runConnect": {
+          "title": "Run & connect",
+          "body": "Invites, reminders, check-in and updates keep everyone in sync."
         },
-        "invite": {
-          "title": "Invite and communicate",
-          "summary": "Reach your people."
-        },
-        "run": {
-          "title": "Run",
-          "summary": "Smooth on the day."
-        },
-        "teach": {
-          "title": "Teach and share",
-          "summary": "Courses and resources."
-        },
-        "grow": {
-          "title": "Grow and manage",
-          "summary": "Your profile, team and results."
+        "teachGrow": {
+          "title": "Teach & grow",
+          "body": "Lessons, resources and a public profile help your community grow."
         }
       },
-      "items": {
-        "oneTime": "One-time events",
-        "recurring": "Recurring events",
-        "retreats": "Multi-day retreats",
-        "virtual": "Virtual and hybrid",
-        "tickets": "Tickets",
-        "tiers": "Ticket tiers",
-        "addOns": "Add-ons",
-        "promo": "Promo codes",
-        "courses": "Courses",
-        "resources": "Resources",
-        "memberships": "Memberships",
-        "subscriptions": "Subscriptions",
-        "links": "Share links",
-        "qr": "QR codes",
-        "email": "Email",
-        "sms": "Paid SMS",
-        "reminders": "Reminders",
-        "updates": "Updates",
-        "capacity": "Capacity",
-        "waitlists": "Waitlists",
-        "waivers": "Waivers",
-        "guardian": "Guardian consent",
-        "checkin": "Check-in",
-        "wallet": "Wallet tickets",
-        "attendance": "Attendance",
-        "sections": "Sections",
-        "lessons": "Lessons",
-        "media": "Video, embeds, files and text",
-        "quizzes": "Quizzes",
-        "progress": "Progress",
-        "certificates": "Certificates",
-        "downloads": "Downloads",
-        "profile": "Public host profile",
-        "teams": "Teams and roles",
-        "analytics": "Analytics",
-        "payouts": "Payouts",
-        "exports": "Exports",
-        "moderation": "Moderation",
-        "support": "Support"
-      }
-    },
-    "steps": {
-      "title": "How hosting works",
-      "create": {
-        "title": "Create",
-        "body": "Set up an event, retreat, course or resource."
-      },
-      "share": {
-        "title": "Share or sell",
-        "body": "Send a link or QR code, free or paid."
-      },
-      "run": {
-        "title": "Run or teach",
-        "body": "Check people in or guide them through lessons."
-      },
-      "grow": {
-        "title": "Learn and grow",
-        "body": "See what worked and plan what is next."
-      }
-    },
-    "audience": {
-      "title": "Made for people who bring others together",
-      "items": {
-        "wellness": "Wellness professionals",
-        "coaches": "Coaches",
-        "educators": "Educators",
-        "fitness": "Fitness leaders",
-        "retreats": "Retreat organizers",
-        "creators": "Creators",
-        "community": "Community organizations"
-      }
+      "seeAll": "See all host tools"
     },
     "attend": {
-      "label": "For attendees and learners",
-      "title": "Find something good to join",
-      "items": {
-        "discover": "Discover events and courses",
-        "register": "Register or purchase",
-        "tickets": "Manage your tickets",
-        "learn": "Learn at your own pace",
-        "downloads": "Download resources",
-        "memberships": "Join memberships",
-        "saved": "Return to what you saved"
-      }
-    },
-    "explore": {
-      "title": "Happening on ZoheeWell",
-      "seeAll": "See all",
-      "empty": "Events are coming soon to your area",
-      "notify": "Notify me",
-      "invite": "Invite a host",
-      "create": "Create an event",
-      "inviteTitle": "Host on ZoheeWell",
-      "copied": "Link copied.",
-      "shared": "Thanks for sharing ZoheeWell.",
-      "manual": "Copy this link to share:",
-      "inviteText": "Host your events and courses on ZoheeWell.",
-      "inviteCopied": "Invite link copied"
+      "title": "Looking for something to join?",
+      "body": "Find events, retreats and courses near you—or online."
     },
     "pricing": {
       "label": "Pricing",
@@ -205,34 +125,11 @@
       "pilot": "Pricing may change after the pilot.",
       "foundingTitle": "Founding hosts",
       "founding": "By personal invitation only: six months of complete access from activation, with no card and no automatic conversion. We give 30 days’ notice before access ends. If you choose annual billing by the end of access, you get 20% off your first paid year. This offer does not stack with the normal annual discount.",
-      "see": "See full pricing"
+      "see": "See full pricing",
+      "teaser": "Start free. Paid plans from $49/mo, two months free on annual billing."
     },
     "trust": {
-      "title": "Built on trust",
-      "privacy": {
-        "title": "Privacy first",
-        "body": "We collect only what is needed, hosts see only their own participants, and we never sell personal data."
-      },
-      "language": {
-        "title": "English and Spanish",
-        "body": "Every screen works in English and Latin American Spanish."
-      },
-      "access": {
-        "title": "Accessible",
-        "body": "Designed for phones, keyboards and screen readers."
-      },
-      "consent": {
-        "title": "Clear consent",
-        "body": "Marketing messages are always opt-in and easy to stop."
-      },
-      "support": {
-        "title": "Two kinds of support",
-        "body": "Hosts support their guests; ZoheeWell supports hosts and the platform."
-      },
-      "honest": {
-        "title": "Honest status",
-        "body": "If something is still being set up, we say so."
-      }
+      "line": "Privacy-first, fully bilingual, accessible by design, and honest about what's live."
     },
     "final": {
       "title": "Ready to bring people together?"

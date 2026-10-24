@@ -108,18 +108,3 @@ export function GatheringCard({ g, slot, near, goingOverride, goingSlot, showRsv
     </ResponsiveSheet>}
   </article>;
 }
-
-/** Photo-only card for the hero when there aren't enough real gatherings yet. No invented details. */
-export function PhotoCard({ slot, category, style, className, priority }: { slot: string; category: Category; style?: CSSProperties | undefined; className?: string | undefined; priority?: boolean | undefined }) {
-  const { t } = useTranslation();
-  return <article className={`gw-gcard ${className ?? ''}`} style={style}>
-    <div className="gw-gcard-media">
-      <BrandImage slot={slot} aspect={4 / 3} sizes="(min-width: 1024px) 360px, 80vw" priority={priority} />
-      <div className="gw-gcard-chips"><CategoryChip category={category} /></div>
-    </div>
-    <div className="gw-gcard-body">
-      <h3 className="gw-gcard-title">{t(`landing.hero.photoTitle_${category}`)}</h3>
-      <p className="gw-gcard-meta">{t('landing.hero.photoMeta')}</p>
-    </div>
-  </article>;
-}

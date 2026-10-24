@@ -2090,49 +2090,60 @@ a.gw-cat-chip:hover{background:#fff}
 .consent-check input{margin-top:1px;flex-shrink:0}
 .consent-check:focus-within{outline:2px solid var(--ring);outline-offset:2px}
 
-/* Host-first homepage (scoped) */
+/* Host-first homepage (scoped): short hero, marketing carousel, three tool cards. */
 .gw-home .gw-home-sec{padding:48px 0}
 .gw-home .gw-h2{margin-bottom:20px}
-.gw-home-hero-photo{border-radius:24px;overflow:hidden}
-.gw-home-groups{display:grid;gap:12px}
-.gw-home-group{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:4px 16px}
-.gw-home-group summary{display:flex;gap:12px;align-items:center;min-height:56px;cursor:pointer;list-style:none}
-.gw-home-group summary::-webkit-details-marker{display:none}
-.gw-home-group summary:focus-visible{outline:3px solid var(--ring);outline-offset:2px;border-radius:8px}
-.gw-home-group summary>span:last-child{display:flex;flex-direction:column}
-.gw-home-group-sum{font-size:14px;color:var(--muted-foreground)}
-.gw-home-group ul{display:flex;flex-wrap:wrap;gap:6px 14px;padding:4px 0 16px;margin:0;list-style:none;font-size:15px}
-.gw-home-group li{display:inline-flex;gap:6px;align-items:center}
-.gw-home-steps p{margin:4px 0 0;font-size:15px;color:var(--muted-foreground)}
-.gw-home-chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:0}
-.gw-home-chips li{padding:10px 16px;border-radius:999px;background:var(--card);border:1px solid var(--border);font-weight:600;font-size:15px}
-.gw-home-list{display:grid;gap:10px;list-style:none;padding:0;margin:0 0 24px}
-.gw-home-list li{display:flex;gap:10px;align-items:center}
-.gw-home-plans{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;list-style:none;padding:4px 2px 12px;margin:0 0 16px}
-.gw-home-plans:focus-visible{outline:3px solid var(--ring)}
-.gw-home-plans li{scroll-snap-align:start;flex:0 0 160px;display:flex;flex-direction:column;gap:4px;padding:16px;border:1px solid var(--border);border-radius:16px;background:var(--card)}
-.gw-home-price{font-size:28px;font-weight:700}.gw-home-price small{font-size:14px;font-weight:500}
-.gw-home-founding{margin:16px 0;padding:16px;border-radius:16px;background:var(--secondary)}
-.gw-home-founding h3{margin:0 0 4px;font-size:17px}.gw-home-founding p{margin:0}
-.gw-home-trust{display:grid;gap:16px;list-style:none;padding:0;margin:0}
-.gw-home-trust h3{margin:0 0 4px;font-size:17px}.gw-home-trust p{margin:0;color:var(--muted-foreground)}
-.gw-home-final{text-align:center}.gw-home-final .gw-final-ctas{justify-content:center}
-.gw-home .gw-final-ctas{display:flex;flex-wrap:wrap;gap:12px}
+.gw-home-anchor{scroll-margin-top:80px}
 .gw-home .gw-btn{min-height:48px}
+.gw-home .gw-hero-h1{font-size:clamp(36px,6vw,64px);line-height:1.05;max-width:640px;text-wrap:balance}
+.gw-home .gw-home-hero{padding:48px 0 16px}
+.gw-home-hero .gw-lede{margin-top:16px;max-width:520px}
+.gw-home-tagline{margin:28px 0 0;font-size:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--lavender)}
+/* Carousel: cards stay in normal flow; only the image carries a fixed aspect ratio. */
+.gw-home-carousel-sec{padding:16px 0 8px}
+.gw-carousel{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;list-style:none;margin:0;padding:4px 2px 12px;scrollbar-width:none}
+.gw-carousel::-webkit-scrollbar{display:none}
+.gw-carousel:focus-visible{outline:3px solid var(--ring);outline-offset:2px;border-radius:20px}
+.gw-carousel-card{flex:0 0 86vw;max-width:420px;scroll-snap-align:start;background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.gw-carousel-photo{border-radius:0}
+.gw-carousel-caption{display:flex;flex-direction:column;gap:2px;padding:14px 16px 16px}
+.gw-carousel-cat{font-weight:700;font-size:16px;color:var(--foreground)}
+.gw-carousel-line{font-size:14px;color:var(--muted-foreground)}
+.gw-carousel-nav{display:flex;align-items:center;gap:12px;margin-top:4px}
+.gw-carousel-btn{width:44px;height:44px;flex-shrink:0;display:grid;place-items:center;border-radius:50%;background:var(--card);border:1px solid var(--border);color:var(--foreground)}
+.gw-carousel-btn:hover:not(:disabled){border-color:var(--primary)}
+.gw-carousel-btn:disabled{opacity:.4;cursor:default}
+.gw-carousel-btn:focus-visible{outline:3px solid var(--ring);outline-offset:2px}
+.gw-carousel-count{font-size:13px;color:var(--muted-foreground);font-variant-numeric:tabular-nums}
+/* Three concise host cards */
+.gw-home-cards{display:grid;gap:12px;list-style:none;padding:0;margin:0 0 20px}
+.gw-home-cards li{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.gw-home-cards h3{margin:0;font-size:17px}
+.gw-home-cards p{margin:0;color:var(--muted-foreground);font-size:15px}
+/* Attendee band + final CTA */
+.gw-home-band{display:grid;gap:20px;align-items:center}
+.gw-home-band-copy .gw-h2{margin-bottom:0}
+.gw-home-band-copy p{margin:8px 0 0;color:var(--muted-foreground);max-width:520px}
+.gw-home-final{text-align:center}
+.gw-home-final .gw-final-ctas{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.gw-home-priceline{margin:24px 0 0;font-size:15px}
+.gw-textlink{color:var(--primary);font-weight:600;text-decoration:underline;text-underline-offset:3px}
 @media (min-width:768px){
   .gw-home .gw-home-sec{padding:64px 0}
-  .gw-home-groups{grid-template-columns:repeat(2,1fr)}
-  .gw-home-list{grid-template-columns:repeat(2,1fr)}
-  .gw-home-trust{grid-template-columns:repeat(3,1fr)}
+  .gw-home-cards{grid-template-columns:repeat(3,1fr);gap:16px}
+  .gw-home-band{grid-template-columns:minmax(0,1fr) auto}
 }
 @media (min-width:1024px){
-  .gw-home-groups{grid-template-columns:repeat(3,1fr)}
-  .gw-home-plans{overflow:visible}.gw-home-plans li{flex:1 1 0}
+  .gw-carousel-card{flex-basis:calc((100% - 32px)/3)}
 }
-.gw-home .gw-hero-h1{font-size:clamp(34px,5.2vw,60px);line-height:1.08}
-.gw-home-hero{padding-bottom:24px}
-.gw-home-group summary .gw-home-tool-tag{align-self:flex-start;margin-top:4px}
-.gw-home .gw-hero-visual{display:block;width:100%}
+@media (prefers-reduced-motion:reduce){
+  .gw-carousel{scroll-behavior:auto}
+}
+/* Extreme zoom (layout viewport under ~240px): keep the headline and nav usable. */
+@media (max-width:240px){
+  .gw-home .gw-hero-h1{font-size:28px}
+  .gw-nav-mobile .gw-nav-lang{display:none}
+}
 .gw-home-hero-photo{display:block;width:100%;max-width:560px;margin-inline:auto}
 .gw-home-hero-photo img{width:100%;height:100%;object-fit:cover}
 .gw-home-hero-media{width:100%}

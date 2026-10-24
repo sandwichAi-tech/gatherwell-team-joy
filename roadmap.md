@@ -1,5 +1,11 @@
 # Roadmap
 
+## Completed: v0.29 homepage simplification
+
+- [x] Short hero pitch + swipeable/keyboard carousel of approved category imagery; no event records on the homepage (test/template rows cannot surface).
+- [x] Long feature catalog replaced by three host cards, one attendee band, pricing teaser link and single trust line; details remain on dedicated pages.
+- [x] Browser QA 99/99 (390px/1280px, EN/ES, 200% zoom, reduced motion); 304 tests, typecheck and build pass.
+
 ## Completed: v0.26 QA pass (communications + tickets/check-in)
 
 - [x] Signed-in browser QA at 390px and 1280px: bell, notifications, updates, discussion, contact host, support, Setup-required gates.
