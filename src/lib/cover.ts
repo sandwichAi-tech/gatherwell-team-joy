@@ -30,7 +30,7 @@ export const DEFAULT_FOCAL = '50% 50%';
 /** Clamp any stored/unknown style index into a valid palette slot. */
 export function coverStyleAt(style: number | null | undefined): string {
   const i = typeof style === 'number' && Number.isFinite(style) ? Math.abs(Math.trunc(style)) : 0;
-  return COVER_STYLES[i % COVER_STYLE_COUNT];
+  return COVER_STYLES[i % COVER_STYLE_COUNT] ?? COVER_STYLES[0];
 }
 
 export function isValidOverlay(v: unknown): v is number {

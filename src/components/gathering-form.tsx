@@ -272,7 +272,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
           {coverPath && <>
             <div>
               <span className="field-label">{t('gathering.coverFocal')}</span>
-              <div className="cover-focal-grid" role="radiogroup" aria-label={t('gathering.coverFocal')}>{COVER_FOCALS.map(f => <button key={f} type="button" role="radio" aria-checked={coverFocal === f} aria-label={t(`gathering.focal.${f.replace(/% /g, '-').replace(/%/g, '')}`)} className={coverFocal === f ? 'is-selected' : ''} onClick={() => setCoverFocal(f)}><GwIcon name="Crosshair" /></button>)}</div>
+              <div className="cover-focal-grid" role="radiogroup" aria-label={t('gathering.coverFocal')}>{COVER_FOCALS.map(f => <button key={f} type="button" role="radio" aria-checked={coverFocal === f} aria-label={t(`gathering.focal.${f.replace(/% /g, '-').replace(/%/g, '')}`)} className={coverFocal === f ? 'is-selected' : ''} onClick={() => setCoverFocal(f)}><span className="cover-focal-dot" aria-hidden="true" /></button>)}</div>
               <small className="field-hint">{t('gathering.coverFocalHint')}</small>
             </div>
             <div>
