@@ -6382,6 +6382,7 @@ export type Database = {
       admin_user_detail: { Args: { _id: string }; Returns: Json }
       admin_users: { Args: { _q: string }; Returns: Json }
       ai_usage_status: { Args: never; Returns: Json }
+      archive_host_update: { Args: { _id: string }; Returns: undefined }
       assign_license_seat: {
         Args: { _on: boolean; _team: string; _user: string }
         Returns: undefined
@@ -6452,6 +6453,10 @@ export type Database = {
       can_edit_track: { Args: { _track: string }; Returns: boolean }
       can_join_conversation: { Args: { _event: string }; Returns: boolean }
       can_manage_event: { Args: { _event_id: string }; Returns: boolean }
+      can_manage_offering: {
+        Args: { _id: string; _kind: string }
+        Returns: boolean
+      }
       can_moderate_comment: { Args: { _c: string }; Returns: boolean }
       can_read_challenge: { Args: { _c: string }; Returns: boolean }
       can_read_comment: { Args: { _c: string }; Returns: boolean }
@@ -6459,6 +6464,7 @@ export type Database = {
       can_review_coach: { Args: { _host: string }; Returns: boolean }
       can_rsvp_event: { Args: { _event_id: string }; Returns: boolean }
       can_use_team_templates: { Args: { _team: string }; Returns: boolean }
+      can_view_contact_thread: { Args: { _thread: string }; Returns: boolean }
       can_view_event: { Args: { _event_id: string }; Returns: boolean }
       cancel_rsvp_by_code: { Args: { _code: string }; Returns: boolean }
       challenge_check_in: {
@@ -6532,6 +6538,8 @@ export type Database = {
         }[]
       }
       cleanup_auth_intents: { Args: never; Returns: number }
+      close_contact_thread: { Args: { _thread: string }; Returns: undefined }
+      close_support_ticket: { Args: { _ticket: string }; Returns: undefined }
       coach_checklist: { Args: never; Returns: Json }
       coach_trust: { Args: { _host: string }; Returns: Json }
       comment_feed: { Args: { _event: string; _topic: string }; Returns: Json }
@@ -6546,6 +6554,7 @@ export type Database = {
       compute_playbook: { Args: never; Returns: number }
       confirm_adult: { Args: { _attest: boolean }; Returns: undefined }
       consume_auth_intent: { Args: { _token: string }; Returns: string }
+      contact_thread_messages: { Args: { _thread: string }; Returns: Json }
       copy_starter_template: {
         Args: { _team: string; _template: string }
         Returns: string
@@ -6577,6 +6586,10 @@ export type Database = {
       }
       create_subteam: {
         Args: { _name: string; _parent: string }
+        Returns: string
+      }
+      create_support_ticket: {
+        Args: { _body: string; _category: string; _subject: string }
         Returns: string
       }
       create_team: {
@@ -6807,6 +6820,10 @@ export type Database = {
         Args: { _host: string; _start: string }
         Returns: Json
       }
+      in_offering_audience: {
+        Args: { _id: string; _kind: string }
+        Returns: boolean
+      }
       infer_gathering_category: {
         Args: { _category: string; _title: string }
         Returns: string
@@ -6861,7 +6878,9 @@ export type Database = {
         Returns: undefined
       }
       mark_badges_seen: { Args: { _ids: string[] }; Returns: undefined }
+      mark_notifications_read: { Args: { _id?: string }; Returns: undefined }
       mark_topic_read: { Args: { _id: string }; Returns: undefined }
+      mark_update_read: { Args: { _id: string }; Returns: undefined }
       moderate_comment:
         | {
             Args: {
@@ -6882,6 +6901,7 @@ export type Database = {
         Returns: undefined
       }
       moderation_queue: { Args: { _team: string }; Returns: Json }
+      moderation_reports: { Args: { _team: string }; Returns: Json }
       my_alert_matches: { Args: never; Returns: Json }
       my_broadcasts: {
         Args: never
@@ -6895,6 +6915,7 @@ export type Database = {
         }[]
       }
       my_calendar_feeds: { Args: never; Returns: Json }
+      my_contact_threads: { Args: never; Returns: Json }
       my_following: { Args: never; Returns: Json }
       my_invite_code: { Args: never; Returns: string }
       my_learning: { Args: never; Returns: Json }
@@ -6933,6 +6954,7 @@ export type Database = {
         }[]
       }
       my_tickets: { Args: never; Returns: Json }
+      my_updates: { Args: { _limit?: number; _offset?: number }; Returns: Json }
       my_value_meter: { Args: never; Returns: Json }
       my_welcome: { Args: never; Returns: Json }
       my_workspace_assignments: { Args: { _team: string }; Returns: Json }
@@ -6989,6 +7011,11 @@ export type Database = {
       offer_founding_status: { Args: { _offer: string }; Returns: Json }
       offer_learner_progress: { Args: { _offer: string }; Returns: Json }
       offer_readiness: { Args: { _offer: string }; Returns: Json }
+      offering_audience: {
+        Args: { _id: string; _kind: string }
+        Returns: string[]
+      }
+      offering_updates: { Args: { _id: string; _kind: string }; Returns: Json }
       pair_buddy: {
         Args: { _buddy: string; _rsvp: string }
         Returns: undefined
@@ -7046,6 +7073,7 @@ export type Database = {
       }
       promote_waitlist: { Args: { _event: string }; Returns: undefined }
       public_upcoming: { Args: { _host: string; _team: string }; Returns: Json }
+      publish_host_update: { Args: { _id: string }; Returns: number }
       queue_broadcast: { Args: { _id: string }; Returns: number }
       queue_rsvp_notices: {
         Args: { _rsvp: string; _template: string }
@@ -7111,6 +7139,14 @@ export type Database = {
         Returns: undefined
       }
       replace_offer_item: { Args: { _item: string; _p: Json }; Returns: string }
+      reply_contact_thread: {
+        Args: { _body: string; _thread: string }
+        Returns: undefined
+      }
+      reply_support_ticket: {
+        Args: { _body: string; _ticket: string }
+        Returns: undefined
+      }
       report_content: {
         Args: { _id: string; _note: string; _reason: string; _type: string }
         Returns: boolean
@@ -7267,6 +7303,17 @@ export type Database = {
         }
         Returns: undefined
       }
+      save_host_update: {
+        Args: {
+          _body: string
+          _id: string
+          _kind: string
+          _offering: string
+          _scheduled_at?: string
+          _title: string
+        }
+        Returns: string
+      }
       save_quiz_response: {
         Args: {
           _attempt: string
@@ -7352,6 +7399,10 @@ export type Database = {
       sign_waiver_by_code: {
         Args: { _code: string; _name: string }
         Returns: undefined
+      }
+      start_contact_thread: {
+        Args: { _body: string; _event: string; _offer: string }
+        Returns: string
       }
       start_hosting_window: { Args: never; Returns: string }
       start_quiz_attempt: { Args: { _quiz: string }; Returns: Json }
