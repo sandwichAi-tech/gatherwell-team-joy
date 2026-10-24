@@ -1,5 +1,14 @@
 # ZoheeWell Change Log
 
+## v0.15 — Pricing consistency: hosts, studios and the signed-in plan screen (2026-10-24)
+- /hosts and /studios now carry the approved fee disclosure under their plan lists: flat 5% ZoheeWell platform fee on paid host-generated sales, free offerings have no fee, Stripe processing separate — in English and Latin American Spanish.
+- Signed-in plan screen: prospective cards now show the approved prices (Free $0, Advanced $49, Pro $99; Team 25 $199 and Team 100 $499 already matched) with the flat 5% fee line, plus an annual note (10x monthly, two months free; pricing may change after the pilot). The old fee ladder, monthly cap and per-plan fee copy no longer render; the savings nudge based on retired fees is removed.
+- Paid plan checkout stays disabled and labelled Setup required, because plan_settings rows and Stripe price IDs are untouched and still hold legacy values. Downgrade to Free (no money moves) still works. Existing subscriptions, legacy prices, cancel-at-period-end and scheduled-switch banners are unchanged and still show the real recorded status.
+- No schema, data, provider or billing-record changes.
+- Tests: new src/lib/pricing-consistency.test.ts (7: disclosure on both pages, approved card values, disabled paid CTAs, legacy preservation, old-fee absence, en/es annual note, billing key parity); suite 25 files / 170 passed.
+- Browser: /hosts, /studios, /pricing at 390px and 1440px in EN and ES — fee disclosure present in both languages, no "7%" anywhere, no horizontal overflow, no runtime errors. Signed-in /plan check not possible: the only mintable account is not onboarded and was left untouched.
+- Unverified: signed-in plan screen in a browser (needs an onboarded account), screen-reader pass, real checkout against approved prices (not configured).
+
 ## v0.14 — Public pricing aligned with Blueprint v4 (2026-10-23)
 - /pricing rebuilt: Free $0, Advanced $49, Pro $99, Team 25 $199, Team 100 $499 monthly; annual 10x (two months free); pilot note; flat 5% fee, free has no fee, Stripe separate; founding offer in full. Paid plans labelled Setup required; payouts Coming soon. New FAQ.
 - /hosts and /studios plan previews now use the same approved plans; old fee ladder, caps and guest service fee removed from public pages. Signed-in plan screen and billing records untouched.

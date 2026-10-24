@@ -38,6 +38,12 @@ export function FeeAndFounding() {
   </div>;
 }
 
+/** One-line approved fee disclosure for every marketing page that shows plans. */
+export function FeeDisclosure() {
+  const { t } = useTranslation();
+  return <p className="gw-fine gw-fee-disclosure">{t('home.pricing.fee', { pct: PLATFORM_FEE_PERCENT })}</p>;
+}
+
 export function StartHostingLink() {
   const { t } = useTranslation();
   return <Link to="/login" search={{ intent: 'host' }} className="gw-btn gw-btn-primary gw-btn-lg">{t('home.cta.start')}<GwIcon name="ArrowRight" size={18} /></Link>;

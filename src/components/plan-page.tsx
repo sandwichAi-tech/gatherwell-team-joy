@@ -1,4 +1,4 @@
-import { noLimitsPhase, planSaving } from '@/lib/plan-savings';
+import { noLimitsPhase } from '@/lib/plan-savings';
 import { PlanCardBody } from '@/components/plan-features';
 import { FoundingCommitmentsCard, FoundingPlanBanner } from '@/components/founding';
 import { EarningsMilestones } from '@/components/coach-launch';
@@ -29,6 +29,11 @@ import { useInlineCheckout } from '@/components/inline-checkout';
 import { PaymentTestModeBanner } from '@/components/payment-test-mode-banner';
 
 const fmtDate = (iso: string, lang: string) => new Date(iso).toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+/** Blueprint v4 prices shown on the prospective cards. plan_settings rows and Stripe price IDs stay
+ *  untouched, so paid checkout stays disabled ("Setup required") until the approved prices are configured. */
+const V4_MONTHLY_CENTS: Record<PlanId, number> = { free: 0, growth: 4900, pro: 9900 };
+const V4_FEE_PERCENT = 5;
 
 /** App errors with their own wording; anything else is the provider's message. */
 const CHECKOUT_ERRORS = ['already_on_plan', 'already_on_license', 'price_mismatch', 'price_not_found', 'founding_free', 'no_subscription', 'no_period_end'];
@@ -166,10 +171,8 @@ export function PlanPage() {
     {st.source === 'own' && (() => {
       const dfmt = (d: string) => new Date(d).toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', { month: 'long', day: 'numeric' });
       const phase = noLimitsPhase(st.no_limits_until);
-      const save = planSaving(st.plan, st.sales_month, settings);
       return <section className="panel" aria-live="polite">
         <strong>{t('billing.feesMonth', { paid: formatMoney(st.fees_month, lang) })}</strong>
-        {save && <p className="field-hint">{t(save.plan === 'growth' ? 'billing.savingGrowth' : 'billing.savingPro', { amount: formatMoney(save.cents, lang) })}</p>}
         {st.plan === 'free' && phase && st.no_limits_until && <p className="field-hint">{phase === 'active' ? t('billing.noLimitsUntil', { date: dfmt(st.no_limits_until) }) : t('billing.noLimitsEnding', { date: dfmt(st.no_limits_until) })}</p>}
       </section>;
     })()}
@@ -181,7 +184,7 @@ export function PlanPage() {
         <h2>{t('billing.upgradeAdvTitle')}</h2>
         <p className="auth-subtitle">{g ? t('billing.upgradeReasonGatherings', { used: st.usage.gatherings, max: lim.gatherings }) : t('billing.upgradeReasonGuests', { max: lim.guests })}</p>
         <p className="field-hint">{t('billing.upgradeAdvBody')}</p>
-        {gate.connected ? <Button disabled={gate.busy} onClick={() => choose('growth')}>{t('billing.upgradeAdvTitle')}</Button> : <Button variant="secondary" disabled>{t('billing.comingSoon')}</Button>}
+        <Button variant="secondary" disabled>{t('pricingV4.setupRequired')}</Button>
       </section>;
     })()}
     {st.founding && <FoundingPlanBanner f={st.founding} />}
@@ -189,13 +192,14 @@ export function PlanPage() {
 
     <div className="plan-grid">
       {PLANS.map(p => {
-        const ps = settings[p.id];
+        // Prospective cards show the approved Blueprint v4 price and the flat 5% fee, not the legacy plan_settings rows.
+        const ps = { monthly_price: V4_MONTHLY_CENTS[p.id], fee_percent: V4_FEE_PERCENT };
         const isCurrent = (st.source === 'founding' && p.id === 'pro') || st.source === 'own' && (st.own_plan === p.id && st.legacy_price_cents === null || (p.id === 'free' && st.own_plan === 'free'));
         return <article key={p.id} className={`plan-card ${isCurrent ? 'is-current' : ''} `}>
           <PlanCardBody id={p.id} setting={ps} tagClass="plan-tag" priceClass="plan-price" feeClass="plan-fee-line" />
           {isCurrent ? <Button variant="secondary" disabled>{t('billing.yourPlan')}</Button>
-            : p.id !== 'free' && !gate.connected ? <Button variant="secondary" disabled>{t('billing.comingSoon')}</Button>
-            : <Button variant={p.id === 'pro' ? 'default' : 'secondary'} disabled={gate.busy} onClick={() => choose(p.id)}>{p.id === 'free' ? t('billing.switchTo', { plan: t('billing.name_free') }) : t('billing.upgrade')}</Button>}
+            : p.id === 'free' ? <Button variant="secondary" disabled={gate.busy} onClick={() => choose('free')}>{t('billing.switchTo', { plan: t('billing.name_free') })}</Button>
+            : <Button variant="secondary" disabled>{t('pricingV4.setupRequired')}</Button>}
         </article>;
       })}
       <article className="plan-card plan-card-team">
@@ -207,6 +211,7 @@ export function PlanPage() {
       </article>
     </div>
 
+    <p className="auth-subtitle">{t('billing.v4AnnualNote')}</p>
     <FoundingCommitmentsCard />
     <p className="auth-subtitle">{t('billing.cardNote')}</p>
 
@@ -217,7 +222,7 @@ export function PlanPage() {
 
     <section className="panel get-paid">
       <div className="section-heading"><h2>{t('billing.getPaid')}</h2><span className={`chip connect-${st.connect_status}`}>{t(`billing.connect_${st.connect_status}`)}</span></div>
-      <p className="auth-subtitle">{lim.fee_cap != null ? t('billing.getPaidCapped', { n: lim.fee_pct, cap: formatMoney(lim.fee_cap, lang) }) : t('billing.getPaidText', { n: lim.fee_pct })}</p>
+      <p className="auth-subtitle">{t('home.pricing.fee', { pct: V4_FEE_PERCENT })}</p>
       {st.connect_status !== 'active' && <Button disabled={gate.busy} onClick={() => void gate.run(() => connect({ data: { origin } }))}>{st.connect_status === 'pending' ? t('billing.connectContinue') : t('billing.connectStart')}</Button>}
       <label className="settings-row is-static"><span className="settings-label">{t('billing.passFee')}<small className="field-hint">{t('billing.passFeeHint')}</small></span><Switch aria-label={t('billing.passFee')} checked={st.pass_fee} onCheckedChange={v => void togglePassFee(v)} /></label>
     </section>
@@ -226,12 +231,12 @@ export function PlanPage() {
       {downgrade && <>
         <ul className="plan-features">
           <li>{t('billing.downKeep')}</li>
-          {(() => { const l = { ...PLANS.find(p => p.id === downgrade)!.limits, fee_pct: settings[downgrade].fee_percent }; return <>
+          {(() => { const l = PLANS.find(p => p.id === downgrade)!.limits; return <>
             <li>{l.gatherings === null ? t('billing.fGatheringsUnlimited') : t('billing.downGatherings', { n: l.gatherings })}</li>
             <li>{l.guests === null ? t('billing.fGuestsUnlimited') : t('billing.downGuests', { n: l.guests })}</li>
             <li>{t('billing.downStorage', { size: formatStorage(l.storage_mb, lang) })}</li>
             <li>{t('billing.fAssistant', { n: l.assistant })}</li>
-            <li>{t('billing.fFee', { n: l.fee_pct })}</li></>; })()}
+            <li>{t('billing.fFee', { n: V4_FEE_PERCENT })}</li></>; })()}
         </ul>
         <p className="field-hint">{t('billing.downgradeAtMonthEnd')}</p>
         <Button className="onboarding-continue" disabled={gate.busy} onClick={() => { const target = downgrade!; setDowngrade(null); runScheduled(target); }}>{t('billing.downConfirm')}</Button>

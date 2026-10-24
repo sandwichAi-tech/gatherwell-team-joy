@@ -187,4 +187,5 @@ Active work follows the approved Prompt 1–17 sequence in the ZoheeWell Beta Pr
 - [x] Host-first public homepage (v0.13)
 - [ ] Area alerts for Notify me (Prompt 8)
 - [x] Align /pricing page with Blueprint v4 plans (v0.14)
-- [ ] Align signed-in plan screen with Blueprint v4 plans
+- [x] Align signed-in plan screen with Blueprint v4 plans (v0.15; prospective cards only — plan_settings rows and Stripe price IDs still legacy, paid checkout disabled)
+- [ ] Configure approved prices in plan_settings and Stripe, then enable paid checkout
