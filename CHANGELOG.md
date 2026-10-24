@@ -195,3 +195,12 @@
 - Wallet: Apple/Google Wallet shown as disabled "Setup required" on the ticket page until provider certificates exist.
 - Migrations: 0078_tickets_checkin_calendar_ops, 0079_ticket_payload_volatile_fix. Tests: 276 passing (23 new: ICS recurrence/timezone/cancellation/folding, CSV injection/UTF-8). Live-verified with ee000008 fixtures (removed): ticket privacy shapes, wrong-event/cancelled/waitlist scans, idempotent rescan, undo+audit, outsider rejection, rate limits, walk-in manager-only, export role boundaries, aggregate totals.
 - Unverified: signed-in browser QA (no session injected this pass), camera permission denial on real devices, screen reader pass.
+
+## v0.24 — 2026-10-24 — In-app communications, community, moderation, support
+- Host updates: draft/publish/archive per event or course with server-derived audiences (registered/enrolled only), in-app Updates inbox with read state and pagination; scheduled delivery rejected at publish as Setup required; no email/SMS sending.
+- Discussions: per-event host toggle (default off; existing commented events backfilled on), participant-only posting, minors and non-participants denied server-side, reporting, block, community-scope suspension.
+- Moderation: workspace Moderation tab with reported-posts queue and open reports; hide/unhide/remove (reason required), resolve/dismiss; reporter identity never exposed; audit metadata redacted.
+- Contact host: registration/enrollment-scoped threads, host replies, close/block; no email/phone exposure. Platform support center with categories, status, replies, emergency guidance; hosts cannot see other users' tickets.
+- Notifications center with unread badge in the app header; email/SMS channel switches disabled and labeled Setup required until providers are connected.
+- Migrations: 0080_comms_updates_notifications_support, 0081_comms_rpcs_updates_contact_support.
+- Verified live: audience derivation + dedupe, schedule rejection, outsider/minor/disabled-discussion posting denials, reporter anonymity, hide leaves queue, contact/support isolation. 276 tests, typecheck and build green.
