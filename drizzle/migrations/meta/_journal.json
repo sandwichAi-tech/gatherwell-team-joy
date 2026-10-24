@@ -680,6 +680,13 @@
       "when": 1792883423636,
       "tag": "0096_outbox_automation_kind",
       "breakpoints": true
+    },
+    {
+      "idx": 97,
+      "version": "7",
+      "when": 1792883956997,
+      "tag": "0097_journey_execution",
+      "breakpoints": true
     }
   ]
 }
