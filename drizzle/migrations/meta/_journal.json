@@ -652,6 +652,13 @@
       "when": 1792881114311,
       "tag": "0092_event_cover_customization",
       "breakpoints": true
+    },
+    {
+      "idx": 93,
+      "version": "7",
+      "when": 1792881570698,
+      "tag": "0093_fix_public_event_payload_size",
+      "breakpoints": true
     }
   ]
 }
