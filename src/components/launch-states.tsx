@@ -2,7 +2,8 @@ import { useIsFetching, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { GwFeatureTile, type GwIconName } from '@/components/gw-icon';
-import { useEffect, useReducer, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from 'react';
+import { createQueryCacheRevisionStore } from '@/lib/query-cache-store';
 
 export function ListSkeleton({ rows = 3 }: { rows?: number }) {
   const { t } = useTranslation();
@@ -25,8 +26,8 @@ export function EmptyState({ icon, title, text, action, compact }: { icon: GwIco
 export function QueryFeedback() {
   const qc = useQueryClient();
   const { t } = useTranslation();
-  const [, update] = useReducer(n => n + 1, 0);
-  useEffect(() => qc.getQueryCache().subscribe(update), [qc]);
+  const cacheStore = useMemo(() => createQueryCacheRevisionStore(qc), [qc]);
+  useSyncExternalStore(cacheStore.subscribe, cacheStore.getSnapshot, cacheStore.getSnapshot);
   const fetching = useIsFetching();
   const failed = qc.getQueryCache().getAll().filter(q => q.getObserversCount() > 0 && q.state.status === 'error');
   const initial = qc.getQueryCache().getAll().some(q => q.getObserversCount() > 0 && q.state.fetchStatus === 'fetching' && q.state.data === undefined);

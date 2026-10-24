@@ -1,8 +1,9 @@
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from '@/components/ui/drawer';
 import { GwFeatureTile, type GwIconName } from '@/components/gw-icon';
+import { captureActiveElement, restoreElementFocus } from '@/lib/focus-restore';
 
 type Props = { open: boolean; onOpenChange: (open: boolean) => void; title: string; description?: string | undefined; icon?: GwIconName | undefined; footer?: ReactNode; children: ReactNode };
 
