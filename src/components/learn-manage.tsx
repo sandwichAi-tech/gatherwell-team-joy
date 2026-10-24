@@ -249,11 +249,15 @@ function RecipeEditor({ recipe, teamId, onClose }: { recipe: Partial<Recipe> | n
   </ResponsiveSheet>;
 }
 
-function RecipesTab({ teamId }: { teamId: string }) {
-  const { t, i18n } = useTranslation(); const { userId } = useLearn();
+function RecipesTab({ teamId, openNew }: { teamId: string; openNew?: boolean | undefined }) {
+  const { t, i18n } = useTranslation(); const { userId } = useLearn(); const navigate = useNavigate();
   const { data } = useQuery(recipesQuery(userId));
   const [editing, setEditing] = useState<Partial<Recipe> | null>(null);
+  const [consumed, setConsumed] = useState(false);
   const own = (data?.recipes ?? []).filter(r => r.team_id === teamId);
+  useEffect(() => {
+    if (openNew && !consumed) { setConsumed(true); setEditing({ tags: [], cover_style: own.length % COVER_STYLES.length }); void navigate({ to: '/learn/manage', search: { tab: 'recipes' }, replace: true, resetScroll: false }); }
+  }, [openNew, consumed, own.length, navigate]);
   return <section className="panel">
     <div className="section-heading"><h2>{t('learnHub.teamRecipes')}</h2><Button onClick={() => setEditing({ tags: [], cover_style: own.length % COVER_STYLES.length })}><Plus />{t('learnHub.addRecipe')}</Button></div>
     {own.length ? <ul className="order-list">{own.map(r => <li key={r.id}><span className="order-title"><strong>{i18n.resolvedLanguage === 'es' ? r.title_es || r.title_en : r.title_en || r.title_es}</strong><small>{r.prep_minutes ? t('learnHub.prep', { count: r.prep_minutes }) : ''}</small></span>
