@@ -13,7 +13,14 @@ import { offerIncludes, offerText, offerTitle } from '@/lib/offers';
 import { COVER_STYLES } from '@/lib/gatherings';
 import { formatMoney } from '@/lib/billing';
 import { minutesLabel } from '@/components/learn';
-import { useSession } from '@/lib/account';
+import { rememberNext } from '@/lib/return-to';
+
+/** Client-only session check; the page server-renders signed-out either way. */
+function useUserId() {
+  const [userId, setUserId] = useState('');
+  useState(() => { void supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? '')); });
+  return userId;
+}
 
 function priceLine(o: PublicOffer, lang: string, t: (k: string, o?: Record<string, unknown>) => string) {
   if (!o.price_cents) return t('offers.free');
@@ -27,8 +34,7 @@ export function PublicOfferPage({ id }: { id: string }) {
   const lang = i18n.resolvedLanguage ?? 'en';
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const { data: session } = useSession();
-  const userId = session?.user?.id ?? '';
+  const userId = useUserId();
   const q = useQuery(publicOfferQuery(id));
   const access = useQuery({ ...canAccessOfferQuery(id, userId), enabled: !!userId });
   const [busy, setBusy] = useState(false);
