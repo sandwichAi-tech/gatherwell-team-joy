@@ -54,7 +54,7 @@ function priceLabel(t: import('i18next').TFunction, o: Pick<Offer, 'price_cents'
 }
 
 /* ---------- Host: manage offers ---------- */
-export function OffersManagePage({ newKind }: { newKind?: 'course' | 'download' | undefined } = {}) {
+export function OffersManagePage({ newKind, mode }: { newKind?: 'course' | 'download' | undefined; mode?: 'bundle' | undefined } = {}) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? 'en';
   const { userId } = useGatherwell();
@@ -80,11 +80,11 @@ export function OffersManagePage({ newKind }: { newKind?: 'course' | 'download' 
           <Button variant="secondary" size="icon" aria-label={t('offers.edit')} onClick={() => setEditing(o)}><Pencil /></Button>
         </div>
       </li>)}</ul>}
-    {ws && <OfferEditor offer={editing} teamId={ws.teamId} onClose={() => setEditing(null)} />}
+    {ws && <OfferEditor offer={editing} teamId={ws.teamId} onClose={() => setEditing(null)} bundleMode={mode === 'bundle' && editing?.kind === 'download' && !editing?.id} />}
   </>;
 }
 
-function OfferEditor({ offer, teamId, onClose }: { offer: Partial<Offer> | null; teamId: string; onClose: () => void }) {
+function OfferEditor({ offer, teamId, onClose, bundleMode }: { offer: Partial<Offer> | null; teamId: string; onClose: () => void; bundleMode?: boolean | undefined }) {
   const { t } = useTranslation();
   const { userId } = useGatherwell();
   const qc = useQueryClient();
