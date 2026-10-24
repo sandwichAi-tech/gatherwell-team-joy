@@ -435,6 +435,62 @@
       "when": 1792813937861,
       "tag": "0061_offer_readiness_array_append",
       "breakpoints": true
+    },
+    {
+      "idx": 62,
+      "version": "7",
+      "when": 1792814939845,
+      "tag": "0062_quizzes_progress_certificates",
+      "breakpoints": true
+    },
+    {
+      "idx": 63,
+      "version": "7",
+      "when": 1792814998670,
+      "tag": "0063_fix_submit_grading_and_duplicate",
+      "breakpoints": true
+    },
+    {
+      "idx": 64,
+      "version": "7",
+      "when": 1792815113412,
+      "tag": "0064_fix_quiz_publish_gate_insert",
+      "breakpoints": true
+    },
+    {
+      "idx": 65,
+      "version": "7",
+      "when": 1792815193292,
+      "tag": "0065_fix_cert_number_generation",
+      "breakpoints": true
+    },
+    {
+      "idx": 66,
+      "version": "7",
+      "when": 1792815266969,
+      "tag": "0066_fix_duplicate_offer_alias_collision",
+      "breakpoints": true
+    },
+    {
+      "idx": 67,
+      "version": "7",
+      "when": 1792815323965,
+      "tag": "0067_duplicate_quizzes_as_drafts",
+      "breakpoints": true
+    },
+    {
+      "idx": 68,
+      "version": "7",
+      "when": 1792815649562,
+      "tag": "0068_public_offer_quiz_metadata",
+      "breakpoints": true
+    },
+    {
+      "idx": 69,
+      "version": "7",
+      "when": 1792815681381,
+      "tag": "0069_fix_public_offer_description_key",
+      "breakpoints": true
     }
   ]
 }

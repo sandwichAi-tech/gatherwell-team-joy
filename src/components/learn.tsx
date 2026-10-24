@@ -18,6 +18,7 @@ import {
   remindersQuery, RECIPE_TAGS, populatedTracks, trackStats, trackTitle, type LearnData, type Lesson, type Recipe, type Track,
 } from '@/lib/learn';
 import { myLearningQuery } from '@/lib/content';
+import { CertificateList } from '@/components/quiz';
 import { OfferCover } from '@/components/offers';
 import { offerTitle } from '@/lib/offers';
 
@@ -148,6 +149,7 @@ export function LearnHome() {
         <div className="offer-row-main"><strong>{offerTitle(e, lang)}</strong>
           <small>{e.host_name ?? ''}{e.lessons > 0 ? ` · ${t('learnHub.progressLabel', { done: e.done, total: e.lessons })}` : ''}{e.status === 'archived' ? ` · ${t('offers.status.archived')}` : ''}</small></div>
         <ArrowRight /></Link></li>)}</ul></section>}
+    <CertificateList userId={userId} />
     {startHere && <section className="learn-section"><TrackCard track={startHere} data={data} featured /></section>}
     {rest.length > 0 && <section className="learn-section"><div className="section-heading"><h2>{t('learnHub.yourTracks')}</h2></div>
       <div className="track-grid">{rest.map(tr => <TrackCard key={tr.id} track={tr} data={data} />)}</div></section>}
