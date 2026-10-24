@@ -195,8 +195,8 @@ export function PlanPage() {
 
     <div className="plan-grid">
       {PLANS.map(p => {
-        // Prospective cards show the approved Blueprint v4 price and the flat 5% fee, not the legacy plan_settings rows.
-        const ps = { monthly_price: V4_MONTHLY_CENTS[p.id], fee_percent: V4_FEE_PERCENT };
+        // Prospective cards show the approved price and that plan's platform fee, not the legacy plan_settings rows.
+        const ps = { monthly_price: V5_MONTHLY_CENTS[p.id], fee_percent: V5_FEE_PERCENT[p.id] };
         const isCurrent = (st.source === 'founding' && p.id === 'pro') || st.source === 'own' && (st.own_plan === p.id && st.legacy_price_cents === null || (p.id === 'free' && st.own_plan === 'free'));
         return <article key={p.id} className={`plan-card ${isCurrent ? 'is-current' : ''} `}>
           <PlanCardBody id={p.id} setting={ps} tagClass="plan-tag" priceClass="plan-price" feeClass="plan-fee-line" />
@@ -225,7 +225,7 @@ export function PlanPage() {
 
     <section className="panel get-paid">
       <div className="section-heading"><h2>{t('billing.getPaid')}</h2><span className={`chip connect-${st.connect_status}`}>{t(`billing.connect_${st.connect_status}`)}</span></div>
-      <p className="auth-subtitle">{t('home.pricing.fee', { pct: V4_FEE_PERCENT })}</p>
+      <p className="auth-subtitle">{t('pricingV4.feeDisclosure')}</p>
       {st.connect_status !== 'active' && <Button disabled={gate.busy} onClick={() => void gate.run(() => connect({ data: { origin } }))}>{st.connect_status === 'pending' ? t('billing.connectContinue') : t('billing.connectStart')}</Button>}
       <label className="settings-row is-static"><span className="settings-label">{t('billing.passFee')}<small className="field-hint">{t('billing.passFeeHint')}</small></span><Switch aria-label={t('billing.passFee')} checked={st.pass_fee} onCheckedChange={v => void togglePassFee(v)} /></label>
     </section>
@@ -239,7 +239,7 @@ export function PlanPage() {
             <li>{l.guests === null ? t('billing.fGuestsUnlimited') : t('billing.downGuests', { n: l.guests })}</li>
             <li>{t('billing.downStorage', { size: formatStorage(l.storage_mb, lang) })}</li>
             <li>{t('billing.fAssistant', { n: l.assistant })}</li>
-            <li>{t('billing.fFee', { n: V4_FEE_PERCENT })}</li></>; })()}
+            <li>{t('billing.fFee', { n: V5_FEE_PERCENT[downgrade] })}</li></>; })()}
         </ul>
         <p className="field-hint">{t('billing.downgradeAtMonthEnd')}</p>
         <Button className="onboarding-continue" disabled={gate.busy} onClick={() => { const target = downgrade!; setDowngrade(null); runScheduled(target); }}>{t('billing.downConfirm')}</Button>
