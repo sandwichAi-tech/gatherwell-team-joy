@@ -5133,6 +5133,7 @@
       "label": "Enlace personalizado",
       "placeholder": "tu-nombre",
       "copy": "Copiar enlace",
+      "create": "Crea tu enlace",
       "edit": "Editar enlace",
       "save": "Guardar enlace",
       "saved": "Tu enlace público se actualizó.",

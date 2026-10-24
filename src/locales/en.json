@@ -5133,6 +5133,7 @@
       "label": "Custom link",
       "placeholder": "your-name",
       "copy": "Copy link",
+      "create": "Create your link",
       "edit": "Edit link",
       "save": "Save link",
       "saved": "Your public link was updated.",

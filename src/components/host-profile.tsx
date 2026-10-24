@@ -100,6 +100,7 @@ export function SlugEditor({ userId, slug, onSaved }: { userId: string; slug: st
 
   return <fieldset className="edit-section slug-editor"><legend>{t('hostProfile.slug.title')}</legend>
     <p className="field-hint">{t('hostProfile.slug.hint')}</p>
+    {!url && !editing && <Button variant="secondary" onClick={() => { setValue(''); setEditing(true); }}><GwIcon name="Link2" />{t('hostProfile.slug.create')}</Button>}
     {url && !editing && <div className="slug-current">
       <code className="slug-url" data-testid="slug-url">{url}</code>
       <div className="feed-actions">
