@@ -117,3 +117,9 @@ The requester supplied the following results after commit ac2eef3c5d5ff7138522b8
 - get_public_host returns only host-approved fields; city is gated behind city_public opt-in; unpublished (host_public=false) profiles return NULL and cannot be followed. No email, phone, exact address, earnings, or attendee data is exposed.
 - save_host_profile enforces HTTPS-only links and a social-domain allowlist server-side; clients cannot bypass it.
 - Follower counts are aggregate-only; my_following shows each signed-in user their own list and drops targets that go private.
+
+## 2026-10-24 — Workspace roles, invites, audit (0074)
+- team_capability() is the single server-side capability check; owner derives from teams.owner_id, never from a member row. Suspended members lose all capabilities immediately.
+- team_invites and team_audit are RPC-only (no direct table policies); invite acceptance requires the signed-in account's verified email to match, adult attestation, and enforces one-use/expiry/revocation. Invite creation returns an identical shape whether or not the email has an account.
+- team_log redacts token/email_body/waiver/payment keys from audit metadata; audit shows actor/target display names only to owner/admin.
+- Ownership transfer requires typing the workspace name and keeps at least one owner; leaving as sole owner is blocked.

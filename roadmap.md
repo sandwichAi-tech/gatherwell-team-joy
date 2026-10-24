@@ -203,3 +203,5 @@ Active work follows the approved Prompt 1–17 sequence in the ZoheeWell Beta Pr
 - [ ] Learner quiz/certificate browser journey with a second account (API-verified only so far)
 - [x] Discovery milestone (v0.23): unified catalog, saved, location alerts (in-app), invite-a-host attribution
 - [ ] Alert email/SMS delivery once providers + consent are configured (currently in-app only, labelled)
+- [x] Workspace milestone (v0.25): roles, invitations, seats, audit
+- [ ] Invite email delivery once provider configured (currently copy-link only, labelled)

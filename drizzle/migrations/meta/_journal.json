@@ -519,6 +519,13 @@
       "when": 1792818902814,
       "tag": "0073_fix_save_host_profile_languages",
       "breakpoints": true
+    },
+    {
+      "idx": 74,
+      "version": "7",
+      "when": 1792819411554,
+      "tag": "0074_workspace_roles_invites_audit",
+      "breakpoints": true
     }
   ]
 }

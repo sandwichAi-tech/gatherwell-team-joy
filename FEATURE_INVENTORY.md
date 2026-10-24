@@ -132,4 +132,5 @@ Specifics:
 - Invite a host (v0.23): opaque attributed share token, recorded once after signup, self-referral rejected.
 - Host public profiles (v0.24): host-controlled org, categories, languages, accessibility statement, allowlisted links, city opt-in, publish/unpublish, readiness checklist, preview; public page shows only published public offerings; Person/Organization structured data from real fields.
 - Following (v0.24): signed-in follow/unfollow is idempotent; /following lists still-public hosts/teams; hosts see aggregate counts only.
+- Team workspaces (v0.25): 8 workspace roles with centralized server-side capability checks, email invitations via copyable one-use links (email delivery Setup required), seat usage vs real entitlement with invite blocking, member suspend/remove/role change, ownership transfer with typed confirmation, and an owner/admin audit activity log.
 

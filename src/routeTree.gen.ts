@@ -55,6 +55,7 @@ import { Route as AuthenticatedAppStartRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppTeamRouteImport } from './routes/_authenticated/_app/team'
 import { Route as AuthenticatedAppVerifyRouteImport } from './routes/_authenticated/_app/verify'
 import { Route as IHostTokenRouteImport } from './routes/i.host.$token'
+import { Route as InviteTeamTokenRouteImport } from './routes/invite.team.$token'
 import { Route as AuthenticatedAppAdminIndexRouteImport } from './routes/_authenticated/_app/admin.index'
 import { Route as AuthenticatedAppAdminSiteMediaRouteImport } from './routes/_authenticated/_app/admin.site-media'
 import { Route as AuthenticatedAppChallengeIdRouteImport } from './routes/_authenticated/_app/challenge.$id'
@@ -66,6 +67,7 @@ import { Route as AuthenticatedAppOfferIdRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAppPlanSeatsRouteImport } from './routes/_authenticated/_app/plan_.seats'
 import { Route as AuthenticatedAppTeamInsightsRouteImport } from './routes/_authenticated/_app/team_.insights'
 import { Route as AuthenticatedAppTeamMapRouteImport } from './routes/_authenticated/_app/team_.map'
+import { Route as AuthenticatedAppTeamSettingsRouteImport } from './routes/_authenticated/_app/team_.settings'
 import { Route as ApiPublicAiFollowupsRouteImport } from './routes/api/public/ai/followups'
 import { Route as ApiPublicCalendarTokenRouteImport } from './routes/api/public/calendar/$token'
 import { Route as ApiPublicEmailMailgunRouteImport } from './routes/api/public/email/mailgun'
@@ -315,6 +317,11 @@ const IHostTokenRoute = IHostTokenRouteImport.update({
   path: '/i/host/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InviteTeamTokenRoute = InviteTeamTokenRouteImport.update({
+  id: '/invite/team/$token',
+  path: '/invite/team/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAppAdminIndexRoute =
   AuthenticatedAppAdminIndexRouteImport.update({
     id: '/admin/',
@@ -378,6 +385,12 @@ const AuthenticatedAppTeamMapRoute = AuthenticatedAppTeamMapRouteImport.update({
   path: '/team/map',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppTeamSettingsRoute =
+  AuthenticatedAppTeamSettingsRouteImport.update({
+    id: '/team_/settings',
+    path: '/team/settings',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const ApiPublicAiFollowupsRoute = ApiPublicAiFollowupsRouteImport.update({
   id: '/api/public/ai/followups',
   path: '/api/public/ai/followups',
@@ -501,6 +514,7 @@ export interface FileRoutesByFullPath {
   '/team': typeof AuthenticatedAppTeamRoute
   '/verify': typeof AuthenticatedAppVerifyRoute
   '/i/host/$token': typeof IHostTokenRoute
+  '/invite/team/$token': typeof InviteTeamTokenRoute
   '/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/event/$id': typeof AuthenticatedAppEventIdRoute
@@ -511,6 +525,7 @@ export interface FileRoutesByFullPath {
   '/plan/seats': typeof AuthenticatedAppPlanSeatsRoute
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
+  '/team/settings': typeof AuthenticatedAppTeamSettingsRoute
   '/api/public/ai/followups': typeof ApiPublicAiFollowupsRoute
   '/api/public/calendar/$token': typeof ApiPublicCalendarTokenRoute
   '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
@@ -572,6 +587,7 @@ export interface FileRoutesByTo {
   '/team': typeof AuthenticatedAppTeamRoute
   '/verify': typeof AuthenticatedAppVerifyRoute
   '/i/host/$token': typeof IHostTokenRoute
+  '/invite/team/$token': typeof InviteTeamTokenRoute
   '/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/event/$id': typeof AuthenticatedAppEventIdRoute
@@ -582,6 +598,7 @@ export interface FileRoutesByTo {
   '/plan/seats': typeof AuthenticatedAppPlanSeatsRoute
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
+  '/team/settings': typeof AuthenticatedAppTeamSettingsRoute
   '/api/public/ai/followups': typeof ApiPublicAiFollowupsRoute
   '/api/public/calendar/$token': typeof ApiPublicCalendarTokenRoute
   '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
@@ -646,6 +663,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/team': typeof AuthenticatedAppTeamRoute
   '/_authenticated/_app/verify': typeof AuthenticatedAppVerifyRoute
   '/i/host/$token': typeof IHostTokenRoute
+  '/invite/team/$token': typeof InviteTeamTokenRoute
   '/_authenticated/_app/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/_authenticated/_app/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/_authenticated/_app/event/$id': typeof AuthenticatedAppEventIdRoute
@@ -656,6 +674,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/plan_/seats': typeof AuthenticatedAppPlanSeatsRoute
   '/_authenticated/_app/team_/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/_authenticated/_app/team_/map': typeof AuthenticatedAppTeamMapRoute
+  '/_authenticated/_app/team_/settings': typeof AuthenticatedAppTeamSettingsRoute
   '/api/public/ai/followups': typeof ApiPublicAiFollowupsRoute
   '/api/public/calendar/$token': typeof ApiPublicCalendarTokenRoute
   '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
@@ -719,6 +738,7 @@ export interface FileRouteTypes {
     | '/team'
     | '/verify'
     | '/i/host/$token'
+    | '/invite/team/$token'
     | '/admin/site-media'
     | '/challenge/$id'
     | '/event/$id'
@@ -729,6 +749,7 @@ export interface FileRouteTypes {
     | '/plan/seats'
     | '/team/insights'
     | '/team/map'
+    | '/team/settings'
     | '/api/public/ai/followups'
     | '/api/public/calendar/$token'
     | '/api/public/email/mailgun'
@@ -790,6 +811,7 @@ export interface FileRouteTypes {
     | '/team'
     | '/verify'
     | '/i/host/$token'
+    | '/invite/team/$token'
     | '/admin/site-media'
     | '/challenge/$id'
     | '/event/$id'
@@ -800,6 +822,7 @@ export interface FileRouteTypes {
     | '/plan/seats'
     | '/team/insights'
     | '/team/map'
+    | '/team/settings'
     | '/api/public/ai/followups'
     | '/api/public/calendar/$token'
     | '/api/public/email/mailgun'
@@ -863,6 +886,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/team'
     | '/_authenticated/_app/verify'
     | '/i/host/$token'
+    | '/invite/team/$token'
     | '/_authenticated/_app/admin/site-media'
     | '/_authenticated/_app/challenge/$id'
     | '/_authenticated/_app/event/$id'
@@ -873,6 +897,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/plan_/seats'
     | '/_authenticated/_app/team_/insights'
     | '/_authenticated/_app/team_/map'
+    | '/_authenticated/_app/team_/settings'
     | '/api/public/ai/followups'
     | '/api/public/calendar/$token'
     | '/api/public/email/mailgun'
@@ -915,6 +940,7 @@ export interface RootRouteChildren {
   UnsubscribeTokenRoute: typeof UnsubscribeTokenRoute
   VerifyNumberRoute: typeof VerifyNumberRoute
   IHostTokenRoute: typeof IHostTokenRoute
+  InviteTeamTokenRoute: typeof InviteTeamTokenRoute
   ApiPublicAiFollowupsRoute: typeof ApiPublicAiFollowupsRoute
   ApiPublicCalendarTokenRoute: typeof ApiPublicCalendarTokenRoute
   ApiPublicEmailMailgunRoute: typeof ApiPublicEmailMailgunRoute
@@ -1249,6 +1275,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IHostTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/invite/team/$token': {
+      id: '/invite/team/$token'
+      path: '/invite/team/$token'
+      fullPath: '/invite/team/$token'
+      preLoaderRoute: typeof InviteTeamTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/_app/admin/': {
       id: '/_authenticated/_app/admin/'
       path: '/admin'
@@ -1324,6 +1357,13 @@ declare module '@tanstack/react-router' {
       path: '/team/map'
       fullPath: '/team/map'
       preLoaderRoute: typeof AuthenticatedAppTeamMapRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/team_/settings': {
+      id: '/_authenticated/_app/team_/settings'
+      path: '/team/settings'
+      fullPath: '/team/settings'
+      preLoaderRoute: typeof AuthenticatedAppTeamSettingsRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
     '/api/public/ai/followups': {
@@ -1458,6 +1498,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppPlanSeatsRoute: typeof AuthenticatedAppPlanSeatsRoute
   AuthenticatedAppTeamInsightsRoute: typeof AuthenticatedAppTeamInsightsRoute
   AuthenticatedAppTeamMapRoute: typeof AuthenticatedAppTeamMapRoute
+  AuthenticatedAppTeamSettingsRoute: typeof AuthenticatedAppTeamSettingsRoute
   AuthenticatedAppAdminIndexRoute: typeof AuthenticatedAppAdminIndexRoute
   AuthenticatedAppEventIdCheckinRoute: typeof AuthenticatedAppEventIdCheckinRoute
   AuthenticatedAppEventIdGuestsRoute: typeof AuthenticatedAppEventIdGuestsRoute
@@ -1498,6 +1539,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppPlanSeatsRoute: AuthenticatedAppPlanSeatsRoute,
   AuthenticatedAppTeamInsightsRoute: AuthenticatedAppTeamInsightsRoute,
   AuthenticatedAppTeamMapRoute: AuthenticatedAppTeamMapRoute,
+  AuthenticatedAppTeamSettingsRoute: AuthenticatedAppTeamSettingsRoute,
   AuthenticatedAppAdminIndexRoute: AuthenticatedAppAdminIndexRoute,
   AuthenticatedAppEventIdCheckinRoute: AuthenticatedAppEventIdCheckinRoute,
   AuthenticatedAppEventIdGuestsRoute: AuthenticatedAppEventIdGuestsRoute,
@@ -1550,6 +1592,7 @@ const rootRouteChildren: RootRouteChildren = {
   UnsubscribeTokenRoute: UnsubscribeTokenRoute,
   VerifyNumberRoute: VerifyNumberRoute,
   IHostTokenRoute: IHostTokenRoute,
+  InviteTeamTokenRoute: InviteTeamTokenRoute,
   ApiPublicAiFollowupsRoute: ApiPublicAiFollowupsRoute,
   ApiPublicCalendarTokenRoute: ApiPublicCalendarTokenRoute,
   ApiPublicEmailMailgunRoute: ApiPublicEmailMailgunRoute,
