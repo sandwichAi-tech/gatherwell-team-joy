@@ -32,6 +32,8 @@ import {
 } from '@/lib/offers';
 import { cancelOfferMembership, offerDownloadLink, pauseOfferMembership, startOfferCheckout } from '@/lib/offers.functions';
 import { CommunityRequestsPanel, CommunitySeatCard } from '@/components/community-seats';
+import { CurriculumPanel, OfferDetailsEditor, OfferHostActions, PublicOfferLink, ReadinessPanel } from '@/components/content-studio';
+import { canAccessOfferQuery } from '@/lib/content';
 
 const KINDS: OfferKind[] = ['membership', 'course', 'download'];
 const dateFmt = (iso: string, lang: string) => new Date(iso).toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -177,6 +179,8 @@ export function OfferPage({ id, paid }: { id: string; paid?: boolean }) {
   const { userId } = useGatherwell();
   const qc = useQueryClient();
   const q = useQuery({ ...offerQuery(id, userId), refetchInterval: paid ? 4000 : false });
+  const access = useQuery(canAccessOfferQuery(id, userId));
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const { data: gate } = useQuery(paymentsStatusQuery);
   const checkout = useServerFn(startOfferCheckout);
   const download = useServerFn(offerDownloadLink);
