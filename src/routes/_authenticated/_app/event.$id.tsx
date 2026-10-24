@@ -110,8 +110,8 @@ function EventDetailPage() {
     priceCents: event.price_cents ?? null, canSell: planStatus?.connect_status === 'active',
     regOpens: (ev.reg_opens_at as string) ?? '', regCloses: (ev.reg_closes_at as string) ?? '',
     retreatOn: !!ev.retreat, retreatEnd: event.ends_at ?? '',
-    allowsMinors: !!ev.allows_minors, minAge: ev.min_age != null ? String(ev.min_age) : '',
-    tiers: Array.isArray(ev.ticket_tiers) ? ev.ticket_tiers as never[] : [],
+    allowsMinors: !!ev['allows_minors'], minAge: ev['min_age'] != null ? String(ev['min_age']) : '',
+    tiers: Array.isArray(ev['ticket_tiers']) ? ev['ticket_tiers'] as never[] : [],
   }) : [];
 
   return <>
