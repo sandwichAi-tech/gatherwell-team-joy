@@ -12,7 +12,8 @@ Active work follows the approved Prompt 1–17 sequence in the ZoheeWell Beta Pr
 - [x] Registration verification pass (v0.18) — concurrency, waitlist promotion, claim/merge, guardian rules, isolation, token security verified live; rsvp_event_minor ambiguous-column defect fixed (0056); My tickets card layout fixed
 - [ ] Two-account browser journey (attendee view of host-cancellation reason, cross-account My tickets) — needs approval to mint a second live account session
 - [x] Course & resource authoring + free learner access (v0.19) — 0057–0059; content studio, public /o/$id pages, My learning, free enrollment verified live; paid stays Setup required
-- [ ] Course/resource browser journeys (create/publish/enroll in UI) and resource-bundle ordering UI — pending
+- [x] Resource-bundle authoring UI + browser journeys (v0.20) — 0060; bundle items, replace history, signed downloads verified; fixtures and test storage object removed
+- [ ] Course creation browser journey (sections/lessons in UI), screen-reader and 200% zoom passes for content surfaces — pending
 - [x] Homepage density fix — removed immediate duplicate Host/Attend section; compact four-step and 15-tool layouts verified at 390px/1440px, both CTAs work, 96 tests pass; verification limits in CHANGELOG.md.
 
 
