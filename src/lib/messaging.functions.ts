@@ -35,7 +35,7 @@ export const saveMessageTemplate = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     const { data: id, error } = await context.supabase.rpc('save_message_template', {
       _team: data.teamId, _id: data.id ?? null, _name: data.name, _channel: data.channel,
-      _language: data.language, _subject: data.subject ?? null, _body: data.body, _audience: data.audience ?? null,
+      _language: data.language, _subject: data.subject ?? '', _body: data.body, _audience: data.audience ?? '',
     });
     if (error) throw new Error(error.message);
     return { id };
@@ -78,7 +78,7 @@ export const saveMessageAutomation = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     const { data: id, error } = await context.supabase.rpc('save_message_automation', {
       _team: data.teamId, _id: data.id ?? null, _name: data.name, _trigger: data.trigger,
-      _timing_hours: data.timing_hours, _audience: data.audience ?? null, _channel: data.channel,
+      _timing_hours: data.timing_hours, _audience: data.audience ?? '', _channel: data.channel,
       _template_id: data.template_id ?? null, _event_id: data.event_id ?? null,
     });
     if (error) throw new Error(error.message);

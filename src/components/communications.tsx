@@ -103,8 +103,8 @@ function SetupBanner({ setup }: { setup: Setup }) {
   return <section className="guest-card comms-setup" aria-label={t('comms.setupTitle')}>
     <strong>{t('comms.setupTitle')}</strong>
     <ul className="comms-setup-list">
-      <li><GwIcon name="Envelope" /> {t('comms.channel.email')} — {setup.email ? t('comms.setupReady') : t('comms.setupRequired')}</li>
-      <li><GwIcon name="ChatCircle" /> {t('comms.channel.sms')} — {setup.sms ? t('comms.setupReady') : t('comms.setupRequired')}</li>
+      <li><GwIcon name="Mail" /> {t('comms.channel.email')} — {setup.email ? t('comms.setupReady') : t('comms.setupRequired')}</li>
+      <li><GwIcon name="MessageSquare" /> {t('comms.channel.sms')} — {setup.sms ? t('comms.setupReady') : t('comms.setupRequired')}</li>
       <li><GwIcon name="Bell" /> {t('comms.channel.in_app')} — {t('comms.setupReady')}</li>
     </ul>
     {(!setup.email || !setup.sms) && <small className="field-hint">{t('comms.setupHint')}</small>}
@@ -477,7 +477,7 @@ function JourneyEditor({ teamId, journey, templates, onClose, onSaved }: { teamI
           <div className="comms-step-actions" role="group" aria-label={t('comms.stepActions', { n: i + 1 })}>
             <Button variant="ghost" size="icon" className="min-h-11 min-w-11" aria-label={t('comms.moveUp', { n: i + 1 })} disabled={i === 0} onClick={() => setSteps(ss => moveStep(ss, i, -1))}><GwIcon name="ArrowUp" /></Button>
             <Button variant="ghost" size="icon" className="min-h-11 min-w-11" aria-label={t('comms.moveDown', { n: i + 1 })} disabled={i === steps.length - 1} onClick={() => setSteps(ss => moveStep(ss, i, 1))}><GwIcon name="ArrowDown" /></Button>
-            <Button variant="ghost" size="icon" className="min-h-11 min-w-11" aria-label={t('comms.removeStep', { n: i + 1 })} onClick={() => setSteps(ss => ss.filter((_, j) => j !== i))}><GwIcon name="Trash" /></Button>
+            <Button variant="ghost" size="icon" className="min-h-11 min-w-11" aria-label={t('comms.removeStep', { n: i + 1 })} onClick={() => setSteps(ss => ss.filter((_, j) => j !== i))}><GwIcon name="Trash2" /></Button>
           </div>
         </li>)}
       </ol>
