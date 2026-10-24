@@ -318,3 +318,10 @@
 - Idempotent: one live run per journey per registration (partial unique index); pause freezes running runs, resume restores them; recipients are derived server-side from the registration — no arbitrary recipients, no duplicate sends.
 - Journeys tab gains a Runs activity view (status, step position, outcome notes) that never shows recipient details.
 - Verified live: trigger→run, rendered send, wait scheduling, condition pass and skip, idempotent re-trigger, pause/resume, anon/user denials, single outbox row; browser EN/ES runs view 5/5. Fixtures removed.
+
+## v0.37 — Payments readiness clarity (2026-10-24)
+- Root cause of vague "Setup needed": paid publishing depends on two separate things — ZoheeWell's platform payment connection (env-level, admin-only) and the coach's own payout setup (Stripe Connect onboarding, billing_accounts.connect_status). The block_unpaid_selling trigger already blocks publishing paid events/offers server-side until payouts_live().
+- New "Getting paid" checklist on /plan (shared PaymentsReadiness panel): free offerings always ready; platform connection marked as ZoheeWell-only when missing; payout setup shown as the coach's action (with the existing Connect start/continue button) only when the platform side is connected. Fee disclosure reuses the approved per-plan ladder copy; a draft-safety note explains paid drafts stay saved but can't publish early.
+- Event form's bare "Setup required" pill replaced with an honest blocked note (platform vs payout reason) linking to the checklist; the note hides itself once the coach can actually sell.
+- New getPaymentsReadiness server function (auth-required, reads own billing row via RLS); readinessSteps/canSellPaid mapper unit-tested (5 tests).
+- Verified: 388 tests, 12/12 browser checks EN/ES 390/1280 + 200% zoom, anon billing read denied. Not simulatable: fully coach-ready state (needs a real Connect account) and live checkout.
