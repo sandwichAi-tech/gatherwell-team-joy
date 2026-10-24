@@ -23,7 +23,7 @@ describe('scanner dialog keyboard access', () => {
     const root = document.createElement('div');
     root.innerHTML = '<button type="button">Close</button><input aria-label="Code" /><button type="submit">Check in</button>';
     document.body.append(root);
-    const [closeButton, input, submit] = scannerFocusableElements(root);
+    const [closeButton, input, submit] = scannerFocusableElements(root) as [HTMLElement, HTMLElement, HTMLElement];
     const close = vi.fn();
 
     closeButton.focus();

@@ -27,8 +27,8 @@ export function handleScannerDialogKeyDown(event: KeyboardEvent, root: HTMLEleme
     return true;
   }
 
-  const first = focusable[0];
-  const last = focusable[focusable.length - 1];
+  const first = focusable[0]!;
+  const last = focusable[focusable.length - 1]!;
   const active = document.activeElement;
   const focusIsOutside = !active || !root.contains(active);
 
