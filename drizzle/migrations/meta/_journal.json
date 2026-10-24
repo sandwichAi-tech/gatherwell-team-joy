@@ -386,6 +386,13 @@
       "when": 1792809707943,
       "tag": "0054_registration_functions",
       "breakpoints": true
+    },
+    {
+      "idx": 55,
+      "version": "7",
+      "when": 1792809750689,
+      "tag": "0055_public_event_ticket_tiers",
+      "breakpoints": true
     }
   ]
 }
