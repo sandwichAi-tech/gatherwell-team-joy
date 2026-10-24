@@ -19,11 +19,12 @@ import { formatMoney, planSettingsQuery, type PlanSetting } from '@/lib/billing'
 import { updatePlanSettings,
   adminTeamAction, adminUserAction, endBroadcast, getAdminAccess, getAdminOverview, getAdminTeam, getAdminUser, getAudit, getBroadcasts, getFlags, getLibrary,
   listAdminTeams, listAdminUsers, listReports, moderateReport, reorderLibrary, saveLibraryItem, sendBroadcast, setFlag, setLibraryPublished, type AdminReport, listRecentTexts, simulateSmsReply, listMail, retryMail, listVerifications, decideVerification, type AdminVerification,
+  listAdminTickets, replyAdminTicket, closeAdminTicket, type AdminTicket,
 } from '@/lib/admin.functions';
 
-export const ADMIN_TABS = ['overview', 'teams', 'users', 'moderation', 'verify', 'library', 'broadcasts', 'founding', 'day60', 'settings', 'audit', 'mail'] as const;
+export const ADMIN_TABS = ['overview', 'teams', 'users', 'moderation', 'verify', 'library', 'broadcasts', 'founding', 'day60', 'settings', 'audit', 'mail', 'support'] as const;
 export type AdminTab = (typeof ADMIN_TABS)[number];
-const TAB_ICONS: Record<AdminTab, GwIconProps['name']> = { overview: 'BarChart3', teams: 'UsersRound', users: 'UserRound', moderation: 'Flag', verify: 'BadgeCheck', library: 'BookOpen', broadcasts: 'Megaphone', founding: 'Medal', day60: 'Trophy', settings: 'Settings2', audit: 'FileText', mail: 'Mail' };
+const TAB_ICONS: Record<AdminTab, GwIconProps['name']> = { overview: 'BarChart3', teams: 'UsersRound', users: 'UserRound', moderation: 'Flag', verify: 'BadgeCheck', library: 'BookOpen', broadcasts: 'Megaphone', founding: 'Medal', day60: 'Trophy', settings: 'Settings2', audit: 'FileText', mail: 'Mail', support: 'LifeBuoy' };
 
 const useLang = () => { const { i18n } = useTranslation(); return i18n.resolvedLanguage === 'es' ? 'es' : 'en'; };
 const fmtDate = (iso: string | null | undefined, lang: string, time = false) => iso ? new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', time ? { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' } : { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(iso)) : '—';
@@ -51,6 +52,7 @@ export function AdminConsole({ tab }: { tab: AdminTab }) {
     {tab === 'settings' && <Settings />}
     {tab === 'audit' && <Audit />}
     {tab === 'mail' && <MailLog />}
+    {tab === 'support' && <SupportTickets />}
   </div>;
 }
 
