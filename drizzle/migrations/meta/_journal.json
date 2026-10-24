@@ -610,6 +610,13 @@
       "when": 1792863677325,
       "tag": "0086_safety_verification_hardening",
       "breakpoints": true
+    },
+    {
+      "idx": 87,
+      "version": "7",
+      "when": 1792866224759,
+      "tag": "0087_safety_retry_self_target_guards",
+      "breakpoints": true
     }
   ]
 }
