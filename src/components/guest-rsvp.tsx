@@ -43,7 +43,7 @@ export function CalendarButtons({ event }: { event: CalEvent }) {
   const icsEvent: IcsEvent = {
     id: event.id, title: event.title, startsAt: event.starts_at, endsAt: event.ends_at,
     location: [event.location_name, event.address].filter(Boolean).join(', ') || null,
-    description: details, url: link || undefined,
+    description: details, url: link || null,
     recurrence: (event as { recurrence?: string | null }).recurrence ?? null,
   };
   return <div className="guest-button-row"><AddToCalendar event={icsEvent} filename="gathering.ics" /></div>;

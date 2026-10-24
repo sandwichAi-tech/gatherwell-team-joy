@@ -2,7 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { QRCodeSVG } from 'qrcode.react';
-import { ArrowLeft, CalendarDays, MapPin, Printer, Video, Wallet, AlertCircle, CheckCircle2 } from '@/components/icons';
+import { ArrowLeft, CalendarDays, MapPin, Printer, Video, CreditCard, AlertCircle, CheckCircle2 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { AddToCalendar } from '@/components/add-to-calendar';
 import { ListSkeleton } from '@/components/launch-states';
@@ -11,7 +11,7 @@ import { formatWhen } from '@/lib/guest';
 import { gatherwellHead } from '@/lib/gatherwell-head';
 import type { IcsEvent } from '@/lib/ics';
 
-export const Route = createFileRoute('/_authenticated/_app/ticket/$code')({ head: () => gatherwellHead('tickets'), component: TicketDetailPage });
+export const Route = createFileRoute('/_authenticated/_app/ticket/$code')({ head: () => gatherwellHead('me'), component: TicketDetailPage });
 
 type TicketPayload = {
   found: boolean;
@@ -126,8 +126,8 @@ function TicketDetailPage() {
       <div className="ticket-wallet no-print">
         <h2>{t('wallet.title')}</h2>
         <div className="wallet-row">
-          <Button variant="secondary" disabled aria-disabled="true"><Wallet />{t('wallet.apple')}</Button>
-          <Button variant="secondary" disabled aria-disabled="true"><Wallet />{t('wallet.google')}</Button>
+          <Button variant="secondary" disabled aria-disabled="true"><CreditCard />{t('wallet.apple')}</Button>
+          <Button variant="secondary" disabled aria-disabled="true"><CreditCard />{t('wallet.google')}</Button>
         </div>
         <p className="muted">{t('wallet.setupRequired')}</p>
       </div>
