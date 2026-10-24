@@ -110,7 +110,7 @@ function CheckInMode() {
       <div className="checkin-counters">{([['going', counts?.going], ['checked_in', counts?.checked_in], ['walk_ins', counts?.walk_ins], ['waitlist', counts?.waitlist]] as const).map(([k, v]) =>
         <div key={k}><strong className="tabular-nums">{v ?? 0}</strong><span>{t(`checkin.counts.${k}`)}</span></div>)}</div>
       <div className="checkin-search"><Search /><Input aria-label={t('checkin.search')} placeholder={t('checkin.search')} value={q} onChange={e => setQ(e.target.value)} /></div>
-      <div className="checkin-tools"><Button onClick={() => { setScan(null); setScanning(true); }}><QrCode />{t('checkin.scan')}</Button><Button variant="secondary" onClick={() => setWalkIn(true)}><UserPlus />{t('checkin.walkIn')}</Button></div>
+      <div className="checkin-tools"><Button onClick={() => { setScan(null); setScanning(true); }}><QrCode />{t('checkin.scan')}</Button>{canManage && <Button variant="secondary" onClick={() => setWalkIn(true)}><UserPlus />{t('checkin.walkIn')}</Button>}</div>
     </header>
     {(!online || pending.length > 0) && <div className="connection-note" role="status"><p>{t(pending.length ? 'launch.pending' : 'launch.offline', { count: pending.length })}</p>{pending.length > 0 && <Button variant="secondary" disabled={!online} onClick={() => void sync()}>{t('error.retry')}</Button>}</div>}
     {isLoading ? <ListSkeleton /> : error ? <RetryState retry={() => void refetch()} /> : <main className="checkin-body">
@@ -123,7 +123,7 @@ function CheckInMode() {
       <h2 className="checkin-section">{t('checkin.checkedIn')} <span className="tabular-nums">{done.length}</span></h2>
       <ul className="checkin-list is-done">{done.map(r => <li key={r.id}><CheckCircle2 className="checkin-ok" />
         <span className="checkin-name">{r.guest_name}{r.is_walk_in && <small>{t('checkin.walkInTag')}</small>}{r.small_group && <small>{r.small_group}</small>}<small>{r.checked_in_at && new Date(r.checked_in_at).toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' })}</small></span>
-        <Button variant="ghost" size="icon" aria-label={t('checkin.undo')} onClick={() => checkIn(r.id, true)}><Undo2 /></Button></li>)}</ul>
+        <Button variant="ghost" size="icon" aria-label={t('checkin.undo')} onClick={() => setUndoTarget({ id: r.id, name: r.guest_name ?? '' })}><Undo2 /></Button></li>)}</ul>
     </main>}
     {scanning && <Scanner onClose={() => setScanning(false)} onCode={onCode} scan={scan} onNext={() => setScan(null)} />}
     <WalkInSheet open={walkIn} eventId={id} onClose={() => setWalkIn(false)} onSaved={() => queryClient.invalidateQueries({ queryKey: listKey })} />
