@@ -673,6 +673,13 @@
       "when": 1792882876644,
       "tag": "0095_communications_hub",
       "breakpoints": true
+    },
+    {
+      "idx": 96,
+      "version": "7",
+      "when": 1792883423636,
+      "tag": "0096_outbox_automation_kind",
+      "breakpoints": true
     }
   ]
 }
