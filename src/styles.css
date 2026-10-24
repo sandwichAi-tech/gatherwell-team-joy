@@ -2163,3 +2163,11 @@ a.gw-cat-chip:hover{background:#fff}
 .builder-fee .guest-fee-lines{background:var(--warm-chip)}
 .guest-minor{display:flex;flex-direction:column;gap:12px;padding:16px;border:1px solid var(--border);border-radius:14px}
 .guest-minor-fields{display:flex;flex-direction:column;gap:12px}
+.guest-tiers{display:flex;flex-direction:column;gap:8px;border:0;padding:0;margin:0}
+.guest-tier{display:grid;grid-template-columns:20px 1fr;gap:4px 12px;align-items:center;padding:12px 14px;border:1px solid var(--border);border-radius:14px;min-height:48px;cursor:pointer}
+.guest-tier:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.guest-tier.is-disabled{opacity:.6;cursor:not-allowed}
+.guest-tier input{width:18px;height:18px;grid-row:span 2}
+.guest-tier-name{font-weight:600}
+.guest-tier-meta{font-size:13px;color:var(--muted);grid-column:2}
+.ticket-card .event-info p{display:flex;align-items:center;gap:6px;margin:2px 0}
