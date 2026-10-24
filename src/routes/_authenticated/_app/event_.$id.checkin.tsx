@@ -34,7 +34,8 @@ function CheckInMode() {
       // Minimal admission fields via the check-in capability; works for assigned check-in staff too.
       const { data, error } = await supabase.rpc('checkin_guest_list', { _event: id });
       if (error) throw error;
-      return (data ?? []) as unknown as { id: string; guest_name: string | null; status: string; plus_ones: number; checked_in_at: string | null; is_walk_in: boolean; wants_buddy: boolean | null; buddy_rsvp_id: string | null; small_group: string | null }[];
+      return ((data ?? []) as unknown as { id: string; guest_name: string | null; status: string; plus_ones: number; checked_in_at: string | null; is_walk_in: boolean; wants_buddy: boolean | null; buddy_rsvp_id: string | null; small_group: string | null }[])
+        .map(r => ({ ...r, wants_buddy: r.wants_buddy ?? false }));
     },
   });
   const counts = useLiveCounts(id);
