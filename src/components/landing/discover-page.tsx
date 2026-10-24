@@ -147,7 +147,11 @@ export function DiscoverPage({ search }: { search: DiscoverSearch }) {
         {!isLoading && !error && data.length > 0 && <ul className="gw-grid catalog-grid">{data.map(item => <CatalogCard key={`${item.kind}:${item.id}`} item={item} lang={lang} />)}</ul>}
         {!isLoading && !error && data.length === 0 && <div className="gw-empty">
           <p><strong>{filters.near ? t('discover.emptyLocal') : t('discover.empty')}</strong></p>
-          {hasActiveFilters(filters) && <button type="button" className="gw-btn gw-btn-secondary" onClick={clearAll}>{t('discover.clearAll')}</button>}
+          <div className="gw-empty-actions">
+            {hasActiveFilters(filters) && <button type="button" className="gw-btn gw-btn-secondary" onClick={clearAll}>{t('discover.clearAll')}</button>}
+            <Link to="/alerts" className="gw-btn gw-btn-secondary">{t('discover.notifyMe')}</Link>
+            <button type="button" className="gw-btn gw-btn-secondary" onClick={() => void shareInvite()}>{t('discover.inviteHost')}</button>
+          </div>
         </div>}
         {!isLoading && !error && filters.near && localCount === 0 && onlineCount > 0 && <p className="gw-fine">{t('discover.onlineInstead')}</p>}
       </section>}
