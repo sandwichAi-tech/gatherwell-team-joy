@@ -71,8 +71,12 @@ export const workspaceQuery = (userId: string) => queryOptions({
     if (member) return member;
     if (saved) {
       // Leaders of a parent team can open sub-teams they are not directly in; they act there as leader.
-      const { data } = await supabase.from('teams').select('id, name, plan, join_code, owner_id').eq('id', saved).maybeSingle();
-      if (data) return { teamId: data.id, name: data.name, plan: data.plan, joinCode: data.join_code, role: 'leader', ownerId: data.owner_id, customBadge: null, inherited: true };
+      // Verify an active capability first so a suspended/removed membership never resolves here.
+      const { data: capable } = await supabase.rpc('team_capability', { _team: saved, _cap: 'events' });
+      if (capable) {
+        const { data } = await supabase.from('teams').select('id, name, plan, join_code, owner_id').eq('id', saved).maybeSingle();
+        if (data) return { teamId: data.id, name: data.name, plan: data.plan, joinCode: data.join_code, role: 'leader', workspaceRole: 'admin', ownerId: data.owner_id, customBadge: null, inherited: true };
+      }
     }
     return teams.find(team => team.role === 'leader') ?? teams[0] ?? null;
   },
