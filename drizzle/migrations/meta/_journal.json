@@ -442,6 +442,13 @@
       "when": 1792814939845,
       "tag": "0062_quizzes_progress_certificates",
       "breakpoints": true
+    },
+    {
+      "idx": 63,
+      "version": "7",
+      "when": 1792814998670,
+      "tag": "0063_fix_submit_grading_and_duplicate",
+      "breakpoints": true
     }
   ]
 }
