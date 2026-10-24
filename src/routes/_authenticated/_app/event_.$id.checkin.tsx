@@ -43,6 +43,7 @@ function CheckInMode() {
   const { data: canManage = false } = useQuery({ queryKey: ['event', id, 'can-manage'], queryFn: async () => !!(await supabase.rpc('can_manage_event', { _event_id: id })).data });
   useRsvpChanges(id, () => void queryClient.invalidateQueries({ queryKey: listKey }));
   const [q, setQ] = useState(''); const [scanning, setScanning] = useState(false); const [walkIn, setWalkIn] = useState(false); const [scan, setScan] = useState<Scan | null>(null);
+  const [undoTarget, setUndoTarget] = useState<{ id: string; name: string } | null>(null);
   const queue = useRef(createCheckinQueue());
   const syncing = useRef(false);
   const [pending, setPending] = useState<PendingCheckin[]>([]);
@@ -127,6 +128,12 @@ function CheckInMode() {
     </main>}
     {scanning && <Scanner onClose={() => setScanning(false)} onCode={onCode} scan={scan} onNext={() => setScan(null)} />}
     <WalkInSheet open={walkIn} eventId={id} onClose={() => setWalkIn(false)} onSaved={() => queryClient.invalidateQueries({ queryKey: listKey })} />
+    <ResponsiveSheet open={!!undoTarget} onOpenChange={o => !o && setUndoTarget(null)} title={t('checkin.undoTitle')} description={t('checkin.undoText', { name: undoTarget?.name ?? '' })}>
+      <div className="confirm-actions">
+        <Button variant="secondary" onClick={() => setUndoTarget(null)}>{t('checkin.undoKeep')}</Button>
+        <Button className="danger-button" onClick={() => { if (undoTarget) void checkIn(undoTarget.id, true); setUndoTarget(null); }}>{t('checkin.undoConfirm')}</Button>
+      </div>
+    </ResponsiveSheet>
   </div>;
 }
 
