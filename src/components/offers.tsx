@@ -129,7 +129,7 @@ function OfferEditor({ offer, teamId, onClose, bundleMode }: { offer: Partial<Of
   };
   const field = (id: string, label: string, el: React.ReactNode) => <div className="form-field"><label className="field-label" htmlFor={id}>{label}</label>{el}</div>;
 
-  return <ResponsiveSheet open={!!offer} onOpenChange={o => !o && onClose()} title={offer?.id ? t('offers.edit') : t('offers.new')}>
+  return <ResponsiveSheet open={!!offer} onOpenChange={o => !o && onClose()} title={offer?.id ? t('offers.edit') : bundleMode ? t('resources.create.types.bundle.name') : t('offers.new')} description={bundleMode ? t('resources.preset.bundle.hint') : undefined}>
     <div className="edit-form">
       <div className="form-field"><span className="field-label">{t('offers.type')}</span>
         <div className="choice-pair offer-kinds" role="group" aria-label={t('offers.type')}>{KINDS.map(k => <button key={k} type="button" disabled={!!offer?.id} className={`choice-card ${f.kind === k ? 'is-selected' : ''}`} aria-pressed={f.kind === k} onClick={() => setF({ ...f, kind: k })}><strong>{t(`offers.kind.${k}`)}</strong><small>{t(`offers.kindText.${k}`)}</small></button>)}</div></div>
@@ -176,7 +176,7 @@ function OfferEditor({ offer, teamId, onClose, bundleMode }: { offer: Partial<Of
 }
 
 /* ---------- Offer page (Join / Buy) ---------- */
-export function OfferPage({ id, paid }: { id: string; paid?: boolean }) {
+export function OfferPage({ id, paid, panel }: { id: string; paid?: boolean; panel?: string | undefined }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? 'en';
   const { userId } = useGatherwell();
@@ -189,6 +189,12 @@ export function OfferPage({ id, paid }: { id: string; paid?: boolean }) {
   const download = useServerFn(offerDownloadLink);
   const [busy, setBusy] = useState(false); const [promo, setPromo] = useState<Promo | null>(null);
   const { data: founding } = useQuery({ ...foundingStatusQuery(id), enabled: !!q.data?.offer?.founding_seats });
+  const isHost = q.data?.offer?.host_id === userId;
+  useEffect(() => {
+    if (panel !== 'quiz' || !isHost) return;
+    const el = document.getElementById('quiz-panel');
+    if (el) el.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  }, [panel, isHost]);
   if (q.isPending) return <ListSkeleton />;
   if (q.isError) return <RetryState retry={() => void q.refetch()} />;
   const { offer, purchase, hostName } = q.data;
