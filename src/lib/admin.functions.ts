@@ -171,20 +171,16 @@ export const adminUserAction = createServerFn({ method: 'POST' }).middleware([re
       const { error } = await pub.auth.signInWithOtp({ email, options: { shouldCreateUser: false, emailRedirectTo: `${new URL(data.origin).origin}/home` } });
       if (error) return { ok: false as const, error: 'failed' };
       await audit(db, context.userId, 'user.resend_link', 'user', data.userId, null, { email }, data.reason);
-    } else if (data.action === 'suspend') {
-      if (!data.reason) return { ok: false as const, error: 'reason_required' };
-      const { error } = await db.auth.admin.updateUserById(data.userId, { ban_duration: '876000h' });
+    } else if (data.action === 'suspend' || data.action === 'restore') {
+      const { data: before } = await db.from('user_suspensions').select('user_id').eq('user_id', data.userId).maybeSingle();
+      const wasBanned = Boolean(u.user.banned_until && new Date(u.user.banned_until).getTime() > Date.now());
+      const { error } = await db.auth.admin.updateUserById(data.userId, { ban_duration: data.action === 'suspend' ? '876000h' : 'none' });
       if (error) return { ok: false as const, error: 'failed' };
-      const { error: recordError } = await db.from('user_suspensions').upsert({ user_id: data.userId, reason: data.reason, suspended_by: context.userId });
-      if (recordError) { await db.auth.admin.updateUserById(data.userId, { ban_duration: 'none' }); return { ok: false as const, error: 'failed' }; }
-      await audit(db, context.userId, 'safety.user.suspend', 'user', data.userId, null, { reason: data.reason }, data.reason);
-    } else if (data.action === 'restore') {
-      const { error } = await db.auth.admin.updateUserById(data.userId, { ban_duration: 'none' });
-      if (error) return { ok: false as const, error: 'failed' };
-      const { data: before } = await db.from('user_suspensions').select('reason, created_at').eq('user_id', data.userId).maybeSingle();
-      const { error: recordError } = await db.from('user_suspensions').delete().eq('user_id', data.userId);
-      if (recordError) { await db.auth.admin.updateUserById(data.userId, { ban_duration: '876000h' }); return { ok: false as const, error: 'failed' }; }
-      await audit(db, context.userId, 'safety.user.restore', 'user', data.userId, before, null, data.reason);
+      const { error: recordError } = await db.rpc('admin_account_record', { _actor: context.userId, _target: data.userId, _action: data.action, _reason: data.reason || '' });
+      if (recordError) {
+        const { error: compensationError } = await db.auth.admin.updateUserById(data.userId, { ban_duration: wasBanned || before ? '876000h' : 'none' });
+        return { ok: false as const, error: compensationError ? 'reconciliation_required' : 'failed' };
+      }
     } else {
       if (!data.reason) return { ok: false as const, error: 'reason_required' };
       const { data: sole } = await db.from('teams').select('id, name').eq('owner_id', data.userId);
@@ -572,19 +568,17 @@ export const listAdminTickets = createServerFn({ method: 'POST' }).middleware([r
 export const replyAdminTicket = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ ticketId: uuid, body: z.string().trim().min(1).max(4000) }).parse(d))
   .handler(async ({ data, context }) => {
-    const db = await assertAdmin(context);
+    await assertAdmin(context);
     const { error } = await context.supabase.rpc('reply_support_ticket', { _ticket: data.ticketId, _body: data.body });
     if (error) return { ok: false as const, error: error.message.includes('closed') ? 'closed' : error.message.includes('rate') ? 'rate_limited' : 'failed' };
-    await audit(db, context.userId, 'support.reply', 'support_ticket', data.ticketId, null, { staff: true });
     return { ok: true as const };
   });
 
 export const closeAdminTicket = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ ticketId: uuid, reason: note }).parse(d))
   .handler(async ({ data, context }) => {
-    const db = await assertAdmin(context);
+    await assertAdmin(context);
     const { error } = await context.supabase.rpc('close_support_ticket', { _ticket: data.ticketId });
     if (error) return { ok: false as const, error: 'failed' };
-    await audit(db, context.userId, 'support.close', 'support_ticket', data.ticketId, null, null, data.reason);
     return { ok: true as const };
   });
