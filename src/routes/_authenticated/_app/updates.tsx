@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { createFileRoute, Link, useSearch } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Megaphone, Check, CheckCircle } from '@/components/icons';
+import { Megaphone, Check, CheckCircle2 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { ListSkeleton, RetryState, EmptyState } from '@/components/launch-states';
 import { supabase } from '@/integrations/supabase/client';
@@ -41,7 +41,7 @@ function UpdatesPage() {
   return <section className="panel" aria-labelledby="updates-title">
     <div className="section-heading">
       <div><h1 id="updates-title" className="manage-title"><Megaphone className="inline-icon" />{t('updates.title')}</h1><p>{t('updates.subtitle')}</p></div>
-      {data.some(d => !d.read) && <Button variant="secondary" onClick={() => void mark(null)}><CheckCircle />{t('updates.markAllRead')}</Button>}
+      {data.some(d => !d.read) && <Button variant="secondary" onClick={() => void mark(null)}><CheckCircle2 />{t('updates.markAllRead')}</Button>}
     </div>
     {isLoading ? <ListSkeleton /> : error ? <RetryState retry={() => void refetch()} /> : data.length === 0 ?
       <EmptyState icon="Megaphone" text={t('updates.empty')} /> :

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Bell, CheckCircle } from '@/components/icons';
+import { Bell, CheckCircle2 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { ListSkeleton, RetryState, EmptyState } from '@/components/launch-states';
 import { supabase } from '@/integrations/supabase/client';
@@ -41,7 +41,7 @@ function NotificationsPage() {
   return <section className="panel" aria-labelledby="notif-title">
     <div className="section-heading">
       <div><h1 id="notif-title" className="manage-title"><Bell className="inline-icon" />{t('notifications.title')}</h1><p>{t('notifications.subtitle')}</p></div>
-      {data.some(n => !n.read_at) && <Button variant="secondary" onClick={() => void markAll()}><CheckCircle />{t('notifications.markAllRead')}</Button>}
+      {data.some(n => !n.read_at) && <Button variant="secondary" onClick={() => void markAll()}><CheckCircle2 />{t('notifications.markAllRead')}</Button>}
     </div>
     {isLoading ? <ListSkeleton /> : error ? <RetryState retry={() => void refetch()} /> : data.length === 0 ?
       <EmptyState icon="Bell" text={t('notifications.empty')} /> :
