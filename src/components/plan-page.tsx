@@ -35,8 +35,8 @@ const fmtDate = (iso: string, lang: string) => new Date(iso).toLocaleDateString(
  *  until the approved prices are configured. Fees mirror the v5 fee ladder. */
 const V5_MONTHLY_CENTS: Record<PlanId, number> = { free: 0, growth: 4900, pro: 9900 };
 const V5_FEE_PERCENT: Record<PlanId, number> = { free: 5, growth: 3, pro: 2 };
-/** Builder seats per plan (owner + admins/hosts/content editors). */
-const V5_BUILDER_SEATS: Record<PlanId, number> = { free: 3, growth: 3, pro: 5 };
+/** Team license platform fees (v5 ladder): Team 25 pays 1%, Organization 0.5%. */
+const V5_LICENSE_FEE_PERCENT: Record<string, number> = { team25: 1, team100: 0.5 };
 
 /** App errors with their own wording; anything else is the provider's message. */
 const CHECKOUT_ERRORS = ['already_on_plan', 'already_on_license', 'price_mismatch', 'price_not_found', 'founding_free', 'no_subscription', 'no_period_end'];
@@ -208,9 +208,9 @@ export function PlanPage() {
       <article className="plan-card plan-card-team">
         <h3>{t('billing.name_team')}</h3>
         <p className="auth-subtitle">{t('billing.teamText')}</p>
-        {LICENSES.map(l => <div key={l.id} className="plan-license-row"><span><strong>{t(`billing.${l.id}`)}</strong><small>{t('billing.seatsGrowth', { n: l.seats })}</small></span><span className="plan-license-price">{formatMoney(l.cents, lang)}{t('billing.perMonth')}</span>
+        {LICENSES.map(l => <div key={l.id} className="plan-license-row"><span><strong>{t(`billing.${l.id}`)}</strong><small>{t('billing.seatsGrowth', { n: l.seats })} · {t('billing.feeOnSales', { pct: V5_LICENSE_FEE_PERCENT[l.id] })}</small></span><span className="plan-license-price">{formatMoney(l.cents, lang)}{t('billing.perMonth')}</span>
           {ws?.role === 'leader' && <Button variant="secondary" disabled={gate.busy} onClick={() => void gate.run(() => license({ data: { teamId: ws.teamId, tier: l.id, origin, lang, environment: getStripeEnvironment() } }))}>{t('billing.buy')}</Button>}</div>)}
-        <div className="plan-license-row"><span><strong>{t('billing.organization')}</strong><small>{t('billing.orgText')}</small></span><Button asChild variant="secondary"><a href="mailto:help@gatherwell.app">{t('billing.contact')}</a></Button></div>
+        <div className="plan-license-row"><span><strong>{t('billing.organization')}</strong><small>{t('billing.orgText')} · {t('billing.feeOnSales', { pct: 0.5 })}</small></span><Button asChild variant="secondary"><a href="mailto:help@gatherwell.app">{t('billing.contact')}</a></Button></div>
       </article>
     </div>
 
