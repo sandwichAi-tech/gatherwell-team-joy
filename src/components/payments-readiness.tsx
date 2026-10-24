@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { GwIcon } from '@/components/gw-icon';
 import { Button } from '@/components/ui/button';
 import { getPaymentsReadiness, startConnectOnboarding } from '@/lib/billing.functions';
 import { readinessSteps, type ReadinessStep } from '@/lib/payments-readiness';
@@ -16,9 +16,9 @@ export const paymentsReadinessQuery = {
 };
 
 function StepIcon({ state }: { state: ReadinessStep['state'] }) {
-  if (state === 'ready') return <CheckCircle className="payready-icon is-ready" aria-hidden />;
-  if (state === 'action') return <AlertCircle className="payready-icon is-action" aria-hidden />;
-  return <Clock className="payready-icon is-waiting" aria-hidden />;
+  if (state === 'ready') return <GwIcon name="CircleCheck" className="payready-icon is-ready" aria-hidden />;
+  if (state === 'action') return <GwIcon name="AlertCircle" className="payready-icon is-action" aria-hidden />;
+  return <GwIcon name="Clock" className="payready-icon is-waiting" aria-hidden />;
 }
 
 /**
@@ -39,7 +39,7 @@ export function PaymentsReadiness({ showFee = true }: { showFee?: boolean }) {
     try {
       const r = await connect({ data: { origin: window.location.origin } });
       if (r.ok && r.url) window.location.href = r.url;
-      else toast.error(t(`billing.checkoutError_${r.error ?? ''}`, { defaultValue: t('billing.error') }));
+      else if (!r.ok) toast.error(t(`billing.checkoutError_${r.error}`, { defaultValue: t('billing.error') }));
     } catch (e) { toast.error(rpcError(t, e)); }
     setBusy(false);
   };
@@ -74,7 +74,7 @@ export function PaidBlockedNote() {
   if (data.canSellPaid) return null;
   const reason = !data.platformConnected ? 'platform' : 'payouts';
   return <p className="not-connected-note" role="note">
-    <AlertCircle aria-hidden size={16} />
+    <GwIcon name="AlertCircle" aria-hidden />
     <span>{t(`payReady.blocked_${reason}`)} <a href="/plan" className="payready-link">{t('payReady.seeChecklist')}</a></span>
   </p>;
 }
