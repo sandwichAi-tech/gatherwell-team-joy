@@ -688,9 +688,9 @@ ul.order-list li{grid-template-columns:minmax(0,1fr) auto}
 
 /* Nav */
 .gw-nav{position:sticky;top:0;z-index:50;background:transparent;border-bottom:1px solid transparent;transition:background-color .2s ease-out,border-color .2s ease-out}
-/* Scrolled header is near-opaque so page content (plan cards, billing toggle)
+/* Scrolled header is fully opaque so page content (plan cards, billing toggle)
    never bleeds through or crowds it while scrolling. */
-.gw-nav.is-solid{background:color-mix(in srgb,var(--card) 97%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom-color:var(--border)}
+.gw-nav.is-solid{background:var(--card);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom-color:var(--border)}
 .gw-nav-inner{max-width:1200px;margin:0 auto;padding:0 20px;height:68px;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .gw-landing-logo{font-size:19px}.gw-landing-logo .brand-mark{width:34px;height:34px;font-size:28px}
 .gw-nav-links{display:none;align-items:center;gap:8px}
