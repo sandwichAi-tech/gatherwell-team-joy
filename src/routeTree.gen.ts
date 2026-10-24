@@ -39,6 +39,7 @@ import { Route as AuthenticatedAppBlueprintsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAppCirclesRouteImport } from './routes/_authenticated/_app/circles'
 import { Route as AuthenticatedAppEarningsRouteImport } from './routes/_authenticated/_app/earnings'
 import { Route as AuthenticatedAppEventsRouteImport } from './routes/_authenticated/_app/events'
+import { Route as AuthenticatedAppFollowingRouteImport } from './routes/_authenticated/_app/following'
 import { Route as AuthenticatedAppFollowupsRouteImport } from './routes/_authenticated/_app/followups'
 import { Route as AuthenticatedAppHomeRouteImport } from './routes/_authenticated/_app/home'
 import { Route as AuthenticatedAppLearnRouteImport } from './routes/_authenticated/_app/learn'
@@ -230,6 +231,12 @@ const AuthenticatedAppEventsRoute = AuthenticatedAppEventsRouteImport.update({
   path: '/events',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppFollowingRoute =
+  AuthenticatedAppFollowingRouteImport.update({
+    id: '/following',
+    path: '/following',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppFollowupsRoute =
   AuthenticatedAppFollowupsRouteImport.update({
     id: '/followups',
@@ -478,6 +485,7 @@ export interface FileRoutesByFullPath {
   '/circles': typeof AuthenticatedAppCirclesRoute
   '/earnings': typeof AuthenticatedAppEarningsRoute
   '/events': typeof AuthenticatedAppEventsRoute
+  '/following': typeof AuthenticatedAppFollowingRoute
   '/followups': typeof AuthenticatedAppFollowupsRoute
   '/home': typeof AuthenticatedAppHomeRoute
   '/learn': typeof AuthenticatedAppLearnRoute
@@ -548,6 +556,7 @@ export interface FileRoutesByTo {
   '/circles': typeof AuthenticatedAppCirclesRoute
   '/earnings': typeof AuthenticatedAppEarningsRoute
   '/events': typeof AuthenticatedAppEventsRoute
+  '/following': typeof AuthenticatedAppFollowingRoute
   '/followups': typeof AuthenticatedAppFollowupsRoute
   '/home': typeof AuthenticatedAppHomeRoute
   '/learn': typeof AuthenticatedAppLearnRoute
@@ -621,6 +630,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/circles': typeof AuthenticatedAppCirclesRoute
   '/_authenticated/_app/earnings': typeof AuthenticatedAppEarningsRoute
   '/_authenticated/_app/events': typeof AuthenticatedAppEventsRoute
+  '/_authenticated/_app/following': typeof AuthenticatedAppFollowingRoute
   '/_authenticated/_app/followups': typeof AuthenticatedAppFollowupsRoute
   '/_authenticated/_app/home': typeof AuthenticatedAppHomeRoute
   '/_authenticated/_app/learn': typeof AuthenticatedAppLearnRoute
@@ -693,6 +703,7 @@ export interface FileRouteTypes {
     | '/circles'
     | '/earnings'
     | '/events'
+    | '/following'
     | '/followups'
     | '/home'
     | '/learn'
@@ -763,6 +774,7 @@ export interface FileRouteTypes {
     | '/circles'
     | '/earnings'
     | '/events'
+    | '/following'
     | '/followups'
     | '/home'
     | '/learn'
@@ -835,6 +847,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/circles'
     | '/_authenticated/_app/earnings'
     | '/_authenticated/_app/events'
+    | '/_authenticated/_app/following'
     | '/_authenticated/_app/followups'
     | '/_authenticated/_app/home'
     | '/_authenticated/_app/learn'
@@ -1122,6 +1135,13 @@ declare module '@tanstack/react-router' {
       path: '/events'
       fullPath: '/events'
       preLoaderRoute: typeof AuthenticatedAppEventsRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/following': {
+      id: '/_authenticated/_app/following'
+      path: '/following'
+      fullPath: '/following'
+      preLoaderRoute: typeof AuthenticatedAppFollowingRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
     '/_authenticated/_app/followups': {
@@ -1413,6 +1433,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppCirclesRoute: typeof AuthenticatedAppCirclesRoute
   AuthenticatedAppEarningsRoute: typeof AuthenticatedAppEarningsRoute
   AuthenticatedAppEventsRoute: typeof AuthenticatedAppEventsRoute
+  AuthenticatedAppFollowingRoute: typeof AuthenticatedAppFollowingRoute
   AuthenticatedAppFollowupsRoute: typeof AuthenticatedAppFollowupsRoute
   AuthenticatedAppHomeRoute: typeof AuthenticatedAppHomeRoute
   AuthenticatedAppLearnRoute: typeof AuthenticatedAppLearnRoute
@@ -1452,6 +1473,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppCirclesRoute: AuthenticatedAppCirclesRoute,
   AuthenticatedAppEarningsRoute: AuthenticatedAppEarningsRoute,
   AuthenticatedAppEventsRoute: AuthenticatedAppEventsRoute,
+  AuthenticatedAppFollowingRoute: AuthenticatedAppFollowingRoute,
   AuthenticatedAppFollowupsRoute: AuthenticatedAppFollowupsRoute,
   AuthenticatedAppHomeRoute: AuthenticatedAppHomeRoute,
   AuthenticatedAppLearnRoute: AuthenticatedAppLearnRoute,

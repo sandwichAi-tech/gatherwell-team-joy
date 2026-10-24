@@ -130,3 +130,6 @@ Specifics:
 - Saved (v0.23): signed-in save/unsave on offerings + /saved list; items that go private drop out automatically.
 - Location alerts (v0.23): coarse-location alerts with pause/resume/delete and in-app matches; email/SMS delivery Setup required.
 - Invite a host (v0.23): opaque attributed share token, recorded once after signup, self-referral rejected.
+- Host public profiles (v0.24): host-controlled org, categories, languages, accessibility statement, allowlisted links, city opt-in, publish/unpublish, readiness checklist, preview; public page shows only published public offerings; Person/Organization structured data from real fields.
+- Following (v0.24): signed-in follow/unfollow is idempotent; /following lists still-public hosts/teams; hosts see aggregate counts only.
+

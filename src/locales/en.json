@@ -181,7 +181,8 @@
       "copied": "Link copied.",
       "shared": "Thanks for sharing ZoheeWell.",
       "manual": "Copy this link to share:",
-      "inviteText": "Host your events and courses on ZoheeWell."
+      "inviteText": "Host your events and courses on ZoheeWell.",
+      "inviteCopied": "Invite link copied"
     },
     "pricing": {
       "label": "Pricing",
@@ -3276,7 +3277,10 @@
     "resume": "Resume",
     "pausedUntil": "Paused until {{date}}",
     "pausedToast": "Paused until {{date}}. No charges while paused.",
-    "resumedToast": "Welcome back. Your Circle is active."
+    "resumedToast": "Welcome back. Your Circle is active.",
+    "kind_course": "Course",
+    "kind_download": "Resource",
+    "kind_membership": "Membership"
   },
   "welcome": {
     "title": "Invite friends",
@@ -3539,7 +3543,8 @@
     "publicPagesHint": "Share these so people can follow you.",
     "myPage": "My host page",
     "teamPage": "Team page",
-    "googleCalendar": "Google Calendar"
+    "googleCalendar": "Google Calendar",
+    "offerings": "Courses and resources"
   },
   "crop": {
     "title": "Crop your cover",
@@ -4895,7 +4900,9 @@
     "online": "Online",
     "empty": "Nothing matches right now. Try widening your filters.",
     "emptyLocal": "Events are coming soon to your area.",
-    "onlineInstead": "Online learning is available below."
+    "onlineInstead": "Online learning is available below.",
+    "notifyMe": "Notify me",
+    "inviteHost": "Invite a host"
   },
   "saved": {
     "eyebrow": "Your list",
@@ -4955,5 +4962,46 @@
       "weekly": "Weekly"
     },
     "deliveryNote": "Matches appear in this app. Email and text delivery are Setup required until messaging providers are configured."
+  },
+  "hostProfile": {
+    "title": "Public host profile",
+    "intro": "Choose what visitors see on your public page. Nothing here is shown until you publish it.",
+    "published": "Profile published",
+    "publishedHint": "Unpublish to hide your public page and disappear from discovery and Following lists.",
+    "readiness": "Profile readiness",
+    "ready": {
+      "name": "Display name",
+      "bio": "Short biography",
+      "photo": "Profile photo",
+      "categories": "At least one category",
+      "languages": "Content languages"
+    },
+    "org": "Organization (optional)",
+    "orgPlaceholder": "Studio or business name",
+    "categories": "Categories",
+    "categoriesPlaceholder": "Yoga, meditation, fitness",
+    "categoriesHint": "Separate with commas, up to 8.",
+    "languages": "Content languages",
+    "accessibility": "Accessibility and support statement (optional)",
+    "accessibilityPlaceholder": "How you support accessibility at your offerings",
+    "cityPublic": "Show my city publicly",
+    "cityPublicHint": "Only your city or region is ever shown — never your address.",
+    "links": "Public links",
+    "linkLabel": "Label",
+    "linkUrl": "URL",
+    "linkKind": {
+      "website": "Website",
+      "social": "Social"
+    },
+    "addLink": "Add link",
+    "removeLink": "Remove link",
+    "linksHint": "HTTPS links only. Social links are limited to major platforms.",
+    "linkInvalid": "Check your links: HTTPS only, and social links must be from a supported platform.",
+    "preview": "Preview public page"
+  },
+  "following": {
+    "title": "Following",
+    "emptyTitle": "Not following anyone yet",
+    "empty": "Follow hosts and teams to keep up with what they publish."
   }
 }

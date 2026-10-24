@@ -3731,10 +3731,16 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           city: string | null
+          city_public: boolean
           cover_url: string | null
           created_at: string
           full_name: string | null
+          host_accessibility: string | null
+          host_categories: string[] | null
           host_languages: string[]
+          host_links: Json | null
+          host_org: string | null
+          host_public: boolean
           id: string
           language: string
           live_at: string | null
@@ -3754,10 +3760,16 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           city?: string | null
+          city_public?: boolean
           cover_url?: string | null
           created_at?: string
           full_name?: string | null
+          host_accessibility?: string | null
+          host_categories?: string[] | null
           host_languages?: string[]
+          host_links?: Json | null
+          host_org?: string | null
+          host_public?: boolean
           id: string
           language?: string
           live_at?: string | null
@@ -3777,10 +3789,16 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           city?: string | null
+          city_public?: boolean
           cover_url?: string | null
           created_at?: string
           full_name?: string | null
+          host_accessibility?: string | null
+          host_categories?: string[] | null
           host_languages?: string[]
+          host_links?: Json | null
+          host_org?: string | null
+          host_public?: boolean
           id?: string
           language?: string
           live_at?: string | null
@@ -6385,6 +6403,7 @@ export type Database = {
         }[]
       }
       my_calendar_feeds: { Args: never; Returns: Json }
+      my_following: { Args: never; Returns: Json }
       my_invite_code: { Args: never; Returns: string }
       my_learning: { Args: never; Returns: Json }
       my_offer_stats: {
@@ -6720,6 +6739,18 @@ export type Database = {
       }
       save_coach_review: {
         Args: { _body: string; _host: string; _rating: number }
+        Returns: undefined
+      }
+      save_host_profile: {
+        Args: {
+          _accessibility: string
+          _categories: string[]
+          _city_public: boolean
+          _host_public: boolean
+          _languages: string[]
+          _links: Json
+          _org: string
+        }
         Returns: undefined
       }
       save_quiz_response: {

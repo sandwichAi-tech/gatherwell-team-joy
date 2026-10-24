@@ -22,7 +22,9 @@ import { formatWhen } from '@/lib/guest';
 import { initialsOf, mediaUrl } from '@/lib/account';
 
 type Upcoming = { id: string; title: string; starts_at: string; timezone: string; location_name: string | null; online: boolean; cover_style: number | null };
-type HostPage = { id: string; name: string | null; avatar_url: string | null; cover_url: string | null; coverSrc?: string | null; city: string | null; bio: string | null; shop_url: string | null; followers: number; following: boolean; upcoming: Upcoming[] };
+type HostOffering = { kind: string; id: string; title: string; summary: string | null; price_cents: number | null };
+type HostLink = { label: string; url: string; kind: 'website' | 'social' };
+type HostPage = { id: string; name: string | null; org: string | null; avatar_url: string | null; cover_url: string | null; coverSrc?: string | null; city: string | null; bio: string | null; shop_url: string | null; categories: string[]; languages: string[]; accessibility: string | null; links: HostLink[]; followers: number; following: boolean; upcoming: Upcoming[]; offerings: HostOffering[] };
 type TeamPage = { id: string; name: string; cover_url: string | null; leader: { name: string | null; slug: string | null; avatar_url: string | null } | null; members: number; followers: number; following: boolean; upcoming: Upcoming[] };
 
 export const pageQuery = (kind: 'host' | 'team', slug: string) => ({
@@ -59,15 +61,28 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
         <Avatar path={avatarPath} name={name} />
         <p className="eyebrow">{t(kind === 'host' ? 'follow.hostLabel' : 'follow.teamLabel')}</p>
         <h1 className="follow-name">{name}{host && <HostSeal id={host.id} />}{host && <FoundingSeal id={host.id} />}</h1>
+        {host?.org && <p className="follow-org">{host.org}</p>}
         <p className="follow-meta">{[host?.city, team ? t('follow.members', { count: team.members }) : null, t('follow.followers', { count: d.followers })].filter(Boolean).join(' · ')}</p>
         {team?.leader?.name && <p className="follow-meta">{t('follow.ledBy')} {team.leader.slug ? <Link to="/h/$slug" params={{ slug: team.leader.slug }}>{team.leader.name}</Link> : team.leader.name}</p>}
         {host?.bio && <p className="follow-bio">{host.bio}</p>}
+        {host && (host.categories.length > 0 || host.languages.length > 0) && <ul className="follow-chips" aria-label={t('hostProfile.categories')}>
+          {host.categories.map(c => <li key={c} className="discover-chip is-static">{c}</li>)}
+          {host.languages.map(l => <li key={l} className="discover-chip is-static">{t(l === 'es' ? 'me.spanish' : 'me.english')}</li>)}
+        </ul>}
+        {host?.accessibility && <p className="follow-accessibility"><GwIcon name="Heart" />{host.accessibility}</p>}
         {host && <FeaturedBadges userId={host.id} />}
         <div className="follow-actions"><FollowButton kind={kind} target={d.id} following={d.following} slug={slug} />
           {host?.shop_url && <Button asChild variant="secondary"><a href={host.shop_url} target="_blank" rel="noopener noreferrer"><GwIcon name="ExternalLink" />{t('follow.shop')}</a></Button>}</div>
+        {host && host.links.length > 0 && <ul className="follow-links">{host.links.map((l, i) => <li key={i}><a href={l.url} target="_blank" rel="noopener noreferrer" className="auth-link"><GwIcon name={l.kind === 'social' ? 'AtSign' : 'Link2'} />{l.label || l.url.replace(/^https:\/\//, '')}</a></li>)}</ul>}
       </div>
     </section>
     {host && <CoachTrustSection hostId={host.id} />}
+    {host && host.offerings.length > 0 && <section className="follow-upcoming">
+      <h2>{t('follow.offerings')}</h2>
+      <ul className="follow-list">{host.offerings.map(o => <li key={o.id}><Link to="/o/$id" params={{ id: o.id }} className="follow-event">
+        <span><strong>{o.title}</strong><small>{t(`offers.kind.${o.kind}`)}{o.price_cents ? '' : ` · ${t('offers.free')}`}</small></span>
+        <GwIcon name="ChevronRight" /></Link></li>)}</ul>
+    </section>}
     <section className="follow-upcoming">
       <h2>{t('follow.upcoming')}</h2>
       {d.upcoming.length ? <ul className="follow-list">{d.upcoming.map(e => <li key={e.id}><Link to="/e/$id" params={{ id: e.id }} className="follow-event">
