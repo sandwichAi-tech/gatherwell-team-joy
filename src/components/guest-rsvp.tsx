@@ -13,7 +13,7 @@ import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { QRCodeSVG } from 'qrcode.react';
 import { toast } from 'sonner';
-import { CalendarPlus, Copy, MessageCircle, MessageSquareText, Minus, Navigation, Plus, Video, Send } from '@/components/icons';
+import { Copy, MessageCircle, MessageSquareText, Minus, Navigation, Plus, Video, Send } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -25,7 +25,9 @@ import { startTicketCheckout } from '@/lib/billing.functions';
 import { formatMoney } from '@/lib/billing';
 import { RsvpQuestionsFields, answersReady } from '@/components/rsvp-questions';
 import { WaiverAccept, useEventWaiver, waiverReady, waiverRpc } from '@/components/waiver';
-import { directionsUrl, downloadIcs, formatWhen, googleCalendarUrl, guestLink, hasPlace, inviteToken, rsvpErrorKey, type PublicEvent } from '@/lib/guest';
+import { directionsUrl, formatWhen, guestLink, hasPlace, inviteToken, rsvpErrorKey, type PublicEvent } from '@/lib/guest';
+import { AddToCalendar } from '@/components/add-to-calendar';
+import type { IcsEvent } from '@/lib/ics';
 import { AGE_BANDS, checkMinorRegistration } from '@/lib/identity';
 import { minorBandAllowed } from '@/lib/event-builder';
 import { defaultTier, needsTier, registrationReady, tierSpotsLeft, tierState } from '@/lib/registration';
@@ -38,10 +40,13 @@ export function CalendarButtons({ event }: { event: CalEvent }) {
   const [link, setLink] = useState('');
   useEffect(() => { setLink(guestLink(event.id)); }, [event.id]);
   const details = `${t('guest.calendarDetails')} ${link}`.trim();
-  return <div className="guest-button-row">
-    <Button variant="secondary" onClick={() => downloadIcs(event, details)}><CalendarPlus />{t('guest.addCalendar')}</Button>
-    <Button asChild variant="secondary"><a href={googleCalendarUrl(event, details)} target="_blank" rel="noopener noreferrer"><CalendarPlus />{t('guest.googleCalendar')}</a></Button>
-  </div>;
+  const icsEvent: IcsEvent = {
+    id: event.id, title: event.title, startsAt: event.starts_at, endsAt: event.ends_at,
+    location: [event.location_name, event.address].filter(Boolean).join(', ') || null,
+    description: details, url: link || null,
+    recurrence: (event as { recurrence?: string | null }).recurrence ?? null,
+  };
+  return <div className="guest-button-row"><AddToCalendar event={icsEvent} filename="gathering.ics" /></div>;
 }
 
 export function DirectionsButton({ event, variant = 'secondary' }: { event: Pick<PublicEvent, 'address' | 'location_name' | 'lat' | 'lng'>; variant?: 'secondary' | 'default' }) {

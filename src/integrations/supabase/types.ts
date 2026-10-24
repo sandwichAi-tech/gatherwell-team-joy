@@ -6090,6 +6090,8 @@ export type Database = {
         }
         Returns: string
       }
+      attendance_export: { Args: { _event: string }; Returns: Json }
+      attendance_totals: { Args: { _event: string }; Returns: Json }
       award_badge: {
         Args: { _badge: string; _note: string; _team: string; _user: string }
         Returns: undefined
@@ -7065,6 +7067,7 @@ export type Database = {
           phone: string
         }[]
       }
+      ticket_payload: { Args: { _code: string }; Returns: Json }
       toggle_comment_reaction: {
         Args: { _id: string; _kind: string }
         Returns: boolean

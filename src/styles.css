@@ -2261,3 +2261,34 @@ a.gw-cat-chip:hover{background:#fff}
 .ws-member-actions { display: flex; gap: .25rem; align-items: center; flex-wrap: wrap; }
 .ws-role-select { min-height: 48px; }
 .ws-invite-link { word-break: break-all; display: block; padding: .75rem; background: var(--muted-bg, var(--secondary)); border-radius: var(--radius); }
+
+/* Ticket detail + print */
+.ticket-panel { max-width: 34rem; margin-inline: auto; }
+.ticket-card-detail { display: flex; flex-direction: column; gap: var(--space-4, 1rem); }
+.ticket-head { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
+.ticket-head h1 { margin: 0; }
+.ticket-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); gap: .75rem; margin: 0; }
+.ticket-meta dt { font-size: .8rem; color: var(--muted-foreground); }
+.ticket-meta dd { margin: 0; font-weight: 600; }
+.ticket-qr-block { display: flex; flex-direction: column; align-items: center; gap: .5rem; padding: 1.25rem; border: 2px dashed var(--border); border-radius: 1rem; text-align: center; }
+.ticket-qr { background: #fff; padding: .75rem; border-radius: .75rem; line-height: 0; }
+.ticket-code { font-family: ui-monospace, monospace; font-size: 1.05rem; letter-spacing: .08em; font-weight: 700; margin: 0; word-break: break-all; }
+.ticket-note { border-left: 3px solid var(--border); padding-left: .75rem; }
+.ticket-note p { margin: .25rem 0 0; }
+.ticket-actions, .wallet-row { display: flex; flex-wrap: wrap; gap: .5rem; }
+.ticket-actions :is(button, a), .wallet-row button { min-height: 48px; }
+.ticket-wallet h2 { font-size: 1rem; margin: 0 0 .5rem; }
+.ticket-state { display: flex; flex-direction: column; align-items: center; gap: .5rem; text-align: center; padding: 1rem 0; }
+.ticket-state svg { width: 2rem; height: 2rem; }
+.calendar-options { display: flex; flex-direction: column; gap: .5rem; }
+.calendar-option { display: flex; align-items: center; justify-content: space-between; gap: .75rem; width: 100%; min-height: 48px; text-align: left; }
+.calendar-option span { display: flex; flex-direction: column; }
+.calendar-option small { color: var(--muted-foreground); }
+
+@media print {
+  .no-print, .gatherwell-nav, .gatherwell-tabs, header, nav, footer { display: none !important; }
+  .ticket-panel { max-width: none; }
+  .ticket-card-detail { border: none; box-shadow: none; }
+  .ticket-qr-block { border: 2px solid #000; }
+  body { background: #fff; }
+}

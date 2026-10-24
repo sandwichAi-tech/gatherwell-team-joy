@@ -547,6 +547,20 @@
       "when": 1792820969632,
       "tag": "0077_fix_moderation_queue_comments_hidden",
       "breakpoints": true
+    },
+    {
+      "idx": 78,
+      "version": "7",
+      "when": 1792821416160,
+      "tag": "0078_tickets_checkin_calendar_ops",
+      "breakpoints": true
+    },
+    {
+      "idx": 79,
+      "version": "7",
+      "when": 1792822015052,
+      "tag": "0079_ticket_payload_volatile_fix",
+      "breakpoints": true
     }
   ]
 }

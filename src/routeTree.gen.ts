@@ -68,6 +68,7 @@ import { Route as AuthenticatedAppPlanSeatsRouteImport } from './routes/_authent
 import { Route as AuthenticatedAppTeamInsightsRouteImport } from './routes/_authenticated/_app/team_.insights'
 import { Route as AuthenticatedAppTeamMapRouteImport } from './routes/_authenticated/_app/team_.map'
 import { Route as AuthenticatedAppTeamSettingsRouteImport } from './routes/_authenticated/_app/team_.settings'
+import { Route as AuthenticatedAppTicketCodeRouteImport } from './routes/_authenticated/_app/ticket.$code'
 import { Route as ApiPublicAiFollowupsRouteImport } from './routes/api/public/ai/followups'
 import { Route as ApiPublicCalendarTokenRouteImport } from './routes/api/public/calendar/$token'
 import { Route as ApiPublicEmailMailgunRouteImport } from './routes/api/public/email/mailgun'
@@ -391,6 +392,12 @@ const AuthenticatedAppTeamSettingsRoute =
     path: '/team/settings',
     getParentRoute: () => AuthenticatedAppRouteRoute,
   } as any)
+const AuthenticatedAppTicketCodeRoute =
+  AuthenticatedAppTicketCodeRouteImport.update({
+    id: '/ticket/$code',
+    path: '/ticket/$code',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const ApiPublicAiFollowupsRoute = ApiPublicAiFollowupsRouteImport.update({
   id: '/api/public/ai/followups',
   path: '/api/public/ai/followups',
@@ -526,6 +533,7 @@ export interface FileRoutesByFullPath {
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
   '/team/settings': typeof AuthenticatedAppTeamSettingsRoute
+  '/ticket/$code': typeof AuthenticatedAppTicketCodeRoute
   '/api/public/ai/followups': typeof ApiPublicAiFollowupsRoute
   '/api/public/calendar/$token': typeof ApiPublicCalendarTokenRoute
   '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
@@ -599,6 +607,7 @@ export interface FileRoutesByTo {
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
   '/team/settings': typeof AuthenticatedAppTeamSettingsRoute
+  '/ticket/$code': typeof AuthenticatedAppTicketCodeRoute
   '/api/public/ai/followups': typeof ApiPublicAiFollowupsRoute
   '/api/public/calendar/$token': typeof ApiPublicCalendarTokenRoute
   '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
@@ -675,6 +684,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/team_/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/_authenticated/_app/team_/map': typeof AuthenticatedAppTeamMapRoute
   '/_authenticated/_app/team_/settings': typeof AuthenticatedAppTeamSettingsRoute
+  '/_authenticated/_app/ticket/$code': typeof AuthenticatedAppTicketCodeRoute
   '/api/public/ai/followups': typeof ApiPublicAiFollowupsRoute
   '/api/public/calendar/$token': typeof ApiPublicCalendarTokenRoute
   '/api/public/email/mailgun': typeof ApiPublicEmailMailgunRoute
@@ -750,6 +760,7 @@ export interface FileRouteTypes {
     | '/team/insights'
     | '/team/map'
     | '/team/settings'
+    | '/ticket/$code'
     | '/api/public/ai/followups'
     | '/api/public/calendar/$token'
     | '/api/public/email/mailgun'
@@ -823,6 +834,7 @@ export interface FileRouteTypes {
     | '/team/insights'
     | '/team/map'
     | '/team/settings'
+    | '/ticket/$code'
     | '/api/public/ai/followups'
     | '/api/public/calendar/$token'
     | '/api/public/email/mailgun'
@@ -898,6 +910,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/team_/insights'
     | '/_authenticated/_app/team_/map'
     | '/_authenticated/_app/team_/settings'
+    | '/_authenticated/_app/ticket/$code'
     | '/api/public/ai/followups'
     | '/api/public/calendar/$token'
     | '/api/public/email/mailgun'
@@ -1366,6 +1379,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppTeamSettingsRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/ticket/$code': {
+      id: '/_authenticated/_app/ticket/$code'
+      path: '/ticket/$code'
+      fullPath: '/ticket/$code'
+      preLoaderRoute: typeof AuthenticatedAppTicketCodeRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/api/public/ai/followups': {
       id: '/api/public/ai/followups'
       path: '/api/public/ai/followups'
@@ -1499,6 +1519,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppTeamInsightsRoute: typeof AuthenticatedAppTeamInsightsRoute
   AuthenticatedAppTeamMapRoute: typeof AuthenticatedAppTeamMapRoute
   AuthenticatedAppTeamSettingsRoute: typeof AuthenticatedAppTeamSettingsRoute
+  AuthenticatedAppTicketCodeRoute: typeof AuthenticatedAppTicketCodeRoute
   AuthenticatedAppAdminIndexRoute: typeof AuthenticatedAppAdminIndexRoute
   AuthenticatedAppEventIdCheckinRoute: typeof AuthenticatedAppEventIdCheckinRoute
   AuthenticatedAppEventIdGuestsRoute: typeof AuthenticatedAppEventIdGuestsRoute
@@ -1540,6 +1561,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppTeamInsightsRoute: AuthenticatedAppTeamInsightsRoute,
   AuthenticatedAppTeamMapRoute: AuthenticatedAppTeamMapRoute,
   AuthenticatedAppTeamSettingsRoute: AuthenticatedAppTeamSettingsRoute,
+  AuthenticatedAppTicketCodeRoute: AuthenticatedAppTicketCodeRoute,
   AuthenticatedAppAdminIndexRoute: AuthenticatedAppAdminIndexRoute,
   AuthenticatedAppEventIdCheckinRoute: AuthenticatedAppEventIdCheckinRoute,
   AuthenticatedAppEventIdGuestsRoute: AuthenticatedAppEventIdGuestsRoute,

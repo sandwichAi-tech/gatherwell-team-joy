@@ -184,3 +184,14 @@
 - Moderators get an assignment-scoped moderation_queue shell (0076/0077 fix reports/comments columns); analysts get aggregate-only team_analytics_summary.
 - Team settings gated to owner/admin; new Assignments tab with create/revoke/reactivate; workspace switcher and active-workspace fallback exclude suspended memberships; creation sheet options follow workspace capabilities.
 - Verified live with fixtures (since removed): assignment CRUD + rejections, outsider denial, check-in scoping and minimal fields, content-editor boundaries, moderator scoping, analyst aggregates, revoke/suspend enforcement. 253 unit tests pass.
+
+## v0.24 — Tickets, check-in operations, attendance export, calendar (2026-10-24)
+
+- Ticket detail page at /ticket/:code: QR (opaque 128-bit code only), grouped fallback code, print view, attendee/party/tier/status, arrival + accessibility + cancellation notes, and clear cancelled/waitlisted/event-cancelled/past states.
+- New `ticket_payload` RPC: constant-shape invalid responses, rate-limited (20/min per code prefix), address/online link/arrival note only for active registrations on published events; never returns email, user/RSVP/team IDs, waiver, guardian, or payment data.
+- Check-in hardening: `check_in_code` now rate-limited (40/min per staffer+event) with constant not_found shape, explicit cancelled/waitlist results; check-in, undo, and walk-in write team_audit entries; undo requires confirmation in the UI; walk-in control hidden unless the caller is an event manager (server already enforced).
+- Attendance operations: `attendance_totals` (registered/checked-in/waitlisted/cancelled/remaining) for event-day staff; `attendance_export` (manager-only, audited, minimal admission fields — no contact/waiver/guardian/payment data) powering a formula-injection-safe UTF-8 CSV with localized dates on the guests page.
+- Calendar: new src/lib/ics.ts (RFC 5545 folding/escaping, stable UIDs, SEQUENCE, STATUS:CANCELLED, weekly RRULE, multi-day itinerary in description) plus AddToCalendar menu (Apple/download .ics, Google, Outlook links) on the public event page and ticket detail.
+- Wallet: Apple/Google Wallet shown as disabled "Setup required" on the ticket page until provider certificates exist.
+- Migrations: 0078_tickets_checkin_calendar_ops, 0079_ticket_payload_volatile_fix. Tests: 276 passing (23 new: ICS recurrence/timezone/cancellation/folding, CSV injection/UTF-8). Live-verified with ee000008 fixtures (removed): ticket privacy shapes, wrong-event/cancelled/waitlist scans, idempotent rescan, undo+audit, outsider rejection, rate limits, walk-in manager-only, export role boundaries, aggregate totals.
+- Unverified: signed-in browser QA (no session injected this pass), camera permission denial on real devices, screen reader pass.

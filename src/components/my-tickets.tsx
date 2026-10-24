@@ -82,6 +82,7 @@ export function MyTickets() {
               {r.terms_version != null && <p className="muted">{t('tickets.termsLine', { version: r.terms_version })}</p>}
               <div className="guest-button-row">
                 {e.online_url && active && <Button asChild variant="secondary"><a href={e.online_url} target="_blank" rel="noopener noreferrer"><Video />{t('guest.joinOnline')}</a></Button>}
+                <Button asChild><Link to="/ticket/$code" params={{ code: r.checkin_code }}>{t('tickets.viewTicket')}</Link></Button>
                 <Button asChild variant="secondary"><Link to="/r/$code" params={{ code: r.checkin_code }}>{t('guest.manage')}</Link></Button>
                 {active && <Button variant="ghost" className="danger-text" onClick={() => setCancelling(r)}>{t('tickets.cancel')}</Button>}
               </div>
