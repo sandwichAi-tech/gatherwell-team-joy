@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { ListSkeleton } from '@/components/launch-states';
+import { AdminSafety } from '@/components/admin-safety';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
@@ -22,9 +23,9 @@ import { updatePlanSettings,
   listAdminTickets, replyAdminTicket, closeAdminTicket, type AdminTicket,
 } from '@/lib/admin.functions';
 
-export const ADMIN_TABS = ['overview', 'teams', 'users', 'moderation', 'verify', 'library', 'broadcasts', 'founding', 'day60', 'settings', 'audit', 'mail', 'support'] as const;
+export const ADMIN_TABS = ['overview', 'teams', 'users', 'offerings', 'moderation', 'communities', 'verify', 'library', 'broadcasts', 'founding', 'day60', 'settings', 'audit', 'mail', 'support'] as const;
 export type AdminTab = (typeof ADMIN_TABS)[number];
-const TAB_ICONS: Record<AdminTab, GwIconProps['name']> = { overview: 'BarChart3', teams: 'UsersRound', users: 'UserRound', moderation: 'Flag', verify: 'BadgeCheck', library: 'BookOpen', broadcasts: 'Megaphone', founding: 'Medal', day60: 'Trophy', settings: 'Settings2', audit: 'FileText', mail: 'Mail', support: 'LifeBuoy' };
+const TAB_ICONS: Record<AdminTab, GwIconProps['name']> = { overview: 'BarChart3', teams: 'UsersRound', users: 'UserRound', offerings: 'BookOpen', communities: 'ShieldCheck', moderation: 'Flag', verify: 'BadgeCheck', library: 'BookOpen', broadcasts: 'Megaphone', founding: 'Medal', day60: 'Trophy', settings: 'Settings2', audit: 'FileText', mail: 'Mail', support: 'LifeBuoy' };
 
 const useLang = () => { const { i18n } = useTranslation(); return i18n.resolvedLanguage === 'es' ? 'es' : 'en'; };
 const fmtDate = (iso: string | null | undefined, lang: string, time = false) => iso ? new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', time ? { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' } : { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(iso)) : '—';
@@ -41,16 +42,18 @@ export function AdminConsole({ tab }: { tab: AdminTab }) {
     <header className="page-heading"><div><p className="eyebrow">{t('admin.eyebrow')}</p><h1>{t('admin.title')}</h1><p>{t('admin.subtitle')}</p></div></header>
     <nav className="admin-tabs" aria-label={t('admin.title')}>{ADMIN_TABS.map(k => <button key={k} type="button" className={tab === k ? 'is-active' : ''} aria-current={tab === k ? 'page' : undefined} onClick={() => void navigate({ to: '/admin', search: { tab: k } })}><GwIcon name={TAB_ICONS[k]} size={18} /><span>{t(`admin.tabs.${k}`)}</span></button>)}</nav>
     {tab === 'overview' && <Overview />}
-    {tab === 'teams' && <Teams />}
-    {tab === 'users' && <Users />}
-    {tab === 'moderation' && <Moderation />}
+    {tab === 'teams' && <AdminSafety key={tab} kind="teams" />}
+    {tab === 'users' && <AdminSafety key={tab} kind="users" />}
+    {tab === 'offerings' && <AdminSafety key={tab} kind="offerings" />}
+    {tab === 'moderation' && <AdminSafety key={tab} kind="reports" />}
+    {tab === 'communities' && <AdminSafety key={tab} kind="communities" />}
     {tab === 'verify' && <Verifications />}
     {tab === 'library' && <Library />}
     {tab === 'broadcasts' && <Broadcasts />}
     {tab === 'founding' && <FoundingAdmin />}
     {tab === 'day60' && <Day60Admin />}
     {tab === 'settings' && <Settings />}
-    {tab === 'audit' && <Audit />}
+    {tab === 'audit' && <AdminSafety key={tab} kind="audit" />}
     {tab === 'mail' && <MailLog />}
     {tab === 'support' && <SupportTickets />}
   </div>;
