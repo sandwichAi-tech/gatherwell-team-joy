@@ -171,10 +171,8 @@ export function PlanPage() {
     {st.source === 'own' && (() => {
       const dfmt = (d: string) => new Date(d).toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', { month: 'long', day: 'numeric' });
       const phase = noLimitsPhase(st.no_limits_until);
-      const save = planSaving(st.plan, st.sales_month, settings);
       return <section className="panel" aria-live="polite">
         <strong>{t('billing.feesMonth', { paid: formatMoney(st.fees_month, lang) })}</strong>
-        {save && <p className="field-hint">{t(save.plan === 'growth' ? 'billing.savingGrowth' : 'billing.savingPro', { amount: formatMoney(save.cents, lang) })}</p>}
         {st.plan === 'free' && phase && st.no_limits_until && <p className="field-hint">{phase === 'active' ? t('billing.noLimitsUntil', { date: dfmt(st.no_limits_until) }) : t('billing.noLimitsEnding', { date: dfmt(st.no_limits_until) })}</p>}
       </section>;
     })()}
@@ -186,7 +184,7 @@ export function PlanPage() {
         <h2>{t('billing.upgradeAdvTitle')}</h2>
         <p className="auth-subtitle">{g ? t('billing.upgradeReasonGatherings', { used: st.usage.gatherings, max: lim.gatherings }) : t('billing.upgradeReasonGuests', { max: lim.guests })}</p>
         <p className="field-hint">{t('billing.upgradeAdvBody')}</p>
-        {gate.connected ? <Button disabled={gate.busy} onClick={() => choose('growth')}>{t('billing.upgradeAdvTitle')}</Button> : <Button variant="secondary" disabled>{t('billing.comingSoon')}</Button>}
+        <Button variant="secondary" disabled>{t('pricingV4.setupRequired')}</Button>
       </section>;
     })()}
     {st.founding && <FoundingPlanBanner f={st.founding} />}
