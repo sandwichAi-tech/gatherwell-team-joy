@@ -1,6 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
+import type { Json } from '@/integrations/supabase/types';
 import type { HostAnalytics, TeamAnalytics } from './insights';
 
 /** Caller's own host analytics (hosted/co-hosted events, owned offers, real order ledger). */
@@ -25,7 +26,7 @@ export const exportMyData = createServerFn({ method: 'POST' }).middleware([requi
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase.rpc('export_my_data');
     if (error) throw new Error(error.message);
-    return data as unknown as Record<string, unknown>;
+    return data as Json;
   });
 
 export type ConsentHistory = {

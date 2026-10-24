@@ -7,7 +7,7 @@ import { GwFeatureTile, GwIcon } from '@/components/gw-icon';
 import { downloadCsv } from '@/lib/csv';
 import { formatMoney } from '@/lib/billing';
 import { useGatherwell } from '@/components/gatherwell-shell';
-import { workspaceQuery } from '@/lib/team';
+import { workspaceQuery } from '@/lib/account';
 import { roleAllows } from '@/lib/workspace';
 import { getHostAnalytics, getTeamAnalytics } from '@/lib/insights.functions';
 import { attendanceRate, eventsCsv, offersCsv, totals, type HostAnalytics } from '@/lib/insights';
@@ -112,9 +112,9 @@ export function InsightsPage() {
       <div className="section-heading"><h2>{t('insights.salesHeading')}</h2></div>
       {hasSales
         ? <div className="stats-grid">
-            <StatCard label={t('insights.gross')} value={formatMoney(analytics.sales.gross_cents)} />
-            <StatCard label={t('insights.platformFees')} value={formatMoney(analytics.sales.platform_fee_cents)} hint={t('insights.feeHint')} />
-            <StatCard label={t('insights.net')} value={formatMoney(analytics.sales.net_cents)} />
+            <StatCard label={t('insights.gross')} value={formatMoney(analytics.sales.gross_cents, lang)} />
+            <StatCard label={t('insights.platformFees')} value={formatMoney(analytics.sales.platform_fee_cents, lang)} hint={t('insights.feeHint')} />
+            <StatCard label={t('insights.net')} value={formatMoney(analytics.sales.net_cents, lang)} />
           </div>
         : <EmptyState compact icon="CreditCard" text={t('insights.salesEmpty')} />}
     </section>

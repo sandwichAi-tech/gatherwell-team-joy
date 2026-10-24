@@ -599,7 +599,7 @@ function SupportTickets() {
     await queryClient.invalidateQueries({ queryKey: ['admin-tickets'] });
   };
   const close = async (id: string) => {
-    if (!await confirmAction({ title: t('admin.support.close'), description: t('admin.support.confirmClose'), confirmLabel: t('admin.support.close') })) return;
+    if (!await confirmAction({ title: t('admin.support.close'), body: t('admin.support.confirmClose'), confirmLabel: t('admin.support.close') })) return;
     const res = await closeFn({ data: { ticketId: id } });
     if (!res.ok) { toast.error(errText(t, res.error)); return; }
     toast.success(t('admin.support.closedToast'));

@@ -50,8 +50,8 @@ export function PrivacyDataPanel() {
         <ul className="consent-list">
           {consent!.adult_confirmed_at && <li><GwIcon name="BadgeCheck" size={16} /><span>{t('profile.adultConfirmed')} · {fmtDate(consent!.adult_confirmed_at, lang)}</span></li>}
           {consent!.terms.map((row, i) => <li key={`t${i}`}><GwIcon name="FileText" size={16} /><span>{t('profile.termsAccepted')} · {row.event} · {fmtDate(row.accepted_at, lang)}</span></li>)}
-          {consent!.waivers.map((row, i) => <li key={`w${i}`}><GwIcon name="PenLine" size={16} /><span>{t('profile.waivers')} · {row.event}{row.version != null ? ` · ${t('profile.versionLabel')} ${row.version}` : ''} · {fmtDate(row.accepted_at, lang)}</span></li>)}
-          {consent!.guardian_consents.map((row, i) => <li key={`g${i}`}><GwIcon name="Baby" size={16} /><span>{t('profile.guardianConsents')} · {row.event}{row.minor_first_name ? ` · ${t('profile.minorLabel')}: ${row.minor_first_name}` : ''} · {fmtDate(row.consented_at, lang)}</span></li>)}
+          {consent!.waivers.map((row, i) => <li key={`w${i}`}><GwIcon name="FileText" size={16} /><span>{t('profile.waivers')} · {row.event}{row.version != null ? ` · ${t('profile.versionLabel')} ${row.version}` : ''} · {fmtDate(row.accepted_at, lang)}</span></li>)}
+          {consent!.guardian_consents.map((row, i) => <li key={`g${i}`}><GwIcon name="UsersRound" size={16} /><span>{t('profile.guardianConsents')} · {row.event}{row.minor_first_name ? ` · ${t('profile.minorLabel')}: ${row.minor_first_name}` : ''} · {fmtDate(row.consented_at, lang)}</span></li>)}
         </ul>
       )}
       {consent?.marketing && <p className="stat-hint">{t('profile.marketingPrefs')}: {consent.marketing.all_off ? t('profile.marketingAllOff') : [consent.marketing.reminders && 'reminders', consent.marketing.announcements && 'announcements', consent.marketing.badges && 'badges', consent.marketing.followups && 'followups'].filter(Boolean).join(', ') || t('profile.marketingAllOff')}</p>}
