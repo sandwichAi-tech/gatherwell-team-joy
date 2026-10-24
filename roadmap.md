@@ -1,5 +1,10 @@
 # Roadmap
 
+## v0.33 custom coach public links
+- Done: /h/$slug pressure-test, custom slug editor with server-side validation/reserved words/uniqueness/rate limit, old-slug alias redirects, EN/ES, browser QA 16/16.
+- Open: screen-reader pass on the slug editor; second-account browser pass.
+
+
 ## v0.32 type-first resource authoring
 
 - [x] /learn/create chooser: 10 type cards with icons/examples/"Best for", help panel, back/choose-another, creator-only.
