@@ -173,7 +173,7 @@ function Scanner({ onClose, onCode, scan, onNext }: { onClose: () => void; onCod
     })();
     return () => { stopped = true; cancelAnimationFrame(raf); stream?.getTracks().forEach(tr => tr.stop()); };
   }, [onCode]);
-  return <div className="scanner" role="dialog" aria-modal="true" aria-label={t('checkin.scan')}>
+  return <div className={`scanner${denied ? ' is-denied' : ''}`} role="dialog" aria-modal="true" aria-label={t('checkin.scan')}>
     <video ref={video} playsInline muted className="scanner-video" />
     <div className="scanner-frame" aria-hidden="true" />
     <Button variant="secondary" size="icon" className="scanner-close" aria-label={t('checkin.closeScanner')} onClick={onClose}><X /></Button>
