@@ -122,8 +122,8 @@ export function EventDetailsSections({ value, onChange, priceCents, lang }: { va
       <Textarea id="g-access" rows={2} maxLength={1000} className="field-textarea" value={value.accessibility} onChange={e => set({ accessibility: e.target.value })} placeholder={t('builder.accessibilityPlaceholder')} />
       <label className="field-label" htmlFor="g-bring">{t('builder.bring')}</label>
       <Textarea id="g-bring" rows={2} maxLength={1000} className="field-textarea" value={value.bring} onChange={e => set({ bring: e.target.value })} placeholder={t('builder.bringPlaceholder')} />
-      <label className="field-label" htmlFor="g-cancel">{t('builder.cancellation')}</label>
-      <Textarea id="g-cancel" rows={2} maxLength={1000} className="field-textarea" value={value.cancellation} onChange={e => set({ cancellation: e.target.value })} placeholder={t('builder.cancellationPlaceholder')} />
+      <label className="field-label" htmlFor="g-cancel-preset">{t('builder.cancellation')}</label>
+      <PolicyPicker id="g-cancel-preset" paid={!!priceCents} value={value.cancellation} onChange={v => set({ cancellation: v })} />
     </section>
 
     <section className="form-section">
