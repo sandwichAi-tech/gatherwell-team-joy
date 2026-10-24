@@ -540,6 +540,13 @@
       "when": 1792820914798,
       "tag": "0076_fix_moderation_queue_reports_column",
       "breakpoints": true
+    },
+    {
+      "idx": 77,
+      "version": "7",
+      "when": 1792820969632,
+      "tag": "0077_fix_moderation_queue_comments_hidden",
+      "breakpoints": true
     }
   ]
 }
