@@ -9,6 +9,8 @@ import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { ListSkeleton, RetryState, EmptyState } from '@/components/launch-states';
 import { supabase } from '@/integrations/supabase/client';
 
+const db = supabase as unknown as { rpc: (fn: string, args?: Record<string, unknown>) => Promise<{ data: any; error: { message?: string } | null }> };
+
 type QueueItem = { id: string; excerpt: string; scope: 'event' | 'topic'; scope_id: string; reports: number; created_at: string };
 type ReportItem = { id: string; target_type: string; target_id: string; reason: string; status: string; created_at: string; excerpt: string | null; author_id: string | null };
 
@@ -27,15 +29,15 @@ export function ModerationPanel({ teamId }: { teamId: string }) {
   const [suspendFor, setSuspendFor] = useState<ReportItem | null>(null);
   const queueQ = useQuery({
     queryKey: ['moderation-queue', teamId],
-    queryFn: async () => (await supabase.rpc('moderation_queue', { _team: teamId })).data as unknown as QueueItem[],
+    queryFn: async () => (await db.rpc('moderation_queue', { _team: teamId })).data as unknown as QueueItem[],
   });
   const reportsQ = useQuery({
     queryKey: ['moderation-reports', teamId],
-    queryFn: async () => (await supabase.rpc('moderation_reports', { _team: teamId })).data as unknown as ReportItem[],
+    queryFn: async () => (await db.rpc('moderation_reports', { _team: teamId })).data as unknown as ReportItem[],
   });
   const refresh = () => { void qc.invalidateQueries({ queryKey: ['moderation-queue', teamId] }); void qc.invalidateQueries({ queryKey: ['moderation-reports', teamId] }); };
   const act = async (fn: string, args: Record<string, unknown>, ok: string) => {
-    const { error } = await supabase.rpc(fn, args);
+    const { error } = await db.rpc(fn, args);
     if (error) { toast.error(t(errKey(error))); return; }
     toast.success(t(ok)); refresh();
   };
@@ -85,7 +87,7 @@ function RemoveSheet({ commentId, onClose, onDone }: { commentId: string; onClos
   const [reason, setReason] = useState(''); const [busy, setBusy] = useState(false);
   const submit = async (e: FormEvent) => {
     e.preventDefault(); setBusy(true);
-    const { error } = await supabase.rpc('moderate_comment', { _id: commentId, _hidden: true, _remove_reason: reason.trim() });
+    const { error } = await db.rpc('moderate_comment', { _id: commentId, _hidden: true, _remove_reason: reason.trim() });
     setBusy(false);
     if (error) { toast.error(t(errKey(error))); return; }
     toast.success(t('moderation.removed')); onDone();
@@ -103,7 +105,7 @@ function SuspendSheet({ teamId, report, onClose, onDone }: { teamId: string; rep
   const [reason, setReason] = useState(''); const [busy, setBusy] = useState(false);
   const submit = async (e: FormEvent) => {
     e.preventDefault(); setBusy(true);
-    const { error } = await supabase.rpc('suspend_community', { _team: teamId, _user: report.author_id, _scope_type: 'team', _scope_id: null, _reason: reason.trim() });
+    const { error } = await db.rpc('suspend_community', { _team: teamId, _user: report.author_id, _scope_type: 'team', _scope_id: null, _reason: reason.trim() });
     setBusy(false);
     if (error) { toast.error(t(errKey(error))); return; }
     toast.success(t('moderation.suspended')); onDone();
