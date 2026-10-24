@@ -259,9 +259,9 @@ function ProgressTab({ teamId }: { teamId: string }) {
 }
 
 export function LearnManage({ tab }: { tab: Tab }) {
-  const { t } = useTranslation(); const { teamId, leader, workspace } = useLearn(); const navigate = useNavigate();
+  const { t } = useTranslation(); const { teamId, workspace } = useLearn(); const navigate = useNavigate();
   if (!workspace) return <div className="min-h-96" />;
-  if (!leader) return <section className="panel"><Link to="/learn" className="back-link"><ArrowLeft />{t('learn.title')}</Link><p className="auth-subtitle">{t('learnHub.leadersOnly')}</p></section>;
+  if (workspace.role === 'member') return <section className="panel"><Link to="/learn" className="back-link"><ArrowLeft />{t('learn.title')}</Link><p className="auth-subtitle">{t('learnHub.leadersOnly')}</p></section>;
   return <>
     <Link to="/learn" className="back-link"><ArrowLeft />{t('learn.title')}</Link>
     <div className="page-heading"><div><span className="eyebrow">{t('learn.title')}</span><h1>{t('learnHub.manage')}</h1><p>{t('learnHub.manageText')}</p></div></div>

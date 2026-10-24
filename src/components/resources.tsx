@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { toast } from 'sonner';
 import {
-  ArrowRight, Award, BookOpen, ClipboardCheck, CopyPlus, Download, FileText, GraduationCap, Layers, Leaf, Link2, Pencil, Play, Plus, Radio, Sparkles, Trash2, UsersRound, Video, Waveform,
+  ArrowLeft, ArrowRight, Award, BookOpen, ClipboardCheck, CopyPlus, Download, FileText, GraduationCap, Layers, Leaf, Link2, Pencil, Play, Plus, Radio, Sparkles, Trash2, UsersRound, Video, Waveform,
 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -213,7 +213,7 @@ export function ResourceTemplatesPage({ tab }: { tab: 'starters' | 'mine' }) {
   const { teamId, workspace } = useLearn(); const canCreate = useCanCreate();
   const q = useQuery({ ...resourceTemplatesQuery(), enabled: canCreate });
   const [busy, setBusy] = useState<string | null>(null);
-  const back = <Link to="/learn" className="back-link"><ArrowRight className="flip" />{t('resources.title')}</Link>;
+  const back = <Link to="/learn" className="back-link"><ArrowLeft />{t('resources.title')}</Link>;
   if (!workspace) return <ListSkeleton />;
   if (!canCreate) return <section className="panel">{back}<p className="auth-subtitle">{t('templatesR.creatorsOnly')}</p></section>;
   const { starters, mine } = splitTemplates(q.data ?? [], teamId);

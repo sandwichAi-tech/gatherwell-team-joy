@@ -54,7 +54,7 @@ function priceLabel(t: import('i18next').TFunction, o: Pick<Offer, 'price_cents'
 }
 
 /* ---------- Host: manage offers ---------- */
-export function OffersManagePage() {
+export function OffersManagePage({ newKind }: { newKind?: 'course' | 'download' | undefined } = {}) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? 'en';
   const { userId } = useGatherwell();
@@ -62,6 +62,8 @@ export function OffersManagePage() {
   const q = useQuery(myOffersQuery(userId));
   const [editing, setEditing] = useState<Partial<Offer> | null>(null);
   const canHost = ws && ws.role !== 'member';
+  const [opened, setOpened] = useState(false);
+  useEffect(() => { if (newKind && canHost && !opened) { setOpened(true); setEditing({ kind: newKind, price_cents: 0, cover_style: 0, drip_days: 7, includes_en: [], includes_es: [], status: 'draft' }); } }, [newKind, canHost, opened]);
 
   return <>
     <div className="page-heading"><div><span className="eyebrow">{t('offers.eyebrow')}</span><h1>{t('offers.title')}</h1><p className="auth-subtitle">{t('offers.subtitle')}</p></div>
