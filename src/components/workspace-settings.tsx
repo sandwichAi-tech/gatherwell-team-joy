@@ -91,12 +91,13 @@ const scopesQuery = (teamId: string) => ({
   },
 });
 
-type Tab = 'members' | 'invites' | 'assignments' | 'seats' | 'activity';
+type Tab = 'members' | 'invites' | 'assignments' | 'seats' | 'activity' | 'moderation';
 
 export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string; userId: string; teamName: string }) {
   const { t, i18n } = useTranslation();
   const qc = useQueryClient();
   const [tab, setTab] = useState<Tab>('members');
+  const canModerate = roleAllows(workspaceRole, 'moderate');
   const [search, setSearch] = useState('');
   const [inviteOpen, setInviteOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
@@ -166,7 +167,7 @@ export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string
   const setAssignmentActive = (a: Assignment, active: boolean) => void run(() => supabase.rpc('set_workspace_assignment_active', { _id: a.id, _active: active }), t(active ? 'workspace.assignReactivated' : 'workspace.assignRevoked'));
 
   const filtered = (members.data ?? []).filter(m => !search || (m.full_name ?? '').toLowerCase().includes(search.toLowerCase()));
-  const tabs: [Tab, string][] = [['members', t('workspace.members')], ['invites', t('workspace.invites')], ['assignments', t('workspace.assignments')], ['seats', t('workspace.seats')], ['activity', t('workspace.activity')]];
+  const tabs: [Tab, string][] = [['members', t('workspace.members')], ['invites', t('workspace.invites')], ['assignments', t('workspace.assignments')], ['moderation', t('moderation.queueTitle')], ['seats', t('workspace.seats')], ['activity', t('workspace.activity')]];
 
   return <div className="workspace-settings">
     <div className="segmented ws-tabs" role="tablist" aria-label={t('workspace.title')}>
@@ -256,6 +257,8 @@ export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string
       </ResponsiveSheet>
     </>}
 
+    {tab === 'moderation' && canModerate && <ModerationPanel teamId={teamId} />}
+    {tab === 'moderation' && !canModerate && <p className="auth-subtitle">{t('workspace.noAccess')}</p>}
     {tab === 'seats' && <>
       {seats.isLoading && <ListSkeleton rows={2} />}
       {seats.isError && <RetryState retry={() => void seats.refetch()} />}
