@@ -9,7 +9,7 @@ export function ListSkeleton({ rows = 3 }: { rows?: number }) {
   const { t } = useTranslation();
   const [slow, setSlow] = useState(false);
   useEffect(() => { const timer = setTimeout(() => setSlow(true), 12000); return () => clearTimeout(timer); }, []);
-  return <div className="list-skeleton" role="status" aria-label={t('publicEvent.loading')} aria-busy="true">{Array.from({ length: rows }, (_, n) => <div key={n} className="skeleton-row"><span className="skeleton skeleton-avatar" /><div><span className="skeleton skeleton-line" /><span className="skeleton skeleton-line is-short" /></div></div>)}{slow && <RetryState retry={() => window.location.reload()} />}</div>;
+  return <div className="list-skeleton" role="status" aria-label={t('publicEvent.loading')} aria-busy="true" suppressHydrationWarning>{Array.from({ length: rows }, (_, n) => <div key={n} className="skeleton-row"><span className="skeleton skeleton-avatar" /><div><span className="skeleton skeleton-line" /><span className="skeleton skeleton-line is-short" /></div></div>)}{slow && <RetryState retry={() => window.location.reload()} />}</div>;
 }
 
 export function RetryState({ retry }: { retry: () => void }) {
