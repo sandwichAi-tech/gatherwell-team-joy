@@ -37,6 +37,8 @@ import { MembersOnlyPicker } from '@/components/offers';
 import { WaiverEventToggle } from '@/components/waiver';
 import { RsvpSettingsPanel } from '@/components/rsvp-questions';
 import { EventComments, GroupChatLink } from '@/components/conversation';
+import { HostUpdates } from '@/components/host-updates';
+import { ContactHostButton } from '@/components/contact-host';
 import { CohostsPanel, cohostsQuery } from '@/components/cohosts';
 import { Polls, PhotoRoll, useLiveCounts } from '@/components/event-live';
 
@@ -175,7 +177,10 @@ function EventDetailPage() {
     {manages && <CommunityRequestsPanel kind="event" target={event.id} seats={(event as { community_seats?: number | null }).community_seats} />}
     {manages && event.status === 'published' && <TextInvitePanel eventId={event.id} title={event.title} startsAt={event.starts_at} timezone={event.timezone} />}
     {manages && event.status === 'published' && <EventBadgePanel eventId={event.id} teamId={event.team_id} />}
-    {event.status !== 'draft' && <EventComments eventId={event.id} teamId={event.team_id} me={userId} />}
+    {event.status !== 'draft' && <HostUpdates kind="event" offeringId={event.id} />}
+    {manages && event.status !== 'draft' && <label className="switch-row guest-hide-row"><MessageCircle className="inline-icon" /><span><strong>{t('discussion.toggle')}</strong><small>{t('discussion.toggleHelp')}</small></span><Switch checked={!!(event as { discussion_enabled?: boolean }).discussion_enabled} onCheckedChange={async v => { const { error } = await supabase.from('events').update({ discussion_enabled: v }).eq('id', id); if (error) toast.error(t('profile.saveError')); else await refresh(); }} /></label>}
+    {event.status !== 'draft' && ((event as { discussion_enabled?: boolean }).discussion_enabled ? <EventComments eventId={event.id} teamId={event.team_id} me={userId} /> : !manages && <p className="muted">{t('discussion.disabled')}</p>)}
+    {!manages && event.status === 'published' && <div className="guest-button-row"><ContactHostButton eventId={event.id} /></div>}
     {(manages || cohostIds.length > 0) && <CohostsPanel eventId={event.id} teamId={event.team_id} hostId={event.host_id} canEdit={event.host_id === userId || leadsTeam} />}
 
     <ResponsiveSheet open={sheet === 'share'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.share')} description={event.title}>
