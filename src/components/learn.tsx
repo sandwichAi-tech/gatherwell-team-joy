@@ -17,6 +17,9 @@ import {
   ancestorsQuery, effectiveType, embedUrl, icsFor, isUpcomingLive, learnFileUrl, learnQuery, lessonTitle, lessonsOf, listOf, pick, recipesQuery,
   remindersQuery, RECIPE_TAGS, populatedTracks, trackStats, trackTitle, type LearnData, type Lesson, type Recipe, type Track,
 } from '@/lib/learn';
+import { myLearningQuery } from '@/lib/content';
+import { OfferCover } from '@/components/offers';
+import { offerTitle } from '@/lib/offers';
 
 export function useLearn() {
   const { userId } = useGatherwell();
@@ -25,9 +28,13 @@ export function useLearn() {
   const teamId = workspace?.teamId ?? '';
   const { data: ancestors = [] } = useQuery({ ...ancestorsQuery(teamId), enabled: !!teamId });
   const { data, isLoading, isError, refetch } = useQuery(learnQuery(userId));
+  const { data: learning = [] } = useQuery(myLearningQuery(userId));
   const leader = workspace?.role === 'leader';
-  const tracks = useMemo(() => (data?.tracks ?? []).filter(t => (ancestors.length ? ancestors.includes(t.team_id) : t.team_id === teamId) && (t.is_published || (leader && t.team_id === teamId))), [data, ancestors, teamId, leader]);
-  return { userId, workspace, teamId, leader, data, tracks, isLoading, isError, refetch, lang: i18n.resolvedLanguage ?? 'en' };
+  const entitledOffers = useMemo(() => new Set(learning.map(e => e.id)), [learning]);
+  const tracks = useMemo(() => (data?.tracks ?? []).filter(t =>
+    ((ancestors.length ? ancestors.includes(t.team_id) : t.team_id === teamId) && (t.is_published || (leader && t.team_id === teamId)))
+    || (t.offer_id && entitledOffers.has(t.offer_id) && t.is_published)), [data, ancestors, teamId, leader, entitledOffers]);
+  return { userId, workspace, teamId, leader, data, tracks, learning, isLoading, isError, refetch, lang: i18n.resolvedLanguage ?? 'en' };
 }
 
 export function useNow(ms = 30_000) {
