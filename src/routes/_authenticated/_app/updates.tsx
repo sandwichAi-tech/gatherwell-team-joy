@@ -6,11 +6,13 @@ import { Megaphone, Check, CheckCircle2 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { ListSkeleton, RetryState, EmptyState } from '@/components/launch-states';
 import { supabase } from '@/integrations/supabase/client';
+
+const db = supabase as unknown as { rpc: (fn: string, args?: Record<string, unknown>) => Promise<{ data: any; error: { message?: string } | null }> };
 import { gatherwellHead } from '@/lib/gatherwell-head';
 
 export const Route = createFileRoute('/_authenticated/_app/updates')({
   head: () => gatherwellHead('me'),
-  validateSearch: (s: Record<string, unknown>) => ({ u: typeof s.u === 'string' ? s.u : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({ u: typeof s['u'] === 'string' ? s['u'] : undefined }),
   component: UpdatesPage,
 });
 
@@ -29,10 +31,10 @@ function UpdatesPage() {
   const [pages, setPages] = useState(1);
   const { data = [], isLoading, error, refetch } = useQuery({
     queryKey: ['updates-inbox', pages],
-    queryFn: async () => (await supabase.rpc('my_updates', { _limit: PAGE * pages, _offset: 0 })).data as unknown as UpdateItem[],
+    queryFn: async () => (await db.rpc('my_updates', { _limit: PAGE * pages, _offset: 0 })).data as unknown as UpdateItem[],
   });
   const mark = async (id: string | null) => {
-    await supabase.rpc('mark_update_read', { _id: id });
+    await db.rpc('mark_update_read', { _id: id });
     await qc.invalidateQueries({ queryKey: ['updates-inbox'] });
   };
   useEffect(() => { if (focus && data.some(d => d.id === focus && !d.read)) void mark(focus); // eslint-disable-line react-hooks/exhaustive-deps

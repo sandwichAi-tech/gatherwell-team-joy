@@ -9,6 +9,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { supabase } from '@/integrations/supabase/client';
 
+const db = supabase as unknown as { rpc: (fn: string, args?: Record<string, unknown>) => Promise<{ data: any; error: { message?: string } | null }> };
+
 type Item = { id: string; title: string; body: string; status: string; scheduled_at: string | null; published_at: string | null; updated_at: string; read: boolean };
 
 const errKey = (e: unknown) => {
@@ -25,7 +27,7 @@ export function HostUpdates({ kind, offeringId }: { kind: 'event' | 'offer'; off
   const key = ['offering-updates', kind, offeringId];
   const { data } = useQuery({
     queryKey: key,
-    queryFn: async () => (await supabase.rpc('offering_updates', { _kind: kind, _id: offeringId })).data as { manage: boolean; items: Item[] } | null,
+    queryFn: async () => (await db.rpc('offering_updates', { _kind: kind, _id: offeringId })).data as { manage: boolean; items: Item[] } | null,
   });
   const [editing, setEditing] = useState<Item | 'new' | null>(null);
   const items = data?.items ?? [];
@@ -33,18 +35,18 @@ export function HostUpdates({ kind, offeringId }: { kind: 'event' | 'offer'; off
   if (!data || (!manage && items.length === 0)) return null;
 
   const publish = async (id: string) => {
-    const { error } = await supabase.rpc('publish_host_update', { _id: id });
+    const { error } = await db.rpc('publish_host_update', { _id: id });
     if (error) { toast.error(t(errKey(error))); return; }
     toast.success(t('updates.published')); await qc.invalidateQueries({ queryKey: key });
     await qc.invalidateQueries({ queryKey: ['updates-inbox'] });
   };
   const archive = async (id: string) => {
-    const { error } = await supabase.rpc('archive_host_update', { _id: id });
+    const { error } = await db.rpc('archive_host_update', { _id: id });
     if (error) { toast.error(t(errKey(error))); return; }
     toast.success(t('updates.archived')); await qc.invalidateQueries({ queryKey: key });
   };
   const markRead = async (id: string) => {
-    await supabase.rpc('mark_update_read', { _id: id });
+    await db.rpc('mark_update_read', { _id: id });
     await qc.invalidateQueries({ queryKey: key });
   };
 
@@ -83,7 +85,7 @@ function UpdateEditor({ kind, offeringId, existing, onClose, onSaved }: { kind: 
   const [busy, setBusy] = useState(false);
   const submit = async (e: FormEvent) => {
     e.preventDefault(); setBusy(true);
-    const { error } = await supabase.rpc('save_host_update', { _id: existing?.id ?? null, _kind: kind, _offering: offeringId, _title: title.trim(), _body: body.trim(), _scheduled_at: null });
+    const { error } = await db.rpc('save_host_update', { _id: existing?.id ?? null, _kind: kind, _offering: offeringId, _title: title.trim(), _body: body.trim(), _scheduled_at: null });
     setBusy(false);
     if (error) { toast.error(t(errKey(error))); return; }
     toast.success(t('updates.saved')); onSaved();

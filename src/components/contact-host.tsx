@@ -8,6 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { supabase } from '@/integrations/supabase/client';
 
+const db = supabase as unknown as { rpc: (fn: string, args?: Record<string, unknown>) => Promise<{ data: any; error: { message?: string } | null }> };
+
 const errKey = (e: unknown) => {
   const m = String((e as { message?: string })?.message ?? '');
   for (const k of ['blocked', 'rate_limited', 'not_allowed', 'adult_required', 'invalid_body']) if (m.includes(k)) return `inbox.errors.${k}`;
@@ -23,7 +25,7 @@ export function ContactHostButton({ eventId, offerId, label }: { eventId?: strin
   const submit = async (e: FormEvent) => {
     e.preventDefault(); const text = body.trim(); if (!text) return;
     setBusy(true);
-    const { data, error } = await supabase.rpc('start_contact_thread', { _event: eventId ?? null, _offer: offerId ?? null, _body: text });
+    const { data, error } = await db.rpc('start_contact_thread', { _event: eventId ?? null, _offer: offerId ?? null, _body: text });
     setBusy(false);
     if (error) { toast.error(t(errKey(error))); return; }
     toast.success(t('inbox.sent'));

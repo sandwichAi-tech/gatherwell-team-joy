@@ -123,3 +123,9 @@ The requester supplied the following results after commit ac2eef3c5d5ff7138522b8
 - team_invites and team_audit are RPC-only (no direct table policies); invite acceptance requires the signed-in account's verified email to match, adult attestation, and enforces one-use/expiry/revocation. Invite creation returns an identical shape whether or not the email has an account.
 - team_log redacts token/email_body/waiver/payment keys from audit metadata; audit shows actor/target display names only to owner/admin.
 - Ownership transfer requires typing the workspace name and keeps at least one owner; leaving as sole owner is blocked.
+
+## Communications & moderation (v0.24)
+- host_updates/contact_threads/support_tickets are RPC-only (no direct table writes); audiences derived server-side from rsvps/entitlements, never from client-supplied recipient lists.
+- notify_users dedupes by unique key; audit entries carry ids/kinds only — no bodies, emails, or tokens.
+- moderation_reports strips reporter_id; community suspensions are scope-limited, not account-level.
+- Email/SMS/push delivery remains unconnected; all such actions are labeled Setup required and no send counts are shown.

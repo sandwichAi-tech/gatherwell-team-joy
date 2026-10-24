@@ -3,18 +3,20 @@ import { createFileRoute, useSearch } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Lifebuoy, Plus, Send, X, AlertCircle } from '@/components/icons';
+import { LifeBuoy, Plus, Send, X, AlertCircle } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { ListSkeleton, RetryState, EmptyState } from '@/components/launch-states';
 import { supabase } from '@/integrations/supabase/client';
+
+const db = supabase as unknown as { rpc: (fn: string, args?: Record<string, unknown>) => Promise<{ data: any; error: { message?: string } | null }> };
 import { gatherwellHead } from '@/lib/gatherwell-head';
 
 export const Route = createFileRoute('/_authenticated/_app/support')({
   head: () => gatherwellHead('me'),
-  validateSearch: (s: Record<string, unknown>) => ({ t: typeof s.t === 'string' ? s.t : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({ t: typeof s['t'] === 'string' ? s['t'] : undefined }),
   component: SupportPage,
 });
 
@@ -47,7 +49,7 @@ function SupportPage() {
 
   return <section className="panel" aria-labelledby="support-title">
     <div className="section-heading">
-      <div><h1 id="support-title" className="manage-title"><Lifebuoy className="inline-icon" />{t('support.title')}</h1><p>{t('support.subtitle')}</p></div>
+      <div><h1 id="support-title" className="manage-title"><LifeBuoy className="inline-icon" />{t('support.title')}</h1><p>{t('support.subtitle')}</p></div>
       <Button onClick={() => setCreating(true)}><Plus />{t('support.new')}</Button>
     </div>
     <div className="notice-banner is-inline" role="note">
@@ -55,7 +57,7 @@ function SupportPage() {
     </div>
     <p className="muted">{t('support.routingNote')}</p>
     {isLoading ? <ListSkeleton /> : error ? <RetryState retry={() => void refetch()} /> : data.length === 0 ?
-      <EmptyState icon="Lifebuoy" text={t('support.empty')} /> :
+      <EmptyState icon="LifeBuoy" text={t('support.empty')} /> :
       <ul className="settings-list">{data.map(tk => <li key={tk.id}>
         <button type="button" className="settings-row" onClick={() => setOpen(tk.id)}>
           <span className="settings-label"><strong>{tk.subject}</strong>
@@ -74,7 +76,7 @@ function NewTicketSheet({ open, onClose, onCreated }: { open: boolean; onClose: 
   const [subject, setSubject] = useState(''); const [body, setBody] = useState(''); const [busy, setBusy] = useState(false);
   const submit = async (e: FormEvent) => {
     e.preventDefault(); setBusy(true);
-    const { data, error } = await supabase.rpc('create_support_ticket', { _category: cat, _subject: subject.trim(), _body: body.trim() });
+    const { data, error } = await db.rpc('create_support_ticket', { _category: cat, _subject: subject.trim(), _body: body.trim() });
     setBusy(false);
     if (error) { toast.error(t(errKey(error))); return; }
     toast.success(t('support.created')); setSubject(''); setBody(''); onCreated(data as string);
@@ -109,12 +111,12 @@ function TicketSheet({ ticket, onClose, onChanged }: { ticket: Ticket; onClose: 
   const send = async (e: FormEvent) => {
     e.preventDefault(); const text = body.trim(); if (!text) return;
     setBusy(true);
-    const { error } = await supabase.rpc('reply_support_ticket', { _ticket: ticket.id, _body: text });
+    const { error } = await db.rpc('reply_support_ticket', { _ticket: ticket.id, _body: text });
     setBusy(false);
     if (error) { toast.error(t(errKey(error))); return; }
     setBody(''); await qc.invalidateQueries({ queryKey: key }); onChanged();
   };
-  const close = async () => { await supabase.rpc('close_support_ticket', { _ticket: ticket.id }); onChanged(); onClose(); };
+  const close = async () => { await db.rpc('close_support_ticket', { _ticket: ticket.id }); onChanged(); onClose(); };
   return <ResponsiveSheet open onOpenChange={o => !o && onClose()} title={ticket.subject} description={t(`support.cat.${ticket.category}`)}>
     {isLoading ? <ListSkeleton rows={2} /> : <ul className="thread-messages">
       {msgs.map(m => <li key={m.id} className={`thread-msg ${m.is_staff ? 'is-host' : 'is-me'}`}>

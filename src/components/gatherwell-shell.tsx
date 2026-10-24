@@ -13,6 +13,7 @@ import { Home, CalendarDays, UsersRound, BookOpen, UserRound, Plus, Sparkles, Ar
 import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
 import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { profileQuery, workspaceQuery, initialsOf, firstName } from '@/lib/account';
 import { roleAllows } from '@/lib/workspace';
 import type { WorkspaceRole } from '@/components/workspace-settings';
@@ -36,6 +37,11 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
  const [detail, setDetail] = useState<{ title: string; description: string } | null>(null);
  const [memberView, setMemberView] = useState(false);
  const navigate = useNavigate();
+ const { data: unread = 0 } = useQuery({
+   queryKey: ['notifications-unread'],
+   queryFn: async () => (await supabase.from('notifications').select('id', { count: 'exact', head: true }).is('read_at', null)).count ?? 0,
+   refetchInterval: 60_000,
+ });
  const [theme, updateTheme] = useState<Theme>('system');
  const [ready, setReady] = useState(false);
  const [learnOn] = useFeature('feature_learn');
@@ -70,7 +76,7 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
     <header className="app-header">
      <Link to="/home" className="brand mobile-brand"><BrandLogo /><span className="sr-only">{t('brand')}</span></Link>
      <span className="desktop-header-label">{t('common.workspaceLabel')}<span>/</span><strong>{t(`nav.${current.key}`)}</strong></span>
-     <div className="header-actions"><Link to="/discover" className="gw-app-discover" aria-label={t('marketing.discover')}><GwIcon name="Compass" size={20}/><span>{t('marketing.discover')}</span></Link><Button variant="ghost" size="icon" className="assistant-button" aria-label={t('common.assistant')} title={t('common.assistant')} onClick={() => openSheet('assistant')}><Sparkles /></Button><Link to="/me" className="header-avatar" aria-label={t('me.profile')}>{initials}</Link></div>
+     <div className="header-actions"><Link to="/notifications" className="header-bell" aria-label={t('notifications.title')}><GwIcon name="Bell" size={20}/>{unread > 0 && <span className="header-bell-badge" aria-label={t('notifications.unread')}>{unread > 99 ? '99+' : unread}</span>}</Link><Link to="/discover" className="gw-app-discover" aria-label={t('marketing.discover')}><GwIcon name="Compass" size={20}/><span>{t('marketing.discover')}</span></Link><Button variant="ghost" size="icon" className="assistant-button" aria-label={t('common.assistant')} title={t('common.assistant')} onClick={() => openSheet('assistant')}><Sparkles /></Button><Link to="/me" className="header-avatar" aria-label={t('me.profile')}>{initials}</Link></div>
     </header>
     <main id="main-content" className="page-content"><ClientOnly fallback={<ListSkeleton />}><PlatformNotices teamId={workspace?.teamId} /><QueryFeedback /><div key={pathname} className="page-transition">{children}</div></ClientOnly></main>
    </div>

@@ -90,8 +90,8 @@ export function NotificationSettings({ userId }: { userId: string }) {
   return <div className="notify-settings">
     <span className="field-label">{t('notify.channels')}</span>
     <div className="settings-list">{channels.map(({ key, Icon }) => <label className="switch-row notify-row" key={key}>
-      <Icon className="settings-icon" /><span><strong>{t(`notify.channel.${key}`)}</strong>{status && !connected[key] ? <small className="not-connected-badge">{t('common.notConnected')}</small> : <small>{t('notify.connected')}</small>}</span>
-      <Switch checked={prefs[key]} onCheckedChange={v => void save({ [key]: v })} aria-label={t(`notify.channel.${key}`)} /></label>)}</div>
+      <Icon className="settings-icon" /><span><strong>{t(`notify.channel.${key}`)}</strong>{status && !connected[key] ? <small className="not-connected-badge">{t('common.setupRequired', 'Setup required')}</small> : <small>{t('notify.connected')}</small>}</span>
+      <Switch checked={prefs[key] && connected[key]} disabled={!!status && !connected[key]} onCheckedChange={v => void save({ [key]: v })} aria-label={t(`notify.channel.${key}`)} /></label>)}</div>
     {status?.pushKey && device !== 'unsupported' && <div className="notify-device">
       {device === 'on' ? <p className="auth-subtitle">{t('notify.deviceOn')}</p> : device === 'blocked' ? <p className="auth-subtitle">{t('notify.deviceBlocked')}</p>
         : <Button variant="secondary" onClick={async () => { try { const r = await enablePush(status.pushKey!, userId); if (r === 'enabled') { setDevice('on'); toast.success(t('notify.pushOn')); } else if (r === 'denied') setDevice('blocked'); } catch { toast.error(t('profile.saveError')); } }}><Bell />{t('notify.enableDevice')}</Button>}

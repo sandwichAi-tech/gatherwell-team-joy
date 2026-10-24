@@ -157,7 +157,7 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
   </ResponsiveSheet>;
 }
 
-type Panel = 'qr' | 'gatherings' | 'challenges' | 'badges' | 'teams' | 'notifications' | 'plan' | 'purchases' | 'invite' | 'calendar' | 'hostProfile' | null;
+type Panel = 'qr' | 'gatherings' | 'challenges' | 'badges' | 'teams' | 'notifications' | 'updates' | 'inbox' | 'support' | 'plan' | 'purchases' | 'invite' | 'calendar' | 'hostProfile' | null;
 
 export function MePage() {
   const { t, i18n } = useTranslation();
@@ -208,13 +208,16 @@ export function MePage() {
   const linkRow = (icon: GwIconName, label: string, to: string, trailing?: ReactNode, search?: Record<string, string>) => <Link className="settings-row" to={to} search={search as never}><GwFeatureTile name={icon} size={24} className="settings-tile" /><span className="settings-label">{label}</span>{trailing ?? <ChevronRight className="settings-chevron" />}</Link>;
   const staticRow = (icon: GwIconName, label: string, control: ReactNode) => <div className="settings-row is-static"><GwFeatureTile name={icon} size={24} className="settings-tile" /><span className="settings-label">{label}</span>{control}</div>;
 
-  const panelIcons: Record<Exclude<Panel, null>, GwIconName> = { qr: 'QrCode', gatherings: 'CalendarDays', challenges: 'Flag', badges: 'Award', teams: 'UsersRound', notifications: 'Bell', plan: 'CreditCard', purchases: 'CreditCard', invite: 'UserPlus', calendar: 'CalendarPlus', hostProfile: 'Globe2' };
+  const panelIcons: Record<Exclude<Panel, null>, GwIconName> = { qr: 'QrCode', gatherings: 'CalendarDays', challenges: 'Flag', badges: 'Award', teams: 'UsersRound', notifications: 'Bell', updates: 'Megaphone', inbox: 'MessageCircle', support: 'LifeBuoy', plan: 'CreditCard', purchases: 'CreditCard', invite: 'UserPlus', calendar: 'CalendarPlus', hostProfile: 'Globe2' };
   const panels: Record<Exclude<Panel, null>, { title: string; icon: GwIconName; body: ReactNode }> = {
     gatherings: { title: t('profile.myGatherings'), icon: 'CalendarDays', body: <MyGatheringsList userId={userId} /> },
     challenges: { title: t('profile.myChallenges'), icon: 'Flag', body: <MyChallengesList userId={userId} /> },
     badges: { title: t('profile.myBadges'), icon: 'Award', body: workspace ? <BadgeWall teamId={workspace.teamId} /> : <EmptyState compact icon="UsersRound" text={t('workspace.none')} /> },
     teams: { title: t('profile.myTeams'), icon: 'UsersRound', body: teams.length ? <div className="team-list">{teams.map(team => <button type="button" key={team.teamId} className={`choice-card ${workspace?.teamId === team.teamId ? 'is-selected' : ''}`} aria-pressed={workspace?.teamId === team.teamId} onClick={() => switchTeam(team.teamId)}><span className="initial-avatar">{initialsOf(team.name)}</span><span><strong>{team.name}</strong><small>{t(`roles.${team.role}`)}{team.customBadge ? ` · ${team.customBadge}` : ''}</small></span>{workspace?.teamId === team.teamId && <Check className="choice-check" />}</button>)}</div> : <EmptyState compact icon="UsersRound" text={t('workspace.none')} /> },
     notifications: { title: t('profile.notifications'), icon: 'Bell', body: <NotificationSettings userId={userId} /> },
+    updates: { title: t('nav.updates'), icon: 'Megaphone', body: <p className="auth-subtitle"><Link to="/updates" search={{ u: undefined }} className="auth-link">{t('nav.updates')} →</Link></p> },
+    inbox: { title: t('nav.inbox'), icon: 'MessageCircle', body: <p className="auth-subtitle"><Link to="/inbox" search={{ thread: undefined }} className="auth-link">{t('nav.inbox')} →</Link></p> },
+    support: { title: t('nav.support'), icon: 'LifeBuoy', body: <p className="auth-subtitle"><Link to="/support" search={{ t: undefined }} className="auth-link">{t('nav.support')} →</Link></p> },
     invite: { title: t('welcome.title'), icon: 'UserPlus', body: <InviteFriendsPanel /> },
     calendar: { title: t('follow.feedTitle'), icon: 'CalendarPlus', body: <CalendarFeedPanel userId={userId} /> },
     purchases: { title: t('offers.purchases'), icon: 'CreditCard', body: <PurchasesPanel /> },
@@ -273,6 +276,9 @@ export function MePage() {
     </SettingsGroup>
     <SettingsGroup title={t('profile.groupPreferences')}>
       {row('Bell', t('profile.notifications'), () => setPanel('notifications'))}
+      {row('Megaphone', t('nav.updates'), () => setPanel('updates'))}
+      {row('MessageCircle', t('nav.inbox'), () => setPanel('inbox'))}
+      {row('LifeBuoy', t('nav.support'), () => setPanel('support'))}
       {SPANISH_ENABLED && staticRow('Globe2', t('me.language'), <div className="segmented" role="group" aria-label={t('me.language')}>{(['en', 'es'] as const).map(lang => <Button key={lang} variant="ghost" aria-pressed={i18n.resolvedLanguage === lang} className={i18n.resolvedLanguage === lang ? 'selected' : ''} onClick={() => saveLanguage(lang)}>{lang === 'en' ? 'EN' : 'ES'}</Button>)}</div>)}
       {staticRow('Sun', t('me.appearance'), <div className="segmented" role="group" aria-label={t('me.appearance')}>{([{ value: 'light', Icon: Sun }, { value: 'dark', Icon: Moon }, { value: 'system', Icon: Monitor }] as const).map(({ value, Icon }) => <Button key={value} variant="ghost" size="icon" className={theme === value ? 'selected' : ''} aria-pressed={theme === value} aria-label={t(`me.${value}`)} title={t(`me.${value}`)} onClick={() => setTheme(value)}><Icon /></Button>)}</div>)}
     </SettingsGroup>

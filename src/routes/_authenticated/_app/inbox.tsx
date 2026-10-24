@@ -9,11 +9,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { ListSkeleton, RetryState, EmptyState } from '@/components/launch-states';
 import { supabase } from '@/integrations/supabase/client';
+
+const db = supabase as unknown as { rpc: (fn: string, args?: Record<string, unknown>) => Promise<{ data: any; error: { message?: string } | null }> };
 import { gatherwellHead } from '@/lib/gatherwell-head';
 
 export const Route = createFileRoute('/_authenticated/_app/inbox')({
   head: () => gatherwellHead('me'),
-  validateSearch: (s: Record<string, unknown>) => ({ thread: typeof s.thread === 'string' ? s.thread : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({ thread: typeof s['thread'] === 'string' ? s['thread'] : undefined }),
   component: InboxPage,
 });
 
@@ -34,7 +36,7 @@ function InboxPage() {
   const [open, setOpen] = useState<string | null>(focus ?? null);
   const { data = [], isLoading, error, refetch } = useQuery({
     queryKey: ['contact-threads'],
-    queryFn: async () => (await supabase.rpc('my_contact_threads')).data as unknown as Thread[],
+    queryFn: async () => (await db.rpc('my_contact_threads')).data as unknown as Thread[],
   });
   const current = data.find(x => x.id === open) ?? null;
 
@@ -61,25 +63,25 @@ function ThreadSheet({ thread, onClose, onChanged }: { thread: Thread; onClose: 
   const key = ['contact-thread', thread.id];
   const { data: msgs = [], isLoading } = useQuery({
     queryKey: key,
-    queryFn: async () => (await supabase.rpc('contact_thread_messages', { _thread: thread.id })).data as unknown as Msg[],
+    queryFn: async () => (await db.rpc('contact_thread_messages', { _thread: thread.id })).data as unknown as Msg[],
     refetchInterval: 15_000,
   });
   const send = async (e: FormEvent) => {
     e.preventDefault(); const text = body.trim(); if (!text) return;
     setBusy(true);
-    const { error } = await supabase.rpc('reply_contact_thread', { _thread: thread.id, _body: text });
+    const { error } = await db.rpc('reply_contact_thread', { _thread: thread.id, _body: text });
     setBusy(false);
     if (error) { toast.error(t(errKey(error))); return; }
     setBody(''); await qc.invalidateQueries({ queryKey: key }); onChanged();
   };
   const close = async () => {
-    await supabase.rpc('close_contact_thread', { _thread: thread.id });
+    await db.rpc('close_contact_thread', { _thread: thread.id });
     onChanged(); onClose();
   };
   const block = async () => {
     if (!thread.requester_id) return;
-    await supabase.rpc('block_user', { _user: thread.requester_id });
-    await supabase.rpc('close_contact_thread', { _thread: thread.id });
+    await db.rpc('block_user', { _user: thread.requester_id });
+    await db.rpc('close_contact_thread', { _thread: thread.id });
     toast.success(t('inbox.blockedDone')); onChanged(); onClose();
   };
   return <ResponsiveSheet open onOpenChange={o => !o && onClose()} title={thread.title ?? t('inbox.conversation')}
