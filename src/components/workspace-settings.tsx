@@ -153,7 +153,7 @@ export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string
       <ul className="ws-invite-list">{invites.data?.map(i => <li key={i.id} className="ws-invite">
         <span className="ws-member-main"><strong>{i.email}</strong><small>{t(`workspace.role.${i.role}`)} · {t(`workspace.state.${i.state}`)}</small></span>
         {i.state === 'pending' && <Button variant="ghost" size="icon" aria-label={t('workspace.revoke')} onClick={() => revoke(i.id)}><GwIcon name="X" /></Button>}
-      </li>)}</ul>}
+      </li>)}</ul>
       <ResponsiveSheet open={inviteOpen} onOpenChange={setInviteOpen} icon="UserPlus" title={t('workspace.newInvite')} description={t('workspace.inviteHint')}
         footer={inviteLink
           ? <Button className="w-full" onClick={async () => { try { await navigator.clipboard.writeText(inviteLink); toast.success(t('workspace.inviteCopied')); } catch { toast.error(t('error.message')); } }}><GwIcon name="Copy" />{t('workspace.copyLink')}</Button>
@@ -189,7 +189,7 @@ export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string
       <ul className="ws-activity-list">{activity.data?.map((a, i) => <li key={i} className="ws-activity">
         <span className="ws-member-main"><strong>{t(`workspace.action.${a.action}`, { defaultValue: a.action })}</strong>
           <small>{[a.actor, a.target, new Date(a.at).toLocaleString(i18n.resolvedLanguage === 'es' ? 'es' : 'en')].filter(Boolean).join(' · ')}</small></span>
-      </li>)}</ul>}
+      </li>)}</ul>
     </>}
   </div>;
 }
