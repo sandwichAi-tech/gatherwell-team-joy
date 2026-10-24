@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import en from '@/locales/en.json';
 import es from '@/locales/es.json';
 import { HOME_PLANS, annualPrice } from './homepage';
+import { safeReturnPath } from './return-to';
 
 const src = readFileSync('src/components/landing/marketing-pages.tsx', 'utf8');
 const pricingPage = src.slice(src.indexOf('export function PricingPage'), src.indexOf('\n', src.indexOf('export function PricingPage')));
@@ -39,10 +40,23 @@ describe('public pricing (approved 2026-10-24 model)', () => {
     expect(approved).toContain('pricingV4.feeLine');
     expect(approved).toContain('pricingV4.seatsLine');
   });
-  it('Organization uses a truthful contact-sales path, never checkout', () => {
-    expect(approved).toContain("CONTACT_SALES_HREF = 'mailto:");
+  it('Organization uses the in-app support flow, never checkout or a stale email', () => {
+    expect(approved).toContain("CONTACT_SALES_PATH = '/support?new=organization'");
+    expect(approved).toContain('search={{ next: CONTACT_SALES_PATH }}');
     expect(approved).toContain('pricingV4.contactSales');
+    expect(approved).not.toMatch(/mailto:|gatherwell\.app/i);
     expect(approved).not.toMatch(/organization[\s\S]{0,200}startPlanCheckout/);
+  });
+  it('the support return path passes the same-origin allowlist and prefill intent', () => {
+    expect(safeReturnPath('/support?new=organization')).toBe('/support?new=organization');
+    expect(safeReturnPath('/support')).toBe('/support');
+    expect(safeReturnPath('https://evil.example/support')).toBeNull();
+    expect(safeReturnPath('/support?new=organization&next=https://x')).toBeNull();
+    const support = readFileSync('src/routes/_authenticated/_app/support.tsx', 'utf8');
+    expect(support).toContain("s['new'] === 'organization'");
+    expect(support).toContain("support.orgSubject");
+    expect(en.support.orgSubject).toBeTruthy();
+    expect(es.support.orgSubject).toBeTruthy();
   });
   it('comparison chart covers the required rows with text, not color alone', () => {
     for (const k of ['seats', 'fee', 'events', 'courses', 'memberships', 'tickets', 'checkin', 'roles', 'analytics', 'exports', 'support', 'sms', 'payments']) {

@@ -4,8 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { GwIcon } from '@/components/gw-icon';
 import { HOME_PLANS, annualPrice } from '@/lib/homepage';
 
-/** Support inbox used across the app for assisted sales and help. */
-export const CONTACT_SALES_HREF = 'mailto:help@gatherwell.app';
+/**
+ * Assisted-setup path for Organization: the in-app support flow with an
+ * organization intent. Signed-out prospects go through sign-in first and land
+ * back on the prefilled support request (same-origin return path).
+ */
+export const CONTACT_SALES_PATH = '/support?new=organization';
 
 /** Monthly/annual billing toggle shared by the public pricing cards. */
 export function BillingToggle({ annual, onChange }: { annual: boolean; onChange: (a: boolean) => void }) {
@@ -39,7 +43,7 @@ export function ApprovedPlans({ headingLevel = 3 }: { headingLevel?: 2 | 3 }) {
       <p className="gw-v4-plan-fee">{t('pricingV4.feeLine', { pct: p.feePct })}</p>
       <p className="gw-v4-plan-seats">{t('pricingV4.seatsLine', { n: p.seats })}</p>
       {'contactSales' in p && p.contactSales
-        ? <a href={CONTACT_SALES_HREF} className="gw-btn gw-btn-secondary gw-btn-block">{t('pricingV4.contactSales')}</a>
+        ? <Link to="/login" search={{ next: CONTACT_SALES_PATH }} className="gw-btn gw-btn-secondary gw-btn-block">{t('pricingV4.contactSales')}</Link>
         : p.monthly > 0
           ? <span className="gw-home-tool-tag">{t('pricingV4.setupRequired')}</span>
           : <Link to="/login" search={{ intent: 'host' }} className="gw-btn gw-btn-primary gw-btn-block">{t('home.cta.start')}</Link>}

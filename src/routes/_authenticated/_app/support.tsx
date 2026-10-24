@@ -16,7 +16,10 @@ import { gatherwellHead } from '@/lib/gatherwell-head';
 
 export const Route = createFileRoute('/_authenticated/_app/support')({
   head: () => gatherwellHead('me'),
-  validateSearch: (s: Record<string, unknown>) => ({ t: typeof s['t'] === 'string' ? s['t'] : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    t: typeof s['t'] === 'string' ? s['t'] : undefined,
+    new: s['new'] === 'organization' ? ('organization' as const) : undefined,
+  }),
   component: SupportPage,
 });
 
@@ -33,9 +36,9 @@ const errKey = (e: unknown) => {
 function SupportPage() {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage === 'es' ? 'es-419' : 'en-US';
-  const { t: focus } = useSearch({ from: '/_authenticated/_app/support' });
+  const { t: focus, new: preset } = useSearch({ from: '/_authenticated/_app/support' });
   const qc = useQueryClient();
-  const [creating, setCreating] = useState(false);
+  const [creating, setCreating] = useState(preset === 'organization');
   const [open, setOpen] = useState<string | null>(focus ?? null);
   const { data = [], isLoading, error, refetch } = useQuery({
     queryKey: ['support-tickets'],
@@ -65,15 +68,15 @@ function SupportPage() {
           <span className={`chip ${tk.status === 'answered' ? 'published-chip' : ''}`}>{t(`support.status.${tk.status}`)}</span>
         </button>
       </li>)}</ul>}
-    <NewTicketSheet open={creating} onClose={() => setCreating(false)} onCreated={id => { setCreating(false); setOpen(id); void qc.invalidateQueries({ queryKey: ['support-tickets'] }); }} />
+    <NewTicketSheet open={creating} preset={preset} onClose={() => setCreating(false)} onCreated={id => { setCreating(false); setOpen(id); void qc.invalidateQueries({ queryKey: ['support-tickets'] }); }} />
     {current && <TicketSheet ticket={current} onClose={() => setOpen(null)} onChanged={() => void qc.invalidateQueries({ queryKey: ['support-tickets'] })} />}
   </section>;
 }
 
-function NewTicketSheet({ open, onClose, onCreated }: { open: boolean; onClose: () => void; onCreated: (id: string) => void }) {
+function NewTicketSheet({ open, preset, onClose, onCreated }: { open: boolean; preset?: 'organization' | undefined; onClose: () => void; onCreated: (id: string) => void }) {
   const { t } = useTranslation();
-  const [cat, setCat] = useState<(typeof CATS)[number]>('account');
-  const [subject, setSubject] = useState(''); const [body, setBody] = useState(''); const [busy, setBusy] = useState(false);
+  const [cat, setCat] = useState<(typeof CATS)[number]>(preset === 'organization' ? 'billing' : 'account');
+  const [subject, setSubject] = useState(preset === 'organization' ? t('support.orgSubject') : ''); const [body, setBody] = useState(''); const [busy, setBusy] = useState(false);
   const submit = async (e: FormEvent) => {
     e.preventDefault(); setBusy(true);
     const { data, error } = await db.rpc('create_support_ticket', { _category: cat, _subject: subject.trim(), _body: body.trim() });

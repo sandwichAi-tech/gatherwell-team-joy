@@ -218,7 +218,7 @@ export function MePage() {
     notifications: { title: t('profile.notifications'), icon: 'Bell', body: <NotificationSettings userId={userId} /> },
     updates: { title: t('nav.updates'), icon: 'Megaphone', body: <p className="auth-subtitle"><Link to="/updates" search={{ u: undefined }} className="auth-link">{t('nav.updates')} →</Link></p> },
     inbox: { title: t('nav.inbox'), icon: 'MessageCircle', body: <p className="auth-subtitle"><Link to="/inbox" search={{ thread: undefined }} className="auth-link">{t('nav.inbox')} →</Link></p> },
-    support: { title: t('nav.support'), icon: 'LifeBuoy', body: <p className="auth-subtitle"><Link to="/support" search={{ t: undefined }} className="auth-link">{t('nav.support')} →</Link></p> },
+    support: { title: t('nav.support'), icon: 'LifeBuoy', body: <p className="auth-subtitle"><Link to="/support" search={{ t: undefined, new: undefined }} className="auth-link">{t('nav.support')} →</Link></p> },
     invite: { title: t('welcome.title'), icon: 'UserPlus', body: <InviteFriendsPanel /> },
     calendar: { title: t('follow.feedTitle'), icon: 'CalendarPlus', body: <CalendarFeedPanel userId={userId} /> },
     purchases: { title: t('offers.purchases'), icon: 'CreditCard', body: <PurchasesPanel /> },

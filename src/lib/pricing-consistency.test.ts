@@ -25,7 +25,8 @@ describe('pricing consistency (approved 2026-10-24 model)', () => {
   });
   it('Organization is assisted setup on the plan screen, never self-serve checkout', () => {
     expect(planPage).toContain("LICENSES.filter(l => l.id === 'team25')");
-    expect(planPage).toContain('mailto:help@gatherwell.app');
+    expect(planPage).toContain(`to="/support" search={{ t: undefined, new: 'organization' }}`);
+    expect(planPage).not.toContain('mailto:help@gatherwell.app');
   });
   it('paid plan checkout stays disabled as setup required, never faking success', () => {
     expect(planPage).toContain(`{t('pricingV4.setupRequired')}`);
