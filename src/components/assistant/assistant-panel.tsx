@@ -85,11 +85,14 @@ function Conversation({ screen, name, close, chat }: { screen: Screen; name: str
   </div>;
 }
 
-/** Bottom sheet (85%) on phones, 420px right panel on desktop; stays mounted so the session's chat survives closing. */
+/** Bottom sheet (85%) on phones, 420px right panel on desktop. Chat state lives here so it survives closing;
+ *  the Drawer/Sheet itself unmounts when closed — a mounted-but-closed vaul Drawer leaves aria-hidden on the
+ *  app root, which hides the entire page from screen readers. */
 export function AssistantPanel({ open, onOpenChange, screen, name }: { open: boolean; onOpenChange: (o: boolean) => void; screen: Screen; name: string }) {
   const mobile = useIsMobile(); const { t } = useTranslation();
   const [msgs, setMsgs] = useState<Msg[]>([]); const [preview, setPreview] = useState(false);
   const body = <Conversation screen={screen} name={name} close={() => onOpenChange(false)} chat={{ msgs, setMsgs, preview, setPreview }} />;
+  if (!open) return null;
   if (mobile) return <Drawer open={open} onOpenChange={onOpenChange} shouldScaleBackground={false}>
     <DrawerContent className="as-drawer"><DrawerTitle className="sr-only">{t('assistant.title')}</DrawerTitle><DrawerDescription className="sr-only">{t('assistant.title')}</DrawerDescription>{body}</DrawerContent>
   </Drawer>;
