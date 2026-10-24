@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { useGatherwell } from '@/components/gatherwell-shell';
 import { alertsQuery, alertMatchesQuery, type LocationAlert } from '@/lib/discovery';
 import { ListSkeleton, RetryState, EmptyState } from '@/components/launch-states';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
@@ -95,7 +96,8 @@ function AlertEditor({ userId, alert, onClose }: { userId: string; alert: Partia
   </ResponsiveSheet>;
 }
 
-export function AlertsPage({ userId }: { userId: string }) {
+export function AlertsPage() {
+  const { userId } = useGatherwell();
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
   const qc = useQueryClient();

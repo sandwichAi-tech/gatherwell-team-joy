@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from '@tanstack/react-router';
 import { queryOptions } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useGatherwell } from '@/components/gatherwell-shell';
 import { savedQuery, type CatalogItem } from '@/lib/discovery';
 import { ListSkeleton, RetryState, EmptyState } from '@/components/launch-states';
 import { SaveButton } from '@/components/save-button';
@@ -46,7 +47,8 @@ const savedDetailsQuery = (rows: SavedRow[] | undefined) => queryOptions({
   },
 });
 
-export function SavedPage({ userId }: { userId: string }) {
+export function SavedPage() {
+  const { userId } = useGatherwell();
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
   const rows = useQuery(savedRowsQuery(userId));
