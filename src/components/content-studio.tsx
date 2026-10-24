@@ -514,11 +514,13 @@ export function BundleReader({ offerId, userId }: { offerId: string; userId: str
   if (isLoading) return <ListSkeleton />;
   if (items.length === 0) return null;
   const download = async (item: BundleItem) => {
+    // Open the tab synchronously: window.open after an await is blocked by popup blockers.
+    const win = window.open('', '_blank', 'noopener');
     setBusyId(item.id);
     const res = await offerItemDownloadLink({ data: { itemId: item.id } });
     setBusyId('');
-    if (!res.ok) { toast.error(t('content.downloadError')); return; }
-    window.open(res.url, '_blank', 'noopener');
+    if (!res.ok) { win?.close(); toast.error(t('content.downloadError')); return; }
+    if (win) win.location.href = res.url; else window.location.href = res.url;
   };
   return <section className="panel">
     <h2>{t('content.bundle')}</h2>
