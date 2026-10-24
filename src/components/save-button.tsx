@@ -19,7 +19,7 @@ export function SaveButton({ kind, targetId }: { kind: 'event' | 'offer'; target
   }
   const saved = useQuery(savedQuery(userId ?? undefined));
   const isSaved = saved.data?.has(`${kind}:${targetId}`) ?? false;
-  if (userId === null) return <Link to="/login" className="chip save-chip" aria-label={t('saved.save')}><GwIcon name="BookmarkSimple" size={16} /></Link>;
+  if (userId === null) return <Link to="/login" className="chip save-chip" aria-label={t('saved.save')}><GwIcon name="Bookmark" size={16} /></Link>;
   if (userId === undefined) return null;
   const toggle = async () => {
     setBusy(true);
@@ -31,6 +31,6 @@ export function SaveButton({ kind, targetId }: { kind: 'event' | 'offer'; target
     setBusy(false);
   };
   return <button type="button" className={`chip save-chip${isSaved ? ' selected' : ''}`} aria-pressed={isSaved} aria-label={t(isSaved ? 'saved.unsave' : 'saved.save')} disabled={busy} onClick={() => void toggle()}>
-    <GwIcon name={isSaved ? 'BookmarkSimple' : 'BookmarkSimple'} size={16} weight={isSaved ? 'fill' : 'regular'} />
+    <GwIcon name={isSaved ? 'BookmarkCheck' : 'Bookmark'} size={16} />
   </button>;
 }

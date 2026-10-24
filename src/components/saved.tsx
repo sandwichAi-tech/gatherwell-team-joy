@@ -59,10 +59,10 @@ export function SavedPage() {
   const items = details.data ?? [];
   return <main className="page">
     <div className="page-heading"><div><span className="eyebrow">{t('saved.eyebrow')}</span><h1>{t('saved.title')}</h1><p>{t('saved.sentence')}</p></div></div>
-    {rows.data!.length === 0 ? <EmptyState icon="BookmarkSimple" title={t('saved.emptyTitle')} text={t('saved.empty')} action={<Link to="/discover" className="gw-btn gw-btn-primary">{t('saved.browse')}</Link>} />
+    {rows.data!.length === 0 ? <EmptyState icon="Bookmark" title={t('saved.emptyTitle')} text={t('saved.empty')} action={<Link to="/discover" className="gw-btn gw-btn-primary">{t('saved.browse')}</Link>} />
       : details.isPending ? <ListSkeleton />
       : <ul className="gw-grid catalog-grid">{items.map(item => <li key={`${item.kind}:${item.id}`} className="gw-card catalog-card">
-          <Link to={item.url as '/e/$id'} className="catalog-card-main">
+          <Link to={item.kind === 'event' ? '/e/$id' : '/o/$id'} params={{ id: item.id }} className="catalog-card-main">
             <span className="chip">{t(`discover.kind.${item.kind}`)}</span>
             <strong>{item.title}</strong>
             {item.starts_at && <small className="catalog-meta">{new Intl.DateTimeFormat(lang === 'es' ? 'es' : 'en', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: item.timezone || undefined }).format(new Date(item.starts_at))}</small>}
@@ -71,6 +71,6 @@ export function SavedPage() {
         </li>)}
         {items.length === 0 && <li className="gw-empty"><p>{t('saved.allGone')}</p></li>}
       </ul>}
-    <p className="gw-fine"><GwIcon name="Info" size={14} /> {t('saved.privateNote')}</p>
+    <p className="gw-fine"><GwIcon name="Bell" size={14} /> {t('saved.privateNote')}</p>
   </main>;
 }

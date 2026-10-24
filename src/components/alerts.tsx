@@ -134,7 +134,9 @@ export function AlertsPage() {
       <ul className="offer-list">{matched.map((m, i) => <li key={`${m.alert_id}:${m.offering.id}:${i}`} className="offer-row">
         <div className="offer-row-main"><strong>{m.offering.title}</strong>
           <small>{t(`discover.kind.${m.offering.kind}`)} · {m.alert_label}{m.offering.starts_at ? ` · ${new Intl.DateTimeFormat(lang === 'es' ? 'es' : 'en', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(m.offering.starts_at))}` : ''}</small></div>
-        <Button asChild variant="secondary" size="sm"><Link to={m.offering.url as '/e/$id'}>{t('alerts.view')}</Link></Button>
+        <Button asChild variant="secondary" size="sm">{m.offering.kind === 'event'
+          ? <Link to="/e/$id" params={{ id: m.offering.id }}>{t('alerts.view')}</Link>
+          : <Link to="/o/$id" params={{ id: m.offering.id }}>{t('alerts.view')}</Link>}</Button>
       </li>)}</ul>
     </section>}
 
@@ -145,10 +147,10 @@ export function AlertsPage() {
           <div className="offer-row-actions">
             <label className="switch-row"><Switch checked={!a.paused} onCheckedChange={on => void setPaused(a, !on)} aria-label={t(a.paused ? 'alerts.resume' : 'alerts.pause')} /><span className="muted-small">{t(a.paused ? 'alerts.paused' : 'alerts.active')}</span></label>
             <Button variant="secondary" size="icon" aria-label={t('alerts.edit')} onClick={() => setEditing(a)}><GwIcon name="Pencil" /></Button>
-            <Button variant="ghost" size="icon" aria-label={t('alerts.delete')} onClick={() => void remove(a)}><GwIcon name="Trash" /></Button>
+            <Button variant="ghost" size="icon" aria-label={t('alerts.delete')} onClick={() => void remove(a)}><GwIcon name="Trash2" /></Button>
           </div>
         </li>)}</ul>}
-    <p className="gw-fine"><GwIcon name="Info" size={14} /> {t('alerts.deliveryNote')}</p>
+    <p className="gw-fine"><GwIcon name="Bell" size={14} /> {t('alerts.deliveryNote')}</p>
     {editing && <AlertEditor userId={userId} alert={editing} onClose={() => setEditing(null)} />}
   </main>;
 }

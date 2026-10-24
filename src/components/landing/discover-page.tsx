@@ -4,7 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { LandingFrame } from '@/components/landing/landing-chrome';
 import { CategoryRow } from '@/components/landing/landing-page';
-import { LocationFilter, type Coords } from '@/components/landing/location-filter';
+import { LocationFilter } from '@/components/landing/location-filter';
+import type { Coords } from '@/components/landing/gathering-card';
 import { isCategory, type Category } from '@/lib/landing';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
 import { LocationCard, publicLocationsQuery } from '@/components/locations';
@@ -55,10 +56,11 @@ export function searchToFilters(s: DiscoverSearch, near: Coords | null): Discove
   };
 }
 
-function CatalogCard({ item, lang, t }: { item: CatalogItem; lang: string; t: (k: string, o?: Record<string, unknown>) => string }) {
+function CatalogCard({ item, lang }: { item: CatalogItem; lang: string }) {
+  const { t } = useTranslation();
   const when = item.starts_at ? new Intl.DateTimeFormat(lang === 'es' ? 'es' : 'en', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: item.timezone || undefined }).format(new Date(item.starts_at)) : null;
   return <li className="gw-card catalog-card">
-    <Link to={item.url as '/e/$id'} className="catalog-card-main">
+    <Link to={item.kind === 'event' ? '/e/$id' : '/o/$id'} params={{ id: item.id }} className="catalog-card-main">
       <span className="chip">{t(`discover.kind.${item.kind}`)}</span>
       <strong>{item.title}</strong>
       {item.summary && <small className="catalog-summary">{item.summary}</small>}
@@ -96,7 +98,7 @@ export function DiscoverPage({ search }: { search: DiscoverSearch }) {
 
       <section className="gw-container gw-discover-filters" aria-label={t('discover.filters')}>
         <div className="catalog-search">
-          <GwIcon name="MagnifyingGlass" size={18} />
+          <GwIcon name="Search" size={18} />
           <input type="search" className="catalog-search-input" defaultValue={search.q ?? ''} placeholder={t('discover.searchPlaceholder')} aria-label={t('discover.searchPlaceholder')}
             onKeyDown={e => { if (e.key === 'Enter') set({ q: (e.target as HTMLInputElement).value || undefined }); }}
             onBlur={e => { if ((e.target.value || undefined) !== search.q) set({ q: e.target.value || undefined }); }} />
@@ -142,7 +144,7 @@ export function DiscoverPage({ search }: { search: DiscoverSearch }) {
         {isLoading && <ListSkeleton />}
         {error && <RetryState retry={() => void refetch()} />}
         {!isLoading && !error && <p className="gw-fine" role="status">{t('discover.count', { count: data.length })}</p>}
-        {!isLoading && !error && data.length > 0 && <ul className="gw-grid catalog-grid">{data.map(item => <CatalogCard key={`${item.kind}:${item.id}`} item={item} lang={lang} t={(k, o) => t(k, o)} />)}</ul>}
+        {!isLoading && !error && data.length > 0 && <ul className="gw-grid catalog-grid">{data.map(item => <CatalogCard key={`${item.kind}:${item.id}`} item={item} lang={lang} />)}</ul>}
         {!isLoading && !error && data.length === 0 && <div className="gw-empty">
           <p><strong>{filters.near ? t('discover.emptyLocal') : t('discover.empty')}</strong></p>
           {hasActiveFilters(filters) && <button type="button" className="gw-btn gw-btn-secondary" onClick={clearAll}>{t('discover.clearAll')}</button>}
