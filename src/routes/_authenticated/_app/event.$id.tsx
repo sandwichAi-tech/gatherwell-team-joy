@@ -11,7 +11,9 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ArrowLeft, ArrowRight, CalendarDays, MapPin, UserRound, UsersRound, Check, Save, Rocket, Pencil, CopyPlus, Share2, Ban, Trash2, Copy, MessageCircle, MessageSquareText, Repeat, ImageDown, EyeOff, ScanLine, PartyPopper } from '@/components/icons';
+import { ArrowLeft, ArrowRight, CalendarDays, MapPin, UserRound, UsersRound, Check, Save, Rocket, Pencil, CopyPlus, Share2, Ban, Trash2, Copy, MessageCircle, MessageSquareText, Repeat, ImageDown, EyeOff, ScanLine, PartyPopper, Archive, Eye } from '@/components/icons';
+import { readinessBlockers } from '@/lib/event-builder';
+import { planStatusQuery } from '@/lib/billing';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
@@ -58,7 +60,8 @@ function EventDetailPage() {
   const { data: summary } = useQuery({ queryKey: ['event', id, 'summary', live?.checked_in], enabled: manages && ended && event?.status === 'published',
     queryFn: async () => (await supabase.rpc('event_summary', { _event: id })).data as null | Record<'rsvps' | 'checkins' | 'walk_ins' | 'first_timers' | 'photos', number> });
   const [draft, setDraft] = useState<TemplateDraft | null>(null);
-  const [saving, setSaving] = useState(false); const [sheet, setSheet] = useState<'share' | 'cancel' | 'delete' | null>(null); const [notify, setNotify] = useState(true);
+  const [saving, setSaving] = useState(false); const [sheet, setSheet] = useState<'share' | 'cancel' | 'delete' | 'archive' | null>(null); const [notify, setNotify] = useState(true);
+  const { data: planStatus } = useQuery(planStatusQuery(userId));
   const [refund, setRefund] = useState(true); const gate = usePaymentGate(); const refundFn = useServerFn(refundPayments);
   const { data: planWaiting = 0 } = useQuery({ queryKey: ['event', id, 'plan-waitlist'], enabled: manages && event?.status === 'published',
     queryFn: async () => {
@@ -80,7 +83,7 @@ function EventDetailPage() {
     const { error } = await supabase.from('event_checklists').update({ items, updated_at: new Date().toISOString() }).eq('event_id', id);
     if (error) { toast.error(t('profile.saveError')); await refresh(); }
   };
-  const setStatus = async (status: 'published' | 'cancelled') => {
+  const setStatus = async (status: 'published' | 'cancelled' | 'draft' | 'archived') => {
     setSaving(true); const { error } = await supabase.from('events').update({ status }).eq('id', id); setSaving(false);
     if (error) { toast.error(t('profile.saveError')); return; }
     if (status === 'cancelled' && refund && event.price_cents) {

@@ -55,6 +55,7 @@ export const Download = mk('Download');
 export const ExternalLink = mk('ExternalLink');
 export const Eye = mk('Eye');
 export const EyeOff = mk('EyeOff');
+export const Archive = mk('Archive');
 export const FileText = mk('FileText');
 export const Flag = mk('Flag');
 export const Gift = mk('Gift');
