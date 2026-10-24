@@ -2251,3 +2251,13 @@ a.gw-cat-chip:hover{background:#fff}
 .following-row { display: flex; align-items: center; gap: .5rem; }
 .following-row .follow-event { flex: 1; }
 .gw-empty-actions { display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center; margin-top: 1rem; }
+
+/* Workspace settings */
+.ws-tabs { margin-bottom: 1rem; flex-wrap: wrap; }
+.ws-member-list, .ws-invite-list, .ws-activity-list { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; gap: .5rem; }
+.ws-member, .ws-invite, .ws-activity { display: flex; align-items: center; gap: .75rem; padding: .75rem; border: 1px solid var(--border); border-radius: var(--radius); }
+.ws-member-main { flex: 1; min-width: 0; display: grid; }
+.ws-member-main small { color: var(--muted); }
+.ws-member-actions { display: flex; gap: .25rem; align-items: center; flex-wrap: wrap; }
+.ws-role-select { min-height: 48px; }
+.ws-invite-link { word-break: break-all; display: block; padding: .75rem; background: var(--muted-bg, var(--secondary)); border-radius: var(--radius); }

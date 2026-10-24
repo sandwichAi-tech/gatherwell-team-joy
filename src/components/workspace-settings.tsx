@@ -149,7 +149,7 @@ export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string
       <Button onClick={() => { setInviteLink(null); setInviteOpen(true); }}><GwIcon name="UserPlus" />{t('workspace.newInvite')}</Button>
       {invites.isLoading && <ListSkeleton rows={2} />}
       {invites.isError && <RetryState retry={() => void invites.refetch()} />}
-      {invites.data?.length === 0 && <EmptyState compact icon="EnvelopeSimple" text={t('workspace.noInvites')} />}
+      {invites.data?.length === 0 && <EmptyState compact icon="Mail" text={t('workspace.noInvites')} />}
       <ul className="ws-invite-list">{invites.data?.map(i => <li key={i.id} className="ws-invite">
         <span className="ws-member-main"><strong>{i.email}</strong><small>{t(`workspace.role.${i.role}`)} · {t(`workspace.state.${i.state}`)}</small></span>
         {i.state === 'pending' && <Button variant="ghost" size="icon" aria-label={t('workspace.revoke')} onClick={() => revoke(i.id)}><GwIcon name="X" /></Button>}
@@ -185,7 +185,7 @@ export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string
     {tab === 'activity' && <>
       {activity.isLoading && <ListSkeleton rows={3} />}
       {activity.isError && <RetryState retry={() => void activity.refetch()} />}
-      {activity.data?.length === 0 && <EmptyState compact icon="ListChecks" text={t('workspace.noActivity')} />}
+      {activity.data?.length === 0 && <EmptyState compact icon="List" text={t('workspace.noActivity')} />}
       <ul className="ws-activity-list">{activity.data?.map((a, i) => <li key={i} className="ws-activity">
         <span className="ws-member-main"><strong>{t(`workspace.action.${a.action}`, { defaultValue: a.action })}</strong>
           <small>{[a.actor, a.target, new Date(a.at).toLocaleString(i18n.resolvedLanguage === 'es' ? 'es' : 'en')].filter(Boolean).join(' · ')}</small></span>
