@@ -210,7 +210,7 @@ export function PlanPage() {
         <p className="auth-subtitle">{t('billing.teamText')}</p>
         {LICENSES.filter(l => l.id === 'team25').map(l => <div key={l.id} className="plan-license-row"><span><strong>{t(`billing.${l.id}`)}</strong><small>{t('billing.seatsGrowth', { n: l.seats })} · {t('billing.feeOnSales', { pct: V5_LICENSE_FEE_PERCENT[l.id] })}</small></span><span className="plan-license-price">{formatMoney(l.cents, lang)}{t('billing.perMonth')}</span>
           {ws?.role === 'leader' && <Button variant="secondary" disabled={gate.busy} onClick={() => void gate.run(() => license({ data: { teamId: ws.teamId, tier: l.id, origin, lang, environment: getStripeEnvironment() } }))}>{t('billing.buy')}</Button>}</div>)}
-        <div className="plan-license-row"><span><strong>{t('billing.organization')}</strong><small>{t('billing.orgText')} · {t('billing.feeOnSales', { pct: 0.5 })}</small></span><Button asChild variant="secondary"><Link to="/support" search={{ new: 'organization' }}>{t('billing.contact')}</Link></Button></div>
+        <div className="plan-license-row"><span><strong>{t('billing.organization')}</strong><small>{t('billing.orgText')} · {t('billing.feeOnSales', { pct: 0.5 })}</small></span><Button asChild variant="secondary"><Link to="/support" search={{ t: undefined, new: 'organization' }}>{t('billing.contact')}</Link></Button></div>
       </article>
     </div>
 
@@ -296,7 +296,7 @@ export function SeatsPage() {
       <EmptyState compact icon="CreditCard" text={t('billing.noLicense')} />
       {LICENSES.filter(l => l.id === 'team25').map(l => <div key={l.id} className="plan-license-row"><span><strong>{t(`billing.${l.id}`)}</strong><small>{t('billing.seatsGrowth', { n: l.seats })} · {t('billing.feeOnSales', { pct: V5_LICENSE_FEE_PERCENT[l.id] })}</small></span><span className="plan-license-price">{formatMoney(l.cents, lang)}{t('billing.perMonth')}</span>
         <Button disabled={gate.busy} onClick={() => void gate.run(() => license({ data: { teamId, tier: l.id, origin: window.location.origin, lang, environment: getStripeEnvironment() } }))}>{t('billing.buy')}</Button></div>)}
-      <div className="plan-license-row"><span><strong>{t('billing.organization')}</strong><small>{t('billing.orgText')} · {t('billing.feeOnSales', { pct: 0.5 })}</small></span><Button asChild variant="secondary"><Link to="/support" search={{ new: 'organization' }}>{t('billing.contact')}</Link></Button></div>
+      <div className="plan-license-row"><span><strong>{t('billing.organization')}</strong><small>{t('billing.orgText')} · {t('billing.feeOnSales', { pct: 0.5 })}</small></span><Button asChild variant="secondary"><Link to="/support" search={{ t: undefined, new: 'organization' }}>{t('billing.contact')}</Link></Button></div>
       {isAdmin && <Button variant="secondary" onClick={() => void grantPreview()}>{t('billing.grantPreview')}</Button>}
     </section>}
     {gate.sheet}

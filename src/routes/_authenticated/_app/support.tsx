@@ -73,7 +73,7 @@ function SupportPage() {
   </section>;
 }
 
-function NewTicketSheet({ open, preset, onClose, onCreated }: { open: boolean; preset?: 'organization'; onClose: () => void; onCreated: (id: string) => void }) {
+function NewTicketSheet({ open, preset, onClose, onCreated }: { open: boolean; preset?: 'organization' | undefined; onClose: () => void; onCreated: (id: string) => void }) {
   const { t } = useTranslation();
   const [cat, setCat] = useState<(typeof CATS)[number]>(preset === 'organization' ? 'billing' : 'account');
   const [subject, setSubject] = useState(preset === 'organization' ? t('support.orgSubject') : ''); const [body, setBody] = useState(''); const [busy, setBusy] = useState(false);
