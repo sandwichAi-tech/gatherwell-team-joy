@@ -100,3 +100,9 @@ The requester supplied the following results after commit ac2eef3c5d5ff7138522b8
 ## 2026-10-24 — Course verification (0061)
 - offer_readiness() 400'd on any blocker (array literal bug); fixed with array_append — no privilege change, still host-only via auth.uid() check.
 - Re-verified live: anonymous /o/$id exposes metadata + lesson titles only (no content, paths, notes, emails); archiving an offer immediately removes public access; course fixtures fully removed after testing.
+
+## 2026-10-24 — Quizzes & certificates (0062–0069)
+- Answer keys, scoring notes and unpublished quizzes are host-only: learners read questions via get_quiz_for_taker (no keys/accepted answers/explanations); the quizzes table has no learner SELECT. Verified via API fixture.
+- Grading, attempt limits, cooldowns, time limits and prerequisites are enforced in security-definer RPCs; clients cannot set scores. submit_quiz is idempotent per attempt.
+- Certificates: issued only after server-verified completion, idempotent, unguessable ZW-+12-hex numbers; public verification returns only validity, display name, course, issuer, dates and revoked/expired flags — no email or profile data. Revocation keeps history.
+- a11y defect fixed: mounted-but-closed vaul Drawers (assistant, creation sheet) left aria-hidden on the app root, hiding the entire page from assistive tech; both now unmount when closed.

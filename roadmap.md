@@ -199,3 +199,5 @@ Active work follows the approved Prompt 1–17 sequence in the ZoheeWell Beta Pr
 - [ ] Raise test-account gathering limit or use a fresh account to browser-verify create-from-scratch
 - [x] Registration milestone (v0.17): terms consent, ticket tiers, host cancel with reason, My tickets; guest free RSVP verified in browser
 - [ ] Registration follow-ups: concurrency load check, waitlist promotion + guest claim browser journeys, guardian RSVP on a live minors event, screen-reader pass
+- [x] Quiz/progress/certificate milestone (v0.22): authoring, grading, progress, certificates, public verification; API + host-side browser verified
+- [ ] Learner quiz/certificate browser journey with a second account (API-verified only so far)
