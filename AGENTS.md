@@ -15,7 +15,7 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Render brand artwork through BrandLogo using original CDN-backed SVGs and theme-aware variants; keep photography in BrandImage so logos retain exact supplied colors without photo grading.
 - Marketing icons use the shared GwIcon marketing variant: duotone silhouettes with scoped contour reinforcement, preserving signed-in icon weights.
 - Keep homepage hosting paths, steps and tool inventory inside the existing landing page and reuse login intent/discovery routes; marketing copy never claims a provider or checkout is live before it is verified.
-- Keep enduring product requirements in PROJECT_RULES.md under SOURCE_OF_TRUTH.md; apply them to all future work.
+- Keep enduring product requirements in PROJECT_RULES.md under SOURCE_OF_TRUTH.md.
 - Use react-i18next with matched English and Latin American Spanish JSON resources for all visible and accessible copy, so language changes stay instant and complete.
 - Keep shared navigation, settings, and sheets in GatherwellShell around the root Outlet; use separate leaf routes for the five tabs so deep links work.
 - localStorage holds only language, theme and a pending invite code (cleared once the join completes); all user data lives in Lovable Cloud with team-scoped RLS.
@@ -47,7 +47,7 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Resources reuses the existing /learn routes and feature_learn gate; reader lists omit zero-lesson tracks and empty sections while management retains them for editing, avoiding duplicate content systems.
 - Home’s morning brief reuses getDailyBrief with authenticated caller-scoped reads and a tested pure rule mapper; no AI/daily snapshot storage, guest contacts, or shared user cache, so facts refresh and attendee codes remain private.
 - Admin password sign-in uses the public /admin-login page and existing Cloud Auth accounts; getAdminAccess validates the authenticated role before navigation, while every admin data handler retains its own role check, so the sign-in screen never grants privileges.
-- Event Blueprints reuse templates, TemplateEditor and the existing template-attributed event creation path; shared blueprint-defaults maps all reusable fields and excludes dates/places, while host-own RLS enables save/edit/delete without exposing other hosts' drafts.
+- Event Blueprints reuse templates, TemplateEditor and the template-attributed event creation path; blueprint-defaults maps reusable fields and excludes dates/places; host-own RLS keeps drafts private.
 - Platform fees are calculated only from versioned fee_rules (DB calc_platform_fee_cents, mirrored and tested in src/lib/fees.ts); orders snapshot the rule so history never recalculates.
 - Database role regressions live in tests/database and run only by explicit invocation against a disposable copy; never connect these fixture-writing tests to production, preview, or the ordinary automated suite.
 - Consent acceptances resolve version/hash in database triggers, and flag changes append server-owned config history; clients never choose snapshots or write audit history.
