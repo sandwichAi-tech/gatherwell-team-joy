@@ -4692,19 +4692,74 @@
     "setupRequired": "Configuración pendiente",
     "checkoutNote": "El pago de planes todavía no está disponible. Puedes empezar hoy con el plan Gratis.",
     "feeTitle": "Tarifa de plataforma",
+    "feeLadder": "La tarifa de plataforma de ZoheeWell sobre ventas pagadas baja a medida que crece tu plan: 5% en Gratis, 3% en Avanzado, 2% en Pro, 1% en Equipo 25 y 0.5% en Organización. Lo gratuito nunca tiene tarifa de plataforma. El procesamiento de Stripe es aparte.",
+    "feeDisclosure": "Tarifa de plataforma sobre ventas pagadas: 5% Gratis, 3% Avanzado, 2% Pro, 1% Equipo 25, 0.5% Organización. Lo gratuito no tiene tarifa. El procesamiento de Stripe es aparte.",
     "payoutsNote": "Los pagos a anfitriones estarán disponibles próximamente.",
     "annualTitle": "Pago anual",
+    "billingPeriod": "Periodo de pago",
+    "monthly": "Mensual",
+    "annual": "Anual",
+    "twoMonthsFree": "2 meses gratis",
+    "annualSavings": "Ahorra {{pct}}% comparado con el pago mensual",
+    "startingAt": "desde",
+    "contactSales": "Contactar a ventas",
+    "feeLine": "{{pct}}% de tarifa de plataforma sobre ventas pagadas",
+    "seatsLine": "{{n}} lugares de constructor",
+    "seatTitle": "¿Qué es un lugar de constructor?",
+    "seatBody": "Un lugar de constructor es para quien crea o administra lo que ofreces: el dueño, administradores, anfitriones y editores de contenido.",
+    "seatFree": "El personal de registro, analistas, moderadores, miembros, asistentes y estudiantes nunca usan un lugar de constructor: agrega los que necesites.",
     "desc": {
       "free": "Organiza eventos gratuitos y empieza.",
       "advanced": "Más herramientas para anfitriones en crecimiento.",
       "pro": "Todo para anfitriones con mucha actividad.",
-      "team25": "Para equipos de hasta 25 anfitriones.",
-      "team100": "Para equipos de hasta 100 anfitriones."
+      "team25": "Para equipos de hasta 25 constructores.",
+      "organization": "Para organizaciones de hasta 100 constructores, con ayuda en la configuración."
+    },
+    "compare": {
+      "title": "Compara los planes",
+      "sub": "Todos los planes incluyen el conjunto completo de eventos, cursos y comunidad. Los planes difieren en lugares de constructor y en la tarifa de plataforma sobre ventas pagadas.",
+      "caption": "Comparación de los planes de ZoheeWell: lugares de constructor, tarifa de plataforma y funciones incluidas.",
+      "feature": "Función",
+      "included": "Incluido",
+      "onPaidSales": "sobre ventas pagadas",
+      "note_email": "Soporte por correo",
+      "note_usage": "Uso con precio aparte",
+      "note_setup": "Configuración pendiente",
+      "footnote": "El pago de planes y los pagos a anfitriones todavía no están disponibles. Los SMS y el procesamiento de pagos los proveen terceros y tienen precio aparte.",
+      "rows": {
+        "seats": "Lugares de constructor",
+        "fee": "Tarifa de plataforma",
+        "events": "Eventos y retiros",
+        "courses": "Cursos y recursos",
+        "memberships": "Membresías y suscripciones",
+        "tickets": "Niveles de boletos y registro",
+        "checkin": "Registro de entrada y listas de espera",
+        "roles": "Roles de equipo e invitaciones",
+        "analytics": "Analíticas e informes",
+        "exports": "Exportación de datos",
+        "support": "Soporte",
+        "sms": "SMS y mensajería",
+        "payments": "Procesamiento de pagos"
+      }
+    },
+    "whichPlan": {
+      "title": "¿Qué plan es para mí?",
+      "items": [
+        { "title": "Apenas empiezas", "body": "Gratis es para ti. Organiza eventos gratuitos, invita a dos colaboradores y solo pagas una tarifa cuando vendes algo." },
+        { "title": "Haces crecer tu audiencia", "body": "Avanzado baja tu tarifa a 3% y mantiene tres lugares de constructor para ti y dos colaboradores." },
+        { "title": "Te dedicas a organizar", "body": "Pro baja la tarifa a 2% y te da cinco lugares de constructor para un equipo pequeño." },
+        { "title": "Diriges un equipo o estudio", "body": "Equipo 25 cubre hasta 25 constructores con una tarifa de 1% sobre ventas pagadas." },
+        { "title": "Una organización grande", "body": "Organización llega hasta 100 constructores con una tarifa de 0.5%. Contacta a ventas y lo configuramos contigo." }
+      ]
     },
     "faq": [
       {
         "q": "¿Cuál es la tarifa de plataforma?",
-        "a": "Se aplica una tarifa fija de plataforma de ZoheeWell del 5% a tus ventas pagadas en cualquier plan. Lo gratuito no tiene tarifa de plataforma. El procesamiento de Stripe es aparte."
+        "a": "Se aplica una tarifa de plataforma de ZoheeWell a tus ventas pagadas, y baja a medida que crece tu plan: 5% en Gratis, 3% en Avanzado, 2% en Pro, 1% en Equipo 25 y 0.5% en Organización. Lo gratuito no tiene tarifa de plataforma. El procesamiento de Stripe es aparte."
+      },
+      {
+        "q": "¿Qué es un lugar de constructor?",
+        "a": "Un lugar de constructor es para quien crea o administra lo que ofreces: el dueño, administradores, anfitriones y editores de contenido. El personal de registro, analistas, moderadores, miembros, asistentes y estudiantes nunca usan un lugar de constructor."
       },
       {
         "q": "¿Cómo funciona el pago anual?",
