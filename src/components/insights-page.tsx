@@ -8,7 +8,8 @@ import { downloadCsv } from '@/lib/csv';
 import { formatMoney } from '@/lib/billing';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { workspaceQuery } from '@/lib/account';
-import { roleAllows } from '@/lib/workspace';
+import { roleAllows, type WorkspaceCapability } from '@/lib/workspace';
+import type { WorkspaceRole } from '@/components/workspace-settings';
 import { getHostAnalytics, getTeamAnalytics } from '@/lib/insights.functions';
 import { attendanceRate, eventsCsv, offersCsv, totals, type HostAnalytics } from '@/lib/insights';
 
@@ -27,7 +28,7 @@ export function InsightsPage() {
   const teamFn = useServerFn(getTeamAnalytics);
   const { data: workspace } = useQuery(workspaceQuery(userId));
   const { data, isLoading } = useQuery({ queryKey: ['host-analytics', userId], queryFn: () => hostFn() });
-  const canTeamAnalytics = roleAllows(workspace?.role, 'analytics');
+  const canTeamAnalytics = roleAllows(workspace?.role as WorkspaceRole | 'owner' | undefined, 'analytics' as WorkspaceCapability);
   const { data: team } = useQuery({
     queryKey: ['team-analytics', workspace?.teamId],
     enabled: canTeamAnalytics && !!workspace?.teamId,
