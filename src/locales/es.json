@@ -644,7 +644,10 @@
       "member_reactivated": "Miembro reactivado",
       "member_removed": "Miembro eliminado",
       "member_left": "Miembro salió",
-      "ownership_transferred": "Propiedad transferida"
+      "ownership_transferred": "Propiedad transferida",
+      "assignment_created": "Asignación creada",
+      "assignment_revoked": "Asignación revocada",
+      "assignment_reactivated": "Asignación reactivada"
     },
     "err": {
       "forbidden": "No tienes permiso para eso.",
@@ -662,7 +665,38 @@
       "owner_role_fixed": "El rol del propietario no se puede cambiar aquí.",
       "not_member": "Esa persona no es miembro.",
       "confirm_mismatch": "El texto de confirmación no coincide.",
-      "sole_owner": "Transfiere la propiedad antes de salir: eres el único propietario."
+      "sole_owner": "Transfiere la propiedad antes de salir: eres el único propietario.",
+      "invalid_scope_type": "Ese tipo de acceso no está disponible.",
+      "role_needs_no_assignment": "Los propietarios y administradores ya tienen acceso completo.",
+      "invalid_scope_for_role": "Ese tipo de acceso no corresponde al rol de este miembro.",
+      "scope_not_found": "Ese elemento no pertenece a este espacio.",
+      "already_assigned": "Este miembro ya tiene ese acceso.",
+      "not_found": "Asignación no encontrada.",
+      "not_allowed": "No tienes acceso para hacer eso."
+    },
+    "assignments": "Asignaciones",
+    "assignHint": "Da acceso a personal de registro, moderadores y editores de contenido a eventos, contenido o discusiones específicos.",
+    "newAssignment": "Nueva asignación",
+    "noAssignments": "Aún no hay asignaciones.",
+    "assignActive": "Activa",
+    "assignInactive": "Revocada",
+    "assignSaved": "Asignación guardada",
+    "assignRevoked": "Asignación revocada",
+    "assignReactivated": "Asignación reactivada",
+    "assignSheetHint": "La persona mantiene este acceso hasta que lo revoques. Cada cambio queda registrado en Actividad.",
+    "assignMember": "Miembro",
+    "assignPickMember": "Elige un miembro",
+    "assignScopeType": "Tipo de acceso",
+    "assignTarget": "A qué puede acceder",
+    "assignPickTarget": "Elige qué compartir",
+    "noScopes": "Aún no hay nada disponible para este tipo de acceso.",
+    "scopeGone": "Elemento eliminado",
+    "assignSave": "Guardar asignación",
+    "noAccess": "Solo los propietarios y administradores del espacio pueden abrir su configuración.",
+    "scope": {
+      "event": "Evento",
+      "content": "Contenido",
+      "moderation": "Moderación"
     }
   },
   "legal": {
