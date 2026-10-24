@@ -31,7 +31,8 @@
     "memberView": "Cambiar a vista de miembro",
     "leaderView": "Cambiar a vista de líder",
     "sampleDetails": "Detalles de ejemplo",
-    "previewNote": "Vista de ejemplo. Esta acción aún no está conectada."
+    "previewNote": "Vista de ejemplo. Esta acción aún no está conectada.",
+    "save": "Guardar"
   },
   "home": {
     "meta": {

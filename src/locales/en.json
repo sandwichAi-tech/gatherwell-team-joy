@@ -31,7 +31,8 @@
     "memberView": "Switch to member view",
     "leaderView": "Switch to leader view",
     "sampleDetails": "Sample details",
-    "previewNote": "Sample preview. This action is not connected yet."
+    "previewNote": "Sample preview. This action is not connected yet.",
+    "save": "Save"
   },
   "home": {
     "meta": {
