@@ -2313,9 +2313,14 @@ a.gw-cat-chip:hover{background:#fff}
 .moderation-panel h3 { margin-top: 1.25rem; }
 
 /* QA v0.25 fixes */
-.scanner-manual { margin-top: .75rem; display: flex; flex-direction: column; gap: .4rem; }
+.scanner { overflow-y: auto; padding: calc(72px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom)); align-content: start; justify-items: center; }
+.scanner.is-denied .scanner-video, .scanner.is-denied .scanner-frame { display: none; }
+.scanner-hint { position: static; margin-top: 12px; }
+.scanner-result { position: static; margin-top: 16px; width: 100%; }
+.scanner-manual { position: relative; z-index: 1; margin-top: 16px; width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: .4rem; background: var(--card); color: var(--foreground); padding: 16px; border-radius: 16px; }
 .scanner-manual label { font-weight: 600; font-size: .9rem; }
 .scanner-manual-row { display: flex; gap: .5rem; }
 .scanner-manual-row input { flex: 1; min-height: 48px; }
+.scanner-manual-row button { min-height: 48px; }
 .mobile-brand { min-height: 48px; display: inline-flex; align-items: center; }
 .gw-app-discover { min-width: 48px; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: .35rem; }
