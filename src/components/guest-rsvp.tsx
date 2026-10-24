@@ -26,6 +26,8 @@ import { formatMoney } from '@/lib/billing';
 import { RsvpQuestionsFields, answersReady } from '@/components/rsvp-questions';
 import { WaiverAccept, useEventWaiver, waiverReady, waiverRpc } from '@/components/waiver';
 import { directionsUrl, downloadIcs, formatWhen, googleCalendarUrl, guestLink, hasPlace, inviteToken, rsvpErrorKey, type PublicEvent } from '@/lib/guest';
+import { AGE_BANDS, checkMinorRegistration } from '@/lib/identity';
+import { minorBandAllowed } from '@/lib/event-builder';
 
 type CalEvent = Pick<PublicEvent, 'id' | 'title' | 'starts_at' | 'ends_at' | 'location_name' | 'address'>;
 
@@ -76,6 +78,8 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
   const [busy, setBusy] = useState(false); const [error, setError] = useState<string | null>(null);
   const [price, setPrice] = useState<{ price_cents: number; pass_fee: boolean; fee_pct: number; cover_service_fee?: boolean; service_fee_percent?: number; service_fee_fixed?: number; refund_policy?: string } | null>(null);
   const { data: waiver } = useEventWaiver(intent ? event.id : undefined); const [wName, setWName] = useState(''); const [wOk, setWOk] = useState(false); const [adult, setAdult] = useState(false);
+  const [minorOn, setMinorOn] = useState(false);
+  const [minor, setMinor] = useState({ first: '', band: '' as string, gName: '', gRel: 'parent', gEmail: '', gPhone: '', consent: false });
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const gate = usePaymentGate(); const checkout = useServerFn(startTicketCheckout);
   const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
@@ -106,6 +110,24 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
     if (intent === 'going' && !answersReady(event.questions, answers)) { setError(t('guest.errors.answers_required')); return; }
     const waiverName = waiver?.required ? wName.trim() : '';
     const consent = rsvpReminderConsent(form);
+    if (minorOn && event.allows_minors) {
+      const check = checkMinorRegistration(true, true, { firstName: minor.first, ageBand: minor.band, guardianConsent: minor.consent });
+      if (!check.ok) { setError(t(`guest.errors.${check.error}`)); return; }
+      if (!minor.gName.trim() || !minor.gRel.trim() || (!minor.gEmail.trim() && !minor.gPhone.trim())) { setError(t('guest.errors.guardian_details_incomplete')); return; }
+      if (!minorBandAllowed(event.min_age ?? null, minor.band as 'under_5' | '5_12' | '13_17')) { setError(t('guest.errors.min_age_not_met')); return; }
+      setBusy(true); setError(null);
+      try {
+        const { data, error: err } = await supabase.rpc('rsvp_event_minor', {
+          _event_id: event.id, _minor_first: minor.first.trim(), _minor_age_band: minor.band,
+          _guardian_name: minor.gName.trim(), _guardian_relationship: minor.gRel, _guardian_email: minor.gEmail.trim(), _guardian_phone: minor.gPhone.trim(),
+          _language: i18n.resolvedLanguage === 'es' ? 'es' : 'en', _sms: consent.sms, _mail: consent.mail, _token: inviteToken() ?? '' });
+        const row = (Array.isArray(data) ? data[0] : null) as { code: string; status: string } | null;
+        if (err || !row) { const k = rsvpErrorKey(err); setError(t(k === 'guest.errors.generic' ? 'guest.errors.save_failed' : k)); return; }
+        trackEvent('rsvp', { status: row.status, minor: true });
+        onDone({ code: row.code, status: row.status as RsvpResult['status'] });
+      } catch { setError(t('guest.errors.save_failed')); } finally { setBusy(false); }
+      return;
+    }
     if (paid) {
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim())) { setError(t('guest.errors.invalid_email')); return; }
       if (!adult) { setError(t('identity.adultRequired')); return; }
@@ -143,6 +165,25 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
         <div><label className="field-label" htmlFor="g-last">{t('guest.lastName')}</label><Input id="g-last" autoComplete="family-name" maxLength={60} className="field-input" value={form.last} onChange={e => setForm({ ...form, last: e.target.value })} /></div>
         <div className="guest-plus"><span className="field-label">{t('guest.plusOnes')}</span><Stepper value={form.plus} onChange={plus => setForm({ ...form, plus })} label={t('guest.plusOnes')} /></div>
       </div></details>
+      {event.allows_minors && !paid && intent === 'going' && <section className="guest-minor">
+        <label className="guest-consent"><Checkbox checked={minorOn} onCheckedChange={v => setMinorOn(!!v)} /><span>{t('guest.minor.toggle')}</span></label>
+        {minorOn && <div className="guest-minor-fields">
+          <div><label className="field-label" htmlFor="g-minor-first">{t('guest.minor.firstName')}</label><Input id="g-minor-first" maxLength={40} className="field-input" value={minor.first} onChange={e => setMinor({ ...minor, first: e.target.value })} /></div>
+          <div><label className="field-label" htmlFor="g-minor-band">{t('guest.minor.ageBand')}</label>
+            <select id="g-minor-band" className="field-input" value={minor.band} onChange={e => setMinor({ ...minor, band: e.target.value })}>
+              <option value="">{t('guest.minor.pickBand')}</option>
+              {AGE_BANDS.map(b => <option key={b} value={b} disabled={!minorBandAllowed(event.min_age ?? null, b)}>{t(`guest.minor.bands.${b}`)}</option>)}
+            </select></div>
+          <div><label className="field-label" htmlFor="g-gname">{t('guest.minor.guardianName')}</label><Input id="g-gname" autoComplete="name" maxLength={120} className="field-input" value={minor.gName} onChange={e => setMinor({ ...minor, gName: e.target.value })} /></div>
+          <div><label className="field-label" htmlFor="g-grel">{t('guest.minor.relationship')}</label>
+            <select id="g-grel" className="field-input" value={minor.gRel} onChange={e => setMinor({ ...minor, gRel: e.target.value })}>
+              {(['parent', 'guardian', 'other'] as const).map(r => <option key={r} value={r}>{t(`guest.minor.rel.${r}`)}</option>)}
+            </select></div>
+          <div><label className="field-label" htmlFor="g-gemail">{t('guest.minor.guardianEmail')}</label><Input id="g-gemail" type="email" maxLength={200} className="field-input" value={minor.gEmail} onChange={e => setMinor({ ...minor, gEmail: e.target.value })} /></div>
+          <div><label className="field-label" htmlFor="g-gphone">{t('guest.minor.guardianPhone')}</label><Input id="g-gphone" type="tel" inputMode="tel" maxLength={30} className="field-input" value={minor.gPhone} onChange={e => setMinor({ ...minor, gPhone: e.target.value })} /></div>
+          <label className="guest-consent"><Checkbox checked={minor.consent} onCheckedChange={v => setMinor({ ...minor, consent: !!v })} /><span>{t('guest.minor.consent')}</span></label>
+        </div>}
+      </section>}
       {!!event.questions?.length && <RsvpQuestionsFields questions={event.questions} value={answers} onChange={setAnswers} />}
       {event.require_approval && intent === 'going' && <p className="guest-hint">{t('rsvpq.approvalHint')}</p>}
       {waiver && <WaiverAccept waiver={waiver} name={wName} accepted={wOk} onName={setWName} onAccepted={setWOk} />}

@@ -2154,3 +2154,12 @@ a.gw-cat-chip:hover{background:#fff}
 .gw-v4-box-title{margin:0 0 6px;font-size:18px}.gw-v4-box p{margin:0 0 6px}
 @media (min-width:768px){.gw-v4-plans{grid-template-columns:repeat(2,1fr)}.gw-v4-terms{grid-template-columns:repeat(3,1fr)}}
 @media (min-width:1100px){.gw-v4-plans{grid-template-columns:repeat(5,1fr)}}
+
+/* Event builder + public page additions */
+.guest-summary{font-size:17px;line-height:1.5;color:var(--body);margin:4px 0 0}
+.guest-tags{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:8px 0 0}
+.builder-tier{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--border);border-radius:14px;margin-bottom:8px}
+.builder-blockers{margin:4px 0 0;padding-left:18px;font-size:14px;line-height:1.6}
+.builder-fee .guest-fee-lines{background:var(--warm-chip)}
+.guest-minor{display:flex;flex-direction:column;gap:12px;padding:16px;border:1px solid var(--border);border-radius:14px}
+.guest-minor-fields{display:flex;flex-direction:column;gap:12px}

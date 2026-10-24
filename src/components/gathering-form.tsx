@@ -4,6 +4,7 @@ import { RefundSelect } from '@/components/refund-line';
 import { asRefundPolicy, type RefundPolicy } from '@/lib/refunds';
 import { PriceGuidance } from '@/components/coach-launch';
 import { RetreatEditor, cleanRetreat } from '@/components/retreat';
+import { EventDetailsSections, detailsFromEvent, detailsPayload, emptyDetails, type EventDetails } from '@/components/event-details-form';
 import { asRetreat, emptyRetreat, type Retreat } from '@/lib/retreat';
 import { CATEGORIES, isCategory, type Category } from '@/lib/landing';
 import { CropFileInput, type CropResult } from '@/components/image-crop';
@@ -52,7 +53,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const [category, setCategory] = useState<Category>('more'); const [categoryLabel, setCategoryLabel] = useState('');
   const [title, setTitle] = useState(''); const [coverPath, setCoverPath] = useState<string | null>(null); const [coverStyle, setCoverStyle] = useState(0);
   const [start, setStart] = useState(''); const [duration, setDuration] = useState<number>(60); const [customDuration, setCustomDuration] = useState(false);
-  const [place, setPlace] = useState<'person' | 'online'>('person'); const [locationName, setLocationName] = useState(''); const [address, setAddress] = useState('');
+  const [place, setPlace] = useState<'person' | 'online' | 'hybrid'>('person'); const [locationName, setLocationName] = useState(''); const [address, setAddress] = useState('');
+  const [details, setDetails] = useState<EventDetails>(emptyDetails);
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null); const [note, setNote] = useState(''); const [url, setUrl] = useState('');
   const [price, setPrice] = useState(''); const [refund, setRefund] = useState<RefundPolicy>('24h'); const [limit, setLimit] = useState<null | 'gatherings' | 'storage'>(null);
   const [capacity, setCapacity] = useState(''); const [communitySeats, setCommunitySeats] = useState(''); const [coverFee, setCoverFee] = useState(false); const [visibility, setVisibility] = useState<'public' | 'team' | 'invite'>('public');
@@ -84,7 +86,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       setCategory(isCategory(e.category) ? e.category : 'more'); setCategoryLabel(e.category_label ?? ''); setTitle(e.title); setCoverPath(e.cover_url); setCoverStyle(e.cover_style ?? 0); setDescEn(e.description_en ?? ''); setDescEs(e.description_es ?? '');
       const mins = e.ends_at ? Math.max(5, Math.round((new Date(e.ends_at).getTime() - new Date(e.starts_at).getTime()) / 60000)) : 60;
       setDuration(mins); setCustomDuration(!DURATIONS.includes(mins as 60));
-      setPlace(isOnline(e) ? 'online' : 'person'); setLocationName(e.location_name ?? ''); setAddress(e.address ?? ''); setNote(e.meeting_note ?? ''); setUrl(e.online_url ?? '');
+      setPlace(isOnline(e) ? 'online' : e.online_url ? 'hybrid' : 'person'); setLocationName(e.location_name ?? ''); setAddress(e.address ?? ''); setNote(e.meeting_note ?? ''); setUrl(e.online_url ?? '');
+      setDetails(detailsFromEvent(e as Record<string, unknown>));
       setCoords(e.lat != null && e.lng != null ? { lat: e.lat, lng: e.lng } : null);
       setCoverFee(!!(e as { cover_service_fee?: boolean }).cover_service_fee);
       setRefund(asRefundPolicy((e as { refund_policy?: string }).refund_policy));
@@ -147,7 +150,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const teamId = editing && source ? source.event.team_id : workspace.teamId;
   if (!editing && workspace.role === 'member') return <section className="panel"><h2>{t('gathering.hostsOnly')}</h2><p>{t('gathering.hostsOnlyText')}</p></section>;
 
-  const urlBad = place === 'online' && url.trim() !== '' && !/^https:\/\/\S+$/i.test(url.trim());
+  const urlBad = place !== 'person' && url.trim() !== '' && !/^https:\/\/\S+$/i.test(url.trim());
   const valid = !(retreatOn && (!retreatEnd || !start || new Date(retreatEnd) <= new Date(start))) && title.trim() && start && !urlBad && (place === 'person' || url.trim()) && (!capacity || Number(capacity) >= 1) && (!priceCents || (priceCents >= 100 && priceCents <= 100000));
   const presets = datePresets(); const usual = editing ? null : usualSlot(history);
   const startDate = start ? new Date(start) : null;
@@ -157,15 +160,23 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
 
   const payload = () => ({
     category, category_label: category === 'more' ? categoryLabel.trim() : '', title: title.trim(), cover_url: coverPath ?? '', cover_style: coverStyle, starts_at: new Date(start).toISOString(), duration_minutes: duration,
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, location_name: place === 'person' ? locationName : '', address: place === 'person' ? address : '',
-    meeting_note: place === 'person' ? note : '', online_url: place === 'online' ? url.trim() : '', capacity: capacity ? Number(capacity) : '',
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, location_name: place !== 'online' ? locationName : '', address: place !== 'online' ? address : '',
+    meeting_note: place !== 'online' ? note : '', online_url: place !== 'person' ? url.trim() : '', capacity: capacity ? Number(capacity) : '',
     visibility, description_en: descEn.trim(), description_es: descEs.trim(), template_id: tpl?.id ?? '',
     ...(weekly ? { recurrence: rule.kind, occurrences: dates.map(d => d.toISOString()) } : {}),
     lat: place === 'person' && coords ? coords.lat : '', lng: place === 'person' && coords ? coords.lng : '',
   });
 
+  const detailsJson = detailsPayload(details);
+  const saveDetails = async (id: string) => {
+    if (!detailsJson) return true;
+    const { error } = await supabase.rpc('update_event_details', { _event: id, _p: { ...detailsJson, format: place } });
+    if (error) { toast.error(rpcError(t, error)); return false; }
+    return true;
+  };
   const submit = async (publish: boolean) => {
     setTried(true); if (!valid) { toast.error(t('gathering.fixFields')); return; }
+    if (!detailsJson) { toast.error(t('gathering.fixFields')); return; }
     if (priceCents && visibility === 'team') { toast.error(t('templates.teamFree')); return; }
     if (priceCents && publish && !canSell) { toast.error(t('billing.payoutsRequired')); return; }
     setBusy(true);
@@ -175,6 +186,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       setBusy(false);
       if (error) { toast.error(rpcError(t, error)); return; }
       await savePrice(eventId!); await saveTeamReg(eventId!); if (!(await saveRetreat(eventId!))) return;
+      if (!(await saveDetails(eventId!))) return;
       await queryClient.invalidateQueries(); toast.success(t('gathering.saved'));
       void navigate({ to: '/event/$id', params: { id: eventId! } }); return;
     }
@@ -186,6 +198,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (priceCents) await savePrice(data);
     if (teamReg.on) await saveTeamReg(data);
     if (retreatOn && !(await saveRetreat(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
+    if (!(await saveDetails(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
     await queryClient.invalidateQueries();
     if (publish) setDone({ id: data, visibility }); else { toast.success(t('gathering.draftSaved')); void navigate({ to: '/event/$id', params: { id: data } }); }
   };
@@ -261,15 +274,17 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
 
       <section className="form-section">
         <span className="field-label">{t('gathering.place')}</span>
-        <div className="segmented full" role="group" aria-label={t('gathering.place')}>{(['person', 'online'] as const).map(p => <Button key={p} variant="ghost" className={place === p ? 'selected' : ''} aria-pressed={place === p} onClick={() => setPlace(p)}>{p === 'person' ? <MapPin /> : <Globe2 />}{t(`map.${p}`)}</Button>)}</div>
-        {place === 'person' ? <>
+        <div className="segmented full" role="group" aria-label={t('gathering.place')}>{(['person', 'online', 'hybrid'] as const).map(p => <Button key={p} variant="ghost" className={place === p ? 'selected' : ''} aria-pressed={place === p} onClick={() => setPlace(p)}>{p === 'person' ? <MapPin /> : <Globe2 />}{t(`builder.format.${p}`)}</Button>)}</div>
+        {place !== 'online' && <>
           <Input className="field-input" maxLength={160} value={locationName} onChange={e => setLocationName(e.target.value)} placeholder={t('gathering.locationName')} aria-label={t('gathering.locationName')} />
           <Input ref={addressRef} className="field-input" maxLength={300} value={address} onChange={e => { setAddress(e.target.value); setCoords(null); }} placeholder={t('gathering.address')} aria-label={t('gathering.address')} autoComplete="off" />
           {!mapsKey && <p className="not-connected">{t('gathering.addressNote')}</p>}
           <Input className="field-input" maxLength={300} value={note} onChange={e => setNote(e.target.value)} placeholder={t('gathering.note')} aria-label={t('gathering.note')} />
-        </> : <>
+        </>}
+        {place !== 'person' && <>
           <Input type="url" inputMode="url" className="field-input" maxLength={500} value={url} onChange={e => setUrl(e.target.value)} placeholder="https://" aria-label={t('gathering.link')} aria-invalid={urlBad || (tried && !url.trim())} />
           {(urlBad || (tried && !url.trim())) && <p className="field-error">{t('gathering.errors.invalid_url')}</p>}
+          <p className="field-hint">{t('builder.onlinePrivate')}</p>
         </>}
       </section>
 
@@ -315,6 +330,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         <ClaimGuard text={descTab === 'en' ? descEn : descEs} lang={descTab} onUse={v => (descTab === 'en' ? setDescEn : setDescEs)(v)} />
         {tr.preview && <p className="not-connected">{t('assistant.previewTranslateNote')}</p>}
       </section>
+
+      <EventDetailsSections value={details} onChange={setDetails} priceCents={priceCents} lang={lang} />
 
       <section className="form-section">
         {(retreatsOn || retreatOn) && <><label className="guest-consent"><input type="checkbox" checked={retreatOn} onChange={e => { setRetreatOn(e.target.checked); if (e.target.checked && !retreatEnd && startDate) { const d = new Date(startDate); d.setDate(d.getDate() + 2); d.setHours(12, 0, 0, 0); setRetreatEnd(toLocalInput(d)); } }} /><span><strong>{t('retreat.toggle')}</strong><br /><small className="field-hint">{t('retreat.toggleHint')}</small></span></label>

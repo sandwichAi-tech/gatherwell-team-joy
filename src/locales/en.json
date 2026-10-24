@@ -780,7 +780,8 @@
     "status": {
       "draft": "Draft",
       "published": "Published",
-      "cancelled": "Cancelled"
+      "cancelled": "Cancelled",
+      "archived": "Archived"
     },
     "visibility": {
       "public": "Public",
@@ -1174,12 +1175,40 @@
       "members_only": "This event is for members only.",
       "waiver_required": "Please type your full name and check the box to accept the waiver.",
       "answers_required": "Please answer the required questions.",
-      "early_access": "RSVPs aren't open to everyone yet."
+      "early_access": "RSVPs aren't open to everyone yet.",
+      "minors_not_allowed": "This event is for adults only.",
+      "minor_details_incomplete": "Add the minor's first name and age range.",
+      "guardian_details_incomplete": "Add the guardian's name, relationship, and email or phone.",
+      "guardian_consent_required": "Guardian consent is required.",
+      "min_age_not_met": "This event has a minimum age that isn't met.",
+      "registration_not_open": "Registration hasn't opened yet.",
+      "registration_closed": "Registration is closed."
     },
     "waitlistPosition": "You're #{{n}} on the waitlist",
     "metaOnline": "Online",
     "metaHost": "Hosted by {{name}}",
-    "metaFree": "Free"
+    "metaFree": "Free",
+    "minor": {
+      "toggle": "This spot is for a minor",
+      "firstName": "Minor's first name",
+      "ageBand": "Age range",
+      "pickBand": "Choose…",
+      "bands": {
+        "under_5": "Under 5",
+        "5_12": "5–12",
+        "13_17": "13–17"
+      },
+      "guardianName": "Parent or guardian name",
+      "relationship": "Relationship",
+      "rel": {
+        "parent": "Parent",
+        "guardian": "Legal guardian",
+        "other": "Other adult"
+      },
+      "guardianEmail": "Guardian email",
+      "guardianPhone": "Guardian phone",
+      "consent": "I am the parent or legal guardian and I consent to this minor attending."
+    }
   },
   "guestList": {
     "back": "Back to event",
@@ -4482,5 +4511,88 @@
         "a": "Yes. Pricing may change after the pilot. We will tell you before any change affects you."
       }
     ]
+  },
+  "builder": {
+    "summary": "Short summary",
+    "summaryPlaceholder": "One line that says what this is",
+    "summaryEs": "Short summary (Spanish)",
+    "language": "Event language",
+    "mapLink": "Map link",
+    "mapLinkHint": "Optional link to a map pin or directions page.",
+    "openMap": "Open map",
+    "onlinePrivate": "The join link stays private until someone registers.",
+    "regWindow": "Registration window",
+    "regOpens": "Opens",
+    "regCloses": "Closes",
+    "waitlist": "Waitlist",
+    "waitlistHint": "Let guests join a waitlist when the event fills up.",
+    "tags": "Tags",
+    "tagsPlaceholder": "yoga, beginner, outdoor",
+    "tagsHint": "Up to 8, separated by commas.",
+    "contactEmail": "Contact email",
+    "contactPhone": "Contact phone",
+    "contact": "Questions",
+    "accessibility": "Accessibility notes",
+    "accessibilityPlaceholder": "Step-free entrance, quiet room, …",
+    "bring": "What to bring",
+    "bringPlaceholder": "Water bottle, mat, …",
+    "cancellation": "Cancellation and refund policy",
+    "cancellationPlaceholder": "Tell guests what happens if they or you cancel.",
+    "minors": "Minors can attend",
+    "minorsHint": "A parent or guardian registers each minor and gives consent.",
+    "minAge": "Minimum age",
+    "minAgeHint": "Leave empty to allow all ages with a guardian.",
+    "minorsTitle": "Age policy",
+    "minorsWelcome": "Minors are welcome with a parent or guardian.",
+    "minorsMinAge": "Minors ages {{age}}+ are welcome with a parent or guardian.",
+    "adultsOnly": "This event is for adults 18+ only.",
+    "tiers": "Ticket tiers and add-ons",
+    "tiersHint": "Optional. Checkout turns on once payments are configured.",
+    "tierName": "Tier name",
+    "tierQty": "Quantity (optional)",
+    "saleStarts": "Sale starts",
+    "saleEnds": "Sale ends",
+    "addTier": "Add tier",
+    "removeTier": "Remove tier",
+    "addonName": "Add-on name",
+    "addAddon": "Add add-on",
+    "removeAddon": "Remove add-on",
+    "feeEstimate": "Fee estimate",
+    "ticketPrice": "Ticket price",
+    "platformFee": "ZoheeWell fee (5%)",
+    "youKeep": "You keep",
+    "feeNote": "Stripe processing fees are separate and set by Stripe.",
+    "readiness": "Publication readiness",
+    "readyToPublish": "Everything needed is in place.",
+    "blockers": {
+      "title": "Add a title",
+      "date": "Pick a date and time",
+      "place": "Add a venue or address",
+      "online_link": "Add a valid https join link",
+      "reg_window": "Registration opens before it closes",
+      "retreat_dates": "Retreat end must be after the start",
+      "payouts": "Paid events need payouts set up (Setup required)",
+      "tier_invalid": "Fix ticket tier names and prices",
+      "min_age": "Minimum age needs minors allowed, 0–17"
+    },
+    "unpublish": "Unpublish",
+    "unpublished": "Unpublished — back to draft",
+    "archive": "Archive",
+    "archived": "Archived",
+    "archiveTitle": "Archive this event?",
+    "archiveText": "Archived events leave your lists but keep their records. You can restore by unpublishing to draft.",
+    "preview": "Preview public page",
+    "regNotOpen": "Registration hasn't opened",
+    "regNotOpenText": "Registration opens {{date}}.",
+    "regClosed": "Registration is closed",
+    "regClosedText": "This event is no longer taking registrations.",
+    "format": {
+      "person": "In person",
+      "online": "Online",
+      "hybrid": "Hybrid"
+    },
+    "errors": {
+      "reg_window": "Registration must open before it closes."
+    }
   }
 }

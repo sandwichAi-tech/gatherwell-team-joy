@@ -11,7 +11,9 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ArrowLeft, ArrowRight, CalendarDays, MapPin, UserRound, UsersRound, Check, Save, Rocket, Pencil, CopyPlus, Share2, Ban, Trash2, Copy, MessageCircle, MessageSquareText, Repeat, ImageDown, EyeOff, ScanLine, PartyPopper } from '@/components/icons';
+import { ArrowLeft, ArrowRight, CalendarDays, MapPin, UserRound, UsersRound, Check, Save, Rocket, Pencil, CopyPlus, Share2, Ban, Trash2, Copy, MessageCircle, MessageSquareText, Repeat, ImageDown, EyeOff, ScanLine, PartyPopper, Archive, Eye } from '@/components/icons';
+import { readinessBlockers } from '@/lib/event-builder';
+import { planStatusQuery } from '@/lib/billing';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
@@ -58,7 +60,8 @@ function EventDetailPage() {
   const { data: summary } = useQuery({ queryKey: ['event', id, 'summary', live?.checked_in], enabled: manages && ended && event?.status === 'published',
     queryFn: async () => (await supabase.rpc('event_summary', { _event: id })).data as null | Record<'rsvps' | 'checkins' | 'walk_ins' | 'first_timers' | 'photos', number> });
   const [draft, setDraft] = useState<TemplateDraft | null>(null);
-  const [saving, setSaving] = useState(false); const [sheet, setSheet] = useState<'share' | 'cancel' | 'delete' | null>(null); const [notify, setNotify] = useState(true);
+  const [saving, setSaving] = useState(false); const [sheet, setSheet] = useState<'share' | 'cancel' | 'delete' | 'archive' | null>(null); const [notify, setNotify] = useState(true);
+  const { data: planStatus } = useQuery(planStatusQuery(userId));
   const [refund, setRefund] = useState(true); const gate = usePaymentGate(); const refundFn = useServerFn(refundPayments);
   const { data: planWaiting = 0 } = useQuery({ queryKey: ['event', id, 'plan-waitlist'], enabled: manages && event?.status === 'published',
     queryFn: async () => {
@@ -80,7 +83,7 @@ function EventDetailPage() {
     const { error } = await supabase.from('event_checklists').update({ items, updated_at: new Date().toISOString() }).eq('event_id', id);
     if (error) { toast.error(t('profile.saveError')); await refresh(); }
   };
-  const setStatus = async (status: 'published' | 'cancelled') => {
+  const setStatus = async (status: 'published' | 'cancelled' | 'draft' | 'archived') => {
     setSaving(true); const { error } = await supabase.from('events').update({ status }).eq('id', id); setSaving(false);
     if (error) { toast.error(t('profile.saveError')); return; }
     if (status === 'cancelled' && refund && event.price_cents) {
@@ -89,7 +92,7 @@ function EventDetailPage() {
     }
     if (status === 'cancelled' && notify) { const { data: n } = await supabase.rpc('notify_gathering_cancelled', { _event: id }); toast.success(t('notify.cancelQueued', { count: n ?? 0 })); }
     void queryClient.invalidateQueries({ queryKey: ['outbox-summary', id] });
-    toast.success(t(status === 'published' ? 'templates.launchedToast' : 'gathering.cancelled')); setSheet(null); await refresh();
+    toast.success(t(status === 'published' ? 'templates.launchedToast' : status === 'draft' ? 'builder.unpublished' : status === 'archived' ? 'builder.archived' : 'gathering.cancelled')); setSheet(null); await refresh();
   };
   const remove = async () => {
     setSaving(true); const { error } = await supabase.from('events').delete().eq('id', id); setSaving(false);
@@ -100,6 +103,16 @@ function EventDetailPage() {
   const when = start.toLocaleString(lang, { weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   const link = shareLink(event); const invite = t('gathering.invite', { title: event.title, date: when, link });
   const statusChip = <span className={`chip ${event.status === 'published' ? 'published-chip' : ''}`}>{t(`teamSpace.status.${event.status}`)}</span>;
+  const ev = event as Record<string, unknown>;
+  const blockers = event.status === 'draft' ? readinessBlockers({
+    title: event.title, startsAt: event.starts_at, format: (ev['format'] as 'person' | 'online' | 'hybrid') ?? (event.online_url ? 'online' : 'person'),
+    locationName: event.location_name ?? '', address: event.address ?? '', onlineUrl: event.online_url ?? '',
+    priceCents: event.price_cents ?? null, canSell: planStatus?.connect_status === 'active',
+    regOpens: (ev['reg_opens_at'] as string) ?? '', regCloses: (ev['reg_closes_at'] as string) ?? '',
+    retreatOn: !!ev['retreat'], retreatEnd: event.ends_at ?? '',
+    allowsMinors: !!ev['allows_minors'], minAge: ev['min_age'] != null ? String(ev['min_age']) : '',
+    tiers: Array.isArray(ev['ticket_tiers']) ? ev['ticket_tiers'] as never[] : [],
+  }) : [];
 
   return <>
     <Link to="/events" className="auth-link back-link"><ArrowLeft />{t('gathering.backToGatherings')}</Link>
@@ -117,13 +130,20 @@ function EventDetailPage() {
         </ul>
         {description && <p className="detail-description">{description}</p>}
         {manages && planWaiting > 0 && <div className="notice-banner is-inline" role="status"><UsersRound /><div><strong>{t('billing.planWaitTitle', { count: planWaiting })}</strong><p>{t('billing.planWaitBody')}</p></div><Button asChild size="sm"><Link to="/plan">{t('billing.upgrade')}</Link></Button></div>}
+        {manages && event.status === 'draft' && <div className="notice-banner is-inline" role="status" aria-label={t('builder.readiness')}>
+          <Rocket /><div><strong>{t('builder.readiness')}</strong>
+            {blockers.length > 0 ? <ul className="builder-blockers">{blockers.map(b => <li key={b}>{t(`builder.blockers.${b}`)}</li>)}</ul> : <p>{t('builder.readyToPublish')}</p>}</div>
+        </div>}
         {manages ? <div className="manage-actions">
           {event.status === 'published' && <Button asChild><Link to="/event/$id/checkin" params={{ id }}><ScanLine />{t('live.startCheckin')}</Link></Button>}
-          {event.status === 'draft' && <Button disabled={saving} onClick={() => setStatus('published')}><Rocket />{t('gathering.publish')}</Button>}
-          {event.status !== 'cancelled' && <Button asChild variant="secondary"><Link to="/gathering/$id/edit" params={{ id }}><Pencil />{t('gathering.edit')}</Link></Button>}
+          {event.status === 'draft' && <Button disabled={saving || blockers.length > 0} onClick={() => setStatus('published')}><Rocket />{t('gathering.publish')}</Button>}
+          {(event.status === 'published' || event.status === 'archived') && <Button variant="secondary" disabled={saving} onClick={() => setStatus('draft')}><EyeOff />{t('builder.unpublish')}</Button>}
+          {event.status === 'published' && (event.visibility !== 'team') && <Button asChild variant="secondary"><Link to="/e/$id" params={{ id }}><Eye />{t('builder.preview')}</Link></Button>}
+          {event.status !== 'cancelled' && event.status !== 'archived' && <Button asChild variant="secondary"><Link to="/gathering/$id/edit" params={{ id }}><Pencil />{t('gathering.edit')}</Link></Button>}
           <Button asChild variant="secondary"><Link to="/gathering/new" search={{ from: id }}><CopyPlus />{t('gathering.duplicate')}</Link></Button>
           {event.status === 'published' && <Button variant="secondary" onClick={() => setSheet('share')}><Share2 />{t('gathering.share')}</Button>}
           {isHost && <Button variant="secondary" onClick={() => setDraft(blueprintFromEvent(event, checklist?.map(item => item.label) ?? []))}><Save />{t('templates.saveAs')}</Button>}
+          {event.status !== 'cancelled' && event.status !== 'archived' && <Button variant="ghost" onClick={() => setSheet('archive')}><Archive />{t('builder.archive')}</Button>}
           {event.status === 'published' && <Button variant="ghost" className="danger-text" onClick={() => setSheet('cancel')}><Ban />{t('gathering.cancel')}</Button>}
           {event.status === 'draft' && <Button variant="ghost" className="danger-text" onClick={() => setSheet('delete')}><Trash2 />{t('gathering.deleteDraft')}</Button>}
         </div> : event.status === 'published' && event.visibility === 'public' && <div className="manage-actions"><Button asChild variant="secondary"><Link to="/e/$id" params={{ id: event.id }}>{t('teamSpace.openEvent')}<ArrowRight /></Link></Button></div>}
@@ -171,6 +191,9 @@ function EventDetailPage() {
       <div className="edit-form"><label className="switch-row"><Checkbox checked={notify} onCheckedChange={v => setNotify(!!v)} /><span><strong>{t('gathering.notifyGuests')}</strong><small>{t('notify.cancelNote')}</small></span></label>
         {!!event.price_cents && <label className="switch-row"><Checkbox checked={refund} onCheckedChange={v => setRefund(!!v)} /><span><strong>{t('billing.refundEveryone')}</strong><small>{gate.connected ? t('billing.refundOnCancel') : t('billing.refundNotConnected')}</small></span></label>}
         <div className="confirm-actions"><Button variant="secondary" onClick={() => setSheet(null)}>{t('gathering.keep')}</Button><Button className="danger-button" disabled={saving} onClick={() => setStatus('cancelled')}>{t('gathering.cancel')}</Button></div></div>
+    </ResponsiveSheet>
+    <ResponsiveSheet open={sheet === 'archive'} onOpenChange={o => !o && setSheet(null)} title={t('builder.archiveTitle')} description={t('builder.archiveText')}>
+      <div className="confirm-actions"><Button variant="secondary" onClick={() => setSheet(null)}>{t('gathering.keep')}</Button><Button disabled={saving} onClick={() => setStatus('archived')}>{t('builder.archive')}</Button></div>
     </ResponsiveSheet>
     <ResponsiveSheet open={sheet === 'delete'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.deleteTitle')} description={t('gathering.deleteText')}>
       <div className="confirm-actions"><Button variant="secondary" onClick={() => setSheet(null)}>{t('gathering.keep')}</Button><Button className="danger-button" disabled={saving} onClick={remove}>{t('gathering.deleteDraft')}</Button></div>

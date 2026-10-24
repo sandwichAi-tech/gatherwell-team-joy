@@ -20,6 +20,7 @@ import { CalendarButtons, Confirmation, DirectionsButton, RsvpSheet, type RsvpRe
 import { initialsOf, mediaUrl } from '@/lib/account';
 import { Polls, PhotoRoll, WeatherNote, useLiveCounts } from '@/components/event-live';
 import { formatWhen, isUuid, prefetchPublic, publicEventQuery, rsvpByCodeQuery } from '@/lib/guest';
+import { regWindowState } from '@/lib/event-builder';
 import { getPublicEventMeta } from '@/lib/public-event.functions';
 import i18n from '@/lib/i18n';
 import { supabase } from '@/integrations/supabase/client';
@@ -84,6 +85,11 @@ function PublicEventBody() {
   const left = event.capacity != null ? Math.max(0, event.capacity - event.going) : null;
   const full = left === 0;
   const cancelled = event.status === 'cancelled';
+  const summary = lang === 'es' ? event.summary_es || event.summary_en : event.summary_en || event.summary_es;
+  const regState = regWindowState(event.reg_opens_at, event.reg_closes_at);
+  const regClosed = regState === 'closed';
+  const regNotOpen = regState === 'not_open';
+  const waitlistOff = full && event.waitlist_enabled === false;
 
   if (teamResult) return <>
     <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="guest-cover" />
@@ -100,6 +106,8 @@ function PublicEventBody() {
     <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="guest-cover" />
     <article className="guest-body">
       <div className="guest-title-row"><h1 className="guest-title">{event.title}</h1><ReportButton type="event" id={id} /></div>
+      {summary && <p className="guest-summary">{summary}</p>}
+      {!!event.tags?.length && <ul className="guest-tags" aria-label={t('builder.tags')}>{event.tags.map(tag => <li key={tag} className="chip">{tag}</li>)}</ul>}
       {price && <p className="guest-price-line"><strong className="tabular-nums">{formatMoney(price.price_cents, lang)}</strong><span>{t('billing.perPerson')}{price.pass_fee ? ` · ${t('billing.feeNote', { pct: price.fee_pct })}` : ''}{price.cover_service_fee ? ` · ${t('billing.allInShort')}` : ` · ${t('billing.plusServiceFee', { fee: formatMoney(serviceFee(price.price_cents, Number(price.service_fee_percent ?? 0), price.service_fee_fixed ?? 0), lang) })}`}</span></p>}
       {price && <RefundLine policy={price.refund_policy} />}
       {cancelled && <div className="guest-cancelled" role="status"><Ban /><div><strong>{t('guest.cancelledTitle')}</strong><p>{t('guest.cancelledText')}</p></div></div>}
@@ -115,18 +123,31 @@ function PublicEventBody() {
       </div>
       {!!event.cohosts?.length && <div className="guest-cohosts"><span className="guest-label">{t('cohosts.withCohosts')}</span><ul>{event.cohosts.map((c, i) => <li key={i}><span className="initial-avatar">{initialsOf(c.name)}</span><span>{c.name ?? t('teamSpace.someone')}</span></li>)}</ul></div>}
 
-      {event.is_online ? <section className="guest-card"><div className="guest-place"><Video /><div><strong>{t('publicEvent.online')}</strong><p>{t('guest.onlineHidden')}</p></div></div></section>
-        : (event.location_name || event.address) && <section className="guest-card">
+      {event.has_online && <section className="guest-card"><div className="guest-place"><Video /><div><strong>{t('publicEvent.online')}</strong><p>{t('guest.onlineHidden')}</p></div></div></section>}
+      {(event.location_name || event.address) && <section className="guest-card">
           {meta?.staticMap && <img className="guest-map" src={meta.staticMap} alt={t('guest.mapAlt')} loading="lazy" />}
           <div className="guest-place"><MapPin /><div>
             {event.location_name && <strong>{event.location_name}</strong>}
             {event.address && <p>{event.address}</p>}
             {event.meeting_note && <p className="muted">{t('guest.meetingPoint')}: {event.meeting_note}</p>}
           </div></div>
-          {!cancelled && <DirectionsButton event={event} />}
+          <div className="guest-button-row">
+            {!cancelled && <DirectionsButton event={event} />}
+            {event.map_url && <Button asChild variant="secondary"><a href={event.map_url} target="_blank" rel="noopener noreferrer"><MapPin />{t('builder.openMap')}</a></Button>}
+          </div>
         </section>}
 
       {description && <section className="guest-description"><p>{description}</p></section>}
+      {event.accessibility_notes && <section className="guest-card"><strong>{t('builder.accessibility')}</strong><p>{event.accessibility_notes}</p></section>}
+      {event.what_to_bring && <section className="guest-card"><strong>{t('builder.bring')}</strong><p>{event.what_to_bring}</p></section>}
+      <section className="guest-card" aria-label={t('builder.minorsTitle')}>
+        <strong>{t('builder.minorsTitle')}</strong>
+        <p>{event.allows_minors ? (event.min_age != null ? t('builder.minorsMinAge', { age: event.min_age }) : t('builder.minorsWelcome')) : t('builder.adultsOnly')}</p>
+      </section>
+      {(event.cancellation_policy || event.contact_email || event.contact_phone) && <section className="guest-card">
+        {event.cancellation_policy && <><strong>{t('builder.cancellation')}</strong><p>{event.cancellation_policy}</p></>}
+        {(event.contact_email || event.contact_phone) && <><strong>{t('builder.contact')}</strong><p>{[event.contact_email, event.contact_phone].filter(Boolean).join(' · ')}</p></>}
+      </section>}
       {asRetreat(event.retreat) && <RetreatDetails retreat={asRetreat(event.retreat)!} startsAt={event.starts_at} endsAt={event.ends_at} priceCents={price?.price_cents ?? null} />}
 
       <section className="guest-going" aria-live="polite">
@@ -135,10 +156,12 @@ function PublicEventBody() {
       </section>
 
       {!cancelled && early && <EarlyAccessNotice access={early} />}
-      {!cancelled && (!early || early.has_access || event.my_code) && <>
+      {!cancelled && regNotOpen && <div className="guest-cancelled" role="status"><CalendarDays /><div><strong>{t('builder.regNotOpen')}</strong><p>{t('builder.regNotOpenText', { date: formatWhen(event.reg_opens_at!, lang) })}</p></div></div>}
+      {!cancelled && regClosed && <div className="guest-cancelled" role="status"><Ban /><div><strong>{t('builder.regClosed')}</strong><p>{t('builder.regClosedText')}</p></div></div>}
+      {!cancelled && !regClosed && !regNotOpen && (!early || early.has_access || event.my_code) && <>
         {event.my_code ? <div className="guest-actions"><p className="guest-label">{t('guest.alreadyIn')}</p><Button asChild className="guest-primary"><Link to="/r/$code" params={{ code: event.my_code }}>{t('guest.manage')}</Link></Button></div>
           : <div className="guest-actions">
-            <Button className="guest-primary" onClick={() => setIntent('going')}>{full ? t('guest.joinWaitlist') : price ? t('billing.imInPrice', { amount: formatMoney(price.price_cents, lang) }) : t('guest.imIn')}</Button>
+            <Button className="guest-primary" disabled={waitlistOff} onClick={() => setIntent('going')}>{waitlistOff ? t('guest.full') : full ? t('guest.joinWaitlist') : price ? t('billing.imInPrice', { amount: formatMoney(price.price_cents, lang) }) : t('guest.imIn')}</Button>
             <Button variant="secondary" className="guest-secondary" onClick={() => setIntent('maybe')}>{t('guest.maybe')}</Button>
             {event.team_registration && <Button variant="secondary" className="guest-secondary" onClick={() => setTeamOpen(true)}>{t('teamRsvp.cta', { min: event.team_min ?? 2, max: event.team_max ?? 6 })}</Button>}
           </div>}

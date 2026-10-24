@@ -1442,14 +1442,19 @@ export type Database = {
       }
       events: {
         Row: {
+          accessibility_notes: string | null
+          addons: Json
           address: string | null
           allows_minors: boolean
+          cancellation_policy: string | null
           capacity: number | null
           category: string | null
           category_label: string | null
           chat_links: Json
           community_seats: number | null
           completed_at: string | null
+          contact_email: string | null
+          contact_phone: string | null
           cover_service_fee: boolean
           cover_style: number
           cover_url: string | null
@@ -1458,15 +1463,19 @@ export type Database = {
           description_es: string | null
           early_offer_id: string | null
           ends_at: string | null
+          format: string
           hide_guest_list: boolean
           host_id: string
           id: string
           invite_token: string
+          language: string
           lat: number | null
           lng: number | null
           location_id: string | null
           location_name: string | null
+          map_url: string | null
           meeting_note: string | null
+          min_age: number | null
           offer_id: string | null
           online_url: string | null
           pass_fee: boolean
@@ -1474,6 +1483,8 @@ export type Database = {
           public_rsvp_at: string | null
           recurrence: string
           refund_policy: string
+          reg_closes_at: string | null
+          reg_opens_at: string | null
           require_approval: boolean
           requires_waiver: boolean
           retreat: Json | null
@@ -1482,6 +1493,9 @@ export type Database = {
           small_groups: string[]
           starts_at: string
           status: string
+          summary_en: string | null
+          summary_es: string | null
+          tags: string[]
           team_id: string
           team_max: number
           team_min: number
@@ -1489,20 +1503,28 @@ export type Database = {
           team_registration: boolean
           template_id: string | null
           theme: string | null
+          ticket_tiers: Json
           timezone: string
           title: string
           visibility: string
+          waitlist_enabled: boolean
+          what_to_bring: string | null
           whatsapp_url: string | null
         }
         Insert: {
+          accessibility_notes?: string | null
+          addons?: Json
           address?: string | null
           allows_minors?: boolean
+          cancellation_policy?: string | null
           capacity?: number | null
           category?: string | null
           category_label?: string | null
           chat_links?: Json
           community_seats?: number | null
           completed_at?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
           cover_service_fee?: boolean
           cover_style?: number
           cover_url?: string | null
@@ -1511,15 +1533,19 @@ export type Database = {
           description_es?: string | null
           early_offer_id?: string | null
           ends_at?: string | null
+          format?: string
           hide_guest_list?: boolean
           host_id?: string
           id?: string
           invite_token?: string
+          language?: string
           lat?: number | null
           lng?: number | null
           location_id?: string | null
           location_name?: string | null
+          map_url?: string | null
           meeting_note?: string | null
+          min_age?: number | null
           offer_id?: string | null
           online_url?: string | null
           pass_fee?: boolean
@@ -1527,6 +1553,8 @@ export type Database = {
           public_rsvp_at?: string | null
           recurrence?: string
           refund_policy?: string
+          reg_closes_at?: string | null
+          reg_opens_at?: string | null
           require_approval?: boolean
           requires_waiver?: boolean
           retreat?: Json | null
@@ -1535,6 +1563,9 @@ export type Database = {
           small_groups?: string[]
           starts_at: string
           status?: string
+          summary_en?: string | null
+          summary_es?: string | null
+          tags?: string[]
           team_id: string
           team_max?: number
           team_min?: number
@@ -1542,20 +1573,28 @@ export type Database = {
           team_registration?: boolean
           template_id?: string | null
           theme?: string | null
+          ticket_tiers?: Json
           timezone?: string
           title: string
           visibility?: string
+          waitlist_enabled?: boolean
+          what_to_bring?: string | null
           whatsapp_url?: string | null
         }
         Update: {
+          accessibility_notes?: string | null
+          addons?: Json
           address?: string | null
           allows_minors?: boolean
+          cancellation_policy?: string | null
           capacity?: number | null
           category?: string | null
           category_label?: string | null
           chat_links?: Json
           community_seats?: number | null
           completed_at?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
           cover_service_fee?: boolean
           cover_style?: number
           cover_url?: string | null
@@ -1564,15 +1603,19 @@ export type Database = {
           description_es?: string | null
           early_offer_id?: string | null
           ends_at?: string | null
+          format?: string
           hide_guest_list?: boolean
           host_id?: string
           id?: string
           invite_token?: string
+          language?: string
           lat?: number | null
           lng?: number | null
           location_id?: string | null
           location_name?: string | null
+          map_url?: string | null
           meeting_note?: string | null
+          min_age?: number | null
           offer_id?: string | null
           online_url?: string | null
           pass_fee?: boolean
@@ -1580,6 +1623,8 @@ export type Database = {
           public_rsvp_at?: string | null
           recurrence?: string
           refund_policy?: string
+          reg_closes_at?: string | null
+          reg_opens_at?: string | null
           require_approval?: boolean
           requires_waiver?: boolean
           retreat?: Json | null
@@ -1588,6 +1633,9 @@ export type Database = {
           small_groups?: string[]
           starts_at?: string
           status?: string
+          summary_en?: string | null
+          summary_es?: string | null
+          tags?: string[]
           team_id?: string
           team_max?: number
           team_min?: number
@@ -1595,9 +1643,12 @@ export type Database = {
           team_registration?: boolean
           template_id?: string | null
           theme?: string | null
+          ticket_tiers?: Json
           timezone?: string
           title?: string
           visibility?: string
+          waitlist_enabled?: boolean
+          what_to_bring?: string | null
           whatsapp_url?: string | null
         }
         Relationships: [
@@ -3948,6 +3999,10 @@ export type Database = {
           group_name: string | null
           guardian_consent_at: string | null
           guardian_consent_version_id: string | null
+          guardian_email: string | null
+          guardian_name: string | null
+          guardian_phone: string | null
+          guardian_relationship: string | null
           guest_email: string | null
           guest_name: string | null
           guest_phone: string | null
@@ -3976,6 +4031,10 @@ export type Database = {
           group_name?: string | null
           guardian_consent_at?: string | null
           guardian_consent_version_id?: string | null
+          guardian_email?: string | null
+          guardian_name?: string | null
+          guardian_phone?: string | null
+          guardian_relationship?: string | null
           guest_email?: string | null
           guest_name?: string | null
           guest_phone?: string | null
@@ -4004,6 +4063,10 @@ export type Database = {
           group_name?: string | null
           guardian_consent_at?: string | null
           guardian_consent_version_id?: string | null
+          guardian_email?: string | null
+          guardian_name?: string | null
+          guardian_phone?: string | null
+          guardian_relationship?: string | null
           guest_email?: string | null
           guest_name?: string | null
           guest_phone?: string | null
@@ -5817,6 +5880,25 @@ export type Database = {
           status: string
         }[]
       }
+      rsvp_event_minor: {
+        Args: {
+          _event_id: string
+          _guardian_email: string
+          _guardian_name: string
+          _guardian_phone: string
+          _guardian_relationship: string
+          _language: string
+          _mail: boolean
+          _minor_age_band: string
+          _minor_first: string
+          _sms: boolean
+          _token: string
+        }
+        Returns: {
+          code: string
+          status: string
+        }[]
+      }
       rsvp_event_waiver: {
         Args: {
           _email: string
@@ -5989,6 +6071,10 @@ export type Database = {
       }
       unlock_invite: {
         Args: { _event: string; _token: string }
+        Returns: undefined
+      }
+      update_event_details: {
+        Args: { _event: string; _p: Json }
         Returns: undefined
       }
       update_gathering: {
