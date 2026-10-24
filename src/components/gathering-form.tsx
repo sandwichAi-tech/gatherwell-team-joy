@@ -193,6 +193,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       setBusy(false);
       if (error) { toast.error(rpcError(t, error)); return; }
       await savePrice(eventId!); await saveTeamReg(eventId!); if (!(await saveRetreat(eventId!))) return;
+      await saveCover(eventId!);
       if (!(await saveDetails(eventId!))) return;
       await queryClient.invalidateQueries(); toast.success(t('gathering.saved'));
       void navigate({ to: '/event/$id', params: { id: eventId! } }); return;
@@ -205,6 +206,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (priceCents) await savePrice(data);
     if (teamReg.on) await saveTeamReg(data);
     if (retreatOn && !(await saveRetreat(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
+    await saveCover(data);
     if (!(await saveDetails(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
     await queryClient.invalidateQueries();
     if (publish) setDone({ id: data, visibility }); else { toast.success(t('gathering.draftSaved')); void navigate({ to: '/event/$id', params: { id: data } }); }
