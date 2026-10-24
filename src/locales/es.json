@@ -1582,7 +1582,10 @@
       "recipes": "Recetas",
       "progress": "Avance"
     },
-    "noTracks": "Aún no hay rutas."
+    "noTracks": "Aún no hay rutas.",
+    "uploadAudio": "Archivo de audio",
+    "audioHint": "MP3, M4A o WAV hasta 200 MB. O pega un enlace abajo.",
+    "audioLink": "Enlace de audio (HTTPS)"
   },
   "challenges": {
     "title": "Retos",
@@ -5444,7 +5447,81 @@
     "title": "Recursos",
     "sentence": "Cursos, guías, sesiones en vivo, recetas y más de tu equipo y de ZoheeWell.",
     "templatesButton": "Plantillas de recursos",
-    "create": "Crear recurso",
+    "create": {
+      "title": "¿Qué vas a crear?",
+      "sentence": "Elige el tipo de recurso. Cada uno abre un editor hecho para ese tipo, y todo empieza como borrador.",
+      "back": "Volver a Recursos",
+      "chooseAnother": "Elegir otro tipo",
+      "creatorsOnly": "Solo los anfitriones y líderes del equipo pueden crear recursos.",
+      "helpTitle": "¿Cuál elijo?",
+      "helpSingleTitle": "Un recurso individual",
+      "helpSingle": "Un video, guía, audio, enlace, archivo o sesión en vivo es una sola cosa que las personas abren desde tu biblioteca.",
+      "helpCourseTitle": "Un curso",
+      "helpCourse": "Una ruta estructurada con secciones, lecciones, cuestionarios opcionales y certificados.",
+      "helpBundleTitle": "Un paquete mixto",
+      "helpBundle": "Un solo paquete con texto, archivos, enlaces y contenido integrado para abrir o descargar.",
+      "template": "Empezar desde una plantilla",
+      "templateText": "Plantillas iniciales de ZoheeWell o las estructuras guardadas de tu equipo.",
+      "types": {
+        "video": {
+          "name": "Video",
+          "example": "Una clase grabada, un tutorial o un mensaje de bienvenida.",
+          "best": "Ideal para: ver cuando quieran."
+        },
+        "quiz": {
+          "name": "Cuestionario",
+          "example": "Preguntas con puntajes, intentos y comentarios.",
+          "best": "Ideal para: comprobar lo aprendido dentro de un curso."
+        },
+        "guide": {
+          "name": "Guía / PDF / hoja de trabajo",
+          "example": "Una guía para leer, un cuaderno o un folleto.",
+          "best": "Ideal para: leer e imprimir."
+        },
+        "audio": {
+          "name": "Audio",
+          "example": "Una meditación, un episodio de pódcast o una charla.",
+          "best": "Ideal para: escuchar en movimiento."
+        },
+        "file": {
+          "name": "Archivo descargable",
+          "example": "Un PDF, libro electrónico o zip que las personas guardan.",
+          "best": "Ideal para: un solo archivo para descargar."
+        },
+        "link": {
+          "name": "Enlace",
+          "example": "Un artículo, herramienta o página en la web.",
+          "best": "Ideal para: señalar algo útil."
+        },
+        "live": {
+          "name": "Sesión en vivo / repetición",
+          "example": "Una sesión en línea programada, con repetición después.",
+          "best": "Ideal para: reunirse en vivo y ver después."
+        },
+        "recipe": {
+          "name": "Receta",
+          "example": "Ingredientes, pasos y tiempo de preparación.",
+          "best": "Ideal para: cocinar juntos."
+        },
+        "course": {
+          "name": "Curso",
+          "example": "Secciones, lecciones, cuestionarios y certificados.",
+          "best": "Ideal para: una ruta de aprendizaje estructurada."
+        },
+        "bundle": {
+          "name": "Paquete de recursos mixto",
+          "example": "Texto, archivos, enlaces y contenido integrado en un solo paquete.",
+          "best": "Ideal para: un kit de herramientas o paquete de inicio."
+        }
+      },
+      "quizParent": {
+        "title": "¿Dónde vive este cuestionario?",
+        "text": "Los cuestionarios son parte de un curso. Elige el curso al que pertenece y llegarás a su sección de cuestionarios.",
+        "pick": "Elige un curso",
+        "new": "Curso nuevo",
+        "empty": "Aún no tienes un curso. Crea uno primero — empieza como borrador."
+      }
+    },
     "untitled": "Sin título",
     "tabs": {
       "foryou": "Para ti",
@@ -5543,6 +5620,39 @@
       "recipeText": "Ingredientes y pasos para tu equipo.",
       "fromTemplate": "Empezar con una plantilla",
       "fromTemplateText": "Plantillas de ZoheeWell o de tu equipo."
+    },
+    "preset": {
+      "track": {
+        "video": "Nombra tu video",
+        "guide": "Nombra tu guía",
+        "audio": "Nombra tu audio",
+        "link": "Nombra tu enlace",
+        "live": "Nombra tu sesión en vivo"
+      },
+      "trackText": {
+        "video": "Así lo encontrarán en tu biblioteca. Después agregarás el video.",
+        "guide": "Así lo encontrarán en tu biblioteca. Después agregarás el archivo.",
+        "audio": "Así lo encontrarán en tu biblioteca. Después agregarás el audio.",
+        "link": "Así lo encontrarán en tu biblioteca. Después agregarás el enlace.",
+        "live": "Así lo encontrarán en tu biblioteca. Después lo programarás."
+      },
+      "lesson": {
+        "video": "Agrega el video",
+        "pdf": "Agrega la guía",
+        "audio": "Agrega el audio",
+        "link": "Agrega el enlace",
+        "live": "Programa la sesión"
+      },
+      "lessonText": {
+        "video": "Sube un archivo de video o pega un enlace HTTPS.",
+        "pdf": "Sube un PDF o pega un enlace HTTPS.",
+        "audio": "Sube un archivo de audio o pega un enlace HTTPS.",
+        "link": "Pega el enlace HTTPS. No necesitas archivo.",
+        "live": "Elige fecha y hora. El enlace de la reunión solo lo ven los miembros de tu equipo."
+      },
+      "bundle": {
+        "hint": "Guarda primero lo básico. Después abre el paquete para agregar texto, archivos, enlaces y contenido integrado en cualquier orden."
+      }
     }
   },
   "templatesR": {
