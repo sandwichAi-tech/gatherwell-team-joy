@@ -75,3 +75,19 @@ describe('commerce configuration', () => {
     expect(paidSetupRequired({ price_cents: 0 })).toBe(false);
   });
 });
+
+describe('bundle items', () => {
+  it('text items need body content', () => {
+    expect(bundleItemError({ type: 'text', body: '' })).toBe('missing_content');
+    expect(bundleItemError({ type: 'text', body: 'Hello' })).toBeNull();
+  });
+  it('file items need an uploaded file', () => {
+    expect(bundleItemError({ type: 'file' })).toBe('missing_content');
+    expect(bundleItemError({ type: 'file', storage_path: 'team/x.pdf' })).toBeNull();
+  });
+  it('link and embed items require https URLs', () => {
+    expect(bundleItemError({ type: 'link' })).toBe('missing_content');
+    expect(bundleItemError({ type: 'link', url: 'http://x.com' })).toBe('https');
+    expect(bundleItemError({ type: 'embed', url: 'https://vimeo.com/123' })).toBeNull();
+  });
+});
