@@ -1,5 +1,12 @@
 # ZoheeWell Change Log
 
+## v0.21 — Course authoring browser verification, readiness fix (2026-10-24)
+- Fixed: offer_readiness() failed with a 400 ("malformed array literal") whenever any blocker fired — `b || 'no_sections'` resolved to array||array and tried to cast the literal. Migration 0061 (additive) rewrites blocker accumulation with array_append(). Publication blockers now render truthfully on the offering page.
+- Verified live in the browser with a ZZ-TEST-COURSE fixture (archived, then fully removed with its section, lesson, items and entitlements — 0 leftover rows): draft course shows real blockers; host adds a lesson, publishes section and lesson via the editor switches, blockers clear; course publishes via the offers manage editor; public /o/$id renders title, host, price and curriculum in English and Spanish at 390px and 1440px with no horizontal overflow and reduced motion on; anonymous visitors see metadata and lesson titles only with a "Sign in to enroll for free" CTA — no lesson content, file paths, notes, or emails; archiving the course immediately hides the public page ("This offer isn't available").
+- Tests: 28 files / 210 tests pass; tsgo clean; build OK.
+- Unverified: signed-in non-host enrollment click-through in the browser (no second account; enroll_free verified at API level in v0.19); course create-from-scratch in the browser (fixture used); screen-reader pass; 200% zoom pass on the new panels; paid purchase/subscription flows (remain Setup required, no entitlement created); video/audio transcode (no provider — not faked).
+
+
 ## v0.20 — Resource bundle authoring, signed downloads, browser verification (2026-10-24)
 - Database (0060, additive): offer_items table for ordered resource-bundle items (text/file/link/embed, bilingual title+body, preview and download-permission flags, draft/published, replaced_by version chain) with host-manages and entitled-learner RLS; replace_offer_item() swaps in a new version while preserving the prior one for entitled-version history; get_public_offer() now includes bundle item metadata (no storage paths or URLs); offer_readiness() accepts a published bundle item in place of a single file.
 - App: BundlePanel on download offerings — add/edit items, accessible up/down reorder, publish/unpublish per item, safe remove (drafts only), replace-with-new-version; BundleReader for entitled learners with per-item signed downloads (10-minute expiry, allow_download and entitlement enforced server-side); public /o/$id pages list bundle item metadata; phone-friendly bundle rows.

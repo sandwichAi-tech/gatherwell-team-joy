@@ -96,3 +96,7 @@ The requester supplied the following results after commit ac2eef3c5d5ff7138522b8
 - Bundle downloads are signed server-side per item (learn-media, 600s, attachment) after can_access_offer + allow_download + published/current checks; replaced versions are not downloadable.
 - get_public_offer exposes bundle item metadata only (no storage_path, no URLs); verified live with leak checks.
 - Download UI uses same-tab assignment to the attachment signed URL — no popup-blocker-prone window.open.
+
+## 2026-10-24 — Course verification (0061)
+- offer_readiness() 400'd on any blocker (array literal bug); fixed with array_append — no privilege change, still host-only via auth.uid() check.
+- Re-verified live: anonymous /o/$id exposes metadata + lesson titles only (no content, paths, notes, emails); archiving an offer immediately removes public access; course fixtures fully removed after testing.
