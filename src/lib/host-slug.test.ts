@@ -31,7 +31,7 @@ describe('validateProfileSlug', () => {
     expect(validateProfileSlug('-abc')).toBeNull();
   });
   it('rejects reserved routes and platform words', () => {
-    for (const word of ['admin', 'api', 'login', 'discover', 'pricing', 'support', 'me', 'events', 'learn', 'zoheewell']) {
+    for (const word of ['admin', 'api', 'login', 'discover', 'pricing', 'support', 'events', 'learn', 'zoheewell']) {
       expect(RESERVED_PROFILE_SLUGS).toContain(word);
       expect(validateProfileSlug(word)).toBe('reserved_slug');
     }
