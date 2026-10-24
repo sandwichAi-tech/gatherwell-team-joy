@@ -14,7 +14,8 @@
     "progress": "Progress",
     "updates": "Updates",
     "inbox": "Messages",
-    "support": "Support"
+    "support": "Support",
+    "insights": "Insights"
   },
   "common": {
     "create": "Create",
@@ -357,7 +358,8 @@
     "terms": "ZoheeWell terms.",
     "privacy": "ZoheeWell privacy.",
     "event": "An event on ZoheeWell.",
-    "unsubscribe": "Choose which ZoheeWell emails you receive."
+    "unsubscribe": "Choose which ZoheeWell emails you receive.",
+    "insights": "Real counts from your events, courses, resources and sales."
   },
   "stats": {
     "members": {
@@ -794,7 +796,22 @@
     "sectionAbout": "About you",
     "sectionContact": "Contact and links",
     "memberSince": "Member since {{date}}",
-    "manage": "Manage"
+    "manage": "Manage",
+    "groupPrivacy": "Privacy & data",
+    "privacyData": "Privacy & data",
+    "exportData": "Download my data",
+    "exportDataText": "A JSON file with your profile, registrations, enrollments, progress, purchases, follows, messages, support records and consent records. Only your own data is included.",
+    "exported": "Your download has started.",
+    "consentHistory": "Consent history",
+    "adultConfirmed": "Confirmed you are 18 or older",
+    "waivers": "Waivers signed",
+    "guardianConsents": "Guardian consents",
+    "termsAccepted": "Terms accepted",
+    "marketingPrefs": "Marketing email preferences",
+    "marketingAllOff": "All marketing emails off",
+    "consentEmpty": "No consent records yet.",
+    "minorLabel": "Child",
+    "versionLabel": "Version"
   },
   "teamSpace": {
     "noTeamTitle": "You're not in a team yet",
@@ -990,9 +1007,9 @@
     "onlyYou": "Only you"
   },
   "insights": {
-    "eyebrow": "Leader view",
+    "eyebrow": "Hosting",
     "title": "Insights",
-    "subtitle": "Activity across your organization. Events, guests and check-ins only.",
+    "subtitle": "Real numbers from your own events, offerings and sales. Nothing is estimated or sampled.",
     "leadersOnly": "Insights are available to team leaders.",
     "period": "Period",
     "periods": {
@@ -1044,7 +1061,37 @@
     "homeLink": "See Insights",
     "homeText": "Events, check-ins and top hosts across your organization.",
     "mapLink": "Team map",
-    "homeShort": "Your organization's week at a glance"
+    "homeShort": "Your organization's week at a glance",
+    "registered": "Registered",
+    "attended": "Checked in",
+    "waitlisted": "Waitlisted",
+    "cancelled": "Cancelled",
+    "eventsHeading": "Events",
+    "eventsEmpty": "No events yet. Registration and attendance counts appear here once you host one.",
+    "colEvent": "Event",
+    "colDate": "Date",
+    "attendanceRate": "Attendance",
+    "offersHeading": "Courses & resources",
+    "offersEmpty": "No courses or resources yet. Enrollment and completion counts appear here once you publish one.",
+    "colOffering": "Offering",
+    "colKind": "Type",
+    "enrollments": "Enrollments",
+    "learnersStarted": "Learners started",
+    "certificates": "Certificates",
+    "salesHeading": "Sales",
+    "salesEmpty": "No recorded sales yet. Paid checkout is not connected, so free offerings are the only working path right now.",
+    "gross": "Gross",
+    "platformFees": "Platform fees",
+    "feeHint": "Flat 5% ZoheeWell fee on paid sales; Stripe processing is separate.",
+    "net": "Net",
+    "teamHeading": "Team: {{team}}",
+    "teamEmpty": "No team activity yet.",
+    "teamMembers": "Members",
+    "teamEvents": "Team events",
+    "teamEvents30d": "{{count}} in the last 30 days",
+    "teamNote": "Team totals are aggregate counts only — never guest names or contact details.",
+    "exportEvents": "Download events CSV",
+    "exportOffers": "Download offerings CSV"
   },
   "map": {
     "eyebrow": "Leader view",
@@ -2587,7 +2634,8 @@
       "verify": "Verify",
       "founding": "Founding coaches",
       "day60": "Day 60",
-      "mail": "Mail"
+      "mail": "Mail",
+      "support": "Support"
     },
     "period": {
       "week": "This week",
@@ -2943,6 +2991,23 @@
         "simulated": "Simulated",
         "failed": "Failed",
         "skipped": "Skipped"
+      }
+    },
+    "support": {
+      "title": "Support tickets",
+      "empty": "No tickets in this state.",
+      "requester": "From",
+      "messages": "Messages",
+      "replyPlaceholder": "Write a reply to the member…",
+      "reply": "Send reply",
+      "close": "Close ticket",
+      "replied": "Reply sent. The member sees it in their Support page.",
+      "closedToast": "Ticket closed.",
+      "confirmClose": "Close this ticket? The member can open a new one anytime.",
+      "filters": {
+        "open": "Open",
+        "answered": "Answered",
+        "closed": "Closed"
       }
     }
   },

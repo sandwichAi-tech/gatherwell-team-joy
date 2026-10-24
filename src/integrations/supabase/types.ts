@@ -6376,6 +6376,7 @@ export type Database = {
       admin_overview: { Args: { _since: string }; Returns: Json }
       admin_reports: { Args: { _status: string }; Returns: Json }
       admin_retry_message: { Args: { _id: string }; Returns: Json }
+      admin_support_tickets: { Args: { _status: string }; Returns: Json }
       admin_team_detail: { Args: { _id: string }; Returns: Json }
       admin_teams: { Args: { _q: string }; Returns: Json }
       admin_time_to_live: { Args: { _since: string }; Returns: Json }
@@ -6677,6 +6678,7 @@ export type Database = {
         Args: { _event: string; _token: string }
         Returns: Json
       }
+      export_my_data: { Args: never; Returns: Json }
       feature_badge: {
         Args: { _id: string; _slot: number }
         Returns: undefined
@@ -6805,6 +6807,7 @@ export type Database = {
         Returns: boolean
       }
       honor_welcome_code: { Args: { _code: string }; Returns: Json }
+      host_analytics: { Args: never; Returns: Json }
       host_cancel_rsvp: {
         Args: { _reason: string; _rsvp: string }
         Returns: undefined
@@ -6915,6 +6918,7 @@ export type Database = {
         }[]
       }
       my_calendar_feeds: { Args: never; Returns: Json }
+      my_consent_history: { Args: never; Returns: Json }
       my_contact_threads: { Args: never; Returns: Json }
       my_following: { Args: never; Returns: Json }
       my_invite_code: { Args: never; Returns: string }
@@ -7424,6 +7428,7 @@ export type Database = {
         Returns: string
       }
       team_activity: { Args: { _limit?: number; _team: string }; Returns: Json }
+      team_analytics: { Args: { _team: string }; Returns: Json }
       team_analytics_summary: { Args: { _team: string }; Returns: Json }
       team_benchmark: { Args: { _root: string }; Returns: Json }
       team_capability: {

@@ -32,6 +32,7 @@ import { PurchasesPanel } from '@/components/offers';
 import { InviteFriendsPanel } from '@/components/welcome';
 import { RegularHosts } from '@/components/belonging';
 import { MyChallengesList, MyGatheringsList, ProfileHero, RecentBadges, SettingsGroup, StatsStrip } from '@/components/profile-hero';
+import { PrivacyDataPanel } from '@/components/privacy-panel';
 import { GwFeatureTile, type GwIconName } from '@/components/gw-icon';
 import { HostProfilePanel } from '@/components/host-profile';
 import { QRCodeSVG } from 'qrcode.react';
@@ -157,7 +158,7 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
   </ResponsiveSheet>;
 }
 
-type Panel = 'qr' | 'gatherings' | 'challenges' | 'badges' | 'teams' | 'notifications' | 'updates' | 'inbox' | 'support' | 'plan' | 'purchases' | 'invite' | 'calendar' | 'hostProfile' | null;
+type Panel = 'qr' | 'gatherings' | 'challenges' | 'badges' | 'teams' | 'notifications' | 'updates' | 'inbox' | 'support' | 'plan' | 'purchases' | 'invite' | 'calendar' | 'hostProfile' | 'privacy' | null;
 
 export function MePage() {
   const { t, i18n } = useTranslation();
@@ -208,7 +209,7 @@ export function MePage() {
   const linkRow = (icon: GwIconName, label: string, to: string, trailing?: ReactNode, search?: Record<string, string>) => <Link className="settings-row" to={to} search={search as never}><GwFeatureTile name={icon} size={24} className="settings-tile" /><span className="settings-label">{label}</span>{trailing ?? <ChevronRight className="settings-chevron" />}</Link>;
   const staticRow = (icon: GwIconName, label: string, control: ReactNode) => <div className="settings-row is-static"><GwFeatureTile name={icon} size={24} className="settings-tile" /><span className="settings-label">{label}</span>{control}</div>;
 
-  const panelIcons: Record<Exclude<Panel, null>, GwIconName> = { qr: 'QrCode', gatherings: 'CalendarDays', challenges: 'Flag', badges: 'Award', teams: 'UsersRound', notifications: 'Bell', updates: 'Megaphone', inbox: 'MessageCircle', support: 'LifeBuoy', plan: 'CreditCard', purchases: 'CreditCard', invite: 'UserPlus', calendar: 'CalendarPlus', hostProfile: 'Globe2' };
+  const panelIcons: Record<Exclude<Panel, null>, GwIconName> = { qr: 'QrCode', gatherings: 'CalendarDays', challenges: 'Flag', badges: 'Award', teams: 'UsersRound', notifications: 'Bell', updates: 'Megaphone', inbox: 'MessageCircle', support: 'LifeBuoy', plan: 'CreditCard', purchases: 'CreditCard', invite: 'UserPlus', calendar: 'CalendarPlus', hostProfile: 'Globe2', privacy: 'ShieldCheck' };
   const panels: Record<Exclude<Panel, null>, { title: string; icon: GwIconName; body: ReactNode }> = {
     gatherings: { title: t('profile.myGatherings'), icon: 'CalendarDays', body: <MyGatheringsList userId={userId} /> },
     challenges: { title: t('profile.myChallenges'), icon: 'Flag', body: <MyChallengesList userId={userId} /> },
@@ -224,6 +225,7 @@ export function MePage() {
     qr: { title: t('profile.qrTitle'), icon: 'QrCode', body: <div className="qr-panel">{inviteUrl ? <div className="qr-code"><QRCodeSVG value={inviteUrl} size={280} level="M" marginSize={2} /></div> : <p className="auth-subtitle">{t('publicEvent.loading')}</p>}<p className="auth-subtitle">{t('profile.qrText')}</p></div> },
     plan: { title: t('profile.plan'), icon: 'CreditCard', body: <><p className="plan-name">{t(`plans.${workspace?.plan ?? 'free'}`)}</p><p className="auth-subtitle">{workspace?.name ?? t('workspace.none')}</p></> },
     hostProfile: { title: t('hostProfile.title'), icon: 'Globe2', body: <HostProfilePanel userId={userId} /> },
+    privacy: { title: t('profile.privacyData'), icon: 'ShieldCheck', body: <PrivacyDataPanel /> },
   };
 
   const isHost = !!workspace && workspace.role !== 'member';
@@ -284,6 +286,7 @@ export function MePage() {
     </SettingsGroup>
     {(isHost || isAdmin) && <SettingsGroup title={t('profile.groupHost')}>
       {isHost && row('Globe2', t('hostProfile.title'), () => setPanel('hostProfile'))}
+      {isHost && linkRow('BarChart3', t('insights.title'), '/insights')}
       {isHost && linkRow('FileText', t('offers.title'), '/offers')}
       {isHost && linkRow('Gift', t('promo.title'), '/promos')}
       {isHost && linkRow('MapPin', t('locations.title'), '/locations')}
@@ -294,6 +297,9 @@ export function MePage() {
     <SettingsGroup title={t('profile.groupSupport')}>
       <a className="settings-row" href="mailto:help@gatherwell.app"><GwFeatureTile name="LifeBuoy" size={24} className="settings-tile" /><span className="settings-label">{t('profile.help')}</span><ChevronRight className="settings-chevron" /></a>
       {row('LogOut', t('me.signOut'), signOut, <span />)}
+    </SettingsGroup>
+    <SettingsGroup title={t('profile.groupPrivacy')}>
+      {row('ShieldCheck', t('profile.privacyData'), () => setPanel('privacy'))}
     </SettingsGroup>
     <SettingsGroup title={t('profile.groupLegal')}>
       {linkRow('FileText', t('auth.terms'), '/terms')}

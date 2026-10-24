@@ -134,3 +134,9 @@ The requester supplied the following results after commit ac2eef3c5d5ff7138522b8
 - Browser QA verified no console errors, horizontal overflow, unnamed icon buttons, unlabeled form controls, or sub-44px targets at 390px, 1280px, and 200% zoom with reduced motion.
 - Scanner and confirmation dialogs now manage keyboard focus and Escape consistently; haptics are guarded by user activation so headless/unsupported contexts do not emit console errors.
 - QA fixture cleanup used targeted child-first deletes plus a database-wide UUID/text/JSON scan. All fixture rows are zero, and the fixture auth user (ee000010-…0002) was deleted by exact id+email after confirming zero public references; verified auth.users count is 0. The real owner adult confirmation predates QA and was preserved.
+
+## 2026-10-24 — Insights, export, consent, admin support (0082–0083)
+- host_analytics/export_my_data/my_consent_history are security-definer and scope every subquery to auth.uid(); export contains only the caller's rows (verified live: no other user's email or data). email_prefs token column is excluded from the export.
+- team_analytics returns aggregate counts only and is gated by team_capability('analytics') — owner/admin/analyst; content editor, check-in, moderator and member roles get forbidden (stranger-team denial verified live).
+- admin_support_tickets is has_role(admin)-gated and returns display names, never requester emails; staff replies reuse the rate-limited reply_support_ticket RPC; replies/closes write admin_audit.
+- Insights CSV exports are aggregate-only (no guest names, contacts, or participant-level rows).

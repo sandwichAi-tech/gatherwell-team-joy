@@ -19,11 +19,12 @@ import { formatMoney, planSettingsQuery, type PlanSetting } from '@/lib/billing'
 import { updatePlanSettings,
   adminTeamAction, adminUserAction, endBroadcast, getAdminAccess, getAdminOverview, getAdminTeam, getAdminUser, getAudit, getBroadcasts, getFlags, getLibrary,
   listAdminTeams, listAdminUsers, listReports, moderateReport, reorderLibrary, saveLibraryItem, sendBroadcast, setFlag, setLibraryPublished, type AdminReport, listRecentTexts, simulateSmsReply, listMail, retryMail, listVerifications, decideVerification, type AdminVerification,
+  listAdminTickets, replyAdminTicket, closeAdminTicket, type AdminTicket,
 } from '@/lib/admin.functions';
 
-export const ADMIN_TABS = ['overview', 'teams', 'users', 'moderation', 'verify', 'library', 'broadcasts', 'founding', 'day60', 'settings', 'audit', 'mail'] as const;
+export const ADMIN_TABS = ['overview', 'teams', 'users', 'moderation', 'verify', 'library', 'broadcasts', 'founding', 'day60', 'settings', 'audit', 'mail', 'support'] as const;
 export type AdminTab = (typeof ADMIN_TABS)[number];
-const TAB_ICONS: Record<AdminTab, GwIconProps['name']> = { overview: 'BarChart3', teams: 'UsersRound', users: 'UserRound', moderation: 'Flag', verify: 'BadgeCheck', library: 'BookOpen', broadcasts: 'Megaphone', founding: 'Medal', day60: 'Trophy', settings: 'Settings2', audit: 'FileText', mail: 'Mail' };
+const TAB_ICONS: Record<AdminTab, GwIconProps['name']> = { overview: 'BarChart3', teams: 'UsersRound', users: 'UserRound', moderation: 'Flag', verify: 'BadgeCheck', library: 'BookOpen', broadcasts: 'Megaphone', founding: 'Medal', day60: 'Trophy', settings: 'Settings2', audit: 'FileText', mail: 'Mail', support: 'LifeBuoy' };
 
 const useLang = () => { const { i18n } = useTranslation(); return i18n.resolvedLanguage === 'es' ? 'es' : 'en'; };
 const fmtDate = (iso: string | null | undefined, lang: string, time = false) => iso ? new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', time ? { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' } : { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(iso)) : '—';
@@ -51,6 +52,7 @@ export function AdminConsole({ tab }: { tab: AdminTab }) {
     {tab === 'settings' && <Settings />}
     {tab === 'audit' && <Audit />}
     {tab === 'mail' && <MailLog />}
+    {tab === 'support' && <SupportTickets />}
   </div>;
 }
 
@@ -575,5 +577,56 @@ function MailLog() {
       {r.retryable && <Button variant="ghost" size="icon" disabled={retrying !== null} aria-label={t('admin.mail.retry')} title={t('admin.mail.retry')} onClick={() => void retryMessage(r.id)}><GwIcon name="RefreshCw" size={20} /></Button>}</div>
     </li>)}{data && !data.rows.length && <li className="muted-copy">{t('admin.mail.empty')}</li>}</ul>
     {data && data.rows.length < data.total && <Button variant="secondary" onClick={() => setPages(p => p + 1)}>{t('admin.mail.loadMore')}</Button>}
+  </section>;
+}
+
+function SupportTickets() {
+  const { t } = useTranslation(); const lang = useLang();
+  const queryClient = useQueryClient();
+  const [status, setStatus] = useState<'open' | 'answered' | 'closed'>('open');
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [reply, setReply] = useState('');
+  const listFn = useServerFn(listAdminTickets);
+  const replyFn = useServerFn(replyAdminTicket);
+  const closeFn = useServerFn(closeAdminTicket);
+  const { data: tickets, isLoading } = useQuery({ queryKey: ['admin-tickets', status], queryFn: () => listFn({ data: { status } }) });
+
+  const sendReply = async (id: string) => {
+    const res = await replyFn({ data: { ticketId: id, body: reply } });
+    if (!res.ok) { toast.error(errText(t, res.error)); return; }
+    toast.success(t('admin.support.replied'));
+    setReply(''); setOpenId(null);
+    await queryClient.invalidateQueries({ queryKey: ['admin-tickets'] });
+  };
+  const close = async (id: string) => {
+    if (!await confirmAction({ title: t('admin.support.close'), body: t('admin.support.confirmClose'), confirmLabel: t('admin.support.close') })) return;
+    const res = await closeFn({ data: { ticketId: id } });
+    if (!res.ok) { toast.error(errText(t, res.error)); return; }
+    toast.success(t('admin.support.closedToast'));
+    await queryClient.invalidateQueries({ queryKey: ['admin-tickets'] });
+  };
+
+  return <section className="panel">
+    <div className="section-heading"><h2>{t('admin.support.title')}</h2></div>
+    <Segmented value={status} options={['open', 'answered', 'closed'] as const} onChange={setStatus} label={v => t(`admin.support.filters.${v}`)} />
+    {isLoading ? <ListSkeleton /> : !tickets?.length ? <p className="muted-copy">{t('admin.support.empty')}</p> : (
+      <ul className="admin-list">{tickets.map((tk: AdminTicket) => (
+        <li key={tk.id} className="admin-row">
+          <div className="admin-row-main">
+            <strong>{tk.subject}</strong>
+            <small>{t(`support.categories.${tk.category}`, { defaultValue: tk.category })} · {t('admin.support.requester')}: {tk.requester ?? '—'} · {fmtDate(tk.updated_at, lang, true)} · {t('admin.support.messages')}: {tk.messages}</small>
+            {tk.last_message && <p className="muted-copy">{tk.last_message.is_staff ? '↩ ' : ''}{tk.last_message.body}</p>}
+          </div>
+          {tk.status !== 'closed' && <div className="admin-row-actions">
+            <Button variant="secondary" size="sm" onClick={() => { setOpenId(openId === tk.id ? null : tk.id); setReply(''); }}>{t('admin.support.reply')}</Button>
+            <Button variant="ghost" size="sm" onClick={() => void close(tk.id)}>{t('admin.support.close')}</Button>
+          </div>}
+          {openId === tk.id && <div className="admin-reply">
+            <Textarea value={reply} onChange={e => setReply(e.target.value)} placeholder={t('admin.support.replyPlaceholder')} rows={3} maxLength={4000} aria-label={t('admin.support.reply')} />
+            <Button size="sm" disabled={!reply.trim()} onClick={() => void sendReply(tk.id)}>{t('admin.support.reply')}</Button>
+          </div>}
+        </li>
+      ))}</ul>
+    )}
   </section>;
 }

@@ -13,3 +13,16 @@
 - [ ] Screen-reader narration pass on ticket/calendar, communications and check-in surfaces.
 - [ ] Real-device camera permission and live QR scan pass.
 - [ ] Wallet provider certificates (UI remains gated as Setup required).
+
+## Completed: v0.27 insights, admin support, privacy & data
+
+- [x] Host /insights dashboard with real event/offering/sales aggregates and aggregate-only CSV exports.
+- [x] Team analytics gated to owner/admin/analyst via team_capability.
+- [x] Admin support-ticket triage tab with audited staff replies and close.
+- [x] Me > Privacy & data: Download my data (JSON, own rows only) and consent history.
+- [x] 287 tests, typecheck, build; browser QA 17/17 (phone/desktop, EN/ES); no fixtures created.
+
+## Remaining
+
+- [ ] Browser pass of the admin support tab as an admin account (RPC denial verified; no admin account in this environment).
+- [ ] Screen-reader pass on the new insights/privacy panels.
