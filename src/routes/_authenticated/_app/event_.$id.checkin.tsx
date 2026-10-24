@@ -39,6 +39,8 @@ function CheckInMode() {
     },
   });
   const counts = useLiveCounts(id);
+  // Walk-ins are an event-manager action; check-in-only staff never see the control.
+  const { data: canManage = false } = useQuery({ queryKey: ['event', id, 'can-manage'], queryFn: async () => !!(await supabase.rpc('can_manage_event', { _event_id: id })).data });
   useRsvpChanges(id, () => void queryClient.invalidateQueries({ queryKey: listKey }));
   const [q, setQ] = useState(''); const [scanning, setScanning] = useState(false); const [walkIn, setWalkIn] = useState(false); const [scan, setScan] = useState<Scan | null>(null);
   const queue = useRef(createCheckinQueue());
