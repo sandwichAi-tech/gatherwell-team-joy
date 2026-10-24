@@ -30,10 +30,13 @@ import { PaymentTestModeBanner } from '@/components/payment-test-mode-banner';
 
 const fmtDate = (iso: string, lang: string) => new Date(iso).toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
-/** Blueprint v4 prices shown on the prospective cards. plan_settings rows and Stripe price IDs stay
- *  untouched, so paid checkout stays disabled ("Setup required") until the approved prices are configured. */
-const V4_MONTHLY_CENTS: Record<PlanId, number> = { free: 0, growth: 4900, pro: 9900 };
-const V4_FEE_PERCENT = 5;
+/** Approved prices and per-plan fees shown on the prospective cards. plan_settings rows and
+ *  Stripe price IDs stay untouched, so paid checkout stays disabled ("Setup required")
+ *  until the approved prices are configured. Fees mirror the v5 fee ladder. */
+const V5_MONTHLY_CENTS: Record<PlanId, number> = { free: 0, growth: 4900, pro: 9900 };
+const V5_FEE_PERCENT: Record<PlanId, number> = { free: 5, growth: 3, pro: 2 };
+/** Builder seats per plan (owner + admins/hosts/content editors). */
+const V5_BUILDER_SEATS: Record<PlanId, number> = { free: 3, growth: 3, pro: 5 };
 
 /** App errors with their own wording; anything else is the provider's message. */
 const CHECKOUT_ERRORS = ['already_on_plan', 'already_on_license', 'price_mismatch', 'price_not_found', 'founding_free', 'no_subscription', 'no_period_end'];
