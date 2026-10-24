@@ -396,7 +396,7 @@ export function BundlePanel({ offer }: { offer: Offer }) {
   };
   const remove = async (item: BundleItem) => {
     if (item.is_published) { toast.error(t('content.removeDraftOnly')); return; }
-    if (!(await confirmAction(t('content.confirmRemoveItem')))) return;
+    if (!(await confirmAction({ title: t('content.confirmRemoveItem'), destructive: true }))) return;
     await db.from('offer_items').delete().eq('id', item.id);
     await refresh();
   };
@@ -409,7 +409,7 @@ export function BundlePanel({ offer }: { offer: Offer }) {
   return <section className="panel">
     <div className="section-heading"><h2>{t('content.bundle')}</h2><Button size="sm" onClick={() => setEdit('new')}><Plus />{t('content.addItem')}</Button></div>
     <p className="muted-small">{t('content.bundleText')}</p>
-    {isLoading ? <ListSkeleton /> : items.length === 0 ? <EmptyState icon="file" title={t('content.noItems')} text={t('content.noItemsText')} /> :
+    {isLoading ? <ListSkeleton /> : items.length === 0 ? <EmptyState icon="FileText" title={t('content.noItems')} text={t('content.noItemsText')} /> :
       <ol className="lesson-list">{items.map((item, i) => <li key={item.id} className="lesson-row">
         <div className="row-actions" role="group" aria-label={t('content.reorder')}>
           <button type="button" className="icon-btn" disabled={i === 0} aria-label={t('content.moveUp')} onClick={() => void move(i, -1)}><ArrowUp /></button>
