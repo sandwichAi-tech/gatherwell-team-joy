@@ -393,6 +393,13 @@
       "when": 1792809750689,
       "tag": "0055_public_event_ticket_tiers",
       "breakpoints": true
+    },
+    {
+      "idx": 56,
+      "version": "7",
+      "when": 1792810617332,
+      "tag": "0056_fix_rsvp_event_minor_ambiguous_status",
+      "breakpoints": true
     }
   ]
 }

@@ -8,7 +8,9 @@ Active work follows the approved Prompt 1–17 sequence in the ZoheeWell Beta Pr
 - [x] Prompt 2 correction — applied 0049/0050, consent 7/7 verified, evidence recorded, 96 existing tests pass, counts/flags unchanged
 - [ ] Disposable-copy SQL role regression — requires an isolated writable database copy; never run on production
 - [x] Prompt 3 — identity, onboarding, language, account modes (see CHANGELOG v0.12)
-- [ ] Prompt 3 follow-up — guardian form on event page + host allows_minors toggle; signed-in browser and email-delivery checks need a session and real email
+- [x] Prompt 3 follow-up — guardian form on event page + host allows_minors toggle shipped (v0.16); guardian registration verified live end to end (v0.18); email-delivery checks still need real providers
+- [x] Registration verification pass (v0.18) — concurrency, waitlist promotion, claim/merge, guardian rules, isolation, token security verified live; rsvp_event_minor ambiguous-column defect fixed (0056); My tickets card layout fixed
+- [ ] Two-account browser journey (attendee view of host-cancellation reason, cross-account My tickets) — needs approval to mint a second live account session
 - [x] Homepage density fix — removed immediate duplicate Host/Attend section; compact four-step and 15-tool layouts verified at 390px/1440px, both CTAs work, 96 tests pass; verification limits in CHANGELOG.md.
 
 

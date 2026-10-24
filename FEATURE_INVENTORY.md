@@ -17,7 +17,7 @@ Outside accounts not connected yet: email (Resend/Mailgun), text (Twilio), push 
 | /e/$id paid | Ticket checkout | Not connected (Stripe) | No |
 | /i/$code | Invite link that leads to a gathering RSVP | Working | No |
 | /r/$code | Referral link | Working | No |
-| /events?tab=tickets | Signed-in My tickets: status, waitlist position, waiver/terms records, cancel, private join link | Working | No |
+| /events?tab=tickets | Signed-in My tickets: status, waitlist position, waiver/terms records, cancel, private join link | Working (verified live 2026-10-24, EN/ES, phone/desktop) | No |
 | /join/$code | Join a team from an invite code | Working | No |
 | /unsubscribe/$token | Email preferences and opt-out | Working | No |
 | Text replies IN/OUT/STOP | RSVP by text reply | Not connected (only admin simulation) | No |
