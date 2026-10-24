@@ -3,7 +3,7 @@ import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ArrowDown, ArrowUp, Copy, ExternalLink, Pencil, Plus, Trash2, Upload, Video } from '@/components/icons';
+import { ArrowDown, ArrowUp, Copy, ExternalLink, Pencil, Plus, Trash2, Upload } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -375,5 +375,3 @@ export function PublicOfferLink({ id }: { id: string }) {
   const { t } = useTranslation();
   return <Button asChild variant="ghost" size="sm"><Link to="/o/$id" params={{ id }} target="_blank"><ExternalLink />{t('content.viewPublicPage')}</Link></Button>;
 }
-
-export { Video as _keepVideo };
