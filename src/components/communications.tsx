@@ -3,9 +3,9 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { useGatherwell } from '@/lib/gatherwell-context';
+import { useGatherwell } from '@/components/gatherwell-shell';
 import { workspaceQuery } from '@/lib/account';
-import { rpcError } from '@/lib/errors';
+import { rpcError } from '@/lib/gatherings';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -169,7 +169,7 @@ function TemplatesTab({ teamId, templates, loading, canManage, onChanged }: { te
     </>}
 
     {editing && <TemplateEditor teamId={teamId} template={editing === 'new' ? null : editing} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); onChanged(); }} />}
-    {preview && <ResponsiveSheet open onClose={() => setPreview(null)} title={preview.name}>
+    {preview && <ResponsiveSheet open onOpenChange={() => setPreview(null)} title={preview.name}>
       <div className="comms-preview">
         {preview.subject && <p><strong>{t('comms.subject')}:</strong> {samplePreview(preview.subject, t)}</p>}
         <p style={{ whiteSpace: 'pre-line' }}>{samplePreview(preview.body, t)}</p>
@@ -200,7 +200,7 @@ function TemplateEditor({ teamId, template, onClose, onSaved }: { teamId: string
     setBusy(false);
   };
 
-  return <ResponsiveSheet open onClose={onClose} title={template ? t('comms.editTemplate') : t('comms.createTemplate')}
+  return <ResponsiveSheet open onOpenChange={onClose} title={template ? t('comms.editTemplate') : t('comms.createTemplate')}
     footer={<Button className="guest-primary" disabled={busy} onClick={() => void save()}>{busy ? t('onboarding.saving') : t('comms.save')}</Button>}>
     <div className="form-section">
       <label className="field-label" htmlFor="mt-name">{t('comms.name')}</label>
@@ -322,7 +322,7 @@ function AutomationEditor({ teamId, automation, templates, onClose, onSaved }: {
     setBusy(false);
   };
 
-  return <ResponsiveSheet open onClose={onClose} title={automation ? t('comms.editAutomation') : t('comms.createAutomation')}
+  return <ResponsiveSheet open onOpenChange={onClose} title={automation ? t('comms.editAutomation') : t('comms.createAutomation')}
     footer={<Button className="guest-primary" disabled={busy} onClick={() => void save()}>{busy ? t('onboarding.saving') : t('comms.saveDraft')}</Button>}>
     <div className="form-section">
       <label className="field-label" htmlFor="ma-name">{t('comms.name')}</label>
@@ -443,7 +443,7 @@ function JourneyEditor({ teamId, journey, templates, onClose, onSaved }: { teamI
     setBusy(false);
   };
 
-  return <ResponsiveSheet open onClose={onClose} title={journey ? t('comms.editJourney') : t('comms.createJourney')}
+  return <ResponsiveSheet open onOpenChange={onClose} title={journey ? t('comms.editJourney') : t('comms.createJourney')}
     footer={<Button className="guest-primary" disabled={busy} onClick={() => void save()}>{busy ? t('onboarding.saving') : t('comms.saveDraft')}</Button>}>
     <div className="form-section">
       <label className="field-label" htmlFor="mj-name">{t('comms.name')}</label>
