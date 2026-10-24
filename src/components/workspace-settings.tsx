@@ -152,8 +152,21 @@ export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string
   };
   const revoke = (id: string) => void run(() => supabase.rpc('revoke_team_invite', { _id: id }), t('workspace.revoked'));
 
+  const assignableMembers = (members.data ?? []).filter(m => !m.is_owner && !m.suspended_at && m.workspace_role !== 'admin');
+  const scopeOptions = scopes.data?.[scopeType] ?? [];
+  const createAssignment = async () => {
+    setBusy(true);
+    const { error } = await supabase.rpc('assign_workspace_scope', { _team: teamId, _user: assignee, _scope_type: scopeType, _scope_id: scopeId });
+    setBusy(false);
+    if (error) { toast.error(t(`workspace.err.${error.message}`, { defaultValue: t('error.message') })); return; }
+    toast.success(t('workspace.assignSaved'));
+    setAssignOpen(false); setAssignee(''); setScopeId('');
+    refresh();
+  };
+  const setAssignmentActive = (a: Assignment, active: boolean) => void run(() => supabase.rpc('set_workspace_assignment_active', { _id: a.id, _active: active }), t(active ? 'workspace.assignReactivated' : 'workspace.assignRevoked'));
+
   const filtered = (members.data ?? []).filter(m => !search || (m.full_name ?? '').toLowerCase().includes(search.toLowerCase()));
-  const tabs: [Tab, string][] = [['members', t('workspace.members')], ['invites', t('workspace.invites')], ['seats', t('workspace.seats')], ['activity', t('workspace.activity')]];
+  const tabs: [Tab, string][] = [['members', t('workspace.members')], ['invites', t('workspace.invites')], ['assignments', t('workspace.assignments')], ['seats', t('workspace.seats')], ['activity', t('workspace.activity')]];
 
   return <div className="workspace-settings">
     <div className="segmented ws-tabs" role="tablist" aria-label={t('workspace.title')}>
