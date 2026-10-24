@@ -5938,5 +5938,52 @@
     "seeChecklist": "Ver la lista de Cómo cobrar",
     "draftSafe": "Tus borradores de pago están seguros: la publicación de un evento o recurso de pago se bloquea hasta que cada paso anterior esté listo.",
     "feeNote": ""
+  },
+  "toolsPage": {
+    "eyebrow": "Tu espacio de trabajo",
+    "title": "Herramientas",
+    "subtitle": "Todo lo que puedes administrar, en un solo lugar.",
+    "badge": { "setup": "Ventas de pago: falta configuración" },
+    "emptyTitle": "Aún no tienes herramientas de gestión",
+    "emptyText": "Estás aquí como miembro. Cuando organices o te unas a un equipo con un rol de anfitrión, tus herramientas aparecerán aquí.",
+    "emptyAction": "Volver al inicio",
+    "sections": {
+      "events": "Eventos",
+      "resources": "Recursos y aprendizaje",
+      "selling": "Ventas",
+      "communication": "Comunicación",
+      "team": "Equipo y plan",
+      "insights": "Estadísticas",
+      "presence": "Tu presencia",
+      "admin": "Administración de la plataforma",
+      "help": "Ayuda"
+    },
+    "tools": {
+      "events": { "title": "Eventos", "desc": "Administra tus eventos, invitados y registro de entrada." },
+      "eventNew": { "title": "Crear un evento", "desc": "Único, recurrente o de varios días—gratuito o de pago." },
+      "blueprints": { "title": "Modelos de eventos", "desc": "Configuraciones reutilizables para volver a lanzar." },
+      "learn": { "title": "Recursos", "desc": "Explora y administra cursos, guías y más." },
+      "learnCreate": { "title": "Crear un recurso", "desc": "Video, audio, guía, cuestionario, enlace, sesión en vivo y más." },
+      "learnManage": { "title": "Administrar contenido", "desc": "Edita rutas, lecciones, recetas y borradores." },
+      "learnTemplates": { "title": "Plantillas", "desc": "Comienza con ejemplos bilingües o las plantillas de tu equipo." },
+      "offers": { "title": "Ofertas", "desc": "Cursos, membresías y compras únicas." },
+      "promos": { "title": "Códigos promocionales", "desc": "Descuentos para eventos, retos y ofertas." },
+      "earnings": { "title": "Ingresos", "desc": "Tus ventas y estado de cobros." },
+      "communications": { "title": "Comunicaciones", "desc": "Plantillas, automatizaciones, recorridos e historial de mensajes." },
+      "followups": { "title": "Seguimientos", "desc": "Próximos pasos sugeridos con tu gente." },
+      "team": { "title": "Espacio de equipo", "desc": "Miembros, roles e invitaciones." },
+      "teamSettings": { "title": "Configuración del equipo", "desc": "Nombre, código de acceso y preferencias del espacio." },
+      "teamInsights": { "title": "Estadísticas del equipo", "desc": "Cómo va tu equipo de un vistazo." },
+      "teamMap": { "title": "Mapa de miembros", "desc": "Dónde se reúnen tus miembros." },
+      "plan": { "title": "Plan y facturación", "desc": "Tu plan, comisiones de plataforma y configuración de pagos." },
+      "planSeats": { "title": "Asientos", "desc": "Quién ocupa tus asientos de creación." },
+      "insights": { "title": "Estadísticas", "desc": "Rendimiento de eventos y contenido." },
+      "hostProfile": { "title": "Perfil público", "desc": "Tu página pública de anfitrión y enlace personalizado." },
+      "locations": { "title": "Ubicaciones", "desc": "Lugares donde organizas, visibles en tu página pública." },
+      "verify": { "title": "Verifícate", "desc": "Genera confianza con una insignia verificada." },
+      "admin": { "title": "Consola de administración", "desc": "Resumen de la plataforma, funciones, reportes y seguridad." },
+      "adminMedia": { "title": "Medios del sitio", "desc": "Fotos e ilustraciones que se muestran en el sitio." },
+      "support": { "title": "Soporte", "desc": "Obtén ayuda o reporta un problema." }
+    }
   }
 }

@@ -5938,5 +5938,52 @@
     "seeChecklist": "See the Getting paid checklist",
     "draftSafe": "Paid drafts are safe: publishing a paid event or resource is blocked until every step above is ready.",
     "feeNote": ""
+  },
+  "toolsPage": {
+    "eyebrow": "Your workspace",
+    "title": "Tools",
+    "subtitle": "Everything you can manage, in one place.",
+    "badge": { "setup": "Paid sales: setup needed" },
+    "emptyTitle": "No management tools yet",
+    "emptyText": "You're here as a member. When you host or join a team with a hosting role, your tools will appear here.",
+    "emptyAction": "Back to Home",
+    "sections": {
+      "events": "Events",
+      "resources": "Resources & learning",
+      "selling": "Selling",
+      "communication": "Communication",
+      "team": "Team & plan",
+      "insights": "Insights",
+      "presence": "Your presence",
+      "admin": "Platform admin",
+      "help": "Help"
+    },
+    "tools": {
+      "events": { "title": "Events", "desc": "Manage your events, guests and check-in." },
+      "eventNew": { "title": "Create an event", "desc": "One-time, recurring or multi-day—free or paid." },
+      "blueprints": { "title": "Event blueprints", "desc": "Reusable event setups you can launch again." },
+      "learn": { "title": "Resources", "desc": "Browse and manage courses, guides and more." },
+      "learnCreate": { "title": "Create a resource", "desc": "Video, audio, guide, quiz, link, live session and more." },
+      "learnManage": { "title": "Manage content", "desc": "Edit tracks, lessons, recipes and drafts." },
+      "learnTemplates": { "title": "Templates", "desc": "Start from bilingual starters or your team's templates." },
+      "offers": { "title": "Offers", "desc": "Courses, memberships and one-time purchases." },
+      "promos": { "title": "Promo codes", "desc": "Discounts for events, challenges and offers." },
+      "earnings": { "title": "Earnings", "desc": "Your sales and payout status." },
+      "communications": { "title": "Communications", "desc": "Templates, automations, journeys and message history." },
+      "followups": { "title": "Follow-ups", "desc": "Suggested next steps with your people." },
+      "team": { "title": "Team space", "desc": "Members, roles and invitations." },
+      "teamSettings": { "title": "Team settings", "desc": "Name, join code and workspace preferences." },
+      "teamInsights": { "title": "Team insights", "desc": "How your team is doing at a glance." },
+      "teamMap": { "title": "Member map", "desc": "Where your members are gathered." },
+      "plan": { "title": "Plan & billing", "desc": "Your plan, platform fees and payment setup." },
+      "planSeats": { "title": "Seats", "desc": "Who fills your builder seats." },
+      "insights": { "title": "Insights", "desc": "Event and content performance." },
+      "hostProfile": { "title": "Public profile", "desc": "Your public host page and custom link." },
+      "locations": { "title": "Locations", "desc": "Places you host, shown on your public page." },
+      "verify": { "title": "Get verified", "desc": "Build trust with a verified badge." },
+      "admin": { "title": "Admin console", "desc": "Platform overview, flags, reports and safety." },
+      "adminMedia": { "title": "Site media", "desc": "Photos and artwork shown across the site." },
+      "support": { "title": "Support", "desc": "Get help or report a problem." }
+    }
   }
 }
