@@ -1026,7 +1026,14 @@
     "useDefault": "Use a default cover",
     "coverStyle": "Cover style",
     "styleN": "Style {{n}}",
-    "styleName": { "0": "Deep plum", "1": "Plum to terracotta", "2": "Terracotta to sand", "3": "Terracotta glow", "4": "Soft lavender plum", "5": "Midnight plum" },
+    "styleName": {
+      "0": "Deep plum",
+      "1": "Plum to terracotta",
+      "2": "Terracotta to sand",
+      "3": "Terracotta glow",
+      "4": "Soft lavender plum",
+      "5": "Midnight plum"
+    },
     "coverOverlay": "Overlay strength",
     "coverOverlayHint": "Darkens the cover so text stays easy to read.",
     "overlay": {
@@ -4676,9 +4683,9 @@
     "text": {
       "free_anytime": "This is a free event. You can cancel your spot anytime — no charges, no questions.",
       "free_notify": "This is a free event. If you can't make it, please cancel so someone else can take your spot.",
-      "paid_24h": "Full refund if you cancel at least 24 hours before the start. If the host cancels, everyone is refunded in full.",
-      "paid_7d": "Full refund if you cancel at least 7 days before the start. If the host cancels, everyone is refunded in full.",
-      "paid_none": "Ticket sales are final. If the host cancels, everyone is refunded in full."
+      "paid_24h": "Full refund if you cancel at least 24 hours before the start. If the host cancels, the host refunds everyone in full.",
+      "paid_7d": "Full refund if you cancel at least 7 days before the start. If the host cancels, the host refunds everyone in full.",
+      "paid_none": "Ticket sales are final. If the host cancels, the host refunds everyone in full."
     }
   },
   "refunds": {
