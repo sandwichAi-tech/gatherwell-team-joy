@@ -6372,6 +6372,15 @@ export type Database = {
         }
         Returns: string
       }
+      admin_account_record: {
+        Args: {
+          _action: string
+          _actor: string
+          _reason: string
+          _target: string
+        }
+        Returns: undefined
+      }
       admin_broadcasts: { Args: never; Returns: Json }
       admin_day60: { Args: never; Returns: Json }
       admin_founding: { Args: never; Returns: Json }
