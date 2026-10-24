@@ -94,13 +94,13 @@ export async function getQuizForTaker(quizId: string): Promise<{ data: TakerPayl
   return { data: data as TakerPayload | null, error };
 }
 export async function startQuizAttempt(quizId: string) {
-  return supabase.rpc('start_quiz_attempt', { _quiz: quizId }) as Promise<{ data: { attempt_id: string; attempt_no: number; deadline: string | null; resumed: boolean } | null; error: { message?: string } | null }>;
+  return supabase.rpc('start_quiz_attempt', { _quiz: quizId }) as unknown as Promise<{ data: { attempt_id: string; attempt_no: number; deadline: string | null; resumed: boolean } | null; error: { message?: string } | null }>;
 }
 export async function saveQuizResponse(attemptId: string, questionId: string, selected: string[] | null, text: string | null) {
-  return supabase.rpc('save_quiz_response', { _attempt: attemptId, _question: questionId, _selected: selected, _text: text });
+  return supabase.rpc('save_quiz_response', { _attempt: attemptId, _question: questionId, _selected: selected ?? undefined, _text: text ?? undefined } as never);
 }
 export async function submitQuiz(attemptId: string) {
-  return supabase.rpc('submit_quiz', { _attempt: attemptId }) as Promise<{ data: SubmitResult | null; error: unknown }>;
+  return supabase.rpc('submit_quiz', { _attempt: attemptId }) as unknown as Promise<{ data: SubmitResult | null; error: unknown }>;
 }
 export async function myQuizAttempts(quizId: string): Promise<AttemptRow[]> {
   const { data } = await supabase.rpc('my_quiz_attempts', { _quiz: quizId });
@@ -114,7 +114,7 @@ export async function getCourseProgress(offerId: string): Promise<CourseProgress
   return data as CourseProgress | null;
 }
 export async function issueCertificate(offerId: string) {
-  return supabase.rpc('issue_certificate', { _offer: offerId }) as Promise<{ data: { certificate_id: string; cert_number: string; idempotent: boolean; revoked: boolean } | null; error: { message?: string } | null }>;
+  return supabase.rpc('issue_certificate', { _offer: offerId }) as unknown as Promise<{ data: { certificate_id: string; cert_number: string; idempotent: boolean; revoked: boolean } | null; error: { message?: string } | null }>;
 }
 export async function revokeCertificate(certId: string, reason: string) {
   return supabase.rpc('revoke_certificate', { _cert: certId, _reason: reason });
