@@ -209,7 +209,7 @@ export function FollowingPage() {
             <span><strong>{f.name}</strong><small>{t('follow.followers', { count: f.followers })}</small></span>
             <GwIcon name="ChevronRight" />
           </Link>
-          <Button variant="ghost" size="icon" aria-label={t('follow.unfollow')} onClick={() => void unfollow(f.kind, f.id)}><GwIcon name="BellOff" /></Button>
+          <Button variant="ghost" size="icon" aria-label={t('follow.unfollow')} onClick={() => void unfollow(f.kind, f.id)}><GwIcon name="BellRing" /></Button>
         </li>;
       })}</ul>}
   </div>;

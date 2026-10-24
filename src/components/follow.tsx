@@ -69,7 +69,7 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
           {host.categories.map(c => <li key={c} className="discover-chip is-static">{c}</li>)}
           {host.languages.map(l => <li key={l} className="discover-chip is-static">{t(l === 'es' ? 'me.spanish' : 'me.english')}</li>)}
         </ul>}
-        {host?.accessibility && <p className="follow-accessibility"><GwIcon name="Accessibility" />{host.accessibility}</p>}
+        {host?.accessibility && <p className="follow-accessibility"><GwIcon name="HeartHandshake" />{host.accessibility}</p>}
         {host && <FeaturedBadges userId={host.id} />}
         <div className="follow-actions"><FollowButton kind={kind} target={d.id} following={d.following} slug={slug} />
           {host?.shop_url && <Button asChild variant="secondary"><a href={host.shop_url} target="_blank" rel="noopener noreferrer"><GwIcon name="ExternalLink" />{t('follow.shop')}</a></Button>}</div>

@@ -181,7 +181,8 @@
       "copied": "Enlace copiado.",
       "shared": "Gracias por compartir ZoheeWell.",
       "manual": "Copia este enlace para compartir:",
-      "inviteText": "Organiza tus eventos y cursos en ZoheeWell."
+      "inviteText": "Organiza tus eventos y cursos en ZoheeWell.",
+      "inviteCopied": "Enlace de invitación copiado"
     },
     "pricing": {
       "label": "Precios",
@@ -3276,7 +3277,10 @@
     "resume": "Reanudar",
     "pausedUntil": "En pausa hasta el {{date}}",
     "pausedToast": "En pausa hasta el {{date}}. Sin cobros mientras tanto.",
-    "resumedToast": "Qué gusto verte de vuelta. Tu Círculo está activo."
+    "resumedToast": "Qué gusto verte de vuelta. Tu Círculo está activo.",
+    "kind_course": "Curso",
+    "kind_download": "Recurso",
+    "kind_membership": "Membresía"
   },
   "welcome": {
     "title": "Invita a tus amigos",
