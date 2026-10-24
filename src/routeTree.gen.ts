@@ -33,6 +33,7 @@ import { Route as OIdRouteImport } from './routes/o.$id'
 import { Route as RCodeRouteImport } from './routes/r.$code'
 import { Route as TSlugRouteImport } from './routes/t.$slug'
 import { Route as UnsubscribeTokenRouteImport } from './routes/unsubscribe.$token'
+import { Route as VerifyNumberRouteImport } from './routes/verify.$number'
 import { Route as AuthenticatedAppBlueprintsRouteImport } from './routes/_authenticated/_app/blueprints'
 import { Route as AuthenticatedAppCirclesRouteImport } from './routes/_authenticated/_app/circles'
 import { Route as AuthenticatedAppEarningsRouteImport } from './routes/_authenticated/_app/earnings'
@@ -192,6 +193,11 @@ const TSlugRoute = TSlugRouteImport.update({
 const UnsubscribeTokenRoute = UnsubscribeTokenRouteImport.update({
   id: '/unsubscribe/$token',
   path: '/unsubscribe/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyNumberRoute = VerifyNumberRouteImport.update({
+  id: '/verify/$number',
+  path: '/verify/$number',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAppBlueprintsRoute =
@@ -448,6 +454,7 @@ export interface FileRoutesByFullPath {
   '/r/$code': typeof RCodeRoute
   '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
+  '/verify/$number': typeof VerifyNumberRoute
   '/blueprints': typeof AuthenticatedAppBlueprintsRoute
   '/circles': typeof AuthenticatedAppCirclesRoute
   '/earnings': typeof AuthenticatedAppEarningsRoute
@@ -514,6 +521,7 @@ export interface FileRoutesByTo {
   '/r/$code': typeof RCodeRoute
   '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
+  '/verify/$number': typeof VerifyNumberRoute
   '/blueprints': typeof AuthenticatedAppBlueprintsRoute
   '/circles': typeof AuthenticatedAppCirclesRoute
   '/earnings': typeof AuthenticatedAppEarningsRoute
@@ -583,6 +591,7 @@ export interface FileRoutesById {
   '/r/$code': typeof RCodeRoute
   '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
+  '/verify/$number': typeof VerifyNumberRoute
   '/_authenticated/_app/blueprints': typeof AuthenticatedAppBlueprintsRoute
   '/_authenticated/_app/circles': typeof AuthenticatedAppCirclesRoute
   '/_authenticated/_app/earnings': typeof AuthenticatedAppEarningsRoute
@@ -651,6 +660,7 @@ export interface FileRouteTypes {
     | '/r/$code'
     | '/t/$slug'
     | '/unsubscribe/$token'
+    | '/verify/$number'
     | '/blueprints'
     | '/circles'
     | '/earnings'
@@ -717,6 +727,7 @@ export interface FileRouteTypes {
     | '/r/$code'
     | '/t/$slug'
     | '/unsubscribe/$token'
+    | '/verify/$number'
     | '/blueprints'
     | '/circles'
     | '/earnings'
@@ -785,6 +796,7 @@ export interface FileRouteTypes {
     | '/r/$code'
     | '/t/$slug'
     | '/unsubscribe/$token'
+    | '/verify/$number'
     | '/_authenticated/_app/blueprints'
     | '/_authenticated/_app/circles'
     | '/_authenticated/_app/earnings'
@@ -852,6 +864,7 @@ export interface RootRouteChildren {
   RCodeRoute: typeof RCodeRoute
   TSlugRoute: typeof TSlugRoute
   UnsubscribeTokenRoute: typeof UnsubscribeTokenRoute
+  VerifyNumberRoute: typeof VerifyNumberRoute
   ApiPublicAiFollowupsRoute: typeof ApiPublicAiFollowupsRoute
   ApiPublicCalendarTokenRoute: typeof ApiPublicCalendarTokenRoute
   ApiPublicEmailMailgunRoute: typeof ApiPublicEmailMailgunRoute
@@ -1030,6 +1043,13 @@ declare module '@tanstack/react-router' {
       path: '/unsubscribe/$token'
       fullPath: '/unsubscribe/$token'
       preLoaderRoute: typeof UnsubscribeTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify/$number': {
+      id: '/verify/$number'
+      path: '/verify/$number'
+      fullPath: '/verify/$number'
+      preLoaderRoute: typeof VerifyNumberRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/_app/blueprints': {
@@ -1444,6 +1464,7 @@ const rootRouteChildren: RootRouteChildren = {
   RCodeRoute: RCodeRoute,
   TSlugRoute: TSlugRoute,
   UnsubscribeTokenRoute: UnsubscribeTokenRoute,
+  VerifyNumberRoute: VerifyNumberRoute,
   ApiPublicAiFollowupsRoute: ApiPublicAiFollowupsRoute,
   ApiPublicCalendarTokenRoute: ApiPublicCalendarTokenRoute,
   ApiPublicEmailMailgunRoute: ApiPublicEmailMailgunRoute,
