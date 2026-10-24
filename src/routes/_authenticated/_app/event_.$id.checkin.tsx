@@ -141,6 +141,14 @@ function Scanner({ onClose, onCode, scan, onNext }: { onClose: () => void; onCod
   const { t } = useTranslation();
   const video = useRef<HTMLVideoElement>(null); const busy = useRef(false); const paused = useRef(false);
   const [denied, setDenied] = useState(false);
+  const [manual, setManual] = useState('');
+  const submitManual = async (e: FormEvent) => {
+    e.preventDefault();
+    const code = manual.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (!code) return;
+    setManual('');
+    await onCode(code);
+  };
   paused.current = !!scan;
   useEffect(() => {
     let stream: MediaStream | null = null; let raf = 0; let stopped = false;
