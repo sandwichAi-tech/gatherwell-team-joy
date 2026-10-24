@@ -119,7 +119,7 @@ export function SlugEditor({ userId, slug, onSaved }: { userId: string; slug: st
           {problem ? t(`hostProfile.slug.error.${problem === 'invalid_slug' ? 'invalid' : 'reserved'}`) : normalized && normalized !== normalizeProfileSlug(slug ?? '') ? t('hostProfile.slug.willBe', { slug: normalized }) : t('hostProfile.slug.rules')}
         </small>
       </div>
-      <p className="field-hint"><GwIcon name="Info" />{t('hostProfile.slug.oldLinks')}</p>
+      <p className="field-hint"><GwIcon name="WarningCircle" />{t('hostProfile.slug.oldLinks')}</p>
       <div className="form-actions">
         <Button className="sheet-primary" disabled={busy || !!problem || !normalized || normalized === slug} onClick={() => void save()}>{busy ? t('onboarding.saving') : t('hostProfile.slug.save')}</Button>
         <Button variant="ghost" onClick={() => setEditing(false)}>{t('common.cancel')}</Button>
