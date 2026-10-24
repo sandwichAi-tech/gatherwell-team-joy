@@ -112,15 +112,16 @@
       "label": "Precios",
       "title": "Empieza gratis. Crece cuando estés listo.",
       "perMonth": "/mes",
+      "perYear": "/año",
       "annual": "${{price}}/año con pago anual",
       "plans": {
         "free": "Gratis",
         "advanced": "Avanzado",
         "pro": "Pro",
         "team25": "Equipo 25",
-        "team100": "Equipo 100"
+        "organization": "Organización"
       },
-      "fee": "Se aplica una tarifa de plataforma de ZoheeWell del {{pct}}% a tus ventas pagadas. Lo gratuito no tiene tarifa. El procesamiento de Stripe es aparte.",
+      "fee": "Las tarifas de plataforma sobre ventas pagadas van de 5% en Gratis a 0.5% en Organización. Lo gratuito no tiene tarifa. El procesamiento de Stripe es aparte.",
       "twoMonths": "Con el pago anual obtienes dos meses gratis.",
       "pilot": "Los precios pueden cambiar después del piloto.",
       "foundingTitle": "Anfitriones fundadores",

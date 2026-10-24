@@ -112,15 +112,16 @@
       "label": "Pricing",
       "title": "Start free. Grow when you are ready.",
       "perMonth": "/mo",
+      "perYear": "/yr",
       "annual": "${{price}}/yr billed annually",
       "plans": {
         "free": "Free",
         "advanced": "Advanced",
         "pro": "Pro",
         "team25": "Team 25",
-        "team100": "Team 100"
+        "organization": "Organization"
       },
-      "fee": "A {{pct}}% ZoheeWell platform fee applies to paid sales you make. Free offerings have no fee. Stripe processing is separate.",
+      "fee": "Platform fees on paid sales range from 5% on Free down to 0.5% on Organization. Free offerings have no fee. Stripe processing is separate.",
       "twoMonths": "Annual billing gives you two months free.",
       "pilot": "Pricing may change after the pilot.",
       "foundingTitle": "Founding hosts",
