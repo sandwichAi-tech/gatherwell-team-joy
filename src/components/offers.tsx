@@ -32,7 +32,7 @@ import {
 } from '@/lib/offers';
 import { cancelOfferMembership, offerDownloadLink, pauseOfferMembership, startOfferCheckout } from '@/lib/offers.functions';
 import { CommunityRequestsPanel, CommunitySeatCard } from '@/components/community-seats';
-import { CurriculumPanel, OfferDetailsEditor, OfferHostActions, PublicOfferLink, ReadinessPanel } from '@/components/content-studio';
+import { BundlePanel, BundleReader, CurriculumPanel, OfferDetailsEditor, OfferHostActions, PublicOfferLink, ReadinessPanel } from '@/components/content-studio';
 import { canAccessOfferQuery } from '@/lib/content';
 
 const KINDS: OfferKind[] = ['membership', 'course', 'download'];
