@@ -2022,6 +2022,35 @@ export type Database = {
           },
         ]
       }
+      lesson_instructor_notes: {
+        Row: {
+          lesson_id: string
+          notes_en: string | null
+          notes_es: string | null
+          updated_at: string
+        }
+        Insert: {
+          lesson_id: string
+          notes_en?: string | null
+          notes_es?: string | null
+          updated_at?: string
+        }
+        Update: {
+          lesson_id?: string
+          notes_en?: string | null
+          notes_es?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_instructor_notes_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: true
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lesson_live_links: {
         Row: {
           lesson_id: string
@@ -2159,12 +2188,19 @@ export type Database = {
       }
       lessons: {
         Row: {
+          attachments: Json
           created_at: string
+          description_en: string | null
+          description_es: string | null
           duration_minutes: number | null
+          event_id: string | null
           id: string
+          is_preview: boolean
+          is_published: boolean
           live_starts_at: string | null
           notes_en: string | null
           notes_es: string | null
+          prerequisite_lesson_id: string | null
           replay_url: string | null
           sort_order: number
           storage_path: string | null
@@ -2175,12 +2211,19 @@ export type Database = {
           url: string | null
         }
         Insert: {
+          attachments?: Json
           created_at?: string
+          description_en?: string | null
+          description_es?: string | null
           duration_minutes?: number | null
+          event_id?: string | null
           id?: string
+          is_preview?: boolean
+          is_published?: boolean
           live_starts_at?: string | null
           notes_en?: string | null
           notes_es?: string | null
+          prerequisite_lesson_id?: string | null
           replay_url?: string | null
           sort_order?: number
           storage_path?: string | null
@@ -2191,12 +2234,19 @@ export type Database = {
           url?: string | null
         }
         Update: {
+          attachments?: Json
           created_at?: string
+          description_en?: string | null
+          description_es?: string | null
           duration_minutes?: number | null
+          event_id?: string | null
           id?: string
+          is_preview?: boolean
+          is_published?: boolean
           live_starts_at?: string | null
           notes_en?: string | null
           notes_es?: string | null
+          prerequisite_lesson_id?: string | null
           replay_url?: string | null
           sort_order?: number
           storage_path?: string | null
@@ -2207,6 +2257,13 @@ export type Database = {
           url?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "lessons_prerequisite_lesson_id_fkey"
+            columns: ["prerequisite_lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "lessons_track_id_fkey"
             columns: ["track_id"]
@@ -2600,6 +2657,41 @@ export type Database = {
           },
         ]
       }
+      offer_grants: {
+        Row: {
+          created_at: string
+          granted_by: string
+          granted_to: string
+          id: string
+          note: string | null
+          offer_id: string
+        }
+        Insert: {
+          created_at?: string
+          granted_by: string
+          granted_to: string
+          id?: string
+          note?: string | null
+          offer_id: string
+        }
+        Update: {
+          created_at?: string
+          granted_by?: string
+          granted_to?: string
+          id?: string
+          note?: string | null
+          offer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_grants_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       offer_managers: {
         Row: {
           assigned_by: string | null
@@ -2704,13 +2796,20 @@ export type Database = {
       }
       offers: {
         Row: {
+          accessibility_notes: string | null
+          billing_interval: string | null
+          category: string | null
+          coauthor_name: string | null
           community_seats: number | null
           cover_style: number
           cover_url: string | null
           created_at: string
+          currency: string
           description_en: string | null
           description_es: string | null
           drip_days: number
+          enroll_closes_at: string | null
+          enroll_opens_at: string | null
           file_path: string | null
           founding_price_cents: number | null
           founding_seats: number | null
@@ -2719,22 +2818,37 @@ export type Database = {
           includes_en: Json
           includes_es: Json
           kind: string
+          license_en: string | null
+          license_es: string | null
           price_cents: number
           refund_policy: string
           status: string
+          summary_en: string | null
+          summary_es: string | null
+          support_email: string | null
+          tags: string[]
           team_id: string
           title_en: string
           title_es: string
           updated_at: string
+          version_label: string | null
+          visibility: string
         }
         Insert: {
+          accessibility_notes?: string | null
+          billing_interval?: string | null
+          category?: string | null
+          coauthor_name?: string | null
           community_seats?: number | null
           cover_style?: number
           cover_url?: string | null
           created_at?: string
+          currency?: string
           description_en?: string | null
           description_es?: string | null
           drip_days?: number
+          enroll_closes_at?: string | null
+          enroll_opens_at?: string | null
           file_path?: string | null
           founding_price_cents?: number | null
           founding_seats?: number | null
@@ -2743,22 +2857,37 @@ export type Database = {
           includes_en?: Json
           includes_es?: Json
           kind: string
+          license_en?: string | null
+          license_es?: string | null
           price_cents?: number
           refund_policy?: string
           status?: string
+          summary_en?: string | null
+          summary_es?: string | null
+          support_email?: string | null
+          tags?: string[]
           team_id: string
           title_en?: string
           title_es?: string
           updated_at?: string
+          version_label?: string | null
+          visibility?: string
         }
         Update: {
+          accessibility_notes?: string | null
+          billing_interval?: string | null
+          category?: string | null
+          coauthor_name?: string | null
           community_seats?: number | null
           cover_style?: number
           cover_url?: string | null
           created_at?: string
+          currency?: string
           description_en?: string | null
           description_es?: string | null
           drip_days?: number
+          enroll_closes_at?: string | null
+          enroll_opens_at?: string | null
           file_path?: string | null
           founding_price_cents?: number | null
           founding_seats?: number | null
@@ -2767,13 +2896,21 @@ export type Database = {
           includes_en?: Json
           includes_es?: Json
           kind?: string
+          license_en?: string | null
+          license_es?: string | null
           price_cents?: number
           refund_policy?: string
           status?: string
+          summary_en?: string | null
+          summary_es?: string | null
+          support_email?: string | null
+          tags?: string[]
           team_id?: string
           title_en?: string
           title_es?: string
           updated_at?: string
+          version_label?: string | null
+          visibility?: string
         }
         Relationships: [
           {
@@ -5288,6 +5425,7 @@ export type Database = {
         Args: { _event: string }
         Returns: boolean
       }
+      can_access_offer: { Args: { _offer: string }; Returns: boolean }
       can_access_offer_participants: {
         Args: { _offer: string }
         Returns: boolean
@@ -5445,6 +5583,7 @@ export type Database = {
       delete_my_account: { Args: never; Returns: undefined }
       delete_my_coach_review: { Args: { _host: string }; Returns: undefined }
       due_followup_events: { Args: never; Returns: string[] }
+      duplicate_offer: { Args: { _offer: string }; Returns: string }
       effective_plan: { Args: { _uid: string }; Returns: Json }
       email_token: { Args: { _email: string; _lang: string }; Returns: string }
       enqueue_message: {
@@ -5464,6 +5603,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      enroll_free: { Args: { _offer: string }; Returns: undefined }
       evaluate_badges: {
         Args: { _team: string; _user: string }
         Returns: undefined
@@ -5528,6 +5668,7 @@ export type Database = {
       }
       get_public_host: { Args: { _slug: string }; Returns: Json }
       get_public_location: { Args: { _slug: string }; Returns: Json }
+      get_public_offer: { Args: { _id: string }; Returns: Json }
       get_public_team: { Args: { _slug: string }; Returns: Json }
       get_rsvp_by_code: { Args: { _code: string }; Returns: Json }
       get_team_invite: {
@@ -5555,6 +5696,10 @@ export type Database = {
           _user: string
         }
         Returns: boolean
+      }
+      grant_offer_access: {
+        Args: { _email: string; _offer: string }
+        Returns: string
       }
       guest_cap: { Args: { _event: string }; Returns: number }
       guest_invite_code_for: { Args: { _checkin: string }; Returns: string }
@@ -5677,6 +5822,7 @@ export type Database = {
       }
       my_calendar_feeds: { Args: never; Returns: Json }
       my_invite_code: { Args: never; Returns: string }
+      my_learning: { Args: never; Returns: Json }
       my_offer_stats: {
         Args: never
         Returns: {
@@ -5753,6 +5899,7 @@ export type Database = {
       }
       notify_rsvp_request: { Args: { _rsvp: string }; Returns: undefined }
       offer_founding_status: { Args: { _offer: string }; Returns: Json }
+      offer_readiness: { Args: { _offer: string }; Returns: Json }
       pair_buddy: {
         Args: { _buddy: string; _rsvp: string }
         Returns: undefined

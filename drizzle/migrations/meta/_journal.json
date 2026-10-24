@@ -400,6 +400,13 @@
       "when": 1792810617332,
       "tag": "0056_fix_rsvp_event_minor_ambiguous_status",
       "breakpoints": true
+    },
+    {
+      "idx": 57,
+      "version": "7",
+      "when": 1792811508305,
+      "tag": "0057_content_authoring_learner_access",
+      "breakpoints": true
     }
   ]
 }
