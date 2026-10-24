@@ -666,6 +666,13 @@
       "when": 1792882217685,
       "tag": "0094_public_event_price_cents",
       "breakpoints": true
+    },
+    {
+      "idx": 95,
+      "version": "7",
+      "when": 1792882876644,
+      "tag": "0095_communications_hub",
+      "breakpoints": true
     }
   ]
 }
