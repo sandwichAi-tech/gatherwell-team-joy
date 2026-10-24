@@ -46,6 +46,7 @@ import { Route as AuthenticatedAppLearnRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppLocationsRouteImport } from './routes/_authenticated/_app/locations'
 import { Route as AuthenticatedAppMeRouteImport } from './routes/_authenticated/_app/me'
 import { Route as AuthenticatedAppNetworkRouteImport } from './routes/_authenticated/_app/network'
+import { Route as AuthenticatedAppNotificationsRouteImport } from './routes/_authenticated/_app/notifications'
 import { Route as AuthenticatedAppOffersRouteImport } from './routes/_authenticated/_app/offers'
 import { Route as AuthenticatedAppPlanRouteImport } from './routes/_authenticated/_app/plan'
 import { Route as AuthenticatedAppProgressRouteImport } from './routes/_authenticated/_app/progress'
@@ -53,6 +54,7 @@ import { Route as AuthenticatedAppPromosRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAppSavedRouteImport } from './routes/_authenticated/_app/saved'
 import { Route as AuthenticatedAppStartRouteImport } from './routes/_authenticated/_app/start'
 import { Route as AuthenticatedAppTeamRouteImport } from './routes/_authenticated/_app/team'
+import { Route as AuthenticatedAppUpdatesRouteImport } from './routes/_authenticated/_app/updates'
 import { Route as AuthenticatedAppVerifyRouteImport } from './routes/_authenticated/_app/verify'
 import { Route as IHostTokenRouteImport } from './routes/i.host.$token'
 import { Route as InviteTeamTokenRouteImport } from './routes/invite.team.$token'
@@ -272,6 +274,12 @@ const AuthenticatedAppNetworkRoute = AuthenticatedAppNetworkRouteImport.update({
   path: '/network',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppNotificationsRoute =
+  AuthenticatedAppNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppOffersRoute = AuthenticatedAppOffersRouteImport.update({
   id: '/offers',
   path: '/offers',
@@ -306,6 +314,11 @@ const AuthenticatedAppStartRoute = AuthenticatedAppStartRouteImport.update({
 const AuthenticatedAppTeamRoute = AuthenticatedAppTeamRouteImport.update({
   id: '/team',
   path: '/team',
+  getParentRoute: () => AuthenticatedAppRouteRoute,
+} as any)
+const AuthenticatedAppUpdatesRoute = AuthenticatedAppUpdatesRouteImport.update({
+  id: '/updates',
+  path: '/updates',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
 const AuthenticatedAppVerifyRoute = AuthenticatedAppVerifyRouteImport.update({
@@ -512,6 +525,7 @@ export interface FileRoutesByFullPath {
   '/locations': typeof AuthenticatedAppLocationsRoute
   '/me': typeof AuthenticatedAppMeRoute
   '/network': typeof AuthenticatedAppNetworkRoute
+  '/notifications': typeof AuthenticatedAppNotificationsRoute
   '/offers': typeof AuthenticatedAppOffersRoute
   '/plan': typeof AuthenticatedAppPlanRoute
   '/progress': typeof AuthenticatedAppProgressRoute
@@ -519,6 +533,7 @@ export interface FileRoutesByFullPath {
   '/saved': typeof AuthenticatedAppSavedRoute
   '/start': typeof AuthenticatedAppStartRoute
   '/team': typeof AuthenticatedAppTeamRoute
+  '/updates': typeof AuthenticatedAppUpdatesRoute
   '/verify': typeof AuthenticatedAppVerifyRoute
   '/i/host/$token': typeof IHostTokenRoute
   '/invite/team/$token': typeof InviteTeamTokenRoute
@@ -586,6 +601,7 @@ export interface FileRoutesByTo {
   '/locations': typeof AuthenticatedAppLocationsRoute
   '/me': typeof AuthenticatedAppMeRoute
   '/network': typeof AuthenticatedAppNetworkRoute
+  '/notifications': typeof AuthenticatedAppNotificationsRoute
   '/offers': typeof AuthenticatedAppOffersRoute
   '/plan': typeof AuthenticatedAppPlanRoute
   '/progress': typeof AuthenticatedAppProgressRoute
@@ -593,6 +609,7 @@ export interface FileRoutesByTo {
   '/saved': typeof AuthenticatedAppSavedRoute
   '/start': typeof AuthenticatedAppStartRoute
   '/team': typeof AuthenticatedAppTeamRoute
+  '/updates': typeof AuthenticatedAppUpdatesRoute
   '/verify': typeof AuthenticatedAppVerifyRoute
   '/i/host/$token': typeof IHostTokenRoute
   '/invite/team/$token': typeof InviteTeamTokenRoute
@@ -663,6 +680,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/locations': typeof AuthenticatedAppLocationsRoute
   '/_authenticated/_app/me': typeof AuthenticatedAppMeRoute
   '/_authenticated/_app/network': typeof AuthenticatedAppNetworkRoute
+  '/_authenticated/_app/notifications': typeof AuthenticatedAppNotificationsRoute
   '/_authenticated/_app/offers': typeof AuthenticatedAppOffersRoute
   '/_authenticated/_app/plan': typeof AuthenticatedAppPlanRoute
   '/_authenticated/_app/progress': typeof AuthenticatedAppProgressRoute
@@ -670,6 +688,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/saved': typeof AuthenticatedAppSavedRoute
   '/_authenticated/_app/start': typeof AuthenticatedAppStartRoute
   '/_authenticated/_app/team': typeof AuthenticatedAppTeamRoute
+  '/_authenticated/_app/updates': typeof AuthenticatedAppUpdatesRoute
   '/_authenticated/_app/verify': typeof AuthenticatedAppVerifyRoute
   '/i/host/$token': typeof IHostTokenRoute
   '/invite/team/$token': typeof InviteTeamTokenRoute
@@ -739,6 +758,7 @@ export interface FileRouteTypes {
     | '/locations'
     | '/me'
     | '/network'
+    | '/notifications'
     | '/offers'
     | '/plan'
     | '/progress'
@@ -746,6 +766,7 @@ export interface FileRouteTypes {
     | '/saved'
     | '/start'
     | '/team'
+    | '/updates'
     | '/verify'
     | '/i/host/$token'
     | '/invite/team/$token'
@@ -813,6 +834,7 @@ export interface FileRouteTypes {
     | '/locations'
     | '/me'
     | '/network'
+    | '/notifications'
     | '/offers'
     | '/plan'
     | '/progress'
@@ -820,6 +842,7 @@ export interface FileRouteTypes {
     | '/saved'
     | '/start'
     | '/team'
+    | '/updates'
     | '/verify'
     | '/i/host/$token'
     | '/invite/team/$token'
@@ -889,6 +912,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/locations'
     | '/_authenticated/_app/me'
     | '/_authenticated/_app/network'
+    | '/_authenticated/_app/notifications'
     | '/_authenticated/_app/offers'
     | '/_authenticated/_app/plan'
     | '/_authenticated/_app/progress'
@@ -896,6 +920,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/saved'
     | '/_authenticated/_app/start'
     | '/_authenticated/_app/team'
+    | '/_authenticated/_app/updates'
     | '/_authenticated/_app/verify'
     | '/i/host/$token'
     | '/invite/team/$token'
@@ -1225,6 +1250,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppNetworkRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/notifications': {
+      id: '/_authenticated/_app/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedAppNotificationsRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/offers': {
       id: '/_authenticated/_app/offers'
       path: '/offers'
@@ -1272,6 +1304,13 @@ declare module '@tanstack/react-router' {
       path: '/team'
       fullPath: '/team'
       preLoaderRoute: typeof AuthenticatedAppTeamRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/updates': {
+      id: '/_authenticated/_app/updates'
+      path: '/updates'
+      fullPath: '/updates'
+      preLoaderRoute: typeof AuthenticatedAppUpdatesRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
     '/_authenticated/_app/verify': {
@@ -1500,6 +1539,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppLocationsRoute: typeof AuthenticatedAppLocationsRoute
   AuthenticatedAppMeRoute: typeof AuthenticatedAppMeRoute
   AuthenticatedAppNetworkRoute: typeof AuthenticatedAppNetworkRoute
+  AuthenticatedAppNotificationsRoute: typeof AuthenticatedAppNotificationsRoute
   AuthenticatedAppOffersRoute: typeof AuthenticatedAppOffersRoute
   AuthenticatedAppPlanRoute: typeof AuthenticatedAppPlanRoute
   AuthenticatedAppProgressRoute: typeof AuthenticatedAppProgressRoute
@@ -1507,6 +1547,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppSavedRoute: typeof AuthenticatedAppSavedRoute
   AuthenticatedAppStartRoute: typeof AuthenticatedAppStartRoute
   AuthenticatedAppTeamRoute: typeof AuthenticatedAppTeamRoute
+  AuthenticatedAppUpdatesRoute: typeof AuthenticatedAppUpdatesRoute
   AuthenticatedAppVerifyRoute: typeof AuthenticatedAppVerifyRoute
   AuthenticatedAppAdminSiteMediaRoute: typeof AuthenticatedAppAdminSiteMediaRoute
   AuthenticatedAppChallengeIdRoute: typeof AuthenticatedAppChallengeIdRoute
@@ -1542,6 +1583,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppLocationsRoute: AuthenticatedAppLocationsRoute,
   AuthenticatedAppMeRoute: AuthenticatedAppMeRoute,
   AuthenticatedAppNetworkRoute: AuthenticatedAppNetworkRoute,
+  AuthenticatedAppNotificationsRoute: AuthenticatedAppNotificationsRoute,
   AuthenticatedAppOffersRoute: AuthenticatedAppOffersRoute,
   AuthenticatedAppPlanRoute: AuthenticatedAppPlanRoute,
   AuthenticatedAppProgressRoute: AuthenticatedAppProgressRoute,
@@ -1549,6 +1591,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppSavedRoute: AuthenticatedAppSavedRoute,
   AuthenticatedAppStartRoute: AuthenticatedAppStartRoute,
   AuthenticatedAppTeamRoute: AuthenticatedAppTeamRoute,
+  AuthenticatedAppUpdatesRoute: AuthenticatedAppUpdatesRoute,
   AuthenticatedAppVerifyRoute: AuthenticatedAppVerifyRoute,
   AuthenticatedAppAdminSiteMediaRoute: AuthenticatedAppAdminSiteMediaRoute,
   AuthenticatedAppChallengeIdRoute: AuthenticatedAppChallengeIdRoute,
