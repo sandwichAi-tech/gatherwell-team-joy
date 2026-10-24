@@ -40,6 +40,30 @@ export function QuizPanel({ offer }: { offer: Offer }) {
     queryFn: async () => (await supabase.from('lessons').select('id, title_en, title_es, tracks!inner(offer_id)').eq('tracks.offer_id', offer.id)).data ?? [],
   });
   const lessons = lessonsQ.data ?? [];
+
+/** Learner-facing list of published quizzes for an entitled offer. */
+export function LearnerQuizList({ offerId }: { offerId: string }) {
+  const { t, i18n } = useTranslation();
+  const lang = i18n.resolvedLanguage ?? 'en';
+  const [open, setOpen] = useState<string | null>(null);
+  // Learners cannot read the quizzes table (answer-key secrecy); discover published
+  // quizzes through the public-offer payload's quiz list.
+  const q = useQuery({
+    queryKey: ['learner-quizzes', offerId],
+    queryFn: async () => (await supabase.rpc('get_public_offer', { _offer: offerId })).data as { quizzes?: { id: string; title_en: string; title_es: string; is_required: boolean }[] } | null,
+  });
+  const list = q.data?.quizzes ?? [];
+  if (!list.length) return null;
+  return <section className="panel" aria-label={t('quiz.panel')}>
+    <div className="section-heading"><h2>{t('quiz.panel')}</h2></div>
+    <ul className="offer-list">{list.map(z => <li key={z.id} className="offer-row">
+      <div className="offer-row-main"><strong>{lang === 'es' ? z.title_es || z.title_en : z.title_en || z.title_es}</strong>
+        {z.is_required && <small>{t('quiz.required')}</small>}</div>
+      <div className="offer-row-actions"><Button variant="secondary" size="sm" onClick={() => setOpen(open === z.id ? null : z.id)}>{t(open === z.id ? 'quiz.close' : 'quiz.open')}</Button></div>
+      {open === z.id && <QuizTaker quizId={z.id} />}
+    </li>)}</ul>
+  </section>;
+}
   const lessonName = (id: string | null) => {
     if (!id) return t('quiz.finalQuiz');
     const l = lessons.find(x => x.id === id);
