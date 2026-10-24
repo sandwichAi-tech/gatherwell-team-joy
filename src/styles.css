@@ -2403,3 +2403,16 @@ a.gw-cat-chip:hover{background:#fff}
 .slug-prefix{display:flex;align-items:center;padding:0 12px;border:1px solid var(--border);border-right:0;border-radius:10px 0 0 10px;background:var(--muted);color:var(--muted-foreground);font-size:14px;white-space:nowrap}
 .slug-input-row .slug-prefix+*{border-radius:0 10px 10px 0}
 .field-hint.is-error{color:var(--destructive)}
+
+/* Event cover customization (v0.34) */
+.gathering-cover.has-photo{display:block;overflow:hidden}
+.gathering-cover.has-photo .brand-image{width:100%;height:100%}
+.gathering-cover.has-photo .brand-image img{width:100%;height:100%;object-fit:cover}
+.gathering-cover-scrim{position:absolute;inset:0;pointer-events:none;z-index:1}
+.gathering-cover-letter{font-size:56px;font-weight:700;opacity:.92;color:#F8F5F0;position:relative;z-index:2;text-shadow:0 1px 8px rgba(48,35,56,.45)}
+.cover-controls{display:grid;gap:14px;margin-top:12px}
+.cover-focal-grid{display:grid;grid-template-columns:repeat(3,48px);gap:6px}
+.cover-focal-grid button{min-width:48px;min-height:48px;border-radius:10px;border:1px solid var(--border);background:var(--muted);display:flex;align-items:center;justify-content:center}
+.cover-focal-grid button.is-selected{border-color:var(--primary);background:var(--accent)}
+.cover-focal-grid button svg{opacity:.55}
+.cover-focal-grid button.is-selected svg{opacity:1;color:var(--primary)}
