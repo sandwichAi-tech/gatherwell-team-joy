@@ -126,14 +126,10 @@ export const adminTeamAction = createServerFn({ method: 'POST' }).middleware([re
       if (error) return { ok: false as const, error: 'failed' };
       const { data: after } = await db.from('team_licenses').select('tier, seats, status, is_preview').eq('team_id', team.id).maybeSingle();
       await audit(db, context.userId, 'team.grant_license', 'team', team.id, before, after, data.reason);
-    } else if (data.action === 'suspend') {
-      if (!data.reason) return { ok: false as const, error: 'reason_required' };
-      await db.from('team_suspensions').upsert({ team_id: team.id, reason: data.reason, suspended_by: context.userId });
-      await audit(db, context.userId, 'team.suspend', 'team', team.id, null, { reason: data.reason }, data.reason);
     } else {
-      const { data: before } = await db.from('team_suspensions').select('reason, created_at').eq('team_id', team.id).maybeSingle();
-      await db.from('team_suspensions').delete().eq('team_id', team.id);
-      await audit(db, context.userId, 'team.restore', 'team', team.id, before, null, data.reason);
+      if (!data.reason || data.reason.trim().length < 3) return { ok: false as const, error: 'reason_required' };
+      const { error } = await context.supabase.rpc('admin_safety_action', { _kind: 'team', _id: team.id, _action: data.action, _reason: data.reason });
+      if (error) return { ok: false as const, error: 'failed' };
     }
     return { ok: true as const };
   });
@@ -160,6 +156,9 @@ export const adminUserAction = createServerFn({ method: 'POST' }).middleware([re
   .inputValidator((d: unknown) => z.object({ userId: uuid, action: z.enum(['resend', 'suspend', 'restore', 'delete']), reason: note, origin: z.string().url() }).parse(d))
   .handler(async ({ data, context }) => {
     const db = await assertAdmin(context);
+    const { error: guardError } = await context.supabase.rpc('admin_safety_guard');
+    if (guardError) return { ok: false as const, error: 'forbidden' };
+    if (['suspend', 'restore'].includes(data.action) && (!data.reason || data.reason.trim().length < 3)) return { ok: false as const, error: 'reason_required' };
     if (data.userId === context.userId && data.action !== 'resend') return { ok: false as const, error: 'self' };
     const { data: u } = await db.auth.admin.getUserById(data.userId);
     const email = u?.user?.email;
@@ -176,14 +175,16 @@ export const adminUserAction = createServerFn({ method: 'POST' }).middleware([re
       if (!data.reason) return { ok: false as const, error: 'reason_required' };
       const { error } = await db.auth.admin.updateUserById(data.userId, { ban_duration: '876000h' });
       if (error) return { ok: false as const, error: 'failed' };
-      await db.from('user_suspensions').upsert({ user_id: data.userId, reason: data.reason, suspended_by: context.userId });
-      await audit(db, context.userId, 'user.suspend', 'user', data.userId, null, { reason: data.reason }, data.reason);
+      const { error: recordError } = await db.from('user_suspensions').upsert({ user_id: data.userId, reason: data.reason, suspended_by: context.userId });
+      if (recordError) { await db.auth.admin.updateUserById(data.userId, { ban_duration: 'none' }); return { ok: false as const, error: 'failed' }; }
+      await audit(db, context.userId, 'safety.user.suspend', 'user', data.userId, null, { reason: data.reason }, data.reason);
     } else if (data.action === 'restore') {
       const { error } = await db.auth.admin.updateUserById(data.userId, { ban_duration: 'none' });
       if (error) return { ok: false as const, error: 'failed' };
       const { data: before } = await db.from('user_suspensions').select('reason, created_at').eq('user_id', data.userId).maybeSingle();
-      await db.from('user_suspensions').delete().eq('user_id', data.userId);
-      await audit(db, context.userId, 'user.restore', 'user', data.userId, before, null, data.reason);
+      const { error: recordError } = await db.from('user_suspensions').delete().eq('user_id', data.userId);
+      if (recordError) { await db.auth.admin.updateUserById(data.userId, { ban_duration: '876000h' }); return { ok: false as const, error: 'failed' }; }
+      await audit(db, context.userId, 'safety.user.restore', 'user', data.userId, before, null, data.reason);
     } else {
       if (!data.reason) return { ok: false as const, error: 'reason_required' };
       const { data: sole } = await db.from('teams').select('id, name').eq('owner_id', data.userId);
@@ -219,44 +220,12 @@ export const listReports = createServerFn({ method: 'POST' }).middleware([requir
   });
 
 export const moderateReport = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ reportId: uuid, action: z.enum(['approve', 'remove', 'edit']), note, text: z.string().trim().max(2000).optional(), textEs: z.string().trim().max(2000).optional() }).parse(d))
+  .inputValidator((d: unknown) => z.object({ reportId: uuid, action: z.enum(['approve', 'remove', 'edit']), note, text: z.string().max(2000).optional(), textEs: z.string().max(2000).optional() }).parse(d))
   .handler(async ({ data, context }) => {
-    const db = await assertAdmin(context);
-    const { data: rep } = await db.from('reports').select('*').eq('id', data.reportId).maybeSingle();
-    if (!rep) return { ok: false as const, error: 'not_found' };
-    const id = rep.target_id; let before: unknown = null; let after: unknown = null;
-    if (data.action === 'remove') {
-      if (rep.target_type === 'event') { const { data: e } = await db.from('events').select('status').eq('id', id).maybeSingle(); before = e; await db.from('events').update({ status: 'draft' }).eq('id', id); after = { status: 'draft' }; }
-      else if (rep.target_type === 'shoutout') {
-        const { data: s } = await db.from('shoutouts').select('message, hidden, activity_id').eq('id', id).maybeSingle(); before = s;
-        await db.from('shoutouts').update({ hidden: true }).eq('id', id);
-        if (s?.activity_id) { await db.from('activity_reactions').delete().eq('activity_id', s.activity_id); await db.from('activity').delete().eq('id', s.activity_id); }
-        after = { hidden: true };
-      } else if (rep.target_type === 'comment') { before = { hidden: false }; await db.from('comments').update({ hidden: true }).eq('id', id); after = { hidden: true };
-      } else if (rep.target_type === 'photo') { before = { hidden: false }; await db.from('event_photos').update({ hidden: true }).eq('id', id); after = { hidden: true }; }
-      else if (rep.target_type === 'activity') { const { data: a } = await db.from('activity').select('type, payload').eq('id', id).maybeSingle(); before = a; await db.from('activity_reactions').delete().eq('activity_id', id); await db.from('activity').delete().eq('id', id); }
-      else { const { data: a } = await db.from('announcements').select('body').eq('id', id).maybeSingle(); before = a; await db.from('announcements').delete().eq('id', id); }
-    } else if (data.action === 'edit') {
-      if (!data.text && !data.textEs) return { ok: false as const, error: 'text_required' };
-      if (rep.target_type === 'event') {
-        const { data: e } = await db.from('events').select('description_en, description_es').eq('id', id).maybeSingle(); before = e;
-        after = { description_en: data.text || null, description_es: data.textEs || null };
-        await db.from('events').update(after as never).eq('id', id);
-      } else if (rep.target_type === 'shoutout') {
-        const { data: s } = await db.from('shoutouts').select('message, activity_id').eq('id', id).maybeSingle(); before = { message: s?.message };
-        await db.from('shoutouts').update({ message: data.text! }).eq('id', id); after = { message: data.text };
-        if (s?.activity_id) { const { data: a } = await db.from('activity').select('payload').eq('id', s.activity_id).maybeSingle(); if (a) await db.from('activity').update({ payload: { ...(a.payload as object), body: data.text } }).eq('id', s.activity_id); }
-      } else if (rep.target_type === 'announcement') {
-        const { data: a } = await db.from('announcements').select('body').eq('id', id).maybeSingle(); before = a;
-        await db.from('announcements').update({ body: data.text! }).eq('id', id); after = { body: data.text };
-      } else if (rep.target_type === 'activity') {
-        const { data: a } = await db.from('activity').select('payload').eq('id', id).maybeSingle(); before = a;
-        const payload = { ...(a?.payload as object), body: data.text }; await db.from('activity').update({ payload }).eq('id', id); after = { payload };
-      } else return { ok: false as const, error: 'not_editable' };
-    }
-    const status = data.action === 'approve' ? 'approved' : data.action === 'remove' ? 'removed' : 'edited';
-    await db.from('reports').update({ status, resolution_note: data.note || null, resolved_by: context.userId, resolved_at: new Date().toISOString() }).eq('target_id', id).eq('status', 'open');
-    await audit(db, context.userId, `moderation.${data.action}`, rep.target_type, id, before, after, data.note);
+    if (data.action === 'edit') return { ok: false as const, error: 'not_editable' };
+    if (!data.note || data.note.trim().length < 3) return { ok: false as const, error: 'reason_required' };
+    const { error } = await context.supabase.rpc('admin_safety_action', { _kind: 'report', _id: data.reportId, _action: data.action === 'approve' ? 'resolve' : 'hide', _reason: data.note });
+    if (error) return { ok: false as const, error: 'failed' };
     return { ok: true as const };
   });
 
@@ -380,16 +349,9 @@ export const setFlag = createServerFn({ method: 'POST' }).middleware([requireSup
 export const getAudit = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ q: z.string().max(100), area: z.enum(['all', 'team', 'user', 'moderation', 'library', 'broadcast', 'flag', 'mail']) }).parse(d))
   .handler(async ({ data, context }) => {
-    const db = await assertAdmin(context);
-    let q = db.from('admin_audit').select('*').order('created_at', { ascending: false }).limit(200);
-    if (data.area !== 'all') q = q.like('action', `${data.area === 'moderation' ? 'moderation' : data.area}.%`);
-    const term = data.q.trim().replace(/[%,()]/g, '');
-    if (term) q = q.or(`action.ilike.%${term}%,target_id.ilike.%${term}%,note.ilike.%${term}%`);
-    const { data: rows } = await q;
-    const ids = [...new Set((rows ?? []).map(r => r.actor_id).filter(Boolean))] as string[];
-    const { data: people } = ids.length ? await db.from('profiles').select('id, full_name').in('id', ids) : { data: [] };
-    const names = Object.fromEntries((people ?? []).map(p => [p.id, p.full_name]));
-    return (rows ?? []).map(r => ({ ...r, actor_name: r.actor_id ? names[r.actor_id] ?? null : null }));
+    const { data: rows, error } = await context.supabase.rpc('admin_safety_list', { _kind: 'audit', _q: data.q || (data.area === 'all' ? '' : data.area), _state: 'all', _page: 0 });
+    if (error) throw new Error('forbidden');
+    return ((rows ?? []) as unknown as SafetyRow[]).slice(0, 25).map(r => ({ id: r.id, action: r.title || '', actor_name: r.actor, created_at: r.created_at, target_type: r.kind, target_id: r.target_id, note: r.reason, before: null, after: null }));
   });
 
 /** Message monitor: latest text messages (invites, replies, confirmations) from the outbox. */
