@@ -35,6 +35,7 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Plans/limits live in billing_accounts, team_licenses, license_seats; effective_plan()+plan_limits() decide limits (triggers, new rows only). Stripe: billing.functions.ts + /api/public/stripe/webhook only; no key → sheet.
 - Platform admin: /admin data and actions go only through src/lib/admin.functions.ts and every action writes admin_audit; reports come from report_content() or the claims trigger.
 - Platform safety lists/actions use caller-scoped admin_safety RPCs for private projections, bounded pagination, throttling and atomic reversible moderation plus audit; account bans remain the existing managed-auth operation and never imply deletion.
+- Account restriction records and their audit commit through a service-only RPC after caller validation; managed-auth failures use checked compensation because Auth and database writes cannot share a transaction.
 - Admin retries use admin_retry_message() (atomic requeue of failed, unacknowledged rows + audit); delivery stays in the outbox processor so preferences and simulated mode hold.
 - Follows/calendar: public pages read only via get_public_host/get_public_team; iCal via /api/public/calendar/$token (token is the only credential).
 

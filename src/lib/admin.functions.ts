@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { canRetryMessage } from './mail-retry';
-import { safetyAction, safetySearch, safetyPage, type SafetyRow } from './admin-safety';
+import { safetyAction, safetySearch, safetyPage, safetyRestrictionIsSelf, type SafetyRow } from './admin-safety';
 
 type Ctx = { supabase: { rpc: (fn: 'has_role', args: { _user_id: string; _role: 'admin' }) => PromiseLike<{ data: boolean | null }> }; userId: string };
 
@@ -159,7 +159,7 @@ export const adminUserAction = createServerFn({ method: 'POST' }).middleware([re
     const { error: guardError } = await context.supabase.rpc('admin_safety_guard');
     if (guardError) return { ok: false as const, error: 'forbidden' };
     if (['suspend', 'restore'].includes(data.action) && (!data.reason || data.reason.trim().length < 3)) return { ok: false as const, error: 'reason_required' };
-    if (data.userId === context.userId && data.action !== 'resend') return { ok: false as const, error: 'self' };
+    if (safetyRestrictionIsSelf(context.userId, data.userId) && data.action !== 'resend') return { ok: false as const, error: 'self' };
     const { data: u } = await db.auth.admin.getUserById(data.userId);
     const email = u?.user?.email;
     if (!u?.user) return { ok: false as const, error: 'not_found' };
