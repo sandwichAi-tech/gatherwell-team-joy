@@ -192,13 +192,14 @@ export function PlanPage() {
 
     <div className="plan-grid">
       {PLANS.map(p => {
-        const ps = settings[p.id];
+        // Prospective cards show the approved Blueprint v4 price and the flat 5% fee, not the legacy plan_settings rows.
+        const ps = { monthly_price: V4_MONTHLY_CENTS[p.id], fee_percent: V4_FEE_PERCENT };
         const isCurrent = (st.source === 'founding' && p.id === 'pro') || st.source === 'own' && (st.own_plan === p.id && st.legacy_price_cents === null || (p.id === 'free' && st.own_plan === 'free'));
         return <article key={p.id} className={`plan-card ${isCurrent ? 'is-current' : ''} `}>
           <PlanCardBody id={p.id} setting={ps} tagClass="plan-tag" priceClass="plan-price" feeClass="plan-fee-line" />
           {isCurrent ? <Button variant="secondary" disabled>{t('billing.yourPlan')}</Button>
-            : p.id !== 'free' && !gate.connected ? <Button variant="secondary" disabled>{t('billing.comingSoon')}</Button>
-            : <Button variant={p.id === 'pro' ? 'default' : 'secondary'} disabled={gate.busy} onClick={() => choose(p.id)}>{p.id === 'free' ? t('billing.switchTo', { plan: t('billing.name_free') }) : t('billing.upgrade')}</Button>}
+            : p.id === 'free' ? <Button variant="secondary" disabled={gate.busy} onClick={() => choose('free')}>{t('billing.switchTo', { plan: t('billing.name_free') })}</Button>
+            : <Button variant="secondary" disabled>{t('pricingV4.setupRequired')}</Button>}
         </article>;
       })}
       <article className="plan-card plan-card-team">
@@ -210,6 +211,7 @@ export function PlanPage() {
       </article>
     </div>
 
+    <p className="auth-subtitle">{t('billing.v4AnnualNote')}</p>
     <FoundingCommitmentsCard />
     <p className="auth-subtitle">{t('billing.cardNote')}</p>
 
