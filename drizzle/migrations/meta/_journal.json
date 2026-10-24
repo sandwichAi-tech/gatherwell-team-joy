@@ -484,6 +484,13 @@
       "when": 1792815649562,
       "tag": "0068_public_offer_quiz_metadata",
       "breakpoints": true
+    },
+    {
+      "idx": 69,
+      "version": "7",
+      "when": 1792815681381,
+      "tag": "0069_fix_public_offer_description_key",
+      "breakpoints": true
     }
   ]
 }
