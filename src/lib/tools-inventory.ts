@@ -20,7 +20,7 @@ export type ToolId =
   | 'admin' | 'adminMedia'
   | 'support';
 
-export type Tool = { id: ToolId; to: string; icon: GwIconName; badge?: 'setup' };
+export type Tool = { id: ToolId; to: string; icon: GwIconName; badge?: 'setup' | undefined };
 export type ToolSection = { id: ToolSectionId; tools: Tool[] };
 
 export type ToolsInput = {
