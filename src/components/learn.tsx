@@ -7,7 +7,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { toast } from 'sonner';
-import { ArrowLeft, ArrowRight, Bell, BellRing, Bookmark, BookmarkCheck, CalendarPlus, Check, Clock, ExternalLink, FileText, Link2, Play, Radio, Settings2, Share2, Video } from '@/components/icons';
+import { ArrowLeft, ArrowRight, Bell, BellRing, Bookmark, BookmarkCheck, CalendarPlus, Check, Clock, ExternalLink, FileText, Link2, Play, Radio, Settings2, Share2, Video, Waveform, Download } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { supabase } from '@/integrations/supabase/client';
@@ -57,7 +57,7 @@ export function LearnCover({ path, style = 0, title, className = '' }: { path?: 
   return <div className={`learn-cover ${className}`} style={{ backgroundImage: url ? `url(${url})` : COVER_STYLES[(style ?? 0) % COVER_STYLES.length] }} aria-hidden="true">{!url && <span>{(title.trim()[0] ?? 'L').toUpperCase()}</span>}</div>;
 }
 
-const TYPE_ICON = { video: Video, pdf: FileText, link: Link2, live: Radio } as const;
+export const TYPE_ICON = { video: Video, pdf: FileText, link: Link2, live: Radio, text: FileText, audio: Waveform, file: Download } as const;
 export const minutesLabel = (t: TFunction, m: number) => (m >= 60 ? t('learnHub.hours', { h: Math.floor(m / 60), m: m % 60 }) : t('learnHub.minutes', { count: m }));
 
 export function countdown(t: TFunction, startsAt: string, now: number) {
@@ -198,7 +198,7 @@ function CompletionCard({ title }: { title: string }) {
 }
 
 function Player({ lesson }: { lesson: Lesson }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
   const type = effectiveType(lesson);
   const external = lesson.type === 'live' ? lesson.replay_url : lesson.url;
   const { data: fileUrl } = useQuery({ queryKey: ['learn-url', lesson.storage_path], queryFn: () => learnFileUrl(lesson.storage_path), enabled: !!lesson.storage_path && lesson.type !== 'live', staleTime: 50 * 60_000 });
@@ -214,6 +214,9 @@ function Player({ lesson }: { lesson: Lesson }) {
     return src ? <div className="pdf-frame"><iframe src={src} title={t('learnHub.type.pdf')} /><Button asChild variant="secondary"><a href={src} target="_blank" rel="noopener noreferrer"><ExternalLink />{t('learnHub.openPdf')}</a></Button></div> : <div className="player player-empty">{t('learnHub.noMedia')}</div>;
   }
   if (type === 'link') return external ? <LinkCard url={external} /> : null;
+  if (type === 'audio') return fileUrl ? <div className="player player-audio"><audio src={fileUrl} controls preload="metadata" /></div> : external ? <LinkCard url={external} /> : <div className="player player-empty">{t('learnHub.noMedia')}</div>;
+  if (type === 'file') return fileUrl ? <Button asChild variant="secondary"><a href={fileUrl} target="_blank" rel="noopener noreferrer"><Download />{t('learnHub.type.file')}</a></Button> : <div className="player player-empty">{t('learnHub.noMedia')}</div>;
+  if (type === 'text') { const body = pick(lang, lesson.description_en, lesson.description_es); return body ? <section className="panel lesson-text"><p>{body}</p></section> : null; }
   return null;
 }
 
