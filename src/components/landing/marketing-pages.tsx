@@ -5,7 +5,7 @@ import { LandingFrame, StickyFindBar } from './landing-chrome';
 import { PlanCardBody } from '@/components/plan-features';
 import { paymentsStatusQuery, PLANS, PRO_FEATURES, LICENSES, formatMoney, formatStorage, planSettingsQuery } from '@/lib/billing';
 import { useQuery } from '@tanstack/react-query';
-import { ApprovedPlans, FeeAndFounding, StartHostingLink } from './approved-pricing';
+import { ApprovedPlans, FeeAndFounding, FeeDisclosure, StartHostingLink } from './approved-pricing';
 
 const BENEFIT_ICONS: GwIconName[] = ['CalendarPlus', 'Link2', 'BellRing', 'QrCode', 'BookOpen', 'UsersRound'];
 const STEP_ICONS: GwIconName[] = ['CalendarPlus', 'Share2', 'QrCode', 'MessageCircle'];
