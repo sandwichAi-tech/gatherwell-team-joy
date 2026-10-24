@@ -5,15 +5,9 @@ import type { Database } from '@/integrations/supabase/types';
 export type Gathering = Database['public']['Tables']['events']['Row'] & { going?: number };
 export type EventsTab = 'upcoming' | 'hosting' | 'past' | 'tickets';
 
-/** Six refined default covers (plum → lavender family). Index is stored in events.cover_style. */
-export const COVER_STYLES = [
-  'linear-gradient(135deg, #2F2340 0%, #7A5FA8 100%)',
-  'linear-gradient(160deg, #3B2A52 0%, #A48BC8 100%)',
-  'linear-gradient(135deg, #2F2340 0%, #5B4580 55%, #F3C6A5 140%)',
-  'radial-gradient(120% 120% at 0% 0%, #7A5FA8 0%, #2F2340 70%)',
-  'linear-gradient(120deg, #4A3766 0%, #C9B8E3 100%)',
-  'linear-gradient(200deg, #241A33 0%, #6D58A0 60%, #EFEBF6 130%)',
-] as const;
+/** Curated ZoheeWell-branded gradient covers (Blueprint v4 palette). Index is stored in events.cover_style. */
+export { COVER_STYLES } from '@/lib/cover';
+import { COVER_STYLES } from '@/lib/cover';
 
 const withGoing = async (rows: Gathering[]) => Promise.all(rows.map(async e => ({ ...e, going: (await supabase.rpc('event_going_count', { _event_id: e.id })).data ?? 0 })));
 

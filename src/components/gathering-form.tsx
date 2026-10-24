@@ -19,6 +19,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { X, Camera, Check, Languages, Copy, MessageCircle, MessageSquareText, MapPin, Globe2, Repeat, ChevronRight } from '@/components/icons';
+import { COVER_OVERLAYS, COVER_FOCALS, clampOverlay, clampFocal } from '@/lib/cover';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -52,6 +53,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
 
   const [category, setCategory] = useState<Category>('more'); const [categoryLabel, setCategoryLabel] = useState('');
   const [title, setTitle] = useState(''); const [coverPath, setCoverPath] = useState<string | null>(null); const [coverStyle, setCoverStyle] = useState(0);
+  const [coverOverlay, setCoverOverlay] = useState(0); const [coverFocal, setCoverFocal] = useState<string>('50% 50%'); const [coverAlt, setCoverAlt] = useState('');
   const [start, setStart] = useState(''); const [duration, setDuration] = useState<number>(60); const [customDuration, setCustomDuration] = useState(false);
   const [place, setPlace] = useState<'person' | 'online' | 'hybrid'>('person'); const [locationName, setLocationName] = useState(''); const [address, setAddress] = useState('');
   const [details, setDetails] = useState<EventDetails>(emptyDetails);
@@ -84,6 +86,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (sourceId) {
       if (!source) return; const e = source.event;
       setCategory(isCategory(e.category) ? e.category : 'more'); setCategoryLabel(e.category_label ?? ''); setTitle(e.title); setCoverPath(e.cover_url); setCoverStyle(e.cover_style ?? 0); setDescEn(e.description_en ?? ''); setDescEs(e.description_es ?? '');
+      setCoverOverlay(clampOverlay((e as { cover_overlay?: number }).cover_overlay)); setCoverFocal(clampFocal((e as { cover_focal?: string }).cover_focal)); setCoverAlt((e as { cover_alt?: string | null }).cover_alt ?? '');
       const mins = e.ends_at ? Math.max(5, Math.round((new Date(e.ends_at).getTime() - new Date(e.starts_at).getTime()) / 60000)) : 60;
       setDuration(mins); setCustomDuration(!DURATIONS.includes(mins as 60));
       setPlace(isOnline(e) ? 'online' : e.online_url ? 'hybrid' : 'person'); setLocationName(e.location_name ?? ''); setAddress(e.address ?? ''); setNote(e.meeting_note ?? ''); setUrl(e.online_url ?? '');
@@ -168,6 +171,11 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   });
 
   const detailsJson = detailsPayload(details);
+  const saveCover = async (id: string) => {
+    const { error } = await supabase.rpc('save_event_cover', { _event: id, _style: coverStyle, _overlay: coverOverlay, _focal: coverFocal, _alt: coverAlt.trim() || null } as never);
+    if (error) toast.error(rpcError(t, error));
+    return !error;
+  };
   const saveDetails = async (id: string) => {
     if (!detailsJson) return true;
     const { error } = await supabase.rpc('update_event_details', { _event: id, _p: { ...detailsJson, format: place } });
@@ -186,6 +194,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       setBusy(false);
       if (error) { toast.error(rpcError(t, error)); return; }
       await savePrice(eventId!); await saveTeamReg(eventId!); if (!(await saveRetreat(eventId!))) return;
+      await saveCover(eventId!);
       if (!(await saveDetails(eventId!))) return;
       await queryClient.invalidateQueries(); toast.success(t('gathering.saved'));
       void navigate({ to: '/event/$id', params: { id: eventId! } }); return;
@@ -198,6 +207,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (priceCents) await savePrice(data);
     if (teamReg.on) await saveTeamReg(data);
     if (retreatOn && !(await saveRetreat(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
+    await saveCover(data);
     if (!(await saveDetails(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
     await queryClient.invalidateQueries();
     if (publish) setDone({ id: data, visibility }); else { toast.success(t('gathering.draftSaved')); void navigate({ to: '/event/$id', params: { id: data } }); }
@@ -242,15 +252,35 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         <small className="field-hint">{t('templates.orScratch')}</small>
       </section>; })()}
 
-      {full && <section className="form-section">
-        <GatheringCover path={coverPath} style={coverStyle} title={title || 'G'} className="form-cover" />
+      {full && <section className="form-section" aria-label={t('gathering.coverStyle')}>
+        <GatheringCover path={coverPath} style={coverStyle} title={title || 'G'} className="form-cover" overlay={coverOverlay} focal={coverFocal} alt={coverAlt || null} />
         <div className="cover-actions">
           <label className="file-button"><Camera /><span>{uploading ? t('onboarding.saving') : t(coverPath ? 'gathering.changePhoto' : 'gathering.addPhoto')}</span>
             <CropFileInput kind="cover" withSquare onCropped={r => void onPhoto(r)} onRejected={() => toast.error(t('gathering.photoTooBig'))} /></label>
           {coverPath && <Button variant="ghost" onClick={() => setCoverPath(null)}>{t('gathering.useDefault')}</Button>}
+          {(coverOverlay !== 0 || coverFocal !== '50% 50%' || coverAlt) && <Button variant="ghost" onClick={() => { setCoverOverlay(0); setCoverFocal('50% 50%'); setCoverAlt(''); }}>{t('gathering.coverReset')}</Button>}
         </div>
-        {!coverPath && <div className="style-picker" role="radiogroup" aria-label={t('gathering.coverStyle')}>{COVER_STYLES.map((bg, i) =>
-          <button key={i} type="button" role="radio" aria-checked={coverStyle === i} aria-label={t('gathering.styleN', { n: i + 1 })} className={`style-swatch ${coverStyle === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} onClick={() => setCoverStyle(i)} />)}</div>}
+        <div className="cover-controls">
+          {!coverPath && <div className="style-picker" role="radiogroup" aria-label={t('gathering.coverStyle')}>{COVER_STYLES.map((bg, i) =>
+            <button key={i} type="button" role="radio" aria-checked={coverStyle === i} aria-label={t('gathering.styleN', { n: i + 1 })} className={`style-swatch ${coverStyle === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} onClick={() => setCoverStyle(i)} />)}</div>}
+          <div>
+            <span className="field-label">{t('gathering.coverOverlay')}</span>
+            <div className="segmented full" role="group" aria-label={t('gathering.coverOverlay')}>{COVER_OVERLAYS.map(o => <Button key={o} variant="ghost" className={coverOverlay === o ? 'selected' : ''} aria-pressed={coverOverlay === o} onClick={() => setCoverOverlay(o)}>{t(`gathering.overlay.${o}`)}</Button>)}</div>
+            <small className="field-hint">{t('gathering.coverOverlayHint')}</small>
+          </div>
+          {coverPath && <>
+            <div>
+              <span className="field-label">{t('gathering.coverFocal')}</span>
+              <div className="cover-focal-grid" role="radiogroup" aria-label={t('gathering.coverFocal')}>{COVER_FOCALS.map(f => <button key={f} type="button" role="radio" aria-checked={coverFocal === f} aria-label={t(`gathering.focal.${f.replace(/% /g, '-').replace(/%/g, '')}`)} className={coverFocal === f ? 'is-selected' : ''} onClick={() => setCoverFocal(f)}><span className="cover-focal-dot" aria-hidden="true" /></button>)}</div>
+              <small className="field-hint">{t('gathering.coverFocalHint')}</small>
+            </div>
+            <div>
+              <label className="field-label" htmlFor="g-cover-alt">{t('gathering.coverAlt')}</label>
+              <Input id="g-cover-alt" className="field-input" maxLength={200} value={coverAlt} onChange={e => setCoverAlt(e.target.value)} placeholder={t('gathering.coverAltPlaceholder')} />
+              <small className="field-hint">{t('gathering.coverAltHint')}</small>
+            </div>
+          </>}
+        </div>
       </section>}
 
       <section className="form-section">

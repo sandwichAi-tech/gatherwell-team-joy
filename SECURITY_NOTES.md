@@ -172,3 +172,8 @@ The requester supplied the following results after commit ac2eef3c5d5ff7138522b8
 - No new tables, RPCs or storage buckets; audio lessons reuse the private learn-media bucket (200 MB limit) and existing signed-URL reads. Live meeting links stay in lesson_live_links (team-member read only); preset copy states this.
 - Quiz creation never bypasses the parent-offer requirement; the picker only lists the caller's own courses and lands on the existing quiz panel.
 - v0.33: set_profile_slug is the only slug-change path (security definer, auth-required, normalized, reserved-word blocked, unique across profiles/teams/locations and all slug history, rate-limited to 3 changes/24h). profile_slug_history is RLS-locked with no client policies — readable only via security-definer RPCs; it doubles as the audit trail for link changes. resolve_host_slug/get_public_host resolve aliases without exposing history contents. get_public_host still returns only approved public fields for published profiles; unpublished and unknown slugs both return null.
+
+### v0.33
+- Cover adjustments write only through save_event_cover (can_manage_event-checked); anonymous and cross-user calls denied (verified live). Style/overlay/focal/alt validated server-side; invalid values rejected.
+- get_public_event exposes only display-safe cover fields; private cover paths still resolve via signed URLs. Public payload rebuilt in two jsonb halves (100-arg limit).
+- Cancellation policy is display text only; no refund engine or payment claims were added.

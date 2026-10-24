@@ -1627,6 +1627,9 @@ export type Database = {
           completed_at: string | null
           contact_email: string | null
           contact_phone: string | null
+          cover_alt: string | null
+          cover_focal: string
+          cover_overlay: number
           cover_service_fee: boolean
           cover_style: number
           cover_url: string | null
@@ -1698,6 +1701,9 @@ export type Database = {
           completed_at?: string | null
           contact_email?: string | null
           contact_phone?: string | null
+          cover_alt?: string | null
+          cover_focal?: string
+          cover_overlay?: number
           cover_service_fee?: boolean
           cover_style?: number
           cover_url?: string | null
@@ -1769,6 +1775,9 @@ export type Database = {
           completed_at?: string | null
           contact_email?: string | null
           contact_phone?: string | null
+          cover_alt?: string | null
+          cover_focal?: string
+          cover_overlay?: number
           cover_service_fee?: boolean
           cover_style?: number
           cover_url?: string | null
@@ -7417,6 +7426,16 @@ export type Database = {
       }
       save_coach_review: {
         Args: { _body: string; _host: string; _rating: number }
+        Returns: undefined
+      }
+      save_event_cover: {
+        Args: {
+          _alt: string
+          _event: string
+          _focal: string
+          _overlay: number
+          _style: number
+        }
         Returns: undefined
       }
       save_host_profile: {

@@ -645,6 +645,20 @@
       "when": 1792879927678,
       "tag": "0091_custom_host_slugs",
       "breakpoints": true
+    },
+    {
+      "idx": 92,
+      "version": "7",
+      "when": 1792881114311,
+      "tag": "0092_event_cover_customization",
+      "breakpoints": true
+    },
+    {
+      "idx": 93,
+      "version": "7",
+      "when": 1792881570698,
+      "tag": "0093_fix_public_event_payload_size",
+      "breakpoints": true
     }
   ]
 }

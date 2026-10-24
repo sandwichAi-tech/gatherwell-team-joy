@@ -92,18 +92,18 @@ function PublicEventBody() {
   const waitlistOff = full && event.waitlist_enabled === false;
 
   if (teamResult) return <>
-    <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="guest-cover" />
+    <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="guest-cover" overlay={event.cover_overlay} focal={event.cover_focal} alt={event.cover_alt} />
     <div className="guest-body"><TeamConfirmation result={teamResult} /></div>
   </>;
 
   if (result) return <>
-    <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="guest-cover" />
+    <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="guest-cover" overlay={event.cover_overlay} focal={event.cover_focal} alt={event.cover_alt} />
     <ConfirmationLoader code={result.code} fallbackStatus={result.status} />
     <div className="guest-body live-extras"><Polls eventId={id} code={result.code} /></div>
   </>;
 
   return <>
-    <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="guest-cover" />
+    <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="guest-cover" overlay={event.cover_overlay} focal={event.cover_focal} alt={event.cover_alt} />
     <article className="guest-body">
       <div className="guest-title-row"><h1 className="guest-title">{event.title}</h1><ReportButton type="event" id={id} /></div>
       {summary && <p className="guest-summary">{summary}</p>}

@@ -1026,6 +1026,30 @@
     "useDefault": "Usar una portada predeterminada",
     "coverStyle": "Estilo de portada",
     "styleN": "Estilo {{n}}",
+    "coverOverlay": "Intensidad del overlay",
+    "coverOverlayHint": "Oscurece la portada para que el texto se lea mejor.",
+    "overlay": {
+      "0": "Ninguno",
+      "25": "Sutil",
+      "50": "Fuerte"
+    },
+    "coverFocal": "Punto focal",
+    "coverFocalHint": "Elige qué parte de la foto se mantiene visible al recortarla.",
+    "focal": {
+      "0-0": "Arriba a la izquierda",
+      "50-0": "Arriba al centro",
+      "100-0": "Arriba a la derecha",
+      "0-50": "Centro a la izquierda",
+      "50-50": "Centro",
+      "100-50": "Centro a la derecha",
+      "0-100": "Abajo a la izquierda",
+      "50-100": "Abajo al centro",
+      "100-100": "Abajo a la derecha"
+    },
+    "coverAlt": "Descripción de la portada (texto alternativo)",
+    "coverAltPlaceholder": "Por ejemplo: personas estirando en un estudio soleado",
+    "coverAltHint": "Lo leen los lectores de pantalla. Déjalo vacío para usar el título del evento.",
+    "coverReset": "Restablecer ajustes",
     "photoTooBig": "Elige una imagen de menos de 8 MB.",
     "title": "Título",
     "titlePlaceholder": "Fit Camp del sábado",
@@ -4635,6 +4659,26 @@
     "modeGroup": "Cómo usas ZoheeWell",
     "startHosting": "Empezar a organizar",
     "switchAttending": "Cambiar a asistir"
+  },
+  "policy": {
+    "none": "Sin política visible",
+    "textLabel": "Texto de la política para los asistentes",
+    "customHint": "Los invitados ven este texto exacto antes de registrarse y en la página del evento. Sé claro sobre lo que pueden esperar: no prometas reembolsos que no puedas cumplir.",
+    "preset": {
+      "free_anytime": "Gratis — cancela cuando quieras",
+      "free_notify": "Gratis — avisa si no puedes venir",
+      "paid_24h": "De pago — reembolso completo hasta 24 horas antes",
+      "paid_7d": "De pago — reembolso completo hasta 7 días antes",
+      "paid_none": "De pago — sin reembolsos",
+      "custom": "Política personalizada"
+    },
+    "text": {
+      "free_anytime": "Este es un evento gratuito. Puedes cancelar tu lugar cuando quieras, sin cargos ni preguntas.",
+      "free_notify": "Este es un evento gratuito. Si no puedes asistir, cancela para que otra persona pueda tomar tu lugar.",
+      "paid_24h": "Reembolso completo si cancelas al menos 24 horas antes del inicio. Si el anfitrión cancela, todos reciben el reembolso completo.",
+      "paid_7d": "Reembolso completo si cancelas al menos 7 días antes del inicio. Si el anfitrión cancela, todos reciben el reembolso completo.",
+      "paid_none": "Las ventas de boletos son finales. Si el anfitrión cancela, todos reciben el reembolso completo."
+    }
   },
   "refunds": {
     "label": "Reembolsos",

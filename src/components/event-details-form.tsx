@@ -66,6 +66,24 @@ export function detailsPayload(d: EventDetails): Record<string, unknown> | null 
   };
 }
 
+/** Prewritten cancellation/refund policy choices; the attendee-facing text stays editable per event. */
+export function PolicyPicker({ id, paid, value, onChange }: { id: string; paid: boolean; value: string; onChange: (v: string) => void }) {
+  const { t } = useTranslation();
+  const presets = paid ? ['paid_24h', 'paid_7d', 'paid_none'] : ['free_anytime', 'free_notify'];
+  const matched = presets.find(p => t(`policy.text.${p}`) === value);
+  const selected = matched ?? (value.trim() ? 'custom' : '');
+  return <>
+    <select id={id} className="field-input" value={selected} aria-label={t('builder.cancellation')}
+      onChange={e => { const v = e.target.value; if (v === 'custom') onChange(value.trim() ? value : ''); else if (v) onChange(t(`policy.text.${v}`)); else onChange(''); }}>
+      <option value="">{t('policy.none')}</option>
+      {presets.map(p => <option key={p} value={p}>{t(`policy.preset.${p}`)}</option>)}
+      <option value="custom">{t('policy.preset.custom')}</option>
+    </select>
+    <Textarea rows={3} maxLength={1000} className="field-textarea" value={value} onChange={e => onChange(e.target.value)} placeholder={t('builder.cancellationPlaceholder')} aria-label={t('policy.textLabel')} />
+    <small className="field-hint">{t('policy.customHint')}</small>
+  </>;
+}
+
 export function EventDetailsSections({ value, onChange, priceCents, lang }: { value: EventDetails; onChange: (d: EventDetails) => void; priceCents: number | null; lang: 'en' | 'es' }) {
   const { t } = useTranslation();
   const set = (patch: Partial<EventDetails>) => onChange({ ...value, ...patch });
@@ -122,8 +140,8 @@ export function EventDetailsSections({ value, onChange, priceCents, lang }: { va
       <Textarea id="g-access" rows={2} maxLength={1000} className="field-textarea" value={value.accessibility} onChange={e => set({ accessibility: e.target.value })} placeholder={t('builder.accessibilityPlaceholder')} />
       <label className="field-label" htmlFor="g-bring">{t('builder.bring')}</label>
       <Textarea id="g-bring" rows={2} maxLength={1000} className="field-textarea" value={value.bring} onChange={e => set({ bring: e.target.value })} placeholder={t('builder.bringPlaceholder')} />
-      <label className="field-label" htmlFor="g-cancel">{t('builder.cancellation')}</label>
-      <Textarea id="g-cancel" rows={2} maxLength={1000} className="field-textarea" value={value.cancellation} onChange={e => set({ cancellation: e.target.value })} placeholder={t('builder.cancellationPlaceholder')} />
+      <label className="field-label" htmlFor="g-cancel-preset">{t('builder.cancellation')}</label>
+      <PolicyPicker id="g-cancel-preset" paid={!!priceCents} value={value.cancellation} onChange={v => set({ cancellation: v })} />
     </section>
 
     <section className="form-section">

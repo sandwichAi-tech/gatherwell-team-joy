@@ -1026,6 +1026,30 @@
     "useDefault": "Use a default cover",
     "coverStyle": "Cover style",
     "styleN": "Style {{n}}",
+    "coverOverlay": "Overlay strength",
+    "coverOverlayHint": "Darkens the cover so text stays easy to read.",
+    "overlay": {
+      "0": "None",
+      "25": "Subtle",
+      "50": "Strong"
+    },
+    "coverFocal": "Focal point",
+    "coverFocalHint": "Choose which part of the photo stays in view when it is cropped.",
+    "focal": {
+      "0-0": "Top left",
+      "50-0": "Top center",
+      "100-0": "Top right",
+      "0-50": "Middle left",
+      "50-50": "Center",
+      "100-50": "Middle right",
+      "0-100": "Bottom left",
+      "50-100": "Bottom center",
+      "100-100": "Bottom right"
+    },
+    "coverAlt": "Cover description (alt text)",
+    "coverAltPlaceholder": "For example: people stretching in a sunny studio",
+    "coverAltHint": "Read aloud by screen readers. Leave empty to use the event title.",
+    "coverReset": "Reset adjustments",
     "photoTooBig": "Choose an image under 8 MB.",
     "title": "Title",
     "titlePlaceholder": "Saturday Fit Camp",
@@ -4635,6 +4659,26 @@
     "modeGroup": "How you use ZoheeWell",
     "startHosting": "Start hosting",
     "switchAttending": "Switch to attending"
+  },
+  "policy": {
+    "none": "No policy shown",
+    "textLabel": "Attendee-facing policy text",
+    "customHint": "Guests see this exact text before they register and on the event page. Be clear about what they can expect — don't promise refunds you can't honor.",
+    "preset": {
+      "free_anytime": "Free — cancel anytime",
+      "free_notify": "Free — please cancel if you can't come",
+      "paid_24h": "Paid — full refund until 24 hours before",
+      "paid_7d": "Paid — full refund until 7 days before",
+      "paid_none": "Paid — no refunds",
+      "custom": "Custom policy"
+    },
+    "text": {
+      "free_anytime": "This is a free event. You can cancel your spot anytime — no charges, no questions.",
+      "free_notify": "This is a free event. If you can't make it, please cancel so someone else can take your spot.",
+      "paid_24h": "Full refund if you cancel at least 24 hours before the start. If the host cancels, everyone is refunded in full.",
+      "paid_7d": "Full refund if you cancel at least 7 days before the start. If the host cancels, everyone is refunded in full.",
+      "paid_none": "Ticket sales are final. If the host cancels, everyone is refunded in full."
+    }
   },
   "refunds": {
     "label": "Refunds",

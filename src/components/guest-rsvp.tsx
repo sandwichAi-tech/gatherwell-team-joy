@@ -13,7 +13,7 @@ import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { QRCodeSVG } from 'qrcode.react';
 import { toast } from 'sonner';
-import { Copy, MessageCircle, MessageSquareText, Minus, Navigation, Plus, Video, Send } from '@/components/icons';
+import { Copy, MessageCircle, MessageSquareText, Minus, Navigation, Plus, Video, Send, ShieldCheck } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -219,6 +219,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
           </label>;
         })}
       </fieldset>}
+      {event.cancellation_policy && <p className="field-hint refund-line"><ShieldCheck /><span>{event.cancellation_policy}</span></p>}
       <label className="guest-consent"><Checkbox checked={termsOk} onCheckedChange={v => setTermsOk(!!v)} /><span>{t('guest.termsAgree')} <a href="/terms" target="_blank" rel="noopener">{t('guest.termsLink')}</a> · <a href="/privacy" target="_blank" rel="noopener">{t('guest.privacyLink')}</a></span></label>
       <label className="guest-consent"><Checkbox checked={updates} onCheckedChange={v => setUpdates(!!v)} /><span>{t('guest.updatesOptIn')}</span></label>
       {paid && price && <p className="guest-price"><strong>{formatMoney(price.price_cents, lang)}</strong><span>{t('billing.perPerson')}{fee ? ` · ${t('billing.bookingFee', { fee: formatMoney(fee, lang) })}` : ''}</span></p>}
