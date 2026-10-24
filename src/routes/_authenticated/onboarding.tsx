@@ -16,6 +16,7 @@ import { LanguageToggle, pageHead, setLanguage } from '@/components/auth-frame';
 import { supabase } from '@/integrations/supabase/client';
 import { JOIN_BY_KEY } from '@/lib/recognition';
 import { takeNext } from '@/lib/return-to';
+import { recordPendingHostInvite } from '@/lib/discovery';
 import { clearPendingInvite, pendingInvite, initialsOf, joinLink, parseJoinCode, profileQuery, uploadMedia, workspaceQuery } from '@/lib/account';
 
 export const Route = createFileRoute('/_authenticated/onboarding')({ head: () => pageHead('onboarding.nameTitle', 'meta.onboarding'), component: Onboarding });
@@ -88,6 +89,7 @@ function Onboarding() {
     if (e) { setFinishing(false); setError(t('onboarding.error')); return; }
     trackEvent('signup'); trackEvent('onboarding_complete');
     clearPendingInvite();
+    await recordPendingHostInvite(); // invite-a-host attribution; idempotent, self-referral rejected server-side
     // Mark the cached profile onboarded so the app gate lets Home through immediately.
     queryClient.setQueryData(profileQuery(user.id).queryKey, p => (p ? { ...p, onboarded: true } : p));
     await queryClient.invalidateQueries({ queryKey: ['workspace', user.id] }).catch(() => null);
