@@ -24,5 +24,8 @@
 
 ## Remaining
 
+- [ ] v0.28: platform safety queues, private lookup, reversible interventions, scoped suspensions and audit.
+- [ ] v0.28: authorization tests, bilingual phone/desktop QA, fixture cleanup and release documentation.
+
 - [ ] Browser pass of the admin support tab as an admin account (RPC denial verified; no admin account in this environment).
 - [ ] Screen-reader pass on the new insights/privacy panels.
