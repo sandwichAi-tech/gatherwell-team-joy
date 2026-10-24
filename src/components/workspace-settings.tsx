@@ -81,7 +81,7 @@ export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string
   const activity = useQuery({ ...activityQuery(teamId), enabled: tab === 'activity' });
   const refresh = () => { void qc.invalidateQueries({ queryKey: ['ws-members', teamId] }); void qc.invalidateQueries({ queryKey: ['ws-invites', teamId] }); void qc.invalidateQueries({ queryKey: ['ws-seats', teamId] }); void qc.invalidateQueries({ queryKey: ['ws-activity', teamId] }); };
 
-  const run = async (fn: () => Promise<{ error: { message: string } | null }>, done?: string) => {
+  const run = async (fn: () => PromiseLike<{ error: { message: string } | null }>, done?: string) => {
     setBusy(true);
     const { error } = await fn();
     setBusy(false);
