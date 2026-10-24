@@ -6359,6 +6359,10 @@ export type Database = {
         Args: { _at?: string; _offering_type: string }
         Returns: string
       }
+      active_fee_rule_for_plan: {
+        Args: { _at?: string; _offering_type: string; _plan: string }
+        Returns: string
+      }
       add_walk_in: {
         Args: {
           _email: string
@@ -6866,6 +6870,7 @@ export type Database = {
         Returns: Json
       }
       is_adult: { Args: { _uid?: string }; Returns: boolean }
+      is_builder_workspace_role: { Args: { _role: string }; Returns: boolean }
       is_connected: { Args: { _a: string; _b: string }; Returns: boolean }
       is_event_cohost: { Args: { _event: string }; Returns: boolean }
       is_founding_coach: { Args: { _uid: string }; Returns: boolean }
@@ -7461,6 +7466,8 @@ export type Database = {
       team_analytics: { Args: { _team: string }; Returns: Json }
       team_analytics_summary: { Args: { _team: string }; Returns: Json }
       team_benchmark: { Args: { _root: string }; Returns: Json }
+      team_builder_seat_count: { Args: { _team: string }; Returns: number }
+      team_builder_seat_limit: { Args: { _team: string }; Returns: number }
       team_capability: {
         Args: { _cap: string; _team: string }
         Returns: boolean
