@@ -3539,7 +3539,8 @@
     "publicPagesHint": "Compártelas para que la gente te siga.",
     "myPage": "Mi página de anfitrión",
     "teamPage": "Página del equipo",
-    "googleCalendar": "Calendario de Google"
+    "googleCalendar": "Calendario de Google",
+    "offerings": "Cursos y recursos"
   },
   "crop": {
     "title": "Recorta tu portada",
@@ -4895,7 +4896,9 @@
     "online": "En línea",
     "empty": "No hay coincidencias por ahora. Prueba ampliar los filtros.",
     "emptyLocal": "Pronto habrá eventos en tu zona.",
-    "onlineInstead": "Abajo hay aprendizaje en línea disponible."
+    "onlineInstead": "Abajo hay aprendizaje en línea disponible.",
+    "notifyMe": "Avísame",
+    "inviteHost": "Invitar a un anfitrión"
   },
   "saved": {
     "eyebrow": "Tu lista",
@@ -4955,5 +4958,46 @@
       "weekly": "Semanal"
     },
     "deliveryNote": "Las coincidencias aparecen en esta app. El envío por correo y mensaje de texto requiere configuración hasta conectar los proveedores de mensajería."
+  },
+  "hostProfile": {
+    "title": "Perfil público de anfitrión",
+    "intro": "Elige lo que ven las personas en tu página pública. Nada se muestra hasta que lo publiques.",
+    "published": "Perfil publicado",
+    "publishedHint": "Despublica para ocultar tu página pública y desaparecer del descubrimiento y de las listas de seguidos.",
+    "readiness": "Preparación del perfil",
+    "ready": {
+      "name": "Nombre visible",
+      "bio": "Biografía corta",
+      "photo": "Foto de perfil",
+      "categories": "Al menos una categoría",
+      "languages": "Idiomas del contenido"
+    },
+    "org": "Organización (opcional)",
+    "orgPlaceholder": "Nombre del estudio o negocio",
+    "categories": "Categorías",
+    "categoriesPlaceholder": "Yoga, meditación, fitness",
+    "categoriesHint": "Separa con comas, hasta 8.",
+    "languages": "Idiomas del contenido",
+    "accessibility": "Declaración de accesibilidad y apoyo (opcional)",
+    "accessibilityPlaceholder": "Cómo apoyas la accesibilidad en tus ofertas",
+    "cityPublic": "Mostrar mi ciudad públicamente",
+    "cityPublicHint": "Solo se muestra tu ciudad o región, nunca tu dirección.",
+    "links": "Enlaces públicos",
+    "linkLabel": "Etiqueta",
+    "linkUrl": "URL",
+    "linkKind": {
+      "website": "Sitio web",
+      "social": "Red social"
+    },
+    "addLink": "Agregar enlace",
+    "removeLink": "Quitar enlace",
+    "linksHint": "Solo enlaces HTTPS. Las redes sociales se limitan a plataformas conocidas.",
+    "linkInvalid": "Revisa tus enlaces: solo HTTPS y las redes sociales deben ser de una plataforma compatible.",
+    "preview": "Vista previa de la página pública"
+  },
+  "following": {
+    "title": "Siguiendo",
+    "emptyTitle": "Aún no sigues a nadie",
+    "empty": "Sigue a anfitriones y equipos para enterarte de lo que publican."
   }
 }

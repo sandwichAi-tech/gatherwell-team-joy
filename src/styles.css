@@ -2239,3 +2239,15 @@ a.gw-cat-chip:hover{background:#fff}
 .catalog-meta { color: var(--muted-foreground, #6b6470); }
 .save-chip { position: absolute; top: 0.75rem; right: 0.75rem; min-width: 48px; min-height: 48px; justify-content: center; }
 .switch-row { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 48px; }
+
+/* Host public profile editor + Following */
+.readiness-list { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: .5rem; }
+.readiness-list li { display: flex; align-items: center; gap: .5rem; color: var(--muted); font-size: .925rem; }
+.readiness-list li.is-done { color: var(--foreground); }
+.host-link-row { display: grid; gap: .5rem; padding: .75rem; border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: .75rem; }
+.follow-org { margin: 0; color: var(--muted); font-weight: 600; }
+.follow-chips, .follow-links { list-style: none; display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0 0; padding: 0; }
+.follow-accessibility { display: flex; gap: .5rem; align-items: flex-start; color: var(--muted); font-size: .925rem; }
+.following-row { display: flex; align-items: center; gap: .5rem; }
+.following-row .follow-event { flex: 1; }
+.gw-empty-actions { display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center; margin-top: 1rem; }
