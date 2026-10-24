@@ -3876,22 +3876,7 @@
         "title": "Coaches y creadores",
         "body": "Comparte lo que enseñas, en línea y en persona."
       }
-    ],
-    "payTable": {
-      "title": "Lo que pagas",
-      "sub": "Todos los números, desde el inicio. Los precios y cargos salen directo de la configuración de planes.",
-      "monthly": "Precio mensual",
-      "platformFee": "Cargo de la plataforma en entradas, Círculos, cursos y retos",
-      "serviceFee": "Cargo por servicio en cada pago con tarjeta, que cubre el procesamiento",
-      "whoPays": "Quién paga el cargo por servicio",
-      "whoPaysValue": "Tus invitados al pagar, o tú",
-      "gatherings": "Reuniones por mes",
-      "gatheringsFree": "{{n}} (cada fecha de una serie cuenta); sin límite en tus primeros 30 días",
-      "guests": "Invitados por reunión",
-      "guestsFree": "{{n}}; sin límite en tus primeros 30 días",
-      "unlimited": "Ilimitadas",
-      "perMonth": "/mes"
-    }
+    ]
   },
   "teamRsvp": {
     "cta": "Inscribir un equipo ({{min}}–{{max}})",
@@ -4714,33 +4699,6 @@
       "pro": "Todo para anfitriones con mucha actividad.",
       "team25": "Para equipos de hasta 25 constructores.",
       "organization": "Para organizaciones de hasta 100 constructores, con ayuda en la configuración."
-    },
-    "compare": {
-      "title": "Compara los planes",
-      "sub": "Todos los planes incluyen el conjunto completo de eventos, cursos y comunidad. Los planes difieren en lugares de constructor y en la tarifa de plataforma sobre ventas pagadas.",
-      "caption": "Comparación de los planes de ZoheeWell: lugares de constructor, tarifa de plataforma y funciones incluidas.",
-      "feature": "Función",
-      "included": "Incluido",
-      "onPaidSales": "sobre ventas pagadas",
-      "note_email": "Soporte por correo",
-      "note_usage": "Uso con precio aparte",
-      "note_setup": "Configuración pendiente",
-      "footnote": "El pago de planes y los pagos a anfitriones todavía no están disponibles. Los SMS y el procesamiento de pagos los proveen terceros y tienen precio aparte.",
-      "rows": {
-        "seats": "Lugares de constructor",
-        "fee": "Tarifa de plataforma",
-        "events": "Eventos y retiros",
-        "courses": "Cursos y recursos",
-        "memberships": "Membresías y suscripciones",
-        "tickets": "Niveles de boletos y registro",
-        "checkin": "Registro de entrada y listas de espera",
-        "roles": "Roles de equipo e invitaciones",
-        "analytics": "Analíticas e informes",
-        "exports": "Exportación de datos",
-        "support": "Soporte",
-        "sms": "SMS y mensajería",
-        "payments": "Procesamiento de pagos"
-      }
     },
     "whichPlan": {
       "title": "¿Qué plan es para mí?",

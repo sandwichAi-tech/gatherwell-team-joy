@@ -1,5 +1,11 @@
 # ZoheeWell Change Log
 
+## v0.30.2 — Pricing-page simplification (2026-10-24)
+- Removed the entire Compare plans section and chart-only code, styles, EN/ES resources and tests, including unused legacy desktop/table and mobile/card variants. Outcome guidance now lives in its own module and follows the builder-seat explanation directly without a reserved chart gap.
+- Preserved all five plan cards, the unchanged monthly/annual toggle and prices, fees/seats, Setup required states, Organization sign-in/support intent, builder-seat explanation, guidance, fee/annual/founding terms, FAQs and final CTA. Homepage, pricing rules, authorization, providers and data are unchanged.
+- Historical v0.30 comparison-chart notes below describe the former page only; this release supersedes them.
+- Verification: pending focused tests and EN/ES phone/desktop browser checks.
+
 ## v0.30.1 — Organization Contact sales routes to in-app support (2026-10-24)
 - Removed the stale GatherWell-branded mailto from the Organization "Contact sales" CTA. It now routes to the in-app ZoheeWell support flow: /support?new=organization opens a new request prefilled as a billing ticket with an "Organization plan — assisted setup" subject (EN/ES). Signed-out prospects go through /login?next=… and land back on the prefilled request after sign-in.
 - Added /support (with a simple query) to the same-origin return-path allowlist in src/lib/return-to.ts and its database mirror is_safe_return_path (migration 0089); the database version also gained the client's stricter rejects (encoded, scheme-bearing, protocol-relative, control characters).
