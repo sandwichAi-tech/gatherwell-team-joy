@@ -780,7 +780,8 @@
     "status": {
       "draft": "Borrador",
       "published": "Publicado",
-      "cancelled": "Cancelado"
+      "cancelled": "Cancelado",
+      "archived": "Archivado"
     },
     "visibility": {
       "public": "Público",
@@ -1174,12 +1175,40 @@
       "members_only": "Esta reunión es solo para miembros.",
       "waiver_required": "Escribe tu nombre completo y marca la casilla para aceptar la exención.",
       "answers_required": "Responde las preguntas obligatorias.",
-      "early_access": "Aún no se abren las confirmaciones para todos."
+      "early_access": "Aún no se abren las confirmaciones para todos.",
+      "minors_not_allowed": "Este evento es solo para adultos.",
+      "minor_details_incomplete": "Agrega el nombre y el rango de edad del menor.",
+      "guardian_details_incomplete": "Agrega el nombre del tutor, la relación y un correo o teléfono.",
+      "guardian_consent_required": "Se requiere el consentimiento del tutor.",
+      "min_age_not_met": "Este evento tiene una edad mínima que no se cumple.",
+      "registration_not_open": "El registro aún no abre.",
+      "registration_closed": "El registro está cerrado."
     },
     "waitlistPosition": "Eres el n.º {{n}} en la lista de espera",
     "metaOnline": "En línea",
     "metaHost": "Organiza {{name}}",
-    "metaFree": "Gratis"
+    "metaFree": "Gratis",
+    "minor": {
+      "toggle": "Este lugar es para un menor",
+      "firstName": "Nombre del menor",
+      "ageBand": "Rango de edad",
+      "pickBand": "Elige…",
+      "bands": {
+        "under_5": "Menor de 5",
+        "5_12": "5–12",
+        "13_17": "13–17"
+      },
+      "guardianName": "Nombre del padre, madre o tutor",
+      "relationship": "Relación",
+      "rel": {
+        "parent": "Padre o madre",
+        "guardian": "Tutor legal",
+        "other": "Otro adulto"
+      },
+      "guardianEmail": "Correo del tutor",
+      "guardianPhone": "Teléfono del tutor",
+      "consent": "Soy el padre, madre o tutor legal y doy mi consentimiento para que este menor asista."
+    }
   },
   "guestList": {
     "back": "Volver a la reunión",
@@ -4482,5 +4511,88 @@
         "a": "Sí. Los precios pueden cambiar después del piloto. Te avisaremos antes de que algún cambio te afecte."
       }
     ]
+  },
+  "builder": {
+    "summary": "Resumen corto",
+    "summaryPlaceholder": "Una línea que diga de qué se trata",
+    "summaryEs": "Resumen corto (inglés)",
+    "language": "Idioma del evento",
+    "mapLink": "Enlace al mapa",
+    "mapLinkHint": "Enlace opcional a un pin de mapa o página de indicaciones.",
+    "openMap": "Abrir mapa",
+    "onlinePrivate": "El enlace de acceso permanece privado hasta que alguien se registre.",
+    "regWindow": "Ventana de registro",
+    "regOpens": "Abre",
+    "regCloses": "Cierra",
+    "waitlist": "Lista de espera",
+    "waitlistHint": "Permite que los invitados se anoten cuando el evento se llene.",
+    "tags": "Etiquetas",
+    "tagsPlaceholder": "yoga, principiantes, al aire libre",
+    "tagsHint": "Hasta 8, separadas por comas.",
+    "contactEmail": "Correo de contacto",
+    "contactPhone": "Teléfono de contacto",
+    "contact": "Preguntas",
+    "accessibility": "Notas de accesibilidad",
+    "accessibilityPlaceholder": "Entrada sin escalones, sala tranquila, …",
+    "bring": "Qué traer",
+    "bringPlaceholder": "Botella de agua, tapete, …",
+    "cancellation": "Política de cancelación y reembolso",
+    "cancellationPlaceholder": "Explica qué pasa si cancelan o cancelas.",
+    "minors": "Pueden asistir menores",
+    "minorsHint": "Un padre, madre o tutor registra a cada menor y da su consentimiento.",
+    "minAge": "Edad mínima",
+    "minAgeHint": "Déjalo vacío para permitir todas las edades con un tutor.",
+    "minorsTitle": "Política de edad",
+    "minorsWelcome": "Los menores son bienvenidos con un padre, madre o tutor.",
+    "minorsMinAge": "Menores de {{age}}+ son bienvenidos con un padre, madre o tutor.",
+    "adultsOnly": "Este evento es solo para adultos mayores de 18.",
+    "tiers": "Niveles de boletos y extras",
+    "tiersHint": "Opcional. El cobro se activa cuando los pagos estén configurados.",
+    "tierName": "Nombre del nivel",
+    "tierQty": "Cantidad (opcional)",
+    "saleStarts": "Venta inicia",
+    "saleEnds": "Venta termina",
+    "addTier": "Agregar nivel",
+    "removeTier": "Quitar nivel",
+    "addonName": "Nombre del extra",
+    "addAddon": "Agregar extra",
+    "removeAddon": "Quitar extra",
+    "feeEstimate": "Estimación de comisión",
+    "ticketPrice": "Precio del boleto",
+    "platformFee": "Comisión ZoheeWell (5%)",
+    "youKeep": "Recibes",
+    "feeNote": "Las comisiones de procesamiento de Stripe son aparte y las define Stripe.",
+    "readiness": "Listo para publicar",
+    "readyToPublish": "Todo lo necesario está en su lugar.",
+    "blockers": {
+      "title": "Agrega un título",
+      "date": "Elige fecha y hora",
+      "place": "Agrega un lugar o dirección",
+      "online_link": "Agrega un enlace https válido",
+      "reg_window": "El registro debe abrir antes de cerrar",
+      "retreat_dates": "El retiro debe terminar después de empezar",
+      "payouts": "Los eventos de pago necesitan cobros configurados (Configuración pendiente)",
+      "tier_invalid": "Corrige nombres y precios de los niveles",
+      "min_age": "La edad mínima requiere permitir menores, 0–17"
+    },
+    "unpublish": "Despublicar",
+    "unpublished": "Despublicado — volvió a borrador",
+    "archive": "Archivar",
+    "archived": "Archivado",
+    "archiveTitle": "¿Archivar este evento?",
+    "archiveText": "Los eventos archivados salen de tus listas pero conservan sus registros. Puedes restaurar volviendo a borrador.",
+    "preview": "Vista previa pública",
+    "regNotOpen": "El registro aún no abre",
+    "regNotOpenText": "El registro abre el {{date}}.",
+    "regClosed": "El registro está cerrado",
+    "regClosedText": "Este evento ya no acepta registros.",
+    "format": {
+      "person": "Presencial",
+      "online": "En línea",
+      "hybrid": "Híbrido"
+    },
+    "errors": {
+      "reg_window": "El registro debe abrir antes de cerrar."
+    }
   }
 }
