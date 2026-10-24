@@ -40,7 +40,7 @@ export const listSafety = createServerFn({ method: 'POST' }).middleware([require
 export const actSafety = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => safetyAction.parse(d))
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase.rpc('admin_safety_action', { _kind: data.kind, _id: data.id, _action: data.action, _reason: data.reason, _user: data.user ?? null });
+    const { error } = await context.supabase.rpc('admin_safety_action', { _kind: data.kind, _id: data.id, _action: data.action, _reason: data.reason, ...(data.user ? { _user: data.user } : {}) });
     if (error) throw new Error(error.message.includes('rate_limited') ? 'rate_limited' : 'failed');
     return { ok: true };
   });
