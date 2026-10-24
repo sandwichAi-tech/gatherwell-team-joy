@@ -1,16 +1,19 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowUp, ArrowDown, Check, Pencil, Plus, Trash2, Award, Printer, CircleAlert } from 'lucide-react';
+import { ArrowUp, ArrowDown, Check, Pencil, Plus, Trash2, Award, Printer, AlertCircle } from '@/components/icons';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
-import { Field } from '@/components/forms';
-import { ListSkeleton, RetryState } from '@/components/states';
-import { confirmAction } from '@/components/confirm';
+import { ListSkeleton, RetryState } from '@/components/launch-states';
+import { confirmAction } from '@/components/confirm-dialog';
+
+function Field({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
+  return <div className="form-field"><label className="field-label" htmlFor={id}>{label}</label>{children}</div>;
+}
 import { toast } from 'sonner';
 import {
   getQuizForTaker, startQuizAttempt, saveQuizResponse, submitQuiz, myQuizAttempts,
