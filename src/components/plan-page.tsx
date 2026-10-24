@@ -23,7 +23,8 @@ import { workspaceQuery } from '@/lib/account';
 import { rosterQuery } from '@/lib/team';
 import { isAdminQuery } from '@/lib/site-media';
 import { earningsQuery, formatMoney, formatStorage, LICENSES, licenseQuery, paymentsStatusQuery, PLANS, PRO_FEATURES, planSettingsQuery, planStatusQuery, type PlanId } from '@/lib/billing';
-import { openBillingPortal, refundPayments, schedulePlanChange, startConnectOnboarding, startLicenseCheckout, startPlanCheckout } from '@/lib/billing.functions';
+import { openBillingPortal, refundPayments, schedulePlanChange, startLicenseCheckout, startPlanCheckout } from '@/lib/billing.functions';
+import { PaymentsReadiness } from '@/components/payments-readiness';
 import { getStripeEnvironment, paymentsTokenPresent } from '@/lib/stripe';
 import { useInlineCheckout } from '@/components/inline-checkout';
 import { PaymentTestModeBanner } from '@/components/payment-test-mode-banner';
@@ -125,7 +126,6 @@ export function PlanPage() {
   const checkout = useServerFn(startPlanCheckout);
   const license = useServerFn(startLicenseCheckout);
   const portal = useServerFn(openBillingPortal);
-  const connect = useServerFn(startConnectOnboarding);
   const schedule = useServerFn(schedulePlanChange);
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
   const rank: Record<PlanId, number> = { free: 0, growth: 1, pro: 2 };
@@ -223,10 +223,9 @@ export function PlanPage() {
       <Link className="settings-row" to="/earnings"><BarChart3 className="settings-icon" /><span className="settings-label">{t('billing.earnings')}</span><ChevronRight className="settings-chevron" /></Link>
     </section>
 
+    <PaymentsReadiness />
     <section className="panel get-paid">
       <div className="section-heading"><h2>{t('billing.getPaid')}</h2><span className={`chip connect-${st.connect_status}`}>{t(`billing.connect_${st.connect_status}`)}</span></div>
-      <p className="auth-subtitle">{t('pricingV4.feeDisclosure')}</p>
-      {st.connect_status !== 'active' && <Button disabled={gate.busy} onClick={() => void gate.run(() => connect({ data: { origin } }))}>{st.connect_status === 'pending' ? t('billing.connectContinue') : t('billing.connectStart')}</Button>}
       <label className="settings-row is-static"><span className="settings-label">{t('billing.passFee')}<small className="field-hint">{t('billing.passFeeHint')}</small></span><Switch aria-label={t('billing.passFee')} checked={st.pass_fee} onCheckedChange={v => void togglePassFee(v)} /></label>
     </section>
 

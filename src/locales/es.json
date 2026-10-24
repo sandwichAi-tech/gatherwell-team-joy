@@ -5916,5 +5916,27 @@
       "no_recipient": "falló (sin destinatario)",
       "unknown_step": "falló (paso desconocido)"
     }
+  },
+  "payReady": {
+    "title": "Cómo cobrar",
+    "subtitle": "Lo que debe estar listo antes de cobrar por eventos, cursos o recursos.",
+    "step": {
+      "free": "Eventos y recursos gratuitos",
+      "platform": "Conexión de pagos de ZoheeWell",
+      "payouts": "Tu configuración de cobros"
+    },
+    "note": {
+      "free": "Listo — puedes crear y publicar ofertas gratuitas ahora mismo.",
+      "platform_ready": "Conectada — el procesamiento de pagos de ZoheeWell está configurado.",
+      "platform_waiting": "Solo ZoheeWell puede activarla. Las ventas de pago permanecen apagadas hasta que la conexión de la plataforma esté configurada y verificada.",
+      "payouts_ready": "Listo — tu cuenta de cobros está activa, así que puedes publicar ofertas de pago.",
+      "payouts_action": "Tu paso: completa la configuración de cobros para poder publicar ofertas de pago. Toma unos minutos.",
+      "payouts_waiting": "Disponible cuando ZoheeWell conecte los pagos. Puedes preparar borradores de pago ahora."
+    },
+    "blocked_platform": "Las opciones de pago permanecen apagadas hasta que ZoheeWell conecte los pagos — tu borrador se guarda con seguridad.",
+    "blocked_payouts": "Las opciones de pago necesitan tu configuración de cobros antes de publicar — tu borrador se guarda con seguridad.",
+    "seeChecklist": "Ver la lista de Cómo cobrar",
+    "draftSafe": "Tus borradores de pago están seguros: la publicación de un evento o recurso de pago se bloquea hasta que cada paso anterior esté listo.",
+    "feeNote": ""
   }
 }

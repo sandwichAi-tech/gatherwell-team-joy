@@ -6,6 +6,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { formatMoney } from '@/lib/billing';
 import { AGE_BANDS } from '@/lib/identity';
+import { PaidBlockedNote } from '@/components/payments-readiness';
 import { cleanAddons, cleanTiers, emptyAddon, emptyTier, feeEstimateCents, hostKeepsCents, MAX_ADDONS, MAX_TIERS, parseTags, type Addon, type TicketTier } from '@/lib/event-builder';
 
 /** Extra host-editable event fields saved through update_event_details(). */
@@ -179,7 +180,7 @@ export function EventDetailsSections({ value, onChange, priceCents, lang }: { va
         <Button type="button" variant="ghost" className="danger-text" onClick={() => set({ addons: value.addons.filter(x => x.id !== a.id) })} aria-label={t('builder.removeAddon')}><Trash2 />{t('builder.removeAddon')}</Button>
       </div>)}
       {value.addons.length < MAX_ADDONS && <Button type="button" variant="secondary" onClick={() => set({ addons: [...value.addons, emptyAddon()] })}><Plus />{t('builder.addAddon')}</Button>}
-      {(value.tiers.length > 0 || value.addons.length > 0) && <p className="not-connected">{t('pricingV4.setupRequired')}</p>}
+      {(value.tiers.length > 0 || value.addons.length > 0) && <PaidBlockedNote />}
     </section>
 
     {!!priceCents && <section className="form-section builder-fee" aria-label={t('builder.feeEstimate')}>

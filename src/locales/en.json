@@ -5916,5 +5916,27 @@
       "no_recipient": "failed (no reachable recipient)",
       "unknown_step": "failed (unknown step)"
     }
+  },
+  "payReady": {
+    "title": "Getting paid",
+    "subtitle": "What needs to be ready before you can charge for events, courses or resources.",
+    "step": {
+      "free": "Free events and resources",
+      "platform": "ZoheeWell payments connection",
+      "payouts": "Your payout setup"
+    },
+    "note": {
+      "free": "Ready — you can create and publish free offerings right now.",
+      "platform_ready": "Connected — ZoheeWell's payment processing is configured.",
+      "platform_waiting": "Only ZoheeWell can enable this. Paid selling stays off until the platform connection is configured and verified.",
+      "payouts_ready": "Done — your payout account is active, so paid offerings can be published.",
+      "payouts_action": "Your step: finish payout setup so paid offerings can be published. Takes a few minutes.",
+      "payouts_waiting": "Available once ZoheeWell connects payments. You can prepare paid drafts now."
+    },
+    "blocked_platform": "Paid options stay off until ZoheeWell connects payments — your draft is saved safely.",
+    "blocked_payouts": "Paid options need your payout setup before publishing — your draft is saved safely.",
+    "seeChecklist": "See the Getting paid checklist",
+    "draftSafe": "Paid drafts are safe: publishing a paid event or resource is blocked until every step above is ready.",
+    "feeNote": ""
   }
 }
