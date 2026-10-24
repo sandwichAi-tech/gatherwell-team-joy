@@ -7,7 +7,8 @@ export function createQueryCacheRevisionStore(queryClient: QueryClient) {
     subscribe(onStoreChange: () => void) {
       return queryClient.getQueryCache().subscribe(() => {
         revision += 1;
-        onStoreChange();
+        // Cache notifications can arrive while another component is rendering; notify React after that stack finishes.
+        queueMicrotask(onStoreChange);
       });
     },
     getSnapshot() {
