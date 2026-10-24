@@ -165,6 +165,25 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
         <div><label className="field-label" htmlFor="g-last">{t('guest.lastName')}</label><Input id="g-last" autoComplete="family-name" maxLength={60} className="field-input" value={form.last} onChange={e => setForm({ ...form, last: e.target.value })} /></div>
         <div className="guest-plus"><span className="field-label">{t('guest.plusOnes')}</span><Stepper value={form.plus} onChange={plus => setForm({ ...form, plus })} label={t('guest.plusOnes')} /></div>
       </div></details>
+      {event.allows_minors && !paid && intent === 'going' && <section className="guest-minor">
+        <label className="guest-consent"><Checkbox checked={minorOn} onCheckedChange={v => setMinorOn(!!v)} /><span>{t('guest.minor.toggle')}</span></label>
+        {minorOn && <div className="guest-minor-fields">
+          <div><label className="field-label" htmlFor="g-minor-first">{t('guest.minor.firstName')}</label><Input id="g-minor-first" maxLength={40} className="field-input" value={minor.first} onChange={e => setMinor({ ...minor, first: e.target.value })} /></div>
+          <div><label className="field-label" htmlFor="g-minor-band">{t('guest.minor.ageBand')}</label>
+            <select id="g-minor-band" className="field-input" value={minor.band} onChange={e => setMinor({ ...minor, band: e.target.value })}>
+              <option value="">{t('guest.minor.pickBand')}</option>
+              {AGE_BANDS.map(b => <option key={b} value={b} disabled={!minorBandAllowed(event.min_age ?? null, b)}>{t(`guest.minor.bands.${b}`)}</option>)}
+            </select></div>
+          <div><label className="field-label" htmlFor="g-gname">{t('guest.minor.guardianName')}</label><Input id="g-gname" autoComplete="name" maxLength={120} className="field-input" value={minor.gName} onChange={e => setMinor({ ...minor, gName: e.target.value })} /></div>
+          <div><label className="field-label" htmlFor="g-grel">{t('guest.minor.relationship')}</label>
+            <select id="g-grel" className="field-input" value={minor.gRel} onChange={e => setMinor({ ...minor, gRel: e.target.value })}>
+              {(['parent', 'guardian', 'other'] as const).map(r => <option key={r} value={r}>{t(`guest.minor.rel.${r}`)}</option>)}
+            </select></div>
+          <div><label className="field-label" htmlFor="g-gemail">{t('guest.minor.guardianEmail')}</label><Input id="g-gemail" type="email" maxLength={200} className="field-input" value={minor.gEmail} onChange={e => setMinor({ ...minor, gEmail: e.target.value })} /></div>
+          <div><label className="field-label" htmlFor="g-gphone">{t('guest.minor.guardianPhone')}</label><Input id="g-gphone" type="tel" inputMode="tel" maxLength={30} className="field-input" value={minor.gPhone} onChange={e => setMinor({ ...minor, gPhone: e.target.value })} /></div>
+          <label className="guest-consent"><Checkbox checked={minor.consent} onCheckedChange={v => setMinor({ ...minor, consent: !!v })} /><span>{t('guest.minor.consent')}</span></label>
+        </div>}
+      </section>}
       {!!event.questions?.length && <RsvpQuestionsFields questions={event.questions} value={answers} onChange={setAnswers} />}
       {event.require_approval && intent === 'going' && <p className="guest-hint">{t('rsvpq.approvalHint')}</p>}
       {waiver && <WaiverAccept waiver={waiver} name={wName} accepted={wOk} onName={setWName} onAccepted={setWOk} />}
