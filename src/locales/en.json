@@ -1582,7 +1582,10 @@
       "recipes": "Recipes",
       "progress": "Progress"
     },
-    "noTracks": "No tracks yet."
+    "noTracks": "No tracks yet.",
+    "uploadAudio": "Audio file",
+    "audioHint": "MP3, M4A or WAV up to 200 MB. Or paste a link below.",
+    "audioLink": "Audio link (HTTPS)"
   },
   "challenges": {
     "title": "Challenges",
@@ -5444,7 +5447,81 @@
     "title": "Resources",
     "sentence": "Courses, guides, live sessions, recipes and more from your team and ZoheeWell.",
     "templatesButton": "Resource templates",
-    "create": "Create resource",
+    "create": {
+      "title": "What are you creating?",
+      "sentence": "Pick the kind of resource. Each one opens an editor made for it, and everything starts as a draft.",
+      "back": "Back to Resources",
+      "chooseAnother": "Choose another type",
+      "creatorsOnly": "Only hosts and team leaders can create resources.",
+      "helpTitle": "Which should I pick?",
+      "helpSingleTitle": "A single resource",
+      "helpSingle": "A video, guide, audio, link, file or live session is one thing people open from your library.",
+      "helpCourseTitle": "A course",
+      "helpCourse": "A structured path with sections, lessons, optional quizzes and certificates.",
+      "helpBundleTitle": "A mixed bundle",
+      "helpBundle": "One package of text, files, links and embeds people can open or download.",
+      "template": "Start from a template",
+      "templateText": "ZoheeWell starters or your team's saved structures.",
+      "types": {
+        "video": {
+          "name": "Video",
+          "example": "A recorded class, tutorial or welcome message.",
+          "best": "Best for: watching on demand."
+        },
+        "quiz": {
+          "name": "Quiz",
+          "example": "Questions with scores, attempts and feedback.",
+          "best": "Best for: checking understanding inside a course."
+        },
+        "guide": {
+          "name": "Guide / PDF / worksheet",
+          "example": "A readable guide, workbook or handout.",
+          "best": "Best for: reading and printing."
+        },
+        "audio": {
+          "name": "Audio",
+          "example": "A meditation, podcast episode or talk.",
+          "best": "Best for: listening on the go."
+        },
+        "file": {
+          "name": "Downloadable file",
+          "example": "A PDF, ebook or zip people keep.",
+          "best": "Best for: one file to download."
+        },
+        "link": {
+          "name": "Link",
+          "example": "An article, tool or page on the web.",
+          "best": "Best for: pointing to something useful."
+        },
+        "live": {
+          "name": "Live session / replay",
+          "example": "A scheduled online session with a replay afterwards.",
+          "best": "Best for: gathering live, watching later."
+        },
+        "recipe": {
+          "name": "Recipe",
+          "example": "Ingredients, steps and prep time.",
+          "best": "Best for: cooking together."
+        },
+        "course": {
+          "name": "Course",
+          "example": "Sections, lessons, quizzes and certificates.",
+          "best": "Best for: a structured learning path."
+        },
+        "bundle": {
+          "name": "Mixed resource bundle",
+          "example": "Text, files, links and embeds in one package.",
+          "best": "Best for: a toolkit or starter pack."
+        }
+      },
+      "quizParent": {
+        "title": "Where does this quiz live?",
+        "text": "Quizzes are part of a course. Pick the course it belongs to and you'll land on its quiz section.",
+        "pick": "Choose a course",
+        "new": "New course",
+        "empty": "You don't have a course yet. Create one first — it starts as a draft."
+      }
+    },
     "untitled": "Untitled",
     "tabs": {
       "foryou": "For you",
@@ -5533,16 +5610,41 @@
     "createSheet": {
       "title": "Create resource",
       "text": "Choose what to make. Everything starts as a draft until you publish it.",
-      "course": "Course",
-      "courseText": "Sections, lessons and optional quizzes.",
-      "bundle": "Resource bundle",
-      "bundleText": "Text, files, links and embeds people can download.",
-      "track": "Team learning track",
-      "trackText": "A free lesson series for your team.",
-      "recipe": "Recipe",
-      "recipeText": "Ingredients and steps for your team.",
       "fromTemplate": "Start from a template",
       "fromTemplateText": "ZoheeWell starters or your team's templates."
+    },
+    "preset": {
+      "track": {
+        "video": "Name your video",
+        "guide": "Name your guide",
+        "audio": "Name your audio",
+        "link": "Name your link",
+        "live": "Name your live session"
+      },
+      "trackText": {
+        "video": "This is how people find it in your library. You'll add the video next.",
+        "guide": "This is how people find it in your library. You'll add the file next.",
+        "audio": "This is how people find it in your library. You'll add the audio next.",
+        "link": "This is how people find it in your library. You'll add the link next.",
+        "live": "This is how people find it in your library. You'll schedule it next."
+      },
+      "lesson": {
+        "video": "Add the video",
+        "pdf": "Add the guide",
+        "audio": "Add the audio",
+        "link": "Add the link",
+        "live": "Schedule the session"
+      },
+      "lessonText": {
+        "video": "Upload a video file or paste an HTTPS video link.",
+        "pdf": "Upload a PDF or paste an HTTPS link to it.",
+        "audio": "Upload an audio file or paste an HTTPS link to it.",
+        "link": "Paste the HTTPS link. No file needed.",
+        "live": "Set the date and time. The meeting link is only visible to your team members."
+      },
+      "bundle": {
+        "hint": "Save the basics first. Then open the bundle to add text, files, links and embeds in any order."
+      }
     }
   },
   "templatesR": {

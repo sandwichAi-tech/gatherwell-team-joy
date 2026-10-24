@@ -46,7 +46,7 @@ export function QuizPanel({ offer }: { offer: Offer }) {
     const l = lessons.find(x => x.id === id);
     return l ? (lang === 'es' ? l.title_es || l.title_en : l.title_en || l.title_es) : '';
   };
-  return <section className="panel" aria-label={t('quiz.panel')}>
+  return <section className="panel" id="quiz-panel" aria-label={t('quiz.panel')}>
     <div className="section-heading"><div><h2>{t('quiz.panel')}</h2><p className="muted-small">{t('quiz.panelText')}</p></div>
       <Button variant="secondary" size="sm" onClick={() => setEditing({ offer_id: offer.id, lesson_id: null, pass_pct: 80, cooldown_minutes: 0, is_required: false, show_score: true, reveal_answers: 'after_pass', randomize_questions: false, randomize_answers: false, is_published: false, sort_order: (q.data?.length ?? 0) + 1 })}><Plus />{t('quiz.new')}</Button></div>
     {q.isPending ? <ListSkeleton /> : q.isError ? <RetryState retry={() => void q.refetch()} /> : !q.data.length ? <p className="muted-small">{t('quiz.empty')}</p> :

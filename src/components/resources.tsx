@@ -22,6 +22,7 @@ import {
   quizMarkersQuery, recipeCard, resourceTemplatesQuery, saveResourceTemplate, savedOfferResourcesQuery, splitTemplates, templateParts, toResources,
   type ResourceCardData, type ResourceSourceFilter, type ResourceTab, type ResourceTemplate, type ResourceType, type ResourceTypeFilter,
 } from '@/lib/resources';
+import { CREATE_TYPES, type CreateType } from '@/lib/create-resource';
 
 const TYPE_ICON: Record<ResourceType, typeof Video> = { course: GraduationCap, track: Layers, video: Video, audio: Waveform, guide: FileText, file: Download, link: Link2, recipe: Leaf, live: Radio };
 
@@ -165,20 +166,16 @@ export function ResourcesPage({ tab, type, source }: { tab: ResourceTab; type: R
   </>;
 }
 
-const CREATE_OPTIONS = [
-  { key: 'course', icon: GraduationCap, to: '/offers', search: { new: 'course' } },
-  { key: 'bundle', icon: Download, to: '/offers', search: { new: 'download' } },
-  { key: 'track', icon: Layers, to: '/learn/manage', search: { tab: 'tracks' } },
-  { key: 'recipe', icon: Leaf, to: '/learn/manage', search: { tab: 'recipes' } },
-] as const;
+const CREATE_ICON: Record<CreateType, typeof Video> = { video: Video, quiz: ClipboardCheck, guide: FileText, audio: Waveform, file: Download, link: Link2, live: Radio, recipe: Leaf, course: GraduationCap, bundle: Layers };
 
+/** Fast launcher into the type-first chooser on /learn/create. */
 export function CreateResourceSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const { t } = useTranslation(); const navigate = useNavigate();
-  const go = (to: string, search: Record<string, string>) => { onOpenChange(false); void navigate({ to, search }); };
+  const go = (type: CreateType) => { onOpenChange(false); void navigate({ to: '/learn/create', search: { type } }); };
   return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={t('resources.createSheet.title')} description={t('resources.createSheet.text')} icon="BookOpen">
-    <div className="creation-options">{CREATE_OPTIONS.map(({ key, icon: Icon, to, search }) => <Button key={key} variant="ghost" className="creation-option" onClick={() => go(to, search)}>
-      <span className="creation-icon"><Icon /></span><span><strong>{t(`resources.createSheet.${key}`)}</strong><small>{t(`resources.createSheet.${key}Text`)}</small></span><ArrowRight /></Button>)}
-      <Button variant="ghost" className="creation-option" onClick={() => go('/learn/templates', {})}><span className="creation-icon"><Sparkles /></span><span><strong>{t('resources.createSheet.fromTemplate')}</strong><small>{t('resources.createSheet.fromTemplateText')}</small></span><ArrowRight /></Button>
+    <div className="creation-options">{CREATE_TYPES.map(type => { const Icon = CREATE_ICON[type]; return <Button key={type} variant="ghost" className="creation-option" onClick={() => go(type)}>
+      <span className="creation-icon"><Icon /></span><span><strong>{t(`resources.create.types.${type}.name`)}</strong><small>{t(`resources.create.types.${type}.example`)}</small></span><ArrowRight /></Button>; })}
+      <Button variant="ghost" className="creation-option" onClick={() => { onOpenChange(false); void navigate({ to: '/learn/templates' }); }}><span className="creation-icon"><Sparkles /></span><span><strong>{t('resources.createSheet.fromTemplate')}</strong><small>{t('resources.createSheet.fromTemplateText')}</small></span><ArrowRight /></Button>
     </div>
   </ResponsiveSheet>;
 }

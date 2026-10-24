@@ -17,6 +17,7 @@ import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { supabase } from '@/integrations/supabase/client';
 import { COVER_STYLES } from '@/lib/gatherings';
 import { compressImage, lessonTitle, lessonsOf, listOf, RECIPE_TAGS, recipesQuery, trackTitle, uploadLearnFile, type Lesson, type LessonType, type Recipe, type Track } from '@/lib/learn';
+import { isTrackFlow, lessonEditorConfig, lessonPresetFor, parseCreateType, type TrackFlowType } from '@/lib/create-resource';
 import { LearnCover, useLearn } from '@/components/learn';
 
 type Tab = 'tracks' | 'recipes' | 'progress';
@@ -47,7 +48,7 @@ function CoverPicker({ teamId, path, styleIdx, title, onPath, onStyle }: { teamI
     <label className="file-button"><Upload />{busy ? t('onboarding.saving') : t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={async r => { setBusy(true); try { onPath(await uploadLearnFile(teamId, r.file, () => {})); } catch (err) { toast.error(errMsg(t, err)); } setBusy(false); }} /></label></div>;
 }
 
-function TrackEditor({ track, teamId, onClose }: { track: Partial<Track> | null; teamId: string; onClose: () => void }) {
+function TrackEditor({ track, teamId, onClose, preset }: { track: Partial<Track> | null; teamId: string; onClose: (created?: Track) => void; preset?: TrackFlowType | null }) {
   const { t } = useTranslation(); const qc = useQueryClient(); const { userId } = useLearn();
   const [f, setF] = useState({ title_en: '', title_es: '', description_en: '', description_es: '', cover_url: null as string | null, cover_style: 0, is_start_here: false, is_published: false });
   const [busy, setBusy] = useState(false);
@@ -56,10 +57,10 @@ function TrackEditor({ track, teamId, onClose }: { track: Partial<Track> | null;
   const save = async () => {
     setBusy(true);
     const row = { ...f, title_en: f.title_en.trim(), title_es: f.title_es.trim(), description_en: f.description_en.trim() || null, description_es: f.description_es.trim() || null };
-    const res = track?.id ? await supabase.from('tracks').update(row).eq('id', track.id) : await supabase.from('tracks').insert({ ...row, team_id: teamId, sort_order: Date.now() % 1_000_000 });
+    const res = track?.id ? await supabase.from('tracks').update(row).eq('id', track.id) : await supabase.from('tracks').insert({ ...row, team_id: teamId, sort_order: Date.now() % 1_000_000 }).select().single();
     setBusy(false);
     if (res.error) { toast.error(errMsg(t, res.error)); return; }
-    toast.success(t('templates.saved')); await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose();
+    toast.success(t('templates.saved')); await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose(track?.id ? undefined : (res.data as Track));
   };
   const remove = async () => {
     if (!track?.id || !(await confirmAction({ title: t('learnHub.confirmDeleteTrack'), destructive: true }))) return;
@@ -67,7 +68,7 @@ function TrackEditor({ track, teamId, onClose }: { track: Partial<Track> | null;
     if (res.error) { toast.error(errMsg(t, res.error)); return; }
     await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose();
   };
-  return <ResponsiveSheet open={!!track} onOpenChange={o => !o && onClose()} title={track?.id ? t('learnHub.editTrack') : t('learnHub.newTrack')}>
+  return <ResponsiveSheet open={!!track} onOpenChange={o => !o && onClose()} title={preset && !track?.id ? t(`resources.preset.track.${preset}`) : track?.id ? t('learnHub.editTrack') : t('learnHub.newTrack')} description={preset && !track?.id ? t(`resources.preset.trackText.${preset}`) : undefined}>
     <div className="edit-form">
       <div className="bilingual"><Field id="tr-en" label={`${t('templates.title')} · EN`}><Input id="tr-en" className="field-input" maxLength={120} value={f.title_en} onChange={e => setF({ ...f, title_en: e.target.value })} /></Field>
         <Field id="tr-es" label={`${t('templates.title')} · ES`}><Input id="tr-es" className="field-input" maxLength={120} value={f.title_es} onChange={e => setF({ ...f, title_es: e.target.value })} /></Field></div>
@@ -86,13 +87,13 @@ function TrackEditor({ track, teamId, onClose }: { track: Partial<Track> | null;
 
 const toLocalInput = (iso?: string | null) => { if (!iso) return ''; const d = new Date(iso); return new Date(d.getTime() - d.getTimezoneOffset() * 60_000).toISOString().slice(0, 16); };
 
-function LessonEditor({ lesson, teamId, onClose }: { lesson: (Partial<Lesson> & { track_id: string }) | null; teamId: string; onClose: () => void }) {
+function LessonEditor({ lesson, teamId, onClose, preset }: { lesson: (Partial<Lesson> & { track_id: string }) | null; teamId: string; onClose: () => void; preset?: LessonType | null }) {
   const { t } = useTranslation(); const qc = useQueryClient(); const { userId } = useLearn();
-  const empty = { title_en: '', title_es: '', type: 'video' as LessonType, url: '', storage_path: null as string | null, duration: '', live: '', meeting: '', replay: '', notes_en: '', notes_es: '' };
+  const empty = { title_en: '', title_es: '', type: (preset ?? 'video') as LessonType, url: '', storage_path: null as string | null, duration: '', live: '', meeting: '', replay: '', notes_en: '', notes_es: '' };
   const [f, setF] = useState(empty); const [busy, setBusy] = useState(false); const [progress, setProgress] = useState<number | null>(null); const [fileName, setFileName] = useState('');
   useEffect(() => {
     if (!lesson) return;
-    setF({ title_en: lesson.title_en ?? '', title_es: lesson.title_es ?? '', type: (lesson.type as LessonType) ?? 'video', url: lesson.url ?? '', storage_path: lesson.storage_path ?? null, duration: lesson.duration_minutes ? String(lesson.duration_minutes) : '', live: toLocalInput(lesson.live_starts_at), meeting: '', replay: lesson.replay_url ?? '', notes_en: lesson.notes_en ?? '', notes_es: lesson.notes_es ?? '' });
+    setF({ title_en: lesson.title_en ?? '', title_es: lesson.title_es ?? '', type: (lesson.type as LessonType) ?? preset ?? 'video', url: lesson.url ?? '', storage_path: lesson.storage_path ?? null, duration: lesson.duration_minutes ? String(lesson.duration_minutes) : '', live: toLocalInput(lesson.live_starts_at), meeting: '', replay: lesson.replay_url ?? '', notes_en: lesson.notes_en ?? '', notes_es: lesson.notes_es ?? '' });
     setProgress(null); setFileName('');
     if (lesson.id && lesson.type === 'live') void supabase.from('lesson_live_links').select('url').eq('lesson_id', lesson.id).maybeSingle().then(({ data }) => data && setF(x => ({ ...x, meeting: data.url })));
   }, [lesson]);
@@ -107,7 +108,7 @@ function LessonEditor({ lesson, teamId, onClose }: { lesson: (Partial<Lesson> & 
   const save = async () => {
     if (!lesson) return; setBusy(true);
     try {
-      const row = { title_en: f.title_en.trim(), title_es: f.title_es.trim(), type: f.type, url: f.type === 'live' ? null : f.url.trim() || null, storage_path: f.type === 'video' || f.type === 'pdf' ? f.storage_path : null,
+      const row = { title_en: f.title_en.trim(), title_es: f.title_es.trim(), type: f.type, url: f.type === 'live' ? null : f.url.trim() || null, storage_path: lessonEditorConfig(f.type).keepsFile ? f.storage_path : null,
         duration_minutes: parseInt(f.duration, 10) > 0 ? Math.min(600, parseInt(f.duration, 10)) : null, live_starts_at: f.type === 'live' && f.live ? new Date(f.live).toISOString() : null,
         replay_url: f.type === 'live' ? f.replay.trim() || null : null, notes_en: f.notes_en.trim() || null, notes_es: f.notes_es.trim() || null };
       let id = lesson.id;
@@ -127,20 +128,24 @@ function LessonEditor({ lesson, teamId, onClose }: { lesson: (Partial<Lesson> & 
     if (r.error) { toast.error(errMsg(t, r.error)); return; }
     await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose();
   };
-  const fileKind = f.type === 'video' ? 'video/*' : 'application/pdf';
-  return <ResponsiveSheet open={!!lesson} onOpenChange={o => !o && onClose()} title={lesson?.id ? t('learnHub.editLesson') : t('learnHub.newLesson')}>
+  const cfg = lessonEditorConfig(f.type);
+  const uploadLabel = f.type === 'video' ? 'learnHub.uploadVideo' : f.type === 'audio' ? 'learnHub.uploadAudio' : 'learnHub.uploadPdf';
+  const uploadHint = f.type === 'video' ? 'learnHub.videoHint' : f.type === 'audio' ? 'learnHub.audioHint' : 'learnHub.pdfHint';
+  const urlLabel = f.type === 'video' ? 'learnHub.videoLink' : f.type === 'pdf' ? 'learnHub.pdfLink' : f.type === 'audio' ? 'learnHub.audioLink' : 'learnHub.link';
+  return <ResponsiveSheet open={!!lesson} onOpenChange={o => !o && onClose()} title={preset && !lesson?.id ? t(`resources.preset.lesson.${preset}`) : lesson?.id ? t('learnHub.editLesson') : t('learnHub.newLesson')} description={preset && !lesson?.id ? t(`resources.preset.lessonText.${preset}`) : undefined}>
     <div className="edit-form">
       <div className="bilingual"><Field id="ls-en" label={`${t('templates.title')} · EN`}><Input id="ls-en" className="field-input" maxLength={140} value={f.title_en} onChange={set('title_en')} /></Field>
         <Field id="ls-es" label={`${t('templates.title')} · ES`}><Input id="ls-es" className="field-input" maxLength={140} value={f.title_es} onChange={set('title_es')} /></Field></div>
       <TranslatePair pairs={[['title_en', 'title_es'], ['notes_en', 'notes_es']]} f={f} setF={setF} />
-      <div className="form-field"><span className="field-label">{t('learnHub.lessonType')}</span>
-        <div className="type-choices">{(['video', 'pdf', 'link', 'live'] as const).map(ty => <button type="button" key={ty} className={`choice-card ${f.type === ty ? 'is-selected' : ''}`} aria-pressed={f.type === ty} onClick={() => setF({ ...f, type: ty })}><strong>{t(`learnHub.type.${ty}`)}</strong></button>)}</div></div>
-      {(f.type === 'video' || f.type === 'pdf') && <div className="form-field"><span className="field-label">{t(f.type === 'video' ? 'learnHub.uploadVideo' : 'learnHub.uploadPdf')}</span>
-        <label className="file-button"><Upload />{t('learnHub.chooseFile')}<input type="file" accept={fileKind} hidden onChange={e => { const x = e.target.files?.[0]; if (x) void upload(x); }} /></label>
+      {preset && !lesson?.id ? <p className="chip lesson-preset-chip">{t(`learnHub.type.${f.type}`)}</p> :
+        <div className="form-field"><span className="field-label">{t('learnHub.lessonType')}</span>
+          <div className="type-choices">{(['video', 'pdf', 'audio', 'link', 'live'] as const).map(ty => <button type="button" key={ty} className={`choice-card ${f.type === ty ? 'is-selected' : ''}`} aria-pressed={f.type === ty} onClick={() => setF({ ...f, type: ty })}><strong>{t(`learnHub.type.${ty}`)}</strong></button>)}</div></div>}
+      {cfg.uploadAccept && <div className="form-field"><span className="field-label">{t(uploadLabel)}</span>
+        <label className="file-button"><Upload />{t('learnHub.chooseFile')}<input type="file" accept={cfg.uploadAccept} hidden onChange={e => { const x = e.target.files?.[0]; if (x) void upload(x); }} /></label>
         {progress !== null && <div className="upload-progress"><span>{fileName}</span><progress value={progress} max={100} aria-label={t('learnHub.uploading')} /><small>{progress < 100 ? t('learnHub.uploadingPct', { pct: progress }) : t('learnHub.uploaded')}</small></div>}
         {progress === null && f.storage_path && <p className="field-hint">{t('learnHub.fileAttached')} <button type="button" className="text-link" onClick={() => setF({ ...f, storage_path: null })}>{t('learnHub.removeFile')}</button></p>}
-        <p className="field-hint">{t(f.type === 'video' ? 'learnHub.videoHint' : 'learnHub.pdfHint')}</p></div>}
-      {f.type !== 'live' && !f.storage_path && <Field id="ls-url" label={t(f.type === 'video' ? 'learnHub.videoLink' : f.type === 'pdf' ? 'learnHub.pdfLink' : 'learnHub.link')}><Input id="ls-url" type="url" className="field-input" placeholder="https://" value={f.url} onChange={set('url')} /></Field>}
+        <p className="field-hint">{t(uploadHint)}</p></div>}
+      {cfg.showsUrl && !f.storage_path && <Field id="ls-url" label={t(urlLabel)}><Input id="ls-url" type="url" className="field-input" placeholder="https://" value={f.url} onChange={set('url')} /></Field>}
       {f.type === 'live' && <>
         <Field id="ls-live" label={t('learnHub.liveStarts')}><Input id="ls-live" type="datetime-local" className="field-input" value={f.live} onChange={set('live')} /></Field>
         <Field id="ls-meet" label={t('learnHub.meetingLink')}><Input id="ls-meet" type="url" className="field-input" placeholder="https://" value={f.meeting} onChange={set('meeting')} /></Field>
@@ -178,10 +183,21 @@ function LessonOrder({ track, lessons, onEdit }: { track: Track; lessons: Lesson
   </div>;
 }
 
-function TracksTab({ teamId }: { teamId: string }) {
-  const { t, i18n } = useTranslation(); const { data } = useLearn();
+function TracksTab({ teamId, newType }: { teamId: string; newType?: string | undefined }) {
+  const { t, i18n } = useTranslation(); const { data } = useLearn(); const navigate = useNavigate();
   const [editing, setEditing] = useState<Partial<Track> | null>(null); const [lesson, setLesson] = useState<(Partial<Lesson> & { track_id: string }) | null>(null);
+  const parsed = parseCreateType(newType);
+  const [flow, setFlow] = useState<TrackFlowType | null>(null);
+  const [flowTrack, setFlowTrack] = useState<Track | null>(null); const [flowDone, setFlowDone] = useState(false);
+  useEffect(() => { if (parsed && isTrackFlow(parsed) && !flow && !flowDone) setFlow(parsed); }, [parsed, flow, flowDone]);
+  const clearParam = () => void navigate({ to: '/learn/manage', search: { tab: 'tracks' }, replace: true, resetScroll: false });
   const own = (data?.tracks ?? []).filter(tr => tr.team_id === teamId);
+  const flowEditing = flow && !flowTrack && !flowDone;
+  const closeTrack = (created?: Track) => {
+    if (editing) { setEditing(null); return; }
+    if (created) { setFlowTrack(created); clearParam(); } else { setFlowDone(true); clearParam(); }
+  };
+  const closeLesson = () => { setLesson(null); if (flowTrack) { setFlowTrack(null); setFlowDone(true); } };
   return <section className="panel">
     <div className="section-heading"><h2>{t('learnHub.teamTracks')}</h2><Button onClick={() => setEditing({ cover_style: own.length % COVER_STYLES.length })}><Plus />{t('learnHub.newTrack')}</Button></div>
     {own.length ? <div className="manage-tracks">{own.map(tr => <article key={tr.id} className="manage-track">
@@ -190,8 +206,8 @@ function TracksTab({ teamId }: { teamId: string }) {
         <Button variant="secondary" size="sm" onClick={() => setEditing(tr)}><Pencil />{t('templates.edit')}</Button></div>
       {data && <LessonOrder track={tr} lessons={lessonsOf(data, tr.id)} onEdit={setLesson} />}
     </article>)}</div> : <EmptyState compact icon="BookOpen" text={t('learnHub.noTracksYet')} />}
-    <TrackEditor track={editing} teamId={teamId} onClose={() => setEditing(null)} />
-    <LessonEditor lesson={lesson} teamId={teamId} onClose={() => setLesson(null)} />
+    <TrackEditor track={editing ?? (flowEditing ? { cover_style: own.length % COVER_STYLES.length } : null)} teamId={teamId} onClose={closeTrack} preset={editing ? null : flow} />
+    <LessonEditor lesson={lesson ?? (flowTrack && flow ? { track_id: flowTrack.id } : null)} teamId={teamId} onClose={closeLesson} preset={lesson ? null : flow ? lessonPresetFor(flow) : null} />
   </section>;
 }
 
@@ -234,11 +250,15 @@ function RecipeEditor({ recipe, teamId, onClose }: { recipe: Partial<Recipe> | n
   </ResponsiveSheet>;
 }
 
-function RecipesTab({ teamId }: { teamId: string }) {
-  const { t, i18n } = useTranslation(); const { userId } = useLearn();
+function RecipesTab({ teamId, openNew }: { teamId: string; openNew?: boolean | undefined }) {
+  const { t, i18n } = useTranslation(); const { userId } = useLearn(); const navigate = useNavigate();
   const { data } = useQuery(recipesQuery(userId));
   const [editing, setEditing] = useState<Partial<Recipe> | null>(null);
+  const [consumed, setConsumed] = useState(false);
   const own = (data?.recipes ?? []).filter(r => r.team_id === teamId);
+  useEffect(() => {
+    if (openNew && !consumed) { setConsumed(true); setEditing({ tags: [], cover_style: own.length % COVER_STYLES.length }); void navigate({ to: '/learn/manage', search: { tab: 'recipes' }, replace: true, resetScroll: false }); }
+  }, [openNew, consumed, own.length, navigate]);
   return <section className="panel">
     <div className="section-heading"><h2>{t('learnHub.teamRecipes')}</h2><Button onClick={() => setEditing({ tags: [], cover_style: own.length % COVER_STYLES.length })}><Plus />{t('learnHub.addRecipe')}</Button></div>
     {own.length ? <ul className="order-list">{own.map(r => <li key={r.id}><span className="order-title"><strong>{i18n.resolvedLanguage === 'es' ? r.title_es || r.title_en : r.title_en || r.title_es}</strong><small>{r.prep_minutes ? t('learnHub.prep', { count: r.prep_minutes }) : ''}</small></span>
@@ -258,7 +278,7 @@ function ProgressTab({ teamId }: { teamId: string }) {
   </section>;
 }
 
-export function LearnManage({ tab }: { tab: Tab }) {
+export function LearnManage({ tab, newType }: { tab: Tab; newType?: string | undefined }) {
   const { t } = useTranslation(); const { teamId, workspace } = useLearn(); const navigate = useNavigate();
   if (!workspace) return <div className="min-h-96" />;
   if (workspace.role === 'member') return <section className="panel"><Link to="/learn" className="back-link"><ArrowLeft />{t('learn.title')}</Link><p className="auth-subtitle">{t('learnHub.leadersOnly')}</p></section>;
@@ -266,8 +286,8 @@ export function LearnManage({ tab }: { tab: Tab }) {
     <Link to="/learn" className="back-link"><ArrowLeft />{t('learn.title')}</Link>
     <div className="page-heading"><div><span className="eyebrow">{t('learn.title')}</span><h1>{t('learnHub.manage')}</h1><p>{t('learnHub.manageText')}</p></div></div>
     <div className="segmented-tabs" role="tablist">{(['tracks', 'recipes', 'progress'] as const).map(k => <button key={k} role="tab" type="button" aria-selected={tab === k} className={tab === k ? 'is-active' : ''} onClick={() => void navigate({ to: '/learn/manage', search: { tab: k }, replace: true })}>{t(`learnHub.tab.${k}`)}</button>)}</div>
-    {tab === 'tracks' && <TracksTab teamId={teamId} />}
-    {tab === 'recipes' && <RecipesTab teamId={teamId} />}
+    {tab === 'tracks' && <TracksTab teamId={teamId} newType={newType} />}
+    {tab === 'recipes' && <RecipesTab teamId={teamId} openNew={newType === 'recipe'} />}
     {tab === 'progress' && <ProgressTab teamId={teamId} />}
   </>;
 }
