@@ -68,7 +68,7 @@ function QuizParentStep() {
       <div className="section-heading"><h2>{t('resources.create.quizParent.pick')}</h2>
         <Button asChild variant="secondary"><Link to="/offers" search={{ new: 'course' }}><GraduationCap />{t('resources.create.quizParent.new')}</Link></Button></div>
       {courses.length ? <ul className="offer-list compact">{courses.map(o => <li key={o.id}>
-        <button type="button" className="offer-row is-link create-course-pick" onClick={() => { const d = quizParentDestination(o.id); void navigate({ to: '/offer/$id', params: { id: d.params!.id }, search: { panel: 'quiz' } }); }}>
+        <button type="button" className="offer-row is-link create-course-pick" onClick={() => void navigate({ to: '/offer/$id', params: { id: o.id }, search: { panel: 'quiz' } })}>
           <div className="offer-row-main"><strong>{offerTitle(o, lang) || t('offers.untitled')}</strong><small>{t(`offers.status.${o.status}`)}</small></div>
           <ArrowRight /></button></li>)}</ul>
         : <p className="muted-small">{t('resources.create.quizParent.empty')}</p>}
