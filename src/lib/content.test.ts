@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { commerceMode, enrollmentState, isAllowedEmbed, isHttpsUrl, lessonFileError, paidSetupRequired, readinessBlockers } from '@/lib/content';
+import { bundleItemError, commerceMode, enrollmentState, isAllowedEmbed, isHttpsUrl, lessonFileError, paidSetupRequired, readinessBlockers } from '@/lib/content';
 
 describe('readinessBlockers', () => {
   const base = { kind: 'course', sections: 1, lessons: 2, title_en: 'Course', summary_en: 'Short', description_en: 'Long' };
