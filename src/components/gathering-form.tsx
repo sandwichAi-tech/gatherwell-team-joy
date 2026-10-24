@@ -52,6 +52,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
 
   const [category, setCategory] = useState<Category>('more'); const [categoryLabel, setCategoryLabel] = useState('');
   const [title, setTitle] = useState(''); const [coverPath, setCoverPath] = useState<string | null>(null); const [coverStyle, setCoverStyle] = useState(0);
+  const [coverOverlay, setCoverOverlay] = useState(0); const [coverFocal, setCoverFocal] = useState<string>('50% 50%'); const [coverAlt, setCoverAlt] = useState('');
   const [start, setStart] = useState(''); const [duration, setDuration] = useState<number>(60); const [customDuration, setCustomDuration] = useState(false);
   const [place, setPlace] = useState<'person' | 'online' | 'hybrid'>('person'); const [locationName, setLocationName] = useState(''); const [address, setAddress] = useState('');
   const [details, setDetails] = useState<EventDetails>(emptyDetails);
@@ -84,6 +85,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (sourceId) {
       if (!source) return; const e = source.event;
       setCategory(isCategory(e.category) ? e.category : 'more'); setCategoryLabel(e.category_label ?? ''); setTitle(e.title); setCoverPath(e.cover_url); setCoverStyle(e.cover_style ?? 0); setDescEn(e.description_en ?? ''); setDescEs(e.description_es ?? '');
+      setCoverOverlay(clampOverlay((e as { cover_overlay?: number }).cover_overlay)); setCoverFocal(clampFocal((e as { cover_focal?: string }).cover_focal)); setCoverAlt((e as { cover_alt?: string | null }).cover_alt ?? '');
       const mins = e.ends_at ? Math.max(5, Math.round((new Date(e.ends_at).getTime() - new Date(e.starts_at).getTime()) / 60000)) : 60;
       setDuration(mins); setCustomDuration(!DURATIONS.includes(mins as 60));
       setPlace(isOnline(e) ? 'online' : e.online_url ? 'hybrid' : 'person'); setLocationName(e.location_name ?? ''); setAddress(e.address ?? ''); setNote(e.meeting_note ?? ''); setUrl(e.online_url ?? '');
