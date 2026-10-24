@@ -170,7 +170,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const detailsJson = detailsPayload(details);
   const saveDetails = async (id: string) => {
     if (!detailsJson) return true;
-    const { error } = await supabase.rpc('update_event_details', { _event: id, _p: detailsJson });
+    const { error } = await supabase.rpc('update_event_details', { _event: id, _p: { ...detailsJson, format: place } });
     if (error) { toast.error(rpcError(t, error)); return false; }
     return true;
   };

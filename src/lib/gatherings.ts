@@ -22,9 +22,9 @@ export const eventsTabQuery = (userId: string, teamIds: string[], tab: EventsTab
   queryFn: async (): Promise<Gathering[]> => {
     const now = new Date().toISOString();
     let q = supabase.from('events').select('*');
-    if (tab === 'hosting') q = q.eq('host_id', userId).gte('starts_at', now).order('starts_at');
+    if (tab === 'hosting') q = q.eq('host_id', userId).neq('status', 'archived').gte('starts_at', now).order('starts_at');
     else if (tab === 'upcoming') q = q.in('team_id', teamIds.length ? teamIds : ['00000000-0000-0000-0000-000000000000']).eq('status', 'published').gte('starts_at', now).order('starts_at');
-    else q = q.in('team_id', teamIds.length ? teamIds : ['00000000-0000-0000-0000-000000000000']).neq('status', 'draft').lt('starts_at', now).order('starts_at', { ascending: false });
+    else q = q.in('team_id', teamIds.length ? teamIds : ['00000000-0000-0000-0000-000000000000']).neq('status', 'draft').neq('status', 'archived').lt('starts_at', now).order('starts_at', { ascending: false });
     const { data, error } = await q.limit(60);
     if (error) throw error;
     return withGoing(data ?? []);

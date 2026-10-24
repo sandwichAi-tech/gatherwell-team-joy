@@ -9,6 +9,11 @@ export type PublicEvent = {
   hide_guest_list: boolean; going: number; initials: string[] | null;
   host: { name: string | null; avatar_url: string | null; verified?: boolean } | null; retreat?: unknown; cohosts?: { name: string | null; avatar_url: string | null }[]; team_name: string | null; my_code: string | null;
   questions?: RsvpQuestion[]; require_approval?: boolean; team_registration?: boolean; team_min?: number; team_max?: number; team_price_mode?: 'person' | 'team'; visibility?: 'public' | 'team' | 'invite';
+  summary_en?: string | null; summary_es?: string | null; language?: string; format?: 'person' | 'online' | 'hybrid'; map_url?: string | null;
+  reg_opens_at?: string | null; reg_closes_at?: string | null; waitlist_enabled?: boolean; tags?: string[];
+  contact_email?: string | null; contact_phone?: string | null;
+  accessibility_notes?: string | null; what_to_bring?: string | null; cancellation_policy?: string | null;
+  allows_minors?: boolean; min_age?: number | null;
 };
 
 export type RsvpQuestion = { id: string; kind: 'text' | 'choice' | 'yesno'; label: string; options?: string[] | undefined; required?: boolean };
