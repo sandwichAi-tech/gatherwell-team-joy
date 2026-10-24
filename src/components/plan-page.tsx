@@ -222,7 +222,7 @@ export function PlanPage() {
 
     <section className="panel get-paid">
       <div className="section-heading"><h2>{t('billing.getPaid')}</h2><span className={`chip connect-${st.connect_status}`}>{t(`billing.connect_${st.connect_status}`)}</span></div>
-      <p className="auth-subtitle">{lim.fee_cap != null ? t('billing.getPaidCapped', { n: lim.fee_pct, cap: formatMoney(lim.fee_cap, lang) }) : t('billing.getPaidText', { n: lim.fee_pct })}</p>
+      <p className="auth-subtitle">{t('home.pricing.fee', { pct: V4_FEE_PERCENT })}</p>
       {st.connect_status !== 'active' && <Button disabled={gate.busy} onClick={() => void gate.run(() => connect({ data: { origin } }))}>{st.connect_status === 'pending' ? t('billing.connectContinue') : t('billing.connectStart')}</Button>}
       <label className="settings-row is-static"><span className="settings-label">{t('billing.passFee')}<small className="field-hint">{t('billing.passFeeHint')}</small></span><Switch aria-label={t('billing.passFee')} checked={st.pass_fee} onCheckedChange={v => void togglePassFee(v)} /></label>
     </section>
@@ -231,12 +231,12 @@ export function PlanPage() {
       {downgrade && <>
         <ul className="plan-features">
           <li>{t('billing.downKeep')}</li>
-          {(() => { const l = { ...PLANS.find(p => p.id === downgrade)!.limits, fee_pct: settings[downgrade].fee_percent }; return <>
+          {(() => { const l = PLANS.find(p => p.id === downgrade)!.limits; return <>
             <li>{l.gatherings === null ? t('billing.fGatheringsUnlimited') : t('billing.downGatherings', { n: l.gatherings })}</li>
             <li>{l.guests === null ? t('billing.fGuestsUnlimited') : t('billing.downGuests', { n: l.guests })}</li>
             <li>{t('billing.downStorage', { size: formatStorage(l.storage_mb, lang) })}</li>
             <li>{t('billing.fAssistant', { n: l.assistant })}</li>
-            <li>{t('billing.fFee', { n: l.fee_pct })}</li></>; })()}
+            <li>{t('billing.fFee', { n: V4_FEE_PERCENT })}</li></>; })()}
         </ul>
         <p className="field-hint">{t('billing.downgradeAtMonthEnd')}</p>
         <Button className="onboarding-continue" disabled={gate.busy} onClick={() => { const target = downgrade!; setDowngrade(null); runScheduled(target); }}>{t('billing.downConfirm')}</Button>
