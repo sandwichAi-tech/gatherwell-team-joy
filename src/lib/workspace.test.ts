@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { WORKSPACE_ROLES } from '@/components/workspace-settings';
-import { ASSIGNMENT_SCOPES, ROLE_CAPABILITIES, SCOPE_ROLE_MAP, roleAllows, scopeFitsRole, type WorkspaceCapability } from '@/lib/workspace';
+import { readFileSync } from 'node:fs';
+import { ASSIGNMENT_SCOPES, BUILDER_ROLES, ROLE_CAPABILITIES, SCOPE_ROLE_MAP, isBuilderRole, roleAllows, scopeFitsRole, type WorkspaceCapability } from '@/lib/workspace';
+import { BUILDER_SEATS, LICENSES } from '@/lib/billing';
 import en from '@/locales/en.json';
 import es from '@/locales/es.json';
 
@@ -118,5 +120,29 @@ describe('workspace locale parity', () => {
       expect(en.workspace.action[action as keyof typeof en.workspace.action]).toBeTruthy();
       expect(es.workspace.action[action as keyof typeof es.workspace.action]).toBeTruthy();
     }
+  });
+});
+
+describe('builder seats (approved 2026-10-24 model)', () => {
+  it('owner, admin, host and content_editor consume a builder seat', () => {
+    for (const r of ['owner', 'admin', 'host', 'content_editor'] as const) expect(isBuilderRole(r)).toBe(true);
+  });
+  it('check-in, moderator, analyst and member never consume a builder seat', () => {
+    for (const r of ['checkin', 'moderator', 'analyst', 'member'] as const) expect(isBuilderRole(r)).toBe(false);
+    expect(isBuilderRole(null)).toBe(false);
+    expect(isBuilderRole(undefined)).toBe(false);
+  });
+  it('builder roles are a subset of the workspace roles', () => {
+    for (const r of BUILDER_ROLES) expect(WORKSPACE_ROLES).toContain(r);
+  });
+  it('plan builder-seat limits are 3/3/5 and licenses 25/100', () => {
+    expect(BUILDER_SEATS).toEqual({ free: 3, growth: 3, pro: 5 });
+    expect(LICENSES.map(l => [l.id, l.seats])).toEqual([['team25', 25], ['team100', 100]]);
+  });
+  it('the database mirror classifies the same roles', () => {
+    const sql = readFileSync('drizzle/migrations/0088_v5_plan_fee_ladder_builder_seats.sql', 'utf8');
+    expect(sql).toContain(`SELECT _role IN ('admin','host','content_editor')`);
+    expect(sql).toContain('team_builder_seat_limit');
+    expect(sql).toContain("WHEN 'pro' THEN 5 ELSE 3 END");
   });
 });
