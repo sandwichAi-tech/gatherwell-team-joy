@@ -4660,6 +4660,26 @@
     "startHosting": "Empezar a organizar",
     "switchAttending": "Cambiar a asistir"
   },
+  "policy": {
+    "none": "Sin política visible",
+    "textLabel": "Texto de la política para los asistentes",
+    "customHint": "Los invitados ven este texto exacto antes de registrarse y en la página del evento. Sé claro sobre lo que pueden esperar: no prometas reembolsos que no puedas cumplir.",
+    "preset": {
+      "free_anytime": "Gratis — cancela cuando quieras",
+      "free_notify": "Gratis — avisa si no puedes venir",
+      "paid_24h": "De pago — reembolso completo hasta 24 horas antes",
+      "paid_7d": "De pago — reembolso completo hasta 7 días antes",
+      "paid_none": "De pago — sin reembolsos",
+      "custom": "Política personalizada"
+    },
+    "text": {
+      "free_anytime": "Este es un evento gratuito. Puedes cancelar tu lugar cuando quieras, sin cargos ni preguntas.",
+      "free_notify": "Este es un evento gratuito. Si no puedes asistir, cancela para que otra persona pueda tomar tu lugar.",
+      "paid_24h": "Reembolso completo si cancelas al menos 24 horas antes del inicio. Si el anfitrión cancela, todos reciben el reembolso completo.",
+      "paid_7d": "Reembolso completo si cancelas al menos 7 días antes del inicio. Si el anfitrión cancela, todos reciben el reembolso completo.",
+      "paid_none": "Las ventas de boletos son finales. Si el anfitrión cancela, todos reciben el reembolso completo."
+    }
+  },
   "refunds": {
     "label": "Reembolsos",
     "24h": "Reembolso completo hasta 24 horas antes",
