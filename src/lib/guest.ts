@@ -125,7 +125,7 @@ export async function storyImage(opts: { title: string; date: string; link: stri
 
 export function rsvpErrorKey(error: unknown) {
   const m = typeof error === 'object' && error && 'message' in error ? String((error as { message: unknown }).message) : '';
-  for (const k of ['name_required', 'contact_required', 'invalid_email', 'not_open', 'too_long', 'rate_limited', 'members_only', 'waiver_required', 'answers_required', 'early_access']) if (m.includes(k)) return `guest.errors.${k}`;
+  for (const k of ['name_required', 'contact_required', 'invalid_email', 'not_open', 'too_long', 'rate_limited', 'members_only', 'waiver_required', 'answers_required', 'early_access', 'minors_not_allowed', 'minor_details_incomplete', 'guardian_details_incomplete', 'guardian_consent_required', 'min_age_not_met', 'registration_not_open', 'registration_closed']) if (m.includes(k)) return `guest.errors.${k}`;
   return 'guest.errors.generic';
 }
 

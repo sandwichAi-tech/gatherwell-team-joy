@@ -26,6 +26,8 @@ import { formatMoney } from '@/lib/billing';
 import { RsvpQuestionsFields, answersReady } from '@/components/rsvp-questions';
 import { WaiverAccept, useEventWaiver, waiverReady, waiverRpc } from '@/components/waiver';
 import { directionsUrl, downloadIcs, formatWhen, googleCalendarUrl, guestLink, hasPlace, inviteToken, rsvpErrorKey, type PublicEvent } from '@/lib/guest';
+import { AGE_BANDS, checkMinorRegistration } from '@/lib/identity';
+import { minorBandAllowed } from '@/lib/event-builder';
 
 type CalEvent = Pick<PublicEvent, 'id' | 'title' | 'starts_at' | 'ends_at' | 'location_name' | 'address'>;
 
