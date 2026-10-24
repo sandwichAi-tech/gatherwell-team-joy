@@ -19,6 +19,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { X, Camera, Check, Languages, Copy, MessageCircle, MessageSquareText, MapPin, Globe2, Repeat, ChevronRight } from '@/components/icons';
+import { GwIcon } from '@/components/gw-icon';
+import { COVER_OVERLAYS, COVER_FOCALS, clampOverlay, clampFocal } from '@/lib/cover';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -270,7 +272,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
           {coverPath && <>
             <div>
               <span className="field-label">{t('gathering.coverFocal')}</span>
-              <div className="cover-focal-grid" role="radiogroup" aria-label={t('gathering.coverFocal')}>{COVER_FOCALS.map(f => <button key={f} type="button" role="radio" aria-checked={coverFocal === f} aria-label={t(`gathering.focal.${f.replace(/% /g, '-').replace(/%/g, '')}`)} className={coverFocal === f ? 'is-selected' : ''} onClick={() => setCoverFocal(f)}><Crosshair /></button>)}</div>
+              <div className="cover-focal-grid" role="radiogroup" aria-label={t('gathering.coverFocal')}>{COVER_FOCALS.map(f => <button key={f} type="button" role="radio" aria-checked={coverFocal === f} aria-label={t(`gathering.focal.${f.replace(/% /g, '-').replace(/%/g, '')}`)} className={coverFocal === f ? 'is-selected' : ''} onClick={() => setCoverFocal(f)}><GwIcon name="Crosshair" /></button>)}</div>
               <small className="field-hint">{t('gathering.coverFocalHint')}</small>
             </div>
             <div>
