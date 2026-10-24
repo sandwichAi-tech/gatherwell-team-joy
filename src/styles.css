@@ -2292,3 +2292,22 @@ a.gw-cat-chip:hover{background:#fff}
   .ticket-qr-block { border: 2px solid #000; }
   body { background: #fff; }
 }
+
+/* Comms: updates, notifications, threads, moderation */
+.header-bell { position: relative; display: inline-flex; align-items: center; justify-content: center; min-width: 48px; min-height: 48px; color: inherit; }
+.header-bell-badge { position: absolute; top: 6px; right: 6px; min-width: 1.1rem; height: 1.1rem; padding: 0 .25rem; border-radius: 999px; background: var(--primary); color: var(--primary-foreground); font-size: .65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.updates-list { display: flex; flex-direction: column; gap: .75rem; }
+.update-card { border: 1px solid var(--border); border-radius: .9rem; padding: .9rem 1rem; }
+.update-card.is-unread { border-color: var(--primary); }
+.update-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; }
+.update-card-head h2, .update-card-head h3 { margin: 0; font-size: 1.05rem; }
+.update-body { white-space: pre-wrap; margin: .5rem 0 0; }
+.notification-row.is-unread { background: color-mix(in oklab, var(--primary) 6%, transparent); }
+.thread-messages { list-style: none; margin: 0 0 1rem; padding: 0; display: flex; flex-direction: column; gap: .6rem; }
+.thread-msg { max-width: 85%; padding: .6rem .8rem; border-radius: .9rem; border: 1px solid var(--border); }
+.thread-msg p { margin: 0; white-space: pre-wrap; }
+.thread-msg.is-me { align-self: flex-end; background: color-mix(in oklab, var(--primary) 10%, transparent); }
+.thread-msg.is-host { align-self: flex-start; }
+.thread-msg.is-attendee { align-self: flex-start; }
+.moderation-row { flex-wrap: wrap; }
+.moderation-panel h3 { margin-top: 1.25rem; }

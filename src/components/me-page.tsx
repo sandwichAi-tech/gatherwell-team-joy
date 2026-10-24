@@ -276,6 +276,9 @@ export function MePage() {
     </SettingsGroup>
     <SettingsGroup title={t('profile.groupPreferences')}>
       {row('Bell', t('profile.notifications'), () => setPanel('notifications'))}
+      {row('Megaphone', t('nav.updates'), () => setPanel('updates'))}
+      {row('MessageCircle', t('nav.inbox'), () => setPanel('inbox'))}
+      {row('Lifebuoy', t('nav.support'), () => setPanel('support'))}
       {SPANISH_ENABLED && staticRow('Globe2', t('me.language'), <div className="segmented" role="group" aria-label={t('me.language')}>{(['en', 'es'] as const).map(lang => <Button key={lang} variant="ghost" aria-pressed={i18n.resolvedLanguage === lang} className={i18n.resolvedLanguage === lang ? 'selected' : ''} onClick={() => saveLanguage(lang)}>{lang === 'en' ? 'EN' : 'ES'}</Button>)}</div>)}
       {staticRow('Sun', t('me.appearance'), <div className="segmented" role="group" aria-label={t('me.appearance')}>{([{ value: 'light', Icon: Sun }, { value: 'dark', Icon: Moon }, { value: 'system', Icon: Monitor }] as const).map(({ value, Icon }) => <Button key={value} variant="ghost" size="icon" className={theme === value ? 'selected' : ''} aria-pressed={theme === value} aria-label={t(`me.${value}`)} title={t(`me.${value}`)} onClick={() => setTheme(value)}><Icon /></Button>)}</div>)}
     </SettingsGroup>
