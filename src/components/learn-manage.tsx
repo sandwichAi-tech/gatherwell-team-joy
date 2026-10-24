@@ -277,7 +277,7 @@ function ProgressTab({ teamId }: { teamId: string }) {
   </section>;
 }
 
-export function LearnManage({ tab }: { tab: Tab }) {
+export function LearnManage({ tab, newType }: { tab: Tab; newType?: string | undefined }) {
   const { t } = useTranslation(); const { teamId, workspace } = useLearn(); const navigate = useNavigate();
   if (!workspace) return <div className="min-h-96" />;
   if (workspace.role === 'member') return <section className="panel"><Link to="/learn" className="back-link"><ArrowLeft />{t('learn.title')}</Link><p className="auth-subtitle">{t('learnHub.leadersOnly')}</p></section>;
@@ -285,8 +285,8 @@ export function LearnManage({ tab }: { tab: Tab }) {
     <Link to="/learn" className="back-link"><ArrowLeft />{t('learn.title')}</Link>
     <div className="page-heading"><div><span className="eyebrow">{t('learn.title')}</span><h1>{t('learnHub.manage')}</h1><p>{t('learnHub.manageText')}</p></div></div>
     <div className="segmented-tabs" role="tablist">{(['tracks', 'recipes', 'progress'] as const).map(k => <button key={k} role="tab" type="button" aria-selected={tab === k} className={tab === k ? 'is-active' : ''} onClick={() => void navigate({ to: '/learn/manage', search: { tab: k }, replace: true })}>{t(`learnHub.tab.${k}`)}</button>)}</div>
-    {tab === 'tracks' && <TracksTab teamId={teamId} />}
-    {tab === 'recipes' && <RecipesTab teamId={teamId} />}
+    {tab === 'tracks' && <TracksTab teamId={teamId} newType={newType} />}
+    {tab === 'recipes' && <RecipesTab teamId={teamId} openNew={newType === '1'} />}
     {tab === 'progress' && <ProgressTab teamId={teamId} />}
   </>;
 }
