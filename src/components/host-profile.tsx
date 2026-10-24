@@ -131,7 +131,7 @@ export function HostProfilePanel({ userId }: { userId: string }) {
     </div>
 
     <ul className="readiness-list" aria-label={t('hostProfile.readiness')}>
-      {readiness.map(r => <li key={r.key} className={r.done ? 'is-done' : ''}><GwIcon name={r.done ? 'CheckCircle' : 'Circle'} />{t(`hostProfile.ready.${r.key}`)}</li>)}
+      {readiness.map(r => <li key={r.key} className={r.done ? 'is-done' : ''}><GwIcon name={r.done ? 'CheckCircle2' : 'Circle'} />{t(`hostProfile.ready.${r.key}`)}</li>)}
     </ul>
 
     <div className="form-field">
