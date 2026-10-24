@@ -2635,7 +2635,9 @@
       "founding": "Coaches fundadores",
       "day60": "Día 60",
       "mail": "Correo",
-      "support": "Ayuda"
+      "support": "Ayuda",
+      "offerings": "Ofertas",
+      "communities": "Restricciones de comunidad"
     },
     "period": {
       "week": "Esta semana",
@@ -5437,5 +5439,78 @@
     "toggle": "Conversación",
     "toggleHelp": "Permite que los participantes registrados publiquen y respondan. Desactivado por defecto.",
     "disabled": "El anfitrión no ha abierto la conversación para este evento."
+  },
+  "safety": {
+    "tabs": {
+      "users": "Personas",
+      "teams": "Espacios",
+      "offerings": "Ofertas",
+      "reports": "Reportes",
+      "audit": "Historial de auditoría",
+      "communities": "Restricciones de comunidad"
+    },
+    "platformScope": "Acciones de seguridad de la plataforma, separadas de los roles del espacio y controles del anfitrión.",
+    "search": "Buscar nombre, título o ID exacto",
+    "filter": "Estado",
+    "loadError": "No se pudo cargar la lista. El acceso puede no estar disponible o se alcanzó el límite de solicitudes.",
+    "retry": "Intentar de nuevo",
+    "unavailable": "Elemento no disponible",
+    "actor": "Responsable",
+    "assignee": "Asignado a",
+    "review": "Revisar",
+    "pagination": "Páginas de resultados",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "page": "Página {{page}}",
+    "target": "ID del elemento",
+    "reason": "Motivo / nota interna (obligatorio)",
+    "notePrivacy": "Escribe hechos. No incluyas nombres de denunciantes, contactos, consentimientos ni mensajes privados.",
+    "confirm": "Confirma esta acción de seguridad de la plataforma. Los registros se conservan y la acción queda auditada.",
+    "actionError": "La acción no se completó. Actualiza la lista y revisa el estado o los permisos.",
+    "accountScope": "La suspensión de cuenta bloquea el inicio de sesión mediante la restricción existente. No elimina la cuenta.",
+    "teamScope": "La suspensión del espacio limita la creación de eventos nuevos. No cancela registros existentes ni afecta otras cuentas.",
+    "communityScope": "Esta restricción limita la publicación solo en esta comunidad. El inicio de sesión y otras comunidades no cambian.",
+    "communityTitle": "Restringir publicaciones en la comunidad",
+    "userId": "ID exacto de la persona",
+    "state": {
+      "all": "Todos",
+      "active": "Activo",
+      "suspended": "Suspendido",
+      "published": "Publicado",
+      "draft": "Borrador",
+      "archived": "Archivado",
+      "open": "Abierto",
+      "closed": "Cerrado",
+      "mine": "Asignados a mí",
+      "escalated": "Escalado",
+      "approved": "Resuelto / descartado",
+      "removed": "Oculto",
+      "edited": "Editado"
+    },
+    "action": {
+      "claim": "Asignarme",
+      "escalate": "Escalar",
+      "resolve": "Resolver",
+      "dismiss": "Descartar",
+      "hide": "Ocultar / retirar publicación",
+      "unpublish": "Retirar publicación",
+      "suspend": "Suspender",
+      "restore": "Reactivar"
+    },
+    "types": {
+      "user": "Cuenta",
+      "team": "Espacio",
+      "event": "Evento",
+      "retreat": "Retiro",
+      "course": "Curso",
+      "resource": "Recurso",
+      "membership": "Membresía",
+      "comment": "Comentario",
+      "topic": "Discusión",
+      "photo": "Foto",
+      "shoutout": "Reconocimiento",
+      "activity": "Actividad",
+      "announcement": "Anuncio"
+    }
   }
 }
