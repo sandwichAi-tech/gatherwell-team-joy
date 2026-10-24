@@ -1479,7 +1479,10 @@
     "undoTitle": "¿Deshacer registro?",
     "undoText": "Esto elimina el registro de entrada de {{name}}. Queda anotado en el registro de actividad del equipo.",
     "undoKeep": "Mantener registro",
-    "undoConfirm": "Deshacer registro"
+    "undoConfirm": "Deshacer registro",
+    "manualCode": "Ingresar código a mano",
+    "manualCodeHint": "p. ej. EAA8-3320-…",
+    "manualSubmit": "Registrar"
   },
   "learnHub": {
     "startHere": "Empieza aquí",

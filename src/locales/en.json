@@ -1479,7 +1479,10 @@
     "undoTitle": "Undo check-in?",
     "undoText": "This removes the check-in for {{name}}. It is recorded in the team activity log.",
     "undoKeep": "Keep check-in",
-    "undoConfirm": "Undo check-in"
+    "undoConfirm": "Undo check-in",
+    "manualCode": "Enter code by hand",
+    "manualCodeHint": "e.g. EAA8-3320-…",
+    "manualSubmit": "Check in"
   },
   "learnHub": {
     "startHere": "Start here",
