@@ -13,6 +13,7 @@ import { Home, CalendarDays, UsersRound, BookOpen, UserRound, Plus, Sparkles, Ar
 import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
 import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { profileQuery, workspaceQuery, initialsOf, firstName } from '@/lib/account';
 import { roleAllows } from '@/lib/workspace';
 import type { WorkspaceRole } from '@/components/workspace-settings';
@@ -36,6 +37,11 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
  const [detail, setDetail] = useState<{ title: string; description: string } | null>(null);
  const [memberView, setMemberView] = useState(false);
  const navigate = useNavigate();
+ const { data: unread = 0 } = useQuery({
+   queryKey: ['notifications-unread'],
+   queryFn: async () => (await supabase.from('notifications').select('id', { count: 'exact', head: true }).is('read_at', null)).count ?? 0,
+   refetchInterval: 60_000,
+ });
  const [theme, updateTheme] = useState<Theme>('system');
  const [ready, setReady] = useState(false);
  const [learnOn] = useFeature('feature_learn');
