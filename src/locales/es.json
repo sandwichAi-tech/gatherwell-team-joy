@@ -5126,7 +5126,30 @@
     "removeLink": "Quitar enlace",
     "linksHint": "Solo enlaces HTTPS. Las redes sociales se limitan a plataformas conocidas.",
     "linkInvalid": "Revisa tus enlaces: solo HTTPS y las redes sociales deben ser de una plataforma compatible.",
-    "preview": "Vista previa de la página pública"
+    "preview": "Vista previa de la página pública",
+    "slug": {
+      "title": "Tu enlace público",
+      "hint": "Esta es la dirección de tu página pública. Puedes personalizarla una vez publicada.",
+      "label": "Enlace personalizado",
+      "placeholder": "tu-nombre",
+      "copy": "Copiar enlace",
+      "create": "Crea tu enlace",
+      "edit": "Editar enlace",
+      "save": "Guardar enlace",
+      "saved": "Tu enlace público se actualizó.",
+      "rules": "Letras minúsculas, números y guiones, de 3 a 40 caracteres.",
+      "willBe": "Tu enlace será /h/{{slug}}",
+      "oldLinks": "Tus enlaces anteriores siguen funcionando: redirigen automáticamente a la nueva dirección.",
+      "confirmTitle": "¿Cambiar tu enlace público?",
+      "confirmBody": "Tu página se moverá a la nueva dirección. Los enlaces anteriores redirigirán allí y podrás cambiarlo de nuevo más adelante (hasta 3 veces por día).",
+      "error": {
+        "invalid": "Usa de 3 a 40 letras minúsculas, números o guiones, comenzando con una letra o número.",
+        "reserved": "Esa dirección está reservada por ZoheeWell. Prueba con otra.",
+        "taken": "Esa dirección ya está en uso. Prueba con otra.",
+        "rateLimited": "Cambiaste tu enlace recientemente. Inténtalo de nuevo mañana.",
+        "failed": "No pudimos guardar tu enlace. Inténtalo de nuevo."
+      }
+    }
   },
   "following": {
     "title": "Siguiendo",

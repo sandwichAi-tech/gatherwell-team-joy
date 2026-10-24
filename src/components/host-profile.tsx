@@ -13,6 +13,8 @@ import { GwIcon } from '@/components/gw-icon';
 import { EmptyState, ListSkeleton, RetryState } from '@/components/launch-states';
 import { confirmAction } from '@/components/confirm-dialog';
 import { profileQuery } from '@/lib/account';
+import { CopyButton } from '@/components/copy-button';
+import { normalizeProfileSlug, validateProfileSlug, slugErrorKey } from '@/lib/host-slug';
 
 export type HostLink = { label: string; url: string; kind: 'website' | 'social' };
 
@@ -74,6 +76,59 @@ export function hostProfileReadiness(p: Pick<HostProfileRow, 'full_name' | 'bio'
   ];
 }
 
+/** Custom public URL editor: client mirror gives instant feedback; set_profile_slug RPC is authoritative. */
+export function SlugEditor({ userId, slug, onSaved }: { userId: string; slug: string | null; onSaved: (slug: string) => void }) {
+  const { t } = useTranslation();
+  const [editing, setEditing] = useState(false);
+  const [value, setValue] = useState('');
+  const [busy, setBusy] = useState(false);
+  const url = slug ? `${window.location.origin}/h/${slug}` : null;
+  const normalized = normalizeProfileSlug(value);
+  const problem = value.trim() ? validateProfileSlug(value) : null;
+
+  const save = async () => {
+    if (problem || !normalized) return;
+    if (!(await confirmAction({ title: t('hostProfile.slug.confirmTitle'), body: t('hostProfile.slug.confirmBody'), confirmLabel: t('hostProfile.slug.save') }))) return;
+    setBusy(true);
+    const { data, error } = await supabase.rpc('set_profile_slug', { _slug: value } as never);
+    setBusy(false);
+    if (error) { toast.error(t(`hostProfile.slug.error.${slugErrorKey(error.message)}`)); return; }
+    toast.success(t('hostProfile.slug.saved'));
+    setEditing(false);
+    onSaved(data as unknown as string);
+  };
+
+  return <fieldset className="edit-section slug-editor"><legend>{t('hostProfile.slug.title')}</legend>
+    <p className="field-hint">{t('hostProfile.slug.hint')}</p>
+    {!url && !editing && <Button variant="secondary" onClick={() => { setValue(''); setEditing(true); }}><GwIcon name="Link2" />{t('hostProfile.slug.create')}</Button>}
+    {url && !editing && <div className="slug-current">
+      <code className="slug-url" data-testid="slug-url">{url}</code>
+      <div className="feed-actions">
+        <CopyButton text={url} label={t('hostProfile.slug.copy')} />
+        <Button asChild variant="secondary"><Link to="/h/$slug" params={{ slug: slug! }} target="_blank"><GwIcon name="Eye" />{t('hostProfile.preview')}</Link></Button>
+        <Button variant="secondary" onClick={() => { setValue(slug ?? ''); setEditing(true); }}><GwIcon name="Pencil" />{t('hostProfile.slug.edit')}</Button>
+      </div>
+    </div>}
+    {editing && <>
+      <div className="form-field">
+        <Label htmlFor="hp-slug">{t('hostProfile.slug.label')}</Label>
+        <div className="slug-input-row">
+          <span className="slug-prefix" aria-hidden="true">/h/</span>
+          <Input id="hp-slug" inputMode="url" autoComplete="off" maxLength={40} value={value} onChange={e => setValue(e.target.value)} placeholder={t('hostProfile.slug.placeholder')} aria-describedby="hp-slug-status" />
+        </div>
+        <small id="hp-slug-status" className={`field-hint ${problem ? 'is-error' : ''}`} role={problem ? 'alert' : undefined}>
+          {problem ? t(`hostProfile.slug.error.${problem === 'invalid_slug' ? 'invalid' : 'reserved'}`) : normalized && normalized !== normalizeProfileSlug(slug ?? '') ? t('hostProfile.slug.willBe', { slug: normalized }) : t('hostProfile.slug.rules')}
+        </small>
+      </div>
+      <p className="field-hint"><GwIcon name="AlertCircle" />{t('hostProfile.slug.oldLinks')}</p>
+      <div className="form-actions">
+        <Button className="sheet-primary" disabled={busy || !!problem || !normalized || normalized === slug} onClick={() => void save()}>{busy ? t('onboarding.saving') : t('hostProfile.slug.save')}</Button>
+        <Button variant="ghost" onClick={() => setEditing(false)}>{t('common.cancel')}</Button>
+      </div>
+    </>}
+  </fieldset>;
+}
+
 export function HostProfilePanel({ userId }: { userId: string }) {
   const { t } = useTranslation();
   const qc = useQueryClient();
@@ -124,6 +179,11 @@ export function HostProfilePanel({ userId }: { userId: string }) {
 
   return <div className="edit-form host-profile-form">
     <p className="auth-subtitle">{t('hostProfile.intro')}</p>
+
+    <SlugEditor userId={userId} slug={d.slug} onSaved={() => {
+      void qc.invalidateQueries({ queryKey: ['host-profile', userId] });
+      void qc.invalidateQueries({ queryKey: ['public-follow-page', 'host'] });
+    }} />
 
     <div className="switch-row">
       <div><strong>{t('hostProfile.published')}</strong><small>{t('hostProfile.publishedHint')}</small></div>

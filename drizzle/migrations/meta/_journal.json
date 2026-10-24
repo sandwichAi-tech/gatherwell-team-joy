@@ -638,6 +638,13 @@
       "when": 1792876550321,
       "tag": "0090_resource_templates",
       "breakpoints": true
+    },
+    {
+      "idx": 91,
+      "version": "7",
+      "when": 1792879927678,
+      "tag": "0091_custom_host_slugs",
+      "breakpoints": true
     }
   ]
 }

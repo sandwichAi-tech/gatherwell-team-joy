@@ -1,4 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
+import { supabase } from '@/integrations/supabase/client';
+import { normalizeProfileSlug } from '@/lib/host-slug';
 import { pageQuery } from '@/components/follow';
 import { prefetchPublic } from '@/lib/guest';
 import i18n from '@/lib/i18n';
@@ -9,6 +11,15 @@ import { RetryState } from '@/components/launch-states';
 
 export const Route = createFileRoute('/h/$slug')({
   loader: async ({ context, params }) => {
+    // Old custom URLs keep working: resolve aliases to the canonical slug and redirect.
+    const requested = normalizeProfileSlug(params.slug);
+    if (requested && requested !== params.slug) {
+      throw redirect({ to: '/h/$slug', params: { slug: requested }, replace: true });
+    }
+    const { data: canonical } = await supabase.rpc('resolve_host_slug', { _slug: params.slug });
+    if (canonical && canonical !== params.slug) {
+      throw redirect({ to: '/h/$slug', params: { slug: canonical }, replace: true });
+    }
     await prefetchPublic(context.queryClient, pageQuery('host', params.slug));
     const d = context.queryClient.getQueryData(pageQuery('host', params.slug).queryKey) as { name?: string; org?: string | null; bio?: string | null; links?: { url: string }[]; coverSrc?: string | null } | undefined;
     const image = d?.coverSrc ?? await publicShareImage({ data: { slot: 'og_share_image' } }).catch(() => null);
