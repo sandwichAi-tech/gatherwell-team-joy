@@ -31,8 +31,10 @@ function CheckInMode() {
   const { data: rows = [], error, isLoading, refetch } = useQuery({
     queryKey: listKey,
     queryFn: async () => {
-      const { data, error } = await supabase.from('rsvps').select('id,guest_name,plus_ones,status,checked_in_at,is_walk_in,wants_buddy,buddy_rsvp_id,small_group').eq('event_id', id).in('status', ['going', 'maybe', 'waitlist']).order('guest_name');
-      if (error) throw error; return data ?? [];
+      // Minimal admission fields via the check-in capability; works for assigned check-in staff too.
+      const { data, error } = await supabase.rpc('checkin_guest_list', { _event: id });
+      if (error) throw error;
+      return (data ?? []) as unknown as { id: string; guest_name: string | null; status: string; plus_ones: number; checked_in_at: string | null; is_walk_in: boolean; wants_buddy: boolean | null; buddy_rsvp_id: string | null; small_group: string | null }[];
     },
   });
   const counts = useLiveCounts(id);
