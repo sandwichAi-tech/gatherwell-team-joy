@@ -421,6 +421,13 @@
       "when": 1792812374951,
       "tag": "0059_content_entitlement_shape_fix",
       "breakpoints": true
+    },
+    {
+      "idx": 60,
+      "version": "7",
+      "when": 1792812565969,
+      "tag": "0060_resource_bundle_items",
+      "breakpoints": true
     }
   ]
 }
