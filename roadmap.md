@@ -6,11 +6,10 @@
 - [x] Ticket QR/fallback/calendar and check-in manual/invalid/repeat/undo flows.
 - [x] Accessibility: keyboard focus and restoration, 200% zoom, reduced motion, 44px targets, no overflow, EN/ES parity.
 - [x] Defects fixed with regression tests; full suite, typecheck and production build pass.
-- [x] Temporary ee000010/Fx10 public fixtures removed and verified at zero; real owner adult confirmation preserved.
+- [x] Temporary ee000010/Fx10 fixtures fully removed (public rows and the fixture auth account), verified at zero; real owner adult confirmation preserved.
 
 ## Remaining manual/device checks
 
 - [ ] Screen-reader narration pass on ticket/calendar, communications and check-in surfaces.
 - [ ] Real-device camera permission and live QR scan pass.
-- [ ] Managed-auth cleanup for the leftover fixture auth user when a safe admin deletion path is available.
 - [ ] Wallet provider certificates (UI remains gated as Setup required).
