@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { DiscoverPage, type DiscoverSearch } from '@/components/landing/discover-page';
+import { DiscoverPage, searchToFilters, type DiscoverSearch } from '@/components/landing/discover-page';
 import { isCategory } from '@/lib/landing';
-import { searchToFilters, hasActiveFilters } from '@/lib/discovery';
+import { hasActiveFilters } from '@/lib/discovery';
 import i18n from '@/lib/i18n';
 import { publicShareImage } from '@/lib/public-media.functions';
 import { RetryState } from '@/components/launch-states';
@@ -30,11 +30,12 @@ export const Route = createFileRoute('/discover')({
     ...(s['sort'] === 'newest' || s['sort'] === 'relevant' ? { sort: s['sort'] } : {}),
     ...(one(s['space']) ? { space: 1 as const } : {}),
   }),
-  head: ({ search, loaderData }) => {
+  head: ({ matches, loaderData }) => {
     const title = i18n.t('landing.meta.discoverTitle');
     const description = i18n.t('landing.meta.discover');
     // Filtered permutations are not indexed; only the clean catalog is.
-    const filtered = hasActiveFilters(searchToFilters(search as DiscoverSearch, null)) || (search as DiscoverSearch).sort;
+    const search = (matches.at(-1)?.search ?? {}) as DiscoverSearch;
+    const filtered = hasActiveFilters(searchToFilters(search, null)) || !!search.sort;
     return {
       meta: [
         { title }, { name: 'description', content: description },
