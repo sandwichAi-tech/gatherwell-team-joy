@@ -105,11 +105,11 @@ function EventDetailPage() {
   const statusChip = <span className={`chip ${event.status === 'published' ? 'published-chip' : ''}`}>{t(`teamSpace.status.${event.status}`)}</span>;
   const ev = event as Record<string, unknown>;
   const blockers = event.status === 'draft' ? readinessBlockers({
-    title: event.title, startsAt: event.starts_at, format: (ev.format as 'person' | 'online' | 'hybrid') ?? (event.online_url ? 'online' : 'person'),
+    title: event.title, startsAt: event.starts_at, format: (ev['format'] as 'person' | 'online' | 'hybrid') ?? (event.online_url ? 'online' : 'person'),
     locationName: event.location_name ?? '', address: event.address ?? '', onlineUrl: event.online_url ?? '',
     priceCents: event.price_cents ?? null, canSell: planStatus?.connect_status === 'active',
-    regOpens: (ev.reg_opens_at as string) ?? '', regCloses: (ev.reg_closes_at as string) ?? '',
-    retreatOn: !!ev.retreat, retreatEnd: event.ends_at ?? '',
+    regOpens: (ev['reg_opens_at'] as string) ?? '', regCloses: (ev['reg_closes_at'] as string) ?? '',
+    retreatOn: !!ev['retreat'], retreatEnd: event.ends_at ?? '',
     allowsMinors: !!ev['allows_minors'], minAge: ev['min_age'] != null ? String(ev['min_age']) : '',
     tiers: Array.isArray(ev['ticket_tiers']) ? ev['ticket_tiers'] as never[] : [],
   }) : [];
