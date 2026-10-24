@@ -512,6 +512,13 @@
       "when": 1792818504355,
       "tag": "0072_host_profile_fields",
       "breakpoints": true
+    },
+    {
+      "idx": 73,
+      "version": "7",
+      "when": 1792818902814,
+      "tag": "0073_fix_save_host_profile_languages",
+      "breakpoints": true
     }
   ]
 }
