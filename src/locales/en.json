@@ -11,7 +11,10 @@
     "label": "Main navigation",
     "discover": "Discover",
     "circles": "Circles",
-    "progress": "Progress"
+    "progress": "Progress",
+    "updates": "Updates",
+    "inbox": "Messages",
+    "support": "Support"
   },
   "common": {
     "create": "Create",
@@ -5193,5 +5196,178 @@
     "registered": "Registered",
     "checkedIn": "Checked in",
     "remaining": "Spots left"
+  },
+  "updates": {
+    "title": "Updates",
+    "subtitle": "News from hosts of events and courses you joined.",
+    "markAllRead": "Mark all read",
+    "markRead": "Mark read",
+    "unread": "Unread",
+    "loadMore": "Load more",
+    "empty": "No updates yet. When a host shares news about something you joined, it shows up here.",
+    "panelTitle": "Updates for participants",
+    "panelEmpty": "No updates yet.",
+    "new": "New update",
+    "edit": "Edit",
+    "publish": "Publish",
+    "archive": "Archive",
+    "draft": "Draft",
+    "saved": "Draft saved",
+    "published": "Update published to participants",
+    "archived": "Update archived",
+    "editorText": "Everyone registered or enrolled sees this in the app.",
+    "fieldTitle": "Title",
+    "fieldBody": "Message",
+    "audienceNote": "The audience is set automatically from current registrations and enrollments — you can't add recipients by hand.",
+    "inAppOnly": "Delivered in-app only. Email and SMS delivery: Setup required.",
+    "scheduledSetupRequired": "Scheduled sending: Setup required",
+    "saveDraft": "Save draft",
+    "errors": {
+      "scheduling_setup_required": "Scheduled sending isn't connected yet (Setup required). Publish now instead.",
+      "blocked_claim": "This text contains claims we can't publish.",
+      "rate_limited": "Too many actions — wait a moment.",
+      "not_allowed": "You can't manage updates for this.",
+      "invalid_body": "Check the title and message length.",
+      "archived": "This update is archived."
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "subtitle": "Your in-app alerts.",
+    "markAllRead": "Mark all read",
+    "unread": "Unread",
+    "empty": "You're all caught up.",
+    "open": "Open",
+    "kind": {
+      "announcement": "Update",
+      "conversation": "Discussion",
+      "moderation": "Moderation",
+      "ticket": "Tickets",
+      "learning": "Learning",
+      "support": "Support"
+    }
+  },
+  "inbox": {
+    "title": "Messages",
+    "subtitle": "Questions between you and hosts, tied to your registrations.",
+    "empty": "No conversations yet. Use “Contact host” on an event or course you joined.",
+    "conversation": "Conversation",
+    "withHost": "With the host",
+    "withAttendee": "From {{name}}",
+    "closed": "Closed",
+    "closedText": "This conversation is closed.",
+    "reply": "Reply",
+    "replyPlaceholder": "Write your reply…",
+    "send": "Send",
+    "close": "Close conversation",
+    "block": "Block this person",
+    "blockedDone": "Person blocked and conversation closed.",
+    "contactHost": "Contact host",
+    "contactHostText": "Ask the host about logistics or access. Your email and phone are never shared here.",
+    "message": "Message",
+    "privacyNote": "Keep it kind. Hosts can report or block abusive messages.",
+    "sent": "Message sent",
+    "from": {
+      "me": "You",
+      "attendee": "Attendee",
+      "host": "Host"
+    },
+    "errors": {
+      "blocked": "You can't message this host.",
+      "closed": "This conversation is closed.",
+      "rate_limited": "Too many messages — wait a moment.",
+      "not_allowed": "You need an active registration or enrollment to contact the host.",
+      "adult_required": "Messaging is available to adults (18+) only.",
+      "invalid_body": "Check the message length."
+    }
+  },
+  "support": {
+    "title": "ZoheeWell support",
+    "subtitle": "Account, billing, safety, and platform questions — answered by the ZoheeWell team, not your host.",
+    "new": "New request",
+    "newText": "Tell us what's happening. This goes to ZoheeWell support only.",
+    "category": "Category",
+    "subject": "Subject",
+    "body": "How can we help?",
+    "submit": "Send request",
+    "created": "Request sent — we'll reply here.",
+    "empty": "No support requests yet.",
+    "reply": "Reply",
+    "replyPlaceholder": "Write your reply…",
+    "send": "Send",
+    "close": "Close request",
+    "closedText": "This request is closed.",
+    "fromStaff": "ZoheeWell support",
+    "fromMe": "You",
+    "routingNote": "For event or course logistics, use “Contact host” on that event or course instead.",
+    "emergencyTitle": "Emergencies",
+    "emergencyText": "If you or someone else is in immediate danger, call your local emergency number now. ZoheeWell cannot provide emergency response.",
+    "cat": {
+      "account": "Account",
+      "billing": "Billing",
+      "safety": "Safety",
+      "other": "Something else"
+    },
+    "status": {
+      "open": "Open",
+      "answered": "Answered",
+      "closed": "Closed"
+    },
+    "errors": {
+      "rate_limited": "Too many requests — wait a few minutes.",
+      "invalid_body": "Check the subject and message length.",
+      "invalid_category": "Pick a category.",
+      "closed": "This request is closed.",
+      "not_allowed": "You can't view this request."
+    }
+  },
+  "moderation": {
+    "reportsTitle": "Open reports",
+    "noReports": "No open reports.",
+    "queueTitle": "Reported posts",
+    "empty": "Nothing needs review right now.",
+    "anonymousReporter": "Reporter kept anonymous",
+    "reason": {
+      "inappropriate": "Inappropriate",
+      "spam": "Spam",
+      "claim": "Prohibited claim",
+      "other": "Other"
+    },
+    "scope": {
+      "event": "Event",
+      "topic": "Topic"
+    },
+    "reportCount": "{{count}} report(s)",
+    "hide": "Hide",
+    "unhide": "Unhide",
+    "remove": "Remove",
+    "resolve": "Resolve",
+    "dismiss": "Dismiss",
+    "suspend": "Suspend from community",
+    "hidden": "Post hidden",
+    "shown": "Post visible again",
+    "removed": "Post removed",
+    "resolved": "Report resolved",
+    "dismissed": "Report dismissed",
+    "suspended": "Member suspended from this community scope",
+    "removeTitle": "Remove this post?",
+    "removeText": "The post is hidden from everyone and kept in protected moderation records. A reason is required.",
+    "reasonLabel": "Reason (required)",
+    "removeConfirm": "Remove post",
+    "suspendTitle": "Suspend from community?",
+    "suspendText": "This blocks posting in this community scope only — the account stays active.",
+    "suspendConfirm": "Suspend",
+    "errors": {
+      "reason_required": "A reason is required.",
+      "not_allowed": "You can't moderate this.",
+      "forbidden": "You can't moderate this.",
+      "not_found": "Not found.",
+      "invalid_action": "Invalid action."
+    }
+  },
+  "discussion": {
+    "toggle": "Discussion",
+    "toggleHelp": "Let registered participants post and reply. Off by default.",
+    "disabled": "The host hasn't opened discussion for this event."
   }
 }

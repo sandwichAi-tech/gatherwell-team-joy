@@ -11,7 +11,10 @@
     "label": "Navegación principal",
     "discover": "Descubrir",
     "circles": "Círculos",
-    "progress": "Progreso"
+    "progress": "Progreso",
+    "updates": "Novedades",
+    "inbox": "Mensajes",
+    "support": "Soporte"
   },
   "common": {
     "create": "Crear",
@@ -5193,5 +5196,178 @@
     "registered": "Registrados",
     "checkedIn": "En entrada",
     "remaining": "Lugares libres"
+  },
+  "updates": {
+    "title": "Novedades",
+    "subtitle": "Noticias de anfitriones de eventos y cursos a los que te uniste.",
+    "markAllRead": "Marcar todo leído",
+    "markRead": "Marcar leído",
+    "unread": "Sin leer",
+    "loadMore": "Cargar más",
+    "empty": "Aún no hay novedades. Cuando un anfitrión comparta algo sobre un evento o curso tuyo, aparecerá aquí.",
+    "panelTitle": "Novedades para participantes",
+    "panelEmpty": "Aún no hay novedades.",
+    "new": "Nueva novedad",
+    "edit": "Editar",
+    "publish": "Publicar",
+    "archive": "Archivar",
+    "draft": "Borrador",
+    "saved": "Borrador guardado",
+    "published": "Novedad publicada a los participantes",
+    "archived": "Novedad archivada",
+    "editorText": "Todas las personas registradas o inscritas la verán en la app.",
+    "fieldTitle": "Título",
+    "fieldBody": "Mensaje",
+    "audienceNote": "El público se define automáticamente según los registros e inscripciones actuales; no se pueden agregar destinatarios a mano.",
+    "inAppOnly": "Solo dentro de la app. Envío por correo y SMS: configuración pendiente.",
+    "scheduledSetupRequired": "Envío programado: configuración pendiente",
+    "saveDraft": "Guardar borrador",
+    "errors": {
+      "scheduling_setup_required": "El envío programado aún no está conectado (configuración pendiente). Publica ahora.",
+      "blocked_claim": "Este texto contiene afirmaciones que no podemos publicar.",
+      "rate_limited": "Demasiadas acciones; espera un momento.",
+      "not_allowed": "No puedes gestionar novedades de esto.",
+      "invalid_body": "Revisa la longitud del título y el mensaje.",
+      "archived": "Esta novedad está archivada."
+    }
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "subtitle": "Tus avisos dentro de la app.",
+    "markAllRead": "Marcar todo leído",
+    "unread": "Sin leer",
+    "empty": "Estás al día.",
+    "open": "Abrir",
+    "kind": {
+      "announcement": "Novedad",
+      "conversation": "Conversación",
+      "moderation": "Moderación",
+      "ticket": "Boletos",
+      "learning": "Aprendizaje",
+      "support": "Soporte"
+    }
+  },
+  "inbox": {
+    "title": "Mensajes",
+    "subtitle": "Preguntas entre tú y los anfitriones, ligadas a tus registros.",
+    "empty": "Aún no hay conversaciones. Usa «Contactar al anfitrión» en un evento o curso al que te uniste.",
+    "conversation": "Conversación",
+    "withHost": "Con el anfitrión",
+    "withAttendee": "De {{name}}",
+    "closed": "Cerrada",
+    "closedText": "Esta conversación está cerrada.",
+    "reply": "Responder",
+    "replyPlaceholder": "Escribe tu respuesta…",
+    "send": "Enviar",
+    "close": "Cerrar conversación",
+    "block": "Bloquear a esta persona",
+    "blockedDone": "Persona bloqueada y conversación cerrada.",
+    "contactHost": "Contactar al anfitrión",
+    "contactHostText": "Pregunta al anfitrión sobre logística o acceso. Tu correo y teléfono nunca se comparten aquí.",
+    "message": "Mensaje",
+    "privacyNote": "Mantén la amabilidad. Los anfitriones pueden reportar o bloquear mensajes abusivos.",
+    "sent": "Mensaje enviado",
+    "from": {
+      "me": "Tú",
+      "attendee": "Asistente",
+      "host": "Anfitrión"
+    },
+    "errors": {
+      "blocked": "No puedes enviar mensajes a este anfitrión.",
+      "closed": "Esta conversación está cerrada.",
+      "rate_limited": "Demasiados mensajes; espera un momento.",
+      "not_allowed": "Necesitas un registro o inscripción activa para contactar al anfitrión.",
+      "adult_required": "Los mensajes son solo para adultos (18+).",
+      "invalid_body": "Revisa la longitud del mensaje."
+    }
+  },
+  "support": {
+    "title": "Soporte de ZoheeWell",
+    "subtitle": "Preguntas de cuenta, pagos, seguridad y plataforma; las responde el equipo de ZoheeWell, no tu anfitrión.",
+    "new": "Nueva solicitud",
+    "newText": "Cuéntanos qué pasa. Esto llega solo al soporte de ZoheeWell.",
+    "category": "Categoría",
+    "subject": "Asunto",
+    "body": "¿Cómo te ayudamos?",
+    "submit": "Enviar solicitud",
+    "created": "Solicitud enviada; te responderemos aquí.",
+    "empty": "Aún no hay solicitudes de soporte.",
+    "reply": "Responder",
+    "replyPlaceholder": "Escribe tu respuesta…",
+    "send": "Enviar",
+    "close": "Cerrar solicitud",
+    "closedText": "Esta solicitud está cerrada.",
+    "fromStaff": "Soporte de ZoheeWell",
+    "fromMe": "Tú",
+    "routingNote": "Para logística de un evento o curso, usa «Contactar al anfitrión» en ese evento o curso.",
+    "emergencyTitle": "Emergencias",
+    "emergencyText": "Si tú u otra persona están en peligro inmediato, llama ahora a tu número de emergencias local. ZoheeWell no puede brindar respuesta de emergencia.",
+    "cat": {
+      "account": "Cuenta",
+      "billing": "Pagos",
+      "safety": "Seguridad",
+      "other": "Otra cosa"
+    },
+    "status": {
+      "open": "Abierta",
+      "answered": "Respondida",
+      "closed": "Cerrada"
+    },
+    "errors": {
+      "rate_limited": "Demasiadas solicitudes; espera unos minutos.",
+      "invalid_body": "Revisa la longitud del asunto y el mensaje.",
+      "invalid_category": "Elige una categoría.",
+      "closed": "Esta solicitud está cerrada.",
+      "not_allowed": "No puedes ver esta solicitud."
+    }
+  },
+  "moderation": {
+    "reportsTitle": "Reportes abiertos",
+    "noReports": "No hay reportes abiertos.",
+    "queueTitle": "Publicaciones reportadas",
+    "empty": "No hay nada que revisar ahora.",
+    "anonymousReporter": "Reportante anónimo",
+    "reason": {
+      "inappropriate": "Inapropiado",
+      "spam": "Spam",
+      "claim": "Afirmación prohibida",
+      "other": "Otro"
+    },
+    "scope": {
+      "event": "Evento",
+      "topic": "Tema"
+    },
+    "reportCount": "{{count}} reporte(s)",
+    "hide": "Ocultar",
+    "unhide": "Mostrar",
+    "remove": "Eliminar",
+    "resolve": "Resolver",
+    "dismiss": "Descartar",
+    "suspend": "Suspender de la comunidad",
+    "hidden": "Publicación oculta",
+    "shown": "Publicación visible de nuevo",
+    "removed": "Publicación eliminada",
+    "resolved": "Reporte resuelto",
+    "dismissed": "Reporte descartado",
+    "suspended": "Miembro suspendido de este espacio de la comunidad",
+    "removeTitle": "¿Eliminar esta publicación?",
+    "removeText": "Se oculta para todos y se conserva en los registros protegidos de moderación. Se requiere un motivo.",
+    "reasonLabel": "Motivo (obligatorio)",
+    "removeConfirm": "Eliminar publicación",
+    "suspendTitle": "¿Suspender de la comunidad?",
+    "suspendText": "Esto bloquea publicar solo en este espacio; la cuenta sigue activa.",
+    "suspendConfirm": "Suspender",
+    "errors": {
+      "reason_required": "Se requiere un motivo.",
+      "not_allowed": "No puedes moderar esto.",
+      "forbidden": "No puedes moderar esto.",
+      "not_found": "No encontrado.",
+      "invalid_action": "Acción no válida."
+    }
+  },
+  "discussion": {
+    "toggle": "Conversación",
+    "toggleHelp": "Permite que los participantes registrados publiquen y respondan. Desactivado por defecto.",
+    "disabled": "El anfitrión no ha abierto la conversación para este evento."
   }
 }
