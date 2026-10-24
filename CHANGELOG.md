@@ -299,3 +299,8 @@
 - Event creation/editing gains a cancellation & refund policy picker: prewritten free/paid templates plus a custom option, always editable attendee-facing text; shown in event details and before RSVP confirmation. No refund processing is implied.
 - New cover customization: six curated ZoheeWell-branded gradient covers (valid cover with no upload), overlay strength (None/Subtle/Strong) for text readability, 3x3 focal point for uploaded photos, alt text, and reset — with live preview in the form and consistent rendering on cards, details and the public guest page.
 - Server-side validation via save_event_cover RPC (manager-only, bounded style/overlay/focal/alt); public payload extended with cover display fields; jsonb payload split to stay under the 100-argument limit.
+
+### v0.33.1 — Events verification gap closure
+- Free public events no longer request paid price data (price_cents now rides in the public event payload; the price lookup only runs for paid events, including the RSVP sheet and confirmation view).
+- Paid policy presets reworded so host-cancellation refunds are attributed to the host, not implied as automatic processing.
+- Cover controls (gradient palette, overlay, focal point, alt text, reset) now use labeled groups with aria-pressed state and descriptive style names in EN/ES; axe-core scan of the section is clean.
