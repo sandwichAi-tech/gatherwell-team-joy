@@ -49,7 +49,7 @@ export function HomeCarousel() {
     <div className="gw-container">
       <ul ref={trackRef} className="gw-carousel" tabIndex={0} aria-label={t('home.carousel.label')} onKeyDown={onKey}>
         {CAROUSEL_SLIDES.map((s, i) => <li key={s.key} className="gw-carousel-card" aria-roledescription="slide" aria-label={`${t(`home.carousel.slides.${s.key}.title`)} — ${t('home.carousel.slideOf', { n: i + 1, count })}`}>
-          <BrandImage slot={s.slot} alt="" className="gw-carousel-photo" aspect={4 / 3} sizes="(min-width: 1024px) 400px, 86vw" priority={i === 0} />
+          <BrandImage slot={s.slot} alt="" className="gw-carousel-photo" aspect={4 / 3} sizes="(min-width: 1024px) 400px, 86vw" priority />
           <div className="gw-carousel-caption">
             <span className="gw-carousel-cat">{t(`home.carousel.slides.${s.key}.title`)}</span>
             <span className="gw-carousel-line">{t(`home.carousel.slides.${s.key}.line`)}</span>
