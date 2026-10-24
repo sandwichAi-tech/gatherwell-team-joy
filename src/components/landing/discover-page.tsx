@@ -11,7 +11,8 @@ import { ListSkeleton, RetryState } from '@/components/launch-states';
 import { LocationCard, publicLocationsQuery } from '@/components/locations';
 import { SaveButton } from '@/components/save-button';
 import { GwIcon } from '@/components/gw-icon';
-import { discoverCatalogQuery, hasActiveFilters, activeFilterCount, type DiscoverFilters, type DiscoverKind, type DiscoverSort, type CatalogItem } from '@/lib/discovery';
+import { discoverCatalogQuery, hasActiveFilters, activeFilterCount, hostInviteUrl, type DiscoverFilters, type DiscoverKind, type DiscoverSort, type CatalogItem } from '@/lib/discovery';
+import { toast } from 'sonner';
 
 export type DiscoverSearch = {
   q?: string | undefined;
@@ -84,6 +85,14 @@ export function DiscoverPage({ search }: { search: DiscoverSearch }) {
   const { data = [], isLoading, error, refetch } = useQuery(discoverCatalogQuery(filters));
   const set = (patch: Partial<DiscoverSearch>) => void navigate({ search: (prev: DiscoverSearch) => ({ ...prev, ...patch }), replace: true });
   const clearAll = () => void navigate({ search: {}, replace: true });
+  // Same invite-a-host action as the homepage empty state: opaque token when signed in, plain origin otherwise.
+  const shareInvite = async () => {
+    const url = await hostInviteUrl(window.location.origin);
+    try {
+      if (navigator.share) { await navigator.share({ title: t('home.explore.inviteTitle'), text: t('home.explore.inviteText'), url }); return; }
+      await navigator.clipboard.writeText(url); toast.success(t('home.explore.inviteCopied'));
+    } catch { /* user dismissed share sheet */ }
+  };
   const localCount = data.filter(d => d.kind === 'event' && d.format !== 'online').length;
   const onlineCount = data.length - localCount;
   const kinds = filters.kinds ?? [];
