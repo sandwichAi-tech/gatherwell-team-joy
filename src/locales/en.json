@@ -5610,14 +5610,6 @@
     "createSheet": {
       "title": "Create resource",
       "text": "Choose what to make. Everything starts as a draft until you publish it.",
-      "course": "Course",
-      "courseText": "Sections, lessons and optional quizzes.",
-      "bundle": "Resource bundle",
-      "bundleText": "Text, files, links and embeds people can download.",
-      "track": "Team learning track",
-      "trackText": "A free lesson series for your team.",
-      "recipe": "Recipe",
-      "recipeText": "Ingredients and steps for your team.",
       "fromTemplate": "Start from a template",
       "fromTemplateText": "ZoheeWell starters or your team's templates."
     },

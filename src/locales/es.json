@@ -5610,14 +5610,6 @@
     "createSheet": {
       "title": "Crear recurso",
       "text": "Elige qué quieres hacer. Todo empieza como borrador hasta que lo publiques.",
-      "course": "Curso",
-      "courseText": "Secciones, lecciones y cuestionarios opcionales.",
-      "bundle": "Paquete de recursos",
-      "bundleText": "Texto, archivos, enlaces e insertados para descargar.",
-      "track": "Ruta de aprendizaje del equipo",
-      "trackText": "Una serie gratuita de lecciones para tu equipo.",
-      "recipe": "Receta",
-      "recipeText": "Ingredientes y pasos para tu equipo.",
       "fromTemplate": "Empezar con una plantilla",
       "fromTemplateText": "Plantillas de ZoheeWell o de tu equipo."
     },
