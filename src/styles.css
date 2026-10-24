@@ -2416,3 +2416,5 @@ a.gw-cat-chip:hover{background:#fff}
 .cover-focal-grid button.is-selected{border-color:var(--primary);background:var(--accent)}
 .cover-focal-grid button svg{opacity:.55}
 .cover-focal-grid button.is-selected svg{opacity:1;color:var(--primary)}
+.cover-focal-dot{width:10px;height:10px;border-radius:50%;background:var(--muted-foreground);opacity:.5}
+.cover-focal-grid button.is-selected .cover-focal-dot{background:var(--primary);opacity:1}
