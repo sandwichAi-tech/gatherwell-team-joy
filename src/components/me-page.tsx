@@ -284,16 +284,10 @@ export function MePage() {
       {SPANISH_ENABLED && staticRow('Globe2', t('me.language'), <div className="segmented" role="group" aria-label={t('me.language')}>{(['en', 'es'] as const).map(lang => <Button key={lang} variant="ghost" aria-pressed={i18n.resolvedLanguage === lang} className={i18n.resolvedLanguage === lang ? 'selected' : ''} onClick={() => saveLanguage(lang)}>{lang === 'en' ? 'EN' : 'ES'}</Button>)}</div>)}
       {staticRow('Sun', t('me.appearance'), <div className="segmented" role="group" aria-label={t('me.appearance')}>{([{ value: 'light', Icon: Sun }, { value: 'dark', Icon: Moon }, { value: 'system', Icon: Monitor }] as const).map(({ value, Icon }) => <Button key={value} variant="ghost" size="icon" className={theme === value ? 'selected' : ''} aria-pressed={theme === value} aria-label={t(`me.${value}`)} title={t(`me.${value}`)} onClick={() => setTheme(value)}><Icon /></Button>)}</div>)}
     </SettingsGroup>
-    {(isHost || isAdmin) && <SettingsGroup title={t('profile.groupHost')}>
+    <SettingsGroup title={isHost || isAdmin ? t('profile.groupHost') : t('toolsPage.title')}>
       {isHost && row('Globe2', t('hostProfile.title'), () => setPanel('hostProfile'))}
-      {isHost && linkRow('BarChart3', t('insights.title'), '/insights')}
-      {isHost && linkRow('FileText', t('offers.title'), '/offers')}
-      {isHost && linkRow('Gift', t('promo.title'), '/promos')}
-      {isHost && linkRow('MapPin', t('locations.title'), '/locations')}
-      {isHost && linkRow('BadgeCheck', t('coachTrust.getVerified'), '/verify')}
-      {isAdmin && linkRow('ShieldCheck', t('admin.menu'), '/admin', undefined, { tab: 'overview' })}
-      {isAdmin && linkRow('ImageDown', t('siteMedia.menu'), '/admin/site-media')}
-    </SettingsGroup>}
+      {linkRow('SquaresFour', t('toolsPage.title'), '/tools')}
+    </SettingsGroup>
     <SettingsGroup title={t('profile.groupSupport')}>
       <a className="settings-row" href="mailto:help@gatherwell.app"><GwFeatureTile name="LifeBuoy" size={24} className="settings-tile" /><span className="settings-label">{t('profile.help')}</span><ChevronRight className="settings-chevron" /></a>
       {row('LogOut', t('me.signOut'), signOut, <span />)}

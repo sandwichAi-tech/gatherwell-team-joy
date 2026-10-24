@@ -2456,3 +2456,16 @@ a.gw-cat-chip:hover{background:#fff}
 .payready-row .guest-primary{margin-top:8px}
 .payready-fee{margin-top:14px;font-size:13px;color:var(--muted-foreground)}
 .payready-link{text-decoration:underline}
+
+/* Tools launchpad (/tools) */
+.tools-page { display: grid; gap: 16px; }
+.tools-loading { padding: 24px 0; }
+.tools-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; grid-template-columns: 1fr; }
+@media (min-width: 720px) { .tools-grid { grid-template-columns: 1fr 1fr; } }
+.tool-card { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); color: var(--foreground); text-decoration: none; transition: background-color 150ms ease-out; }
+.tool-card:hover { background: var(--secondary); }
+.tool-card:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.tool-card-body { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.tool-card-title { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-weight: 600; font-size: 15px; }
+.tool-card-desc { font-size: 13px; color: var(--muted-foreground); overflow-wrap: anywhere; }
+.tool-badge { font-size: 11px; font-weight: 600; }
