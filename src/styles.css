@@ -2162,6 +2162,7 @@ a.gw-cat-chip:hover{background:#fff}
 .gw-v4-plan-seats{color:var(--muted-foreground);font-weight:500}
 .gw-seat-explainer{margin-top:16px}
 .gw-which-grid{display:grid;gap:12px;list-style:none;padding:0;margin:0}
+.gw-pricing-guidance{padding-top:24px}
 @media (min-width:768px){.gw-which-grid{grid-template-columns:repeat(2,1fr)}}
 @media (min-width:1100px){.gw-which-grid{grid-template-columns:repeat(3,1fr)}}
 

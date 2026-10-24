@@ -3,7 +3,7 @@
 ## v0.30.2 pricing simplification
 
 - [x] Removed comparison chart, unused desktop/mobile legacy variants, chart-only translations/styles/tests; retained cards, billing toggle, guidance, terms, FAQs and support intent.
-- [ ] Focused pricing tests and 390px/1280px EN/ES browser verification; current-source build signal.
+- [x] 71 focused tests; full suite 320/320 (41 files); 96/96 browser checks at 390px/1280px EN/ES; harness typecheck/build OK. No chart gap, pricing unchanged, no fixtures or data changes.
 
 ## Completed: v0.30 approved per-plan pricing
 
