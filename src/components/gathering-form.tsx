@@ -261,8 +261,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
           {(coverOverlay !== 0 || coverFocal !== '50% 50%' || coverAlt) && <Button variant="ghost" onClick={() => { setCoverOverlay(0); setCoverFocal('50% 50%'); setCoverAlt(''); }}>{t('gathering.coverReset')}</Button>}
         </div>
         <div className="cover-controls">
-          {!coverPath && <div className="style-picker" role="radiogroup" aria-label={t('gathering.coverStyle')}>{COVER_STYLES.map((bg, i) =>
-            <button key={i} type="button" role="radio" aria-checked={coverStyle === i} aria-label={t('gathering.styleN', { n: i + 1 })} className={`style-swatch ${coverStyle === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} onClick={() => setCoverStyle(i)} />)}</div>}
+          {!coverPath && <div className="style-picker" role="group" aria-label={t('gathering.coverStyle')}>{COVER_STYLES.map((bg, i) =>
+            <button key={i} type="button" aria-pressed={coverStyle === i} aria-label={t(`gathering.styleName.${i}`)} title={t(`gathering.styleName.${i}`)} className={`style-swatch ${coverStyle === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} onClick={() => setCoverStyle(i)} />)}</div>}
           <div>
             <span className="field-label">{t('gathering.coverOverlay')}</span>
             <div className="segmented full" role="group" aria-label={t('gathering.coverOverlay')}>{COVER_OVERLAYS.map(o => <Button key={o} variant="ghost" className={coverOverlay === o ? 'selected' : ''} aria-pressed={coverOverlay === o} onClick={() => setCoverOverlay(o)}>{t(`gathering.overlay.${o}`)}</Button>)}</div>
@@ -271,7 +271,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
           {coverPath && <>
             <div>
               <span className="field-label">{t('gathering.coverFocal')}</span>
-              <div className="cover-focal-grid" role="radiogroup" aria-label={t('gathering.coverFocal')}>{COVER_FOCALS.map(f => <button key={f} type="button" role="radio" aria-checked={coverFocal === f} aria-label={t(`gathering.focal.${f.replace(/% /g, '-').replace(/%/g, '')}`)} className={coverFocal === f ? 'is-selected' : ''} onClick={() => setCoverFocal(f)}><span className="cover-focal-dot" aria-hidden="true" /></button>)}</div>
+              <div className="cover-focal-grid" role="group" aria-label={t('gathering.coverFocal')}>{COVER_FOCALS.map(f => <button key={f} type="button" aria-pressed={coverFocal === f} aria-label={t(`gathering.focal.${f.replace(/% /g, '-').replace(/%/g, '')}`)} title={t(`gathering.focal.${f.replace(/% /g, '-').replace(/%/g, '')}`)} className={coverFocal === f ? 'is-selected' : ''} onClick={() => setCoverFocal(f)}><span className="cover-focal-dot" aria-hidden="true" /></button>)}</div>
               <small className="field-hint">{t('gathering.coverFocalHint')}</small>
             </div>
             <div>

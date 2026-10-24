@@ -94,7 +94,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
   useEffect(() => { if (intent && needsTier(tiers) && !tierId) setTierId(defaultTier(tiers)); }, [intent, tiers, tierId]);
   const gate = usePaymentGate(); const checkout = useServerFn(startTicketCheckout);
   const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
-  useEffect(() => { void supabase.rpc('event_price', { _id: event.id }).then(({ data }) => setPrice((data as typeof price) ?? null)); }, [event.id]);
+  useEffect(() => { if ((event.price_cents ?? 0) <= 0) return; void supabase.rpc('event_price', { _id: event.id }).then(({ data }) => setPrice((data as typeof price) ?? null)); }, [event.id, event.price_cents]);
   const paid = !!price && intent === 'going';
   const qty = 1 + form.plus;
   const [promo, setPromo] = useState<Promo | null>(null);
@@ -239,7 +239,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
   </ResponsiveSheet>;
 }
 
-type ConfirmEvent = Pick<PublicEvent, 'id' | 'title' | 'starts_at' | 'ends_at' | 'location_name' | 'address' | 'meeting_note' | 'lat' | 'lng'> & { online_url?: string | null };
+type ConfirmEvent = Pick<PublicEvent, 'id' | 'title' | 'starts_at' | 'ends_at' | 'location_name' | 'address' | 'meeting_note' | 'lat' | 'lng' | 'price_cents'> & { online_url?: string | null };
 
 export function Confirmation({ event, code, status }: { event: ConfirmEvent; code: string; status: 'going' | 'maybe' | 'waitlist' | 'cancelled' | 'requested' | 'declined' }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
@@ -250,7 +250,7 @@ export function Confirmation({ event, code, status }: { event: ConfirmEvent; cod
     const a = document.createElement('a'); a.href = url; a.download = 'gatherwell-qr.svg'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
   const when = formatWhen(event.starts_at, lang);
-  const { data: cprice } = useQuery({ queryKey: ['event-price-refund', event.id], queryFn: async () => { const { data } = await supabase.rpc('event_price', { _id: event.id }); return (data as { refund_policy?: string } | null) ?? null; } });
+  const { data: cprice } = useQuery({ queryKey: ['event-price-refund', event.id], enabled: (event.price_cents ?? 0) > 0, queryFn: async () => { const { data } = await supabase.rpc('event_price', { _id: event.id }); return (data as { refund_policy?: string } | null) ?? null; } });
   return <section className="guest-confirm" aria-live="polite">
     <h2 className="guest-confirm-title">{t(`guest.confirm.${status}`)}</h2>
     <p className="guest-confirm-sub">{t(`guest.confirmSub.${status}`)}</p>

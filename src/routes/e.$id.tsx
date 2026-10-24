@@ -71,7 +71,8 @@ function PublicEventBody() {
   const [intent, setIntent] = useState<'going' | 'maybe' | null>(null);
   const [result, setResult] = useState<RsvpResult | null>(null);
   const [teamOpen, setTeamOpen] = useState(false); const [teamResult, setTeamResult] = useState<TeamResult | null>(null);
-  const { data: price } = useQuery({ queryKey: ['event-price', id], queryFn: async () => { const { data } = await supabase.rpc('event_price', { _id: id }); return (data as { price_cents: number; pass_fee: boolean; fee_pct: number; cover_service_fee?: boolean; service_fee_percent?: number; service_fee_fixed?: number; refund_policy?: string } | null) ?? null; } });
+  // Free events never request paid price data; paid events keep the full price/fee lookup.
+  const { data: price } = useQuery({ queryKey: ['event-price', id], enabled: (event?.price_cents ?? 0) > 0, queryFn: async () => { const { data } = await supabase.rpc('event_price', { _id: id }); return (data as { price_cents: number; pass_fee: boolean; fee_pct: number; cover_service_fee?: boolean; service_fee_percent?: number; service_fee_fixed?: number; refund_policy?: string } | null) ?? null; } });
   const { data: early } = useQuery(earlyAccessQuery(id));
 
   if (isLoading) return <div className="guest-skeleton" aria-busy="true"><div className="guest-cover skeleton" /><p className="guest-empty">{t('publicEvent.loading')}</p></div>;

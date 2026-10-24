@@ -1026,6 +1026,14 @@
     "useDefault": "Usar una portada predeterminada",
     "coverStyle": "Estilo de portada",
     "styleN": "Estilo {{n}}",
+    "styleName": {
+      "0": "Ciruela profundo",
+      "1": "Ciruela a terracota",
+      "2": "Terracota a arena",
+      "3": "Brillo terracota",
+      "4": "Ciruela lavanda suave",
+      "5": "Ciruela medianoche"
+    },
     "coverOverlay": "Intensidad del overlay",
     "coverOverlayHint": "Oscurece la portada para que el texto se lea mejor.",
     "overlay": {
@@ -4675,9 +4683,9 @@
     "text": {
       "free_anytime": "Este es un evento gratuito. Puedes cancelar tu lugar cuando quieras, sin cargos ni preguntas.",
       "free_notify": "Este es un evento gratuito. Si no puedes asistir, cancela para que otra persona pueda tomar tu lugar.",
-      "paid_24h": "Reembolso completo si cancelas al menos 24 horas antes del inicio. Si el anfitrión cancela, todos reciben el reembolso completo.",
-      "paid_7d": "Reembolso completo si cancelas al menos 7 días antes del inicio. Si el anfitrión cancela, todos reciben el reembolso completo.",
-      "paid_none": "Las ventas de boletos son finales. Si el anfitrión cancela, todos reciben el reembolso completo."
+      "paid_24h": "Reembolso completo si cancelas al menos 24 horas antes del inicio. Si el anfitrión cancela, el anfitrión reembolsa a todos por completo.",
+      "paid_7d": "Reembolso completo si cancelas al menos 7 días antes del inicio. Si el anfitrión cancela, el anfitrión reembolsa a todos por completo.",
+      "paid_none": "Las ventas de boletos son finales. Si el anfitrión cancela, el anfitrión reembolsa a todos por completo."
     }
   },
   "refunds": {
