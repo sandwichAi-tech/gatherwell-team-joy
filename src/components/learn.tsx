@@ -126,42 +126,6 @@ export function RecipeCard({ recipe, saved }: { recipe: Recipe; saved?: boolean 
   </Link>;
 }
 
-export function LearnHome() {
-  const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
-  const { data, tracks, leader, isLoading, isError, refetch, userId, learning } = useLearn();
-  const { data: rec } = useQuery(recipesQuery(userId));
-  if (isError) return <RetryState retry={() => void refetch()} />;
-  if (isLoading || !data) return <ListSkeleton />;
-  const available = populatedTracks(tracks, data.lessons);
-  const startHere = available.find(tr => tr.is_start_here && tr.is_published) ?? null;
-  const rest = available.filter(tr => tr.id !== startHere?.id);
-  const ids = new Set(tracks.filter(tr => tr.is_published).map(tr => tr.id));
-  const live = data.lessons.filter(l => ids.has(l.track_id) && l.type === 'live' && l.live_starts_at);
-  const upcoming = live.filter(isUpcomingLive).sort((a, b) => a.live_starts_at!.localeCompare(b.live_starts_at!));
-  const replays = live.filter(l => l.replay_url).sort((a, b) => b.live_starts_at!.localeCompare(a.live_starts_at!)).slice(0, 3);
-  const byId = new Map(data.tracks.map(tr => [tr.id, tr]));
-  return <>
-    <div className="page-heading"><div><span className="eyebrow">{t('learn.eyebrow')}</span><h1>{t('learn.title')}</h1><p>{t('learn.sentence')}</p></div>
-      {leader && <Button asChild variant="secondary"><Link to="/learn/manage"><Settings2 />{t('learnHub.manage')}</Link></Button>}</div>
-    {learning.length > 0 && <section className="learn-section"><div className="section-heading"><h2>{t('content.myLearning')}</h2></div>
-      <ul className="offer-list compact">{learning.map(e => <li key={e.id}><Link to="/offer/$id" params={{ id: e.id }} className="offer-row is-link">
-        <OfferCover offer={{ cover_style: e.cover_style, cover_url: e.cover_url, kind: e.kind as 'course' | 'download' | 'membership', title_en: e.title_en, title_es: e.title_es }} />
-        <div className="offer-row-main"><strong>{offerTitle(e, lang)}</strong>
-          <small>{e.host_name ?? ''}{e.lessons > 0 ? ` · ${t('learnHub.progressLabel', { done: e.done, total: e.lessons })}` : ''}{e.status === 'archived' ? ` · ${t('offers.status.archived')}` : ''}</small></div>
-        <ArrowRight /></Link></li>)}</ul></section>}
-    <CertificateList userId={userId} />
-    {startHere && <section className="learn-section"><TrackCard track={startHere} data={data} featured /></section>}
-    {rest.length > 0 && <section className="learn-section"><div className="section-heading"><h2>{t('learnHub.yourTracks')}</h2></div>
-      <div className="track-grid">{rest.map(tr => <TrackCard key={tr.id} track={tr} data={data} />)}</div></section>}
-    {(upcoming.length > 0 || replays.length > 0) && <section className="learn-section"><div className="section-heading"><h2>{t('learnHub.live')}</h2></div>
-      {upcoming.length > 0 && <div className="live-grid">{upcoming.map(l => <LiveCard key={l.id} lesson={l} track={byId.get(l.track_id)} />)}</div>}
-      {replays.length > 0 && <ul className="replay-list">{replays.map(l => <li key={l.id}><Radio /><div><strong>{lessonTitle(l, lang)}</strong><small>{fmtWhen(l.live_starts_at!, lang)}</small></div><Button asChild variant="secondary" size="sm"><Link to="/learn/lesson/$id" params={{ id: l.id }}><Play />{t('learnHub.replay')}</Link></Button></li>)}</ul>}</section>}
-    {!!rec?.recipes.length && <section className="learn-section"><div className="section-heading"><h2>{t('learnHub.recipes')}</h2><Button asChild variant="link"><Link to="/learn/recipes">{t('home.viewAll')}<ArrowRight /></Link></Button></div>
-      <div className="recipe-row">{rec.recipes.slice(0, 6).map(r => <RecipeCard key={r.id} recipe={r} saved={rec.saved.has(r.id)} />)}</div></section>}
-    {!available.length && rec?.recipes.length === 0 && <EmptyState compact icon="GraduationCap" text={t('learnHub.noResources')} />}
-  </>;
-}
-
 function BackLink({ to, params, label }: { to: string; params?: Record<string, string>; label: string }) {
   return <Link to={to} params={params ?? {}} className="back-link"><ArrowLeft />{label}</Link>;
 }
