@@ -116,6 +116,8 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
     if (intent === 'going' && !answersReady(event.questions, answers)) { setError(t('guest.errors.answers_required')); return; }
     const waiverName = waiver?.required ? wName.trim() : '';
     const consent = rsvpReminderConsent(form);
+    if (!termsOk) { setError(t('guest.errors.terms_required')); return; }
+    if (needsTier(tiers) && !paid && !registrationReady({ terms: termsOk, tiers, tierId })) { setError(t('guest.errors.tier_required')); return; }
     if (minorOn && event.allows_minors) {
       const check = checkMinorRegistration(true, true, { firstName: minor.first, ageBand: minor.band, guardianConsent: minor.consent });
       if (!check.ok) { setError(t(`guest.errors.${check.error}`)); return; }
@@ -142,8 +144,9 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
     }
     setBusy(true); setError(null);
     try {
-      const { data, error: err } = await waiverRpc('rsvp_event_full', { _answers: answers, _token: inviteToken(), _waiver_name: waiverName, _event_id: event.id, _first: form.first.trim(), _last: form.last.trim(), _phone: form.phone.trim(), _email: form.email.trim(),
-        _language: i18n.resolvedLanguage === 'es' ? 'es' : 'en', _plus_ones: form.plus, _status: intent, _sms: consent.sms, _mail: consent.mail });
+      const { data, error: err } = await waiverRpc('register_attendance', { _answers: answers, _token: inviteToken(), _waiver_name: waiverName, _event_id: event.id, _first: form.first.trim(), _last: form.last.trim(), _phone: form.phone.trim(), _email: form.email.trim(),
+        _language: i18n.resolvedLanguage === 'es' ? 'es' : 'en', _plus_ones: form.plus, _status: intent, _sms: consent.sms, _mail: consent.mail,
+        _terms_ok: termsOk, _updates_opt_in: updates, _tier_id: tierId ?? '' });
       const row = (Array.isArray(data) ? data[0] : null) as { code: string; status: string } | null;
       if (err || !row) { const k = rsvpErrorKey(err); setError(t(k === 'guest.errors.generic' ? 'guest.errors.save_failed' : k)); return; }
       trackEvent('rsvp', { status: row.status });
@@ -193,6 +196,26 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
       {!!event.questions?.length && <RsvpQuestionsFields questions={event.questions} value={answers} onChange={setAnswers} />}
       {event.require_approval && intent === 'going' && <p className="guest-hint">{t('rsvpq.approvalHint')}</p>}
       {waiver && <WaiverAccept waiver={waiver} name={wName} accepted={wOk} onName={setWName} onAccepted={setWOk} />}
+      {!paid && needsTier(tiers) && <fieldset className="guest-tiers">
+        <legend className="field-label">{t('guest.tiers.title')}</legend>
+        {tiers.map(tier => {
+          const state = tierState(tier);
+          const left = tierSpotsLeft(tier);
+          return <label key={tier.id} className={`guest-tier ${state !== 'open' ? 'is-disabled' : ''}`}>
+            <input type="radio" name="ticket-tier" value={tier.id} disabled={state !== 'open'} checked={tierId === tier.id} onChange={() => setTierId(tier.id)} />
+            <span className="guest-tier-name">{tier.name}</span>
+            <span className="guest-tier-meta">
+              {tier.price_cents > 0 ? <>{formatMoney(tier.price_cents, lang)} <span className="chip quiet-chip">{t('guest.tiers.setupRequired')}</span></> : t('guest.tiers.free')}
+              {state === 'sold_out' && <> · {t('guest.tiers.soldOut')}</>}
+              {state === 'not_yet' && <> · {t('guest.tiers.notYet')}</>}
+              {state === 'ended' && <> · {t('guest.tiers.ended')}</>}
+              {state === 'open' && left != null && <> · {t('guest.tiers.spotsLeft', { count: left })}</>}
+            </span>
+          </label>;
+        })}
+      </fieldset>}
+      <label className="guest-consent"><Checkbox checked={termsOk} onCheckedChange={v => setTermsOk(!!v)} /><span>{t('guest.termsAgree')} <a href="/terms" target="_blank" rel="noopener">{t('guest.termsLink')}</a> · <a href="/privacy" target="_blank" rel="noopener">{t('guest.privacyLink')}</a></span></label>
+      <label className="guest-consent"><Checkbox checked={updates} onCheckedChange={v => setUpdates(!!v)} /><span>{t('guest.updatesOptIn')}</span></label>
       {paid && price && <p className="guest-price"><strong>{formatMoney(price.price_cents, lang)}</strong><span>{t('billing.perPerson')}{fee ? ` · ${t('billing.bookingFee', { fee: formatMoney(fee, lang) })}` : ''}</span></p>}
       {paid && price && <RefundLine policy={price.refund_policy} />}
       {paid && price && <dl className="guest-fee-lines" aria-label={t('billing.orderSummary')}>
