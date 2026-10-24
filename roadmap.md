@@ -24,7 +24,7 @@
 
 ## Remaining
 
-- [ ] Clarify remix-first/version-revert workflow for a parallel site, including history and database limitations.
+- [x] Clarified parallel-site workflow: remix latest, revert original; pre-remix Cloud versions cannot be restored in the remix; code revert does not roll back data.
 - [ ] v0.28: platform safety queues, private lookup, reversible interventions, scoped suspensions and audit.
 - [ ] v0.28: authorization tests, bilingual phone/desktop QA, fixture cleanup and release documentation.
 
