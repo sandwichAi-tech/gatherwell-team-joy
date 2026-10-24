@@ -26,7 +26,7 @@ const quizTitle = (q: Pick<Quiz, 'title_en' | 'title_es'>, lang: string) => (lan
 
 /* ================= Host: quiz list + editor ================= */
 
-export function QuizPanel({ offer, lessons }: { offer: Offer; lessons: { id: string; title_en: string | null; title_es: string | null }[] }) {
+export function QuizPanel({ offer }: { offer: Offer }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? 'en';
   const qc = useQueryClient();
@@ -35,6 +35,11 @@ export function QuizPanel({ offer, lessons }: { offer: Offer; lessons: { id: str
     queryKey: ['quizzes', offer.id],
     queryFn: async () => (await supabase.from('quizzes').select('*').eq('offer_id', offer.id).order('sort_order')).data ?? [],
   });
+  const lessonsQ = useQuery({
+    queryKey: ['quiz-lessons', offer.id],
+    queryFn: async () => (await supabase.from('lessons').select('id, title_en, title_es, tracks!inner(offer_id)').eq('tracks.offer_id', offer.id)).data ?? [],
+  });
+  const lessons = lessonsQ.data ?? [];
   const lessonName = (id: string | null) => {
     if (!id) return t('quiz.finalQuiz');
     const l = lessons.find(x => x.id === id);
