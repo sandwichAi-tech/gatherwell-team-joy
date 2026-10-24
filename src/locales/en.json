@@ -5900,6 +5900,21 @@
       "forbidden": "You don't have permission to manage communications for this team.",
       "auth_required": "Please sign in again."
     },
-    "saveDraft": "Save draft"
+    "saveDraft": "Save draft",
+    "runs": "Runs",
+    "noRuns": "No journey runs yet. A run starts when its trigger happens.",
+    "runStep": "step {{n}} of {{total}}",
+    "runStatus": {
+      "running": "running",
+      "paused": "paused",
+      "completed": "completed",
+      "failed": "failed"
+    },
+    "runNote": {
+      "condition_skip": "ended early (condition not met)",
+      "template_missing": "failed (template removed)",
+      "no_recipient": "failed (no reachable recipient)",
+      "unknown_step": "failed (unknown step)"
+    }
   }
 }
