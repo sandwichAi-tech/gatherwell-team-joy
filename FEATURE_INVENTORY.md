@@ -121,6 +121,8 @@ Specifics:
 
 ## Public homepage (v0.13)
 - Host-first homepage: live. Discovery: real public upcoming events only, fixture titles excluded; empty state live.
-- Notify me (area alerts): coming soon (Prompt 8). Payments, paid SMS, Wallet, payouts, quizzes, certificates: labelled coming soon on home.
+- Notify me (area alerts): coming soon (Prompt 8). Payments, paid SMS, Wallet, payouts: labelled coming soon on home.
 - Public pricing (/pricing, /hosts, /studios): Blueprint v4 plans live as display with the flat 5% fee disclosure; paid checkout Setup required; payouts Coming soon.
 - Signed-in plan screen (v0.15): prospective cards show approved v4 prices and the flat 5% fee; current/legacy subscriptions keep their real recorded status; paid checkout disabled until approved prices are configured in plan_settings and Stripe.
+- Course quizzes (v0.22): host authoring (4 question types, keys, points, reorder, blockers, attempts/cooldown/time limits), server grading + manual short-answer, learner taker with timer/autosave/idempotent submit, progress panels and host completion rules.
+- Certificates (v0.22): host settings, server-verified idempotent issuance, printable card in My learning, public /verify/$number page, host revoke with reason.
