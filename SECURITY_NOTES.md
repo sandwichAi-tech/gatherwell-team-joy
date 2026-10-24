@@ -66,3 +66,7 @@ The requester supplied the following results after commit ac2eef3c5d5ff7138522b8
 - claim_guest_records() reads the verified email from auth.users for auth.uid(), takes an advisory lock, touches only user_id-null unmerged rows, never deletes, logs every claim/merge in guest_claims, and creates no orders or entitlements.
 - 18+ is enforced by triggers (teams, events create/publish, offers) and in checkout server functions; service jobs (no auth.uid()) are exempt.
 - Known gap: is_adult(uuid) lets a signed-in user check another user's adult flag (boolean only).
+- update_event_details() is guarded by can_manage_event() and validates every new field server-side (format, language, reg window order, min age 0-17, https map link, email shape, tag/tier/addon caps).
+- rsvp_event_minor() validates allows_minors, min age band, guardian name/relationship/contact server-side; the guardian consent version is resolved from consent_text_versions in the database, never chosen by the client; the existing guard_minor_registration trigger re-validates on insert/update.
+- enforce_reg_window() blocks guest RSVPs outside the registration window for every RSVP path; host walk-ins bypass it.
+- get_public_event() exposes the new public-safe fields only; online join URLs stay out of the public payload.

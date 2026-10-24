@@ -189,3 +189,5 @@ Active work follows the approved Prompt 1–17 sequence in the ZoheeWell Beta Pr
 - [x] Align /pricing page with Blueprint v4 plans (v0.14)
 - [x] Align signed-in plan screen with Blueprint v4 plans (v0.15; prospective cards only — plan_settings rows and Stripe price IDs still legacy, paid checkout disabled)
 - [ ] Configure approved prices in plan_settings and Stripe, then enable paid checkout
+- [x] Host event/retreat builder: full field set, readiness, unpublish/archive, guardian RSVP (v0.16)
+- [ ] Raise test-account gathering limit or use a fresh account to browser-verify create-from-scratch
