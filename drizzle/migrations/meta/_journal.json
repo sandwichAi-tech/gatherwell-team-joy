@@ -631,6 +631,13 @@
       "when": 1792874608082,
       "tag": "0089_allow_support_return_path",
       "breakpoints": true
+    },
+    {
+      "idx": 90,
+      "version": "7",
+      "when": 1792876550321,
+      "tag": "0090_resource_templates",
+      "breakpoints": true
     }
   ]
 }

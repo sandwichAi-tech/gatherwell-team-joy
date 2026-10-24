@@ -68,6 +68,7 @@ import { Route as AuthenticatedAppEventIdRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAppGatheringNewRouteImport } from './routes/_authenticated/_app/gathering.new'
 import { Route as AuthenticatedAppLearnManageRouteImport } from './routes/_authenticated/_app/learn_.manage'
 import { Route as AuthenticatedAppLearnRecipesRouteImport } from './routes/_authenticated/_app/learn_.recipes'
+import { Route as AuthenticatedAppLearnTemplatesRouteImport } from './routes/_authenticated/_app/learn_.templates'
 import { Route as AuthenticatedAppOfferIdRouteImport } from './routes/_authenticated/_app/offer.$id'
 import { Route as AuthenticatedAppPlanSeatsRouteImport } from './routes/_authenticated/_app/plan_.seats'
 import { Route as AuthenticatedAppTeamInsightsRouteImport } from './routes/_authenticated/_app/team_.insights'
@@ -396,6 +397,12 @@ const AuthenticatedAppLearnRecipesRoute =
     path: '/learn/recipes',
     getParentRoute: () => AuthenticatedAppRouteRoute,
   } as any)
+const AuthenticatedAppLearnTemplatesRoute =
+  AuthenticatedAppLearnTemplatesRouteImport.update({
+    id: '/learn_/templates',
+    path: '/learn/templates',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppOfferIdRoute = AuthenticatedAppOfferIdRouteImport.update({
   id: '/offer/$id',
   path: '/offer/$id',
@@ -565,6 +572,7 @@ export interface FileRoutesByFullPath {
   '/gathering/new': typeof AuthenticatedAppGatheringNewRoute
   '/learn/manage': typeof AuthenticatedAppLearnManageRoute
   '/learn/recipes': typeof AuthenticatedAppLearnRecipesRoute
+  '/learn/templates': typeof AuthenticatedAppLearnTemplatesRoute
   '/offer/$id': typeof AuthenticatedAppOfferIdRoute
   '/plan/seats': typeof AuthenticatedAppPlanSeatsRoute
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
@@ -644,6 +652,7 @@ export interface FileRoutesByTo {
   '/gathering/new': typeof AuthenticatedAppGatheringNewRoute
   '/learn/manage': typeof AuthenticatedAppLearnManageRoute
   '/learn/recipes': typeof AuthenticatedAppLearnRecipesRoute
+  '/learn/templates': typeof AuthenticatedAppLearnTemplatesRoute
   '/offer/$id': typeof AuthenticatedAppOfferIdRoute
   '/plan/seats': typeof AuthenticatedAppPlanSeatsRoute
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
@@ -726,6 +735,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/gathering/new': typeof AuthenticatedAppGatheringNewRoute
   '/_authenticated/_app/learn_/manage': typeof AuthenticatedAppLearnManageRoute
   '/_authenticated/_app/learn_/recipes': typeof AuthenticatedAppLearnRecipesRoute
+  '/_authenticated/_app/learn_/templates': typeof AuthenticatedAppLearnTemplatesRoute
   '/_authenticated/_app/offer/$id': typeof AuthenticatedAppOfferIdRoute
   '/_authenticated/_app/plan_/seats': typeof AuthenticatedAppPlanSeatsRoute
   '/_authenticated/_app/team_/insights': typeof AuthenticatedAppTeamInsightsRoute
@@ -807,6 +817,7 @@ export interface FileRouteTypes {
     | '/gathering/new'
     | '/learn/manage'
     | '/learn/recipes'
+    | '/learn/templates'
     | '/offer/$id'
     | '/plan/seats'
     | '/team/insights'
@@ -886,6 +897,7 @@ export interface FileRouteTypes {
     | '/gathering/new'
     | '/learn/manage'
     | '/learn/recipes'
+    | '/learn/templates'
     | '/offer/$id'
     | '/plan/seats'
     | '/team/insights'
@@ -967,6 +979,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/gathering/new'
     | '/_authenticated/_app/learn_/manage'
     | '/_authenticated/_app/learn_/recipes'
+    | '/_authenticated/_app/learn_/templates'
     | '/_authenticated/_app/offer/$id'
     | '/_authenticated/_app/plan_/seats'
     | '/_authenticated/_app/team_/insights'
@@ -1441,6 +1454,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppLearnRecipesRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/learn_/templates': {
+      id: '/_authenticated/_app/learn_/templates'
+      path: '/learn/templates'
+      fullPath: '/learn/templates'
+      preLoaderRoute: typeof AuthenticatedAppLearnTemplatesRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/offer/$id': {
       id: '/_authenticated/_app/offer/$id'
       path: '/offer/$id'
@@ -1616,6 +1636,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppGatheringNewRoute: typeof AuthenticatedAppGatheringNewRoute
   AuthenticatedAppLearnManageRoute: typeof AuthenticatedAppLearnManageRoute
   AuthenticatedAppLearnRecipesRoute: typeof AuthenticatedAppLearnRecipesRoute
+  AuthenticatedAppLearnTemplatesRoute: typeof AuthenticatedAppLearnTemplatesRoute
   AuthenticatedAppOfferIdRoute: typeof AuthenticatedAppOfferIdRoute
   AuthenticatedAppPlanSeatsRoute: typeof AuthenticatedAppPlanSeatsRoute
   AuthenticatedAppTeamInsightsRoute: typeof AuthenticatedAppTeamInsightsRoute
@@ -1663,6 +1684,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppGatheringNewRoute: AuthenticatedAppGatheringNewRoute,
   AuthenticatedAppLearnManageRoute: AuthenticatedAppLearnManageRoute,
   AuthenticatedAppLearnRecipesRoute: AuthenticatedAppLearnRecipesRoute,
+  AuthenticatedAppLearnTemplatesRoute: AuthenticatedAppLearnTemplatesRoute,
   AuthenticatedAppOfferIdRoute: AuthenticatedAppOfferIdRoute,
   AuthenticatedAppPlanSeatsRoute: AuthenticatedAppPlanSeatsRoute,
   AuthenticatedAppTeamInsightsRoute: AuthenticatedAppTeamInsightsRoute,

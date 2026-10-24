@@ -174,7 +174,7 @@
     "title": "Recursos",
     "eyebrow": "Espacio",
     "heading": "Conocimiento compartido",
-    "sentence": "Rutas, sesiones en vivo y recetas de tu equipo.",
+    "sentence": "Cursos, guías, sesiones en vivo, recetas y más.",
     "button": "Crear capacitación"
   },
   "me": {
@@ -4703,11 +4703,26 @@
     "whichPlan": {
       "title": "¿Qué plan es para mí?",
       "items": [
-        { "title": "Apenas empiezas", "body": "Gratis es para ti. Organiza eventos gratuitos, invita a dos colaboradores y solo pagas una tarifa cuando vendes algo." },
-        { "title": "Haces crecer tu audiencia", "body": "Avanzado baja tu tarifa a 3% y mantiene tres lugares de constructor para ti y dos colaboradores." },
-        { "title": "Te dedicas a organizar", "body": "Pro baja la tarifa a 2% y te da cinco lugares de constructor para un equipo pequeño." },
-        { "title": "Diriges un equipo o estudio", "body": "Equipo 25 cubre hasta 25 constructores con una tarifa de 1% sobre ventas pagadas." },
-        { "title": "Una organización grande", "body": "Organización llega hasta 100 constructores con una tarifa de 0.5%. Contacta a ventas y lo configuramos contigo." }
+        {
+          "title": "Apenas empiezas",
+          "body": "Gratis es para ti. Organiza eventos gratuitos, invita a dos colaboradores y solo pagas una tarifa cuando vendes algo."
+        },
+        {
+          "title": "Haces crecer tu audiencia",
+          "body": "Avanzado baja tu tarifa a 3% y mantiene tres lugares de constructor para ti y dos colaboradores."
+        },
+        {
+          "title": "Te dedicas a organizar",
+          "body": "Pro baja la tarifa a 2% y te da cinco lugares de constructor para un equipo pequeño."
+        },
+        {
+          "title": "Diriges un equipo o estudio",
+          "body": "Equipo 25 cubre hasta 25 constructores con una tarifa de 1% sobre ventas pagadas."
+        },
+        {
+          "title": "Una organización grande",
+          "body": "Organización llega hasta 100 constructores con una tarifa de 0.5%. Contacta a ventas y lo configuramos contigo."
+        }
       ]
     },
     "faq": [
@@ -5424,5 +5439,145 @@
       "activity": "Actividad",
       "announcement": "Anuncio"
     }
+  },
+  "resources": {
+    "title": "Recursos",
+    "sentence": "Cursos, guías, sesiones en vivo, recetas y más de tu equipo y de ZoheeWell.",
+    "templatesButton": "Plantillas de recursos",
+    "create": "Crear recurso",
+    "untitled": "Sin título",
+    "tabs": {
+      "foryou": "Para ti",
+      "library": "Biblioteca",
+      "live": "En vivo",
+      "saved": "Guardados",
+      "mine": "Creados por mí"
+    },
+    "typeLabel": "Filtrar por tipo",
+    "sourceLabel": "Filtrar por origen",
+    "types": {
+      "all": "Todo",
+      "course": "Cursos",
+      "video": "Videos",
+      "audio": "Audio",
+      "guide": "Guías y PDF",
+      "file": "Archivos y descargas",
+      "link": "Enlaces",
+      "recipe": "Recetas"
+    },
+    "typeChip": {
+      "course": "Curso",
+      "track": "Ruta de aprendizaje",
+      "video": "Video",
+      "audio": "Audio",
+      "guide": "Guía",
+      "file": "Descarga",
+      "link": "Enlace",
+      "recipe": "Receta",
+      "live": "Sesión en vivo"
+    },
+    "sources": {
+      "all": "Todo",
+      "team": "Mi equipo",
+      "zoheewell": "ZoheeWell"
+    },
+    "sourceChip": {
+      "team": "Tu equipo",
+      "zoheewell": "ZoheeWell"
+    },
+    "status": {
+      "draft": "Borrador",
+      "archived": "Archivado",
+      "published": "Publicado"
+    },
+    "quiz": "Cuestionario",
+    "open": "Abrir",
+    "continue": "Continuar",
+    "start": "Empezar",
+    "review": "Repasar",
+    "edit": "Editar",
+    "saveTemplate": "Guardar como plantilla",
+    "continueHeading": "Continúa donde te quedaste",
+    "nextLive": "Próximas sesiones en vivo",
+    "upcoming": "Próximas",
+    "replays": "Repeticiones",
+    "memberships": "Tus membresías",
+    "membership": "Membresía",
+    "notAllowed": "No tienes permiso para hacer eso en este equipo.",
+    "error": "Algo salió mal. Inténtalo de nuevo.",
+    "empty": {
+      "foryou": {
+        "title": "Aún no tienes nada en curso",
+        "text": "Abre la Biblioteca para empezar un curso, una guía o una receta.",
+        "action": "Ver la biblioteca"
+      },
+      "library": {
+        "title": "No hay recursos para mostrar",
+        "text": "Todavía no hay nada que coincida. Prueba otro tipo u origen.",
+        "action": "Quitar filtros"
+      },
+      "live": {
+        "title": "No hay sesiones en vivo programadas",
+        "text": "Cuando tu equipo programe una sesión en vivo, aparecerá aquí con recordatorios y repeticiones."
+      },
+      "saved": {
+        "title": "Aún no guardas nada",
+        "text": "Guarda recetas y cursos para encontrarlos rápido aquí.",
+        "action": "Ver la biblioteca"
+      },
+      "mine": {
+        "title": "Aún no has creado un recurso",
+        "text": "Empieza desde cero o con una plantilla de recursos. Todo empieza como borrador."
+      }
+    },
+    "createSheet": {
+      "title": "Crear recurso",
+      "text": "Elige qué quieres hacer. Todo empieza como borrador hasta que lo publiques.",
+      "course": "Curso",
+      "courseText": "Secciones, lecciones y cuestionarios opcionales.",
+      "bundle": "Paquete de recursos",
+      "bundleText": "Texto, archivos, enlaces e insertados para descargar.",
+      "track": "Ruta de aprendizaje del equipo",
+      "trackText": "Una serie gratuita de lecciones para tu equipo.",
+      "recipe": "Receta",
+      "recipeText": "Ingredientes y pasos para tu equipo.",
+      "fromTemplate": "Empezar con una plantilla",
+      "fromTemplateText": "Plantillas de ZoheeWell o de tu equipo."
+    }
+  },
+  "templatesR": {
+    "title": "Plantillas de recursos",
+    "sentence": "Estructuras reutilizables para cursos, guías, sesiones y recetas. Son distintas de los Modelos de eventos.",
+    "starters": "Básicas de ZoheeWell",
+    "mine": "Mis plantillas",
+    "starterChip": "Básica de ZoheeWell",
+    "teamChip": "Plantilla del equipo",
+    "use": "Usar plantilla",
+    "using": "Creando borrador…",
+    "created": "Borrador creado. Reemplaza los textos de ejemplo y publica cuando estés listo.",
+    "parts_one": "{{count}} parte",
+    "parts_other": "{{count}} partes",
+    "needsAssets_one": "{{count}} archivo por subir después de copiar",
+    "needsAssets_other": "{{count}} archivos por subir después de copiar",
+    "target": {
+      "track": "Crea una ruta del equipo en borrador",
+      "course": "Crea un curso en borrador",
+      "download": "Crea un paquete de recursos en borrador",
+      "recipe": "Crea una receta en borrador"
+    },
+    "delete": "Eliminar plantilla",
+    "deleteConfirm": "¿Eliminar esta plantilla? Los recursos ya creados con ella no cambian.",
+    "deleted": "Plantilla eliminada",
+    "emptyMine": "Tu equipo aún no tiene plantillas",
+    "emptyMineText": "Guarda uno de tus recursos como plantilla desde Creados por mí y reutilízalo cuando quieras.",
+    "emptyMineAction": "Ir a Creados por mí",
+    "creatorsOnly": "Las plantillas de recursos son para anfitriones y creadores del equipo.",
+    "saveTitle": "Guardar como plantilla",
+    "saveText": "Guarda la estructura y el texto para tu equipo. No se copian archivos subidos, personas, progreso, ventas ni enlaces en vivo.",
+    "nameEn": "Nombre de la plantilla (inglés)",
+    "nameEs": "Nombre de la plantilla (español)",
+    "save": "Guardar plantilla",
+    "saving": "Guardando…",
+    "saved": "Plantilla guardada"
   }
 }

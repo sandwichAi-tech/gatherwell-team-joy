@@ -1,5 +1,12 @@
 # Roadmap
 
+## v0.31 Resources redesign
+
+- [x] Events-style /learn with tabs, filters, ResourceCard, Create resource chooser.
+- [x] Resource templates (/learn/templates) with starters, team save/reuse, drafts only.
+- [x] Text/audio/file lesson fix; tests, security checks, browser QA, docs.
+- [ ] Manual: second member account browser pass, screen reader, 200% zoom on new pages.
+
 ## v0.30.2 pricing simplification
 
 - [x] Removed comparison chart, unused desktop/mobile legacy variants, chart-only translations/styles/tests; retained cards, billing toggle, guidance, terms, FAQs and support intent.

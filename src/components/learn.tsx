@@ -7,7 +7,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { toast } from 'sonner';
-import { ArrowLeft, ArrowRight, Bell, BellRing, Bookmark, BookmarkCheck, CalendarPlus, Check, Clock, ExternalLink, FileText, Link2, Play, Radio, Settings2, Share2, Video } from '@/components/icons';
+import { ArrowLeft, ArrowRight, Bell, BellRing, Bookmark, BookmarkCheck, CalendarPlus, Check, Clock, ExternalLink, FileText, Link2, Play, Radio, Settings2, Share2, Video, Waveform, Download } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { supabase } from '@/integrations/supabase/client';
@@ -18,9 +18,6 @@ import {
   remindersQuery, RECIPE_TAGS, populatedTracks, trackStats, trackTitle, type LearnData, type Lesson, type Recipe, type Track,
 } from '@/lib/learn';
 import { myLearningQuery } from '@/lib/content';
-import { CertificateList } from '@/components/quiz';
-import { OfferCover } from '@/components/offers';
-import { offerTitle } from '@/lib/offers';
 
 export function useLearn() {
   const { userId } = useGatherwell();
@@ -57,7 +54,7 @@ export function LearnCover({ path, style = 0, title, className = '' }: { path?: 
   return <div className={`learn-cover ${className}`} style={{ backgroundImage: url ? `url(${url})` : COVER_STYLES[(style ?? 0) % COVER_STYLES.length] }} aria-hidden="true">{!url && <span>{(title.trim()[0] ?? 'L').toUpperCase()}</span>}</div>;
 }
 
-const TYPE_ICON = { video: Video, pdf: FileText, link: Link2, live: Radio } as const;
+export const TYPE_ICON = { video: Video, pdf: FileText, link: Link2, live: Radio, text: FileText, audio: Waveform, file: Download } as const;
 export const minutesLabel = (t: TFunction, m: number) => (m >= 60 ? t('learnHub.hours', { h: Math.floor(m / 60), m: m % 60 }) : t('learnHub.minutes', { count: m }));
 
 export function countdown(t: TFunction, startsAt: string, now: number) {
@@ -126,42 +123,6 @@ export function RecipeCard({ recipe, saved }: { recipe: Recipe; saved?: boolean 
   </Link>;
 }
 
-export function LearnHome() {
-  const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
-  const { data, tracks, leader, isLoading, isError, refetch, userId, learning } = useLearn();
-  const { data: rec } = useQuery(recipesQuery(userId));
-  if (isError) return <RetryState retry={() => void refetch()} />;
-  if (isLoading || !data) return <ListSkeleton />;
-  const available = populatedTracks(tracks, data.lessons);
-  const startHere = available.find(tr => tr.is_start_here && tr.is_published) ?? null;
-  const rest = available.filter(tr => tr.id !== startHere?.id);
-  const ids = new Set(tracks.filter(tr => tr.is_published).map(tr => tr.id));
-  const live = data.lessons.filter(l => ids.has(l.track_id) && l.type === 'live' && l.live_starts_at);
-  const upcoming = live.filter(isUpcomingLive).sort((a, b) => a.live_starts_at!.localeCompare(b.live_starts_at!));
-  const replays = live.filter(l => l.replay_url).sort((a, b) => b.live_starts_at!.localeCompare(a.live_starts_at!)).slice(0, 3);
-  const byId = new Map(data.tracks.map(tr => [tr.id, tr]));
-  return <>
-    <div className="page-heading"><div><span className="eyebrow">{t('learn.eyebrow')}</span><h1>{t('learn.title')}</h1><p>{t('learn.sentence')}</p></div>
-      {leader && <Button asChild variant="secondary"><Link to="/learn/manage"><Settings2 />{t('learnHub.manage')}</Link></Button>}</div>
-    {learning.length > 0 && <section className="learn-section"><div className="section-heading"><h2>{t('content.myLearning')}</h2></div>
-      <ul className="offer-list compact">{learning.map(e => <li key={e.id}><Link to="/offer/$id" params={{ id: e.id }} className="offer-row is-link">
-        <OfferCover offer={{ cover_style: e.cover_style, cover_url: e.cover_url, kind: e.kind as 'course' | 'download' | 'membership', title_en: e.title_en, title_es: e.title_es }} />
-        <div className="offer-row-main"><strong>{offerTitle(e, lang)}</strong>
-          <small>{e.host_name ?? ''}{e.lessons > 0 ? ` · ${t('learnHub.progressLabel', { done: e.done, total: e.lessons })}` : ''}{e.status === 'archived' ? ` · ${t('offers.status.archived')}` : ''}</small></div>
-        <ArrowRight /></Link></li>)}</ul></section>}
-    <CertificateList userId={userId} />
-    {startHere && <section className="learn-section"><TrackCard track={startHere} data={data} featured /></section>}
-    {rest.length > 0 && <section className="learn-section"><div className="section-heading"><h2>{t('learnHub.yourTracks')}</h2></div>
-      <div className="track-grid">{rest.map(tr => <TrackCard key={tr.id} track={tr} data={data} />)}</div></section>}
-    {(upcoming.length > 0 || replays.length > 0) && <section className="learn-section"><div className="section-heading"><h2>{t('learnHub.live')}</h2></div>
-      {upcoming.length > 0 && <div className="live-grid">{upcoming.map(l => <LiveCard key={l.id} lesson={l} track={byId.get(l.track_id)} />)}</div>}
-      {replays.length > 0 && <ul className="replay-list">{replays.map(l => <li key={l.id}><Radio /><div><strong>{lessonTitle(l, lang)}</strong><small>{fmtWhen(l.live_starts_at!, lang)}</small></div><Button asChild variant="secondary" size="sm"><Link to="/learn/lesson/$id" params={{ id: l.id }}><Play />{t('learnHub.replay')}</Link></Button></li>)}</ul>}</section>}
-    {!!rec?.recipes.length && <section className="learn-section"><div className="section-heading"><h2>{t('learnHub.recipes')}</h2><Button asChild variant="link"><Link to="/learn/recipes">{t('home.viewAll')}<ArrowRight /></Link></Button></div>
-      <div className="recipe-row">{rec.recipes.slice(0, 6).map(r => <RecipeCard key={r.id} recipe={r} saved={rec.saved.has(r.id)} />)}</div></section>}
-    {!available.length && rec?.recipes.length === 0 && <EmptyState compact icon="GraduationCap" text={t('learnHub.noResources')} />}
-  </>;
-}
-
 function BackLink({ to, params, label }: { to: string; params?: Record<string, string>; label: string }) {
   return <Link to={to} params={params ?? {}} className="back-link"><ArrowLeft />{label}</Link>;
 }
@@ -198,7 +159,7 @@ function CompletionCard({ title }: { title: string }) {
 }
 
 function Player({ lesson }: { lesson: Lesson }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
   const type = effectiveType(lesson);
   const external = lesson.type === 'live' ? lesson.replay_url : lesson.url;
   const { data: fileUrl } = useQuery({ queryKey: ['learn-url', lesson.storage_path], queryFn: () => learnFileUrl(lesson.storage_path), enabled: !!lesson.storage_path && lesson.type !== 'live', staleTime: 50 * 60_000 });
@@ -214,6 +175,9 @@ function Player({ lesson }: { lesson: Lesson }) {
     return src ? <div className="pdf-frame"><iframe src={src} title={t('learnHub.type.pdf')} /><Button asChild variant="secondary"><a href={src} target="_blank" rel="noopener noreferrer"><ExternalLink />{t('learnHub.openPdf')}</a></Button></div> : <div className="player player-empty">{t('learnHub.noMedia')}</div>;
   }
   if (type === 'link') return external ? <LinkCard url={external} /> : null;
+  if (type === 'audio') return fileUrl ? <div className="player player-audio"><audio src={fileUrl} controls preload="metadata" /></div> : external ? <LinkCard url={external} /> : <div className="player player-empty">{t('learnHub.noMedia')}</div>;
+  if (type === 'file') return fileUrl ? <Button asChild variant="secondary"><a href={fileUrl} target="_blank" rel="noopener noreferrer"><Download />{t('learnHub.type.file')}</a></Button> : <div className="player player-empty">{t('learnHub.noMedia')}</div>;
+  if (type === 'text') { const body = pick(lang, lesson.description_en, lesson.description_es); return body ? <section className="panel lesson-text"><p>{body}</p></section> : null; }
   return null;
 }
 

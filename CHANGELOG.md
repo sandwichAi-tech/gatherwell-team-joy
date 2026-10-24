@@ -1,5 +1,13 @@
 # ZoheeWell Change Log
 
+## v0.31 — Resources redesign and Resource templates (2026-10-24)
+- /learn (shown as Resources) now uses the Events layout: heading, Resource templates + Create resource actions for non-member roles, For you / Library / Live / Saved / Created by me tabs, Type and Source filters in the URL, and one ResourceCard system. Memberships are not resources (only listed under For you when entitled). Recipes are one type among many.
+- Create resource chooser routes to existing editors (course/bundle via /offers?new=, track/recipe via /learn/manage). /learn/manage now opens for any non-member role; server checks unchanged.
+- New /learn/templates: six bilingual ZoheeWell starters (Quick video lesson, Guide/worksheet, Mini-course, Resource bundle, Recipe, Live workshop + replay) and team templates. Using one creates an unpublished draft; Save as template (Created by me only) copies structure/text only — uploaded files, live links, replays, prices, people, progress and sales are never copied; files are flagged for re-upload. Event Blueprints unchanged.
+- Fixed text lessons (and audio/file) rendering with an undefined icon; added text, audio and file readers.
+- Verification: 338/338 tests (42 files), typecheck and build OK; rollback-wrapped database checks (all six starters copy to drafts, none published, audit written; outsider/member/anonymous denied; no cross-team visibility); browser 40 page checks at 390/1280 EN/ES with no overflow or console errors; signed-in starter use → save team template → reuse flow passed; QA rows removed.
+- Not verified: second real member account in the browser, screen reader, 200% zoom on the new pages.
+
 ## v0.30.3 — Pricing header collision fix (2026-10-24)
 - During mobile scroll QA on /pricing, the monthly/annual billing selector bled through the sticky site header and appeared to overlap the wordmark. Root cause was the scrolled header's translucent background (86% opacity), not stickiness. The scrolled header is now fully opaque (brand card token), so no page content crowds it; the billing selector itself stays non-sticky at every size (explicitly static, with a guard comment against future sticky use without a below-header offset).
 - All plans, prices, annual discount, CTAs, terms, FAQs and toggle behavior are unchanged; chart removal preserved. No providers, publishing or credentials.

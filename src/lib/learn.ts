@@ -5,7 +5,8 @@ import type { Database } from '@/integrations/supabase/types';
 export type Track = Database['public']['Tables']['tracks']['Row'];
 export type Lesson = Database['public']['Tables']['lessons']['Row'];
 export type Recipe = Database['public']['Tables']['recipes']['Row'];
-export type LessonType = 'video' | 'pdf' | 'link' | 'live';
+export type LessonType = 'video' | 'pdf' | 'link' | 'live' | 'text' | 'audio' | 'file';
+export const LESSON_TYPES: readonly LessonType[] = ['video', 'pdf', 'link', 'live', 'text', 'audio', 'file'];
 export const RECIPE_TAGS = ['breakfast', 'shake', 'snack', 'quick', 'family'] as const;
 
 /** Pick the member's language, falling back to the other one. */
@@ -14,7 +15,7 @@ export const trackTitle = (t: Pick<Track, 'title_en' | 'title_es'>, lang?: strin
 export const lessonTitle = (l: Pick<Lesson, 'title_en' | 'title_es'>, lang?: string) => pick(lang, l.title_en, l.title_es);
 
 /** A live lesson with a replay link behaves like a normal video lesson. */
-export const effectiveType = (l: Pick<Lesson, 'type' | 'replay_url'>): LessonType => (l.type === 'live' && l.replay_url ? 'video' : l.type as LessonType);
+export const effectiveType = (l: Pick<Lesson, 'type' | 'replay_url'>): LessonType => (l.type === 'live' && l.replay_url ? 'video' : (LESSON_TYPES as readonly string[]).includes(l.type) ? l.type as LessonType : 'text');
 export const isUpcomingLive = (l: Lesson) => l.type === 'live' && !l.replay_url && !!l.live_starts_at && new Date(l.live_starts_at).getTime() + 3 * 3600_000 > Date.now();
 
 export type LearnData = { tracks: Track[]; lessons: Lesson[]; done: Set<string> };
