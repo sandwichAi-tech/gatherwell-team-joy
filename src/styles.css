@@ -2104,7 +2104,7 @@ a.gw-cat-chip:hover{background:#fff}
 .gw-carousel{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;list-style:none;margin:0;padding:4px 2px 12px;scrollbar-width:none}
 .gw-carousel::-webkit-scrollbar{display:none}
 .gw-carousel:focus-visible{outline:3px solid var(--ring);outline-offset:2px;border-radius:20px}
-.gw-carousel-card{flex:0 0 calc(100% - 44px);scroll-snap-align:start;background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.gw-carousel-card{flex:0 0 86vw;max-width:420px;scroll-snap-align:start;background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
 .gw-carousel-photo{border-radius:0}
 .gw-carousel-caption{display:flex;flex-direction:column;gap:2px;padding:14px 16px 16px}
 .gw-carousel-cat{font-weight:700;font-size:16px;color:var(--foreground)}
