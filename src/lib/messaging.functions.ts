@@ -125,7 +125,7 @@ export const saveMessageJourney = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     const { data: id, error } = await context.supabase.rpc('save_message_journey', {
       _team: data.teamId, _id: data.id ?? null, _name: data.name, _start_trigger: data.start_trigger,
-      _steps: JSON.stringify(data.steps),
+      _steps: data.steps,
     });
     if (error) throw new Error(error.message);
     return { id };
