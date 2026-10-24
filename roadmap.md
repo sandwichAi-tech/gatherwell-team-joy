@@ -13,7 +13,8 @@ Active work follows the approved Prompt 1–17 sequence in the ZoheeWell Beta Pr
 - [ ] Two-account browser journey (attendee view of host-cancellation reason, cross-account My tickets) — needs approval to mint a second live account session
 - [x] Course & resource authoring + free learner access (v0.19) — 0057–0059; content studio, public /o/$id pages, My learning, free enrollment verified live; paid stays Setup required
 - [x] Resource-bundle authoring UI + browser journeys (v0.20) — 0060; bundle items, replace history, signed downloads verified; fixtures and test storage object removed
-- [ ] Course creation browser journey (sections/lessons in UI), screen-reader and 200% zoom passes for content surfaces — pending
+- [x] Course authoring browser journey (v0.21) — blockers, lesson add, section/lesson/course publish, public page EN/ES, anon privacy, archive hiding verified; offer_readiness array bug fixed (0061); fixtures removed
+- [ ] Screen-reader and 200% zoom passes for content surfaces; signed-in non-host enroll click-through (needs second account); course create-from-scratch in browser
 - [x] Homepage density fix — removed immediate duplicate Host/Attend section; compact four-step and 15-tool layouts verified at 390px/1440px, both CTAs work, 96 tests pass; verification limits in CHANGELOG.md.
 
 
