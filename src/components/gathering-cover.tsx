@@ -11,8 +11,9 @@ export function GatheringCover({ path, style = 0, title, className = '', overlay
   const { data: url } = useQuery({ queryKey: ['media-url', path], queryFn: () => mediaUrl(path), enabled: !!path, staleTime: 50 * 60 * 1000 });
   const scrim = clampOverlay(overlay);
   const scrimEl = scrim > 0 ? <span className="gathering-cover-scrim" style={{ background: `rgba(48, 35, 56, ${scrim / 100})` }} aria-hidden="true" /> : null;
+  const [fx, fy] = clampFocal(focal).split(' ').map(v => Number(v.replace('%', '')) / 100);
   if (url) return <span className={`gathering-cover has-photo ${className}`}>
-    <BrandImage src={url} alt={alt?.trim() || title} className="gathering-cover-img" style={{ objectPosition: clampFocal(focal) }} priority={className.includes('guest-cover')} />
+    <BrandImage src={url} alt={alt?.trim() || title} className="gathering-cover-img" focal={{ x: fx, y: fy }} priority={className.includes('guest-cover')} />
     {scrimEl}
   </span>;
   return <div className={`gathering-cover ${className}`} style={{ backgroundImage: coverStyleAt(style) }} role="img" aria-label={alt?.trim() || title}>
