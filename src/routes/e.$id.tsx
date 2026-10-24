@@ -156,10 +156,12 @@ function PublicEventBody() {
       </section>
 
       {!cancelled && early && <EarlyAccessNotice access={early} />}
-      {!cancelled && (!early || early.has_access || event.my_code) && <>
+      {!cancelled && regNotOpen && <div className="guest-cancelled" role="status"><CalendarDays /><div><strong>{t('builder.regNotOpen')}</strong><p>{t('builder.regNotOpenText', { date: formatWhen(event.reg_opens_at!, lang) })}</p></div></div>}
+      {!cancelled && regClosed && <div className="guest-cancelled" role="status"><Ban /><div><strong>{t('builder.regClosed')}</strong><p>{t('builder.regClosedText')}</p></div></div>}
+      {!cancelled && !regClosed && !regNotOpen && (!early || early.has_access || event.my_code) && <>
         {event.my_code ? <div className="guest-actions"><p className="guest-label">{t('guest.alreadyIn')}</p><Button asChild className="guest-primary"><Link to="/r/$code" params={{ code: event.my_code }}>{t('guest.manage')}</Link></Button></div>
           : <div className="guest-actions">
-            <Button className="guest-primary" onClick={() => setIntent('going')}>{full ? t('guest.joinWaitlist') : price ? t('billing.imInPrice', { amount: formatMoney(price.price_cents, lang) }) : t('guest.imIn')}</Button>
+            <Button className="guest-primary" disabled={waitlistOff} onClick={() => setIntent('going')}>{waitlistOff ? t('guest.full') : full ? t('guest.joinWaitlist') : price ? t('billing.imInPrice', { amount: formatMoney(price.price_cents, lang) }) : t('guest.imIn')}</Button>
             <Button variant="secondary" className="guest-secondary" onClick={() => setIntent('maybe')}>{t('guest.maybe')}</Button>
             {event.team_registration && <Button variant="secondary" className="guest-secondary" onClick={() => setTeamOpen(true)}>{t('teamRsvp.cta', { min: event.team_min ?? 2, max: event.team_max ?? 6 })}</Button>}
           </div>}
