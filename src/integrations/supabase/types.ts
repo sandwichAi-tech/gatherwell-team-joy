@@ -456,6 +456,65 @@ export type Database = {
           },
         ]
       }
+      certificates: {
+        Row: {
+          cert_number: string
+          course_title: string
+          expires_at: string | null
+          id: string
+          issued_at: string
+          issuer_name: string
+          learner_name: string
+          offer_id: string
+          revoke_reason: string | null
+          revoked_at: string | null
+          signer_name: string | null
+          signer_title: string | null
+          statement: string | null
+          user_id: string
+        }
+        Insert: {
+          cert_number: string
+          course_title: string
+          expires_at?: string | null
+          id?: string
+          issued_at?: string
+          issuer_name: string
+          learner_name: string
+          offer_id: string
+          revoke_reason?: string | null
+          revoked_at?: string | null
+          signer_name?: string | null
+          signer_title?: string | null
+          statement?: string | null
+          user_id: string
+        }
+        Update: {
+          cert_number?: string
+          course_title?: string
+          expires_at?: string | null
+          id?: string
+          issued_at?: string
+          issuer_name?: string
+          learner_name?: string
+          offer_id?: string
+          revoke_reason?: string | null
+          revoked_at?: string | null
+          signer_name?: string | null
+          signer_title?: string | null
+          statement?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "certificates_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       challenge_checkins: {
         Row: {
           challenge_id: string
@@ -2078,16 +2137,19 @@ export type Database = {
         Row: {
           completed_at: string
           lesson_id: string
+          started_at: string
           user_id: string
         }
         Insert: {
           completed_at?: string
           lesson_id: string
+          started_at?: string
           user_id?: string
         }
         Update: {
           completed_at?: string
           lesson_id?: string
+          started_at?: string
           user_id?: string
         }
         Relationships: [
@@ -2868,8 +2930,17 @@ export type Database = {
           accessibility_notes: string | null
           billing_interval: string | null
           category: string | null
+          cert_expiry_months: number | null
+          cert_issuer: string | null
+          cert_signer_name: string | null
+          cert_signer_title: string | null
+          cert_statement: string | null
+          cert_title: string | null
+          certificate_enabled: boolean
           coauthor_name: string | null
           community_seats: number | null
+          completion_require_lessons: boolean
+          completion_require_quizzes: boolean
           cover_style: number
           cover_url: string | null
           created_at: string
@@ -2907,8 +2978,17 @@ export type Database = {
           accessibility_notes?: string | null
           billing_interval?: string | null
           category?: string | null
+          cert_expiry_months?: number | null
+          cert_issuer?: string | null
+          cert_signer_name?: string | null
+          cert_signer_title?: string | null
+          cert_statement?: string | null
+          cert_title?: string | null
+          certificate_enabled?: boolean
           coauthor_name?: string | null
           community_seats?: number | null
+          completion_require_lessons?: boolean
+          completion_require_quizzes?: boolean
           cover_style?: number
           cover_url?: string | null
           created_at?: string
@@ -2946,8 +3026,17 @@ export type Database = {
           accessibility_notes?: string | null
           billing_interval?: string | null
           category?: string | null
+          cert_expiry_months?: number | null
+          cert_issuer?: string | null
+          cert_signer_name?: string | null
+          cert_signer_title?: string | null
+          cert_statement?: string | null
+          cert_title?: string | null
+          certificate_enabled?: boolean
           coauthor_name?: string | null
           community_seats?: number | null
+          completion_require_lessons?: boolean
+          completion_require_quizzes?: boolean
           cover_style?: number
           cover_url?: string | null
           created_at?: string
@@ -3835,6 +3924,276 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      quiz_attempts: {
+        Row: {
+          attempt_no: number
+          deadline: string | null
+          id: string
+          passed: boolean | null
+          quiz_id: string
+          score_pct: number | null
+          started_at: string
+          status: string
+          submitted_at: string | null
+          submitted_late: boolean
+          user_id: string
+        }
+        Insert: {
+          attempt_no: number
+          deadline?: string | null
+          id?: string
+          passed?: boolean | null
+          quiz_id: string
+          score_pct?: number | null
+          started_at?: string
+          status?: string
+          submitted_at?: string | null
+          submitted_late?: boolean
+          user_id: string
+        }
+        Update: {
+          attempt_no?: number
+          deadline?: string | null
+          id?: string
+          passed?: boolean | null
+          quiz_id?: string
+          score_pct?: number | null
+          started_at?: string
+          status?: string
+          submitted_at?: string | null
+          submitted_late?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_attempts_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_options: {
+        Row: {
+          id: string
+          is_correct: boolean
+          label_en: string
+          label_es: string
+          question_id: string
+          sort_order: number
+        }
+        Insert: {
+          id?: string
+          is_correct?: boolean
+          label_en?: string
+          label_es?: string
+          question_id: string
+          sort_order?: number
+        }
+        Update: {
+          id?: string
+          is_correct?: boolean
+          label_en?: string
+          label_es?: string
+          question_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_questions: {
+        Row: {
+          accepted_answers: string[] | null
+          allow_manual: boolean
+          created_at: string
+          explanation_en: string | null
+          explanation_es: string | null
+          id: string
+          points: number
+          prompt_en: string
+          prompt_es: string
+          quiz_id: string
+          sort_order: number
+          type: string
+        }
+        Insert: {
+          accepted_answers?: string[] | null
+          allow_manual?: boolean
+          created_at?: string
+          explanation_en?: string | null
+          explanation_es?: string | null
+          id?: string
+          points?: number
+          prompt_en?: string
+          prompt_es?: string
+          quiz_id: string
+          sort_order?: number
+          type: string
+        }
+        Update: {
+          accepted_answers?: string[] | null
+          allow_manual?: boolean
+          created_at?: string
+          explanation_en?: string | null
+          explanation_es?: string | null
+          id?: string
+          points?: number
+          prompt_en?: string
+          prompt_es?: string
+          quiz_id?: string
+          sort_order?: number
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_responses: {
+        Row: {
+          attempt_id: string
+          id: string
+          needs_manual: boolean
+          points_awarded: number | null
+          question_id: string
+          selected: string[] | null
+          text_answer: string | null
+        }
+        Insert: {
+          attempt_id: string
+          id?: string
+          needs_manual?: boolean
+          points_awarded?: number | null
+          question_id: string
+          selected?: string[] | null
+          text_answer?: string | null
+        }
+        Update: {
+          attempt_id?: string
+          id?: string
+          needs_manual?: boolean
+          points_awarded?: number | null
+          question_id?: string
+          selected?: string[] | null
+          text_answer?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_responses_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_attempts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quiz_responses_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quizzes: {
+        Row: {
+          attempts_allowed: number | null
+          cooldown_minutes: number
+          created_at: string
+          created_by: string | null
+          id: string
+          instructions_en: string | null
+          instructions_es: string | null
+          is_published: boolean
+          is_required: boolean
+          lesson_id: string | null
+          offer_id: string
+          pass_pct: number
+          randomize_answers: boolean
+          randomize_questions: boolean
+          reveal_answers: string
+          show_score: boolean
+          sort_order: number
+          time_limit_minutes: number | null
+          title_en: string
+          title_es: string
+          updated_at: string
+        }
+        Insert: {
+          attempts_allowed?: number | null
+          cooldown_minutes?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          instructions_en?: string | null
+          instructions_es?: string | null
+          is_published?: boolean
+          is_required?: boolean
+          lesson_id?: string | null
+          offer_id: string
+          pass_pct?: number
+          randomize_answers?: boolean
+          randomize_questions?: boolean
+          reveal_answers?: string
+          show_score?: boolean
+          sort_order?: number
+          time_limit_minutes?: number | null
+          title_en?: string
+          title_es?: string
+          updated_at?: string
+        }
+        Update: {
+          attempts_allowed?: number | null
+          cooldown_minutes?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          instructions_en?: string | null
+          instructions_es?: string | null
+          is_published?: boolean
+          is_required?: boolean
+          lesson_id?: string | null
+          offer_id?: string
+          pass_pct?: number
+          randomize_answers?: boolean
+          randomize_questions?: boolean
+          reveal_answers?: string
+          show_score?: boolean
+          sort_order?: number
+          time_limit_minutes?: number | null
+          title_en?: string
+          title_es?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quizzes_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quizzes_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       recipes: {
         Row: {
@@ -5599,6 +5958,7 @@ export type Database = {
         Args: { _team: string; _template: string }
         Returns: string
       }
+      course_progress: { Args: { _offer: string }; Returns: Json }
       create_auth_intent: { Args: { _path: string }; Returns: string }
       create_event_badge: {
         Args: {
@@ -5739,6 +6099,7 @@ export type Database = {
       get_public_location: { Args: { _slug: string }; Returns: Json }
       get_public_offer: { Args: { _id: string }; Returns: Json }
       get_public_team: { Args: { _slug: string }; Returns: Json }
+      get_quiz_for_taker: { Args: { _quiz: string }; Returns: Json }
       get_rsvp_by_code: { Args: { _code: string }; Returns: Json }
       get_team_invite: {
         Args: { _code: string }
@@ -5751,6 +6112,10 @@ export type Database = {
       give_shoutout: {
         Args: { _message: string; _photo: string; _team: string; _to: string }
         Returns: string
+      }
+      grade_quiz_response: {
+        Args: { _points: number; _response: string }
+        Returns: Json
       }
       grant_auto_badge: {
         Args: { _code: string; _team: string; _user: string }
@@ -5837,6 +6202,7 @@ export type Database = {
         Returns: boolean
       }
       is_verified_coach: { Args: { _user: string }; Returns: boolean }
+      issue_certificate: { Args: { _offer: string }; Returns: Json }
       join_free_offer: { Args: { _offer: string }; Returns: undefined }
       join_team_by_code: {
         Args: { _by?: string; _code: string; _role?: string }
@@ -5909,6 +6275,7 @@ export type Database = {
         }[]
       }
       my_progress: { Args: { _tz: string }; Returns: Json }
+      my_quiz_attempts: { Args: { _quiz: string }; Returns: Json }
       my_referrals: { Args: never; Returns: Json }
       my_regular_hosts: {
         Args: never
@@ -5968,6 +6335,7 @@ export type Database = {
       }
       notify_rsvp_request: { Args: { _rsvp: string }; Returns: undefined }
       offer_founding_status: { Args: { _offer: string }; Returns: Json }
+      offer_learner_progress: { Args: { _offer: string }; Returns: Json }
       offer_readiness: { Args: { _offer: string }; Returns: Json }
       pair_buddy: {
         Args: { _buddy: string; _rsvp: string }
@@ -6032,6 +6400,8 @@ export type Database = {
         Returns: undefined
       }
       queue_rsvp_reminders: { Args: { _rsvp: string }; Returns: undefined }
+      quiz_access_error: { Args: { _quiz: string }; Returns: string }
+      quiz_blockers: { Args: { _quiz: string }; Returns: string[] }
       record_ai_usage: {
         Args: { _feature: string; _input: number; _output: number }
         Returns: undefined
@@ -6103,6 +6473,10 @@ export type Database = {
       reset_join_code: { Args: { _team: string }; Returns: string }
       resume_my_membership: { Args: { _offer: string }; Returns: undefined }
       retreat_checklist: { Args: { _code: string }; Returns: Json }
+      revoke_certificate: {
+        Args: { _cert: string; _reason: string }
+        Returns: undefined
+      }
       rsvp_belonging: {
         Args: { _event: string }
         Returns: {
@@ -6218,6 +6592,15 @@ export type Database = {
         Args: { _body: string; _host: string; _rating: number }
         Returns: undefined
       }
+      save_quiz_response: {
+        Args: {
+          _attempt: string
+          _question: string
+          _selected: string[]
+          _text: string
+        }
+        Returns: undefined
+      }
       search_team_library: {
         Args: { _q: string; _team: string }
         Returns: {
@@ -6261,6 +6644,10 @@ export type Database = {
         Args: { _ends_at: string; _event: string; _retreat: Json }
         Returns: undefined
       }
+      set_lesson_progress: {
+        Args: { _completed: boolean; _lesson: string }
+        Returns: undefined
+      }
       set_pass_fee: { Args: { _on: boolean }; Returns: undefined }
       set_referral_thanks: {
         Args: { _amount: number; _kind: string }
@@ -6284,8 +6671,10 @@ export type Database = {
         Returns: undefined
       }
       start_hosting_window: { Args: never; Returns: string }
+      start_quiz_attempt: { Args: { _quiz: string }; Returns: Json }
       storage_allows: { Args: { _bytes: number }; Returns: boolean }
       storage_used_bytes: { Args: { _uid: string }; Returns: number }
+      submit_quiz: { Args: { _attempt: string }; Returns: Json }
       submit_verification: {
         Args: { _credentials: Json; _identity: string; _years: number }
         Returns: string
@@ -6358,6 +6747,7 @@ export type Database = {
       }
       user_email: { Args: { _user: string }; Returns: string }
       verified_hosts: { Args: { _ids: string[] }; Returns: string[] }
+      verify_certificate: { Args: { _number: string }; Returns: Json }
       vote_poll: {
         Args: { _code: string; _option: string }
         Returns: undefined
