@@ -76,3 +76,10 @@ The requester supplied the following results after commit ac2eef3c5d5ff7138522b8
 - rsvp_event() raises event_full when a full event has the waitlist disabled; a transaction-local flag (gw.force_waitlist) lets tier-level capacity waitlist through the same locked path.
 - host_cancel_rsvp() requires can_manage_event(), keeps the row (cancelled_by + reason), and the existing rsvp_freed trigger promotes the next waitlisted guest; notifications are queued, not claimed delivered.
 - my_tickets() returns only the caller's own registrations and exposes the virtual join link only while the registration is active; guest management stays behind the opaque checkin code.
+
+## Registration verification (2026-10-24, live pass)
+- Concurrency: the event row lock serializes last-seat races — two simultaneous registrations produced exactly one confirmation and one waitlist.
+- rsvp_event_minor() had an ambiguous `status` reference (OUT param vs events column) that failed every guardian registration; fixed in 0056 by qualifying the column. Any future RETURNS TABLE function touching events must qualify `status`.
+- Guest management is bound to the opaque 24-char checkin code: tampered/short codes are rejected and there is no email-only lookup path (anon has no rsvps grant at all; authenticated non-hosts read zero rows via RLS).
+- host_cancel_rsvp() is can_manage_event()-checked; cancellation keeps the row with cancelled_by + reason.
+- my_tickets() exposes the virtual join link only for the caller's own active registrations.
