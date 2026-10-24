@@ -78,6 +78,8 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
   const [busy, setBusy] = useState(false); const [error, setError] = useState<string | null>(null);
   const [price, setPrice] = useState<{ price_cents: number; pass_fee: boolean; fee_pct: number; cover_service_fee?: boolean; service_fee_percent?: number; service_fee_fixed?: number; refund_policy?: string } | null>(null);
   const { data: waiver } = useEventWaiver(intent ? event.id : undefined); const [wName, setWName] = useState(''); const [wOk, setWOk] = useState(false); const [adult, setAdult] = useState(false);
+  const [minorOn, setMinorOn] = useState(false);
+  const [minor, setMinor] = useState({ first: '', band: '' as string, gName: '', gRel: 'parent', gEmail: '', gPhone: '', consent: false });
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const gate = usePaymentGate(); const checkout = useServerFn(startTicketCheckout);
   const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
@@ -108,6 +110,24 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
     if (intent === 'going' && !answersReady(event.questions, answers)) { setError(t('guest.errors.answers_required')); return; }
     const waiverName = waiver?.required ? wName.trim() : '';
     const consent = rsvpReminderConsent(form);
+    if (minorOn && event.allows_minors) {
+      const check = checkMinorRegistration(true, true, { firstName: minor.first, ageBand: minor.band, guardianConsent: minor.consent });
+      if (!check.ok) { setError(t(`guest.errors.${check.error}`)); return; }
+      if (!minor.gName.trim() || !minor.gRel.trim() || (!minor.gEmail.trim() && !minor.gPhone.trim())) { setError(t('guest.errors.guardian_details_incomplete')); return; }
+      if (!minorBandAllowed(event.min_age ?? null, minor.band as 'under_5' | '5_12' | '13_17')) { setError(t('guest.errors.min_age_not_met')); return; }
+      setBusy(true); setError(null);
+      try {
+        const { data, error: err } = await supabase.rpc('rsvp_event_minor', {
+          _event_id: event.id, _minor_first: minor.first.trim(), _minor_age_band: minor.band,
+          _guardian_name: minor.gName.trim(), _guardian_relationship: minor.gRel, _guardian_email: minor.gEmail.trim(), _guardian_phone: minor.gPhone.trim(),
+          _language: i18n.resolvedLanguage === 'es' ? 'es' : 'en', _sms: consent.sms, _mail: consent.mail, _token: inviteToken() ?? '' });
+        const row = (Array.isArray(data) ? data[0] : null) as { code: string; status: string } | null;
+        if (err || !row) { const k = rsvpErrorKey(err); setError(t(k === 'guest.errors.generic' ? 'guest.errors.save_failed' : k)); return; }
+        trackEvent('rsvp', { status: row.status, minor: true });
+        onDone({ code: row.code, status: row.status as RsvpResult['status'] });
+      } catch { setError(t('guest.errors.save_failed')); } finally { setBusy(false); }
+      return;
+    }
     if (paid) {
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim())) { setError(t('guest.errors.invalid_email')); return; }
       if (!adult) { setError(t('identity.adultRequired')); return; }
