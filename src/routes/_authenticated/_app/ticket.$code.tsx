@@ -5,6 +5,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { ArrowLeft, CalendarDays, MapPin, Printer, Video, CreditCard, AlertCircle, CheckCircle2 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { AddToCalendar } from '@/components/add-to-calendar';
+import { ContactHostButton } from '@/components/contact-host';
 import { ListSkeleton } from '@/components/launch-states';
 import { supabase } from '@/integrations/supabase/client';
 import { formatWhen } from '@/lib/guest';
@@ -121,6 +122,7 @@ function TicketDetailPage() {
         <AddToCalendar event={icsEvent} filename={`${e.title.replace(/[^\w-]+/g, '-').toLowerCase()}.ics`} />
         {active && <Button variant="secondary" onClick={() => window.print()}><Printer />{t('ticket.print')}</Button>}
         {e.online_url && active && <Button asChild variant="secondary"><a href={e.online_url} target="_blank" rel="noopener noreferrer"><Video />{t('guest.joinOnline')}</a></Button>}
+        {active && <ContactHostButton eventId={e.id} />}
       </div>
 
       <div className="ticket-wallet no-print">

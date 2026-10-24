@@ -42,17 +42,21 @@ import { Route as AuthenticatedAppEventsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAppFollowingRouteImport } from './routes/_authenticated/_app/following'
 import { Route as AuthenticatedAppFollowupsRouteImport } from './routes/_authenticated/_app/followups'
 import { Route as AuthenticatedAppHomeRouteImport } from './routes/_authenticated/_app/home'
+import { Route as AuthenticatedAppInboxRouteImport } from './routes/_authenticated/_app/inbox'
 import { Route as AuthenticatedAppLearnRouteImport } from './routes/_authenticated/_app/learn'
 import { Route as AuthenticatedAppLocationsRouteImport } from './routes/_authenticated/_app/locations'
 import { Route as AuthenticatedAppMeRouteImport } from './routes/_authenticated/_app/me'
 import { Route as AuthenticatedAppNetworkRouteImport } from './routes/_authenticated/_app/network'
+import { Route as AuthenticatedAppNotificationsRouteImport } from './routes/_authenticated/_app/notifications'
 import { Route as AuthenticatedAppOffersRouteImport } from './routes/_authenticated/_app/offers'
 import { Route as AuthenticatedAppPlanRouteImport } from './routes/_authenticated/_app/plan'
 import { Route as AuthenticatedAppProgressRouteImport } from './routes/_authenticated/_app/progress'
 import { Route as AuthenticatedAppPromosRouteImport } from './routes/_authenticated/_app/promos'
 import { Route as AuthenticatedAppSavedRouteImport } from './routes/_authenticated/_app/saved'
 import { Route as AuthenticatedAppStartRouteImport } from './routes/_authenticated/_app/start'
+import { Route as AuthenticatedAppSupportRouteImport } from './routes/_authenticated/_app/support'
 import { Route as AuthenticatedAppTeamRouteImport } from './routes/_authenticated/_app/team'
+import { Route as AuthenticatedAppUpdatesRouteImport } from './routes/_authenticated/_app/updates'
 import { Route as AuthenticatedAppVerifyRouteImport } from './routes/_authenticated/_app/verify'
 import { Route as IHostTokenRouteImport } from './routes/i.host.$token'
 import { Route as InviteTeamTokenRouteImport } from './routes/invite.team.$token'
@@ -251,6 +255,11 @@ const AuthenticatedAppHomeRoute = AuthenticatedAppHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppInboxRoute = AuthenticatedAppInboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
+  getParentRoute: () => AuthenticatedAppRouteRoute,
+} as any)
 const AuthenticatedAppLearnRoute = AuthenticatedAppLearnRouteImport.update({
   id: '/learn',
   path: '/learn',
@@ -272,6 +281,12 @@ const AuthenticatedAppNetworkRoute = AuthenticatedAppNetworkRouteImport.update({
   path: '/network',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppNotificationsRoute =
+  AuthenticatedAppNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppOffersRoute = AuthenticatedAppOffersRouteImport.update({
   id: '/offers',
   path: '/offers',
@@ -303,9 +318,19 @@ const AuthenticatedAppStartRoute = AuthenticatedAppStartRouteImport.update({
   path: '/start',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppSupportRoute = AuthenticatedAppSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => AuthenticatedAppRouteRoute,
+} as any)
 const AuthenticatedAppTeamRoute = AuthenticatedAppTeamRouteImport.update({
   id: '/team',
   path: '/team',
+  getParentRoute: () => AuthenticatedAppRouteRoute,
+} as any)
+const AuthenticatedAppUpdatesRoute = AuthenticatedAppUpdatesRouteImport.update({
+  id: '/updates',
+  path: '/updates',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
 const AuthenticatedAppVerifyRoute = AuthenticatedAppVerifyRouteImport.update({
@@ -508,17 +533,21 @@ export interface FileRoutesByFullPath {
   '/following': typeof AuthenticatedAppFollowingRoute
   '/followups': typeof AuthenticatedAppFollowupsRoute
   '/home': typeof AuthenticatedAppHomeRoute
+  '/inbox': typeof AuthenticatedAppInboxRoute
   '/learn': typeof AuthenticatedAppLearnRoute
   '/locations': typeof AuthenticatedAppLocationsRoute
   '/me': typeof AuthenticatedAppMeRoute
   '/network': typeof AuthenticatedAppNetworkRoute
+  '/notifications': typeof AuthenticatedAppNotificationsRoute
   '/offers': typeof AuthenticatedAppOffersRoute
   '/plan': typeof AuthenticatedAppPlanRoute
   '/progress': typeof AuthenticatedAppProgressRoute
   '/promos': typeof AuthenticatedAppPromosRoute
   '/saved': typeof AuthenticatedAppSavedRoute
   '/start': typeof AuthenticatedAppStartRoute
+  '/support': typeof AuthenticatedAppSupportRoute
   '/team': typeof AuthenticatedAppTeamRoute
+  '/updates': typeof AuthenticatedAppUpdatesRoute
   '/verify': typeof AuthenticatedAppVerifyRoute
   '/i/host/$token': typeof IHostTokenRoute
   '/invite/team/$token': typeof InviteTeamTokenRoute
@@ -582,17 +611,21 @@ export interface FileRoutesByTo {
   '/following': typeof AuthenticatedAppFollowingRoute
   '/followups': typeof AuthenticatedAppFollowupsRoute
   '/home': typeof AuthenticatedAppHomeRoute
+  '/inbox': typeof AuthenticatedAppInboxRoute
   '/learn': typeof AuthenticatedAppLearnRoute
   '/locations': typeof AuthenticatedAppLocationsRoute
   '/me': typeof AuthenticatedAppMeRoute
   '/network': typeof AuthenticatedAppNetworkRoute
+  '/notifications': typeof AuthenticatedAppNotificationsRoute
   '/offers': typeof AuthenticatedAppOffersRoute
   '/plan': typeof AuthenticatedAppPlanRoute
   '/progress': typeof AuthenticatedAppProgressRoute
   '/promos': typeof AuthenticatedAppPromosRoute
   '/saved': typeof AuthenticatedAppSavedRoute
   '/start': typeof AuthenticatedAppStartRoute
+  '/support': typeof AuthenticatedAppSupportRoute
   '/team': typeof AuthenticatedAppTeamRoute
+  '/updates': typeof AuthenticatedAppUpdatesRoute
   '/verify': typeof AuthenticatedAppVerifyRoute
   '/i/host/$token': typeof IHostTokenRoute
   '/invite/team/$token': typeof InviteTeamTokenRoute
@@ -659,17 +692,21 @@ export interface FileRoutesById {
   '/_authenticated/_app/following': typeof AuthenticatedAppFollowingRoute
   '/_authenticated/_app/followups': typeof AuthenticatedAppFollowupsRoute
   '/_authenticated/_app/home': typeof AuthenticatedAppHomeRoute
+  '/_authenticated/_app/inbox': typeof AuthenticatedAppInboxRoute
   '/_authenticated/_app/learn': typeof AuthenticatedAppLearnRoute
   '/_authenticated/_app/locations': typeof AuthenticatedAppLocationsRoute
   '/_authenticated/_app/me': typeof AuthenticatedAppMeRoute
   '/_authenticated/_app/network': typeof AuthenticatedAppNetworkRoute
+  '/_authenticated/_app/notifications': typeof AuthenticatedAppNotificationsRoute
   '/_authenticated/_app/offers': typeof AuthenticatedAppOffersRoute
   '/_authenticated/_app/plan': typeof AuthenticatedAppPlanRoute
   '/_authenticated/_app/progress': typeof AuthenticatedAppProgressRoute
   '/_authenticated/_app/promos': typeof AuthenticatedAppPromosRoute
   '/_authenticated/_app/saved': typeof AuthenticatedAppSavedRoute
   '/_authenticated/_app/start': typeof AuthenticatedAppStartRoute
+  '/_authenticated/_app/support': typeof AuthenticatedAppSupportRoute
   '/_authenticated/_app/team': typeof AuthenticatedAppTeamRoute
+  '/_authenticated/_app/updates': typeof AuthenticatedAppUpdatesRoute
   '/_authenticated/_app/verify': typeof AuthenticatedAppVerifyRoute
   '/i/host/$token': typeof IHostTokenRoute
   '/invite/team/$token': typeof InviteTeamTokenRoute
@@ -735,17 +772,21 @@ export interface FileRouteTypes {
     | '/following'
     | '/followups'
     | '/home'
+    | '/inbox'
     | '/learn'
     | '/locations'
     | '/me'
     | '/network'
+    | '/notifications'
     | '/offers'
     | '/plan'
     | '/progress'
     | '/promos'
     | '/saved'
     | '/start'
+    | '/support'
     | '/team'
+    | '/updates'
     | '/verify'
     | '/i/host/$token'
     | '/invite/team/$token'
@@ -809,17 +850,21 @@ export interface FileRouteTypes {
     | '/following'
     | '/followups'
     | '/home'
+    | '/inbox'
     | '/learn'
     | '/locations'
     | '/me'
     | '/network'
+    | '/notifications'
     | '/offers'
     | '/plan'
     | '/progress'
     | '/promos'
     | '/saved'
     | '/start'
+    | '/support'
     | '/team'
+    | '/updates'
     | '/verify'
     | '/i/host/$token'
     | '/invite/team/$token'
@@ -885,17 +930,21 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/following'
     | '/_authenticated/_app/followups'
     | '/_authenticated/_app/home'
+    | '/_authenticated/_app/inbox'
     | '/_authenticated/_app/learn'
     | '/_authenticated/_app/locations'
     | '/_authenticated/_app/me'
     | '/_authenticated/_app/network'
+    | '/_authenticated/_app/notifications'
     | '/_authenticated/_app/offers'
     | '/_authenticated/_app/plan'
     | '/_authenticated/_app/progress'
     | '/_authenticated/_app/promos'
     | '/_authenticated/_app/saved'
     | '/_authenticated/_app/start'
+    | '/_authenticated/_app/support'
     | '/_authenticated/_app/team'
+    | '/_authenticated/_app/updates'
     | '/_authenticated/_app/verify'
     | '/i/host/$token'
     | '/invite/team/$token'
@@ -1197,6 +1246,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppHomeRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/inbox': {
+      id: '/_authenticated/_app/inbox'
+      path: '/inbox'
+      fullPath: '/inbox'
+      preLoaderRoute: typeof AuthenticatedAppInboxRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/learn': {
       id: '/_authenticated/_app/learn'
       path: '/learn'
@@ -1223,6 +1279,13 @@ declare module '@tanstack/react-router' {
       path: '/network'
       fullPath: '/network'
       preLoaderRoute: typeof AuthenticatedAppNetworkRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/notifications': {
+      id: '/_authenticated/_app/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedAppNotificationsRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
     '/_authenticated/_app/offers': {
@@ -1267,11 +1330,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppStartRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/support': {
+      id: '/_authenticated/_app/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof AuthenticatedAppSupportRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/team': {
       id: '/_authenticated/_app/team'
       path: '/team'
       fullPath: '/team'
       preLoaderRoute: typeof AuthenticatedAppTeamRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/updates': {
+      id: '/_authenticated/_app/updates'
+      path: '/updates'
+      fullPath: '/updates'
+      preLoaderRoute: typeof AuthenticatedAppUpdatesRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
     '/_authenticated/_app/verify': {
@@ -1496,17 +1573,21 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppFollowingRoute: typeof AuthenticatedAppFollowingRoute
   AuthenticatedAppFollowupsRoute: typeof AuthenticatedAppFollowupsRoute
   AuthenticatedAppHomeRoute: typeof AuthenticatedAppHomeRoute
+  AuthenticatedAppInboxRoute: typeof AuthenticatedAppInboxRoute
   AuthenticatedAppLearnRoute: typeof AuthenticatedAppLearnRoute
   AuthenticatedAppLocationsRoute: typeof AuthenticatedAppLocationsRoute
   AuthenticatedAppMeRoute: typeof AuthenticatedAppMeRoute
   AuthenticatedAppNetworkRoute: typeof AuthenticatedAppNetworkRoute
+  AuthenticatedAppNotificationsRoute: typeof AuthenticatedAppNotificationsRoute
   AuthenticatedAppOffersRoute: typeof AuthenticatedAppOffersRoute
   AuthenticatedAppPlanRoute: typeof AuthenticatedAppPlanRoute
   AuthenticatedAppProgressRoute: typeof AuthenticatedAppProgressRoute
   AuthenticatedAppPromosRoute: typeof AuthenticatedAppPromosRoute
   AuthenticatedAppSavedRoute: typeof AuthenticatedAppSavedRoute
   AuthenticatedAppStartRoute: typeof AuthenticatedAppStartRoute
+  AuthenticatedAppSupportRoute: typeof AuthenticatedAppSupportRoute
   AuthenticatedAppTeamRoute: typeof AuthenticatedAppTeamRoute
+  AuthenticatedAppUpdatesRoute: typeof AuthenticatedAppUpdatesRoute
   AuthenticatedAppVerifyRoute: typeof AuthenticatedAppVerifyRoute
   AuthenticatedAppAdminSiteMediaRoute: typeof AuthenticatedAppAdminSiteMediaRoute
   AuthenticatedAppChallengeIdRoute: typeof AuthenticatedAppChallengeIdRoute
@@ -1538,17 +1619,21 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppFollowingRoute: AuthenticatedAppFollowingRoute,
   AuthenticatedAppFollowupsRoute: AuthenticatedAppFollowupsRoute,
   AuthenticatedAppHomeRoute: AuthenticatedAppHomeRoute,
+  AuthenticatedAppInboxRoute: AuthenticatedAppInboxRoute,
   AuthenticatedAppLearnRoute: AuthenticatedAppLearnRoute,
   AuthenticatedAppLocationsRoute: AuthenticatedAppLocationsRoute,
   AuthenticatedAppMeRoute: AuthenticatedAppMeRoute,
   AuthenticatedAppNetworkRoute: AuthenticatedAppNetworkRoute,
+  AuthenticatedAppNotificationsRoute: AuthenticatedAppNotificationsRoute,
   AuthenticatedAppOffersRoute: AuthenticatedAppOffersRoute,
   AuthenticatedAppPlanRoute: AuthenticatedAppPlanRoute,
   AuthenticatedAppProgressRoute: AuthenticatedAppProgressRoute,
   AuthenticatedAppPromosRoute: AuthenticatedAppPromosRoute,
   AuthenticatedAppSavedRoute: AuthenticatedAppSavedRoute,
   AuthenticatedAppStartRoute: AuthenticatedAppStartRoute,
+  AuthenticatedAppSupportRoute: AuthenticatedAppSupportRoute,
   AuthenticatedAppTeamRoute: AuthenticatedAppTeamRoute,
+  AuthenticatedAppUpdatesRoute: AuthenticatedAppUpdatesRoute,
   AuthenticatedAppVerifyRoute: AuthenticatedAppVerifyRoute,
   AuthenticatedAppAdminSiteMediaRoute: AuthenticatedAppAdminSiteMediaRoute,
   AuthenticatedAppChallengeIdRoute: AuthenticatedAppChallengeIdRoute,

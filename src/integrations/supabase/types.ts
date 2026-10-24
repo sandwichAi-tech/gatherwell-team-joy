@@ -815,6 +815,9 @@ export type Database = {
           id: string
           parent_id: string | null
           pinned: boolean
+          removed_at: string | null
+          removed_by: string | null
+          removed_reason: string | null
           team_id: string
           topic_id: string | null
         }
@@ -827,6 +830,9 @@ export type Database = {
           id?: string
           parent_id?: string | null
           pinned?: boolean
+          removed_at?: string | null
+          removed_by?: string | null
+          removed_reason?: string | null
           team_id: string
           topic_id?: string | null
         }
@@ -839,6 +845,9 @@ export type Database = {
           id?: string
           parent_id?: string | null
           pinned?: boolean
+          removed_at?: string | null
+          removed_by?: string | null
+          removed_reason?: string | null
           team_id?: string
           topic_id?: string | null
         }
@@ -901,6 +910,45 @@ export type Database = {
           pay_cents?: number
           status?: string
           target_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      community_suspensions: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          reason: string
+          revoked_at: string | null
+          revoked_by: string | null
+          scope_id: string | null
+          scope_type: string
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          reason: string
+          revoked_at?: string | null
+          revoked_by?: string | null
+          scope_id?: string | null
+          scope_type: string
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          reason?: string
+          revoked_at?: string | null
+          revoked_by?: string | null
+          scope_id?: string | null
+          scope_type?: string
+          team_id?: string
           user_id?: string
         }
         Relationships: []
@@ -982,6 +1030,68 @@ export type Database = {
           },
         ]
       }
+      contact_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          sender_id: string
+          thread_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          sender_id: string
+          thread_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          sender_id?: string
+          thread_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "contact_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_threads: {
+        Row: {
+          created_at: string
+          event_id: string | null
+          id: string
+          last_message_at: string
+          offer_id: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          last_message_at?: string
+          offer_id?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          last_message_at?: string
+          offer_id?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_briefs: {
         Row: {
           created_at: string
@@ -1048,6 +1158,7 @@ export type Database = {
           created_by: string
           id: string
           last_post_at: string
+          locked: boolean
           pinned: boolean
           team_id: string
           title: string
@@ -1057,6 +1168,7 @@ export type Database = {
           created_by: string
           id?: string
           last_post_at?: string
+          locked?: boolean
           pinned?: boolean
           team_id: string
           title: string
@@ -1066,6 +1178,7 @@ export type Database = {
           created_by?: string
           id?: string
           last_post_at?: string
+          locked?: boolean
           pinned?: boolean
           team_id?: string
           title?: string
@@ -1520,6 +1633,7 @@ export type Database = {
           created_at: string
           description_en: string | null
           description_es: string | null
+          discussion_enabled: boolean
           early_offer_id: string | null
           ends_at: string | null
           format: string
@@ -1590,6 +1704,7 @@ export type Database = {
           created_at?: string
           description_en?: string | null
           description_es?: string | null
+          discussion_enabled?: boolean
           early_offer_id?: string | null
           ends_at?: string | null
           format?: string
@@ -1660,6 +1775,7 @@ export type Database = {
           created_at?: string
           description_en?: string | null
           description_es?: string | null
+          discussion_enabled?: boolean
           early_offer_id?: string | null
           ends_at?: string | null
           format?: string
@@ -2107,6 +2223,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      host_updates: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          offering_id: string
+          offering_kind: string
+          published_at: string | null
+          scheduled_at: string | null
+          status: string
+          team_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          offering_id: string
+          offering_kind: string
+          published_at?: string | null
+          scheduled_at?: string | null
+          status?: string
+          team_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          offering_id?: string
+          offering_kind?: string
+          published_at?: string | null
+          scheduled_at?: string | null
+          status?: string
+          team_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       lesson_instructor_notes: {
         Row: {
@@ -2803,6 +2964,42 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          dedupe_key: string | null
+          id: string
+          kind: string
+          link: string | null
+          read_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          dedupe_key?: string | null
+          id?: string
+          kind: string
+          link?: string | null
+          read_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          dedupe_key?: string | null
+          id?: string
+          kind?: string
+          link?: string | null
+          read_at?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       offer_grants: {
         Row: {
           created_at: string
@@ -3031,6 +3228,7 @@ export type Database = {
           currency: string
           description_en: string | null
           description_es: string | null
+          discussion_enabled: boolean
           drip_days: number
           enroll_closes_at: string | null
           enroll_opens_at: string | null
@@ -3079,6 +3277,7 @@ export type Database = {
           currency?: string
           description_en?: string | null
           description_es?: string | null
+          discussion_enabled?: boolean
           drip_days?: number
           enroll_closes_at?: string | null
           enroll_opens_at?: string | null
@@ -3127,6 +3326,7 @@ export type Database = {
           currency?: string
           description_en?: string | null
           description_es?: string | null
+          discussion_enabled?: boolean
           drip_days?: number
           enroll_closes_at?: string | null
           enroll_opens_at?: string | null
@@ -5095,6 +5295,71 @@ export type Database = {
         }
         Relationships: []
       }
+      support_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          is_staff: boolean
+          sender_id: string
+          ticket_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          is_staff?: boolean
+          sender_id: string
+          ticket_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          is_staff?: boolean
+          sender_id?: string
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_messages_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_tickets: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       team_audit: {
         Row: {
           action: string
@@ -5628,6 +5893,32 @@ export type Database = {
           },
         ]
       }
+      update_reads: {
+        Row: {
+          read_at: string
+          update_id: string
+          user_id: string
+        }
+        Insert: {
+          read_at?: string
+          update_id: string
+          user_id: string
+        }
+        Update: {
+          read_at?: string
+          update_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "update_reads_update_id_fkey"
+            columns: ["update_id"]
+            isOneToOne: false
+            referencedRelation: "host_updates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_badges: {
         Row: {
           awarded_at: string
@@ -5678,6 +5969,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_blocks: {
+        Row: {
+          blocked_id: string
+          blocker_id: string
+          created_at: string
+        }
+        Insert: {
+          blocked_id: string
+          blocker_id: string
+          created_at?: string
+        }
+        Update: {
+          blocked_id?: string
+          blocker_id?: string
+          created_at?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
@@ -6073,6 +6382,7 @@ export type Database = {
       admin_user_detail: { Args: { _id: string }; Returns: Json }
       admin_users: { Args: { _q: string }; Returns: Json }
       ai_usage_status: { Args: never; Returns: Json }
+      archive_host_update: { Args: { _id: string }; Returns: undefined }
       assign_license_seat: {
         Args: { _on: boolean; _team: string; _user: string }
         Returns: undefined
@@ -6103,6 +6413,7 @@ export type Database = {
           holders: number
         }[]
       }
+      block_user: { Args: { _user: string }; Returns: undefined }
       build_member_plan: {
         Args: { _team: string; _user: string }
         Returns: undefined
@@ -6142,6 +6453,10 @@ export type Database = {
       can_edit_track: { Args: { _track: string }; Returns: boolean }
       can_join_conversation: { Args: { _event: string }; Returns: boolean }
       can_manage_event: { Args: { _event_id: string }; Returns: boolean }
+      can_manage_offering: {
+        Args: { _id: string; _kind: string }
+        Returns: boolean
+      }
       can_moderate_comment: { Args: { _c: string }; Returns: boolean }
       can_read_challenge: { Args: { _c: string }; Returns: boolean }
       can_read_comment: { Args: { _c: string }; Returns: boolean }
@@ -6149,6 +6464,7 @@ export type Database = {
       can_review_coach: { Args: { _host: string }; Returns: boolean }
       can_rsvp_event: { Args: { _event_id: string }; Returns: boolean }
       can_use_team_templates: { Args: { _team: string }; Returns: boolean }
+      can_view_contact_thread: { Args: { _thread: string }; Returns: boolean }
       can_view_event: { Args: { _event_id: string }; Returns: boolean }
       cancel_rsvp_by_code: { Args: { _code: string }; Returns: boolean }
       challenge_check_in: {
@@ -6222,6 +6538,8 @@ export type Database = {
         }[]
       }
       cleanup_auth_intents: { Args: never; Returns: number }
+      close_contact_thread: { Args: { _thread: string }; Returns: undefined }
+      close_support_ticket: { Args: { _ticket: string }; Returns: undefined }
       coach_checklist: { Args: never; Returns: Json }
       coach_trust: { Args: { _host: string }; Returns: Json }
       comment_feed: { Args: { _event: string; _topic: string }; Returns: Json }
@@ -6236,6 +6554,7 @@ export type Database = {
       compute_playbook: { Args: never; Returns: number }
       confirm_adult: { Args: { _attest: boolean }; Returns: undefined }
       consume_auth_intent: { Args: { _token: string }; Returns: string }
+      contact_thread_messages: { Args: { _thread: string }; Returns: Json }
       copy_starter_template: {
         Args: { _team: string; _template: string }
         Returns: string
@@ -6267,6 +6586,10 @@ export type Database = {
       }
       create_subteam: {
         Args: { _name: string; _parent: string }
+        Returns: string
+      }
+      create_support_ticket: {
+        Args: { _body: string; _category: string; _subject: string }
         Returns: string
       }
       create_team: {
@@ -6497,6 +6820,10 @@ export type Database = {
         Args: { _host: string; _start: string }
         Returns: Json
       }
+      in_offering_audience: {
+        Args: { _id: string; _kind: string }
+        Returns: boolean
+      }
       infer_gathering_category: {
         Args: { _category: string; _title: string }
         Returns: string
@@ -6551,16 +6878,30 @@ export type Database = {
         Returns: undefined
       }
       mark_badges_seen: { Args: { _ids: string[] }; Returns: undefined }
+      mark_notifications_read: { Args: { _id?: string }; Returns: undefined }
       mark_topic_read: { Args: { _id: string }; Returns: undefined }
-      moderate_comment: {
-        Args: { _hidden: boolean; _id: string; _pinned: boolean }
-        Returns: undefined
-      }
+      mark_update_read: { Args: { _id: string }; Returns: undefined }
+      moderate_comment:
+        | {
+            Args: {
+              _hidden?: boolean
+              _id: string
+              _locked?: boolean
+              _pinned?: boolean
+              _remove_reason?: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: { _hidden: boolean; _id: string; _pinned: boolean }
+            Returns: undefined
+          }
       moderate_shoutout: {
         Args: { _action: string; _id: string }
         Returns: undefined
       }
       moderation_queue: { Args: { _team: string }; Returns: Json }
+      moderation_reports: { Args: { _team: string }; Returns: Json }
       my_alert_matches: { Args: never; Returns: Json }
       my_broadcasts: {
         Args: never
@@ -6574,6 +6915,7 @@ export type Database = {
         }[]
       }
       my_calendar_feeds: { Args: never; Returns: Json }
+      my_contact_threads: { Args: never; Returns: Json }
       my_following: { Args: never; Returns: Json }
       my_invite_code: { Args: never; Returns: string }
       my_learning: { Args: never; Returns: Json }
@@ -6612,6 +6954,7 @@ export type Database = {
         }[]
       }
       my_tickets: { Args: never; Returns: Json }
+      my_updates: { Args: { _limit?: number; _offset?: number }; Returns: Json }
       my_value_meter: { Args: never; Returns: Json }
       my_welcome: { Args: never; Returns: Json }
       my_workspace_assignments: { Args: { _team: string }; Returns: Json }
@@ -6654,9 +6997,25 @@ export type Database = {
         Returns: undefined
       }
       notify_rsvp_request: { Args: { _rsvp: string }; Returns: undefined }
+      notify_users: {
+        Args: {
+          _body: string
+          _dedupe: string
+          _kind: string
+          _link: string
+          _title: string
+          _user_ids: string[]
+        }
+        Returns: number
+      }
       offer_founding_status: { Args: { _offer: string }; Returns: Json }
       offer_learner_progress: { Args: { _offer: string }; Returns: Json }
       offer_readiness: { Args: { _offer: string }; Returns: Json }
+      offering_audience: {
+        Args: { _id: string; _kind: string }
+        Returns: string[]
+      }
+      offering_updates: { Args: { _id: string; _kind: string }; Returns: Json }
       pair_buddy: {
         Args: { _buddy: string; _rsvp: string }
         Returns: undefined
@@ -6714,6 +7073,7 @@ export type Database = {
       }
       promote_waitlist: { Args: { _event: string }; Returns: undefined }
       public_upcoming: { Args: { _host: string; _team: string }; Returns: Json }
+      publish_host_update: { Args: { _id: string }; Returns: number }
       queue_broadcast: { Args: { _id: string }; Returns: number }
       queue_rsvp_notices: {
         Args: { _rsvp: string; _template: string }
@@ -6779,6 +7139,14 @@ export type Database = {
         Returns: undefined
       }
       replace_offer_item: { Args: { _item: string; _p: Json }; Returns: string }
+      reply_contact_thread: {
+        Args: { _body: string; _thread: string }
+        Returns: undefined
+      }
+      reply_support_ticket: {
+        Args: { _body: string; _ticket: string }
+        Returns: undefined
+      }
       report_content: {
         Args: { _id: string; _note: string; _reason: string; _type: string }
         Returns: boolean
@@ -6796,12 +7164,17 @@ export type Database = {
       reset_calendar_feeds: { Args: never; Returns: Json }
       reset_invite_link: { Args: { _event: string }; Returns: string }
       reset_join_code: { Args: { _team: string }; Returns: string }
+      resolve_report: {
+        Args: { _action: string; _id: string; _note?: string }
+        Returns: undefined
+      }
       resume_my_membership: { Args: { _offer: string }; Returns: undefined }
       retreat_checklist: { Args: { _code: string }; Returns: Json }
       revoke_certificate: {
         Args: { _cert: string; _reason: string }
         Returns: undefined
       }
+      revoke_community_suspension: { Args: { _id: string }; Returns: undefined }
       revoke_team_invite: { Args: { _id: string }; Returns: undefined }
       rsvp_belonging: {
         Args: { _event: string }
@@ -6930,6 +7303,17 @@ export type Database = {
         }
         Returns: undefined
       }
+      save_host_update: {
+        Args: {
+          _body: string
+          _id: string
+          _kind: string
+          _offering: string
+          _scheduled_at?: string
+          _title: string
+        }
+        Returns: string
+      }
       save_quiz_response: {
         Args: {
           _attempt: string
@@ -7016,6 +7400,10 @@ export type Database = {
         Args: { _code: string; _name: string }
         Returns: undefined
       }
+      start_contact_thread: {
+        Args: { _body: string; _event: string; _offer: string }
+        Returns: string
+      }
       start_hosting_window: { Args: never; Returns: string }
       start_quiz_attempt: { Args: { _quiz: string }; Returns: Json }
       storage_allows: { Args: { _bytes: number }; Returns: boolean }
@@ -7023,6 +7411,16 @@ export type Database = {
       submit_quiz: { Args: { _attempt: string }; Returns: Json }
       submit_verification: {
         Args: { _credentials: Json; _identity: string; _years: number }
+        Returns: string
+      }
+      suspend_community: {
+        Args: {
+          _reason: string
+          _scope_id: string
+          _scope_type: string
+          _team: string
+          _user: string
+        }
         Returns: string
       }
       team_activity: { Args: { _limit?: number; _team: string }; Returns: Json }
@@ -7093,6 +7491,7 @@ export type Database = {
         Args: { _confirm: string; _new_owner: string; _team: string }
         Returns: undefined
       }
+      unblock_user: { Args: { _user: string }; Returns: undefined }
       unlock_invite: {
         Args: { _event: string; _token: string }
         Returns: undefined
