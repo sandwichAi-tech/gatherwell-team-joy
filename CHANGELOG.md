@@ -1,5 +1,9 @@
 # ZoheeWell Change Log
 
+## v0.34.1 — Header reflow at high zoom (2026-10-24)
+- Fixed the shared signed-in header overflowing horizontally at 200% zoom (previously affected /tools, /events and every signed-in page): below 480px the header now lets the brand mark shrink and wraps the action controls (notifications, Discover, assistant, profile) onto additional rows. No control is hidden and every tap target stays 44–48px.
+- Verified /tools and /events at 390px and 1280px, normal and 200% zoom, EN/ES: zero horizontal overflow in all ten combinations; keyboard focus order and visible outlines confirmed at 200% zoom. Focused tests (32/32), typecheck and build OK.
+
 ## v0.34 — Tools launchpad (2026-10-24)
 - New signed-in /tools page lists every management tool the current person is authorized to use, directly on the page — no "see more tools" click-through. Purpose-based sections: Events (events, create, blueprints), Resources & learning (browse, create, manage, templates), Selling (offers, promo codes, earnings), Communication (communications hub, follow-ups), Team & plan (team space, settings, insights, member map, plan & billing, seats), Insights, Your presence (public profile, locations, get verified), Platform admin (admin console, site media) and Help (support).
 - Visibility mirrors the existing capability matrix (src/lib/tools-inventory.ts, pure and unit-tested): team leaders and owner/admin see everything; hosts see events/resources/selling/communication; content editors see resources/selling; analysts see insights only; check-in staff, moderators and plain members see no management tools and get a clear empty state instead. Admin console entries appear only for platform admins; feature flags (Resources, member map) and payments readiness (honest "Paid sales: setup needed" badges on selling tools) are respected.
