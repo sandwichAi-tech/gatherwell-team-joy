@@ -13,6 +13,8 @@ import { GwIcon } from '@/components/gw-icon';
 import { EmptyState, ListSkeleton, RetryState } from '@/components/launch-states';
 import { confirmAction } from '@/components/confirm-dialog';
 import { profileQuery } from '@/lib/account';
+import { CopyButton } from '@/components/copy-button';
+import { normalizeProfileSlug, validateProfileSlug, slugErrorKey } from '@/lib/host-slug';
 
 export type HostLink = { label: string; url: string; kind: 'website' | 'social' };
 
