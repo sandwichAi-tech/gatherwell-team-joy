@@ -53,4 +53,4 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Consent acceptances resolve version/hash in database triggers, and flag changes append server-owned config history; clients never choose snapshots or write audit history.
 - Identity: one auth user = one profile; return paths go only through src/lib/return-to.ts (mirrored by is_safe_return_path) and emailed links use single-use auth_intents; 18+ is attested via confirm_adult() and enforced by triggers/checkout functions; view_mode is display-only; guest rows are linked only by claim_guest_records() with merges kept for audit.
 
-- Keep public pricing outcome guidance in its own WhichPlan module, separate from plan cards; no capability comparison table, because shared features do not distinguish plans.
+- Keep pricing guidance in WhichPlan, separate from cards; omit capability tables because shared features do not distinguish plans.
