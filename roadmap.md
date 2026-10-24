@@ -201,3 +201,5 @@ Active work follows the approved Prompt 1–17 sequence in the ZoheeWell Beta Pr
 - [ ] Registration follow-ups: concurrency load check, waitlist promotion + guest claim browser journeys, guardian RSVP on a live minors event, screen-reader pass
 - [x] Quiz/progress/certificate milestone (v0.22): authoring, grading, progress, certificates, public verification; API + host-side browser verified
 - [ ] Learner quiz/certificate browser journey with a second account (API-verified only so far)
+- [x] Discovery milestone (v0.23): unified catalog, saved, location alerts (in-app), invite-a-host attribution
+- [ ] Alert email/SMS delivery once providers + consent are configured (currently in-app only, labelled)
