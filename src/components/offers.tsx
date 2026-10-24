@@ -33,6 +33,7 @@ import {
 import { cancelOfferMembership, offerDownloadLink, pauseOfferMembership, startOfferCheckout } from '@/lib/offers.functions';
 import { CommunityRequestsPanel, CommunitySeatCard } from '@/components/community-seats';
 import { BundlePanel, BundleReader, CurriculumPanel, OfferDetailsEditor, OfferHostActions, PublicOfferLink, ReadinessPanel } from '@/components/content-studio';
+import { QuizPanel, LearnerQuizList, CourseProgressPanel, CertificateSettings, LearnerProgressPanel } from '@/components/quiz';
 import { canAccessOfferQuery } from '@/lib/content';
 
 const KINDS: OfferKind[] = ['membership', 'course', 'download'];
