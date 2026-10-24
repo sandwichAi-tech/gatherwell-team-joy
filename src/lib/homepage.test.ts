@@ -37,7 +37,7 @@ describe('homepage CTAs', () => {
   it('Start hosting goes to host sign-in', () => expect(HOME_CTAS.startHosting).toEqual({ to: '/login', search: { intent: 'host' } }));
   it('Explore goes to discover', () => expect(HOME_CTAS.explore.to).toBe('/discover'));
   it('Create an event goes to host sign-in', () => expect(HOME_CTAS.createEvent).toEqual({ to: '/login', search: { intent: 'host' } }));
-  it('Notify me is not live (no alert storage yet)', () => expect(NOTIFY_ME_LIVE).toBe(false));
+  it('Notify me is live (location alerts persist via location_alerts)', () => expect(NOTIFY_ME_LIVE).toBe(true));
   it('next paths are allowlisted', () => expect(safeReturnPath('/discover')).toBe('/discover'));
   it('empty-state copy exists in both languages', () => { expect(en.home.explore.empty).toBe('Events are coming soon to your area'); expect(es.home.explore.empty).toBeTruthy(); });
 });
