@@ -54,3 +54,4 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Identity: one auth user = one profile; return paths go only through src/lib/return-to.ts (mirrored by is_safe_return_path) and emailed links use single-use auth_intents; 18+ is attested via confirm_adult() and enforced by triggers/checkout functions; view_mode is display-only; guest rows are linked only by claim_guest_records() with merges kept for audit.
 
 - Keep pricing guidance in WhichPlan, separate from cards; omit capability tables because shared features do not distinguish plans.
+- Resource templates live in resource_templates (starters = team_id null) and are copied only via use/save_resource_template RPCs into existing tracks/offers/recipes as drafts, so no parallel content system exists.
