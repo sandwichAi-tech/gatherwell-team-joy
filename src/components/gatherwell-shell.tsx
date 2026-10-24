@@ -14,6 +14,8 @@ import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
 import { useQuery } from '@tanstack/react-query';
 import { profileQuery, workspaceQuery, initialsOf, firstName } from '@/lib/account';
+import { roleAllows } from '@/lib/workspace';
+import type { WorkspaceRole } from '@/components/workspace-settings';
 import { useFeature } from '@/lib/feature-flags';
 import { ListSkeleton, QueryFeedback } from '@/components/launch-states';
 
