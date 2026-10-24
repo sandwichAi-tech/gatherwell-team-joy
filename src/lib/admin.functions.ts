@@ -349,16 +349,9 @@ export const setFlag = createServerFn({ method: 'POST' }).middleware([requireSup
 export const getAudit = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ q: z.string().max(100), area: z.enum(['all', 'team', 'user', 'moderation', 'library', 'broadcast', 'flag', 'mail']) }).parse(d))
   .handler(async ({ data, context }) => {
-    const db = await assertAdmin(context);
-    let q = db.from('admin_audit').select('*').order('created_at', { ascending: false }).limit(200);
-    if (data.area !== 'all') q = q.like('action', `${data.area === 'moderation' ? 'moderation' : data.area}.%`);
-    const term = data.q.trim().replace(/[%,()]/g, '');
-    if (term) q = q.or(`action.ilike.%${term}%,target_id.ilike.%${term}%,note.ilike.%${term}%`);
-    const { data: rows } = await q;
-    const ids = [...new Set((rows ?? []).map(r => r.actor_id).filter(Boolean))] as string[];
-    const { data: people } = ids.length ? await db.from('profiles').select('id, full_name').in('id', ids) : { data: [] };
-    const names = Object.fromEntries((people ?? []).map(p => [p.id, p.full_name]));
-    return (rows ?? []).map(r => ({ ...r, actor_name: r.actor_id ? names[r.actor_id] ?? null : null }));
+    const { data: rows, error } = await context.supabase.rpc('admin_safety_list', { _kind: 'audit', _q: data.q || (data.area === 'all' ? '' : data.area), _state: 'all', _page: 0 });
+    if (error) throw new Error('forbidden');
+    return ((rows ?? []) as unknown as SafetyRow[]).slice(0, 25).map(r => ({ id: r.id, action: r.title || '', actor_name: r.actor, created_at: r.created_at, target_type: r.kind, target_id: r.target_id, note: r.reason, before: null, after: null }));
   });
 
 /** Message monitor: latest text messages (invites, replies, confirmations) from the outbox. */
