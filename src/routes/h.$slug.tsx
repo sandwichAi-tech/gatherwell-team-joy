@@ -1,4 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
+import { supabase } from '@/integrations/supabase/client';
+import { normalizeProfileSlug } from '@/lib/host-slug';
 import { pageQuery } from '@/components/follow';
 import { prefetchPublic } from '@/lib/guest';
 import i18n from '@/lib/i18n';
