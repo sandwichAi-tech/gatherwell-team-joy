@@ -507,10 +507,10 @@
 .checkin-button{min-height:56px;min-width:112px;font-size:16px;border-radius:14px}
 .checkin-list.is-done li{background:var(--muted)}.checkin-ok{width:28px;height:28px;color:var(--success);justify-self:center}
 .scanner{position:fixed;inset:0;z-index:70;background:#000;display:grid;place-items:center}
-.scanner-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.scanner-frame{position:relative;width:min(70vw,300px);aspect-ratio:1;border:3px solid rgba(255,255,255,.9);border-radius:24px;box-shadow:0 0 0 100vmax rgba(0,0,0,.45)}
+.scanner-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;z-index:0}
+.scanner-frame{position:relative;z-index:1;width:min(70vw,300px);aspect-ratio:1;border:3px solid rgba(255,255,255,.9);border-radius:24px;box-shadow:0 0 0 100vmax rgba(0,0,0,.45)}
 .scanner-close{position:absolute;top:calc(16px + env(safe-area-inset-top));right:16px;width:48px;height:48px;border-radius:50%}
-.scanner-hint{position:absolute;bottom:calc(48px + env(safe-area-inset-bottom));left:24px;right:24px;text-align:center;color:#fff;font-size:15px}
+.scanner-hint{position:relative;z-index:1;text-align:center;color:#fff;font-size:15px}
 .scanner-result{position:absolute;left:16px;right:16px;bottom:calc(24px + env(safe-area-inset-bottom));display:grid;justify-items:center;gap:12px;padding:24px;border-radius:20px;background:var(--card);color:var(--foreground);text-align:center;font-size:18px}
 .scanner-result svg{width:44px;height:44px}.scanner-result button{min-height:52px;width:100%;font-size:16px}
 .scanner-result.is-ok svg{color:var(--success)}.scanner-result.is-warn svg{color:var(--lavender)}.scanner-result.is-error svg{color:var(--destructive)}
