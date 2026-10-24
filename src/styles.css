@@ -2166,6 +2166,28 @@ a.gw-cat-chip:hover{background:#fff}
 .gw-v4-box-title{margin:0 0 6px;font-size:18px}.gw-v4-box p{margin:0 0 6px}
 @media (min-width:768px){.gw-v4-plans{grid-template-columns:repeat(2,1fr)}.gw-v4-terms{grid-template-columns:repeat(3,1fr)}}
 @media (min-width:1100px){.gw-v4-plans{grid-template-columns:repeat(5,1fr)}}
+/* Approved pricing: billing toggle, per-plan fee/seat lines, comparison chart */
+.gw-billing-toggle{display:inline-flex;gap:4px;padding:4px;margin:0 0 16px;border:1px solid var(--border);border-radius:999px;background:var(--card)}
+.gw-billing-option{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:8px 18px;border:0;border-radius:999px;background:transparent;color:var(--foreground);font:inherit;font-weight:600;cursor:pointer}
+.gw-billing-option[aria-pressed="true"]{background:var(--primary);color:var(--primary-foreground)}
+.gw-billing-option:focus-visible{outline:3px solid var(--ring);outline-offset:2px}
+.gw-billing-save{font-size:12px;font-weight:500;opacity:.85}
+.gw-price-from{display:block;font-size:13px;font-weight:500;color:var(--muted-foreground)}
+.gw-v4-plan-fee,.gw-v4-plan-seats{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--foreground)}
+.gw-v4-plan-seats{color:var(--muted-foreground);font-weight:500}
+.gw-seat-explainer{margin-top:16px}
+.gw-compare-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--border);border-radius:16px;background:var(--card)}
+.gw-compare-scroll:focus-visible{outline:3px solid var(--ring);outline-offset:2px}
+.gw-compare-table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
+.gw-compare-table th,.gw-compare-table td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+.gw-compare-table thead th{background:var(--secondary);font-size:15px}
+.gw-compare-table tbody tr:last-child th,.gw-compare-table tbody tr:last-child td{border-bottom:0}
+.gw-compare-rowhead{position:sticky;left:0;background:var(--card);font-weight:600;min-width:160px;box-shadow:1px 0 0 var(--border)}
+.gw-compare-table thead .gw-compare-rowhead{background:var(--secondary);z-index:1}
+.gw-compare-yes{display:inline-flex;align-items:center;gap:6px;font-weight:600}
+.gw-which-grid{display:grid;gap:12px;list-style:none;padding:0;margin:0}
+@media (min-width:768px){.gw-which-grid{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1100px){.gw-which-grid{grid-template-columns:repeat(3,1fr)}}
 
 /* Event builder + public page additions */
 .guest-summary{font-size:17px;line-height:1.5;color:var(--body);margin:4px 0 0}
