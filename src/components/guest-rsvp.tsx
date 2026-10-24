@@ -28,6 +28,7 @@ import { WaiverAccept, useEventWaiver, waiverReady, waiverRpc } from '@/componen
 import { directionsUrl, downloadIcs, formatWhen, googleCalendarUrl, guestLink, hasPlace, inviteToken, rsvpErrorKey, type PublicEvent } from '@/lib/guest';
 import { AGE_BANDS, checkMinorRegistration } from '@/lib/identity';
 import { minorBandAllowed } from '@/lib/event-builder';
+import { defaultTier, needsTier, registrationReady, tierSpotsLeft, tierState } from '@/lib/registration';
 
 type CalEvent = Pick<PublicEvent, 'id' | 'title' | 'starts_at' | 'ends_at' | 'location_name' | 'address'>;
 
@@ -81,6 +82,11 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
   const [minorOn, setMinorOn] = useState(false);
   const [minor, setMinor] = useState({ first: '', band: '' as string, gName: '', gRel: 'parent', gEmail: '', gPhone: '', consent: false });
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [termsOk, setTermsOk] = useState(false);
+  const [updates, setUpdates] = useState(false);
+  const [tierId, setTierId] = useState<string | null>(null);
+  const tiers = event.ticket_tiers ?? [];
+  useEffect(() => { if (intent && needsTier(tiers) && !tierId) setTierId(defaultTier(tiers)); }, [intent, tiers, tierId]);
   const gate = usePaymentGate(); const checkout = useServerFn(startTicketCheckout);
   const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
   useEffect(() => { void supabase.rpc('event_price', { _id: event.id }).then(({ data }) => setPrice((data as typeof price) ?? null)); }, [event.id]);
