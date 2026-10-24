@@ -17,6 +17,7 @@ import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { supabase } from '@/integrations/supabase/client';
 import { COVER_STYLES } from '@/lib/gatherings';
 import { compressImage, lessonTitle, lessonsOf, listOf, RECIPE_TAGS, recipesQuery, trackTitle, uploadLearnFile, type Lesson, type LessonType, type Recipe, type Track } from '@/lib/learn';
+import { isTrackFlow, lessonEditorConfig, lessonPresetFor, parseCreateType, type TrackFlowType } from '@/lib/create-resource';
 import { LearnCover, useLearn } from '@/components/learn';
 
 type Tab = 'tracks' | 'recipes' | 'progress';
@@ -86,13 +87,13 @@ function TrackEditor({ track, teamId, onClose, preset }: { track: Partial<Track>
 
 const toLocalInput = (iso?: string | null) => { if (!iso) return ''; const d = new Date(iso); return new Date(d.getTime() - d.getTimezoneOffset() * 60_000).toISOString().slice(0, 16); };
 
-function LessonEditor({ lesson, teamId, onClose }: { lesson: (Partial<Lesson> & { track_id: string }) | null; teamId: string; onClose: () => void }) {
+function LessonEditor({ lesson, teamId, onClose, preset }: { lesson: (Partial<Lesson> & { track_id: string }) | null; teamId: string; onClose: () => void; preset?: LessonType | null }) {
   const { t } = useTranslation(); const qc = useQueryClient(); const { userId } = useLearn();
-  const empty = { title_en: '', title_es: '', type: 'video' as LessonType, url: '', storage_path: null as string | null, duration: '', live: '', meeting: '', replay: '', notes_en: '', notes_es: '' };
+  const empty = { title_en: '', title_es: '', type: (preset ?? 'video') as LessonType, url: '', storage_path: null as string | null, duration: '', live: '', meeting: '', replay: '', notes_en: '', notes_es: '' };
   const [f, setF] = useState(empty); const [busy, setBusy] = useState(false); const [progress, setProgress] = useState<number | null>(null); const [fileName, setFileName] = useState('');
   useEffect(() => {
     if (!lesson) return;
-    setF({ title_en: lesson.title_en ?? '', title_es: lesson.title_es ?? '', type: (lesson.type as LessonType) ?? 'video', url: lesson.url ?? '', storage_path: lesson.storage_path ?? null, duration: lesson.duration_minutes ? String(lesson.duration_minutes) : '', live: toLocalInput(lesson.live_starts_at), meeting: '', replay: lesson.replay_url ?? '', notes_en: lesson.notes_en ?? '', notes_es: lesson.notes_es ?? '' });
+    setF({ title_en: lesson.title_en ?? '', title_es: lesson.title_es ?? '', type: (lesson.type as LessonType) ?? preset ?? 'video', url: lesson.url ?? '', storage_path: lesson.storage_path ?? null, duration: lesson.duration_minutes ? String(lesson.duration_minutes) : '', live: toLocalInput(lesson.live_starts_at), meeting: '', replay: lesson.replay_url ?? '', notes_en: lesson.notes_en ?? '', notes_es: lesson.notes_es ?? '' });
     setProgress(null); setFileName('');
     if (lesson.id && lesson.type === 'live') void supabase.from('lesson_live_links').select('url').eq('lesson_id', lesson.id).maybeSingle().then(({ data }) => data && setF(x => ({ ...x, meeting: data.url })));
   }, [lesson]);
