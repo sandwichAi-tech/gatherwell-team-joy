@@ -311,3 +311,10 @@
 - Server-authoritative RPCs (save/duplicate/archive template, save/status automation, save/status journey, activity) with team_capability('messages') checks, channel/template matching, step validation, and variable rendering; RLS + SELECT-only grants, writes via RPC only.
 - Outbox kind check widened to include 'automation' (migration 0096); custom_message rendering added to the email/SMS renderers.
 - Verified: 383 unit tests, 19 live RPC checks (incl. real RSVP → rendered outbox row), 14 browser checks EN/ES 390/1280; QA fixtures removed. Journeys save/validate/activate but step execution is not wired yet (documented limitation).
+
+## v0.36 — Journey execution (2026-10-24)
+- Journeys now execute: active journeys start a durable run (message_journey_runs) when a supported trigger fires (registration, 24h-before reminder, cancellation). Steps are snapshotted at run start, so editing a journey never changes an in-flight run.
+- Steps advance via advance_journey_runs(), called from the existing outbox processor — same pipeline, same provider gates, no parallel delivery system. Wait steps schedule the next run; send steps render template variables and enqueue into notification_outbox (or in-app notifications); conditions (registration confirmed, event not full, not checked in) continue or end the run truthfully.
+- Idempotent: one live run per journey per registration (partial unique index); pause freezes running runs, resume restores them; recipients are derived server-side from the registration — no arbitrary recipients, no duplicate sends.
+- Journeys tab gains a Runs activity view (status, step position, outcome notes) that never shows recipient details.
+- Verified live: trigger→run, rendered send, wait scheduling, condition pass and skip, idempotent re-trigger, pause/resume, anon/user denials, single outbox row; browser EN/ES runs view 5/5. Fixtures removed.
