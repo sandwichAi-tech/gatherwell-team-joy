@@ -13,6 +13,7 @@ import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { Stepper } from '@/components/guest-rsvp';
 import { useRsvpChanges } from '@/components/event-live';
 import { supabase } from '@/integrations/supabase/client';
+import { downloadCsv } from '@/lib/csv';
 import { initialsOf } from '@/lib/account';
 import { gatherwellHead } from '@/lib/gatherwell-head';
 import { BelongingPrompt, BelongingTags, BuddySheet, SmallGroupsSheet, useBelonging } from '@/components/belonging';
@@ -94,12 +95,19 @@ function GuestListPage() {
     <Link to="/event/$id" params={{ id }} className="auth-link back-link"><ArrowLeft />{t('guestList.back')}</Link>
     <section className="panel">
       <div className="section-heading"><div><h1 className="manage-title">{t('guestList.title')}</h1>{event && <p>{event.title}</p>}</div></div>
+      {totals && <div className="guest-stats" role="status" aria-label={t('export.totals')}>
+        <div className="guest-stat"><strong className="tabular">{totals.registered}</strong><span>{t('export.registered')}</span></div>
+        <div className="guest-stat"><strong className="tabular">{totals.checked_in}</strong><span>{t('export.checkedIn')}</span></div>
+        <div className="guest-stat"><strong className="tabular">{totals.waitlisted}</strong><span>{t('guestList.tabs.waitlist')}</span></div>
+        <div className="guest-stat"><strong className="tabular">{totals.cancelled}</strong><span>{t('guestList.tabs.cancelled')}</span></div>
+        {totals.remaining != null && <div className="guest-stat"><strong className="tabular">{totals.remaining}</strong><span>{t('export.remaining')}</span></div>}
+      </div>}
       <div className="guest-tabs" role="tablist">{TABS.map(k => <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'is-active' : ''} onClick={() => setTab(k)}>{t(`guestList.tabs.${k}`)}<span className="tabular-nums">{counts[k]}</span></button>)}</div>
       <div className="guest-toolbar">
         <div className="guest-search"><Search /><Input aria-label={t('guestList.search')} placeholder={t('guestList.search')} value={q} onChange={e => setQ(e.target.value)} className="field-input" /></div>
         <Button variant="secondary" onClick={() => setAdding(true)} disabled={event?.status !== 'published'}><UserPlus />{t('guestList.add')}</Button>
         <Button variant="secondary" onClick={() => setGroupsOpen(true)}><Layers />{t('belong.groups')}</Button>
-        <Button variant="secondary" onClick={exportCsv} disabled={!rows.length}><Download />{t('guestList.export')}</Button>
+        <Button variant="secondary" onClick={() => void exportCsv()} disabled={exporting}><Download />{t('guestList.export')}</Button>
       </div>
       {error ? <p className="guest-empty">{t('guestList.noAccess')}</p> : isLoading ? <p className="guest-empty">{t('publicEvent.loading')}</p> : list.length === 0 ? <p className="guest-empty">{t('guestList.empty')}</p> :
         <ul className="guest-list">{[...list].sort((a, b) => (a.group_name ?? '').localeCompare(b.group_name ?? '') || (a.group_id ?? '').localeCompare(b.group_id ?? '')).map((r, i, arr) => <Fragment key={r.id}>{r.group_id && arr[i - 1]?.group_id !== r.group_id && <li className="guest-group-head"><UsersRound /><strong>{r.group_name}</strong><span className="muted">{t('teamRsvp.people', { count: arr.filter(x => x.group_id === r.group_id).length })}</span></li>}<li className={`guest-row ${r.group_id ? 'in-group' : ''}`}>
