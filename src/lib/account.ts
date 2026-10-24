@@ -42,20 +42,21 @@ export const profileQuery = (userId: string) => queryOptions({
   },
 });
 
-export type TeamMembership = { teamId: string; name: string; plan: string; joinCode: string; role: string; ownerId: string; customBadge: string | null; inherited?: boolean };
+export type TeamMembership = { teamId: string; name: string; plan: string; joinCode: string; role: string; workspaceRole: string; ownerId: string; customBadge: string | null; inherited?: boolean };
 
 export const teamsQuery = (userId: string) => queryOptions({
   queryKey: ['teams', userId],
   queryFn: async (): Promise<TeamMembership[]> => {
     const { data, error } = await supabase
       .from('team_members')
-      .select('role, custom_badge, joined_at, teams(id, name, plan, join_code, owner_id)')
+      .select('role, workspace_role, custom_badge, joined_at, teams(id, name, plan, join_code, owner_id)')
       .eq('user_id', userId)
+      .is('suspended_at', null)
       .order('joined_at', { ascending: true });
     if (error) throw error;
     return (data ?? []).filter(row => row.teams).map(row => {
       const team = row.teams as { id: string; name: string; plan: string; join_code: string; owner_id: string };
-      return { teamId: team.id, name: team.name, plan: team.plan, joinCode: team.join_code, role: row.role, ownerId: team.owner_id, customBadge: row.custom_badge };
+      return { teamId: team.id, name: team.name, plan: team.plan, joinCode: team.join_code, role: row.role, workspaceRole: row.workspace_role ?? 'member', ownerId: team.owner_id, customBadge: row.custom_badge };
     });
   },
 });
