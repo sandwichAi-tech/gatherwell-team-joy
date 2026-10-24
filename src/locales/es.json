@@ -1466,11 +1466,17 @@
       "ok": "{{name}} quedó registrado",
       "already": "{{name}} ya estaba registrado",
       "not_found": "No está en la lista de esta reunión",
-      "error": "No se pudo leer el código. Inténtalo de nuevo."
+      "error": "No se pudo leer el código. Inténtalo de nuevo.",
+      "cancelled": "Este registro fue cancelado",
+      "waitlist": "Esta persona está en la lista de espera"
     },
     "scanNext": "Escanear otro",
     "walkInAdded": "{{name}} agregado y registrado",
-    "addAndCheckIn": "Agregar y registrar"
+    "addAndCheckIn": "Agregar y registrar",
+    "undoTitle": "¿Deshacer registro?",
+    "undoText": "Esto elimina el registro de entrada de {{name}}. Queda anotado en el registro de actividad del equipo.",
+    "undoKeep": "Mantener registro",
+    "undoConfirm": "Deshacer registro"
   },
   "learnHub": {
     "startHere": "Empieza aquí",
@@ -4837,7 +4843,8 @@
     "waiverLine": "Exención firmada (versión {{version}})",
     "termsLine": "Términos aceptados (v{{version}})",
     "hostCancelled": "El anfitrión canceló este registro",
-    "tierLine": "Boleto: {{name}}"
+    "tierLine": "Boleto: {{name}}",
+    "viewTicket": "Ver boleto"
   },
   "quiz": {
     "panel": "Evaluaciones",
@@ -5123,5 +5130,68 @@
     "title": "Siguiendo",
     "emptyTitle": "Aún no sigues a nadie",
     "empty": "Sigue a anfitriones y equipos para enterarte de lo que publican."
+  },
+  "ticket": {
+    "backToTickets": "Volver a mis boletos",
+    "notFound": "Boleto no encontrado",
+    "notFoundText": "Este enlace no es válido o el registro se eliminó. Revisa Mis boletos para ver tus registros actuales.",
+    "attendee": "Asistente",
+    "partySize": "Tamaño del grupo",
+    "tier": "Tipo de boleto",
+    "waitlistPos": "Posición en lista de espera",
+    "checkedInAt": "Registrado",
+    "codeLabel": "Código de admisión",
+    "showAtDoor": "Muestra este código en la entrada. Las capturas de pantalla también funcionan.",
+    "arrival": "Instrucciones de llegada",
+    "accessibility": "Accesibilidad y apoyo",
+    "cancelPolicy": "Política de cancelación",
+    "print": "Imprimir boleto",
+    "status": {
+      "going": "Confirmado",
+      "maybe": "Tal vez",
+      "waitlist": "En lista de espera",
+      "cancelled": "Cancelado",
+      "requested": "Solicitado",
+      "declined": "Rechazado",
+      "eventCancelled": "Evento cancelado",
+      "waitlisted": "En lista de espera",
+      "expired": "Evento pasado"
+    },
+    "stateText": {
+      "eventCancelled": "El anfitrión canceló este evento. Si pagaste, el anfitrión gestiona los reembolsos.",
+      "cancelled": "Este registro fue cancelado y el código ya no admite entrada.",
+      "waitlisted": "Estás en la lista de espera (posición {{position}}). Este código solo será válido si se libera un lugar.",
+      "expired": "Este evento ya tuvo lugar. ¡Gracias por ser parte!"
+    }
+  },
+  "wallet": {
+    "title": "Pases de billetera",
+    "apple": "Añadir a Apple Wallet",
+    "google": "Añadir a Google Wallet",
+    "setupRequired": "Configuración pendiente: los pases de billetera necesitan certificados de proveedor que aún no están conectados. Tu código QR de arriba funciona para entrar hoy."
+  },
+  "calendar": {
+    "add": "Añadir al calendario",
+    "download": "Descargar archivo de calendario",
+    "downloadHint": "Funciona con Apple Calendar y la mayoría de apps de calendario",
+    "google": "Google Calendar",
+    "outlook": "Outlook",
+    "linkHint": "Se abre en una pestaña nueva, sin conectar ninguna cuenta"
+  },
+  "export": {
+    "name": "Nombre",
+    "status": "Estado",
+    "partySize": "Tamaño del grupo",
+    "walkIn": "Sin cita",
+    "tier": "Tipo de boleto",
+    "registeredAt": "Registrado",
+    "checkedInAt": "Registrado en entrada",
+    "yes": "Sí",
+    "no": "No",
+    "done": "Lista de asistencia descargada",
+    "totals": "Totales de asistencia",
+    "registered": "Registrados",
+    "checkedIn": "En entrada",
+    "remaining": "Lugares libres"
   }
 }

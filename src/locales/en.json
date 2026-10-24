@@ -1466,11 +1466,17 @@
       "ok": "{{name}} is checked in",
       "already": "{{name}} is already checked in",
       "not_found": "Not on the list for this event",
-      "error": "Couldn't read that code. Try again."
+      "error": "Couldn't read that code. Try again.",
+      "cancelled": "This registration was cancelled",
+      "waitlist": "This person is on the waitlist"
     },
     "scanNext": "Scan next",
     "walkInAdded": "{{name}} added and checked in",
-    "addAndCheckIn": "Add and check in"
+    "addAndCheckIn": "Add and check in",
+    "undoTitle": "Undo check-in?",
+    "undoText": "This removes the check-in for {{name}}. It is recorded in the team activity log.",
+    "undoKeep": "Keep check-in",
+    "undoConfirm": "Undo check-in"
   },
   "learnHub": {
     "startHere": "Start here",
@@ -4837,7 +4843,8 @@
     "waiverLine": "Waiver signed (version {{version}})",
     "termsLine": "Terms accepted (v{{version}})",
     "hostCancelled": "The host cancelled this registration",
-    "tierLine": "Ticket: {{name}}"
+    "tierLine": "Ticket: {{name}}",
+    "viewTicket": "View ticket"
   },
   "quiz": {
     "panel": "Quizzes",
@@ -5123,5 +5130,68 @@
     "title": "Following",
     "emptyTitle": "Not following anyone yet",
     "empty": "Follow hosts and teams to keep up with what they publish."
+  },
+  "ticket": {
+    "backToTickets": "Back to my tickets",
+    "notFound": "Ticket not found",
+    "notFoundText": "This link is invalid or the registration was removed. Check My tickets for your current registrations.",
+    "attendee": "Attendee",
+    "partySize": "Party size",
+    "tier": "Ticket type",
+    "waitlistPos": "Waitlist position",
+    "checkedInAt": "Checked in",
+    "codeLabel": "Admission code",
+    "showAtDoor": "Show this code at the door. Screenshots work too.",
+    "arrival": "Arrival instructions",
+    "accessibility": "Accessibility & support",
+    "cancelPolicy": "Cancellation policy",
+    "print": "Print ticket",
+    "status": {
+      "going": "Confirmed",
+      "maybe": "Maybe",
+      "waitlist": "Waitlisted",
+      "cancelled": "Cancelled",
+      "requested": "Requested",
+      "declined": "Declined",
+      "eventCancelled": "Event cancelled",
+      "waitlisted": "Waitlisted",
+      "expired": "Past event"
+    },
+    "stateText": {
+      "eventCancelled": "The host cancelled this event. If you paid, refunds are handled by the host.",
+      "cancelled": "This registration was cancelled and the code no longer admits entry.",
+      "waitlisted": "You are on the waitlist (position {{position}}). This code becomes valid only if a spot opens up.",
+      "expired": "This event has already taken place. Thanks for being part of it!"
+    }
+  },
+  "wallet": {
+    "title": "Wallet passes",
+    "apple": "Add to Apple Wallet",
+    "google": "Add to Google Wallet",
+    "setupRequired": "Setup required — wallet passes need provider certificates that are not connected yet. Your QR code above works for entry today."
+  },
+  "calendar": {
+    "add": "Add to calendar",
+    "download": "Download calendar file",
+    "downloadHint": "Works with Apple Calendar and most calendar apps",
+    "google": "Google Calendar",
+    "outlook": "Outlook",
+    "linkHint": "Opens in a new tab — no account connection needed"
+  },
+  "export": {
+    "name": "Name",
+    "status": "Status",
+    "partySize": "Party size",
+    "walkIn": "Walk-in",
+    "tier": "Ticket type",
+    "registeredAt": "Registered",
+    "checkedInAt": "Checked in",
+    "yes": "Yes",
+    "no": "No",
+    "done": "Attendance list downloaded",
+    "totals": "Attendance totals",
+    "registered": "Registered",
+    "checkedIn": "Checked in",
+    "remaining": "Spots left"
   }
 }
