@@ -505,6 +505,13 @@
       "when": 1792817915418,
       "tag": "0071_fix_discover_catalog_profiles_join",
       "breakpoints": true
+    },
+    {
+      "idx": 72,
+      "version": "7",
+      "when": 1792818504355,
+      "tag": "0072_host_profile_fields",
+      "breakpoints": true
     }
   ]
 }
