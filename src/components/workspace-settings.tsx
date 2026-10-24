@@ -219,6 +219,43 @@ export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string
       </ResponsiveSheet>
     </>}
 
+    {tab === 'assignments' && <>
+      <p className="auth-subtitle">{t('workspace.assignHint')}</p>
+      <Button onClick={() => { setAssignee(''); setScopeId(''); setAssignOpen(true); }}><GwIcon name="UserPlus" />{t('workspace.newAssignment')}</Button>
+      {assignments.isLoading && <ListSkeleton rows={2} />}
+      {assignments.isError && <RetryState retry={() => void assignments.refetch()} />}
+      {assignments.data?.length === 0 && <EmptyState compact icon="UsersRound" text={t('workspace.noAssignments')} />}
+      <ul className="ws-invite-list">{assignments.data?.map(a => <li key={a.id} className="ws-invite">
+        <span className="ws-member-main"><strong>{a.name ?? t('workspace.unnamed')}</strong>
+          <small>{t(`workspace.scope.${a.scope_type}`)} · {a.scope_label ?? t('workspace.scopeGone')} · {a.active ? t('workspace.assignActive') : t('workspace.assignInactive')}</small></span>
+        {a.active
+          ? <Button variant="ghost" size="icon" aria-label={t('workspace.revoke')} onClick={() => setAssignmentActive(a, false)}><GwIcon name="X" /></Button>
+          : <Button variant="ghost" size="icon" aria-label={t('workspace.reactivate')} onClick={() => setAssignmentActive(a, true)}><GwIcon name="Play" /></Button>}
+      </li>)}</ul>
+      <ResponsiveSheet open={assignOpen} onOpenChange={setAssignOpen} icon="UserPlus" title={t('workspace.newAssignment')} description={t('workspace.assignSheetHint')}
+        footer={<Button className="w-full" type="submit" form="ws-assign-form" disabled={busy || !assignee || !scopeId}>{t('workspace.assignSave')}</Button>}>
+        <form id="ws-assign-form" onSubmit={e => { e.preventDefault(); if (!busy) void createAssignment(); }}>
+          <div className="field"><Label htmlFor="ws-assign-member">{t('workspace.assignMember')}</Label>
+            <select id="ws-assign-member" className="field-input" value={assignee} onChange={e => setAssignee(e.target.value)} required>
+              <option value="" disabled>{t('workspace.assignPickMember')}</option>
+              {assignableMembers.map(m => <option key={m.user_id} value={m.user_id}>{m.full_name ?? t('workspace.unnamed')} · {t(`workspace.role.${m.workspace_role}`)}</option>)}
+            </select></div>
+          <div className="field"><Label htmlFor="ws-assign-scope">{t('workspace.assignScopeType')}</Label>
+            <select id="ws-assign-scope" className="field-input" value={scopeType} onChange={e => { setScopeType(e.target.value as typeof scopeType); setScopeId(''); }}>
+              {(['event', 'content', 'moderation'] as const).map(s => <option key={s} value={s}>{t(`workspace.scope.${s}`)}</option>)}
+            </select></div>
+          <div className="field"><Label htmlFor="ws-assign-target">{t('workspace.assignTarget')}</Label>
+            {scopes.isLoading ? <ListSkeleton rows={1} /> : scopeOptions.length === 0
+              ? <p className="auth-subtitle">{t('workspace.noScopes')}</p>
+              : <select id="ws-assign-target" className="field-input" value={scopeId} onChange={e => setScopeId(e.target.value)} required>
+                <option value="" disabled>{t('workspace.assignPickTarget')}</option>
+                {scopeOptions.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
+              </select>}
+          </div>
+        </form>
+      </ResponsiveSheet>
+    </>}
+
     {tab === 'seats' && <>
       {seats.isLoading && <ListSkeleton rows={2} />}
       {seats.isError && <RetryState retry={() => void seats.refetch()} />}
