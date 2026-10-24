@@ -1,5 +1,10 @@
 # ZoheeWell Change Log
 
+## v0.30.3 — Pricing header collision fix (2026-10-24)
+- During mobile scroll QA on /pricing, the monthly/annual billing selector bled through the sticky site header and appeared to overlap the wordmark. Root cause was the scrolled header's translucent background (86% opacity), not stickiness. The scrolled header is now fully opaque (brand card token), so no page content crowds it; the billing selector itself stays non-sticky at every size (explicitly static, with a guard comment against future sticky use without a below-header offset).
+- All plans, prices, annual discount, CTAs, terms, FAQs and toggle behavior are unchanged; chart removal preserved. No providers, publishing or credentials.
+- Verification: full suite 320/320 (41 files); harness production build OK. Browser checks at 390px and 1280px in EN and ES at top and scrolled through the plan cards: opaque header with no bleed-through, annual/monthly toggle round trip ($49/mo ↔ $490/yr, ES $490/año), no horizontal overflow, no console errors.
+
 ## v0.30.2 — Pricing-page simplification (2026-10-24)
 - Removed the entire Compare plans section and chart-only code, styles, EN/ES resources and tests, including unused legacy desktop/table and mobile/card variants. Outcome guidance now lives in its own module and follows the builder-seat explanation directly without a reserved chart gap.
 - Preserved all five plan cards, the unchanged monthly/annual toggle and prices, fees/seats, Setup required states, Organization sign-in/support intent, builder-seat explanation, guidance, fee/annual/founding terms, FAQs and final CTA. Homepage, pricing rules, authorization, providers and data are unchanged.

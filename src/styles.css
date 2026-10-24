@@ -688,7 +688,9 @@ ul.order-list li{grid-template-columns:minmax(0,1fr) auto}
 
 /* Nav */
 .gw-nav{position:sticky;top:0;z-index:50;background:transparent;border-bottom:1px solid transparent;transition:background-color .2s ease-out,border-color .2s ease-out}
-.gw-nav.is-solid{background:color-mix(in srgb,var(--card) 86%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom-color:var(--border)}
+/* Scrolled header is fully opaque so page content (plan cards, billing toggle)
+   never bleeds through or crowds it while scrolling. */
+.gw-nav.is-solid{background:var(--card);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom-color:var(--border)}
 .gw-nav-inner{max-width:1200px;margin:0 auto;padding:0 20px;height:68px;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .gw-landing-logo{font-size:19px}.gw-landing-logo .brand-mark{width:34px;height:34px;font-size:28px}
 .gw-nav-links{display:none;align-items:center;gap:8px}
@@ -2152,7 +2154,10 @@ a.gw-cat-chip:hover{background:#fff}
 @media (min-width:768px){.gw-v4-plans{grid-template-columns:repeat(2,1fr)}.gw-v4-terms{grid-template-columns:repeat(3,1fr)}}
 @media (min-width:1100px){.gw-v4-plans{grid-template-columns:repeat(5,1fr)}}
 /* Approved pricing: billing toggle, per-plan fee/seat lines and outcome guidance */
-.gw-billing-toggle{display:inline-flex;gap:4px;padding:4px;margin:0 0 16px;border:1px solid var(--border);border-radius:999px;background:var(--card)}
+/* Billing selector stays non-sticky on mobile/tablet (and everywhere — all plans
+   are visible on desktop, so sticky adds nothing). Never make it sticky without
+   a top offset below the 68px site header. */
+.gw-billing-toggle{position:static;display:inline-flex;gap:4px;padding:4px;margin:0 0 16px;border:1px solid var(--border);border-radius:999px;background:var(--card)}
 .gw-billing-option{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:8px 18px;border:0;border-radius:999px;background:transparent;color:var(--foreground);font:inherit;font-weight:600;cursor:pointer}
 .gw-billing-option[aria-pressed="true"]{background:var(--primary);color:var(--primary-foreground)}
 .gw-billing-option:focus-visible{outline:3px solid var(--ring);outline-offset:2px}
