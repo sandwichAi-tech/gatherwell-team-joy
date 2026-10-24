@@ -3151,7 +3151,8 @@
     "moveDown": "Move down",
     "download": "Download",
     "downloadError": "Could not prepare the download. Try again.",
-    "openLink": "Open"
+    "openLink": "Open",
+    "duplicate": "Duplicate"
   },
   "offers": {
     "eyebrow": "Your services",

@@ -2186,3 +2186,11 @@ a.gw-cat-chip:hover{background:#fff}
 .public-lesson { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; min-height: 48px; padding: 8px 0; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
 .public-lesson small { color: var(--muted); }
 @media (prefers-reduced-motion: reduce) { .offer-cover, .learn-cover { transition: none; } }
+
+/* Bundle rows: keep titles readable on phones */
+.lesson-row .lesson-row-main { min-width: 0; overflow-wrap: anywhere; }
+.lesson-row .row-actions { flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 480px) {
+  .lesson-row { grid-template-columns: auto minmax(0,1fr); }
+  .lesson-row .row-actions:last-child { grid-column: 1 / -1; justify-content: flex-start; }
+}
