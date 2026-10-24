@@ -166,3 +166,8 @@ The requester supplied the following results after commit ac2eef3c5d5ff7138522b8
 ## Resource templates (v0.31)
 - resource_templates: starters (team_id null) readable by signed-in users; team rows readable/deletable only by content builders/leaders of that team. No direct insert/update.
 - use_resource_template / save_resource_template are security-definer, require can_build_resources(team), always create drafts, write team_audit, and never copy storage paths, live/replay links, prices, enrollments, progress or sales. Anonymous execution is revoked.
+
+## Type-first resource authoring (v0.32)
+- /learn/create is a signed-in, feature_learn-gated route; creator eligibility is non-member workspace role in UI with server RLS unchanged and authoritative (tracks/lessons/offers/recipes/quizzes writes unchanged).
+- No new tables, RPCs or storage buckets; audio lessons reuse the private learn-media bucket (200 MB limit) and existing signed-URL reads. Live meeting links stay in lesson_live_links (team-member read only); preset copy states this.
+- Quiz creation never bypasses the parent-offer requirement; the picker only lists the caller's own courses and lands on the existing quiz panel.

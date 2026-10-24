@@ -1,5 +1,12 @@
 # Roadmap
 
+## v0.32 type-first resource authoring
+
+- [x] /learn/create chooser: 10 type cards with icons/examples/"Best for", help panel, back/choose-another, creator-only.
+- [x] Type presets into existing editors (track+lesson flows, recipe, course, file/bundle offers, quiz parent picker); audio lessons; draft-only creation.
+- [x] 349 tests, typecheck/build OK; browser 38/38 at 390/1280 EN/ES + 200% zoom + reduced motion; fixtures removed.
+- [ ] Manual: screen-reader pass on chooser; second creator account browser pass.
+
 ## v0.31 Resources redesign
 
 - [x] Events-style /learn with tabs, filters, ResourceCard, Create resource chooser.
