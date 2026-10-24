@@ -47,7 +47,7 @@ function CoverPicker({ teamId, path, styleIdx, title, onPath, onStyle }: { teamI
     <label className="file-button"><Upload />{busy ? t('onboarding.saving') : t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={async r => { setBusy(true); try { onPath(await uploadLearnFile(teamId, r.file, () => {})); } catch (err) { toast.error(errMsg(t, err)); } setBusy(false); }} /></label></div>;
 }
 
-function TrackEditor({ track, teamId, onClose }: { track: Partial<Track> | null; teamId: string; onClose: () => void }) {
+function TrackEditor({ track, teamId, onClose, preset }: { track: Partial<Track> | null; teamId: string; onClose: (created?: Track) => void; preset?: TrackFlowType | null }) {
   const { t } = useTranslation(); const qc = useQueryClient(); const { userId } = useLearn();
   const [f, setF] = useState({ title_en: '', title_es: '', description_en: '', description_es: '', cover_url: null as string | null, cover_style: 0, is_start_here: false, is_published: false });
   const [busy, setBusy] = useState(false);
@@ -56,10 +56,10 @@ function TrackEditor({ track, teamId, onClose }: { track: Partial<Track> | null;
   const save = async () => {
     setBusy(true);
     const row = { ...f, title_en: f.title_en.trim(), title_es: f.title_es.trim(), description_en: f.description_en.trim() || null, description_es: f.description_es.trim() || null };
-    const res = track?.id ? await supabase.from('tracks').update(row).eq('id', track.id) : await supabase.from('tracks').insert({ ...row, team_id: teamId, sort_order: Date.now() % 1_000_000 });
+    const res = track?.id ? await supabase.from('tracks').update(row).eq('id', track.id) : await supabase.from('tracks').insert({ ...row, team_id: teamId, sort_order: Date.now() % 1_000_000 }).select().single();
     setBusy(false);
     if (res.error) { toast.error(errMsg(t, res.error)); return; }
-    toast.success(t('templates.saved')); await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose();
+    toast.success(t('templates.saved')); await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose(track?.id ? undefined : (res.data as Track));
   };
   const remove = async () => {
     if (!track?.id || !(await confirmAction({ title: t('learnHub.confirmDeleteTrack'), destructive: true }))) return;
@@ -67,7 +67,7 @@ function TrackEditor({ track, teamId, onClose }: { track: Partial<Track> | null;
     if (res.error) { toast.error(errMsg(t, res.error)); return; }
     await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose();
   };
-  return <ResponsiveSheet open={!!track} onOpenChange={o => !o && onClose()} title={track?.id ? t('learnHub.editTrack') : t('learnHub.newTrack')}>
+  return <ResponsiveSheet open={!!track} onOpenChange={o => !o && onClose()} title={preset && !track?.id ? t(`resources.preset.track.${preset}`) : track?.id ? t('learnHub.editTrack') : t('learnHub.newTrack')} description={preset && !track?.id ? t(`resources.preset.trackText.${preset}`) : undefined}>
     <div className="edit-form">
       <div className="bilingual"><Field id="tr-en" label={`${t('templates.title')} · EN`}><Input id="tr-en" className="field-input" maxLength={120} value={f.title_en} onChange={e => setF({ ...f, title_en: e.target.value })} /></Field>
         <Field id="tr-es" label={`${t('templates.title')} · ES`}><Input id="tr-es" className="field-input" maxLength={120} value={f.title_es} onChange={e => setF({ ...f, title_es: e.target.value })} /></Field></div>
