@@ -34,9 +34,9 @@ export function detailsFromEvent(e: SourceEvent): EventDetails {
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
   };
   return {
-    summaryEn: s('summary_en'), summaryEs: s('summary_es'), language: e.language === 'es' ? 'es' : 'en',
-    mapUrl: s('map_url'), regOpens: local(e.reg_opens_at), regCloses: local(e.reg_closes_at),
-    waitlist: e.waitlist_enabled !== false, tagsInput: Array.isArray(e['tags']) ? (e['tags'] as string[]).join(', ') : '',
+    summaryEn: s('summary_en'), summaryEs: s('summary_es'), language: e['language'] === 'es' ? 'es' : 'en',
+    mapUrl: s('map_url'), regOpens: local(e['reg_opens_at']), regCloses: local(e['reg_closes_at']),
+    waitlist: e['waitlist_enabled'] !== false, tagsInput: Array.isArray(e['tags']) ? (e['tags'] as string[]).join(', ') : '',
     contactEmail: s('contact_email'), contactPhone: s('contact_phone'),
     accessibility: s('accessibility_notes'), bring: s('what_to_bring'), cancellation: s('cancellation_policy'),
     allowsMinors: !!e.allows_minors, minAge: e['min_age'] != null ? String(e['min_age']) : '',
