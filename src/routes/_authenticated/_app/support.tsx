@@ -68,15 +68,15 @@ function SupportPage() {
           <span className={`chip ${tk.status === 'answered' ? 'published-chip' : ''}`}>{t(`support.status.${tk.status}`)}</span>
         </button>
       </li>)}</ul>}
-    <NewTicketSheet open={creating} onClose={() => setCreating(false)} onCreated={id => { setCreating(false); setOpen(id); void qc.invalidateQueries({ queryKey: ['support-tickets'] }); }} />
+    <NewTicketSheet open={creating} preset={preset} onClose={() => setCreating(false)} onCreated={id => { setCreating(false); setOpen(id); void qc.invalidateQueries({ queryKey: ['support-tickets'] }); }} />
     {current && <TicketSheet ticket={current} onClose={() => setOpen(null)} onChanged={() => void qc.invalidateQueries({ queryKey: ['support-tickets'] })} />}
   </section>;
 }
 
-function NewTicketSheet({ open, onClose, onCreated }: { open: boolean; onClose: () => void; onCreated: (id: string) => void }) {
+function NewTicketSheet({ open, preset, onClose, onCreated }: { open: boolean; preset?: 'organization'; onClose: () => void; onCreated: (id: string) => void }) {
   const { t } = useTranslation();
-  const [cat, setCat] = useState<(typeof CATS)[number]>('account');
-  const [subject, setSubject] = useState(''); const [body, setBody] = useState(''); const [busy, setBusy] = useState(false);
+  const [cat, setCat] = useState<(typeof CATS)[number]>(preset === 'organization' ? 'billing' : 'account');
+  const [subject, setSubject] = useState(preset === 'organization' ? t('support.orgSubject') : ''); const [body, setBody] = useState(''); const [busy, setBusy] = useState(false);
   const submit = async (e: FormEvent) => {
     e.preventDefault(); setBusy(true);
     const { data, error } = await db.rpc('create_support_ticket', { _category: cat, _subject: subject.trim(), _body: body.trim() });
