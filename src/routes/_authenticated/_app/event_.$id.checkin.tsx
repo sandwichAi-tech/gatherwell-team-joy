@@ -177,8 +177,15 @@ function Scanner({ onClose, onCode, scan, onNext }: { onClose: () => void; onCod
     <video ref={video} playsInline muted className="scanner-video" />
     <div className="scanner-frame" aria-hidden="true" />
     <Button variant="secondary" size="icon" className="scanner-close" aria-label={t('checkin.closeScanner')} onClick={onClose}><X /></Button>
-    {denied && <div className="scanner-result is-error"><AlertCircle /><strong>{t('checkin.cameraDenied')}</strong><Button onClick={onClose}>{t('checkin.useList')}</Button></div>}
+    {denied && <div className="scanner-result is-error"><AlertCircle /><strong>{t('checkin.cameraDenied')}</strong></div>}
     {!denied && !scan && <p className="scanner-hint">{t('checkin.pointCamera')}</p>}
+    <form className="scanner-manual" onSubmit={e => void submitManual(e)}>
+      <label htmlFor="manual-code">{t('checkin.manualCode')}</label>
+      <div className="scanner-manual-row">
+        <Input id="manual-code" value={manual} onChange={e => setManual(e.target.value)} placeholder={t('checkin.manualCodeHint')} autoComplete="off" inputMode="text" />
+        <Button type="submit" disabled={!manual.trim()}>{t('checkin.manualSubmit')}</Button>
+      </div>
+    </form>
     {scan && <div className={`scanner-result ${scan.result === 'ok' ? 'is-ok' : scan.result === 'already' ? 'is-warn' : 'is-error'}`} aria-live="assertive">
       {scan.result === 'ok' ? <CheckCircle2 /> : <AlertCircle />}
       <strong>{t(scan.result === 'pending' ? 'launch.scanPending' : `checkin.scanResult.${scan.result}`, { name: scan.name ?? '' })}</strong>
