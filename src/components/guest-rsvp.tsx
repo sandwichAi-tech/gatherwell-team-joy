@@ -239,7 +239,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
   </ResponsiveSheet>;
 }
 
-type ConfirmEvent = Pick<PublicEvent, 'id' | 'title' | 'starts_at' | 'ends_at' | 'location_name' | 'address' | 'meeting_note' | 'lat' | 'lng'> & { online_url?: string | null };
+type ConfirmEvent = Pick<PublicEvent, 'id' | 'title' | 'starts_at' | 'ends_at' | 'location_name' | 'address' | 'meeting_note' | 'lat' | 'lng' | 'price_cents'> & { online_url?: string | null };
 
 export function Confirmation({ event, code, status }: { event: ConfirmEvent; code: string; status: 'going' | 'maybe' | 'waitlist' | 'cancelled' | 'requested' | 'declined' }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
