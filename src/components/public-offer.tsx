@@ -3,7 +3,7 @@ import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Check, Clock, Lock } from '@/components/icons';
+import { Check, Lock } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { GuestShell } from '@/components/guest-shell';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
