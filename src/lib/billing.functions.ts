@@ -30,6 +30,25 @@ export const getPaymentsStatus = createServerFn({ method: 'GET' }).handler(async
   connected: !!process.env['STRIPE_SANDBOX_API_KEY'] || !!process.env['STRIPE_LIVE_API_KEY'],
 }));
 
+/**
+ * Coach-facing payments readiness. Platform connection is env-only (ZoheeWell
+ * action); payout setup is the coach's Connect onboarding. canSellPaid mirrors
+ * the block_unpaid_selling trigger (payouts_live) — publishing a paid item
+ * fails server-side until both sides are ready.
+ */
+export const getPaymentsReadiness = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: b } = await context.supabase
+      .from('billing_accounts')
+      .select('connect_status')
+      .eq('user_id', context.userId)
+      .maybeSingle();
+    const platformConnected = !!process.env['STRIPE_SANDBOX_API_KEY'] || !!process.env['STRIPE_LIVE_API_KEY'];
+    const connectStatus = (b?.connect_status === 'active' || b?.connect_status === 'pending' ? b.connect_status : 'none') as 'none' | 'pending' | 'active';
+    return { platformConnected, connectStatus, canSellPaid: platformConnected && connectStatus === 'active' };
+  });
+
 async function ensureCustomer(userId: string, email: string | undefined, env: StripeEnv) {
   const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
   const { createStripeClient } = await import('@/lib/stripe.server');
