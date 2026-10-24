@@ -32,6 +32,8 @@ import {
 } from '@/lib/offers';
 import { cancelOfferMembership, offerDownloadLink, pauseOfferMembership, startOfferCheckout } from '@/lib/offers.functions';
 import { CommunityRequestsPanel, CommunitySeatCard } from '@/components/community-seats';
+import { CurriculumPanel, OfferDetailsEditor, OfferHostActions, PublicOfferLink, ReadinessPanel } from '@/components/content-studio';
+import { canAccessOfferQuery } from '@/lib/content';
 
 const KINDS: OfferKind[] = ['membership', 'course', 'download'];
 const dateFmt = (iso: string, lang: string) => new Date(iso).toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -177,6 +179,8 @@ export function OfferPage({ id, paid }: { id: string; paid?: boolean }) {
   const { userId } = useGatherwell();
   const qc = useQueryClient();
   const q = useQuery({ ...offerQuery(id, userId), refetchInterval: paid ? 4000 : false });
+  const access = useQuery(canAccessOfferQuery(id, userId));
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const { data: gate } = useQuery(paymentsStatusQuery);
   const checkout = useServerFn(startOfferCheckout);
   const download = useServerFn(offerDownloadLink);
@@ -186,7 +190,7 @@ export function OfferPage({ id, paid }: { id: string; paid?: boolean }) {
   if (q.isError) return <RetryState retry={() => void q.refetch()} />;
   const { offer, purchase, hostName } = q.data;
   if (!offer) return <section className="panel empty-state"><Lock /><p>{t('offers.notFound')}</p></section>;
-  const owned = isLive(purchase) || offer.host_id === userId;
+  const owned = isLive(purchase) || offer.host_id === userId || access.data === true;
   const includes = offerIncludes(offer, lang);
   const foundingOpen = offer.kind === 'membership' && !!founding && founding.left > 0;
   const buy = async () => {
@@ -237,6 +241,18 @@ export function OfferPage({ id, paid }: { id: string; paid?: boolean }) {
       </> : <p className="muted-small">{t('offers.closed')}</p>}
       {offer.host_id === userId && <CommunityRequestsPanel kind="offer" target={offer.id} seats={offer.community_seats} />}
     </section>
+    {offer.host_id === userId && <>
+      <section className="panel"><div className="section-heading"><h2>{t('content.hostTools')}</h2></div>
+        <OfferHostActions offer={offer} onChanged={() => void qc.invalidateQueries({ queryKey: ['offers'] })} />
+        <div className="offer-host-actions">
+          <Button variant="secondary" size="sm" onClick={() => setDetailsOpen(true)}><Pencil />{t('content.details')}</Button>
+          {(offer.status === 'published') && <PublicOfferLink id={offer.id} />}
+        </div>
+      </section>
+      <ReadinessPanel offerId={offer.id} onEdit={() => setDetailsOpen(true)} />
+      {offer.kind !== 'download' && <CurriculumPanel offer={offer} />}
+      <OfferDetailsEditor offer={detailsOpen ? offer : null} onClose={() => setDetailsOpen(false)} />
+    </>}
   </article>;
 }
 

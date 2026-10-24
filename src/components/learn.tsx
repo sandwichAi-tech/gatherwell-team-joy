@@ -17,6 +17,9 @@ import {
   ancestorsQuery, effectiveType, embedUrl, icsFor, isUpcomingLive, learnFileUrl, learnQuery, lessonTitle, lessonsOf, listOf, pick, recipesQuery,
   remindersQuery, RECIPE_TAGS, populatedTracks, trackStats, trackTitle, type LearnData, type Lesson, type Recipe, type Track,
 } from '@/lib/learn';
+import { myLearningQuery } from '@/lib/content';
+import { OfferCover } from '@/components/offers';
+import { offerTitle } from '@/lib/offers';
 
 export function useLearn() {
   const { userId } = useGatherwell();
@@ -25,9 +28,13 @@ export function useLearn() {
   const teamId = workspace?.teamId ?? '';
   const { data: ancestors = [] } = useQuery({ ...ancestorsQuery(teamId), enabled: !!teamId });
   const { data, isLoading, isError, refetch } = useQuery(learnQuery(userId));
+  const { data: learning = [] } = useQuery(myLearningQuery(userId));
   const leader = workspace?.role === 'leader';
-  const tracks = useMemo(() => (data?.tracks ?? []).filter(t => (ancestors.length ? ancestors.includes(t.team_id) : t.team_id === teamId) && (t.is_published || (leader && t.team_id === teamId))), [data, ancestors, teamId, leader]);
-  return { userId, workspace, teamId, leader, data, tracks, isLoading, isError, refetch, lang: i18n.resolvedLanguage ?? 'en' };
+  const entitledOffers = useMemo(() => new Set(learning.map(e => e.id)), [learning]);
+  const tracks = useMemo(() => (data?.tracks ?? []).filter(t =>
+    ((ancestors.length ? ancestors.includes(t.team_id) : t.team_id === teamId) && (t.is_published || (leader && t.team_id === teamId)))
+    || (t.offer_id && entitledOffers.has(t.offer_id) && t.is_published)), [data, ancestors, teamId, leader, entitledOffers]);
+  return { userId, workspace, teamId, leader, data, tracks, learning, isLoading, isError, refetch, lang: i18n.resolvedLanguage ?? 'en' };
 }
 
 export function useNow(ms = 30_000) {
@@ -120,7 +127,7 @@ export function RecipeCard({ recipe, saved }: { recipe: Recipe; saved?: boolean 
 
 export function LearnHome() {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
-  const { data, tracks, leader, isLoading, isError, refetch, userId } = useLearn();
+  const { data, tracks, leader, isLoading, isError, refetch, userId, learning } = useLearn();
   const { data: rec } = useQuery(recipesQuery(userId));
   if (isError) return <RetryState retry={() => void refetch()} />;
   if (isLoading || !data) return <ListSkeleton />;
@@ -135,6 +142,12 @@ export function LearnHome() {
   return <>
     <div className="page-heading"><div><span className="eyebrow">{t('learn.eyebrow')}</span><h1>{t('learn.title')}</h1><p>{t('learn.sentence')}</p></div>
       {leader && <Button asChild variant="secondary"><Link to="/learn/manage"><Settings2 />{t('learnHub.manage')}</Link></Button>}</div>
+    {learning.length > 0 && <section className="learn-section"><div className="section-heading"><h2>{t('content.myLearning')}</h2></div>
+      <ul className="offer-list compact">{learning.map(e => <li key={e.id}><Link to="/offer/$id" params={{ id: e.id }} className="offer-row is-link">
+        <OfferCover offer={{ cover_style: e.cover_style, cover_url: e.cover_url, kind: e.kind as 'course' | 'download' | 'membership', title_en: e.title_en, title_es: e.title_es }} />
+        <div className="offer-row-main"><strong>{offerTitle(e, lang)}</strong>
+          <small>{e.host_name ?? ''}{e.lessons > 0 ? ` · ${t('learnHub.progressLabel', { done: e.done, total: e.lessons })}` : ''}{e.status === 'archived' ? ` · ${t('offers.status.archived')}` : ''}</small></div>
+        <ArrowRight /></Link></li>)}</ul></section>}
     {startHere && <section className="learn-section"><TrackCard track={startHere} data={data} featured /></section>}
     {rest.length > 0 && <section className="learn-section"><div className="section-heading"><h2>{t('learnHub.yourTracks')}</h2></div>
       <div className="track-grid">{rest.map(tr => <TrackCard key={tr.id} track={tr} data={data} />)}</div></section>}

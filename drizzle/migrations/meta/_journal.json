@@ -400,6 +400,27 @@
       "when": 1792810617332,
       "tag": "0056_fix_rsvp_event_minor_ambiguous_status",
       "breakpoints": true
+    },
+    {
+      "idx": 57,
+      "version": "7",
+      "when": 1792811508305,
+      "tag": "0057_content_authoring_learner_access",
+      "breakpoints": true
+    },
+    {
+      "idx": 58,
+      "version": "7",
+      "when": 1792812311024,
+      "tag": "0058_content_enrollment_fixes",
+      "breakpoints": true
+    },
+    {
+      "idx": 59,
+      "version": "7",
+      "when": 1792812374951,
+      "tag": "0059_content_entitlement_shape_fix",
+      "breakpoints": true
     }
   ]
 }

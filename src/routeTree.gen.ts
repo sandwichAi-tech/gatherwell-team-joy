@@ -29,6 +29,7 @@ import { Route as ICodeRouteImport } from './routes/i.$code'
 import { Route as JoinCodeRouteImport } from './routes/join.$code'
 import { Route as LSlugRouteImport } from './routes/l.$slug'
 import { Route as LegalDocRouteImport } from './routes/legal.$doc'
+import { Route as OIdRouteImport } from './routes/o.$id'
 import { Route as RCodeRouteImport } from './routes/r.$code'
 import { Route as TSlugRouteImport } from './routes/t.$slug'
 import { Route as UnsubscribeTokenRouteImport } from './routes/unsubscribe.$token'
@@ -171,6 +172,11 @@ const LSlugRoute = LSlugRouteImport.update({
 const LegalDocRoute = LegalDocRouteImport.update({
   id: '/legal/$doc',
   path: '/legal/$doc',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OIdRoute = OIdRouteImport.update({
+  id: '/o/$id',
+  path: '/o/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RCodeRoute = RCodeRouteImport.update({
@@ -438,6 +444,7 @@ export interface FileRoutesByFullPath {
   '/join/$code': typeof JoinCodeRoute
   '/l/$slug': typeof LSlugRoute
   '/legal/$doc': typeof LegalDocRoute
+  '/o/$id': typeof OIdRoute
   '/r/$code': typeof RCodeRoute
   '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
@@ -503,6 +510,7 @@ export interface FileRoutesByTo {
   '/join/$code': typeof JoinCodeRoute
   '/l/$slug': typeof LSlugRoute
   '/legal/$doc': typeof LegalDocRoute
+  '/o/$id': typeof OIdRoute
   '/r/$code': typeof RCodeRoute
   '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
@@ -571,6 +579,7 @@ export interface FileRoutesById {
   '/join/$code': typeof JoinCodeRoute
   '/l/$slug': typeof LSlugRoute
   '/legal/$doc': typeof LegalDocRoute
+  '/o/$id': typeof OIdRoute
   '/r/$code': typeof RCodeRoute
   '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
@@ -638,6 +647,7 @@ export interface FileRouteTypes {
     | '/join/$code'
     | '/l/$slug'
     | '/legal/$doc'
+    | '/o/$id'
     | '/r/$code'
     | '/t/$slug'
     | '/unsubscribe/$token'
@@ -703,6 +713,7 @@ export interface FileRouteTypes {
     | '/join/$code'
     | '/l/$slug'
     | '/legal/$doc'
+    | '/o/$id'
     | '/r/$code'
     | '/t/$slug'
     | '/unsubscribe/$token'
@@ -770,6 +781,7 @@ export interface FileRouteTypes {
     | '/join/$code'
     | '/l/$slug'
     | '/legal/$doc'
+    | '/o/$id'
     | '/r/$code'
     | '/t/$slug'
     | '/unsubscribe/$token'
@@ -836,6 +848,7 @@ export interface RootRouteChildren {
   JoinCodeRoute: typeof JoinCodeRoute
   LSlugRoute: typeof LSlugRoute
   LegalDocRoute: typeof LegalDocRoute
+  OIdRoute: typeof OIdRoute
   RCodeRoute: typeof RCodeRoute
   TSlugRoute: typeof TSlugRoute
   UnsubscribeTokenRoute: typeof UnsubscribeTokenRoute
@@ -989,6 +1002,13 @@ declare module '@tanstack/react-router' {
       path: '/legal/$doc'
       fullPath: '/legal/$doc'
       preLoaderRoute: typeof LegalDocRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/o/$id': {
+      id: '/o/$id'
+      path: '/o/$id'
+      fullPath: '/o/$id'
+      preLoaderRoute: typeof OIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/r/$code': {
@@ -1420,6 +1440,7 @@ const rootRouteChildren: RootRouteChildren = {
   JoinCodeRoute: JoinCodeRoute,
   LSlugRoute: LSlugRoute,
   LegalDocRoute: LegalDocRoute,
+  OIdRoute: OIdRoute,
   RCodeRoute: RCodeRoute,
   TSlugRoute: TSlugRoute,
   UnsubscribeTokenRoute: UnsubscribeTokenRoute,
