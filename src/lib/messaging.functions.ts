@@ -148,3 +148,14 @@ export const getAutomationActivity = createServerFn({ method: 'POST' })
     if (error) throw new Error(error.message);
     return rows ?? [];
   });
+
+export const getJourneyRuns = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { teamId: string; journeyId?: string | null; limit?: number }) => input)
+  .handler(async ({ data, context }) => {
+    const { data: rows, error } = await context.supabase.rpc('journey_run_activity', {
+      _team: data.teamId, _journey: data.journeyId ?? null, _limit: data.limit ?? 20,
+    } as never);
+    if (error) throw new Error(error.message);
+    return rows;
+  });

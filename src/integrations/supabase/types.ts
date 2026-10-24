@@ -2856,6 +2856,80 @@ export type Database = {
           },
         ]
       }
+      message_journey_runs: {
+        Row: {
+          created_at: string
+          current_step: number
+          event_id: string
+          id: string
+          journey_id: string
+          next_run_at: string
+          note: string | null
+          rsvp_id: string
+          status: string
+          steps_snapshot: Json
+          team_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_step?: number
+          event_id: string
+          id?: string
+          journey_id: string
+          next_run_at?: string
+          note?: string | null
+          rsvp_id: string
+          status?: string
+          steps_snapshot: Json
+          team_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_step?: number
+          event_id?: string
+          id?: string
+          journey_id?: string
+          next_run_at?: string
+          note?: string | null
+          rsvp_id?: string
+          status?: string
+          steps_snapshot?: Json
+          team_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_journey_runs_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_journey_runs_journey_id_fkey"
+            columns: ["journey_id"]
+            isOneToOne: false
+            referencedRelation: "message_journeys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_journey_runs_rsvp_id_fkey"
+            columns: ["rsvp_id"]
+            isOneToOne: false
+            referencedRelation: "rsvps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_journey_runs_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       message_journey_steps: {
         Row: {
           config: Json
@@ -6715,6 +6789,7 @@ export type Database = {
       admin_time_to_live: { Args: { _since: string }; Returns: Json }
       admin_user_detail: { Args: { _id: string }; Returns: Json }
       admin_users: { Args: { _q: string }; Returns: Json }
+      advance_journey_runs: { Args: { _limit?: number }; Returns: number }
       ai_usage_status: { Args: never; Returns: Json }
       archive_host_update: { Args: { _id: string }; Returns: undefined }
       archive_message_template: {
@@ -7207,6 +7282,23 @@ export type Database = {
       join_team_by_code: {
         Args: { _by?: string; _code: string; _role?: string }
         Returns: string
+      }
+      journey_run_activity: {
+        Args: { _journey?: string; _limit?: number; _team: string }
+        Returns: {
+          created_at: string
+          current_step: number
+          current_step_kind: string
+          event_title: string
+          id: string
+          journey_id: string
+          journey_name: string
+          next_run_at: string
+          note: string
+          status: string
+          step_count: number
+          updated_at: string
+        }[]
       }
       landing_social_proof: { Args: never; Returns: Json }
       launch_template: {
@@ -7842,6 +7934,16 @@ export type Database = {
         Returns: string
       }
       start_hosting_window: { Args: never; Returns: string }
+      start_journey_run: {
+        Args: {
+          _event: string
+          _journey: string
+          _next: string
+          _rsvp: string
+          _team: string
+        }
+        Returns: undefined
+      }
       start_quiz_attempt: { Args: { _quiz: string }; Returns: Json }
       storage_allows: { Args: { _bytes: number }; Returns: boolean }
       storage_used_bytes: { Args: { _uid: string }; Returns: number }

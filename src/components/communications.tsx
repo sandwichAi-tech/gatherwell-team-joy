@@ -19,7 +19,7 @@ import {
 import {
   getMessagingSetup, listMessageTemplates, saveMessageTemplate, duplicateMessageTemplate, archiveMessageTemplate,
   listMessageAutomations, saveMessageAutomation, setAutomationStatus,
-  listMessageJourneys, saveMessageJourney, setJourneyStatus, getAutomationActivity,
+  listMessageJourneys, saveMessageJourney, setJourneyStatus, getAutomationActivity, getJourneyRuns,
 } from '@/lib/messaging.functions';
 
 type Template = { id: string; team_id: string | null; name: string; channel: string; language: string; subject: string | null; body: string; variables: string[]; audience: string; archived: boolean };
@@ -369,7 +369,13 @@ function JourneysTab({ teamId, journeys, templates, loading, canManage, setup, o
 }) {
   const { t } = useTranslation();
   const [editing, setEditing] = useState<Journey | 'new' | null>(null);
+  const [showRuns, setShowRuns] = useState(false);
   const statusFn = useServerFn(setJourneyStatus);
+  const runsFn = useServerFn(getJourneyRuns);
+  const { data: runs } = useQuery({
+    queryKey: ['journey-runs', teamId], enabled: showRuns,
+    queryFn: () => runsFn({ data: { teamId, limit: 20 } }) as Promise<{ id: string; journey_id: string; journey_name: string; event_title: string; status: string; current_step: number; step_count: number; current_step_kind: string | null; next_run_at: string; note: string | null; created_at: string }[]>,
+  });
 
   const setStatus = async (j: Journey, status: string) => {
     if (status === 'active' && setup) {
@@ -404,6 +410,16 @@ function JourneysTab({ teamId, journeys, templates, loading, canManage, setup, o
         {j.status === 'paused' && <Button variant="ghost" onClick={() => void setStatus(j, 'draft')}>{t('comms.toDraft')}</Button>}
       </div>}
     </article>)}
+
+    <Button variant="ghost" aria-expanded={showRuns} onClick={() => setShowRuns(v => !v)}>{t('comms.runs')}</Button>
+    {showRuns && <section className="guest-card" aria-label={t('comms.runs')}>
+      {!runs?.length && <p className="empty-state">{t('comms.noRuns')}</p>}
+      {runs?.map(r => <p key={r.id} className="comms-activity-row">
+        <strong>{r.journey_name}</strong> · {r.event_title} — {t(`comms.runStatus.${r.status}`)}
+        {r.status === 'running' || r.status === 'paused' ? ` · ${t('comms.runStep', { n: r.current_step, total: r.step_count })}` : ''}
+        {r.note ? ` · ${t(`comms.runNote.${r.note}`, { defaultValue: r.note })}` : ''}
+      </p>)}
+    </section>}
 
     {editing && <JourneyEditor teamId={teamId} journey={editing === 'new' ? null : editing} templates={templates} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); onChanged(); }} />}
   </div>;

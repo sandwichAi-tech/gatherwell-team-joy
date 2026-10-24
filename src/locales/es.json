@@ -5900,6 +5900,21 @@
       "forbidden": "No tienes permiso para administrar las comunicaciones de este equipo.",
       "auth_required": "Inicia sesión de nuevo."
     },
-    "saveDraft": "Guardar borrador"
+    "saveDraft": "Guardar borrador",
+    "runs": "Ejecuciones",
+    "noRuns": "Aún no hay ejecuciones. Una ejecución empieza cuando ocurre su disparador.",
+    "runStep": "paso {{n}} de {{total}}",
+    "runStatus": {
+      "running": "en curso",
+      "paused": "pausada",
+      "completed": "completada",
+      "failed": "falló"
+    },
+    "runNote": {
+      "condition_skip": "terminó antes (condición no cumplida)",
+      "template_missing": "falló (plantilla eliminada)",
+      "no_recipient": "falló (sin destinatario)",
+      "unknown_step": "falló (paso desconocido)"
+    }
   }
 }
