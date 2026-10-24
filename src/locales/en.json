@@ -4660,6 +4660,26 @@
     "startHosting": "Start hosting",
     "switchAttending": "Switch to attending"
   },
+  "policy": {
+    "none": "No policy shown",
+    "textLabel": "Attendee-facing policy text",
+    "customHint": "Guests see this exact text before they register and on the event page. Be clear about what they can expect — don't promise refunds you can't honor.",
+    "preset": {
+      "free_anytime": "Free — cancel anytime",
+      "free_notify": "Free — please cancel if you can't come",
+      "paid_24h": "Paid — full refund until 24 hours before",
+      "paid_7d": "Paid — full refund until 7 days before",
+      "paid_none": "Paid — no refunds",
+      "custom": "Custom policy"
+    },
+    "text": {
+      "free_anytime": "This is a free event. You can cancel your spot anytime — no charges, no questions.",
+      "free_notify": "This is a free event. If you can't make it, please cancel so someone else can take your spot.",
+      "paid_24h": "Full refund if you cancel at least 24 hours before the start. If the host cancels, everyone is refunded in full.",
+      "paid_7d": "Full refund if you cancel at least 7 days before the start. If the host cancels, everyone is refunded in full.",
+      "paid_none": "Ticket sales are final. If the host cancels, everyone is refunded in full."
+    }
+  },
   "refunds": {
     "label": "Refunds",
     "24h": "Full refund until 24 hours before",
