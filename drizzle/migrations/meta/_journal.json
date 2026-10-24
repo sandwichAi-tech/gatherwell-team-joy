@@ -463,6 +463,13 @@
       "when": 1792815193292,
       "tag": "0065_fix_cert_number_generation",
       "breakpoints": true
+    },
+    {
+      "idx": 66,
+      "version": "7",
+      "when": 1792815266969,
+      "tag": "0066_fix_duplicate_offer_alias_collision",
+      "breakpoints": true
     }
   ]
 }
