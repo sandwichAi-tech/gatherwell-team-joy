@@ -46,8 +46,8 @@ describe('pricing consistency (approved 2026-10-24 model)', () => {
   it('annual note and fee copy exist in both languages with matching terms', () => {
     expect(en.billing.v4AnnualNote).toMatch(/10 times the monthly price.*two months free.*may change after the pilot/);
     expect(es.billing.v4AnnualNote).toMatch(/10 veces el precio mensual.*dos meses gratis.*pueden cambiar después del piloto/);
-    expect(en.home.pricing.fee).toContain('{{pct}}%');
-    expect(es.home.pricing.fee).toContain('{{pct}}%');
+    expect(en.home.pricing.fee).toMatch(/5% on Free.*0\.5% on Organization.*Free offerings have no fee.*Stripe/);
+    expect(es.home.pricing.fee).toMatch(/5% en Gratis.*0\.5% en Organización.*Stripe/);
   });
   it('billing keys stay in parity between English and Spanish', () => {
     const keys = (o: unknown, p = ''): string[] => o && typeof o === 'object' ? Object.entries(o).flatMap(([k, v]) => keys(v, `${p}.${k}`)) : [p];
