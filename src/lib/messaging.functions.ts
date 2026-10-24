@@ -36,7 +36,7 @@ export const saveMessageTemplate = createServerFn({ method: 'POST' })
     const { data: id, error } = await context.supabase.rpc('save_message_template', {
       _team: data.teamId, _id: data.id ?? null, _name: data.name, _channel: data.channel,
       _language: data.language, _subject: data.subject ?? '', _body: data.body, _audience: data.audience ?? '',
-    });
+    } as never);
     if (error) throw new Error(error.message);
     return { id };
   });
@@ -80,7 +80,7 @@ export const saveMessageAutomation = createServerFn({ method: 'POST' })
       _team: data.teamId, _id: data.id ?? null, _name: data.name, _trigger: data.trigger,
       _timing_hours: data.timing_hours, _audience: data.audience ?? '', _channel: data.channel,
       _template_id: data.template_id ?? null, _event_id: data.event_id ?? null,
-    });
+    } as never);
     if (error) throw new Error(error.message);
     return { id };
   });
@@ -126,7 +126,7 @@ export const saveMessageJourney = createServerFn({ method: 'POST' })
     const { data: id, error } = await context.supabase.rpc('save_message_journey', {
       _team: data.teamId, _id: data.id ?? null, _name: data.name, _start_trigger: data.start_trigger,
       _steps: data.steps,
-    });
+    } as never);
     if (error) throw new Error(error.message);
     return { id };
   });
