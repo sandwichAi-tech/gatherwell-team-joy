@@ -33,7 +33,7 @@ export function QuizPanel({ offer }: { offer: Offer }) {
   const [editing, setEditing] = useState<Partial<Quiz> | null>(null);
   const q = useQuery({
     queryKey: ['quizzes', offer.id],
-    queryFn: async () => (await supabase.from('quizzes').select('*').eq('offer_id', offer.id).order('sort_order')).data ?? [],
+    queryFn: async () => ((await supabase.from('quizzes').select('*').eq('offer_id', offer.id).order('sort_order')).data ?? []) as unknown as Quiz[],
   });
   const lessonsQ = useQuery({
     queryKey: ['quiz-lessons', offer.id],
@@ -41,29 +41,6 @@ export function QuizPanel({ offer }: { offer: Offer }) {
   });
   const lessons = lessonsQ.data ?? [];
 
-/** Learner-facing list of published quizzes for an entitled offer. */
-export function LearnerQuizList({ offerId }: { offerId: string }) {
-  const { t, i18n } = useTranslation();
-  const lang = i18n.resolvedLanguage ?? 'en';
-  const [open, setOpen] = useState<string | null>(null);
-  // Learners cannot read the quizzes table (answer-key secrecy); discover published
-  // quizzes through the public-offer payload's quiz list.
-  const q = useQuery({
-    queryKey: ['learner-quizzes', offerId],
-    queryFn: async () => (await supabase.rpc('get_public_offer', { _offer: offerId })).data as { quizzes?: { id: string; title_en: string; title_es: string; is_required: boolean }[] } | null,
-  });
-  const list = q.data?.quizzes ?? [];
-  if (!list.length) return null;
-  return <section className="panel" aria-label={t('quiz.panel')}>
-    <div className="section-heading"><h2>{t('quiz.panel')}</h2></div>
-    <ul className="offer-list">{list.map(z => <li key={z.id} className="offer-row">
-      <div className="offer-row-main"><strong>{lang === 'es' ? z.title_es || z.title_en : z.title_en || z.title_es}</strong>
-        {z.is_required && <small>{t('quiz.required')}</small>}</div>
-      <div className="offer-row-actions"><Button variant="secondary" size="sm" onClick={() => setOpen(open === z.id ? null : z.id)}>{t(open === z.id ? 'quiz.close' : 'quiz.open')}</Button></div>
-      {open === z.id && <QuizTaker quizId={z.id} />}
-    </li>)}</ul>
-  </section>;
-}
   const lessonName = (id: string | null) => {
     if (!id) return t('quiz.finalQuiz');
     const l = lessons.find(x => x.id === id);
@@ -82,6 +59,30 @@ export function LearnerQuizList({ offerId }: { offerId: string }) {
   </section>;
 }
 
+/** Learner-facing list of published quizzes for an entitled offer. */
+export function LearnerQuizList({ offerId }: { offerId: string }) {
+  const { t, i18n } = useTranslation();
+  const lang = i18n.resolvedLanguage ?? 'en';
+  const [open, setOpen] = useState<string | null>(null);
+  // Learners cannot read the quizzes table (answer-key secrecy); discover published
+  // quizzes through the public-offer payload's quiz list.
+  const q = useQuery({
+    queryKey: ['learner-quizzes', offerId],
+    queryFn: async () => (await supabase.rpc('get_public_offer', { _id: offerId })).data as { quizzes?: { id: string; title_en: string; title_es: string; is_required: boolean }[] } | null,
+  });
+  const list = q.data?.quizzes ?? [];
+  if (!list.length) return null;
+  return <section className="panel" aria-label={t('quiz.panel')}>
+    <div className="section-heading"><h2>{t('quiz.panel')}</h2></div>
+    <ul className="offer-list">{list.map(z => <li key={z.id} className="offer-row">
+      <div className="offer-row-main"><strong>{lang === 'es' ? z.title_es || z.title_en : z.title_en || z.title_es}</strong>
+        {z.is_required && <small>{t('quiz.required')}</small>}</div>
+      <div className="offer-row-actions"><Button variant="secondary" size="sm" onClick={() => setOpen(open === z.id ? null : z.id)}>{t(open === z.id ? 'quiz.close' : 'quiz.open')}</Button></div>
+      {open === z.id && <QuizTaker quizId={z.id} />}
+    </li>)}</ul>
+  </section>;
+}
+
 function QuizEditor({ quiz, offer, lessons, onClose }: { quiz: Partial<Quiz>; offer: Offer; lessons: { id: string; title_en: string | null; title_es: string | null }[]; onClose: () => void }) {
   const { t } = useTranslation();
   const qc = useQueryClient();
@@ -97,7 +98,7 @@ function QuizEditor({ quiz, offer, lessons, onClose }: { quiz: Partial<Quiz>; of
   const isNew = !quiz.id;
   const questions = useQuery({
     queryKey: ['quiz-questions', quiz.id], enabled: !!quiz.id,
-    queryFn: async () => (await supabase.from('quiz_questions').select('*').eq('quiz_id', quiz.id!).order('sort_order')).data ?? [],
+    queryFn: async () => ((await supabase.from('quiz_questions').select('*').eq('quiz_id', quiz.id!).order('sort_order')).data ?? []) as unknown as QuizQuestion[],
   });
   const blockers = useQuery({
     queryKey: ['quiz-blockers', quiz.id], enabled: !!quiz.id,
@@ -180,7 +181,7 @@ function QuizEditor({ quiz, offer, lessons, onClose }: { quiz: Partial<Quiz>; of
 
       {quiz.id && <>
         <div className="section-heading"><h3>{t('quiz.questions')}</h3>
-          <Button variant="secondary" size="sm" onClick={() => setEditQuestion({ quiz_id: quiz.id, type: 'single', points: 1, sort_order: (questions.data?.length ?? 0) + 1 })}><Plus />{t('quiz.addQuestion')}</Button></div>
+          <Button variant="secondary" size="sm" onClick={() => setEditQuestion({ quiz_id: quiz.id!, type: 'single', points: 1, sort_order: (questions.data?.length ?? 0) + 1 })}><Plus />{t('quiz.addQuestion')}</Button></div>
         {questions.isPending ? <ListSkeleton /> : !questions.data?.length ? <p className="muted-small">{t('quiz.noQuestions')}</p> :
           <ol className="order-list">{questions.data.map(qq => <li key={qq.id}>
             <span className="order-title"><strong>{qq.prompt_en || qq.prompt_es || t('quiz.untitledQuestion')}</strong>
@@ -437,7 +438,7 @@ export function CertificateList({ userId }: { userId: string | undefined }) {
   const lang = i18n.resolvedLanguage ?? 'en';
   const q = useQuery({
     queryKey: ['my-certificates', userId], enabled: !!userId,
-    queryFn: async () => (await supabase.from('certificates').select('*').eq('user_id', userId!).order('issued_at', { ascending: false })).data ?? [],
+    queryFn: async () => ((await supabase.from('certificates').select('*').eq('user_id', userId!).order('issued_at', { ascending: false })).data ?? []) as unknown as Certificate[],
   });
   if (!q.data?.length) return null;
   return <section className="panel" aria-label={t('cert.mine')}>
@@ -519,7 +520,7 @@ function HostCertificates({ offerId }: { offerId: string }) {
   const qc = useQueryClient();
   const q = useQuery({
     queryKey: ['host-certificates', offerId],
-    queryFn: async () => (await supabase.from('certificates').select('*').eq('offer_id', offerId).order('issued_at', { ascending: false })).data ?? [],
+    queryFn: async () => ((await supabase.from('certificates').select('*').eq('offer_id', offerId).order('issued_at', { ascending: false })).data ?? []) as unknown as Certificate[],
   });
   const revoke = async (c: Certificate) => {
     const reason = window.prompt(t('cert.revokeReason'));
