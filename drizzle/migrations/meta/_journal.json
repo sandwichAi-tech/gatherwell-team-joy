@@ -498,6 +498,13 @@
       "when": 1792817198594,
       "tag": "0070_discovery_saved_alerts_invites",
       "breakpoints": true
+    },
+    {
+      "idx": 71,
+      "version": "7",
+      "when": 1792817915418,
+      "tag": "0071_fix_discover_catalog_profiles_join",
+      "breakpoints": true
     }
   ]
 }
