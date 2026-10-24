@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { GwIcon } from '@/components/gw-icon';
 import { EmptyState, ListSkeleton, RetryState } from '@/components/launch-states';
 import { confirmAction } from '@/components/confirm-dialog';
+import { ModerationPanel } from '@/components/moderation-panel';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { initialsOf } from '@/lib/account';
 
@@ -97,7 +98,6 @@ export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string
   const { t, i18n } = useTranslation();
   const qc = useQueryClient();
   const [tab, setTab] = useState<Tab>('members');
-  const canModerate = roleAllows(workspaceRole, 'moderate');
   const [search, setSearch] = useState('');
   const [inviteOpen, setInviteOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
@@ -257,8 +257,7 @@ export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string
       </ResponsiveSheet>
     </>}
 
-    {tab === 'moderation' && canModerate && <ModerationPanel teamId={teamId} />}
-    {tab === 'moderation' && !canModerate && <p className="auth-subtitle">{t('workspace.noAccess')}</p>}
+    {tab === 'moderation' && <ModerationPanel teamId={teamId} />}
     {tab === 'seats' && <>
       {seats.isLoading && <ListSkeleton rows={2} />}
       {seats.isError && <RetryState retry={() => void seats.refetch()} />}
