@@ -7,7 +7,7 @@ import { workspaceQuery } from '@/lib/account';
 import { ListSkeleton } from '@/components/launch-states';
 import i18n from '@/lib/i18n';
 
-export const Route = createFileRoute('/_authenticated/_app/team/settings')({
+export const Route = createFileRoute('/_authenticated/_app/team_/settings')({
   head: () => ({ meta: [{ title: `${i18n.t('workspace.title')} · ${i18n.t('brand')}` }, { name: 'robots', content: 'noindex,nofollow' }] }),
   component: function TeamSettingsPage() {
     const { t } = useTranslation();
