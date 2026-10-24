@@ -492,7 +492,7 @@ function BundleItemEditor({ offer, item, replace, onClose }: { offer: Offer; ite
       {f.type === 'file' && <div className="form-field"><span className="field-label">{t('content.itemFile')}</span>
         <label className="upload-box"><Upload /><span>{file ? file.name : item?.storage_path ? t('content.keepFile') : t('content.chooseFile')}</span>
           <input type="file" className="sr-only" accept={LESSON_FILE_RULES['file']!.accept} onChange={e => setFile(e.target.files?.[0] ?? null)} /></label>
-        {fileErr && <p className="field-error" role="alert">{t(fileErr === 'too_large' ? 'learn.fileTooLarge' : 'content.badFileType')}</p>}
+        {fileErr && <p className="field-error" role="alert">{t(fileErr === 'too_large' ? 'learn.fileTooBig' : 'content.badFileType')}</p>}
         <p className="muted-small">{t('content.fileRules')}</p></div>}
       {(f.type === 'link' || f.type === 'embed') && <>
         {Field({ id: 'bi-url', label: 'URL', children: <Input id="bi-url" type="url" className="field-input" maxLength={500} placeholder="https://" value={f.url} onChange={e => setF({ ...f, url: e.target.value })} /> })}
