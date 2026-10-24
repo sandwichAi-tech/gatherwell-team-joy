@@ -121,4 +121,5 @@ Specifics:
 ## Public homepage (v0.13)
 - Host-first homepage: live. Discovery: real public upcoming events only, fixture titles excluded; empty state live.
 - Notify me (area alerts): coming soon (Prompt 8). Payments, paid SMS, Wallet, payouts, quizzes, certificates: labelled coming soon on home.
-- Public pricing (/pricing, /hosts, /studios): Blueprint v4 plans live as display; paid checkout Setup required; payouts Coming soon.
+- Public pricing (/pricing, /hosts, /studios): Blueprint v4 plans live as display with the flat 5% fee disclosure; paid checkout Setup required; payouts Coming soon.
+- Signed-in plan screen (v0.15): prospective cards show approved v4 prices and the flat 5% fee; current/legacy subscriptions keep their real recorded status; paid checkout disabled until approved prices are configured in plan_settings and Stripe.
