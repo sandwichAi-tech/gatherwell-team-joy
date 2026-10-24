@@ -156,7 +156,7 @@ export function draftDestination(target: ResourceTemplate['target'], id: string)
   return { to: '/offer/$id', params: { id } };
 }
 
-export async function useResourceTemplate(templateId: string, teamId: string) {
+export async function applyResourceTemplate(templateId: string, teamId: string) {
   const { data, error } = await db.rpc('use_resource_template', { _template: templateId, _team: teamId });
   if (error) throw error;
   return data as { target: ResourceTemplate['target']; id: string };
