@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 
 export type Gathering = Database['public']['Tables']['events']['Row'] & { going?: number };
-export type EventsTab = 'upcoming' | 'hosting' | 'past';
+export type EventsTab = 'upcoming' | 'hosting' | 'past' | 'tickets';
 
 /** Six refined default covers (plum → lavender family). Index is stored in events.cover_style. */
 export const COVER_STYLES = [

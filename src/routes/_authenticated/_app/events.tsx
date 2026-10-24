@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { EventsPage } from '@/components/events-page';
 import { gatherwellHead } from '@/lib/gatherwell-head';
 
-const search = z.object({ tab: z.enum(['upcoming', 'hosting', 'past']).optional() });
+const search = z.object({ tab: z.enum(['upcoming', 'hosting', 'past', 'tickets']).optional() });
 export const Route = createFileRoute('/_authenticated/_app/events')({
   validateSearch: search,
   head: () => gatherwellHead('events'),
