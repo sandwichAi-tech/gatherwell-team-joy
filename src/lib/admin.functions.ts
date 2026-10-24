@@ -2,6 +2,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { canRetryMessage } from './mail-retry';
+import { safetyAction, safetySearch, safetyPage, type SafetyRow } from './admin-safety';
 
 type Ctx = { supabase: { rpc: (fn: 'has_role', args: { _user_id: string; _role: 'admin' }) => PromiseLike<{ data: boolean | null }> }; userId: string };
 
@@ -15,7 +16,8 @@ async function assertAdmin(context: Ctx) {
 
 type Admin = Awaited<ReturnType<typeof assertAdmin>>;
 async function audit(db: Admin, actor: string, action: string, targetType: string, targetId: string | null, before: unknown, after: unknown, note?: string | null) {
-  await db.from('admin_audit').insert({ actor_id: actor, action, target_type: targetType, target_id: targetId, before: (before ?? null) as never, after: (after ?? null) as never, note: note || null });
+  const { error } = await db.from('admin_audit').insert({ actor_id: actor, action, target_type: targetType, target_id: targetId, before: (before ?? null) as never, after: (after ?? null) as never, note: note || null });
+  if (error) throw new Error('audit_failed');
 }
 
 const uuid = z.string().uuid();
@@ -26,6 +28,22 @@ export const getAdminAccess = createServerFn({ method: 'POST' }).middleware([req
   const { data } = await context.supabase.rpc('has_role', { _user_id: context.userId, _role: 'admin' });
   return { admin: !!data };
 });
+
+export const listSafety = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => safetySearch.parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: rows, error } = await context.supabase.rpc('admin_safety_list', { _kind: data.kind, _q: data.q, _state: data.state, _page: data.page });
+    if (error) throw new Error(error.message.includes('rate_limited') ? 'rate_limited' : 'forbidden');
+    return safetyPage((rows ?? []) as unknown as SafetyRow[]);
+  });
+
+export const actSafety = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => safetyAction.parse(d))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase.rpc('admin_safety_action', { _kind: data.kind, _id: data.id, _action: data.action, _reason: data.reason, ...(data.user ? { _user: data.user } : {}) });
+    if (error) throw new Error(error.message.includes('rate_limited') ? 'rate_limited' : 'failed');
+    return { ok: true };
+  });
 
 export const getAdminOverview = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ period: z.enum(['week', 'month', 'all']) }).parse(d))

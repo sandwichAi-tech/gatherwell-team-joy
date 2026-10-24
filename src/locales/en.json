@@ -2635,7 +2635,9 @@
       "founding": "Founding coaches",
       "day60": "Day 60",
       "mail": "Mail",
-      "support": "Support"
+      "support": "Support",
+      "offerings": "Offerings",
+      "communities": "Community restrictions"
     },
     "period": {
       "week": "This week",
@@ -5437,5 +5439,78 @@
     "toggle": "Discussion",
     "toggleHelp": "Let registered participants post and reply. Off by default.",
     "disabled": "The host hasn't opened discussion for this event."
+  },
+  "safety": {
+    "tabs": {
+      "users": "People",
+      "teams": "Workspaces",
+      "offerings": "Offerings",
+      "reports": "Reports",
+      "audit": "Audit history",
+      "communities": "Community restrictions"
+    },
+    "platformScope": "Platform safety actions — separate from workspace roles and host controls.",
+    "search": "Search name, title or exact ID",
+    "filter": "Status",
+    "loadError": "This list could not load. Access may be unavailable or the request limit was reached.",
+    "retry": "Try again",
+    "unavailable": "Unavailable target",
+    "actor": "Actor",
+    "assignee": "Assigned to",
+    "review": "Review",
+    "pagination": "Results pages",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {{page}}",
+    "target": "Target ID",
+    "reason": "Reason / internal note (required)",
+    "notePrivacy": "Keep notes factual. Do not include reporter names, contacts, consent contents or private messages.",
+    "confirm": "Confirm this platform safety action. Records are preserved and the action is audited.",
+    "actionError": "The action was not completed. Refresh the list and check the target status or permissions.",
+    "accountScope": "Account suspension blocks sign-in using the existing account restriction. This does not delete the account.",
+    "teamScope": "Workspace suspension limits new event creation. It does not cancel existing registrations or revoke unrelated account access.",
+    "communityScope": "This restriction limits posting in this community scope only. Account sign-in and other communities are unchanged.",
+    "communityTitle": "Restrict community posting",
+    "userId": "Exact user ID",
+    "state": {
+      "all": "All",
+      "active": "Active",
+      "suspended": "Suspended",
+      "published": "Published",
+      "draft": "Draft",
+      "archived": "Archived",
+      "open": "Open",
+      "closed": "Closed",
+      "mine": "Assigned to me",
+      "escalated": "Escalated",
+      "approved": "Resolved / dismissed",
+      "removed": "Hidden",
+      "edited": "Edited"
+    },
+    "action": {
+      "claim": "Assign to me",
+      "escalate": "Escalate",
+      "resolve": "Resolve",
+      "dismiss": "Dismiss",
+      "hide": "Hide / unpublish target",
+      "unpublish": "Unpublish",
+      "suspend": "Suspend",
+      "restore": "Reactivate"
+    },
+    "types": {
+      "user": "Account",
+      "team": "Workspace",
+      "event": "Event",
+      "retreat": "Retreat",
+      "course": "Course",
+      "resource": "Resource",
+      "membership": "Membership",
+      "comment": "Comment",
+      "topic": "Discussion",
+      "photo": "Photo",
+      "shoutout": "Recognition",
+      "activity": "Activity",
+      "announcement": "Announcement"
+    }
   }
 }
