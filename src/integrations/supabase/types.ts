@@ -5989,6 +5989,50 @@ export type Database = {
         }
         Relationships: []
       }
+      workspace_assignments: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          revoked_at: string | null
+          revoked_by: string | null
+          scope_id: string
+          scope_type: string
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          revoked_at?: string | null
+          revoked_by?: string | null
+          scope_id: string
+          scope_type: string
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          revoked_at?: string | null
+          revoked_by?: string | null
+          scope_id?: string
+          scope_type?: string
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_assignments_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -6037,6 +6081,15 @@ export type Database = {
         Args: { _group: string; _rsvp: string }
         Returns: undefined
       }
+      assign_workspace_scope: {
+        Args: {
+          _scope_id: string
+          _scope_type: string
+          _team: string
+          _user: string
+        }
+        Returns: string
+      }
       award_badge: {
         Args: { _badge: string; _note: string; _team: string; _user: string }
         Returns: undefined
@@ -6083,6 +6136,7 @@ export type Database = {
         Args: { _track: string }
         Returns: boolean
       }
+      can_checkin_event: { Args: { _event: string }; Returns: boolean }
       can_edit_track: { Args: { _track: string }; Returns: boolean }
       can_join_conversation: { Args: { _event: string }; Returns: boolean }
       can_manage_event: { Args: { _event_id: string }; Returns: boolean }
@@ -6147,6 +6201,7 @@ export type Database = {
         Args: { _buyer?: string; _code: string; _kind: string; _target: string }
         Returns: Json
       }
+      checkin_guest_list: { Args: { _event: string }; Returns: Json }
       claim_guest_records: { Args: never; Returns: Json }
       claim_outbox: {
         Args: { _limit?: number }
@@ -6415,6 +6470,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      has_workspace_assignment: {
+        Args: {
+          _scope_id: string
+          _scope_type: string
+          _team: string
+          _user: string
+        }
+        Returns: boolean
+      }
       honor_welcome_code: { Args: { _code: string }; Returns: Json }
       host_cancel_rsvp: {
         Args: { _reason: string; _rsvp: string }
@@ -6494,6 +6558,7 @@ export type Database = {
         Args: { _action: string; _id: string }
         Returns: undefined
       }
+      moderation_queue: { Args: { _team: string }; Returns: Json }
       my_alert_matches: { Args: never; Returns: Json }
       my_broadcasts: {
         Args: never
@@ -6547,6 +6612,7 @@ export type Database = {
       my_tickets: { Args: never; Returns: Json }
       my_value_meter: { Args: never; Returns: Json }
       my_welcome: { Args: never; Returns: Json }
+      my_workspace_assignments: { Args: { _team: string }; Returns: Json }
       name_host_of_month: {
         Args: { _note: string; _team: string; _user: string }
         Returns: undefined
@@ -6931,6 +6997,10 @@ export type Database = {
         Args: { _event: string; _groups: string[] }
         Returns: undefined
       }
+      set_workspace_assignment_active: {
+        Args: { _active: boolean; _id: string }
+        Returns: undefined
+      }
       shared_progress: {
         Args: { _team: string; _tz: string; _user: string }
         Returns: Json
@@ -6954,6 +7024,7 @@ export type Database = {
         Returns: string
       }
       team_activity: { Args: { _limit?: number; _team: string }; Returns: Json }
+      team_analytics_summary: { Args: { _team: string }; Returns: Json }
       team_benchmark: { Args: { _root: string }; Returns: Json }
       team_capability: {
         Args: { _cap: string; _team: string }
@@ -7057,6 +7128,7 @@ export type Database = {
         Args: { _kind: string; _target: string }
         Returns: undefined
       }
+      workspace_assignments_list: { Args: { _team: string }; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
