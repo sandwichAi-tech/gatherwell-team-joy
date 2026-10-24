@@ -50,8 +50,8 @@ describe('public pricing (approved 2026-10-24 model)', () => {
       expect(en.pricingV4.compare.rows[k as keyof typeof en.pricingV4.compare.rows]).toBeTruthy();
     }
     expect(comparison).toContain('pricingV4.compare.included');
-    expect(comparison).toContain('note_setup');
-    expect(comparison).toContain('note_usage');
+    expect(comparison).toContain(`note: 'setup'`);
+    expect(comparison).toContain(`note: 'usage'`);
   });
   it('provider-dependent rows are honest in both languages', () => {
     expect(en.pricingV4.compare.note_setup).toBe('Setup required');

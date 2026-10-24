@@ -143,6 +143,6 @@ describe('builder seats (approved 2026-10-24 model)', () => {
     const sql = readFileSync('drizzle/migrations/0088_v5_plan_fee_ladder_builder_seats.sql', 'utf8');
     expect(sql).toContain(`SELECT _role IN ('admin','host','content_editor')`);
     expect(sql).toContain('team_builder_seat_limit');
-    expect(sql).toContain("WHEN 'pro' THEN 5 ELSE 3 END");
+    expect(sql).toContain("WHEN _plan = 'pro' THEN 5 ELSE 3 END");
   });
 });
