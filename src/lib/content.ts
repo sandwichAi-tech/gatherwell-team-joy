@@ -132,3 +132,46 @@ export function commerceMode(o: { price_cents?: number; billing_interval?: Billi
 
 /** Paid content actions are never live in this milestone. */
 export const paidSetupRequired = (o: { price_cents?: number }) => (o.price_cents ?? 0) > 0;
+
+/* ---------- Resource bundle items (migration 0060) ---------- */
+
+export type BundleItem = {
+  id: string; offer_id: string; sort_order: number;
+  type: 'text' | 'file' | 'link' | 'embed';
+  title_en: string; title_es: string; body_en: string | null; body_es: string | null;
+  url: string | null; storage_path: string | null;
+  is_preview: boolean; allow_download: boolean; is_published: boolean;
+  replaced_by: string | null; created_at: string;
+};
+
+/** Host view: all current items (replaced versions hidden) in order. */
+export const bundleItemsQuery = (offerId: string) => queryOptions({
+  queryKey: ['bundle-items', offerId],
+  queryFn: async (): Promise<BundleItem[]> => {
+    const { data, error } = await db.from('offer_items').select('*').eq('offer_id', offerId).is('replaced_by', null).order('sort_order').order('created_at');
+    if (error) throw error;
+    return (data ?? []) as BundleItem[];
+  },
+});
+
+/** Entitled learner view: published current items only. */
+export const bundleAccessQuery = (offerId: string, userId: string) => queryOptions({
+  queryKey: ['bundle-access', offerId, userId],
+  queryFn: async (): Promise<BundleItem[]> => {
+    const { data, error } = await db.from('offer_items').select('id, offer_id, sort_order, type, title_en, title_es, body_en, body_es, url, is_preview, allow_download')
+      .eq('offer_id', offerId).is('replaced_by', null).eq('is_published', true).order('sort_order').order('created_at');
+    if (error) throw error;
+    return (data ?? []) as BundleItem[];
+  },
+});
+
+export const replaceOfferItem = (itemId: string, patch: Record<string, unknown>) =>
+  db.rpc('replace_offer_item', { _item: itemId, _p: patch });
+
+/** Bundle items follow the same link/embed rules as lessons. */
+export function bundleItemError(item: { type: string; url?: string | null; storage_path?: string | null; body?: string | null }): 'https' | 'missing_content' | null {
+  if (item.type === 'text') return item.body?.trim() ? null : 'missing_content';
+  if (item.type === 'file') return item.storage_path ? null : 'missing_content';
+  if (!item.url || !isHttpsUrl(item.url)) return item.url ? 'https' : 'missing_content';
+  return null;
+}
