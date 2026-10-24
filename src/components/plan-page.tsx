@@ -1,4 +1,4 @@
-import { noLimitsPhase, planSaving } from '@/lib/plan-savings';
+import { noLimitsPhase } from '@/lib/plan-savings';
 import { PlanCardBody } from '@/components/plan-features';
 import { FoundingCommitmentsCard, FoundingPlanBanner } from '@/components/founding';
 import { EarningsMilestones } from '@/components/coach-launch';
@@ -29,6 +29,11 @@ import { useInlineCheckout } from '@/components/inline-checkout';
 import { PaymentTestModeBanner } from '@/components/payment-test-mode-banner';
 
 const fmtDate = (iso: string, lang: string) => new Date(iso).toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+/** Blueprint v4 prices shown on the prospective cards. plan_settings rows and Stripe price IDs stay
+ *  untouched, so paid checkout stays disabled ("Setup required") until the approved prices are configured. */
+const V4_MONTHLY_CENTS: Record<PlanId, number> = { free: 0, growth: 4900, pro: 9900 };
+const V4_FEE_PERCENT = 5;
 
 /** App errors with their own wording; anything else is the provider's message. */
 const CHECKOUT_ERRORS = ['already_on_plan', 'already_on_license', 'price_mismatch', 'price_not_found', 'founding_free', 'no_subscription', 'no_period_end'];
