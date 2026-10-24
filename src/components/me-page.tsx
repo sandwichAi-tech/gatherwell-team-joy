@@ -32,6 +32,7 @@ import { PurchasesPanel } from '@/components/offers';
 import { InviteFriendsPanel } from '@/components/welcome';
 import { RegularHosts } from '@/components/belonging';
 import { MyChallengesList, MyGatheringsList, ProfileHero, RecentBadges, SettingsGroup, StatsStrip } from '@/components/profile-hero';
+import { PrivacyDataPanel } from '@/components/privacy-panel';
 import { GwFeatureTile, type GwIconName } from '@/components/gw-icon';
 import { HostProfilePanel } from '@/components/host-profile';
 import { QRCodeSVG } from 'qrcode.react';
