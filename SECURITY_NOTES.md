@@ -70,3 +70,9 @@ The requester supplied the following results after commit ac2eef3c5d5ff7138522b8
 - rsvp_event_minor() validates allows_minors, min age band, guardian name/relationship/contact server-side; the guardian consent version is resolved from consent_text_versions in the database, never chosen by the client; the existing guard_minor_registration trigger re-validates on insert/update.
 - enforce_reg_window() blocks guest RSVPs outside the registration window for every RSVP path; host walk-ins bypass it.
 - get_public_event() exposes the new public-safe fields only; online join URLs stay out of the public payload.
+
+## Registration (2026-10-24)
+- register_attendance() is the single guest/account registration path: platform terms consent is required and its version is resolved from consent_text_versions in the database, never chosen by the client; paid tiers raise payment_required until checkout is configured; tier quantity and sale windows are checked under the event row lock, so capacity stays atomic.
+- rsvp_event() raises event_full when a full event has the waitlist disabled; a transaction-local flag (gw.force_waitlist) lets tier-level capacity waitlist through the same locked path.
+- host_cancel_rsvp() requires can_manage_event(), keeps the row (cancelled_by + reason), and the existing rsvp_freed trigger promotes the next waitlisted guest; notifications are queued, not claimed delivered.
+- my_tickets() returns only the caller's own registrations and exposes the virtual join link only while the registration is active; guest management stays behind the opaque checkin code.

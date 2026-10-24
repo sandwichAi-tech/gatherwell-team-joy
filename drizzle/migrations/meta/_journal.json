@@ -372,6 +372,27 @@
       "when": 1792807680910,
       "tag": "0052_event_builder_fields",
       "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "7",
+      "when": 1792809528884,
+      "tag": "0053_registration_consent_tickets",
+      "breakpoints": true
+    },
+    {
+      "idx": 54,
+      "version": "7",
+      "when": 1792809707943,
+      "tag": "0054_registration_functions",
+      "breakpoints": true
+    },
+    {
+      "idx": 55,
+      "version": "7",
+      "when": 1792809750689,
+      "tag": "0055_public_event_ticket_tiers",
+      "breakpoints": true
     }
   ]
 }

@@ -246,7 +246,8 @@
     "tabs": {
       "upcoming": "Próximas",
       "hosting": "Organizo",
-      "past": "Pasadas"
+      "past": "Pasadas",
+      "tickets": "Mis boletos"
     },
     "view": "Vista",
     "list": "Lista",
@@ -1182,7 +1183,11 @@
       "guardian_consent_required": "Se requiere el consentimiento del tutor.",
       "min_age_not_met": "Este evento tiene una edad mínima que no se cumple.",
       "registration_not_open": "El registro aún no abre.",
-      "registration_closed": "El registro está cerrado."
+      "registration_closed": "El registro está cerrado.",
+      "terms_required": "Acepta los Términos de servicio y la Política de privacidad para continuar.",
+      "tier_required": "Elige un tipo de boleto.",
+      "event_full": "Este evento está lleno y no tiene lista de espera.",
+      "payment_required": "Los boletos de pago aún no están disponibles: el cobro no se ha configurado."
     },
     "waitlistPosition": "Eres el n.º {{n}} en la lista de espera",
     "metaOnline": "En línea",
@@ -1208,6 +1213,20 @@
       "guardianEmail": "Correo del tutor",
       "guardianPhone": "Teléfono del tutor",
       "consent": "Soy el padre, madre o tutor legal y doy mi consentimiento para que este menor asista."
+    },
+    "termsAgree": "Acepto los",
+    "termsLink": "Términos de servicio",
+    "privacyLink": "Política de privacidad",
+    "updatesOptIn": "Quiero recibir novedades de este evento (opcional). Los avisos sobre tu registro se envían de todas formas.",
+    "tiers": {
+      "title": "Tipo de boleto",
+      "free": "Gratis",
+      "setupRequired": "Requiere configuración",
+      "soldOut": "Agotado",
+      "notYet": "Aún no a la venta",
+      "ended": "Venta terminada",
+      "spotsLeft_one": "{{count}} lugar disponible",
+      "spotsLeft_other": "{{count}} lugares disponibles"
     }
   },
   "guestList": {
@@ -1237,7 +1256,12 @@
     "moved": "Pasó a cancelados",
     "moveCancelled": "Cancelar",
     "hideList": "Ocultar quién va",
-    "hideListHelp": "Los invitados solo ven el número."
+    "hideListHelp": "Los invitados solo ven el número.",
+    "cancelTitle": "Cancelar registro",
+    "cancelReason": "Motivo (lo verá el invitado)",
+    "cancelPlaceholder": "Ej.: el evento cambió de fecha",
+    "cancelConfirm": "Cancelar registro",
+    "cancelled": "Registro cancelado"
   },
   "live": {
     "polls": "Encuestas",
@@ -4594,5 +4618,18 @@
     "errors": {
       "reg_window": "El registro debe abrir antes de cerrar."
     }
+  },
+  "tickets": {
+    "empty": "Aún no tienes registros",
+    "emptyText": "Cuando te registres en un evento, tu boleto y su estado aparecerán aquí.",
+    "discover": "Descubrir eventos",
+    "cancel": "Cancelar registro",
+    "cancelTitle": "¿Cancelar tu registro?",
+    "cancelText": "Se liberará tu lugar. Puedes volver a registrarte mientras haya espacio.",
+    "keep": "Conservar mi lugar",
+    "waiverLine": "Exención firmada (versión {{version}})",
+    "termsLine": "Términos aceptados (v{{version}})",
+    "hostCancelled": "El anfitrión canceló este registro",
+    "tierLine": "Boleto: {{name}}"
   }
 }

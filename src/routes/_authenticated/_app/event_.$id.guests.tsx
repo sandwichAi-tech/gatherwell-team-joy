@@ -63,6 +63,16 @@ function GuestListPage() {
     if (error) { toast.error(t('profile.saveError')); return; }
     toast.success(t(status === 'going' ? 'guestList.promoted' : 'guestList.moved')); await refresh();
   };
+  const [cancelling, setCancelling] = useState<{ id: string; name: string } | null>(null);
+  const [cancelReason, setCancelReason] = useState(''); const [cancelBusy, setCancelBusy] = useState(false);
+  const hostCancel = async () => {
+    if (!cancelling) return;
+    setCancelBusy(true);
+    const { error } = await (supabase as any).rpc('host_cancel_rsvp', { _rsvp: cancelling.id, _reason: cancelReason.trim() });
+    setCancelBusy(false);
+    if (error) { toast.error(t('profile.saveError')); return; }
+    toast.success(t('guestList.cancelled')); setCancelling(null); setCancelReason(''); await refresh();
+  };
   const exportCsv = () => {
     const cell = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`;
     const head = ['name', 'team', 'status', 'plus_ones', 'phone', 'email', 'sms_reminders', 'email_reminders', 'rsvp_time', 'checked_in', 'waiver_signed', 'waiver_name', 'waiver_version', 'waiver_time', 'waiver_ip', 'waiver_source', ...questions.map(q => q.label)];
@@ -97,7 +107,7 @@ function GuestListPage() {
             {needsWaiver && !waivers.has(r.id) && r.status === 'going' && <Button size="sm" variant="secondary" onClick={() => setSigning({ id: r.id, name: r.guest_name ?? '' })}><FileText />{t('teamRsvp.signAtDoor')}</Button>}
             {['going', 'maybe'].includes(r.status) && (r.wants_buddy || belong.get(r.id)?.first_time || r.buddy_rsvp_id) && <Button size="sm" variant="secondary" onClick={() => setBuddyFor(r.id)}><HandHeart />{t(r.buddy_rsvp_id ? 'belong.changeBuddy' : 'belong.pairBuddy')}</Button>}
             {r.status === 'waitlist' && <Button size="sm" onClick={() => setStatus(r.id, 'going')}><ArrowUp />{t('guestList.promote')}</Button>}
-            {!['cancelled', 'requested', 'declined'].includes(r.status) && <Button size="sm" variant="ghost" className="danger-text" aria-label={t('guestList.moveCancelled')} onClick={() => setStatus(r.id, 'cancelled')}><X />{t('guestList.moveCancelled')}</Button>}
+            {!['cancelled', 'requested', 'declined'].includes(r.status) && <Button size="sm" variant="ghost" className="danger-text" aria-label={t('guestList.moveCancelled')} onClick={() => { setCancelling({ id: r.id, name: r.guest_name ?? '' }); setCancelReason(''); }}><X />{t('guestList.moveCancelled')}</Button>}
           </div>
         </li></Fragment>)}</ul>}
     </section>
@@ -105,6 +115,10 @@ function GuestListPage() {
     {groupsOpen && <SmallGroupsSheet eventId={id} rows={active.filter(r => r.status !== 'waitlist')} onClose={() => setGroupsOpen(false)} />}
     {signing && <DoorWaiverSheet eventId={id} rsvp={signing} onClose={() => setSigning(null)} onSaved={refresh} />}
     <AddGuestSheet open={adding} eventId={id} onClose={() => setAdding(false)} onSaved={refresh} />
+    <ResponsiveSheet open={!!cancelling} onOpenChange={o => !o && setCancelling(null)} title={t('guestList.cancelTitle')} description={cancelling?.name}
+      footer={<Button className="danger-button" disabled={cancelBusy} onClick={hostCancel}>{t('guestList.cancelConfirm')}</Button>}>
+      <div><label className="field-label" htmlFor="cancel-reason">{t('guestList.cancelReason')}</label><Input id="cancel-reason" maxLength={500} className="field-input" value={cancelReason} placeholder={t('guestList.cancelPlaceholder')} onChange={e => setCancelReason(e.target.value)} /></div>
+    </ResponsiveSheet>
   </>;
 }
 

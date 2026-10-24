@@ -246,7 +246,8 @@
     "tabs": {
       "upcoming": "Upcoming",
       "hosting": "Hosting",
-      "past": "Past"
+      "past": "Past",
+      "tickets": "My tickets"
     },
     "view": "View",
     "list": "List",
@@ -1182,7 +1183,11 @@
       "guardian_consent_required": "Guardian consent is required.",
       "min_age_not_met": "This event has a minimum age that isn't met.",
       "registration_not_open": "Registration hasn't opened yet.",
-      "registration_closed": "Registration is closed."
+      "registration_closed": "Registration is closed.",
+      "terms_required": "Please agree to the Terms of Service and Privacy Policy to continue.",
+      "tier_required": "Choose a ticket type.",
+      "event_full": "This event is full and doesn’t have a waitlist.",
+      "payment_required": "Paid tickets aren’t available yet — checkout hasn’t been set up."
     },
     "waitlistPosition": "You're #{{n}} on the waitlist",
     "metaOnline": "Online",
@@ -1208,6 +1213,20 @@
       "guardianEmail": "Guardian email",
       "guardianPhone": "Guardian phone",
       "consent": "I am the parent or legal guardian and I consent to this minor attending."
+    },
+    "termsAgree": "I agree to the",
+    "termsLink": "Terms of Service",
+    "privacyLink": "Privacy Policy",
+    "updatesOptIn": "Send me news about this event (optional). Messages about your registration are sent either way.",
+    "tiers": {
+      "title": "Ticket type",
+      "free": "Free",
+      "setupRequired": "Setup required",
+      "soldOut": "Sold out",
+      "notYet": "Not on sale yet",
+      "ended": "Sales ended",
+      "spotsLeft_one": "{{count}} spot left",
+      "spotsLeft_other": "{{count}} spots left"
     }
   },
   "guestList": {
@@ -1237,7 +1256,12 @@
     "moved": "Moved to cancelled",
     "moveCancelled": "Cancel",
     "hideList": "Hide who's going",
-    "hideListHelp": "Guests see only the count."
+    "hideListHelp": "Guests see only the count.",
+    "cancelTitle": "Cancel registration",
+    "cancelReason": "Reason (shared with the guest)",
+    "cancelPlaceholder": "E.g. the event date changed",
+    "cancelConfirm": "Cancel registration",
+    "cancelled": "Registration cancelled"
   },
   "live": {
     "polls": "Polls",
@@ -4594,5 +4618,18 @@
     "errors": {
       "reg_window": "Registration must open before it closes."
     }
+  },
+  "tickets": {
+    "empty": "No registrations yet",
+    "emptyText": "When you register for an event, your ticket and status will show up here.",
+    "discover": "Discover events",
+    "cancel": "Cancel registration",
+    "cancelTitle": "Cancel your registration?",
+    "cancelText": "Your spot will be released. You can register again while space is available.",
+    "keep": "Keep my spot",
+    "waiverLine": "Waiver signed (version {{version}})",
+    "termsLine": "Terms accepted (v{{version}})",
+    "hostCancelled": "The host cancelled this registration",
+    "tierLine": "Ticket: {{name}}"
   }
 }

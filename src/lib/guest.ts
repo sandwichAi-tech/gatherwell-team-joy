@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { COVER_STYLES } from '@/lib/gatherings';
+import type { TicketTier } from '@/lib/registration';
 
 export type PublicEvent = {
   id: string; title: string; description_en: string | null; description_es: string | null;
@@ -13,7 +14,7 @@ export type PublicEvent = {
   reg_opens_at?: string | null; reg_closes_at?: string | null; waitlist_enabled?: boolean; tags?: string[];
   contact_email?: string | null; contact_phone?: string | null;
   accessibility_notes?: string | null; what_to_bring?: string | null; cancellation_policy?: string | null;
-  allows_minors?: boolean; min_age?: number | null;
+  allows_minors?: boolean; min_age?: number | null; ticket_tiers?: TicketTier[];
 };
 
 export type RsvpQuestion = { id: string; kind: 'text' | 'choice' | 'yesno'; label: string; options?: string[] | undefined; required?: boolean };
@@ -125,7 +126,7 @@ export async function storyImage(opts: { title: string; date: string; link: stri
 
 export function rsvpErrorKey(error: unknown) {
   const m = typeof error === 'object' && error && 'message' in error ? String((error as { message: unknown }).message) : '';
-  for (const k of ['name_required', 'contact_required', 'invalid_email', 'not_open', 'too_long', 'rate_limited', 'members_only', 'waiver_required', 'answers_required', 'early_access', 'minors_not_allowed', 'minor_details_incomplete', 'guardian_details_incomplete', 'guardian_consent_required', 'min_age_not_met', 'registration_not_open', 'registration_closed']) if (m.includes(k)) return `guest.errors.${k}`;
+  for (const k of ['name_required', 'contact_required', 'invalid_email', 'not_open', 'too_long', 'rate_limited', 'members_only', 'waiver_required', 'answers_required', 'early_access', 'minors_not_allowed', 'minor_details_incomplete', 'guardian_details_incomplete', 'guardian_consent_required', 'min_age_not_met', 'registration_not_open', 'registration_closed', 'event_full', 'terms_required', 'tier_required', 'payment_required']) if (m.includes(k)) return `guest.errors.${k}`;
   return 'guest.errors.generic';
 }
 
