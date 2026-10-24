@@ -36,7 +36,7 @@ function errText(t: TFunction, e: unknown) {
   return m.includes('not_allowed') ? t('resources.notAllowed') : t('resources.error');
 }
 
-export function ResourceCard({ r, creator, onSaveTemplate }: { r: ResourceCardData; creator?: boolean; onSaveTemplate?: (r: ResourceCardData) => void }) {
+export function ResourceCard({ r, creator, onSaveTemplate }: { r: ResourceCardData; creator?: boolean | undefined; onSaveTemplate?: ((r: ResourceCardData) => void) | undefined }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
   const title = pick(lang, r.title_en, r.title_es) || t('resources.untitled');
   const Icon = TYPE_ICON[r.type];
@@ -67,7 +67,7 @@ export function ResourceCard({ r, creator, onSaveTemplate }: { r: ResourceCardDa
   </article>;
 }
 
-function Grid({ list, creator, onSaveTemplate }: { list: ResourceCardData[]; creator?: boolean; onSaveTemplate?: (r: ResourceCardData) => void }) {
+function Grid({ list, creator, onSaveTemplate }: { list: ResourceCardData[]; creator?: boolean | undefined; onSaveTemplate?: ((r: ResourceCardData) => void) | undefined }) {
   return <div className="resource-grid">{list.map(r => <ResourceCard key={r.key} r={r} creator={creator} onSaveTemplate={onSaveTemplate} />)}</div>;
 }
 

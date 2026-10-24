@@ -61,7 +61,7 @@ export type ResourceInputs = {
   tracks: Track[];            // already filtered to what the caller may read
   learning: LearningEntry[];  // caller's entitlements (my_learning)
   recipes: Recipe[];
-  quizOffers?: Set<string>; quizLessons?: Set<string>;
+  quizOffers?: Set<string> | undefined; quizLessons?: Set<string> | undefined;
   teamName?: string | null;
 };
 
