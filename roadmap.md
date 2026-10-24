@@ -1,11 +1,15 @@
 # Roadmap
 
-## Completed: Tickets, check-in operations, attendance exports, calendar (v0.24)
+## Current milestone: In-app communications, discussions, moderation, notification prefs, support routing
 
-All items done: migration 0078/0079, ticket detail page with QR/print/states, hardened check-in (rate limits, audit, undo confirmation, walk-in manager-only), attendance totals + safe CSV export, ICS/Google/Outlook calendar, wallet Setup required, 276 tests, live role-boundary verification, fixtures cleaned.
+- [ ] Audit: announcements, broadcasts/broadcast_reads, comments, discussion_topics, reports, moderation_queue, notification_outbox, existing UI (conversation.tsx, notifications)
+- [ ] Migration: host updates (announcements w/ draft/publish/edit/archive + server-derived audience), notification center (in-app, dedupe keys, unread, prefs by category), discussions (toggle per offering, posts/replies/reactions, report, block/mute, scope suspension), moderation actions (hide/lock/remove w/ reason, resolve reports, reporter anonymity, redacted audit), contact-host threads, platform support tickets, rate limits
+- [ ] UI: Updates inbox + nav entry, notification center + prefs (email/SMS disabled Setup required), discussion threads, moderation queue UI, contact-host thread, support center
+- [ ] Tests: eligibility/audience, read state, dedupe, ownership, reactions, reporting, scoped moderation, reporter anonymity, block/mute, community suspension, contact/support isolation, minors denial, rate limits, audit redaction
+- [ ] Live verification with fixtures, cleanup, typecheck/build/tests
+- [ ] Docs: CHANGELOG, FEATURE_INVENTORY, SECURITY_NOTES, roadmap; report
 
-## Open / next
-
-- [ ] Signed-in browser QA for ticket page + check-in (needs an injected session; was unavailable)
-- [ ] Screen reader + 200% zoom pass on new ticket/calendar surfaces
-- [ ] Wallet provider certificates (Apple/Google) when credentials exist — UI already gated as Setup required
+## Parked from v0.24
+- [ ] Signed-in browser QA for ticket page + check-in (needs injected session)
+- [ ] Screen reader + 200% zoom pass on ticket/calendar surfaces
+- [ ] Wallet provider certificates (UI gated as Setup required)
