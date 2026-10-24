@@ -187,8 +187,9 @@ function TracksTab({ teamId, newType }: { teamId: string; newType?: string | und
   const { t, i18n } = useTranslation(); const { data } = useLearn(); const navigate = useNavigate();
   const [editing, setEditing] = useState<Partial<Track> | null>(null); const [lesson, setLesson] = useState<(Partial<Lesson> & { track_id: string }) | null>(null);
   const parsed = parseCreateType(newType);
-  const flow: TrackFlowType | null = parsed && isTrackFlow(parsed) ? parsed : null;
+  const [flow, setFlow] = useState<TrackFlowType | null>(null);
   const [flowTrack, setFlowTrack] = useState<Track | null>(null); const [flowDone, setFlowDone] = useState(false);
+  useEffect(() => { if (parsed && isTrackFlow(parsed) && !flow && !flowDone) setFlow(parsed); }, [parsed, flow, flowDone]);
   const clearParam = () => void navigate({ to: '/learn/manage', search: { tab: 'tracks' }, replace: true, resetScroll: false });
   const own = (data?.tracks ?? []).filter(tr => tr.team_id === teamId);
   const flowEditing = flow && !flowTrack && !flowDone;
