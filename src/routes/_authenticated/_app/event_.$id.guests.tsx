@@ -63,6 +63,16 @@ function GuestListPage() {
     if (error) { toast.error(t('profile.saveError')); return; }
     toast.success(t(status === 'going' ? 'guestList.promoted' : 'guestList.moved')); await refresh();
   };
+  const [cancelling, setCancelling] = useState<{ id: string; name: string } | null>(null);
+  const [cancelReason, setCancelReason] = useState(''); const [cancelBusy, setCancelBusy] = useState(false);
+  const hostCancel = async () => {
+    if (!cancelling) return;
+    setCancelBusy(true);
+    const { error } = await (supabase as any).rpc('host_cancel_rsvp', { _rsvp: cancelling.id, _reason: cancelReason.trim() });
+    setCancelBusy(false);
+    if (error) { toast.error(t('profile.saveError')); return; }
+    toast.success(t('guestList.cancelled')); setCancelling(null); setCancelReason(''); await refresh();
+  };
   const exportCsv = () => {
     const cell = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`;
     const head = ['name', 'team', 'status', 'plus_ones', 'phone', 'email', 'sms_reminders', 'email_reminders', 'rsvp_time', 'checked_in', 'waiver_signed', 'waiver_name', 'waiver_version', 'waiver_time', 'waiver_ip', 'waiver_source', ...questions.map(q => q.label)];

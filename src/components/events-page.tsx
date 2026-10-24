@@ -52,8 +52,8 @@ export function EventsPage({ tab }: { tab: EventsTab }) {
         <Button variant="ghost" size="icon" aria-pressed={view === 'list'} className={view === 'list' ? 'selected' : ''} onClick={() => setView('list')} aria-label={t('events.list')} title={t('events.list')}><List /></Button>
         <Button variant="ghost" size="icon" aria-pressed={view === 'map'} className={view === 'map' ? 'selected' : ''} onClick={() => setView('map')} aria-label={t('events.map')} title={t('events.map')}><MapIcon /></Button></div>
     </div>
-    {view === 'map' && <section className="panel map-panel">{mapsKey ? <RealMap apiKey={mapsKey} events={data} onPick={e => navigate({ to: '/event/$id', params: { id: e.id } })} /> : <MapPlaceholder />}</section>}
-    {isLoading ? <ListSkeleton /> : data.length ? <div className="gathering-grid">{data.map(e => <GatheringCard key={e.id} e={e} lang={lang} />)}</div> : <>
+    {view === 'map' && tab !== 'tickets' && <section className="panel map-panel">{mapsKey ? <RealMap apiKey={mapsKey} events={data} onPick={e => navigate({ to: '/event/$id', params: { id: e.id } })} /> : <MapPlaceholder />}</section>}
+    {tab === 'tickets' ? <MyTickets /> : isLoading ? <ListSkeleton /> : data.length ? <div className="gathering-grid">{data.map(e => <GatheringCard key={e.id} e={e} lang={lang} />)}</div> : <>
       <section className="panel empty-gatherings"><h2>{t(`events.empty.${tab}`)}</h2><p>{t('events.emptyText')}</p>
         {canCreate && <Button asChild><Link to="/gathering/new"><Plus />{t('gathering.createFirst')}<ArrowRight /></Link></Button>}</section>
     </>}
