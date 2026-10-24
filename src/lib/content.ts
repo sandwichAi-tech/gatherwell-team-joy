@@ -18,6 +18,7 @@ export type PublicOffer = {
   enroll_opens_at: string | null; enroll_closes_at: string | null;
   sections: { id: string; title_en: string; title_es: string; description_en: string | null; description_es: string | null;
     lessons: { id: string; title_en: string; title_es: string; type: string; duration_minutes: number | null; is_preview: boolean }[] | null }[];
+  items: { id: string; type: string; title_en: string; title_es: string; is_preview: boolean; allow_download: boolean }[];
 };
 
 export type LearningEntry = {
