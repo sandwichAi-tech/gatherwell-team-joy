@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { COVER_STYLES } from '@/lib/gatherings';
 import type { TicketTier } from '@/lib/registration';
+import { downloadIcsFile, googleCalendarUrl as googleUrl } from '@/lib/ics';
 
 export type PublicEvent = {
   id: string; title: string; description_en: string | null; description_es: string | null;
