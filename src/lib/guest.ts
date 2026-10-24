@@ -50,8 +50,6 @@ export const rsvpByCodeQuery = (code: string) => ({
 });
 
 type When = Pick<PublicEvent, 'title' | 'starts_at' | 'ends_at' | 'location_name' | 'address'>;
-const endOf = (e: When) => e.ends_at ? new Date(e.ends_at) : new Date(new Date(e.starts_at).getTime() + 3600000);
-const stamp = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
 const placeText = (e: When) => [e.location_name, e.address].filter(Boolean).join(', ');
 
 export function googleCalendarUrl(e: When, details: string) {
