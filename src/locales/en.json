@@ -3063,7 +3063,7 @@
     "includesPlaceholder": "Members-only events\nResource library\nCommunity",
     "price": "Price (USD)",
     "priceMonthly": "Monthly price (USD)",
-    "feeNote": "Leave at 0 for free. The platform fee for your plan applies to paid offers.",
+    "feeNote": "Leave at 0 for free. A flat 5% ZoheeWell platform fee applies to paid sales on any plan. Stripe processing is separate.",
     "drip": "Days between lessons",
     "courseHelp": "After saving, link a Resources track to this course. Lessons unlock one by one.",
     "membershipHelp": "After saving, mark events or Resources tracks as members-only for this Circle.",
