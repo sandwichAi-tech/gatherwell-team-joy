@@ -99,7 +99,7 @@ export async function processOutbox(limit = 100) {
   let journeys = 0;
   try {
     const adv = await supabaseAdmin.rpc('advance_journey_runs', { _limit: 50 });
-    if (!adv.error) journeys = (adv.data as number) ?? 0;
+    if (!adv.error) journeys = typeof adv.data === 'number' ? adv.data : 0;
     else console.error('[outbox] advance_journey_runs', adv.error.message);
   } catch (e) { console.error('[outbox] advance_journey_runs', e); }
   return { processed: rows.length, journeys, ...tally };
