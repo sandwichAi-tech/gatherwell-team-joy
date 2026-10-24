@@ -4780,6 +4780,65 @@ export type Database = {
           },
         ]
       }
+      resource_templates: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description_en: string | null
+          description_es: string | null
+          id: string
+          kind: string
+          sort_order: number
+          source_id: string | null
+          source_kind: string | null
+          structure: Json
+          target: string
+          team_id: string | null
+          title_en: string
+          title_es: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description_en?: string | null
+          description_es?: string | null
+          id?: string
+          kind: string
+          sort_order?: number
+          source_id?: string | null
+          source_kind?: string | null
+          structure?: Json
+          target: string
+          team_id?: string | null
+          title_en?: string
+          title_es?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description_en?: string | null
+          description_es?: string | null
+          id?: string
+          kind?: string
+          sort_order?: number
+          source_id?: string | null
+          source_kind?: string | null
+          structure?: Json
+          target?: string
+          team_id?: string | null
+          title_en?: string
+          title_es?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resource_templates_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       retreat_checks: {
         Row: {
           checked_at: string
@@ -6484,6 +6543,7 @@ export type Database = {
         Args: { _track: string }
         Returns: boolean
       }
+      can_build_resources: { Args: { _team: string }; Returns: boolean }
       can_checkin_event: { Args: { _event: string }; Returns: boolean }
       can_edit_track: { Args: { _track: string }; Returns: boolean }
       can_join_conversation: { Args: { _event: string }; Returns: boolean }
@@ -7362,6 +7422,15 @@ export type Database = {
         }
         Returns: undefined
       }
+      save_resource_template: {
+        Args: {
+          _source: string
+          _source_kind: string
+          _title_en: string
+          _title_es: string
+        }
+        Returns: string
+      }
       search_team_library: {
         Args: { _q: string; _team: string }
         Returns: {
@@ -7549,6 +7618,10 @@ export type Database = {
       update_rsvp_by_code: {
         Args: { _code: string; _plus_ones: number; _status: string }
         Returns: string
+      }
+      use_resource_template: {
+        Args: { _team: string; _template: string }
+        Returns: Json
       }
       user_email: { Args: { _user: string }; Returns: string }
       verified_hosts: { Args: { _ids: string[] }; Returns: string[] }
