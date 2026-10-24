@@ -104,11 +104,18 @@ export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string
   const [inviteLink, setInviteLink] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
+  const [assignOpen, setAssignOpen] = useState(false);
+  const [assignee, setAssignee] = useState('');
+  const [scopeType, setScopeType] = useState<'event' | 'content' | 'moderation'>('event');
+  const [scopeId, setScopeId] = useState('');
+
   const members = useQuery(membersQuery(teamId));
   const invites = useQuery({ ...invitesQuery(teamId), enabled: tab === 'invites' });
   const seats = useQuery(seatsQuery(teamId));
   const activity = useQuery({ ...activityQuery(teamId), enabled: tab === 'activity' });
-  const refresh = () => { void qc.invalidateQueries({ queryKey: ['ws-members', teamId] }); void qc.invalidateQueries({ queryKey: ['ws-invites', teamId] }); void qc.invalidateQueries({ queryKey: ['ws-seats', teamId] }); void qc.invalidateQueries({ queryKey: ['ws-activity', teamId] }); };
+  const assignments = useQuery({ ...assignmentsQuery(teamId), enabled: tab === 'assignments' });
+  const scopes = useQuery({ ...scopesQuery(teamId), enabled: tab === 'assignments' });
+  const refresh = () => { void qc.invalidateQueries({ queryKey: ['ws-members', teamId] }); void qc.invalidateQueries({ queryKey: ['ws-invites', teamId] }); void qc.invalidateQueries({ queryKey: ['ws-seats', teamId] }); void qc.invalidateQueries({ queryKey: ['ws-activity', teamId] }); void qc.invalidateQueries({ queryKey: ['ws-assignments', teamId] }); };
 
   const run = async (fn: () => PromiseLike<{ error: { message: string } | null }>, done?: string) => {
     setBusy(true);
