@@ -19,6 +19,7 @@ import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { supabase } from '@/integrations/supabase/client';
 import { initialsOf, mediaUrl, profileQuery, uploadMedia, workspaceQuery } from '@/lib/account';
+import { vibrateOnUserAction } from '@/lib/haptics';
 import { rosterQuery, teamKey } from '@/lib/team';
 import {
   badgeName, badgeText, badgesQuery, featuredBadgesQuery, hasBlockedClaim, holderCountsQuery, hostOfMonthQuery, isLimited, memberOfMonthQuery, myBadgesQuery, pinnedShoutoutQuery, recognitionError, recognitionKey,
@@ -43,7 +44,7 @@ export function Medallion({ badge, size = 64, locked = false }: { badge: Pick<Ba
   </span>;
 }
 
-const haptic = () => { try { navigator.vibrate?.(18); } catch { /* unsupported */ } };
+const haptic = () => { vibrateOnUserAction(18); };
 
 // ---------- Story-size share card ----------
 async function loadImage(src: string) {

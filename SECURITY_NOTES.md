@@ -129,3 +129,8 @@ The requester supplied the following results after commit ac2eef3c5d5ff7138522b8
 - notify_users dedupes by unique key; audit entries carry ids/kinds only — no bodies, emails, or tokens.
 - moderation_reports strips reporter_id; community suspensions are scope-limited, not account-level.
 - Email/SMS/push delivery remains unconnected; all such actions are labeled Setup required and no send counts are shown.
+
+## 2026-10-24 — Communications/check-in QA hardening
+- Browser QA verified no console errors, horizontal overflow, unnamed icon buttons, unlabeled form controls, or sub-44px targets at 390px, 1280px, and 200% zoom with reduced motion.
+- Scanner and confirmation dialogs now manage keyboard focus and Escape consistently; haptics are guarded by user activation so headless/unsupported contexts do not emit console errors.
+- QA fixture cleanup used targeted child-first deletes plus a database-wide UUID/text/JSON scan. Public fixture rows are zero; the real owner adult confirmation predates QA and was preserved. A fixture auth user remains because managed auth-user deletion is not exposed to this environment; it has no remaining public profile or application rows.

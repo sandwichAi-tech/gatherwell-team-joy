@@ -18,6 +18,7 @@ import { gatherwellHead } from '@/lib/gatherwell-head';
 import { createCheckinQueue, isRetryableCheckinError, type PendingCheckin } from '@/lib/checkin-queue';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
 import { handleScannerDialogKeyDown } from '@/lib/scanner-a11y';
+import { vibrateOnUserAction } from '@/lib/haptics';
 import { BelongingPrompt, BelongingTags, useBelonging, useSmallGroups } from '@/components/belonging';
 
 export const Route = createFileRoute('/_authenticated/_app/event_/$id/checkin')({ head: () => gatherwellHead('events'), component: CheckInMode });
@@ -90,7 +91,7 @@ function CheckInMode() {
     const { error, status } = await supabase.rpc('check_in_rsvp', { _rsvp: rid, _undo: undo });
     if (error) { if (isRetryableCheckinError(error, status)) enqueue({ key: rid, eventId: id, rsvpId: rid, undo }); else toast.error(t('profile.saveError')); return; }
     trackEvent('checkin');
-    if (navigator.vibrate) navigator.vibrate(30);
+    vibrateOnUserAction(30);
     const b = belong.get(rid); const name = rows.find(r => r.id === rid)?.guest_name?.split(/\s+/)[0] ?? '';
     if (!undo && b && b.checkins === 2) toast.success(t('belong.nowRegular', { name }), { duration: 6000 });
     else if (!undo && b?.first_time) toast.success(t('belong.welcomePrompt', { name }), { duration: 6000 });
@@ -102,7 +103,7 @@ function CheckInMode() {
     if (error && isRetryableCheckinError(error, status)) { enqueue({ key: code, eventId: id, code, undo: false }); setScan({ result: 'pending' }); return; }
     const res = (data ?? null) as Scan | null;
     setScan(error || !res ? { result: 'error' } : res);
-    if (res?.result === 'ok' && navigator.vibrate) navigator.vibrate([40, 40, 40]);
+    if (res?.result === 'ok') vibrateOnUserAction([40, 40, 40]);
     await queryClient.invalidateQueries({ queryKey: listKey });
   };
 
