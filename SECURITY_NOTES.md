@@ -90,3 +90,9 @@ The requester supplied the following results after commit ac2eef3c5d5ff7138522b8
 - enroll_free is signed-in-only, window-enforced, idempotent; paid offers raise payment_required (no entitlement without verified payment).
 - grant_offer_access resolves recipients server-side by exact confirmed email; unknown accounts return a neutral no_account (no enumeration); every grant writes offer_grants audit rows.
 - Entitlement kind/source values must satisfy the existing entitlements CHECK constraints (course offers use course_subscription; sources free/admin).
+
+## 2026-10-24 — Resource bundles (0060)
+- offer_items: host-only writes; entitled learners read published current versions; anon has no grant.
+- Bundle downloads are signed server-side per item (learn-media, 600s, attachment) after can_access_offer + allow_download + published/current checks; replaced versions are not downloadable.
+- get_public_offer exposes bundle item metadata only (no storage_path, no URLs); verified live with leak checks.
+- Download UI uses same-tab assignment to the attachment signed URL — no popup-blocker-prone window.open.
