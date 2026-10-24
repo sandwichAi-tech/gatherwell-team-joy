@@ -22,7 +22,7 @@ function useUserId() {
   return userId;
 }
 
-function priceLine(o: PublicOffer, lang: string, t: (k: string, o?: Record<string, unknown>) => string) {
+function priceLine(o: PublicOffer, lang: string, t: import('i18next').TFunction) {
   if (!o.price_cents) return t('offers.free');
   const m = formatMoney(o.price_cents, lang);
   if (o.billing_interval) return t('offers.perMonth', { price: m });

@@ -48,7 +48,7 @@ export function OfferDetailsEditor({ offer, onClose }: { offer: Offer | null; on
   const [busy, setBusy] = useState(false);
   useEffect(() => {
     if (!offer) return;
-    const o = offer as Offer & Record<string, any>;
+    const o: any = offer;
     const local = (iso?: string | null) => { if (!iso) return ''; const d = new Date(iso); return new Date(d.getTime() - d.getTimezoneOffset() * 60_000).toISOString().slice(0, 16); };
     setF({ summary_en: o.summary_en ?? '', summary_es: o.summary_es ?? '', category: o.category ?? '', tags: (o.tags ?? []).join(', '), support_email: o.support_email ?? '',
       accessibility_notes: o.accessibility_notes ?? '', coauthor_name: o.coauthor_name ?? '', version_label: o.version_label ?? '', license_en: o.license_en ?? '', license_es: o.license_es ?? '',
