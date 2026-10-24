@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import en from '@/locales/en.json';
 import es from '@/locales/es.json';
-import { CAROUSEL_SLIDES, HOME_CTAS, HOME_PLANS, HOME_TOOL_CARDS, PLATFORM_FEE_PERCENT, annualPrice } from './homepage';
+import { CAROUSEL_SLIDES, HOME_CTAS, HOME_PLANS, HOME_TOOL_CARDS, MAX_PLATFORM_FEE_PERCENT, annualPrice } from './homepage';
 import { safeReturnPath } from './return-to';
 
 describe('homepage hero copy', () => {
@@ -66,11 +66,19 @@ describe('homepage stays light', () => {
 describe('homepage pricing', () => {
   it('plans are $0/$49/$99/$199/$499 monthly', () => expect(HOME_PLANS.map(p => p.monthly)).toEqual([0, 49, 99, 199, 499]));
   it('annual is two months free', () => expect(annualPrice(49)).toBe(490));
-  it('platform fee is 5%', () => expect(PLATFORM_FEE_PERCENT).toBe(5));
+  it('platform fee ladder is 5/3/2/1/0.5 by plan', () => {
+    expect(HOME_PLANS.map(p => p.feePct)).toEqual([5, 3, 2, 1, 0.5]);
+    expect(MAX_PLATFORM_FEE_PERCENT).toBe(5);
+  });
+  it('builder seats are 3/3/5/25/100 and Organization is contact-sales', () => {
+    expect(HOME_PLANS.map(p => p.seats)).toEqual([3, 3, 5, 25, 100]);
+    const org = HOME_PLANS.find(p => p.id === 'organization')!;
+    expect('contactSales' in org && org.contactSales).toBe(true);
+  });
   it('home copy never mentions the retired fee ladder or guest fee', () => {
     for (const l of [en, es]) {
       const text = JSON.stringify(l.home);
-      expect(text).not.toMatch(/\b(7|2|0|3)\s?%/);
+      expect(text).not.toMatch(/\b7\s?%/);
       expect(text).not.toMatch(/0[.,]49/);
     }
   });

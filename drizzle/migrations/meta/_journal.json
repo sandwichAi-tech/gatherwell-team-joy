@@ -617,6 +617,13 @@
       "when": 1792866224759,
       "tag": "0087_safety_retry_self_target_guards",
       "breakpoints": true
+    },
+    {
+      "idx": 88,
+      "version": "7",
+      "when": 1792873657052,
+      "tag": "0088_v5_plan_fee_ladder_builder_seats",
+      "breakpoints": true
     }
   ]
 }

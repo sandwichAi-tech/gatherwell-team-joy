@@ -27,6 +27,8 @@ export const PLANS: { id: PlanId; limits: Omit<Limits, 'fee_pct'> }[] = [
 ];
 /** Annual billing charges ten months. */
 export const yearlyCents = (monthly: number) => monthly * 10;
+/** Builder seats per plan (owner + admins/hosts/content editors). Limited roles never consume a seat. */
+export const BUILDER_SEATS: Record<PlanId, number> = { free: 3, growth: 3, pro: 5 };
 export const PRO_FEATURES = ['texts', 'autopilot', 'branding', 'campaigns', 'cohosts', 'insights', 'support'] as const;
 
 export const planSettingsQuery = queryOptions({

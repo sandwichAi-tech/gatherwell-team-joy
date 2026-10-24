@@ -30,10 +30,13 @@ import { PaymentTestModeBanner } from '@/components/payment-test-mode-banner';
 
 const fmtDate = (iso: string, lang: string) => new Date(iso).toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
-/** Blueprint v4 prices shown on the prospective cards. plan_settings rows and Stripe price IDs stay
- *  untouched, so paid checkout stays disabled ("Setup required") until the approved prices are configured. */
-const V4_MONTHLY_CENTS: Record<PlanId, number> = { free: 0, growth: 4900, pro: 9900 };
-const V4_FEE_PERCENT = 5;
+/** Approved prices and per-plan fees shown on the prospective cards. plan_settings rows and
+ *  Stripe price IDs stay untouched, so paid checkout stays disabled ("Setup required")
+ *  until the approved prices are configured. Fees mirror the v5 fee ladder. */
+const V5_MONTHLY_CENTS: Record<PlanId, number> = { free: 0, growth: 4900, pro: 9900 };
+const V5_FEE_PERCENT: Record<PlanId, number> = { free: 5, growth: 3, pro: 2 };
+/** Team license platform fees (v5 ladder): Team 25 pays 1%, Organization 0.5%. */
+const V5_LICENSE_FEE_PERCENT: Record<string, number> = { team25: 1, team100: 0.5 };
 
 /** App errors with their own wording; anything else is the provider's message. */
 const CHECKOUT_ERRORS = ['already_on_plan', 'already_on_license', 'price_mismatch', 'price_not_found', 'founding_free', 'no_subscription', 'no_period_end'];
@@ -192,8 +195,8 @@ export function PlanPage() {
 
     <div className="plan-grid">
       {PLANS.map(p => {
-        // Prospective cards show the approved Blueprint v4 price and the flat 5% fee, not the legacy plan_settings rows.
-        const ps = { monthly_price: V4_MONTHLY_CENTS[p.id], fee_percent: V4_FEE_PERCENT };
+        // Prospective cards show the approved price and that plan's platform fee, not the legacy plan_settings rows.
+        const ps = { monthly_price: V5_MONTHLY_CENTS[p.id], fee_percent: V5_FEE_PERCENT[p.id] };
         const isCurrent = (st.source === 'founding' && p.id === 'pro') || st.source === 'own' && (st.own_plan === p.id && st.legacy_price_cents === null || (p.id === 'free' && st.own_plan === 'free'));
         return <article key={p.id} className={`plan-card ${isCurrent ? 'is-current' : ''} `}>
           <PlanCardBody id={p.id} setting={ps} tagClass="plan-tag" priceClass="plan-price" feeClass="plan-fee-line" />
@@ -205,9 +208,9 @@ export function PlanPage() {
       <article className="plan-card plan-card-team">
         <h3>{t('billing.name_team')}</h3>
         <p className="auth-subtitle">{t('billing.teamText')}</p>
-        {LICENSES.map(l => <div key={l.id} className="plan-license-row"><span><strong>{t(`billing.${l.id}`)}</strong><small>{t('billing.seatsGrowth', { n: l.seats })}</small></span><span className="plan-license-price">{formatMoney(l.cents, lang)}{t('billing.perMonth')}</span>
+        {LICENSES.filter(l => l.id === 'team25').map(l => <div key={l.id} className="plan-license-row"><span><strong>{t(`billing.${l.id}`)}</strong><small>{t('billing.seatsGrowth', { n: l.seats })} · {t('billing.feeOnSales', { pct: V5_LICENSE_FEE_PERCENT[l.id] })}</small></span><span className="plan-license-price">{formatMoney(l.cents, lang)}{t('billing.perMonth')}</span>
           {ws?.role === 'leader' && <Button variant="secondary" disabled={gate.busy} onClick={() => void gate.run(() => license({ data: { teamId: ws.teamId, tier: l.id, origin, lang, environment: getStripeEnvironment() } }))}>{t('billing.buy')}</Button>}</div>)}
-        <div className="plan-license-row"><span><strong>{t('billing.organization')}</strong><small>{t('billing.orgText')}</small></span><Button asChild variant="secondary"><a href="mailto:help@gatherwell.app">{t('billing.contact')}</a></Button></div>
+        <div className="plan-license-row"><span><strong>{t('billing.organization')}</strong><small>{t('billing.orgText')} · {t('billing.feeOnSales', { pct: 0.5 })}</small></span><Button asChild variant="secondary"><a href="mailto:help@gatherwell.app">{t('billing.contact')}</a></Button></div>
       </article>
     </div>
 
@@ -222,7 +225,7 @@ export function PlanPage() {
 
     <section className="panel get-paid">
       <div className="section-heading"><h2>{t('billing.getPaid')}</h2><span className={`chip connect-${st.connect_status}`}>{t(`billing.connect_${st.connect_status}`)}</span></div>
-      <p className="auth-subtitle">{t('home.pricing.fee', { pct: V4_FEE_PERCENT })}</p>
+      <p className="auth-subtitle">{t('pricingV4.feeDisclosure')}</p>
       {st.connect_status !== 'active' && <Button disabled={gate.busy} onClick={() => void gate.run(() => connect({ data: { origin } }))}>{st.connect_status === 'pending' ? t('billing.connectContinue') : t('billing.connectStart')}</Button>}
       <label className="settings-row is-static"><span className="settings-label">{t('billing.passFee')}<small className="field-hint">{t('billing.passFeeHint')}</small></span><Switch aria-label={t('billing.passFee')} checked={st.pass_fee} onCheckedChange={v => void togglePassFee(v)} /></label>
     </section>
@@ -236,7 +239,7 @@ export function PlanPage() {
             <li>{l.guests === null ? t('billing.fGuestsUnlimited') : t('billing.downGuests', { n: l.guests })}</li>
             <li>{t('billing.downStorage', { size: formatStorage(l.storage_mb, lang) })}</li>
             <li>{t('billing.fAssistant', { n: l.assistant })}</li>
-            <li>{t('billing.fFee', { n: V4_FEE_PERCENT })}</li></>; })()}
+            <li>{t('billing.fFee', { n: V5_FEE_PERCENT[downgrade] })}</li></>; })()}
         </ul>
         <p className="field-hint">{t('billing.downgradeAtMonthEnd')}</p>
         <Button className="onboarding-continue" disabled={gate.busy} onClick={() => { const target = downgrade!; setDowngrade(null); runScheduled(target); }}>{t('billing.downConfirm')}</Button>
@@ -291,8 +294,9 @@ export function SeatsPage() {
       })}</div>
     </section> : <section className="panel">
       <EmptyState compact icon="CreditCard" text={t('billing.noLicense')} />
-      {LICENSES.map(l => <div key={l.id} className="plan-license-row"><span><strong>{t(`billing.${l.id}`)}</strong><small>{t('billing.seatsGrowth', { n: l.seats })}</small></span><span className="plan-license-price">{formatMoney(l.cents, lang)}{t('billing.perMonth')}</span>
+      {LICENSES.filter(l => l.id === 'team25').map(l => <div key={l.id} className="plan-license-row"><span><strong>{t(`billing.${l.id}`)}</strong><small>{t('billing.seatsGrowth', { n: l.seats })} · {t('billing.feeOnSales', { pct: V5_LICENSE_FEE_PERCENT[l.id] })}</small></span><span className="plan-license-price">{formatMoney(l.cents, lang)}{t('billing.perMonth')}</span>
         <Button disabled={gate.busy} onClick={() => void gate.run(() => license({ data: { teamId, tier: l.id, origin: window.location.origin, lang, environment: getStripeEnvironment() } }))}>{t('billing.buy')}</Button></div>)}
+      <div className="plan-license-row"><span><strong>{t('billing.organization')}</strong><small>{t('billing.orgText')} · {t('billing.feeOnSales', { pct: 0.5 })}</small></span><Button asChild variant="secondary"><a href="mailto:help@gatherwell.app">{t('billing.contact')}</a></Button></div>
       {isAdmin && <Button variant="secondary" onClick={() => void grantPreview()}>{t('billing.grantPreview')}</Button>}
     </section>}
     {gate.sheet}

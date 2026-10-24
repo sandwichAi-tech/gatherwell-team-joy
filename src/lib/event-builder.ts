@@ -1,5 +1,5 @@
 /** Pure rules for the host event/retreat builder, mirrored by update_event_details() and rsvp_event_minor() in the database. */
-import { PLATFORM_FEE_PERCENT } from './homepage';
+import { feeRuleForPlan } from './fees';
 import type { AgeBand } from './identity';
 
 export const EVENT_FORMATS = ['person', 'online', 'hybrid'] as const;
@@ -67,9 +67,14 @@ export function readinessBlockers(input: ReadinessInput): Blocker[] {
   return out;
 }
 
-/** Flat platform fee estimate for host-facing previews; Stripe processing is always separate. */
-export const feeEstimateCents = (priceCents: number) => Math.round(priceCents * PLATFORM_FEE_PERCENT / 100);
-export const hostKeepsCents = (priceCents: number) => priceCents - feeEstimateCents(priceCents);
+/**
+ * Platform fee estimate for host-facing previews, from the approved per-plan ladder.
+ * Defaults to the Free-plan rate (the highest any plan pays) so previews stay
+ * conservative; Stripe processing is always separate.
+ */
+export const feeEstimateCents = (priceCents: number, plan: string = 'free') =>
+  Math.round(priceCents * feeRuleForPlan(plan).percent / 100);
+export const hostKeepsCents = (priceCents: number, plan: string = 'free') => priceCents - feeEstimateCents(priceCents, plan);
 
 let nid = 0;
 const newId = () => `t${Date.now().toString(36)}${(nid++).toString(36)}`;

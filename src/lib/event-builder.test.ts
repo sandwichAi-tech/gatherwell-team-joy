@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { canTransition, cleanAddons, cleanTiers, emptyTier, feeEstimateCents, hostKeepsCents, minorBandAllowed, parseTags, readinessBlockers, regWindowState, type ReadinessInput } from './event-builder';
-import { PLATFORM_FEE_PERCENT } from './homepage';
+import { MAX_PLATFORM_FEE_PERCENT } from './homepage';
 import en from '@/locales/en.json';
 import es from '@/locales/es.json';
 
@@ -59,8 +59,9 @@ describe('readinessBlockers', () => {
 
 describe('fee estimate', () => {
   it('uses the flat 5% platform fee', () => {
-    expect(PLATFORM_FEE_PERCENT).toBe(5);
+    expect(MAX_PLATFORM_FEE_PERCENT).toBe(5);
     expect(feeEstimateCents(2000)).toBe(100);
+    expect(feeEstimateCents(2000, 'pro')).toBe(40);
     expect(hostKeepsCents(2000)).toBe(1900);
     expect(feeEstimateCents(0)).toBe(0);
   });

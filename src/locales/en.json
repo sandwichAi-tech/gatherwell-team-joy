@@ -112,15 +112,16 @@
       "label": "Pricing",
       "title": "Start free. Grow when you are ready.",
       "perMonth": "/mo",
+      "perYear": "/yr",
       "annual": "${{price}}/yr billed annually",
       "plans": {
         "free": "Free",
         "advanced": "Advanced",
         "pro": "Pro",
         "team25": "Team 25",
-        "team100": "Team 100"
+        "organization": "Organization"
       },
-      "fee": "A {{pct}}% ZoheeWell platform fee applies to paid sales you make. Free offerings have no fee. Stripe processing is separate.",
+      "fee": "Platform fees on paid sales range from 5% on Free down to 0.5% on Organization. Free offerings have no fee. Stripe processing is separate.",
       "twoMonths": "Annual billing gives you two months free.",
       "pilot": "Pricing may change after the pilot.",
       "foundingTitle": "Founding hosts",
@@ -2335,7 +2336,7 @@
     "seatsGrowth": "Advanced for up to {{n}} members",
     "buy": "Buy",
     "organization": "Organization",
-    "orgText": "For larger organizations",
+    "orgText": "Up to 100 builder seats, assisted setup",
     "contact": "Contact us",
     "seats": "Seats",
     "earnings": "Earnings",
@@ -4691,19 +4692,74 @@
     "setupRequired": "Setup required",
     "checkoutNote": "Paid plan checkout is not open yet. You can start on Free today.",
     "feeTitle": "Platform fee",
+    "feeLadder": "The ZoheeWell platform fee on paid sales gets lower as your plan grows: 5% on Free, 3% on Advanced, 2% on Pro, 1% on Team 25, and 0.5% on Organization. Free offerings never have a platform fee. Stripe processing is separate.",
+    "feeDisclosure": "Platform fee on paid sales: 5% Free, 3% Advanced, 2% Pro, 1% Team 25, 0.5% Organization. Free offerings have no fee. Stripe processing is separate.",
     "payoutsNote": "Payouts to hosts are coming soon.",
     "annualTitle": "Annual billing",
+    "billingPeriod": "Billing period",
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "twoMonthsFree": "2 months free",
+    "annualSavings": "Save {{pct}}% versus paying monthly",
+    "startingAt": "starting at",
+    "contactSales": "Contact sales",
+    "feeLine": "{{pct}}% platform fee on paid sales",
+    "seatsLine": "{{n}} builder seats",
+    "seatTitle": "What is a builder seat?",
+    "seatBody": "A builder seat is for anyone who creates or manages your offerings: the owner, admins, hosts, and content editors.",
+    "seatFree": "Check-in staff, analysts, moderators, members, attendees and learners never use a builder seat — add as many as you need.",
     "desc": {
       "free": "Host free events and get started.",
       "advanced": "More tools for growing hosts.",
       "pro": "Everything for busy, established hosts.",
-      "team25": "For teams of up to 25 hosts.",
-      "team100": "For teams of up to 100 hosts."
+      "team25": "For teams of up to 25 builders.",
+      "organization": "For organizations of up to 100 builders, with assisted setup."
+    },
+    "compare": {
+      "title": "Compare plans",
+      "sub": "Every plan includes the full event, course and community toolkit. Plans differ in builder seats and the platform fee on paid sales.",
+      "caption": "Comparison of ZoheeWell plans: builder seats, platform fee, and included features.",
+      "feature": "Feature",
+      "included": "Included",
+      "onPaidSales": "on paid sales",
+      "note_email": "Email support",
+      "note_usage": "Usage priced separately",
+      "note_setup": "Setup required",
+      "footnote": "Paid checkout and payouts are not open yet. SMS and payment processing are provided by third parties and priced separately.",
+      "rows": {
+        "seats": "Builder seats",
+        "fee": "Platform fee",
+        "events": "Events & retreats",
+        "courses": "Courses & resources",
+        "memberships": "Memberships & subscriptions",
+        "tickets": "Ticket tiers & registration",
+        "checkin": "Check-in & waitlists",
+        "roles": "Team roles & invitations",
+        "analytics": "Analytics & reporting",
+        "exports": "Data exports",
+        "support": "Support",
+        "sms": "SMS & messaging",
+        "payments": "Payment processing"
+      }
+    },
+    "whichPlan": {
+      "title": "Which plan is right for me?",
+      "items": [
+        { "title": "Just getting started", "body": "Free is for you. Host free events, invite two collaborators, and only pay a fee when you sell something." },
+        { "title": "Growing your audience", "body": "Advanced lowers your fee to 3% and keeps three builder seats for you and two collaborators." },
+        { "title": "Hosting full time", "body": "Pro drops the fee to 2% and gives you five builder seats for a small team." },
+        { "title": "Running a team or studio", "body": "Team 25 covers up to 25 builders with a 1% fee on paid sales." },
+        { "title": "A large organization", "body": "Organization scales to 100 builders at a 0.5% fee. Contact sales and we will set it up with you." }
+      ]
     },
     "faq": [
       {
         "q": "What is the platform fee?",
-        "a": "A flat 5% ZoheeWell platform fee applies to paid sales you make on any plan. Free offerings have no platform fee. Stripe processing is separate."
+        "a": "A ZoheeWell platform fee applies to paid sales you make, and it gets lower as your plan grows: 5% on Free, 3% on Advanced, 2% on Pro, 1% on Team 25, and 0.5% on Organization. Free offerings have no platform fee. Stripe processing is separate."
+      },
+      {
+        "q": "What is a builder seat?",
+        "a": "A builder seat is for anyone who creates or manages your offerings: the owner, admins, hosts, and content editors. Check-in staff, analysts, moderators, members, attendees and learners never use a builder seat."
       },
       {
         "q": "How does annual billing work?",

@@ -1,18 +1,42 @@
 import { describe, expect, it } from 'vitest';
-import { platformFeeCents, annualPriceCents, ACTIVE_FEE_RULE } from './fees';
+import { platformFeeCents, planFeeCents, feeRuleForPlan, annualPriceCents, ACTIVE_FEE_RULE, PLAN_FEE_RULES } from './fees';
 
-describe('Blueprint v4 platform fee', () => {
-  it('is a flat 5% on a paid offering', () => {
-    expect(platformFeeCents(10000)).toBe(500);
+describe('approved per-plan platform fee ladder (2026-10-24)', () => {
+  it('Free pays 5% on a paid offering', () => {
+    expect(planFeeCents(10000, 'free')).toBe(500);
   });
-  it('is zero for free offerings', () => {
-    expect(platformFeeCents(0)).toBe(0);
+  it('Advanced pays 3%', () => {
+    expect(planFeeCents(10000, 'advanced')).toBe(300);
+    expect(planFeeCents(10000, 'growth')).toBe(300);
+  });
+  it('Pro pays 2%', () => {
+    expect(planFeeCents(10000, 'pro')).toBe(200);
+  });
+  it('Team 25 pays 1%', () => {
+    expect(planFeeCents(10000, 'team25')).toBe(100);
+  });
+  it('Organization pays 0.5%', () => {
+    expect(planFeeCents(10000, 'organization')).toBe(50);
+    expect(planFeeCents(10000, 'team100')).toBe(50);
+  });
+  it('is zero for free offerings on every plan', () => {
+    for (const p of ['free', 'advanced', 'pro', 'team25', 'organization']) expect(planFeeCents(0, p)).toBe(0);
+  });
+  it('unknown plans fall back to the Free rate', () => {
+    expect(feeRuleForPlan('unknown').id).toBe('v5_free_5');
+    expect(ACTIVE_FEE_RULE).toBe('v5_free_5');
+  });
+  it('the ladder decreases monotonically', () => {
+    const order = ['free', 'advanced', 'pro', 'team25', 'organization'];
+    const pcts = order.map(p => feeRuleForPlan(p).percent);
+    expect(pcts).toEqual([5, 3, 2, 1, 0.5]);
+    for (let i = 1; i < pcts.length; i++) expect(pcts[i]!).toBeLessThan(pcts[i - 1]!);
+  });
+  it('every plan maps to a v5 rule', () => {
+    for (const id of Object.values(PLAN_FEE_RULES)) expect(id).toMatch(/^v5_/);
   });
   it('has no cap on large sales', () => {
-    expect(platformFeeCents(1000000)).toBe(50000);
-  });
-  it('is the active rule', () => {
-    expect(ACTIVE_FEE_RULE).toBe('v4_flat_5');
+    expect(platformFeeCents(1000000, 'v5_free_5')).toBe(50000);
   });
 });
 

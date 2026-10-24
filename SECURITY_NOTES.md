@@ -4,6 +4,10 @@
 
 Reviewed October 2026. Every open scanner note is either fixed or listed here with why it stays.
 
+## 2026-10-24 — Builder-seat enforcement and per-plan fee rules (v0.30)
+- Seat counting and enforcement are server-derived (migration 0088): only owner/admin/host/content_editor consume builder seats; invite, accept and role-change RPCs enforce the limit for builder roles only, so limited roles (check-in, moderator, analyst, member) cannot be used to bypass or inflate seat counts. No authorization was weakened — team_capability checks are unchanged.
+- Platform fees resolve through versioned, immutable fee_rules via active_fee_rule_for_plan; unknown plans fall back to the highest (Free 5%) rate. Orders still snapshot their rule, so history never recalculates.
+
 ## Fixed in this review
 - Signed-out visitors can no longer call host-only actions: add_walk_in, check_in_rsvp, check_in_code, create_poll, event_summary.
 - Every security-definer function already has a fixed search_path (verified: none missing).

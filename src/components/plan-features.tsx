@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { GwIcon } from '@/components/gw-icon';
-import { formatMoney, formatStorage, PLANS, PRO_FEATURES, yearlyCents, type PlanId } from '@/lib/billing';
+import { BUILDER_SEATS, formatMoney, formatStorage, PLANS, PRO_FEATURES, yearlyCents, type PlanId } from '@/lib/billing';
 
 type Setting = { monthly_price: number; fee_percent: number } | undefined;
 
@@ -16,6 +16,7 @@ export function PlanCardBody({ id, setting, tagClass, priceClass, feeClass }: { 
     <p className={priceClass}><strong>{setting ? formatMoney(setting.monthly_price, lang) : '\u00a0'}</strong><span>{t('billing.perMonth')}</span></p>
     {id === 'growth' && setting && <p className="gw-fine">{t('billing.orYearly', { price: formatMoney(yearlyCents(setting.monthly_price), lang) })}</p>}
     <p className={feeClass}>{!setting ? '\u00a0' : setting.fee_percent > 0 ? t('billing.feeOnSales', { pct: setting.fee_percent }) : t('billing.noPlatformFee')}</p>
+    <p className="gw-fine">{t('pricingV4.seatsLine', { n: BUILDER_SEATS[id] })}</p>
     <ul>
       {id === 'free' && <>
         {li(t('billing.fGatherings', { n: lim.gatherings }))}

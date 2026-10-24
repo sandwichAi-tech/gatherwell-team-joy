@@ -1,5 +1,13 @@
 # Roadmap
 
+## Completed: v0.30 approved per-plan pricing + comparison chart
+
+- [x] Per-plan fee ladder (Free 5%, Advanced 3%, Pro 2%, Team 25 1%, Organization 0.5%) in DB fee rules (migration 0088, plan-aware resolver), app constants, UI, EN/ES copy, tests.
+- [x] Builder-seat model (owner/admin/host/content_editor count; check-in/analyst/moderator/member do not): Free/Advanced 3, Pro 5, Team 25 25, Organization up to 100; server-side enforcement in invite/accept/role change.
+- [x] Pricing page: monthly/annual toggle, Organization Contact sales, builder-seat explainer, accessible comparison chart, "Which plan is right for me?".
+- [x] Plan/upgrade surfaces aligned; founding-host offer preserved and non-stacking.
+- [x] QA: 321 tests/41 files, tsgo clean, build OK; browser 8/8 (390/1280px, EN/ES) — toggle, Contact sales, comparison table, no overflow, 44px targets, no console errors. Manual: screen-reader narration of the table.
+
 ## Completed: v0.29 homepage simplification
 
 - [x] Short hero pitch + swipeable/keyboard carousel of approved category imagery; no event records on the homepage (test/template rows cannot surface).
