@@ -1,6 +1,6 @@
 import { WaiverAccept, useEventWaiver, waiverReady, waiverRpc } from '@/components/waiver';
 import { trackEvent } from '@/lib/analytics';
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +17,7 @@ import { rsvpErrorKey } from '@/lib/guest';
 import { gatherwellHead } from '@/lib/gatherwell-head';
 import { createCheckinQueue, isRetryableCheckinError, type PendingCheckin } from '@/lib/checkin-queue';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
+import { handleScannerDialogKeyDown } from '@/lib/scanner-a11y';
 import { BelongingPrompt, BelongingTags, useBelonging, useSmallGroups } from '@/components/belonging';
 
 export const Route = createFileRoute('/_authenticated/_app/event_/$id/checkin')({ head: () => gatherwellHead('events'), component: CheckInMode });
