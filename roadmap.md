@@ -25,8 +25,11 @@
 ## Remaining
 
 - [x] Clarified parallel-site workflow: remix latest, revert original; pre-remix Cloud versions cannot be restored in the remix; code revert does not roll back data.
-- [ ] v0.28: platform safety queues, private lookup, reversible interventions, scoped suspensions and audit.
-- [ ] v0.28: authorization tests, bilingual phone/desktop QA, fixture cleanup and release documentation.
+- [x] v0.28: platform safety queues, private lookup, reversible interventions, scoped suspensions and audit.
+- [x] v0.28: 294 tests; 28 admin page checks, 8 keyboard checks, 17 denial/UI checks, 15 live action checks; all temporary fixtures removed, 140-table scan zero, release documentation updated.
 
-- [ ] Browser pass of the admin support tab as an admin account (RPC denial verified; no admin account in this environment).
+- [x] Admin support tab empty/list layout verified using isolated removable QA admin, EN/ES, phone/desktop.
+- [ ] Nonempty admin Support staff-reply/close browser check (no current authorized QA session/fixtures; server primitives preserved).
+- [ ] Account-ban/reactivation cross-service lifecycle and throttle saturation check (needs isolated QA session/fixtures).
+- [ ] Disposable SQL platform safety RLS regression (isolated writable database unavailable).
 - [ ] Screen-reader pass on the new insights/privacy panels.
