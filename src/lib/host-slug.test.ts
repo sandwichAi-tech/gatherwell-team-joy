@@ -26,13 +26,19 @@ describe('validateProfileSlug', () => {
   });
   it('rejects too-short and bad-character slugs', () => {
     expect(validateProfileSlug('ab')).toBe('invalid_slug');
-    expect(validateProfileSlug('-abc')).toBe('invalid_slug');
     expect(validateProfileSlug('!!!')).toBe('invalid_slug');
+    // Server normalizes first: leading/trailing hyphens are trimmed, so '-abc' becomes valid 'abc'.
+    expect(validateProfileSlug('-abc')).toBeNull();
   });
   it('rejects reserved routes and platform words', () => {
-    for (const word of ['admin', 'api', 'login', 'discover', 'pricing', 'support', 'h', 't', 'e', 'o', 'me', 'events', 'learn', 'zoheewell']) {
+    for (const word of ['admin', 'api', 'login', 'discover', 'pricing', 'support', 'me', 'events', 'learn', 'zoheewell']) {
       expect(RESERVED_PROFILE_SLUGS).toContain(word);
       expect(validateProfileSlug(word)).toBe('reserved_slug');
+    }
+    // Single-letter route prefixes are reserved too, but fail the 3-char minimum first (server checks format first).
+    for (const letter of ['h', 't', 'e', 'o']) {
+      expect(RESERVED_PROFILE_SLUGS).toContain(letter);
+      expect(validateProfileSlug(letter)).toBe('invalid_slug');
     }
   });
 });
