@@ -183,10 +183,20 @@ function LessonOrder({ track, lessons, onEdit }: { track: Track; lessons: Lesson
   </div>;
 }
 
-function TracksTab({ teamId }: { teamId: string }) {
-  const { t, i18n } = useTranslation(); const { data } = useLearn();
+function TracksTab({ teamId, newType }: { teamId: string; newType?: string | undefined }) {
+  const { t, i18n } = useTranslation(); const { data } = useLearn(); const navigate = useNavigate();
   const [editing, setEditing] = useState<Partial<Track> | null>(null); const [lesson, setLesson] = useState<(Partial<Lesson> & { track_id: string }) | null>(null);
+  const parsed = parseCreateType(newType);
+  const flow: TrackFlowType | null = parsed && isTrackFlow(parsed) ? parsed : null;
+  const [flowTrack, setFlowTrack] = useState<Track | null>(null); const [flowDone, setFlowDone] = useState(false);
+  const clearParam = () => void navigate({ to: '/learn/manage', search: { tab: 'tracks' }, replace: true, resetScroll: false });
   const own = (data?.tracks ?? []).filter(tr => tr.team_id === teamId);
+  const flowEditing = flow && !flowTrack && !flowDone;
+  const closeTrack = (created?: Track) => {
+    if (editing) { setEditing(null); return; }
+    if (created) { setFlowTrack(created); clearParam(); } else { setFlowDone(true); clearParam(); }
+  };
+  const closeLesson = () => { setLesson(null); if (flowTrack) { setFlowTrack(null); setFlowDone(true); } };
   return <section className="panel">
     <div className="section-heading"><h2>{t('learnHub.teamTracks')}</h2><Button onClick={() => setEditing({ cover_style: own.length % COVER_STYLES.length })}><Plus />{t('learnHub.newTrack')}</Button></div>
     {own.length ? <div className="manage-tracks">{own.map(tr => <article key={tr.id} className="manage-track">
@@ -195,8 +205,8 @@ function TracksTab({ teamId }: { teamId: string }) {
         <Button variant="secondary" size="sm" onClick={() => setEditing(tr)}><Pencil />{t('templates.edit')}</Button></div>
       {data && <LessonOrder track={tr} lessons={lessonsOf(data, tr.id)} onEdit={setLesson} />}
     </article>)}</div> : <EmptyState compact icon="BookOpen" text={t('learnHub.noTracksYet')} />}
-    <TrackEditor track={editing} teamId={teamId} onClose={() => setEditing(null)} />
-    <LessonEditor lesson={lesson} teamId={teamId} onClose={() => setLesson(null)} />
+    <TrackEditor track={editing ?? (flowEditing ? { cover_style: own.length % COVER_STYLES.length } : null)} teamId={teamId} onClose={closeTrack} preset={editing ? null : flow} />
+    <LessonEditor lesson={lesson ?? (flowTrack && flow ? { track_id: flowTrack.id } : null)} teamId={teamId} onClose={closeLesson} preset={lesson ? null : flow ? lessonPresetFor(flow) : null} />
   </section>;
 }
 
