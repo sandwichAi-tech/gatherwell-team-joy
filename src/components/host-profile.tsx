@@ -179,6 +179,11 @@ export function HostProfilePanel({ userId }: { userId: string }) {
   return <div className="edit-form host-profile-form">
     <p className="auth-subtitle">{t('hostProfile.intro')}</p>
 
+    <SlugEditor userId={userId} slug={d.slug} onSaved={() => {
+      void qc.invalidateQueries({ queryKey: ['host-profile', userId] });
+      void qc.invalidateQueries({ queryKey: ['public-follow-page', 'host'] });
+    }} />
+
     <div className="switch-row">
       <div><strong>{t('hostProfile.published')}</strong><small>{t('hostProfile.publishedHint')}</small></div>
       <Switch checked={form.host_public} onCheckedChange={v => setForm({ ...form, host_public: v })} aria-label={t('hostProfile.published')} />
