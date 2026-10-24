@@ -26,7 +26,7 @@ export type LearningEntry = {
   source: string; enrolled_at: string; lessons: number; done: number;
 };
 
-const db = supabase as unknown as { rpc: (f: string, a?: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }> };
+const db = supabase as unknown as { rpc: (f: string, a?: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>; from: (t: string) => any };
 
 /** Public offering metadata for guests and prospects; null when not published/public. */
 export const publicOfferQuery = (id: string) => queryOptions({
