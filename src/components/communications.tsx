@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { toast } from 'sonner';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { workspaceQuery } from '@/lib/account';
@@ -102,9 +103,9 @@ function SetupBanner({ setup }: { setup: Setup }) {
   return <section className="guest-card comms-setup" aria-label={t('comms.setupTitle')}>
     <strong>{t('comms.setupTitle')}</strong>
     <ul className="comms-setup-list">
-      <li><GwIcon name="envelope" /> {t('comms.channel.email')} — {setup.email ? t('comms.setupReady') : t('comms.setupRequired')}</li>
-      <li><GwIcon name="chat" /> {t('comms.channel.sms')} — {setup.sms ? t('comms.setupReady') : t('comms.setupRequired')}</li>
-      <li><GwIcon name="bell" /> {t('comms.channel.in_app')} — {t('comms.setupReady')}</li>
+      <li><GwIcon name="Envelope" /> {t('comms.channel.email')} — {setup.email ? t('comms.setupReady') : t('comms.setupRequired')}</li>
+      <li><GwIcon name="ChatCircle" /> {t('comms.channel.sms')} — {setup.sms ? t('comms.setupReady') : t('comms.setupRequired')}</li>
+      <li><GwIcon name="Bell" /> {t('comms.channel.in_app')} — {t('comms.setupReady')}</li>
     </ul>
     {(!setup.email || !setup.sms) && <small className="field-hint">{t('comms.setupHint')}</small>}
   </section>;
@@ -249,7 +250,7 @@ function AutomationsTab({ teamId, automations, templates, loading, canManage, se
   const activityFn = useServerFn(getAutomationActivity);
   const { data: activity } = useQuery({
     queryKey: ['automation-activity', teamId], enabled: showActivity,
-    queryFn: () => activityFn({ data: { teamId, limit: 20 } }) as Promise<{ id: string; channel: string; status: string; send_after: string; sent_at: string | null; error: string | null; automation_name: string | null; event_title: string | null }[]>,
+    queryFn: () => activityFn({ data: { teamId, limit: 20 } }) as Promise<{ id: string; channel: string; template: string; status: string; send_after: string; sent_at: string | null; error: string | null; automation_name: string | null; event_title: string | null }[]>,
   });
 
   const setStatus = async (a: Automation, status: string) => {
@@ -408,7 +409,7 @@ function JourneysTab({ teamId, journeys, templates, loading, canManage, setup, o
   </div>;
 }
 
-function stepLabel(kind: string, config: Record<string, unknown>, templates: Template[], t: (k: string, o?: Record<string, unknown>) => string): string {
+function stepLabel(kind: string, config: Record<string, unknown>, templates: Template[], t: TFunction): string {
   if (kind === 'wait') return t('comms.step.wait', { hours: Number(config['hours'] ?? 0) });
   if (kind === 'send') return t('comms.step.send', { name: templates.find(x => x.id === config['template_id'])?.name ?? '—' });
   return t(`comms.condition.${String(config['condition'] ?? '')}`);
@@ -474,9 +475,9 @@ function JourneyEditor({ teamId, journey, templates, onClose, onSaved }: { teamI
             </select>}
           </div>
           <div className="comms-step-actions" role="group" aria-label={t('comms.stepActions', { n: i + 1 })}>
-            <Button variant="ghost" size="icon" className="min-h-11 min-w-11" aria-label={t('comms.moveUp', { n: i + 1 })} disabled={i === 0} onClick={() => setSteps(ss => moveStep(ss, i, -1))}><GwIcon name="arrow-up" /></Button>
-            <Button variant="ghost" size="icon" className="min-h-11 min-w-11" aria-label={t('comms.moveDown', { n: i + 1 })} disabled={i === steps.length - 1} onClick={() => setSteps(ss => moveStep(ss, i, 1))}><GwIcon name="arrow-down" /></Button>
-            <Button variant="ghost" size="icon" className="min-h-11 min-w-11" aria-label={t('comms.removeStep', { n: i + 1 })} onClick={() => setSteps(ss => ss.filter((_, j) => j !== i))}><GwIcon name="trash" /></Button>
+            <Button variant="ghost" size="icon" className="min-h-11 min-w-11" aria-label={t('comms.moveUp', { n: i + 1 })} disabled={i === 0} onClick={() => setSteps(ss => moveStep(ss, i, -1))}><GwIcon name="ArrowUp" /></Button>
+            <Button variant="ghost" size="icon" className="min-h-11 min-w-11" aria-label={t('comms.moveDown', { n: i + 1 })} disabled={i === steps.length - 1} onClick={() => setSteps(ss => moveStep(ss, i, 1))}><GwIcon name="ArrowDown" /></Button>
+            <Button variant="ghost" size="icon" className="min-h-11 min-w-11" aria-label={t('comms.removeStep', { n: i + 1 })} onClick={() => setSteps(ss => ss.filter((_, j) => j !== i))}><GwIcon name="Trash" /></Button>
           </div>
         </li>)}
       </ol>
