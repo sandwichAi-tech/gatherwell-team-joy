@@ -112,3 +112,8 @@ The requester supplied the following results after commit ac2eef3c5d5ff7138522b8
 - saved_offerings and location_alerts are owner-only RLS; alerts store coarse rounded coordinates only, never continuous tracking.
 - host_invites has no client policies: tokens are created and recorded only via security-definer RPCs; recording is idempotent and rejects self-referral. Tokens are opaque 10-char codes, no sequential IDs.
 - Alert delivery is in-app only; no email/SMS is sent or promised until providers and consent are configured.
+
+## 2026-10-24 — Host profiles & follows (0072–0073)
+- get_public_host returns only host-approved fields; city is gated behind city_public opt-in; unpublished (host_public=false) profiles return NULL and cannot be followed. No email, phone, exact address, earnings, or attendee data is exposed.
+- save_host_profile enforces HTTPS-only links and a social-domain allowlist server-side; clients cannot bypass it.
+- Follower counts are aggregate-only; my_following shows each signed-in user their own list and drops targets that go private.
