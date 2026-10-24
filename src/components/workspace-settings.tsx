@@ -20,6 +20,8 @@ type Member = { user_id: string; full_name: string | null; workspace_role: strin
 type Invite = { id: string; email: string; role: string; state: 'pending' | 'accepted' | 'expired' | 'revoked'; expires_at: string; created_at: string };
 type SeatUsage = { tier: string; seat_limit: number; seats_used: number; over_limit: boolean };
 type AuditRow = { action: string; actor: string | null; target: string | null; at: string; meta: Record<string, unknown> };
+type Assignment = { id: string; user_id: string; name: string | null; role: string; scope_type: 'event' | 'content' | 'moderation'; scope_id: string; scope_label: string | null; active: boolean; created_at: string };
+type ScopeOption = { id: string; label: string };
 
 const membersQuery = (teamId: string) => ({
   queryKey: ['ws-members', teamId],
@@ -62,7 +64,34 @@ const activityQuery = (teamId: string) => ({
   },
 });
 
-type Tab = 'members' | 'invites' | 'seats' | 'activity';
+const assignmentsQuery = (teamId: string) => ({
+  queryKey: ['ws-assignments', teamId],
+  queryFn: async () => {
+    const { data, error } = await supabase.rpc('workspace_assignments_list', { _team: teamId });
+    if (error) throw error;
+    return (data ?? []) as unknown as Assignment[];
+  },
+});
+
+/** Scope pickers: team events (event + moderation scopes) and team content (tracks + offers). */
+const scopesQuery = (teamId: string) => ({
+  queryKey: ['ws-scopes', teamId],
+  queryFn: async () => {
+    const [events, tracks, offers] = await Promise.all([
+      supabase.from('events').select('id, title').eq('team_id', teamId).neq('status', 'cancelled').order('starts_at', { ascending: false }).limit(100),
+      supabase.from('tracks').select('id, title_en').eq('team_id', teamId).limit(100),
+      supabase.from('offers').select('id, title_en').eq('team_id', teamId).limit(100),
+    ]);
+    if (events.error) throw events.error;
+    return {
+      event: (events.data ?? []).map(e => ({ id: e.id, label: e.title })) as ScopeOption[],
+      content: [...(tracks.data ?? []).map(tr => ({ id: tr.id, label: tr.title_en })), ...(offers.data ?? []).map(o => ({ id: o.id, label: o.title_en }))] as ScopeOption[],
+      moderation: (events.data ?? []).map(e => ({ id: e.id, label: e.title })) as ScopeOption[],
+    };
+  },
+});
+
+type Tab = 'members' | 'invites' | 'assignments' | 'seats' | 'activity';
 
 export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string; userId: string; teamName: string }) {
   const { t, i18n } = useTranslation();
@@ -75,11 +104,18 @@ export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string
   const [inviteLink, setInviteLink] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
+  const [assignOpen, setAssignOpen] = useState(false);
+  const [assignee, setAssignee] = useState('');
+  const [scopeType, setScopeType] = useState<'event' | 'content' | 'moderation'>('event');
+  const [scopeId, setScopeId] = useState('');
+
   const members = useQuery(membersQuery(teamId));
   const invites = useQuery({ ...invitesQuery(teamId), enabled: tab === 'invites' });
   const seats = useQuery(seatsQuery(teamId));
   const activity = useQuery({ ...activityQuery(teamId), enabled: tab === 'activity' });
-  const refresh = () => { void qc.invalidateQueries({ queryKey: ['ws-members', teamId] }); void qc.invalidateQueries({ queryKey: ['ws-invites', teamId] }); void qc.invalidateQueries({ queryKey: ['ws-seats', teamId] }); void qc.invalidateQueries({ queryKey: ['ws-activity', teamId] }); };
+  const assignments = useQuery({ ...assignmentsQuery(teamId), enabled: tab === 'assignments' });
+  const scopes = useQuery({ ...scopesQuery(teamId), enabled: tab === 'assignments' });
+  const refresh = () => { void qc.invalidateQueries({ queryKey: ['ws-members', teamId] }); void qc.invalidateQueries({ queryKey: ['ws-invites', teamId] }); void qc.invalidateQueries({ queryKey: ['ws-seats', teamId] }); void qc.invalidateQueries({ queryKey: ['ws-activity', teamId] }); void qc.invalidateQueries({ queryKey: ['ws-assignments', teamId] }); };
 
   const run = async (fn: () => PromiseLike<{ error: { message: string } | null }>, done?: string) => {
     setBusy(true);
@@ -116,8 +152,21 @@ export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string
   };
   const revoke = (id: string) => void run(() => supabase.rpc('revoke_team_invite', { _id: id }), t('workspace.revoked'));
 
+  const assignableMembers = (members.data ?? []).filter(m => !m.is_owner && !m.suspended_at && m.workspace_role !== 'admin');
+  const scopeOptions = scopes.data?.[scopeType] ?? [];
+  const createAssignment = async () => {
+    setBusy(true);
+    const { error } = await supabase.rpc('assign_workspace_scope', { _team: teamId, _user: assignee, _scope_type: scopeType, _scope_id: scopeId });
+    setBusy(false);
+    if (error) { toast.error(t(`workspace.err.${error.message}`, { defaultValue: t('error.message') })); return; }
+    toast.success(t('workspace.assignSaved'));
+    setAssignOpen(false); setAssignee(''); setScopeId('');
+    refresh();
+  };
+  const setAssignmentActive = (a: Assignment, active: boolean) => void run(() => supabase.rpc('set_workspace_assignment_active', { _id: a.id, _active: active }), t(active ? 'workspace.assignReactivated' : 'workspace.assignRevoked'));
+
   const filtered = (members.data ?? []).filter(m => !search || (m.full_name ?? '').toLowerCase().includes(search.toLowerCase()));
-  const tabs: [Tab, string][] = [['members', t('workspace.members')], ['invites', t('workspace.invites')], ['seats', t('workspace.seats')], ['activity', t('workspace.activity')]];
+  const tabs: [Tab, string][] = [['members', t('workspace.members')], ['invites', t('workspace.invites')], ['assignments', t('workspace.assignments')], ['seats', t('workspace.seats')], ['activity', t('workspace.activity')]];
 
   return <div className="workspace-settings">
     <div className="segmented ws-tabs" role="tablist" aria-label={t('workspace.title')}>
@@ -167,6 +216,43 @@ export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string
                 {WORKSPACE_ROLES.map(r => <option key={r} value={r}>{t(`workspace.role.${r}`)}</option>)}
               </select></div>
           </form>}
+      </ResponsiveSheet>
+    </>}
+
+    {tab === 'assignments' && <>
+      <p className="auth-subtitle">{t('workspace.assignHint')}</p>
+      <Button onClick={() => { setAssignee(''); setScopeId(''); setAssignOpen(true); }}><GwIcon name="UserPlus" />{t('workspace.newAssignment')}</Button>
+      {assignments.isLoading && <ListSkeleton rows={2} />}
+      {assignments.isError && <RetryState retry={() => void assignments.refetch()} />}
+      {assignments.data?.length === 0 && <EmptyState compact icon="UsersRound" text={t('workspace.noAssignments')} />}
+      <ul className="ws-invite-list">{assignments.data?.map(a => <li key={a.id} className="ws-invite">
+        <span className="ws-member-main"><strong>{a.name ?? t('workspace.unnamed')}</strong>
+          <small>{t(`workspace.scope.${a.scope_type}`)} · {a.scope_label ?? t('workspace.scopeGone')} · {a.active ? t('workspace.assignActive') : t('workspace.assignInactive')}</small></span>
+        {a.active
+          ? <Button variant="ghost" size="icon" aria-label={t('workspace.revoke')} onClick={() => setAssignmentActive(a, false)}><GwIcon name="X" /></Button>
+          : <Button variant="ghost" size="icon" aria-label={t('workspace.reactivate')} onClick={() => setAssignmentActive(a, true)}><GwIcon name="Play" /></Button>}
+      </li>)}</ul>
+      <ResponsiveSheet open={assignOpen} onOpenChange={setAssignOpen} icon="UserPlus" title={t('workspace.newAssignment')} description={t('workspace.assignSheetHint')}
+        footer={<Button className="w-full" type="submit" form="ws-assign-form" disabled={busy || !assignee || !scopeId}>{t('workspace.assignSave')}</Button>}>
+        <form id="ws-assign-form" onSubmit={e => { e.preventDefault(); if (!busy) void createAssignment(); }}>
+          <div className="field"><Label htmlFor="ws-assign-member">{t('workspace.assignMember')}</Label>
+            <select id="ws-assign-member" className="field-input" value={assignee} onChange={e => setAssignee(e.target.value)} required>
+              <option value="" disabled>{t('workspace.assignPickMember')}</option>
+              {assignableMembers.map(m => <option key={m.user_id} value={m.user_id}>{m.full_name ?? t('workspace.unnamed')} · {t(`workspace.role.${m.workspace_role}`)}</option>)}
+            </select></div>
+          <div className="field"><Label htmlFor="ws-assign-scope">{t('workspace.assignScopeType')}</Label>
+            <select id="ws-assign-scope" className="field-input" value={scopeType} onChange={e => { setScopeType(e.target.value as typeof scopeType); setScopeId(''); }}>
+              {(['event', 'content', 'moderation'] as const).map(s => <option key={s} value={s}>{t(`workspace.scope.${s}`)}</option>)}
+            </select></div>
+          <div className="field"><Label htmlFor="ws-assign-target">{t('workspace.assignTarget')}</Label>
+            {scopes.isLoading ? <ListSkeleton rows={1} /> : scopeOptions.length === 0
+              ? <p className="auth-subtitle">{t('workspace.noScopes')}</p>
+              : <select id="ws-assign-target" className="field-input" value={scopeId} onChange={e => setScopeId(e.target.value)} required>
+                <option value="" disabled>{t('workspace.assignPickTarget')}</option>
+                {scopeOptions.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
+              </select>}
+          </div>
+        </form>
       </ResponsiveSheet>
     </>}
 

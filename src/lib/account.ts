@@ -42,20 +42,21 @@ export const profileQuery = (userId: string) => queryOptions({
   },
 });
 
-export type TeamMembership = { teamId: string; name: string; plan: string; joinCode: string; role: string; ownerId: string; customBadge: string | null; inherited?: boolean };
+export type TeamMembership = { teamId: string; name: string; plan: string; joinCode: string; role: string; workspaceRole: string; ownerId: string; customBadge: string | null; inherited?: boolean };
 
 export const teamsQuery = (userId: string) => queryOptions({
   queryKey: ['teams', userId],
   queryFn: async (): Promise<TeamMembership[]> => {
     const { data, error } = await supabase
       .from('team_members')
-      .select('role, custom_badge, joined_at, teams(id, name, plan, join_code, owner_id)')
+      .select('role, workspace_role, custom_badge, joined_at, teams(id, name, plan, join_code, owner_id)')
       .eq('user_id', userId)
+      .is('suspended_at', null)
       .order('joined_at', { ascending: true });
     if (error) throw error;
     return (data ?? []).filter(row => row.teams).map(row => {
       const team = row.teams as { id: string; name: string; plan: string; join_code: string; owner_id: string };
-      return { teamId: team.id, name: team.name, plan: team.plan, joinCode: team.join_code, role: row.role, ownerId: team.owner_id, customBadge: row.custom_badge };
+      return { teamId: team.id, name: team.name, plan: team.plan, joinCode: team.join_code, role: row.role, workspaceRole: row.workspace_role ?? 'member', ownerId: team.owner_id, customBadge: row.custom_badge };
     });
   },
 });
@@ -70,8 +71,12 @@ export const workspaceQuery = (userId: string) => queryOptions({
     if (member) return member;
     if (saved) {
       // Leaders of a parent team can open sub-teams they are not directly in; they act there as leader.
-      const { data } = await supabase.from('teams').select('id, name, plan, join_code, owner_id').eq('id', saved).maybeSingle();
-      if (data) return { teamId: data.id, name: data.name, plan: data.plan, joinCode: data.join_code, role: 'leader', ownerId: data.owner_id, customBadge: null, inherited: true };
+      // Verify an active capability first so a suspended/removed membership never resolves here.
+      const { data: capable } = await supabase.rpc('team_capability', { _team: saved, _cap: 'events' });
+      if (capable) {
+        const { data } = await supabase.from('teams').select('id, name, plan, join_code, owner_id').eq('id', saved).maybeSingle();
+        if (data) return { teamId: data.id, name: data.name, plan: data.plan, joinCode: data.join_code, role: 'leader', workspaceRole: 'admin', ownerId: data.owner_id, customBadge: null, inherited: true };
+      }
     }
     return teams.find(team => team.role === 'leader') ?? teams[0] ?? null;
   },

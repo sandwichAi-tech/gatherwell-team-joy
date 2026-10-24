@@ -644,7 +644,10 @@
       "member_reactivated": "Member reactivated",
       "member_removed": "Member removed",
       "member_left": "Member left",
-      "ownership_transferred": "Ownership transferred"
+      "ownership_transferred": "Ownership transferred",
+      "assignment_created": "Assignment created",
+      "assignment_revoked": "Assignment revoked",
+      "assignment_reactivated": "Assignment reactivated"
     },
     "err": {
       "forbidden": "You do not have permission for that.",
@@ -662,7 +665,38 @@
       "owner_role_fixed": "The owner’s role cannot be changed here.",
       "not_member": "That person is not a member.",
       "confirm_mismatch": "The confirmation text did not match.",
-      "sole_owner": "Transfer ownership before leaving — you are the only owner."
+      "sole_owner": "Transfer ownership before leaving — you are the only owner.",
+      "invalid_scope_type": "That access type is not available.",
+      "role_needs_no_assignment": "Owners and admins already have full access.",
+      "invalid_scope_for_role": "That access type does not match this member's role.",
+      "scope_not_found": "That item does not belong to this workspace.",
+      "already_assigned": "This member already has that access.",
+      "not_found": "Assignment not found.",
+      "not_allowed": "You don't have access to do that."
+    },
+    "assignments": "Assignments",
+    "assignHint": "Give check-in staff, moderators and content editors access to specific events, content or discussions.",
+    "newAssignment": "New assignment",
+    "noAssignments": "No assignments yet.",
+    "assignActive": "Active",
+    "assignInactive": "Revoked",
+    "assignSaved": "Assignment saved",
+    "assignRevoked": "Assignment revoked",
+    "assignReactivated": "Assignment reactivated",
+    "assignSheetHint": "The person keeps this access until you revoke it. Every change is recorded in Activity.",
+    "assignMember": "Member",
+    "assignPickMember": "Choose a member",
+    "assignScopeType": "Access type",
+    "assignTarget": "What they can access",
+    "assignPickTarget": "Choose what to share",
+    "noScopes": "Nothing available for this access type yet.",
+    "scopeGone": "Removed item",
+    "assignSave": "Save assignment",
+    "noAccess": "Only workspace owners and admins can open workspace settings.",
+    "scope": {
+      "event": "Event",
+      "content": "Content",
+      "moderation": "Moderation"
     }
   },
   "legal": {

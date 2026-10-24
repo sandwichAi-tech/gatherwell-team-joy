@@ -175,3 +175,12 @@
 - UI: /team/settings with Members (search, role change, suspend/reactivate, remove, transfer), Invitations (create/copy/revoke, states), Seats (usage vs limit), Activity tabs; /invite/team/<token> acceptance page; linked from Team leader tools.
 - Tested: 32 files / 240 tests (3 new: role list, EN/ES parity, state labels). Live API fixtures verified owner capabilities, seat counting, seats_full invite block, bogus-token rejection, anonymous denial, sole-owner leave block, audit writes. Browser (390px, reduced motion): settings tabs, member list, invite sheet with 7 roles, seat usage, bogus invite rejection, no overflow.
 - Unverified: second-account invite acceptance end-to-end (no second credential; rejection paths API-verified), content_editor/check-in scoped data views (capability function verified; per-surface gating unchanged), screen-reader and 200% zoom on the new tabs.
+
+## v0.23 — Workspace role enforcement and scoped assignments (2026-10-24)
+- New workspace_assignments model (migration 0075): owner/admin delegate event, content, or moderation scopes to limited roles; RPC-only writes, active-uniqueness, audit entries, revoke/reactivate.
+- Fixed set_member_suspension writing a timestamp into workspace_role (suspension was broken); suspended/removed members now lose all team capabilities and team data access (is_team_member excludes suspended).
+- Check-in staff: can_checkin_event + checkin_guest_list expose only admission fields (name, status, plus-ones, checked-in); check-in writes rewired from full manage to check-in capability.
+- Content editors reach team tracks/offers/lessons via the content capability; attendee lists, waivers, payments, billing and member management stay closed to them.
+- Moderators get an assignment-scoped moderation_queue shell (0076/0077 fix reports/comments columns); analysts get aggregate-only team_analytics_summary.
+- Team settings gated to owner/admin; new Assignments tab with create/revoke/reactivate; workspace switcher and active-workspace fallback exclude suspended memberships; creation sheet options follow workspace capabilities.
+- Verified live with fixtures (since removed): assignment CRUD + rejections, outsider denial, check-in scoping and minimal fields, content-editor boundaries, moderator scoping, analyst aggregates, revoke/suspend enforcement. 253 unit tests pass.

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { WorkspaceSettings } from '@/components/workspace-settings';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { workspaceQuery } from '@/lib/account';
+import { roleAllows } from '@/lib/workspace';
 import { ListSkeleton } from '@/components/launch-states';
 import i18n from '@/lib/i18n';
 
@@ -15,6 +16,10 @@ export const Route = createFileRoute('/_authenticated/_app/team_/settings')({
     const { data: workspace, isLoading } = useQuery(workspaceQuery(userId));
     if (isLoading) return <ListSkeleton />;
     if (!workspace) return <p className="auth-subtitle">{t('workspace.none')}</p>;
+    const isOwner = workspace.ownerId === userId;
+    if (!isOwner && !roleAllows(workspace.workspaceRole as never, 'settings')) {
+      return <p className="auth-subtitle" role="alert">{t('workspace.noAccess')}</p>;
+    }
     return <>
       <h1 className="page-title">{t('workspace.title')}</h1>
       <WorkspaceSettings teamId={workspace.teamId} userId={userId} teamName={workspace.name} />
