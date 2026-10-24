@@ -12,7 +12,8 @@ import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { confirmAction } from '@/components/confirm-dialog';
 import { EmptyState, ListSkeleton } from '@/components/launch-states';
 import { supabase } from '@/integrations/supabase/client';
-import { duplicateOffer, grantOfferAccess, isHttpsUrl, lessonFileError, offerReadinessQuery, LESSON_FILE_RULES } from '@/lib/content';
+import { bundleAccessQuery, bundleItemsQuery, duplicateOffer, grantOfferAccess, isHttpsUrl, lessonFileError, offerReadinessQuery, replaceOfferItem, LESSON_FILE_RULES, type BundleItem } from '@/lib/content';
+import { offerItemDownloadLink } from '@/lib/offers.functions';
 import { lessonTitle, pick, trackTitle, uploadLearnFile, type Lesson, type Track } from '@/lib/learn';
 import { formatMoney } from '@/lib/billing';
 import { platformFeeCents } from '@/lib/fees';
@@ -374,4 +375,164 @@ function CourseLessonEditor({ lesson, offer, siblings, onClose }: { lesson: (Par
 export function PublicOfferLink({ id }: { id: string }) {
   const { t } = useTranslation();
   return <Button asChild variant="ghost" size="sm"><Link to="/o/$id" params={{ id }} target="_blank"><ExternalLink />{t('content.viewPublicPage')}</Link></Button>;
+}
+
+/* ---------- Resource bundle: ordered items with version-safe replace ---------- */
+export function BundlePanel({ offer }: { offer: Offer }) {
+  const { t, i18n } = useTranslation();
+  const lang = i18n.resolvedLanguage ?? 'en';
+  const qc = useQueryClient();
+  const { data: items = [], isLoading } = useQuery(bundleItemsQuery(offer.id));
+  const [edit, setEdit] = useState<BundleItem | 'new' | null>(null);
+  const [replacing, setReplacing] = useState<BundleItem | null>(null);
+  const refresh = () => qc.invalidateQueries({ queryKey: ['bundle-items', offer.id] });
+
+  const move = async (i: number, dir: -1 | 1) => {
+    const a = items[i], b = items[i + dir];
+    if (!a || !b) return;
+    await db.from('offer_items').update({ sort_order: b.sort_order }).eq('id', a.id);
+    await db.from('offer_items').update({ sort_order: a.sort_order }).eq('id', b.id);
+    await refresh();
+  };
+  const remove = async (item: BundleItem) => {
+    if (item.is_published) { toast.error(t('content.removeDraftOnly')); return; }
+    if (!(await confirmAction({ title: t('content.confirmRemoveItem'), destructive: true }))) return;
+    await db.from('offer_items').delete().eq('id', item.id);
+    await refresh();
+  };
+  const togglePublish = async (item: BundleItem) => {
+    await db.from('offer_items').update({ is_published: !item.is_published }).eq('id', item.id);
+    await refresh();
+    void qc.invalidateQueries({ queryKey: ['offer-readiness', offer.id] });
+  };
+
+  return <section className="panel">
+    <div className="section-heading"><h2>{t('content.bundle')}</h2><Button size="sm" onClick={() => setEdit('new')}><Plus />{t('content.addItem')}</Button></div>
+    <p className="muted-small">{t('content.bundleText')}</p>
+    {isLoading ? <ListSkeleton /> : items.length === 0 ? <EmptyState icon="FileText" title={t('content.noItems')} text={t('content.noItemsText')} /> :
+      <ol className="lesson-list">{items.map((item, i) => <li key={item.id} className="lesson-row">
+        <div className="row-actions" role="group" aria-label={t('content.reorder')}>
+          <button type="button" className="icon-btn" disabled={i === 0} aria-label={t('content.moveUp')} onClick={() => void move(i, -1)}><ArrowUp /></button>
+          <button type="button" className="icon-btn" disabled={i === items.length - 1} aria-label={t('content.moveDown')} onClick={() => void move(i, 1)}><ArrowDown /></button>
+        </div>
+        <div className="lesson-row-main">
+          <strong>{pick(lang, item.title_en, item.title_es) || t('content.untitledItem')}</strong>
+          <small>{t(`content.itemType.${item.type}`)}{item.is_preview ? ` · ${t('content.previewBadge')}` : ''}{!item.allow_download ? ` · ${t('content.noDownload')}` : ''}{!item.is_published ? ` · ${t('offers.status.draft')}` : ''}</small>
+        </div>
+        <div className="row-actions">
+          <button type="button" className="icon-btn" aria-label={t('content.editItem')} onClick={() => setEdit(item)}><Pencil /></button>
+          <button type="button" className="icon-btn" aria-label={t('content.replaceItem')} onClick={() => setReplacing(item)}><Copy /></button>
+          <button type="button" className="icon-btn" aria-label={t('content.removeItem')} onClick={() => void remove(item)}><Trash2 /></button>
+          <button type="button" className="text-link" onClick={() => void togglePublish(item)}>{t(item.is_published ? 'content.unpublishItem' : 'content.publishItem')}</button>
+        </div>
+      </li>)}</ol>}
+    {edit && <BundleItemEditor offer={offer} item={edit === 'new' ? null : edit} onClose={() => { setEdit(null); void refresh(); void qc.invalidateQueries({ queryKey: ['offer-readiness', offer.id] }); }} />}
+    {replacing && <BundleItemEditor offer={offer} item={replacing} replace onClose={() => { setReplacing(null); void refresh(); }} />}
+  </section>;
+}
+
+function BundleItemEditor({ offer, item, replace, onClose }: { offer: Offer; item: BundleItem | null; replace?: boolean; onClose: () => void }) {
+  const { t } = useTranslation();
+  const blank = { type: 'text', title_en: '', title_es: '', body_en: '', body_es: '', url: '', is_preview: false, allow_download: true };
+  const [f, setF] = useState(blank);
+  const [busy, setBusy] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  useEffect(() => {
+    if (item) setF({ type: item.type, title_en: item.title_en, title_es: item.title_es, body_en: item.body_en ?? '', body_es: item.body_es ?? '', url: item.url ?? '', is_preview: item.is_preview, allow_download: item.allow_download });
+    else setF(blank);
+    setFile(null);
+  }, [item]);
+  const linkOk = f.type === 'text' || f.type === 'file' || !f.url || isHttpsUrl(f.url);
+  const contentOk = f.type === 'text' ? !!(f.body_en.trim() || f.body_es.trim()) : f.type === 'file' ? !!(file || item?.storage_path) : !!f.url.trim();
+  const titleOk = !!(f.title_en.trim() || f.title_es.trim());
+  const fileErr = file ? lessonFileError('file', file) : null;
+
+  const save = async () => {
+    setBusy(true);
+    let storage_path = item?.storage_path ?? null;
+    if (f.type === 'file' && file) {
+      try { storage_path = await uploadLearnFile(offer.team_id ?? 'offers', file, () => {}); }
+      catch { setBusy(false); toast.error(t('learn.uploadError')); return; }
+    }
+    const row = { type: f.type, title_en: f.title_en.trim(), title_es: f.title_es.trim(), body_en: f.body_en.trim() || null, body_es: f.body_es.trim() || null,
+      url: f.type === 'text' || f.type === 'file' ? null : f.url.trim() || null, storage_path: f.type === 'file' ? storage_path : null,
+      is_preview: f.is_preview, allow_download: f.allow_download };
+    let err: { message: string } | null = null;
+    if (replace && item) {
+      const res = await replaceOfferItem(item.id, row);
+      err = res.error;
+    } else if (item) {
+      const res = await db.from('offer_items').update(row).eq('id', item.id);
+      err = res.error;
+    } else {
+      const res = await db.from('offer_items').insert({ ...row, offer_id: offer.id, sort_order: Date.now() % 100000 });
+      err = res.error;
+    }
+    setBusy(false);
+    if (err) { toast.error(t('offers.saveError')); return; }
+    toast.success(t('templates.saved'));
+    onClose();
+  };
+
+  return <ResponsiveSheet open onOpenChange={o => !o && onClose()} title={t(replace ? 'content.replaceItem' : item ? 'content.editItem' : 'content.addItem')}>
+    <div className="edit-form">
+      {replace && <p className="muted-small">{t('content.replaceText')}</p>}
+      <div className="form-field"><span className="field-label">{t('content.itemTypeLabel')}</span>
+        <div className="choice-pair" role="group" aria-label={t('content.itemTypeLabel')}>
+          {(['text', 'file', 'link', 'embed'] as const).map(v => <button key={v} type="button" className={`choice-card ${f.type === v ? 'is-selected' : ''}`} aria-pressed={f.type === v} onClick={() => setF({ ...f, type: v })}><strong>{t(`content.itemType.${v}`)}</strong></button>)}
+        </div></div>
+      <div className="bilingual">
+        {Field({ id: 'bi-ten', label: `${t('templates.title')} · EN`, children: <Input id="bi-ten" className="field-input" maxLength={120} value={f.title_en} onChange={e => setF({ ...f, title_en: e.target.value })} /> })}
+        {Field({ id: 'bi-tes', label: `${t('templates.title')} · ES`, children: <Input id="bi-tes" className="field-input" maxLength={120} value={f.title_es} onChange={e => setF({ ...f, title_es: e.target.value })} /> })}
+      </div>
+      {f.type === 'text' && <div className="bilingual">
+        {Field({ id: 'bi-ben', label: `${t('content.itemBody')} · EN`, children: <Textarea id="bi-ben" rows={4} className="field-textarea" maxLength={5000} value={f.body_en} onChange={e => setF({ ...f, body_en: e.target.value })} /> })}
+        {Field({ id: 'bi-bes', label: `${t('content.itemBody')} · ES`, children: <Textarea id="bi-bes" rows={4} className="field-textarea" maxLength={5000} value={f.body_es} onChange={e => setF({ ...f, body_es: e.target.value })} /> })}
+      </div>}
+      {f.type === 'file' && <div className="form-field"><span className="field-label">{t('content.itemFile')}</span>
+        <label className="upload-box"><Upload /><span>{file ? file.name : item?.storage_path ? t('content.keepFile') : t('content.chooseFile')}</span>
+          <input type="file" className="sr-only" accept={LESSON_FILE_RULES['file']!.accept} onChange={e => setFile(e.target.files?.[0] ?? null)} /></label>
+        {fileErr && <p className="field-error" role="alert">{t(fileErr === 'too_large' ? 'learn.fileTooBig' : 'content.badFileType')}</p>}
+        <p className="muted-small">{t('content.fileRules')}</p></div>}
+      {(f.type === 'link' || f.type === 'embed') && <>
+        {Field({ id: 'bi-url', label: 'URL', children: <Input id="bi-url" type="url" className="field-input" maxLength={500} placeholder="https://" value={f.url} onChange={e => setF({ ...f, url: e.target.value })} /> })}
+        {!linkOk && <p className="field-error" role="alert">{t('content.httpsOnly')}</p>}
+        {f.type === 'embed' && <p className="muted-small">{t('content.embedNote')}</p>}</>}
+      <label className="check-row"><Switch checked={f.is_preview} onCheckedChange={v => setF({ ...f, is_preview: v })} /><span>{t('content.previewItem')}<small>{t('content.previewItemText')}</small></span></label>
+      <label className="check-row"><Switch checked={f.allow_download} onCheckedChange={v => setF({ ...f, allow_download: v })} /><span>{t('content.allowDownload')}<small>{t('content.allowDownloadText')}</small></span></label>
+      <Button className="onboarding-continue" disabled={busy || !linkOk || !contentOk || !titleOk || !!fileErr} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
+    </div>
+  </ResponsiveSheet>;
+}
+
+/* ---------- Learner bundle view: published items with signed downloads ---------- */
+export function BundleReader({ offerId, userId }: { offerId: string; userId: string }) {
+  const { t, i18n } = useTranslation();
+  const lang = i18n.resolvedLanguage ?? 'en';
+  const { data: items = [], isLoading } = useQuery(bundleAccessQuery(offerId, userId));
+  const [busyId, setBusyId] = useState('');
+  if (isLoading) return <ListSkeleton />;
+  if (items.length === 0) return null;
+  const download = async (item: BundleItem) => {
+    setBusyId(item.id);
+    const res = await offerItemDownloadLink({ data: { itemId: item.id } });
+    setBusyId('');
+    if (!res.ok) { toast.error(t('content.downloadError')); return; }
+    // The signed URL is issued with Content-Disposition: attachment, so this downloads in place without navigating away.
+    window.location.assign(res.url);
+  };
+  return <section className="panel">
+    <h2>{t('content.bundle')}</h2>
+    <ol className="lesson-list">{items.map(item => <li key={item.id} className="lesson-row">
+      <div className="lesson-row-main">
+        <strong>{pick(lang, item.title_en, item.title_es)}</strong>
+        <small>{t(`content.itemType.${item.type}`)}</small>
+        {item.type === 'text' && <p className="muted-small">{pick(lang, item.body_en, item.body_es)}</p>}
+      </div>
+      <div className="row-actions">
+        {item.type === 'file' && item.allow_download && <Button size="sm" variant="secondary" disabled={busyId === item.id} onClick={() => void download(item)}>{t('content.download')}</Button>}
+        {(item.type === 'link' || item.type === 'embed') && item.url && <Button size="sm" variant="secondary" asChild><a href={item.url} target="_blank" rel="noopener noreferrer"><ExternalLink />{t('content.openLink')}</a></Button>}
+      </div>
+    </li>)}</ol>
+  </section>;
 }

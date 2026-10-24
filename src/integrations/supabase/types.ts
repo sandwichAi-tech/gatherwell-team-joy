@@ -2692,6 +2692,75 @@ export type Database = {
           },
         ]
       }
+      offer_items: {
+        Row: {
+          allow_download: boolean
+          body_en: string | null
+          body_es: string | null
+          created_at: string
+          id: string
+          is_preview: boolean
+          is_published: boolean
+          offer_id: string
+          replaced_by: string | null
+          sort_order: number
+          storage_path: string | null
+          title_en: string
+          title_es: string
+          type: string
+          url: string | null
+        }
+        Insert: {
+          allow_download?: boolean
+          body_en?: string | null
+          body_es?: string | null
+          created_at?: string
+          id?: string
+          is_preview?: boolean
+          is_published?: boolean
+          offer_id: string
+          replaced_by?: string | null
+          sort_order?: number
+          storage_path?: string | null
+          title_en?: string
+          title_es?: string
+          type?: string
+          url?: string | null
+        }
+        Update: {
+          allow_download?: boolean
+          body_en?: string | null
+          body_es?: string | null
+          created_at?: string
+          id?: string
+          is_preview?: boolean
+          is_published?: boolean
+          offer_id?: string
+          replaced_by?: string | null
+          sort_order?: number
+          storage_path?: string | null
+          title_en?: string
+          title_es?: string
+          type?: string
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_items_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offer_items_replaced_by_fkey"
+            columns: ["replaced_by"]
+            isOneToOne: false
+            referencedRelation: "offer_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       offer_managers: {
         Row: {
           assigned_by: string | null
@@ -6014,6 +6083,7 @@ export type Database = {
           status: string
         }[]
       }
+      replace_offer_item: { Args: { _item: string; _p: Json }; Returns: string }
       report_content: {
         Args: { _id: string; _note: string; _reason: string; _type: string }
         Returns: boolean

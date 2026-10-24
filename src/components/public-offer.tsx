@@ -92,6 +92,13 @@ export function PublicOfferPage({ id }: { id: string }) {
             </li>)}</ul>
           </li>)}</ol></>}
 
+        {(o.items ?? []).length > 0 && <>
+          <h2>{t('content.bundle')}</h2>
+          <ol className="lesson-list public-curriculum">{o.items.map(i => <li key={i.id} className="public-lesson">
+            <span>{pick2(lang, i.title_en, i.title_es)}</span>
+            <small>{t(`content.itemType.${i.type}`)}{i.is_preview ? ` · ${t('content.previewBadge')}` : ''}{!i.allow_download ? ` · ${t('content.noDownload')}` : ''}</small>
+          </li>)}</ol></>}
+
         {owned ? <div className="offer-owned"><span className="chip"><Check className="inline-icon" />{t('offers.owned')}</span>
           <Button asChild><Link to="/offer/$id" params={{ id }}>{t('content.openInLibrary')}</Link></Button></div> :
           window2 === 'open' && !paid ? <Button className="onboarding-continue" disabled={busy} onClick={enroll}>{t(userId ? 'content.enrollFree' : 'content.signInToEnroll')}</Button> :

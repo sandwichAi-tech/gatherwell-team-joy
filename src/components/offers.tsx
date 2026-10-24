@@ -32,7 +32,7 @@ import {
 } from '@/lib/offers';
 import { cancelOfferMembership, offerDownloadLink, pauseOfferMembership, startOfferCheckout } from '@/lib/offers.functions';
 import { CommunityRequestsPanel, CommunitySeatCard } from '@/components/community-seats';
-import { CurriculumPanel, OfferDetailsEditor, OfferHostActions, PublicOfferLink, ReadinessPanel } from '@/components/content-studio';
+import { BundlePanel, BundleReader, CurriculumPanel, OfferDetailsEditor, OfferHostActions, PublicOfferLink, ReadinessPanel } from '@/components/content-studio';
 import { canAccessOfferQuery } from '@/lib/content';
 
 const KINDS: OfferKind[] = ['membership', 'course', 'download'];
@@ -250,9 +250,10 @@ export function OfferPage({ id, paid }: { id: string; paid?: boolean }) {
         </div>
       </section>
       <ReadinessPanel offerId={offer.id} onEdit={() => setDetailsOpen(true)} />
-      {offer.kind !== 'download' && <CurriculumPanel offer={offer} />}
+      {offer.kind !== 'download' ? <CurriculumPanel offer={offer} /> : <BundlePanel offer={offer} />}
       <OfferDetailsEditor offer={detailsOpen ? offer : null} onClose={() => setDetailsOpen(false)} />
     </>}
+    {offer.kind === 'download' && owned && <BundleReader offerId={offer.id} userId={userId} />}
   </article>;
 }
 

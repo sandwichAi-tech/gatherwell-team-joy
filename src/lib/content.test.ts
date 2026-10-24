@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { commerceMode, enrollmentState, isAllowedEmbed, isHttpsUrl, lessonFileError, paidSetupRequired, readinessBlockers } from '@/lib/content';
+import { bundleItemError, commerceMode, enrollmentState, isAllowedEmbed, isHttpsUrl, lessonFileError, paidSetupRequired, readinessBlockers } from '@/lib/content';
 
 describe('readinessBlockers', () => {
   const base = { kind: 'course', sections: 1, lessons: 2, title_en: 'Course', summary_en: 'Short', description_en: 'Long' };
@@ -73,5 +73,21 @@ describe('commerce configuration', () => {
   it('keeps every paid action setup-required', () => {
     expect(paidSetupRequired({ price_cents: 1 })).toBe(true);
     expect(paidSetupRequired({ price_cents: 0 })).toBe(false);
+  });
+});
+
+describe('bundle items', () => {
+  it('text items need body content', () => {
+    expect(bundleItemError({ type: 'text', body: '' })).toBe('missing_content');
+    expect(bundleItemError({ type: 'text', body: 'Hello' })).toBeNull();
+  });
+  it('file items need an uploaded file', () => {
+    expect(bundleItemError({ type: 'file' })).toBe('missing_content');
+    expect(bundleItemError({ type: 'file', storage_path: 'team/x.pdf' })).toBeNull();
+  });
+  it('link and embed items require https URLs', () => {
+    expect(bundleItemError({ type: 'link' })).toBe('missing_content');
+    expect(bundleItemError({ type: 'link', url: 'http://x.com' })).toBe('https');
+    expect(bundleItemError({ type: 'embed', url: 'https://vimeo.com/123' })).toBeNull();
   });
 });
