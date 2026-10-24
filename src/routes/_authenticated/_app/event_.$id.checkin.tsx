@@ -21,7 +21,7 @@ import { BelongingPrompt, BelongingTags, useBelonging, useSmallGroups } from '@/
 
 export const Route = createFileRoute('/_authenticated/_app/event_/$id/checkin')({ head: () => gatherwellHead('events'), component: CheckInMode });
 
-type Scan = { result: 'ok' | 'already' | 'not_found' | 'error' | 'pending'; name?: string };
+type Scan = { result: 'ok' | 'already' | 'not_found' | 'error' | 'pending' | 'cancelled' | 'waitlist'; name?: string };
 
 function CheckInMode() {
   const { id } = Route.useParams(); const { t, i18n } = useTranslation(); const queryClient = useQueryClient();

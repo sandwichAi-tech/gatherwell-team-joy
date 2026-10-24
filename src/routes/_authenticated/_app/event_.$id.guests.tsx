@@ -73,13 +73,22 @@ function GuestListPage() {
     if (error) { toast.error(t('profile.saveError')); return; }
     toast.success(t('guestList.cancelled')); setCancelling(null); setCancelReason(''); await refresh();
   };
-  const exportCsv = () => {
-    const cell = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-    const head = ['name', 'team', 'status', 'plus_ones', 'phone', 'email', 'sms_reminders', 'email_reminders', 'rsvp_time', 'checked_in', 'waiver_signed', 'waiver_name', 'waiver_version', 'waiver_time', 'waiver_ip', 'waiver_source', ...questions.map(q => q.label)];
-    const body = rows.map(r => { const w = waivers.get(r.id); return [r.guest_name, r.group_name ?? '', r.status, r.plus_ones, r.guest_phone, r.guest_email, r.sms_opt_in ? 'yes' : 'no', r.email_opt_in ? 'yes' : 'no', r.created_at, r.checked_in_at ?? '', w ? 'yes' : 'no', w?.full_name ?? '', w?.version ?? '', w?.accepted_at ?? '', w?.ip ?? '', w?.source ?? '', ...questions.map(q => ansText(q, answers.get(r.id)?.[q.id]))].map(cell).join(','); });
-    const url = URL.createObjectURL(new Blob([[head.join(','), ...body].join('\n')], { type: 'text/csv;charset=utf-8' }));
-    const a = document.createElement('a'); a.href = url; a.download = `guests-${(event?.title ?? 'gathering').replace(/[^\w-]+/g, '-').toLowerCase()}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  // Attendance export goes through the audited, manager-only RPC with minimal
+  // admission fields — no waiver/guardian/contact/payment data leaves this path.
+  const [exporting, setExporting] = useState(false);
+  const exportCsv = async () => {
+    setExporting(true);
+    const { data, error } = await supabase.rpc('attendance_export', { _event: id });
+    setExporting(false);
+    if (error) { toast.error(t('profile.saveError')); return; }
+    const fmt = (iso: string | null) => iso ? new Date(iso).toLocaleString(lang, { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+    const rowsOut = ((data ?? []) as { guest_name: string | null; status: string; plus_ones: number; checked_in_at: string | null; is_walk_in: boolean; created_at: string; tier_name: string | null }[])
+      .map(r => [r.guest_name ?? '', t(`guestList.tabs.${r.status}`), 1 + (r.plus_ones ?? 0), r.is_walk_in ? t('export.yes') : t('export.no'), r.tier_name ?? '', fmt(r.created_at), fmt(r.checked_in_at)]);
+    downloadCsv(`attendance-${(event?.title ?? 'event').replace(/[^\w-]+/g, '-').toLowerCase()}.csv`,
+      [t('export.name'), t('export.status'), t('export.partySize'), t('export.walkIn'), t('export.tier'), t('export.registeredAt'), t('export.checkedInAt')], rowsOut);
+    toast.success(t('export.done'));
   };
+  const { data: totals } = useQuery({ queryKey: ['event', id, 'attendance-totals'], queryFn: async () => (await supabase.rpc('attendance_totals', { _event: id })).data as null | { registered: number; checked_in: number; waitlisted: number; cancelled: number; capacity: number | null; remaining: number | null } });
 
   return <>
     <Link to="/event/$id" params={{ id }} className="auth-link back-link"><ArrowLeft />{t('guestList.back')}</Link>
