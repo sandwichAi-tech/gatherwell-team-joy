@@ -20,6 +20,8 @@ type Member = { user_id: string; full_name: string | null; workspace_role: strin
 type Invite = { id: string; email: string; role: string; state: 'pending' | 'accepted' | 'expired' | 'revoked'; expires_at: string; created_at: string };
 type SeatUsage = { tier: string; seat_limit: number; seats_used: number; over_limit: boolean };
 type AuditRow = { action: string; actor: string | null; target: string | null; at: string; meta: Record<string, unknown> };
+type Assignment = { id: string; user_id: string; name: string | null; role: string; scope_type: 'event' | 'content' | 'moderation'; scope_id: string; scope_label: string | null; active: boolean; created_at: string };
+type ScopeOption = { id: string; label: string };
 
 const membersQuery = (teamId: string) => ({
   queryKey: ['ws-members', teamId],
@@ -62,7 +64,34 @@ const activityQuery = (teamId: string) => ({
   },
 });
 
-type Tab = 'members' | 'invites' | 'seats' | 'activity';
+const assignmentsQuery = (teamId: string) => ({
+  queryKey: ['ws-assignments', teamId],
+  queryFn: async () => {
+    const { data, error } = await supabase.rpc('workspace_assignments_list', { _team: teamId });
+    if (error) throw error;
+    return (data ?? []) as unknown as Assignment[];
+  },
+});
+
+/** Scope pickers: team events (event + moderation scopes) and team content (tracks + offers). */
+const scopesQuery = (teamId: string) => ({
+  queryKey: ['ws-scopes', teamId],
+  queryFn: async () => {
+    const [events, tracks, offers] = await Promise.all([
+      supabase.from('events').select('id, title').eq('team_id', teamId).neq('status', 'cancelled').order('starts_at', { ascending: false }).limit(100),
+      supabase.from('tracks').select('id, title_en').eq('team_id', teamId).limit(100),
+      supabase.from('offers').select('id, title_en').eq('team_id', teamId).limit(100),
+    ]);
+    if (events.error) throw events.error;
+    return {
+      event: (events.data ?? []).map(e => ({ id: e.id, label: e.title })) as ScopeOption[],
+      content: [...(tracks.data ?? []).map(tr => ({ id: tr.id, label: tr.title_en })), ...(offers.data ?? []).map(o => ({ id: o.id, label: o.title_en }))] as ScopeOption[],
+      moderation: (events.data ?? []).map(e => ({ id: e.id, label: e.title })) as ScopeOption[],
+    };
+  },
+});
+
+type Tab = 'members' | 'invites' | 'assignments' | 'seats' | 'activity';
 
 export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string; userId: string; teamName: string }) {
   const { t, i18n } = useTranslation();
