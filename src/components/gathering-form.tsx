@@ -251,15 +251,35 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         <small className="field-hint">{t('templates.orScratch')}</small>
       </section>; })()}
 
-      {full && <section className="form-section">
-        <GatheringCover path={coverPath} style={coverStyle} title={title || 'G'} className="form-cover" />
+      {full && <section className="form-section" aria-label={t('gathering.coverStyle')}>
+        <GatheringCover path={coverPath} style={coverStyle} title={title || 'G'} className="form-cover" overlay={coverOverlay} focal={coverFocal} alt={coverAlt || null} />
         <div className="cover-actions">
           <label className="file-button"><Camera /><span>{uploading ? t('onboarding.saving') : t(coverPath ? 'gathering.changePhoto' : 'gathering.addPhoto')}</span>
             <CropFileInput kind="cover" withSquare onCropped={r => void onPhoto(r)} onRejected={() => toast.error(t('gathering.photoTooBig'))} /></label>
           {coverPath && <Button variant="ghost" onClick={() => setCoverPath(null)}>{t('gathering.useDefault')}</Button>}
+          {(coverOverlay !== 0 || coverFocal !== '50% 50%' || coverAlt) && <Button variant="ghost" onClick={() => { setCoverOverlay(0); setCoverFocal('50% 50%'); setCoverAlt(''); }}>{t('gathering.coverReset')}</Button>}
         </div>
-        {!coverPath && <div className="style-picker" role="radiogroup" aria-label={t('gathering.coverStyle')}>{COVER_STYLES.map((bg, i) =>
-          <button key={i} type="button" role="radio" aria-checked={coverStyle === i} aria-label={t('gathering.styleN', { n: i + 1 })} className={`style-swatch ${coverStyle === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} onClick={() => setCoverStyle(i)} />)}</div>}
+        <div className="cover-controls">
+          {!coverPath && <div className="style-picker" role="radiogroup" aria-label={t('gathering.coverStyle')}>{COVER_STYLES.map((bg, i) =>
+            <button key={i} type="button" role="radio" aria-checked={coverStyle === i} aria-label={t('gathering.styleN', { n: i + 1 })} className={`style-swatch ${coverStyle === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} onClick={() => setCoverStyle(i)} />)}</div>}
+          <div>
+            <span className="field-label">{t('gathering.coverOverlay')}</span>
+            <div className="segmented full" role="group" aria-label={t('gathering.coverOverlay')}>{COVER_OVERLAYS.map(o => <Button key={o} variant="ghost" className={coverOverlay === o ? 'selected' : ''} aria-pressed={coverOverlay === o} onClick={() => setCoverOverlay(o)}>{t(`gathering.overlay.${o}`)}</Button>)}</div>
+            <small className="field-hint">{t('gathering.coverOverlayHint')}</small>
+          </div>
+          {coverPath && <>
+            <div>
+              <span className="field-label">{t('gathering.coverFocal')}</span>
+              <div className="cover-focal-grid" role="radiogroup" aria-label={t('gathering.coverFocal')}>{COVER_FOCALS.map(f => <button key={f} type="button" role="radio" aria-checked={coverFocal === f} aria-label={t(`gathering.focal.${f.replace(/% /g, '-').replace(/%/g, '')}`)} className={coverFocal === f ? 'is-selected' : ''} onClick={() => setCoverFocal(f)}><Crosshair /></button>)}</div>
+              <small className="field-hint">{t('gathering.coverFocalHint')}</small>
+            </div>
+            <div>
+              <label className="field-label" htmlFor="g-cover-alt">{t('gathering.coverAlt')}</label>
+              <Input id="g-cover-alt" className="field-input" maxLength={200} value={coverAlt} onChange={e => setCoverAlt(e.target.value)} placeholder={t('gathering.coverAltPlaceholder')} />
+              <small className="field-hint">{t('gathering.coverAltHint')}</small>
+            </div>
+          </>}
+        </div>
       </section>}
 
       <section className="form-section">
