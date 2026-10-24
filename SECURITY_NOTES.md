@@ -83,3 +83,10 @@ The requester supplied the following results after commit ac2eef3c5d5ff7138522b8
 - Guest management is bound to the opaque 24-char checkin code: tampered/short codes are rejected and there is no email-only lookup path (anon has no rsvps grant at all; authenticated non-hosts read zero rows via RLS).
 - host_cancel_rsvp() is can_manage_event()-checked; cancellation keeps the row with cancelled_by + reason.
 - my_tickets() exposes the virtual join link only for the caller's own active registrations.
+
+## 2026-10-24 — Course/resource access (0057–0059)
+- get_public_offer() exposes only metadata and lesson titles/types/durations for published public/unlisted offers — no file paths, URLs, or instructor notes.
+- lesson_instructor_notes is editor-only via can_edit_track; learners have no read path.
+- enroll_free is signed-in-only, window-enforced, idempotent; paid offers raise payment_required (no entitlement without verified payment).
+- grant_offer_access resolves recipients server-side by exact confirmed email; unknown accounts return a neutral no_account (no enumeration); every grant writes offer_grants audit rows.
+- Entitlement kind/source values must satisfy the existing entitlements CHECK constraints (course offers use course_subscription; sources free/admin).
