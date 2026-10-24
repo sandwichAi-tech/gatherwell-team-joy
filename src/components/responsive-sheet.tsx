@@ -10,6 +10,13 @@ type Props = { open: boolean; onOpenChange: (open: boolean) => void; title: stri
 /** Bottom sheet on phones (grab handle, drag to dismiss), centered dialog on desktop. Optional icon tile and sticky footer. */
 export function ResponsiveSheet({ open, onOpenChange, title, description, icon, footer, children }: Props) {
   const mobile = useIsMobile();
+  const previousFocus = useRef<HTMLElement | null>(null);
+  const wasOpen = useRef(false);
+  useEffect(() => {
+    if (open && !wasOpen.current) previousFocus.current = captureActiveElement();
+    if (!open && wasOpen.current) restoreElementFocus(previousFocus.current);
+    wasOpen.current = open;
+  }, [open]);
   const head = (T: typeof DialogTitle | typeof DrawerTitle, D: typeof DialogDescription | typeof DrawerDescription) => <div className="sheet-head has-icon">
     <GwFeatureTile name={icon ?? 'Layers'} size={24} />
     <div><T className="sheet-title">{title}</T>{description ? <D className="sheet-description">{description}</D> : <D className="sr-only">{title}</D>}</div>
