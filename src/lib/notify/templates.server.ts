@@ -112,6 +112,7 @@ export function renderSms(template: string, lang: Lang, p: P) {
     text_rsvp_requested: es ? `ZoheeWell: recibimos tu solicitud para ${title}. El anfitrión la revisará pronto. ${pass}` : `ZoheeWell: we got your request for ${title}. The host will review it soon. ${pass}`,
     text_rsvp_finish: es ? `ZoheeWell: casi listo. Termina tu reservación para ${title} aquí: ${page}` : `ZoheeWell: almost there. Finish your RSVP for ${title} here: ${page}`,
     text_rsvp_out: es ? `ZoheeWell: cancelamos tu lugar en ${title}. Si cambias de idea: ${page}` : `ZoheeWell: your spot at ${title} is cancelled. Changed your mind? ${page}`,
+    rsvp_cancelled_by_host: es ? `ZoheeWell: el anfitrión canceló tu registro para ${title}. ${page}` : `ZoheeWell: the host cancelled your registration for ${title}. ${page}`,
     text_rsvp_closed: es ? `ZoheeWell: ${title} ya no acepta reservaciones.` : `ZoheeWell: ${title} is no longer taking RSVPs.`,
   };
   if (template === 'host_followup') return `${s(p['body'])} ${stop}`;
