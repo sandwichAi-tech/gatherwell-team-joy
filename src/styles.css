@@ -2311,3 +2311,11 @@ a.gw-cat-chip:hover{background:#fff}
 .thread-msg.is-attendee { align-self: flex-start; }
 .moderation-row { flex-wrap: wrap; }
 .moderation-panel h3 { margin-top: 1.25rem; }
+
+/* QA v0.25 fixes */
+.scanner-manual { margin-top: .75rem; display: flex; flex-direction: column; gap: .4rem; }
+.scanner-manual label { font-weight: 600; font-size: .9rem; }
+.scanner-manual-row { display: flex; gap: .5rem; }
+.scanner-manual-row input { flex: 1; min-height: 48px; }
+.mobile-brand { min-height: 48px; display: inline-flex; align-items: center; }
+.gw-app-discover { min-width: 48px; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: .35rem; }
