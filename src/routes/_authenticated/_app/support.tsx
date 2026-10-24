@@ -16,7 +16,10 @@ import { gatherwellHead } from '@/lib/gatherwell-head';
 
 export const Route = createFileRoute('/_authenticated/_app/support')({
   head: () => gatherwellHead('me'),
-  validateSearch: (s: Record<string, unknown>) => ({ t: typeof s['t'] === 'string' ? s['t'] : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    t: typeof s['t'] === 'string' ? s['t'] : undefined,
+    new: s['new'] === 'organization' ? ('organization' as const) : undefined,
+  }),
   component: SupportPage,
 });
 
@@ -33,9 +36,9 @@ const errKey = (e: unknown) => {
 function SupportPage() {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage === 'es' ? 'es-419' : 'en-US';
-  const { t: focus } = useSearch({ from: '/_authenticated/_app/support' });
+  const { t: focus, new: preset } = useSearch({ from: '/_authenticated/_app/support' });
   const qc = useQueryClient();
-  const [creating, setCreating] = useState(false);
+  const [creating, setCreating] = useState(preset === 'organization');
   const [open, setOpen] = useState<string | null>(focus ?? null);
   const { data = [], isLoading, error, refetch } = useQuery({
     queryKey: ['support-tickets'],
