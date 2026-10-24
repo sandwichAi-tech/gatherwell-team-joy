@@ -170,6 +170,11 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   });
 
   const detailsJson = detailsPayload(details);
+  const saveCover = async (id: string) => {
+    const { error } = await supabase.rpc('save_event_cover', { _event: id, _style: coverStyle, _overlay: coverOverlay, _focal: coverFocal, _alt: coverAlt.trim() || null } as never);
+    if (error) toast.error(rpcError(t, error));
+    return !error;
+  };
   const saveDetails = async (id: string) => {
     if (!detailsJson) return true;
     const { error } = await supabase.rpc('update_event_details', { _event: id, _p: { ...detailsJson, format: place } });
