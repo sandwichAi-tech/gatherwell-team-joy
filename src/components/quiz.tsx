@@ -161,7 +161,7 @@ function QuizEditor({ quiz, offer, lessons, onClose }: { quiz: Partial<Quiz>; of
             <Button variant="ghost" size="icon" aria-label={t('templates.edit')} onClick={() => setEditQuestion(qq)}><Pencil /></Button>
           </li>)}</ol>}
         {blockers.data && blockers.data.length > 0 && <div className="panel" role="status"><h3>{t('quiz.blockers')}</h3>
-          <ul className="offer-includes">{blockers.data.map(b => <li key={b}><CircleAlert />{t(`quiz.blocker.${b}`, { defaultValue: b })}</li>)}</ul></div>}
+          <ul className="offer-includes">{blockers.data.map(b => <li key={b}><AlertCircle />{t(`quiz.blocker.${b}`, { defaultValue: b })}</li>)}</ul></div>}
         <Button variant={quiz.is_published ? 'secondary' : 'default'} onClick={togglePublish}>{t(quiz.is_published ? 'quiz.unpublish' : 'quiz.publish')}</Button>
         <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('quiz.delete')}</Button>
       </>}
