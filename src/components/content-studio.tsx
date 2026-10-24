@@ -518,10 +518,8 @@ export function BundleReader({ offerId, userId }: { offerId: string; userId: str
     const res = await offerItemDownloadLink({ data: { itemId: item.id } });
     setBusyId('');
     if (!res.ok) { toast.error(t('content.downloadError')); return; }
-    // Anchor click (not window.open) so popup blockers don't swallow the download after the async call.
-    const a = document.createElement('a');
-    a.href = res.url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.download = '';
-    document.body.appendChild(a); a.click(); a.remove();
+    // The signed URL is issued with Content-Disposition: attachment, so this downloads in place without navigating away.
+    window.location.assign(res.url);
   };
   return <section className="panel">
     <h2>{t('content.bundle')}</h2>
