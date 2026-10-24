@@ -73,3 +73,4 @@
 - [x] Fixture account managed-auth ban/reactivation lifecycle; failure compensation unit tests; throttle saturation checked. Cross-service atomicity is explicitly not claimed.
 - [x] Equivalent live role/RLS/grant and transaction rollback verification substituted for unavailable disposable database; original disposable script not claimed executed.
 - [ ] Screen-reader pass on the new insights/privacy panels.
+- [x] v0.33 Event covers & cancellation policies (gradients, overlay/focal/alt, policy picker) — done 2026-10-24

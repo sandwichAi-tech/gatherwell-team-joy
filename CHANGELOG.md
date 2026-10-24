@@ -294,3 +294,8 @@
 - Notifications center with unread badge in the app header; email/SMS channel switches disabled and labeled Setup required until providers are connected.
 - Migrations: 0080_comms_updates_notifications_support, 0081_comms_rpcs_updates_contact_support.
 - Verified live: audience derivation + dedupe, schedule rejection, outsider/minor/disabled-discussion posting denials, reporter anonymity, hide leaves queue, contact/support isolation. 276 tests, typecheck and build green.
+
+## v0.33 — Event covers & cancellation policies (2026-10-24)
+- Event creation/editing gains a cancellation & refund policy picker: prewritten free/paid templates plus a custom option, always editable attendee-facing text; shown in event details and before RSVP confirmation. No refund processing is implied.
+- New cover customization: six curated ZoheeWell-branded gradient covers (valid cover with no upload), overlay strength (None/Subtle/Strong) for text readability, 3x3 focal point for uploaded photos, alt text, and reset — with live preview in the form and consistent rendering on cards, details and the public guest page.
+- Server-side validation via save_event_cover RPC (manager-only, bounded style/overlay/focal/alt); public payload extended with cover display fields; jsonb payload split to stay under the 100-argument limit.
