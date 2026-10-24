@@ -117,7 +117,7 @@ export const offerItemDownloadLink = createServerFn({ method: 'POST' })
     const { data: access } = await context.supabase.rpc('can_access_offer' as never, { _offer: item.offer_id } as never);
     if (!access) return { ok: false as const, error: 'forbidden' };
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
-    const { data: s, error } = await supabaseAdmin.storage.from('offer-files').createSignedUrl(item.storage_path, 600, { download: true });
+    const { data: s, error } = await supabaseAdmin.storage.from('learn-media').createSignedUrl(item.storage_path, 600, { download: true });
     if (error || !s) return { ok: false as const, error: 'failed' };
     return { ok: true as const, url: s.signedUrl };
   });
