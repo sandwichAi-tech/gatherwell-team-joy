@@ -1413,7 +1413,10 @@
       "pdf": "PDF",
       "link": "Link",
       "live": "Live session",
-      "replay": "Replay"
+      "replay": "Replay",
+      "text": "Text",
+      "audio": "Audio",
+      "file": "Download"
     },
     "notFound": "This isn't available. It may have been removed or unpublished.",
     "lessonOf": "Lesson {{n}} of {{total}}",

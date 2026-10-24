@@ -1413,7 +1413,10 @@
       "pdf": "PDF",
       "link": "Enlace",
       "live": "Sesión en vivo",
-      "replay": "Repetición"
+      "replay": "Repetición",
+      "text": "Texto",
+      "audio": "Audio",
+      "file": "Descarga"
     },
     "notFound": "Esto no está disponible. Puede que se haya eliminado o despublicado.",
     "lessonOf": "Lección {{n}} de {{total}}",
