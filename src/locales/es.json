@@ -5899,6 +5899,7 @@
       "not_found": "No se encontró o no tienes permiso.",
       "forbidden": "No tienes permiso para administrar las comunicaciones de este equipo.",
       "auth_required": "Inicia sesión de nuevo."
-    }
+    },
+    "saveDraft": "Guardar borrador"
   }
 }

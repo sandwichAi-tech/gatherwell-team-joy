@@ -5899,6 +5899,7 @@
       "not_found": "Not found or no permission.",
       "forbidden": "You don't have permission to manage communications for this team.",
       "auth_required": "Please sign in again."
-    }
+    },
+    "saveDraft": "Save draft"
   }
 }
