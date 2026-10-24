@@ -1026,6 +1026,7 @@
     "useDefault": "Usar una portada predeterminada",
     "coverStyle": "Estilo de portada",
     "styleN": "Estilo {{n}}",
+    "styleName": { "0": "Ciruela profundo", "1": "Ciruela a terracota", "2": "Terracota a arena", "3": "Brillo terracota", "4": "Ciruela lavanda suave", "5": "Ciruela medianoche" },
     "coverOverlay": "Intensidad del overlay",
     "coverOverlayHint": "Oscurece la portada para que el texto se lea mejor.",
     "overlay": {
