@@ -66,6 +66,7 @@ import { Route as AuthenticatedAppAdminSiteMediaRouteImport } from './routes/_au
 import { Route as AuthenticatedAppChallengeIdRouteImport } from './routes/_authenticated/_app/challenge.$id'
 import { Route as AuthenticatedAppEventIdRouteImport } from './routes/_authenticated/_app/event.$id'
 import { Route as AuthenticatedAppGatheringNewRouteImport } from './routes/_authenticated/_app/gathering.new'
+import { Route as AuthenticatedAppLearnCreateRouteImport } from './routes/_authenticated/_app/learn_.create'
 import { Route as AuthenticatedAppLearnManageRouteImport } from './routes/_authenticated/_app/learn_.manage'
 import { Route as AuthenticatedAppLearnRecipesRouteImport } from './routes/_authenticated/_app/learn_.recipes'
 import { Route as AuthenticatedAppLearnTemplatesRouteImport } from './routes/_authenticated/_app/learn_.templates'
@@ -385,6 +386,12 @@ const AuthenticatedAppGatheringNewRoute =
     path: '/gathering/new',
     getParentRoute: () => AuthenticatedAppRouteRoute,
   } as any)
+const AuthenticatedAppLearnCreateRoute =
+  AuthenticatedAppLearnCreateRouteImport.update({
+    id: '/learn_/create',
+    path: '/learn/create',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppLearnManageRoute =
   AuthenticatedAppLearnManageRouteImport.update({
     id: '/learn_/manage',
@@ -570,6 +577,7 @@ export interface FileRoutesByFullPath {
   '/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/event/$id': typeof AuthenticatedAppEventIdRoute
   '/gathering/new': typeof AuthenticatedAppGatheringNewRoute
+  '/learn/create': typeof AuthenticatedAppLearnCreateRoute
   '/learn/manage': typeof AuthenticatedAppLearnManageRoute
   '/learn/recipes': typeof AuthenticatedAppLearnRecipesRoute
   '/learn/templates': typeof AuthenticatedAppLearnTemplatesRoute
@@ -650,6 +658,7 @@ export interface FileRoutesByTo {
   '/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/event/$id': typeof AuthenticatedAppEventIdRoute
   '/gathering/new': typeof AuthenticatedAppGatheringNewRoute
+  '/learn/create': typeof AuthenticatedAppLearnCreateRoute
   '/learn/manage': typeof AuthenticatedAppLearnManageRoute
   '/learn/recipes': typeof AuthenticatedAppLearnRecipesRoute
   '/learn/templates': typeof AuthenticatedAppLearnTemplatesRoute
@@ -733,6 +742,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/_authenticated/_app/event/$id': typeof AuthenticatedAppEventIdRoute
   '/_authenticated/_app/gathering/new': typeof AuthenticatedAppGatheringNewRoute
+  '/_authenticated/_app/learn_/create': typeof AuthenticatedAppLearnCreateRoute
   '/_authenticated/_app/learn_/manage': typeof AuthenticatedAppLearnManageRoute
   '/_authenticated/_app/learn_/recipes': typeof AuthenticatedAppLearnRecipesRoute
   '/_authenticated/_app/learn_/templates': typeof AuthenticatedAppLearnTemplatesRoute
@@ -815,6 +825,7 @@ export interface FileRouteTypes {
     | '/challenge/$id'
     | '/event/$id'
     | '/gathering/new'
+    | '/learn/create'
     | '/learn/manage'
     | '/learn/recipes'
     | '/learn/templates'
@@ -895,6 +906,7 @@ export interface FileRouteTypes {
     | '/challenge/$id'
     | '/event/$id'
     | '/gathering/new'
+    | '/learn/create'
     | '/learn/manage'
     | '/learn/recipes'
     | '/learn/templates'
@@ -977,6 +989,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/challenge/$id'
     | '/_authenticated/_app/event/$id'
     | '/_authenticated/_app/gathering/new'
+    | '/_authenticated/_app/learn_/create'
     | '/_authenticated/_app/learn_/manage'
     | '/_authenticated/_app/learn_/recipes'
     | '/_authenticated/_app/learn_/templates'
@@ -1440,6 +1453,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppGatheringNewRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/learn_/create': {
+      id: '/_authenticated/_app/learn_/create'
+      path: '/learn/create'
+      fullPath: '/learn/create'
+      preLoaderRoute: typeof AuthenticatedAppLearnCreateRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/learn_/manage': {
       id: '/_authenticated/_app/learn_/manage'
       path: '/learn/manage'
@@ -1634,6 +1654,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppChallengeIdRoute: typeof AuthenticatedAppChallengeIdRoute
   AuthenticatedAppEventIdRoute: typeof AuthenticatedAppEventIdRoute
   AuthenticatedAppGatheringNewRoute: typeof AuthenticatedAppGatheringNewRoute
+  AuthenticatedAppLearnCreateRoute: typeof AuthenticatedAppLearnCreateRoute
   AuthenticatedAppLearnManageRoute: typeof AuthenticatedAppLearnManageRoute
   AuthenticatedAppLearnRecipesRoute: typeof AuthenticatedAppLearnRecipesRoute
   AuthenticatedAppLearnTemplatesRoute: typeof AuthenticatedAppLearnTemplatesRoute
@@ -1682,6 +1703,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppChallengeIdRoute: AuthenticatedAppChallengeIdRoute,
   AuthenticatedAppEventIdRoute: AuthenticatedAppEventIdRoute,
   AuthenticatedAppGatheringNewRoute: AuthenticatedAppGatheringNewRoute,
+  AuthenticatedAppLearnCreateRoute: AuthenticatedAppLearnCreateRoute,
   AuthenticatedAppLearnManageRoute: AuthenticatedAppLearnManageRoute,
   AuthenticatedAppLearnRecipesRoute: AuthenticatedAppLearnRecipesRoute,
   AuthenticatedAppLearnTemplatesRoute: AuthenticatedAppLearnTemplatesRoute,
