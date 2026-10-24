@@ -4717,8 +4717,10 @@ export type Database = {
       }
       reports: {
         Row: {
+          assigned_to: string | null
           author_id: string | null
           created_at: string
+          escalated_at: string | null
           id: string
           note: string | null
           reason: string
@@ -4733,8 +4735,10 @@ export type Database = {
           team_id: string | null
         }
         Insert: {
+          assigned_to?: string | null
           author_id?: string | null
           created_at?: string
+          escalated_at?: string | null
           id?: string
           note?: string | null
           reason: string
@@ -4749,8 +4753,10 @@ export type Database = {
           team_id?: string | null
         }
         Update: {
+          assigned_to?: string | null
           author_id?: string | null
           created_at?: string
+          escalated_at?: string | null
           id?: string
           note?: string | null
           reason?: string
@@ -6376,6 +6382,21 @@ export type Database = {
       admin_overview: { Args: { _since: string }; Returns: Json }
       admin_reports: { Args: { _status: string }; Returns: Json }
       admin_retry_message: { Args: { _id: string }; Returns: Json }
+      admin_safety_action: {
+        Args: {
+          _action: string
+          _id: string
+          _kind: string
+          _reason: string
+          _user?: string
+        }
+        Returns: undefined
+      }
+      admin_safety_guard: { Args: never; Returns: undefined }
+      admin_safety_list: {
+        Args: { _kind: string; _page?: number; _q?: string; _state?: string }
+        Returns: Json
+      }
       admin_support_tickets: { Args: { _status: string }; Returns: Json }
       admin_team_detail: { Args: { _id: string }; Returns: Json }
       admin_teams: { Args: { _q: string }; Returns: Json }
