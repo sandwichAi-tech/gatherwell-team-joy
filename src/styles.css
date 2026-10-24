@@ -2379,3 +2379,4 @@ a.gw-cat-chip:hover{background:#fff}
 .template-card .template-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 16px 16px 0; }
 .player-audio audio { width: 100%; }
 .lesson-text p { white-space: pre-line; }
+.scroll-row + [role="tabpanel"] { margin-top: 16px; }
