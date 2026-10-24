@@ -1,6 +1,6 @@
 import { WaiverAccept, useEventWaiver, waiverReady, waiverRpc } from '@/components/waiver';
 import { trackEvent } from '@/lib/analytics';
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +17,7 @@ import { rsvpErrorKey } from '@/lib/guest';
 import { gatherwellHead } from '@/lib/gatherwell-head';
 import { createCheckinQueue, isRetryableCheckinError, type PendingCheckin } from '@/lib/checkin-queue';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
+import { handleScannerDialogKeyDown } from '@/lib/scanner-a11y';
 import { BelongingPrompt, BelongingTags, useBelonging, useSmallGroups } from '@/components/belonging';
 
 export const Route = createFileRoute('/_authenticated/_app/event_/$id/checkin')({ head: () => gatherwellHead('events'), component: CheckInMode });
@@ -140,8 +141,16 @@ function CheckInMode() {
 function Scanner({ onClose, onCode, scan, onNext }: { onClose: () => void; onCode: (c: string) => Promise<void>; scan: Scan | null; onNext: () => void }) {
   const { t } = useTranslation();
   const video = useRef<HTMLVideoElement>(null); const busy = useRef(false); const paused = useRef(false);
+  const root = useRef<HTMLDivElement>(null); const closeButton = useRef<HTMLButtonElement>(null); const previousFocus = useRef<HTMLElement | null>(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
   const [denied, setDenied] = useState(false);
   const [manual, setManual] = useState('');
+  const requestClose = useCallback(() => {
+    onCloseRef.current();
+    const previous = previousFocus.current;
+    requestAnimationFrame(() => previous?.focus());
+  }, []);
   const submitManual = async (e: FormEvent) => {
     e.preventDefault();
     const code = manual.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -150,6 +159,15 @@ function Scanner({ onClose, onCode, scan, onNext }: { onClose: () => void; onCod
     await onCode(code);
   };
   paused.current = !!scan;
+  useEffect(() => {
+    previousFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const focusFrame = requestAnimationFrame(() => closeButton.current?.focus());
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (root.current) handleScannerDialogKeyDown(event, root.current, requestClose);
+    };
+    document.addEventListener('keydown', onKeyDown, true);
+    return () => { cancelAnimationFrame(focusFrame); document.removeEventListener('keydown', onKeyDown, true); };
+  }, [requestClose]);
   useEffect(() => {
     let stream: MediaStream | null = null; let raf = 0; let stopped = false;
     const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d', { willReadFrequently: true });
@@ -173,10 +191,10 @@ function Scanner({ onClose, onCode, scan, onNext }: { onClose: () => void; onCod
     })();
     return () => { stopped = true; cancelAnimationFrame(raf); stream?.getTracks().forEach(tr => tr.stop()); };
   }, [onCode]);
-  return <div className={`scanner${denied ? ' is-denied' : ''}`} role="dialog" aria-modal="true" aria-label={t('checkin.scan')}>
+  return <div ref={root} className={`scanner${denied ? ' is-denied' : ''}`} role="dialog" aria-modal="true" aria-label={t('checkin.scan')}>
     <video ref={video} playsInline muted className="scanner-video" />
     <div className="scanner-frame" aria-hidden="true" />
-    <Button variant="secondary" size="icon" className="scanner-close" aria-label={t('checkin.closeScanner')} onClick={onClose}><X /></Button>
+    <Button ref={closeButton} variant="secondary" size="icon" className="scanner-close" aria-label={t('checkin.closeScanner')} onClick={requestClose}><X /></Button>
     {denied && <div className="scanner-result is-error"><AlertCircle /><strong>{t('checkin.cameraDenied')}</strong></div>}
     {!denied && !scan && <p className="scanner-hint">{t('checkin.pointCamera')}</p>}
     <form className="scanner-manual" onSubmit={e => void submitManual(e)}>
