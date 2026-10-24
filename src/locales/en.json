@@ -5126,7 +5126,29 @@
     "removeLink": "Remove link",
     "linksHint": "HTTPS links only. Social links are limited to major platforms.",
     "linkInvalid": "Check your links: HTTPS only, and social links must be from a supported platform.",
-    "preview": "Preview public page"
+    "preview": "Preview public page",
+    "slug": {
+      "title": "Your public link",
+      "hint": "This is the address of your public page. You can personalize it once it's published.",
+      "label": "Custom link",
+      "placeholder": "your-name",
+      "copy": "Copy link",
+      "edit": "Edit link",
+      "save": "Save link",
+      "saved": "Your public link was updated.",
+      "rules": "Lowercase letters, numbers and hyphens, 3–40 characters.",
+      "willBe": "Your link will be /h/{{slug}}",
+      "oldLinks": "Your old links keep working — they redirect to the new address automatically.",
+      "confirmTitle": "Change your public link?",
+      "confirmBody": "Your page will move to the new address. Old links will redirect there, and you can change it again later (up to 3 times per day).",
+      "error": {
+        "invalid": "Use 3–40 lowercase letters, numbers or hyphens, starting with a letter or number.",
+        "reserved": "That address is reserved by ZoheeWell. Try a different one.",
+        "taken": "That address is already taken. Try a different one.",
+        "rateLimited": "You've changed your link recently. Please try again tomorrow.",
+        "failed": "We couldn't save your link. Please try again."
+      }
+    }
   },
   "following": {
     "title": "Following",
