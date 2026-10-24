@@ -20,6 +20,7 @@ import { CalendarButtons, Confirmation, DirectionsButton, RsvpSheet, type RsvpRe
 import { initialsOf, mediaUrl } from '@/lib/account';
 import { Polls, PhotoRoll, WeatherNote, useLiveCounts } from '@/components/event-live';
 import { formatWhen, isUuid, prefetchPublic, publicEventQuery, rsvpByCodeQuery } from '@/lib/guest';
+import { regWindowState } from '@/lib/event-builder';
 import { getPublicEventMeta } from '@/lib/public-event.functions';
 import i18n from '@/lib/i18n';
 import { supabase } from '@/integrations/supabase/client';
@@ -84,6 +85,11 @@ function PublicEventBody() {
   const left = event.capacity != null ? Math.max(0, event.capacity - event.going) : null;
   const full = left === 0;
   const cancelled = event.status === 'cancelled';
+  const summary = lang === 'es' ? event.summary_es || event.summary_en : event.summary_en || event.summary_es;
+  const regState = regWindowState(event.reg_opens_at, event.reg_closes_at);
+  const regClosed = regState === 'closed';
+  const regNotOpen = regState === 'not_open';
+  const waitlistOff = full && event.waitlist_enabled === false;
 
   if (teamResult) return <>
     <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="guest-cover" />
@@ -100,6 +106,8 @@ function PublicEventBody() {
     <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="guest-cover" />
     <article className="guest-body">
       <div className="guest-title-row"><h1 className="guest-title">{event.title}</h1><ReportButton type="event" id={id} /></div>
+      {summary && <p className="guest-summary">{summary}</p>}
+      {!!event.tags?.length && <ul className="guest-tags" aria-label={t('builder.tags')}>{event.tags.map(tag => <li key={tag} className="chip">{tag}</li>)}</ul>}
       {price && <p className="guest-price-line"><strong className="tabular-nums">{formatMoney(price.price_cents, lang)}</strong><span>{t('billing.perPerson')}{price.pass_fee ? ` · ${t('billing.feeNote', { pct: price.fee_pct })}` : ''}{price.cover_service_fee ? ` · ${t('billing.allInShort')}` : ` · ${t('billing.plusServiceFee', { fee: formatMoney(serviceFee(price.price_cents, Number(price.service_fee_percent ?? 0), price.service_fee_fixed ?? 0), lang) })}`}</span></p>}
       {price && <RefundLine policy={price.refund_policy} />}
       {cancelled && <div className="guest-cancelled" role="status"><Ban /><div><strong>{t('guest.cancelledTitle')}</strong><p>{t('guest.cancelledText')}</p></div></div>}
