@@ -174,7 +174,7 @@
     "title": "Resources",
     "eyebrow": "Workspace",
     "heading": "Shared knowledge",
-    "sentence": "Tracks, live sessions and recipes from your team.",
+    "sentence": "Courses, guides, live sessions, recipes and more.",
     "button": "Create training"
   },
   "me": {
@@ -4703,11 +4703,26 @@
     "whichPlan": {
       "title": "Which plan is right for me?",
       "items": [
-        { "title": "Just getting started", "body": "Free is for you. Host free events, invite two collaborators, and only pay a fee when you sell something." },
-        { "title": "Growing your audience", "body": "Advanced lowers your fee to 3% and keeps three builder seats for you and two collaborators." },
-        { "title": "Hosting full time", "body": "Pro drops the fee to 2% and gives you five builder seats for a small team." },
-        { "title": "Running a team or studio", "body": "Team 25 covers up to 25 builders with a 1% fee on paid sales." },
-        { "title": "A large organization", "body": "Organization scales to 100 builders at a 0.5% fee. Contact sales and we will set it up with you." }
+        {
+          "title": "Just getting started",
+          "body": "Free is for you. Host free events, invite two collaborators, and only pay a fee when you sell something."
+        },
+        {
+          "title": "Growing your audience",
+          "body": "Advanced lowers your fee to 3% and keeps three builder seats for you and two collaborators."
+        },
+        {
+          "title": "Hosting full time",
+          "body": "Pro drops the fee to 2% and gives you five builder seats for a small team."
+        },
+        {
+          "title": "Running a team or studio",
+          "body": "Team 25 covers up to 25 builders with a 1% fee on paid sales."
+        },
+        {
+          "title": "A large organization",
+          "body": "Organization scales to 100 builders at a 0.5% fee. Contact sales and we will set it up with you."
+        }
       ]
     },
     "faq": [
@@ -5424,5 +5439,145 @@
       "activity": "Activity",
       "announcement": "Announcement"
     }
+  },
+  "resources": {
+    "title": "Resources",
+    "sentence": "Courses, guides, live sessions, recipes and more from your team and ZoheeWell.",
+    "templatesButton": "Resource templates",
+    "create": "Create resource",
+    "untitled": "Untitled",
+    "tabs": {
+      "foryou": "For you",
+      "library": "Library",
+      "live": "Live",
+      "saved": "Saved",
+      "mine": "Created by me"
+    },
+    "typeLabel": "Filter by type",
+    "sourceLabel": "Filter by source",
+    "types": {
+      "all": "All",
+      "course": "Courses",
+      "video": "Videos",
+      "audio": "Audio",
+      "guide": "Guides & PDFs",
+      "file": "Files & downloads",
+      "link": "Links",
+      "recipe": "Recipes"
+    },
+    "typeChip": {
+      "course": "Course",
+      "track": "Learning track",
+      "video": "Video",
+      "audio": "Audio",
+      "guide": "Guide",
+      "file": "Download",
+      "link": "Link",
+      "recipe": "Recipe",
+      "live": "Live session"
+    },
+    "sources": {
+      "all": "All",
+      "team": "My team",
+      "zoheewell": "ZoheeWell"
+    },
+    "sourceChip": {
+      "team": "Your team",
+      "zoheewell": "ZoheeWell"
+    },
+    "status": {
+      "draft": "Draft",
+      "archived": "Archived",
+      "published": "Published"
+    },
+    "quiz": "Quiz",
+    "open": "Open",
+    "continue": "Continue",
+    "start": "Start",
+    "review": "Review",
+    "edit": "Edit",
+    "saveTemplate": "Save as template",
+    "continueHeading": "Continue where you left off",
+    "nextLive": "Next live sessions",
+    "upcoming": "Upcoming",
+    "replays": "Replays",
+    "memberships": "Your memberships",
+    "membership": "Membership",
+    "notAllowed": "You don't have permission to do that in this team.",
+    "error": "Something went wrong. Please try again.",
+    "empty": {
+      "foryou": {
+        "title": "Nothing in progress yet",
+        "text": "Open the Library to start a course, guide or recipe.",
+        "action": "Browse the library"
+      },
+      "library": {
+        "title": "No resources to show",
+        "text": "Nothing here matches yet. Try another type or source.",
+        "action": "Clear filters"
+      },
+      "live": {
+        "title": "No live sessions scheduled",
+        "text": "When your team schedules a live session, it appears here with reminders and replays."
+      },
+      "saved": {
+        "title": "Nothing saved yet",
+        "text": "Save recipes and courses to find them quickly here.",
+        "action": "Browse the library"
+      },
+      "mine": {
+        "title": "You haven't created a resource yet",
+        "text": "Start from scratch or from a resource template. Everything starts as a draft."
+      }
+    },
+    "createSheet": {
+      "title": "Create resource",
+      "text": "Choose what to make. Everything starts as a draft until you publish it.",
+      "course": "Course",
+      "courseText": "Sections, lessons and optional quizzes.",
+      "bundle": "Resource bundle",
+      "bundleText": "Text, files, links and embeds people can download.",
+      "track": "Team learning track",
+      "trackText": "A free lesson series for your team.",
+      "recipe": "Recipe",
+      "recipeText": "Ingredients and steps for your team.",
+      "fromTemplate": "Start from a template",
+      "fromTemplateText": "ZoheeWell starters or your team's templates."
+    }
+  },
+  "templatesR": {
+    "title": "Resource templates",
+    "sentence": "Reusable starting structures for courses, guides, sessions and recipes. Separate from Event Blueprints.",
+    "starters": "ZoheeWell starters",
+    "mine": "My templates",
+    "starterChip": "ZoheeWell starter",
+    "teamChip": "Team template",
+    "use": "Use template",
+    "using": "Creating draft…",
+    "created": "Draft created. Replace the placeholders, then publish when you're ready.",
+    "parts_one": "{{count}} part",
+    "parts_other": "{{count}} parts",
+    "needsAssets_one": "{{count}} file to upload after copying",
+    "needsAssets_other": "{{count}} files to upload after copying",
+    "target": {
+      "track": "Creates a draft team track",
+      "course": "Creates a draft course",
+      "download": "Creates a draft resource bundle",
+      "recipe": "Creates a draft recipe"
+    },
+    "delete": "Delete template",
+    "deleteConfirm": "Delete this template? Resources already made from it stay as they are.",
+    "deleted": "Template deleted",
+    "emptyMine": "No team templates yet",
+    "emptyMineText": "Save one of your resources as a template from Created by me, then reuse it any time.",
+    "emptyMineAction": "Go to Created by me",
+    "creatorsOnly": "Resource templates are for hosts and team builders.",
+    "saveTitle": "Save as template",
+    "saveText": "Saves the structure and text for your team. Uploaded files, people, progress, sales and live links are not copied.",
+    "nameEn": "Template name (English)",
+    "nameEs": "Template name (Spanish)",
+    "save": "Save template",
+    "saving": "Saving…",
+    "saved": "Template saved"
   }
 }

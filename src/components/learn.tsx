@@ -18,9 +18,6 @@ import {
   remindersQuery, RECIPE_TAGS, populatedTracks, trackStats, trackTitle, type LearnData, type Lesson, type Recipe, type Track,
 } from '@/lib/learn';
 import { myLearningQuery } from '@/lib/content';
-import { CertificateList } from '@/components/quiz';
-import { OfferCover } from '@/components/offers';
-import { offerTitle } from '@/lib/offers';
 
 export function useLearn() {
   const { userId } = useGatherwell();
