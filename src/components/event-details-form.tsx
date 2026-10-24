@@ -40,8 +40,8 @@ export function detailsFromEvent(e: SourceEvent): EventDetails {
     contactEmail: s('contact_email'), contactPhone: s('contact_phone'),
     accessibility: s('accessibility_notes'), bring: s('what_to_bring'), cancellation: s('cancellation_policy'),
     allowsMinors: !!e.allows_minors, minAge: e.min_age != null ? String(e.min_age) : '',
-    tiers: Array.isArray(e.ticket_tiers) ? (e.ticket_tiers as TicketTier[]) : [],
-    addons: Array.isArray(e.addons) ? (e.addons as Addon[]) : [],
+    tiers: Array.isArray(e['ticket_tiers']) ? (e['ticket_tiers'] as TicketTier[]) : [],
+    addons: Array.isArray(e['addons']) ? (e['addons'] as Addon[]) : [],
   };
 }
 
