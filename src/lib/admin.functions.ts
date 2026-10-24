@@ -570,3 +570,41 @@ export const retryMail = createServerFn({ method: 'POST' }).middleware([requireS
     if (error) throw new Error(error.message);
     return z.object({ ok: z.boolean(), error: z.enum(['not_found', 'not_retryable']).optional() }).parse(result);
   });
+
+// ===== Support ticket triage =====
+export type AdminTicket = {
+  id: string; category: string; subject: string; status: string; created_at: string; updated_at: string;
+  requester: string | null; messages: number;
+  last_message: { is_staff: boolean; body: string; created_at: string } | null;
+};
+
+/** Admin-only ticket list; the RPC re-checks has_role(admin) and never returns emails. */
+export const listAdminTickets = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ status: z.enum(['open', 'answered', 'closed']) }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { data: rows, error } = await context.supabase.rpc('admin_support_tickets', { _status: data.status });
+    if (error) throw new Error(error.message);
+    return rows as unknown as AdminTicket[];
+  });
+
+/** Staff reply goes through the existing rate-limited RPC, which marks the ticket answered and notifies the member in-app. */
+export const replyAdminTicket = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ ticketId: uuid, body: z.string().trim().min(1).max(4000) }).parse(d))
+  .handler(async ({ data, context }) => {
+    const db = await assertAdmin(context);
+    const { error } = await context.supabase.rpc('reply_support_ticket', { _ticket: data.ticketId, _body: data.body });
+    if (error) return { ok: false as const, error: error.message.includes('closed') ? 'closed' : error.message.includes('rate') ? 'rate_limited' : 'failed' };
+    await audit(db, context.userId, 'support.reply', 'support_ticket', data.ticketId, null, { staff: true });
+    return { ok: true as const };
+  });
+
+export const closeAdminTicket = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ ticketId: uuid, reason: note }).parse(d))
+  .handler(async ({ data, context }) => {
+    const db = await assertAdmin(context);
+    const { error } = await context.supabase.rpc('close_support_ticket', { _ticket: data.ticketId });
+    if (error) return { ok: false as const, error: 'failed' };
+    await audit(db, context.userId, 'support.close', 'support_ticket', data.ticketId, null, null, data.reason);
+    return { ok: true as const };
+  });
