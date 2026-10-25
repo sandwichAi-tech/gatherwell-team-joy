@@ -27,6 +27,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { formatMoney } from '@/lib/billing';
 import { ReportButton } from '@/components/report-button';
 import { RetryState } from '@/components/launch-states';
+import { SITE_URL, publicIndexing } from '@/lib/seo';
 
 export const Route = createFileRoute('/e/$id')({
   loader: async ({ params, context }) => {
@@ -34,11 +35,13 @@ export const Route = createFileRoute('/e/$id')({
     await prefetchPublic(context.queryClient, publicEventQuery(params.id));
     try { return await getPublicEventMeta({ data: { id: params.id } }); } catch { return null; }
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
     const brand = i18n.t('brand');
+    const indexing = publicIndexing(`/e/${params.id}`);
     if (!loaderData) {
       const title = `${i18n.t('guest.metaFallback')} · ${brand}`;
-      return { meta: [{ title }, { name: 'description', content: i18n.t('meta.event') }, { property: 'og:title', content: title }, { property: 'og:description', content: i18n.t('meta.event') }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }] };
+      // Unresolvable/missing events stay out of the index.
+      return { meta: [{ title }, { name: 'description', content: i18n.t('meta.event') }, { property: 'og:title', content: title }, { property: 'og:description', content: i18n.t('meta.event') }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }, { name: 'robots', content: 'noindex' }] };
     }
     const date = new Intl.DateTimeFormat(i18n.resolvedLanguage === 'es' ? 'es-419' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: loaderData.timezone || 'UTC', timeZoneName: 'short' }).format(new Date(loaderData.startsAt));
     const title = `${loaderData.title} · ${date}`;
@@ -47,7 +50,26 @@ export const Route = createFileRoute('/e/$id')({
     const description = loaderData.cancelled ? i18n.t('guest.cancelledTitle') : `${bits.join(' · ')} — ${i18n.t('guest.metaInvite')}`;
     const meta: Array<Record<string, string>> = [{ title }, { name: 'description', content: description }, { property: 'og:title', content: title }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: loaderData.image ? 'summary_large_image' : 'summary' }, { name: 'twitter:title', content: title }, { name: 'twitter:description', content: description }];
     if (loaderData.image) meta.push({ property: 'og:image', content: loaderData.image }, { name: 'twitter:image', content: loaderData.image });
-    return { meta };
+    meta.push(...indexing.meta);
+    // Event JSON-LD from real public fields only — no ratings, attendance, or fabricated offers.
+    const eventLd: Record<string, unknown> = {
+      '@context': 'https://schema.org',
+      '@type': 'Event',
+      name: loaderData.title,
+      startDate: loaderData.startsAt,
+      url: `${SITE_URL}/e/${params.id}`,
+      eventStatus: loaderData.cancelled ? 'https://schema.org/EventCancelled' : 'https://schema.org/EventScheduled',
+      eventAttendanceMode: loaderData.online ? 'https://schema.org/OnlineEventAttendanceMode' : 'https://schema.org/OfflineEventAttendanceMode',
+      location: loaderData.online
+        ? { '@type': 'VirtualLocation', url: `${SITE_URL}/e/${params.id}` }
+        : { '@type': 'Place', ...(loaderData.place ? { name: loaderData.place } : {}) },
+      ...(loaderData.image ? { image: [loaderData.image] } : {}),
+      ...(loaderData.host ? { organizer: { '@type': 'Person', name: loaderData.host } } : {}),
+      ...(loaderData.priceCents != null && loaderData.priceCents > 0
+        ? { offers: { '@type': 'Offer', price: (loaderData.priceCents / 100).toFixed(2), priceCurrency: 'USD', url: `${SITE_URL}/e/${params.id}` } }
+        : { isAccessibleForFree: true }),
+    };
+    return { meta, links: indexing.links, scripts: [{ type: 'application/ld+json', children: JSON.stringify(eventLd) }] };
   },
   errorComponent: ({ reset }) => <GuestShell><RetryState retry={reset} /></GuestShell>,
   notFoundComponent: () => <GuestShell><p className="guest-empty">{i18n.t('publicEvent.notFound')}</p></GuestShell>,
