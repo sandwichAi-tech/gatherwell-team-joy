@@ -2131,7 +2131,6 @@ a.gw-cat-chip:hover{background:#fff}
   .gw-home .gw-home-sec{padding:64px 0}
   .gw-home-cards{grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
   .gw-home-paths{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-  .gw-home-band{grid-template-columns:minmax(0,1fr) auto}
 }
 @media (min-width:1024px){
   .gw-carousel-card{flex-basis:calc((100% - 32px)/3)}
