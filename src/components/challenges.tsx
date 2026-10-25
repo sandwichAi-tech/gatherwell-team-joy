@@ -27,9 +27,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { firstName, initialsOf, profileQuery, uploadMedia, workspaceQuery } from '@/lib/account';
 import { COVER_STYLES } from '@/lib/gatherings';
 import { ancestorsQuery, compressImage } from '@/lib/learn';
+import { ChallengeBuilder } from '@/components/challenge-builder';
+import { learnFileUrl } from '@/lib/learn';
 import {
-  addDays, challengePhotoUrls, challengesQuery, dayNumber, leaderboardQuery, lengthOf, localDate, localHour, myCheckinsQuery, phaseOf, pick, rpcErrorKey,
-  STARTER_DAYS, STARTERS, streaksOf, titleOf, userTz, type Challenge, type ChallengeItem, type Phase, type Starter,
+  activitiesForDay, addDays, challengePhotoUrls, challengesQuery, dayNumber, goalProgress, leaderboardQuery, lengthOf, lifecycleOf, localDate, localHour, modelOf, myCheckinsQuery, phaseOf, pick, rpcErrorKey,
+  streaksOf, titleOf, userTz, type Challenge, type ChallengeActivity, type ChallengeItem, type ChallengeMessage, type Phase,
 } from '@/lib/challenges';
 
 function useChallenges() {
@@ -175,6 +177,8 @@ export function ChallengePage({ id }: { id: string }) {
   const { data: joinedRow, refetch: refetchJoin } = useQuery({ queryKey: ['challenge-joined', id, userId], queryFn: async () => !!(await supabase.from('challenge_members').select('challenge_id').eq('challenge_id', id).eq('user_id', userId).maybeSingle()).data });
   const { data: mine = [] } = useQuery(myCheckinsQuery(userId, id));
   const { data: board = [] } = useQuery(leaderboardQuery(id));
+  const { data: activities = [] } = useQuery({ queryKey: ['challenge-activities', id], queryFn: async () => ((await supabase.from('challenge_activities').select('*').eq('challenge_id', id).order('sort_order')).data ?? []) as ChallengeActivity[] });
+  const { data: messages = [] } = useQuery({ queryKey: ['challenge-messages', id], queryFn: async () => ((await supabase.from('challenge_messages').select('*').eq('challenge_id', id).order('sort_order')).data ?? []) as ChallengeMessage[] });
   const [sheetDate, setSheetDate] = useState<string | null>(null); const [editing, setEditing] = useState<Partial<Challenge> | null>(null); const [busy, setBusy] = useState(false);
   const payGate = usePaymentGate(); const payChallenge = useServerFn(startChallengeCheckout); const [promo, setPromo] = useState<Promo | null>(null);
   if (isError) return <RetryState retry={() => void refetch()} />;
