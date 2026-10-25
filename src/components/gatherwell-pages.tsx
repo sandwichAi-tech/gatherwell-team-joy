@@ -111,7 +111,7 @@ export function HomePage() {
     <HomeFeatured />
     {!guest && <HomeTemplates />}
     {!guest && <LeaderInsightsLink />}
-    <Feature flag="feature_network"><section className="network-panel"><div className="circle-lines" aria-hidden="true" /><span className="eyebrow">{t('home.networkLabel')}</span><h2>{t('home.networkTitle')}</h2><p>{t('home.networkText')}</p><Button asChild className="peach-button"><Link to="/network">{t('home.networkAction')}<ArrowRight /></Link></Button></section></Feature>
+    <Feature flag="feature_network"><section className="network-panel"><div className="circle-lines" aria-hidden="true" /><span className="eyebrow">{t('home.networkLabel', { defaultValue: i18n.resolvedLanguage === 'es' ? 'TU RED DE ANFITRIONES' : 'YOUR HOST NETWORK' })}</span><h2>{t('home.networkTitle', { defaultValue: i18n.resolvedLanguage === 'es' ? 'Haz crecer tu comunidad en compañía' : 'Grow your community, together' })}</h2><p>{t('home.networkText', { defaultValue: i18n.resolvedLanguage === 'es' ? 'Conecta con otros anfitriones, comparte eventos y reúne a sus comunidades.' : 'Connect with other hosts, share events, and bring your communities together.' })}</p><Button asChild className="peach-button"><Link to="/network">{t('home.networkAction', { defaultValue: i18n.resolvedLanguage === 'es' ? 'Explorar tu red' : 'Explore your network' })}<ArrowRight /></Link></Button></section></Feature>
   </>;
 }
 function LeaderInsightsLink() {

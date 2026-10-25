@@ -81,6 +81,7 @@ export function ResourcesPage({ tab, type, source }: { tab: ResourceTab; type: R
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en'; const navigate = useNavigate();
   const { data, tracks, learning, workspace, teamId, userId, isLoading, isError, refetch } = useLearn();
   const canCreate = useCanCreate();
+  const createLabel = t('resources.create.button', { defaultValue: lang === 'es' ? 'Crear recurso' : 'Create resource' });
   const { data: rec } = useQuery(recipesQuery(userId));
   const { data: quiz } = useQuery(quizMarkersQuery(userId));
   const { data: savedOffers = [] } = useQuery({ ...savedOfferResourcesQuery(userId), enabled: tab === 'saved' });
@@ -120,7 +121,7 @@ export function ResourcesPage({ tab, type, source }: { tab: ResourceTab; type: R
     </>;
   } else if (tab === 'library') {
     const list = filterResources([...library, ...lessonResources(data, tracks, type)], type, source);
-    body = list.length ? <Grid list={list} /> : <Empty tab="library" action={(type !== 'all' || source !== 'all') ? <Button variant="secondary" onClick={() => setSearch({ type: 'all', source: 'all' })}>{t('resources.empty.library.action')}</Button> : canCreate ? <Button onClick={() => setCreating(true)}><Plus />{t('resources.create')}</Button> : undefined} />;
+    body = list.length ? <Grid list={list} /> : <Empty tab="library" action={(type !== 'all' || source !== 'all') ? <Button variant="secondary" onClick={() => setSearch({ type: 'all', source: 'all' })}>{t('resources.empty.library.action')}</Button> : canCreate ? <Button onClick={() => setCreating(true)}><Plus />{createLabel}</Button> : undefined} />;
   } else if (tab === 'live') {
     const ids = new Set(tracks.filter(tr => tr.is_published).map(tr => tr.id));
     const live = data.lessons.filter(l => ids.has(l.track_id) && l.type === 'live' && l.live_starts_at);
@@ -148,13 +149,13 @@ export function ResourcesPage({ tab, type, source }: { tab: ResourceTab; type: R
       ...(rec?.recipes ?? []).filter(r => r.team_id === teamId).map(r => recipeCard(r, teamName)),
     ];
     const list = filterResources(own, type, 'all');
-    body = list.length ? <Grid list={list} creator onSaveTemplate={setSaving} /> : <Empty tab="mine" action={<Button onClick={() => setCreating(true)}><Plus />{t('resources.create')}</Button>} />;
+    body = list.length ? <Grid list={list} creator onSaveTemplate={setSaving} /> : <Empty tab="mine" action={<Button onClick={() => setCreating(true)}><Plus />{createLabel}</Button>} />;
   }
 
   return <>
     <div className="page-heading"><div><span className="eyebrow">{t('learn.eyebrow')}</span><h1>{t('resources.title')}</h1><p>{t('resources.sentence')}</p></div>
       {canCreate && <div className="blueprint-page-actions"><Button asChild variant="secondary"><Link to="/learn/templates">{t('resources.templatesButton')}</Link></Button>
-        <Button className="page-create" onClick={() => setCreating(true)}><Plus />{t('resources.create')}</Button></div>}</div>
+        <Button className="page-create" onClick={() => setCreating(true)}><Plus />{createLabel}</Button></div>}</div>
     <div className="resource-controls">
       <div className="scroll-row"><div className="segmented" role="tablist" aria-label={t('resources.title')}>{tabs.map(k => <Button key={k} role="tab" variant="ghost" aria-selected={tab === k} className={tab === k ? 'selected' : ''} onClick={() => setSearch({ tab: k })}>{t(`resources.tabs.${k}`)}</Button>)}</div></div>
       {showFilters && <div className="scroll-row"><div className="filter-chips" role="group" aria-label={t('resources.typeLabel')}>{RESOURCE_TYPES.map(k => <button type="button" key={k} className={`filter-chip ${type === k ? 'is-active' : ''}`} aria-pressed={type === k} onClick={() => setSearch({ type: k })}>{t(`resources.types.${k}`)}</button>)}</div></div>}

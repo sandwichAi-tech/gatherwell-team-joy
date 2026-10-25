@@ -59,7 +59,7 @@ export function NetworkPage() {
   </div>;
 
   return <>
-    <div className="page-heading"><div><span className="eyebrow">{t('home.networkLabel')}</span><h1>{t('network.title')}</h1><p>{t('network.subtitle')}</p></div></div>
+    <div className="page-heading"><div><span className="eyebrow">{t('home.networkLabel', { defaultValue: lang === 'es' ? 'TU RED DE ANFITRIONES' : 'YOUR HOST NETWORK' })}</span><h1>{t('network.title')}</h1><p>{t('network.subtitle')}</p></div></div>
     {q.isPending ? <ListSkeleton /> : q.isError ? <RetryState retry={() => void q.refetch()} /> : !q.data.is_host ? <section className="panel"><p className="auth-subtitle">{t('network.hostsOnly')}</p></section> : <>
       {q.data.incoming.length > 0 && <section className="panel"><div className="section-heading"><h2>{t('network.requests')}</h2></div>
         {q.data.incoming.map(p => person(p, <>
