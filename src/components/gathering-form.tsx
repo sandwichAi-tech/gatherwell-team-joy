@@ -242,7 +242,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       <span className="success-check"><Check /></span>
       <h1>{t('gathering.live')}</h1>
       <p className="success-title">{title}</p><p className="auth-subtitle">{when}{weekly ? ` · ${t(`gathering.repeats.${rule.kind}`)}` : ''}</p>
-      <div className="success-share"><ShareKit title={title.trim()} startsAt={startDate!.toISOString()} place={place === 'person' ? (locationName || address) : t('teamSpace.online')} link={link} coverPath={coverPath} coverStyle={coverStyle} /></div>
+      <div className="success-share"><ShareKit title={title.trim()} startsAt={startDate!.toISOString()} place={place === 'person' ? (locationName || address) : t('teamSpace.online')} link={link} coverPath={coverPath} coverStyle={coverStyle} focal={coverFocal} /></div>
       <Button className="onboarding-continue" onClick={() => navigate({ to: '/events', search: { tab: 'hosting' } })}>{t('gathering.done')}</Button>
     </div></div>;
   }
