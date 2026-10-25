@@ -757,6 +757,13 @@
       "when": 1792940140858,
       "tag": "0107_resource_activity_privacy",
       "breakpoints": true
+    },
+    {
+      "idx": 108,
+      "version": "7",
+      "when": 1792942241134,
+      "tag": "0108_coach_consent_without_sender",
+      "breakpoints": true
     }
   ]
 }

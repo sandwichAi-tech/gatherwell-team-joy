@@ -741,6 +741,8 @@ export type Database = {
         Row: {
           announcements: boolean
           coach_id: string
+          confirmation_expires_at: string | null
+          confirmation_hash: string | null
           confirmed_at: string | null
           created_at: string
           email: string
@@ -748,13 +750,17 @@ export type Database = {
           language: string
           new_events: boolean
           new_resources: boolean
+          pending_preferences: Json | null
           token_expires_at: string
           token_hash: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           announcements?: boolean
           coach_id: string
+          confirmation_expires_at?: string | null
+          confirmation_hash?: string | null
           confirmed_at?: string | null
           created_at?: string
           email: string
@@ -762,13 +768,17 @@ export type Database = {
           language?: string
           new_events?: boolean
           new_resources?: boolean
+          pending_preferences?: Json | null
           token_expires_at?: string
           token_hash: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           announcements?: boolean
           coach_id?: string
+          confirmation_expires_at?: string | null
+          confirmation_hash?: string | null
           confirmed_at?: string | null
           created_at?: string
           email?: string
@@ -776,14 +786,23 @@ export type Database = {
           language?: string
           new_events?: boolean
           new_resources?: boolean
+          pending_preferences?: Json | null
           token_expires_at?: string
           token_hash?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "coach_subscriptions_coach_id_fkey"
             columns: ["coach_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coach_subscriptions_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -7517,6 +7536,7 @@ export type Database = {
         }[]
       }
       my_calendar_feeds: { Args: never; Returns: Json }
+      my_coach_updates: { Args: { _slug: string }; Returns: Json }
       my_consent_history: { Args: never; Returns: Json }
       my_contact_threads: { Args: never; Returns: Json }
       my_following: { Args: never; Returns: Json }
@@ -7770,19 +7790,34 @@ export type Database = {
         Args: { _id: string; _note: string; _reason: string; _type: string }
         Returns: boolean
       }
-      request_coach_updates: {
-        Args: {
-          _adult: boolean
-          _announcements: boolean
-          _base: string
-          _email: string
-          _events: boolean
-          _language: string
-          _resources: boolean
-          _slug: string
-        }
-        Returns: undefined
-      }
+      request_coach_updates:
+        | {
+            Args: {
+              _adult: boolean
+              _announcements: boolean
+              _base: string
+              _email: string
+              _events: boolean
+              _language: string
+              _resources: boolean
+              _slug: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              _adult: boolean
+              _announcements: boolean
+              _base: string
+              _email: string
+              _events: boolean
+              _language: string
+              _resources: boolean
+              _send_confirmation: boolean
+              _slug: string
+            }
+            Returns: undefined
+          }
       request_community_seat: {
         Args: {
           _kind: string
@@ -8003,6 +8038,16 @@ export type Database = {
           _team: string
         }
         Returns: string
+      }
+      save_my_coach_updates: {
+        Args: {
+          _adult: boolean
+          _announcements: boolean
+          _events: boolean
+          _resources: boolean
+          _slug: string
+        }
+        Returns: undefined
       }
       save_quiz_response: {
         Args: {
