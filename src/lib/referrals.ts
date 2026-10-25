@@ -41,7 +41,7 @@ export function nextRewardStatus(current: RewardStatus, order: OrderStatus): Rew
 }
 
 export function referralUrl(origin: string, kind: 'event' | 'offer', itemId: string, code: string) {
-  return `${origin}/${kind === 'event' ? 'e' : 'o'}/${itemId}?ref=${code}`;
+  return `${origin}/${kind === 'event' ? 'e' : 'o'}/${itemId}?rc=${code}`;
 }
 
 /** Normalizes a ?ref= value; returns null when it cannot be a code. */

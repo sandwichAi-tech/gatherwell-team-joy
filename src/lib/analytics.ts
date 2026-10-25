@@ -1,6 +1,6 @@
 import { sendAnalytics, type TrackedEvent } from './analytics.functions';
 
-function anonId() {
+export function anonId() {
   try {
     let id = localStorage.getItem('gatherwell-aid');
     if (!id) { id = crypto.randomUUID(); localStorage.setItem('gatherwell-aid', id); }
