@@ -13,6 +13,7 @@ project-ID service URLs are never emitted in canonicals, og:url, robots, or site
 | `/` | Organization + WebSite JSON-LD |
 | `/discover` | Clean catalog only; any filter, non-default tab, or `sort` param → `noindex, follow` |
 | `/pricing`, `/faq`, `/hosts`, `/studios` | `/faq` carries the site's only FAQPage JSON-LD |
+| `/about`, `/careers` | Company pages; no schema (AboutPage adds nothing over the homepage Organization block, and there is no real opening to support JobPosting) |
 | `/terms`, `/privacy`, `/credits`, `/legal/{host,guest,sms,cookies}` | Legal pages render headings after hydration (AuthFrame is ClientOnly) |
 | `/e/$id` | Event JSON-LD from real public fields (name, startDate, status, attendance mode, Place/VirtualLocation, organizer, image; Offer only when a real price exists, else `isAccessibleForFree`). Unresolvable/private events → `noindex` fallback. |
 | `/h/$slug` | ProfilePage JSON-LD wrapping Person/Organization; old slugs 301-redirect via alias resolution |
@@ -39,9 +40,9 @@ project-ID service URLs are never emitted in canonicals, og:url, robots, or site
 
 - `public/robots.txt`: `Allow: /` with Disallow for every private/auth/token surface;
   `Sitemap: https://zoheewell.com/sitemap.xml`.
-- `src/routes/sitemap[.]xml.ts`: 13 canonical public routes only
-  (`/`, `/discover`, `/pricing`, `/faq`, `/hosts`, `/studios`, `/terms`, `/privacy`,
-  `/credits`, `/legal/host|guest|sms|cookies`). No `<lastmod>` — there is no
+- `src/routes/sitemap[.]xml.ts`: 15 canonical public routes only
+  (`/`, `/discover`, `/pricing`, `/faq`, `/hosts`, `/studios`, `/about`, `/careers`,
+  `/terms`, `/privacy`, `/credits`, `/legal/host|guest|sms|cookies`). No `<lastmod>` — there is no
   authoritative page-specific content timestamp. Dynamic event/coach URLs are
   intentionally omitted until a bounded, published-only server-side listing exists;
   they remain discoverable through `/discover` and internal links.

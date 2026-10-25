@@ -2262,7 +2262,7 @@
       "privacy": "Privacy",
       "credits": "Photography credits",
       "copyright": "© 2026 ZoheeWell"
-    , "faq": "FAQ"},
+    , "faq": "FAQ", "about": "About", "careers": "Careers"},
     "sticky": {
       "find": "Find an event"
     },
@@ -3850,6 +3850,52 @@
     "cancel": "Cancel"
   },
   "marketing": {
+    "about": {
+      "metaTitle": "About",
+      "metaDesc": "ZoheeWell gives wellness hosts, coaches, and teams one connected home for events, courses, communication, and discovery. Learn what we are building and why.",
+      "label": "About ZoheeWell",
+      "title": "Life is better together.",
+      "sub": "ZoheeWell is one connected home for the people who bring wellness communities together — events and retreats, courses and resources, communication, and a public page where new people can find you.",
+      "ctaHost": "Create an event",
+      "ctaDiscover": "Discover events",
+      "whatLabel": "What it is",
+      "whatTitle": "One home instead of five tools",
+      "whatBody": "Hosts today juggle a ticketing page, a group chat, a spreadsheet, a payment app, and a link-in-bio. ZoheeWell brings the pieces together: create an event or retreat, share one link, take RSVPs and check people in, teach with courses and quizzes, and keep the conversation going — in English and Spanish.",
+      "whoLabel": "Who it serves",
+      "whoTitle": "Built for people who gather people",
+      "whoSub": "ZoheeWell welcomes independent coaches, studios, educators, creators, and community builders of every kind. Many of our earliest hosts come from relationship-led wellness networks — communities built on personal invitation — and the platform is designed to serve them and everyone beyond them.",
+      "who": [
+        { "title": "Hosts and coaches", "body": "Run classes, workshops, retreats, and challenges with RSVPs, waitlists, reminders, and QR check-in." },
+        { "title": "Teachers and creators", "body": "Build courses, lessons, quizzes, recipes, and downloadable resources your people can return to." },
+        { "title": "Teams and leaders", "body": "Give your team shared tools, roles, and a communications hub with templates and journeys." },
+        { "title": "Participants", "body": "Discover public events, resources, and coaches — and RSVP as a guest, no account needed." }
+      ],
+      "useLabel": "How it works",
+      "useTitle": "Two sides of the same gathering",
+      "uses": [
+        { "title": "For hosts", "body": "Create an event in minutes, share your public page, and grow a community you can reach directly. Paid access arrives as payments are configured — free events and resources work today." },
+        { "title": "For participants", "body": "Browse Discover for upcoming events, resources, and coaches near you. Save what you love and RSVP in a tap." }
+      ],
+      "betaLabel": "Where we are",
+      "betaTitle": "An early beta, built carefully",
+      "betaBody": "ZoheeWell is in beta. Some capabilities — like paid tickets and SMS — turn on as their providers are configured, and we say so honestly in the product rather than pretending. We would rather earn trust slowly than overpromise.",
+      "finalTitle": "Bring your people together."
+    },
+    "careers": {
+      "metaTitle": "Careers",
+      "metaDesc": "Work on ZoheeWell: infrastructure for people who bring wellness communities together. No open roles right now — here is what we are building and how to stay in touch.",
+      "label": "Careers",
+      "title": "Help people gather.",
+      "sub": "ZoheeWell is a small, early-stage team building one connected home for wellness hosts, coaches, and their communities.",
+      "workLabel": "The work",
+      "workTitle": "What we are building",
+      "workBody": "We make it simple for a host to run an event or retreat, teach a course, and stay close to their community — in English and Spanish, on any phone. It is careful, unglamorous, meaningful work: accessibility, privacy, and honesty about what is ready come before shiny features.",
+      "rolesLabel": "Open roles",
+      "rolesTitle": "No open roles right now",
+      "rolesBody": "We are not hiring at the moment, and we would rather say that plainly than collect applications we cannot honor. If you would like to introduce yourself for the future, you can reach the team through Support — no promises, but we read what arrives.",
+      "contactCta": "Contact the team",
+      "aboutCta": "About ZoheeWell"
+    },
     "navPricing": "Pricing",
     "navHost": "For hosts",
     "discover": "Discover",
