@@ -841,6 +841,13 @@
       "when": 1792971746840,
       "tag": "0119_referral_programs",
       "breakpoints": true
+    },
+    {
+      "idx": 120,
+      "version": "7",
+      "when": 1792972322756,
+      "tag": "0120_referral_payout_lock_fix",
+      "breakpoints": true
     }
   ]
 }
