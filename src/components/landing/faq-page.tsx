@@ -34,7 +34,7 @@ export function FaqPage() {
           <h1 id="faq-h1" className="gw-display gw-hero-h1">{t('faqPage.title')}</h1>
           <p className="gw-lede">{t('faqPage.sub')}</p>
           <div className="gw-faq-search">
-            <GwIcon name="MagnifyingGlass" size={20} />
+            <GwIcon name="Search" size={20} />
             <input
               type="search"
               value={query}
@@ -65,7 +65,7 @@ export function FaqPage() {
           <h2 id="faq-final" className="gw-display gw-h2">{t('faqPage.finalTitle')}</h2>
           <div className="gw-final-ctas">
             <Link to="/login" search={{ intent: 'host' }} className="gw-btn gw-btn-primary gw-btn-lg">{t('home.cta.createEvent')}<GwIcon name="ArrowRight" size={18} /></Link>
-            <Link to="/support" className="gw-btn gw-btn-secondary gw-btn-lg">{t('faqPage.linkLabels.support')}</Link>
+            <a href="/support" className="gw-btn gw-btn-secondary gw-btn-lg">{t('faqPage.linkLabels.support')}</a>
           </div>
         </div>
       </section>
