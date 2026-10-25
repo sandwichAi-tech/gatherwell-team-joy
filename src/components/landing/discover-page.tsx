@@ -127,7 +127,7 @@ function CoachCard({ coach, coverUrl, avatarUrl }: { coach: CoachItem; coverUrl:
           </span>
         </span>
         {coach.city && <small className="catalog-meta">{coach.city}</small>}
-        {coach.categories.length > 0 && <span className="chip-row coach-card-cats">{coach.categories.slice(0, 3).map(c => <span key={c} className="chip chip-static">{t(`categories.${c}`, { defaultValue: c })}</span>)}</span>}
+        {coach.categories.length > 0 && <span className="chip-row coach-card-cats">{coach.categories.slice(0, 3).map(c => <span key={c} className="chip chip-static">{t(`landing.cat.${c}`, { defaultValue: c })}</span>)}</span>}
         {coach.bio && <small className="catalog-summary">{coach.bio}</small>}
         <small className="catalog-meta coach-card-counts">
           {coach.upcoming_count > 0 && <span>{t('discover.upcomingCount', { count: coach.upcoming_count })}</span>}
