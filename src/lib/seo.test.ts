@@ -41,7 +41,7 @@ describe('robots.txt', () => {
   });
 
   it('does not block public discovery surfaces', () => {
-    for (const path of ['/discover', '/pricing', '/faq', '/hosts', '/studios', '/e/', '/h/', '/t/', '/l/']) {
+    for (const path of ['/discover', '/pricing', '/faq', '/hosts', '/studios', '/about', '/careers', '/e/', '/h/', '/t/', '/l/']) {
       expect(robots).not.toContain(`Disallow: ${path}`);
     }
   });
@@ -60,6 +60,8 @@ describe('sitemap route', () => {
     expect(source).toContain("'/faq'");
     expect(source).toContain("'/hosts'");
     expect(source).toContain("'/studios'");
+    expect(source).toContain("'/about'");
+    expect(source).toContain("'/careers'");
     expect(source).not.toContain("'/login'");
     expect(source).not.toContain("'/join'");
     expect(source).not.toContain("'/admin'");
