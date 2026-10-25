@@ -245,7 +245,6 @@ export function MePage() {
     privacy: { title: t('profile.privacyData'), icon: 'ShieldCheck', body: <PrivacyDataPanel /> },
   };
 
-  const isHost = !!workspace && workspace.role !== 'member';
   const verified = useIsVerified(userId);
   const founding = useIsFounding(userId);
   return <>
