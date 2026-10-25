@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
-  ArrowDown, ArrowLeft, ArrowUp, Check, Eye, GraduationCap, Pencil, Plus, Save, Trash2, Upload,
+  ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, Eye, GraduationCap, Pencil, Plus, Save, Trash2, Upload,
 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +26,7 @@ import {
 import { listOf, RECIPE_TAGS, uploadLearnFile, type Lesson } from '@/lib/learn';
 import { myOffersQuery, offerTitle, saveOffer, uploadOfferFile, type Offer } from '@/lib/offers';
 import type { RefundPolicy } from '@/lib/refunds';
+import { activationIso, hasPlaceholder, publishedDestination, stepNav } from '@/lib/resource-flow';
 import {
   ACCENT_KEYS, accentPair, cardLayoutsFor, defaultCtaKey, emptyItemState, itemIssues, itemSnapshot,
   sanitizeRichText, sectionsFor, type Accent, type CardLayout, type ItemSection, type ItemState,
