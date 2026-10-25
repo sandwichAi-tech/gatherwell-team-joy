@@ -47,11 +47,14 @@ function Avatar({ path, name, size = 96 }: { path: string | null; name: string |
 export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string }) {
   const { t, i18n } = useTranslation();
   const q = useQuery(pageQuery(kind, slug));
+  // Owners get an edit action instead of the Follow button; visitors never see owner controls.
+  const viewer = useQuery({ queryKey: ['viewer-id'], queryFn: async () => (await supabase.auth.getUser()).data.user?.id ?? null, staleTime: 60_000 });
   if (q.isLoading) return <ListSkeleton />;
   if (q.isError) return <RetryState retry={() => void q.refetch()} />;
   const d = q.data;
   if (!d) return <EmptyState icon="Compass" title={t('follow.notFoundTitle')} text={t('follow.notFound')} action={<Button asChild variant="secondary"><Link to="/discover">{t('follow.discover')}</Link></Button>} />;
   const host = kind === 'host' ? d as HostPage : null; const team = kind === 'team' ? d as TeamPage : null;
+  const isOwner = !!viewer.data && viewer.data === d.id;
   const name = host?.name ?? team?.name ?? '';
   const avatarPath = host?.avatar_url ?? team?.leader?.avatar_url ?? null;
   return <div className="follow-page">
@@ -71,7 +74,9 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
         </ul>}
         {host?.accessibility && <p className="follow-accessibility"><GwIcon name="Heart" />{host.accessibility}</p>}
         {host && <FeaturedBadges userId={host.id} />}
-        <div className="follow-actions"><FollowButton kind={kind} target={d.id} following={d.following} slug={slug} />
+        <div className="follow-actions">{isOwner
+          ? <Button asChild variant="secondary"><Link to="/me"><GwIcon name="Pencil" />{t('follow.editMyPage')}</Link></Button>
+          : <FollowButton kind={kind} target={d.id} following={d.following} slug={slug} />}
           {host?.shop_url && <Button asChild variant="secondary"><a href={host.shop_url} target="_blank" rel="noopener noreferrer"><GwIcon name="ExternalLink" />{t('follow.shop')}</a></Button>}</div>
         {host && host.links.length > 0 && <ul className="follow-links">{host.links.map((l, i) => <li key={i}><a href={l.url} target="_blank" rel="noopener noreferrer" className="auth-link"><GwIcon name={l.kind === 'social' ? 'AtSign' : 'Link2'} />{l.label || l.url.replace(/^https:\/\//, '')}</a></li>)}</ul>}
       </div>
@@ -80,7 +85,7 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
     {host && host.offerings.length > 0 && <section className="follow-upcoming">
       <h2>{t('follow.offerings')}</h2>
       <ul className="follow-list">{host.offerings.map(o => <li key={o.id}><Link to="/o/$id" params={{ id: o.id }} className="follow-event">
-        <span><strong>{o.title}</strong><small>{t(`offers.kind.${o.kind}`)}{o.price_cents ? '' : ` · ${t('offers.free')}`}</small></span>
+        <span><strong>{o.title}</strong><small>{t(`offers.kind.${o.kind}`)} · {o.price_cents ? new Intl.NumberFormat(i18n.resolvedLanguage, { style: 'currency', currency: 'USD' }).format(o.price_cents / 100) : t('offers.free')}</small></span>
         <GwIcon name="ChevronRight" /></Link></li>)}</ul>
     </section>}
     <section className="follow-upcoming">
