@@ -84,7 +84,7 @@ export function ReferralShareCard({ kind, id, signedIn }: { kind: Kind; id: stri
 }
 
 function Stat({ label, value }: { label: string; value: string | number }) {
-  return <div className="stat-card"><span className="stat-label">{label}</span><strong className="stat-value">{value}</strong></div>;
+  return <div className="stat-card"><div className="stat-heading"><span>{label}</span></div><strong className="stat-value">{value}</strong></div>;
 }
 
 /** Row 56 + 57: host program setup and coach dashboard. */
@@ -141,11 +141,11 @@ export function CoachReferralsPage() {
       <h2 id="ref-filters">{t('referral.coach.activity')}</h2>
       <div className="referral-filter-grid">
         <label className="field"><span className="field-label">{t('referral.filters.item')}</span>
-          <select className="gw-select" value={f.program} onChange={e => set({ program: e.target.value })}><option value="">{t('referral.filters.all')}</option>{programs.map(p => <option key={p.id} value={p.id}>{p.title}</option>)}</select></label>
+          <select className="field-input" value={f.program} onChange={e => set({ program: e.target.value })}><option value="">{t('referral.filters.all')}</option>{programs.map(p => <option key={p.id} value={p.id}>{p.title}</option>)}</select></label>
         <label className="field"><span className="field-label">{t('referral.filters.referrer')}</span>
-          <select className="gw-select" value={f.referrer} onChange={e => set({ referrer: e.target.value })}><option value="">{t('referral.filters.all')}</option>{(dash.data?.referrers ?? []).map(r => <option key={r.id} value={r.id}>{r.name || t('referral.unnamed')}</option>)}</select></label>
+          <select className="field-input" value={f.referrer} onChange={e => set({ referrer: e.target.value })}><option value="">{t('referral.filters.all')}</option>{(dash.data?.referrers ?? []).map(r => <option key={r.id} value={r.id}>{r.name || t('referral.unnamed')}</option>)}</select></label>
         <label className="field"><span className="field-label">{t('referral.filters.status')}</span>
-          <select className="gw-select" value={f.status} onChange={e => set({ status: e.target.value as CoachFilters['status'] })}><option value="">{t('referral.filters.all')}</option>{STATUSES.map(s => <option key={s} value={s}>{t(`referral.status.${s}`)}</option>)}</select></label>
+          <select className="field-input" value={f.status} onChange={e => set({ status: e.target.value as CoachFilters['status'] })}><option value="">{t('referral.filters.all')}</option>{STATUSES.map(s => <option key={s} value={s}>{t(`referral.status.${s}`)}</option>)}</select></label>
         <label className="field"><span className="field-label">{t('referral.filters.from')}</span><Input type="date" value={f.from} onChange={e => set({ from: e.target.value })} /></label>
         <label className="field"><span className="field-label">{t('referral.filters.to')}</span><Input type="date" value={f.to} onChange={e => set({ to: e.target.value })} /></label>
       </div>
@@ -199,9 +199,9 @@ function ProgramSheet({ item, program, onClose, onSaved }: { item: Item; program
     footer={<Button disabled={busy} onClick={() => void save()}>{t('referral.coach.save')}</Button>}>
     <label className="settings-row is-static"><span className="settings-label">{t('referral.coach.enable')}<small className="field-hint">{t('referral.coach.enableHint')}</small></span><Switch checked={enabled} onCheckedChange={setEnabled} aria-label={t('referral.coach.enable')} /></label>
     <fieldset className="field"><legend className="field-label">{t('referral.coach.rewardType')}</legend>
-      <div className="segmented" role="radiogroup">{(['percent', 'flat'] as const).map(k => <label key={k} className={`segmented-option${kind === k ? ' is-active' : ''}`}><input type="radio" name="reward-kind" value={k} checked={kind === k} onChange={() => { setKind(k); setError(null); }} />{t(`referral.kind.${k}`)}</label>)}</div></fieldset>
+      <div className="segmented full" role="group">{(['percent', 'flat'] as const).map(k => <Button key={k} type="button" variant="ghost" aria-pressed={kind === k} className={kind === k ? 'selected' : ''} onClick={() => { setKind(k); setError(null); }}>{t(`referral.kind.${k}`)}</Button>)}</div></fieldset></fieldset>
     <label className="field"><span className="field-label">{kind === 'percent' ? t('referral.coach.percentLabel') : t('referral.coach.flatLabel')}</span>
-      <Input inputMode="decimal" value={amount} onChange={e => { setAmount(e.target.value); setError(null); }} aria-invalid={!!issue} aria-describedby="ref-example" /></label>
+      <Input className="field-input" inputMode="decimal" value={amount} onChange={e => { setAmount(e.target.value.replace(/[^0-9.]/g, '')); setError(null); }} aria-invalid={!!issue} aria-describedby="ref-example" /></label>
     <p id="ref-example" className="field-hint" aria-live="polite">{issue ? t(`referral.errors.${issue}`) : t('referral.coach.example', { price: formatMoney(item.price_cents, lang), reward: formatMoney(rewardCents(kind, value, item.price_cents), lang) })}</p>
     <p className="field-hint"><strong>{t('referral.coach.window')}</strong> {t('referral.coach.windowValue', { days: REFERRAL_WINDOW_DAYS })}</p>
     <div className="referral-terms"><h3>{t('referral.terms.title')}</h3><ul>{(['eligibility', 'attribution', 'blocked', 'refunds', 'payouts'] as const).map(k => <li key={k}>{t(`referral.terms.${k}`, { days: REFERRAL_WINDOW_DAYS })}</li>)}</ul></div>
