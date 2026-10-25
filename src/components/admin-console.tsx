@@ -40,6 +40,7 @@ export function AdminConsole({ tab }: { tab: AdminTab }) {
   if (!data?.admin) return <section className="panel empty-panel admin-denied"><GwFeatureTile name="Lock" /><h1 className="section-title">{t('admin.deniedTitle')}</h1><p className="muted-copy">{t('admin.deniedBody')}</p><Button asChild variant="secondary"><Link to="/home">{t('admin.backHome')}</Link></Button></section>;
   return <div className="admin-console">
     <header className="page-heading"><div><p className="eyebrow">{t('admin.eyebrow')}</p><h1>{t('admin.title')}</h1><p>{t('admin.subtitle')}</p></div></header>
+    <details className="panel owner-guide"><summary>{t('admin.ownerGuide.title')}</summary><p>{t('admin.ownerGuide.signIn')}</p><p>{t('admin.ownerGuide.sections')}</p><p>{t('admin.ownerGuide.limits')}</p></details>
     <nav className="admin-tabs" aria-label={t('admin.title')}>{ADMIN_TABS.map(k => <button key={k} type="button" className={tab === k ? 'is-active' : ''} aria-current={tab === k ? 'page' : undefined} onClick={() => void navigate({ to: '/admin', search: { tab: k } })}><GwIcon name={TAB_ICONS[k]} size={18} /><span>{t(`admin.tabs.${k}`)}</span></button>)}</nav>
     {tab === 'overview' && <Overview />}
     {tab === 'teams' && <AdminSafety key={tab} kind="teams" />}

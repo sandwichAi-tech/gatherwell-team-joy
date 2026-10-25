@@ -48,7 +48,8 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
  const wsRole = workspace ? ((workspace.ownerId === userId ? 'owner' : workspace.workspaceRole) as 'owner' | WorkspaceRole) : null;
  const canContent = workspace?.role === 'leader' || roleAllows(wsRole, 'content');
  const canManageTeam = workspace?.role === 'leader' || roleAllows(wsRole, 'members');
- const navTabs = (profile?.role_intent === 'guest' ? guestTabs : tabs).filter(tab => tab.key !== 'learn' || learnOn);
+ const coachTabs = [...tabs.slice(0, 4), ...(canContent || canManageTeam ? [{ key: 'communications', path: '/communications', icon: Megaphone } as const] : []), tabs[4]];
+ const navTabs = (profile?.role_intent === 'guest' ? guestTabs : coachTabs).filter(tab => tab.key !== 'learn' || learnOn);
  const isActive = (path: string) => pathname === path || (pathname.startsWith(`${path}/`));
  const current = navTabs.find(tab => isActive(tab.path)) ?? tabs[0];
  useEffect(() => {
@@ -82,7 +83,7 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
    </div>
    {userId && <ClientOnly><BadgeEarnedWatcher /><PushPrompt userId={userId} /></ClientOnly>}
    {pathname !== '/me' && <Button size="icon" className="floating-create" onClick={() => openSheet('create')} aria-label={t('common.create')} title={t('common.create')}><Plus /></Button>}
-   <nav className={`bottom-nav ${profile?.role_intent === 'guest' ? 'attendee-nav' : ''}`} aria-label={t('nav.label')}>{navTabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: true }} className={`bottom-link ${isActive(path) ? 'is-active' : ''}`}><Icon /><span>{t(`nav.${key}`)}</span></Link>)}</nav>
+   <nav className={`bottom-nav ${navTabs.length > 5 ? 'expanded-nav' : ''} ${profile?.role_intent === 'guest' ? 'attendee-nav' : ''}`} aria-label={t('nav.label')}>{navTabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: true }} className={`bottom-link ${isActive(path) ? 'is-active' : ''}`}><Icon /><span>{t(`nav.${key}`)}</span></Link>)}</nav>
    {userId && <ClientOnly><AssistantPanel open={sheet === 'assistant'} onOpenChange={o => setSheet(o ? 'assistant' : null)} screen={current.key as typeof tabs[number]['key']} name={firstName(profile?.full_name)} /></ClientOnly>}
     {sheet !== null && sheet !== 'assistant' && <Drawer open onOpenChange={open => { if (!open) { setSheet(null); setDetail(null); } }} shouldScaleBackground={false}>
     <DrawerContent className="gatherwell-sheet"><div className="sheet-heading"><div><DrawerTitle>{detail ? detail.title : sheet === 'create' ? t('create.title') : sheet ? t(`placeholder.${sheet}`) : ''}</DrawerTitle><DrawerDescription className={sheet === 'create' ? 'mt-3' : 'sr-only'}>{sheet === 'create' ? t('create.description') : t('common.comingSoon')}</DrawerDescription></div><Button variant="ghost" size="icon" onClick={() => setSheet(null)} aria-label={t('common.close')}><X /></Button></div>

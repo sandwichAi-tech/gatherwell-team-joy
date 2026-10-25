@@ -301,6 +301,7 @@ export function MePage() {
       {staticRow('Sun', t('me.appearance'), <div className="segmented" role="group" aria-label={t('me.appearance')}>{([{ value: 'light', Icon: Sun }, { value: 'dark', Icon: Moon }, { value: 'system', Icon: Monitor }] as const).map(({ value, Icon }) => <Button key={value} variant="ghost" size="icon" className={theme === value ? 'selected' : ''} aria-pressed={theme === value} aria-label={t(`me.${value}`)} title={t(`me.${value}`)} onClick={() => setTheme(value)}><Icon /></Button>)}</div>)}
     </SettingsGroup>
     <SettingsGroup title={isHost || isAdmin ? t('profile.groupHost') : t('toolsPage.title')}>
+      {isAdmin && linkRow('ShieldCheck', t('admin.dashboardLink'), '/admin')}
       {isHost && row('Globe2', t('hostProfile.title'), () => setPanel('hostProfile'))}
       {linkRow('SquaresFour', t('toolsPage.title'), '/tools')}
     </SettingsGroup>

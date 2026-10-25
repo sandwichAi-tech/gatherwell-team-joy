@@ -98,6 +98,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
   const { data: team } = useQuery(teamDetailQuery(teamId));
   const { data: tree = [] } = useQuery(teamTreeQuery(teamId));
   const [sheet, setSheet] = useState<Sheet>(null);
+  useEffect(() => { const panel = new URLSearchParams(window.location.search).get('panel'); if (panel === 'members' || panel === 'invite') setSheet(panel); }, []);
   const [waiverOpen, setWaiverOpen] = useState(false); const canHost = isLeader || workspace.role === 'host';
   const [draftBody, setDraftBody] = useState<string | null>(null);
   useEffect(() => { const pending = takePendingAnnouncement(); if (pending) { setDraftBody(pending); if (isLeader) setSheet('announce'); else void navigator.clipboard?.writeText(pending).catch(() => {}); } }, [isLeader]);
