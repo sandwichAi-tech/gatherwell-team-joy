@@ -1,5 +1,15 @@
 import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
+import { z } from 'zod';
+
+export const listCommunicationOfferings = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ teamId: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { data: result, error } = await context.supabase.rpc('communication_offerings', { _team: data.teamId });
+    if (error) throw new Error(error.message);
+    return result as { events: { id: string; title: string }[]; resources: { id: string; title_en: string; title_es: string | null }[] };
+  });
 
 /**
  * Communications hub server functions. All reads/writes go through the
@@ -108,7 +118,7 @@ export const listMessageJourneys = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     const { data: journeys, error } = await context.supabase
       .from('message_journeys')
-      .select('id, name, start_trigger, status, created_at, offer_id')
+      .select('id, name, start_trigger, status, created_at, offer_id, event_id')
       .eq('team_id', data.teamId)
       .order('created_at', { ascending: true });
     if (error) throw new Error(error.message);
@@ -121,7 +131,7 @@ export const listMessageJourneys = createServerFn({ method: 'POST' })
 
 export const saveMessageJourney = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { teamId: string; id?: string | null; name: string; start_trigger: string; steps: unknown[]; offerId?: string }) => input)
+  .inputValidator((input: { teamId: string; id?: string | null; name: string; start_trigger: string; steps: unknown[]; offerId?: string; eventId?: string }) => input)
   .handler(async ({ data, context }) => {
     if (data.start_trigger === 'resource_enrollment') {
       if (!data.offerId) throw new Error('resource_required');
@@ -133,6 +143,10 @@ export const saveMessageJourney = createServerFn({ method: 'POST' })
       _steps: data.steps,
     } as never);
     if (error) throw new Error(error.message);
+    if (typeof id === 'string') {
+      const { error: scopeError } = await context.supabase.rpc('set_communication_event', { _journey: id, _event: data.eventId || null } as never);
+      if (scopeError) throw new Error(scopeError.message);
+    }
     return { id };
   });
 
@@ -156,13 +170,14 @@ export const getAutomationActivity = createServerFn({ method: 'POST' })
 
 export const getJourneyRuns = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { teamId: string; journeyId?: string | null; limit?: number }) => input)
+  .inputValidator((input: unknown) => z.object({ teamId: z.string().uuid(), journeyId: z.string().uuid().nullable().optional(), limit: z.number().int().min(1).max(100).default(20) }).parse(input))
   .handler(async ({ data, context }) => {
     const { data: rows, error } = await context.supabase.rpc('journey_run_activity', {
       _team: data.teamId, _journey: data.journeyId ?? null, _limit: data.limit ?? 20,
     } as never);
     if (error) throw new Error(error.message);
-    const {data:resource,error:resourceError}=await context.supabase.from('resource_journey_runs').select('id,journey_id,status,current_step,steps_snapshot,next_run_at,note,created_at,offers(title_en)').eq('team_id',data.teamId).order('created_at',{ascending:false}).limit(data.limit??20);
+    const {data:resource,error:resourceError}=await context.supabase.rpc('resource_journey_activity', { _team: data.teamId, _journey: data.journeyId ?? null, _limit: data.limit } as never);
     if(resourceError)throw new Error(resourceError.message);
-    return [...(rows??[]),...(resource??[]).map(r=>({...r,journey_name:'',event_title:r.offers?.title_en??'',step_count:Array.isArray(r.steps_snapshot)?r.steps_snapshot.length:0,current_step_kind:null}))];
+    const resourceRows = Array.isArray(resource) ? resource : [];
+    return [...(rows??[]).map(row => ({ ...row, context: 'event' })), ...resourceRows];
   });
