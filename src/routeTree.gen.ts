@@ -26,6 +26,7 @@ import { Route as StudiosRouteImport } from './routes/studios'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAppRouteRouteImport } from './routes/_authenticated/_app/route'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as CoachUpdatesTokenRouteImport } from './routes/coach-updates.$token'
 import { Route as EIdRouteImport } from './routes/e.$id'
 import { Route as HSlugRouteImport } from './routes/h.$slug'
 import { Route as ICodeRouteImport } from './routes/i.$code'
@@ -180,6 +181,11 @@ const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const CoachUpdatesTokenRoute = CoachUpdatesTokenRouteImport.update({
+  id: '/coach-updates/$token',
+  path: '/coach-updates/$token',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const EIdRoute = EIdRouteImport.update({
   id: '/e/$id',
@@ -583,6 +589,7 @@ export interface FileRoutesByFullPath {
   '/studios': typeof StudiosRoute
   '/terms': typeof TermsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/coach-updates/$token': typeof CoachUpdatesTokenRoute
   '/e/$id': typeof EIdRoute
   '/h/$slug': typeof HSlugRoute
   '/i/$code': typeof ICodeRoute
@@ -671,6 +678,7 @@ export interface FileRoutesByTo {
   '/studios': typeof StudiosRoute
   '/terms': typeof TermsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/coach-updates/$token': typeof CoachUpdatesTokenRoute
   '/e/$id': typeof EIdRoute
   '/h/$slug': typeof HSlugRoute
   '/i/$code': typeof ICodeRoute
@@ -762,6 +770,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/_authenticated/_app': typeof AuthenticatedAppRouteRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
+  '/coach-updates/$token': typeof CoachUpdatesTokenRoute
   '/e/$id': typeof EIdRoute
   '/h/$slug': typeof HSlugRoute
   '/i/$code': typeof ICodeRoute
@@ -852,6 +861,7 @@ export interface FileRouteTypes {
     | '/studios'
     | '/terms'
     | '/onboarding'
+    | '/coach-updates/$token'
     | '/e/$id'
     | '/h/$slug'
     | '/i/$code'
@@ -940,6 +950,7 @@ export interface FileRouteTypes {
     | '/studios'
     | '/terms'
     | '/onboarding'
+    | '/coach-updates/$token'
     | '/e/$id'
     | '/h/$slug'
     | '/i/$code'
@@ -1030,6 +1041,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/_authenticated/_app'
     | '/_authenticated/onboarding'
+    | '/coach-updates/$token'
     | '/e/$id'
     | '/h/$slug'
     | '/i/$code'
@@ -1119,6 +1131,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StudiosRoute: typeof StudiosRoute
   TermsRoute: typeof TermsRoute
+  CoachUpdatesTokenRoute: typeof CoachUpdatesTokenRoute
   EIdRoute: typeof EIdRoute
   HSlugRoute: typeof HSlugRoute
   ICodeRoute: typeof ICodeRoute
@@ -1262,6 +1275,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/onboarding'
       preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/coach-updates/$token': {
+      id: '/coach-updates/$token'
+      path: '/coach-updates/$token'
+      fullPath: '/coach-updates/$token'
+      preLoaderRoute: typeof CoachUpdatesTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/e/$id': {
       id: '/e/$id'
@@ -1903,6 +1923,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StudiosRoute: StudiosRoute,
   TermsRoute: TermsRoute,
+  CoachUpdatesTokenRoute: CoachUpdatesTokenRoute,
   EIdRoute: EIdRoute,
   HSlugRoute: HSlugRoute,
   ICodeRoute: ICodeRoute,

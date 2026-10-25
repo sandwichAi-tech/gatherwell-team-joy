@@ -6360,5 +6360,40 @@
     "month": "Month",
     "empty": "No check-ins in this month.",
     "count": "{{count}} check-ins"
+  },
+  "sessions": {
+    "heading": "Experience schedule",
+    "scope": "One registration, ticket and check-in covers the whole experience. Sessions do not have separate admission.",
+    "session": "Session {{count}}",
+    "title": "Title",
+    "starts_at": "Starts",
+    "ends_at": "Ends",
+    "place": "Public venue label",
+    "remove": "Remove session",
+    "invalid": "Add 2–20 ordered, non-overlapping sessions within 31 days of the event start."
+  },
+  "coachUpdates": {
+    "title": "Get updates",
+    "request": "Request confirmation",
+    "email": "Email",
+    "announcements": "Coach announcements",
+    "events": "New events",
+    "resources": "New resources and programs",
+    "adult": "I am 18 or older",
+    "consent": "Optional email preferences for this coach only. Confirm through email; manage or unsubscribe using your private link. No SMS subscription.",
+    "setup": "Coach email updates require sending setup. No subscription or delivery is claimed until confirmation and sending are available.",
+    "pending": "Check your email to confirm. You are not subscribed until you confirm.",
+    "error": "Could not request confirmation. Please try again later.",
+    "manage": "Manage coach updates",
+    "confirm": "Confirm selected preferences",
+    "unsubscribe": "Unsubscribe from this coach",
+    "saved": "Preferences saved for this coach.",
+    "invalid": "This link is invalid or expired. Request a new link from the coach page.",
+    "segments": "Your coach subscribers",
+    "segment_confirmed": "Confirmed subscribers",
+    "segment_announcements": "Announcements",
+    "segment_new_events": "New events",
+    "segment_new_resources": "New resources",
+    "loading": "Loading…"
   }
 }
