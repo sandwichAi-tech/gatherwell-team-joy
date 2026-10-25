@@ -40,6 +40,8 @@ export function ResourceBuilder({ initialType }: { initialType: CreateType }) {
   const { teamId, userId } = useLearn();
 
   const [type, setType] = useState<CreateType>(initialType);
+  // Arriving from the type chooser with a different type adopts it; in-builder switches go through pickType.
+  useEffect(() => { setType(initialType); }, [initialType]);
   const [shared, setShared] = useState({ titleEn: '', titleEs: '', descEn: '', descEs: '', coverPath: null as string | null, coverStyle: 0 });
   const [draft, setDraft] = useState<BuilderDraft>(emptyBuilderDraft);
   const [publish, setPublish] = useState(false);
