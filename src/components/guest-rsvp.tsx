@@ -25,6 +25,8 @@ import { startTicketCheckout } from '@/lib/billing.functions';
 import { formatMoney } from '@/lib/billing';
 import { RsvpQuestionsFields, answersReady } from '@/components/rsvp-questions';
 import { WaiverAccept, useEventWaiver, waiverReady, waiverRpc } from '@/components/waiver';
+import { EventWaiversAccept, MyWaiverAcceptances, useEventWaivers } from '@/components/event-waivers';
+import { acceptedPayload, missingRequired, waiverErrorKey, type WaiverChoices } from '@/lib/event-waivers';
 import { directionsUrl, formatWhen, guestLink, hasPlace, inviteToken, rsvpErrorKey, type PublicEvent } from '@/lib/guest';
 import { AddToCalendar } from '@/components/add-to-calendar';
 import type { IcsEvent } from '@/lib/ics';
@@ -85,6 +87,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
   const [price, setPrice] = useState<{ price_cents: number; pass_fee: boolean; fee_pct: number; cover_service_fee?: boolean; service_fee_percent?: number; service_fee_fixed?: number; refund_policy?: string } | null>(null);
   const { data: waiver } = useEventWaiver(intent ? event.id : undefined); const [wName, setWName] = useState(''); const [wOk, setWOk] = useState(false); const [adult, setAdult] = useState(false);
   const [minorOn, setMinorOn] = useState(false);
+  const ew = useEventWaivers(intent ? event.id : undefined); const eventWaivers = ew.data ?? []; const [ewChoices, setEwChoices] = useState<WaiverChoices>({});
   const [minor, setMinor] = useState({ first: '', band: '' as string, gName: '', gRel: 'parent', gEmail: '', gPhone: '', consent: false });
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [termsOk, setTermsOk] = useState(false);
@@ -118,6 +121,9 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
     if (!form.first.trim()) { setError(t('guest.errors.name_required')); return; }
     if (!form.phone.trim() && !form.email.trim()) { setError(t('guest.errors.contact_required')); return; }
     if (!waiverReady(waiver, wName, wOk)) { setError(t('guest.errors.waiver_required')); return; }
+    if (ew.isError) { setError(t('eventWaivers.errors.load')); return; }
+    if (intent === 'going' && missingRequired(eventWaivers, ewChoices).length) { setError(t('eventWaivers.errors.required')); document.querySelector<HTMLElement>('.event-waivers input, .event-waivers button')?.focus(); return; }
+    const ewAccepted = acceptedPayload(eventWaivers, ewChoices);
     if (intent === 'going' && !answersReady(event.questions, answers)) { setError(t('guest.errors.answers_required')); return; }
     const waiverName = waiver?.required ? wName.trim() : '';
     const consent = rsvpReminderConsent(form);
@@ -144,12 +150,12 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
     if (paid) {
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim())) { setError(t('guest.errors.invalid_email')); return; }
       if (!adult) { setError(t('identity.adultRequired')); return; }
-      await gate.run(() => checkout({ data: { eventId: event.id, first: form.first.trim(), last: form.last.trim(), phone: form.phone.trim(), email: form.email.trim(), plusOnes: form.plus, sms: consent.sms, mail: consent.mail, lang, origin: window.location.origin, waiverName, promo: promo?.code ?? '', adult } }));
+      await gate.run(() => checkout({ data: { eventId: event.id, first: form.first.trim(), last: form.last.trim(), phone: form.phone.trim(), email: form.email.trim(), plusOnes: form.plus, sms: consent.sms, mail: consent.mail, lang, origin: window.location.origin, waiverName, waivers: ewAccepted, promo: promo?.code ?? '', adult } }));
       return;
     }
     setBusy(true); setError(null);
     try {
-      const { data, error: err } = await waiverRpc('register_attendance', { _answers: answers, _token: inviteToken(), _waiver_name: waiverName, _event_id: event.id, _first: form.first.trim(), _last: form.last.trim(), _phone: form.phone.trim(), _email: form.email.trim(),
+      const { data, error: err } = await waiverRpc('register_attendance_waivers', { _waivers: ewAccepted, _answers: answers, _token: inviteToken(), _waiver_name: waiverName, _event_id: event.id, _first: form.first.trim(), _last: form.last.trim(), _phone: form.phone.trim(), _email: form.email.trim(),
         _language: i18n.resolvedLanguage === 'es' ? 'es' : 'en', _plus_ones: form.plus, _status: intent, _sms: consent.sms, _mail: consent.mail,
         _terms_ok: termsOk, _updates_opt_in: updates, _tier_id: tierId ?? '' });
       const row = (Array.isArray(data) ? data[0] : null) as { code: string; status: string } | null;
@@ -201,6 +207,8 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
       {!!event.questions?.length && <RsvpQuestionsFields questions={event.questions} value={answers} onChange={setAnswers} />}
       {event.require_approval && intent === 'going' && <p className="guest-hint">{t('rsvpq.approvalHint')}</p>}
       {waiver && <WaiverAccept waiver={waiver} name={wName} accepted={wOk} onName={setWName} onAccepted={setWOk} />}
+      {intent === 'going' && ew.isError && <p className="field-error" role="alert">{t('eventWaivers.errors.load')} <Button type="button" variant="ghost" onClick={() => void ew.refetch()}>{t('launch.retry')}</Button></p>}
+      {intent === 'going' && <EventWaiversAccept waivers={eventWaivers} choices={ewChoices} onChange={setEwChoices} />}
       {!paid && needsTier(tiers) && <fieldset className="guest-tiers">
         <legend className="field-label">{t('guest.tiers.title')}</legend>
         {tiers.map(tier => {
@@ -259,7 +267,8 @@ export function Confirmation({ event, code, status }: { event: ConfirmEvent; cod
       {(event.location_name || event.address) && <span>{[event.location_name, event.address].filter(Boolean).join(' · ')}</span>}
       {event.meeting_note && <span className="muted">{event.meeting_note}</span>}
     </div>
-    {cprice && status === 'going' && <RefundLine policy={cprice.refund_policy} />}
+    {cprice && status === 'going' && <RefundLine policy={cprice.refund_policy} text={(event as { cancellation_policy?: string | null }).cancellation_policy} />}
+    <MyWaiverAcceptances code={code} />
     {event.online_url && (status === 'going' || status === 'maybe') && <Button asChild className="guest-primary"><a href={event.online_url} target="_blank" rel="noopener noreferrer"><Video />{t('guest.joinOnline')}</a></Button>}
     <GuestBelonging code={code} status={status} />
     {status === 'going' && <div className="guest-qr" ref={qr}><QRCodeSVG value={code} size={176} bgColor="var(--qr-background)" fgColor="var(--qr-foreground)" level="M" marginSize={4} title={t('guest.qrHelp')} /><span>{t('guest.qrHelp')}</span><Button variant="secondary" onClick={saveQr}>{t('launch.saveQr')}</Button></div>}

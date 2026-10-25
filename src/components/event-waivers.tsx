@@ -108,7 +108,7 @@ export function EventWaiversManager({ eventId, userId }: { eventId: string; user
   const [edit, setEdit] = useState<Row | null>(null);
   const refresh = () => { void qc.invalidateQueries({ queryKey: ['event-waivers-manage', eventId] }); void qc.invalidateQueries({ queryKey: ['event-waivers', eventId] }); void qc.invalidateQueries({ queryKey: ['event-waiver-status', eventId] }); };
   const archive = async (w: Row) => {
-    if (!(await confirmAction({ title: t('eventWaivers.archiveTitle'), description: t('eventWaivers.archiveText'), confirmLabel: t('eventWaivers.archive'), destructive: true } as never))) return;
+    if (!(await confirmAction({ title: t('eventWaivers.archiveTitle'), body: t('eventWaivers.archiveText'), confirmLabel: t('eventWaivers.archive'), destructive: true }))) return;
     const { error: e } = await db.from('event_waivers').update({ archived_at: new Date().toISOString() }).eq('id', w.id);
     if (e) toast.error(t('profile.saveError')); else { toast.success(t('eventWaivers.archived')); refresh(); }
   };
@@ -201,7 +201,7 @@ export function EventWaiverStatusPanel({ eventId }: { eventId: string }) {
   return <section className="panel ew-status" aria-labelledby="ew-status-title">
     <div className="section-heading"><div><h2 id="ew-status-title"><ShieldCheck aria-hidden="true" /> {t('eventWaivers.statusTitle')}</h2>
       <p className="auth-subtitle">{t('eventWaivers.statusSummary', { count: data.attendees.length, missing })}</p></div>
-      <Button variant="secondary" disabled={!data.attendees.length} onClick={() => downloadCsv(`waivers-${eventId.slice(0, 8)}.csv`, consentRows(data, lang, label))}><Download />{t('eventWaivers.export')}</Button></div>
+      <Button variant="secondary" disabled={!data.attendees.length} onClick={() => { const [head, ...rows] = consentRows(data, lang, label); downloadCsv(`waivers-${eventId.slice(0, 8)}.csv`, head!, rows); }}><Download />{t('eventWaivers.export')}</Button></div>
     {!data.attendees.length ? <p className="auth-subtitle">{t('eventWaivers.noAttendees')}</p>
       : <div className="table-scroll"><table className="data-table"><caption className="sr-only">{t('eventWaivers.statusTitle')}</caption>
         <thead><tr><th scope="col">{t('eventWaivers.attendee')}</th>{data.waivers.map(w => <th key={w.id} scope="col">{waiverTitle(w, lang)}</th>)}</tr></thead>
