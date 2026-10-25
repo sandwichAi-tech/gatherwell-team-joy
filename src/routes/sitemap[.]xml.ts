@@ -3,7 +3,7 @@ import { SITE_URL } from '@/lib/seo';
 
 // Canonical public indexable routes only. Auth, token/code, account, admin, and
 // filtered-permutation URLs are excluded by policy (see docs/SEO-AEO-AUDIT.md).
-// No <lastmod>: there is no authoritative page-specific content timestamp.
+// No lastmod entries: there is no authoritative page-specific content timestamp.
 const PATHS = ['/', '/discover', '/pricing', '/faq', '/hosts', '/studios', '/terms', '/privacy', '/credits', '/legal/host', '/legal/guest', '/legal/sms', '/legal/cookies'];
 
 export const Route = createFileRoute('/sitemap.xml')({
