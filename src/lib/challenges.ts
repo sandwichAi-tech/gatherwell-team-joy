@@ -80,3 +80,70 @@ export function rpcErrorKey(error: unknown) {
   for (const k of ['not_joined', 'date_closed', 'out_of_range', 'invalid_message', 'not_allowed']) if (m.includes(k)) return `challenges.err.${k}`;
   return 'profile.saveError';
 }
+
+/* ---------- Dynamic challenge models, activities and messages ---------- */
+
+export const CHALLENGE_MODELS = ['streak', 'goal', 'points'] as const;
+export type ChallengeModel = (typeof CHALLENGE_MODELS)[number];
+export const modelOf = (c: { model?: string | null }): ChallengeModel =>
+  (CHALLENGE_MODELS as readonly string[]).includes(c.model ?? '') ? (c.model as ChallengeModel) : 'streak';
+
+/** Goal model: progress toward a target number of check-ins. */
+export function goalProgress(target: number | null | undefined, total: number) {
+  const t = target && target > 0 ? target : 0;
+  return { target: t, done: Math.min(total, t || total), pct: t ? Math.min(1, total / t) : 0, complete: t > 0 && total >= t };
+}
+
+export type ChallengeActivity = {
+  id?: string; title_en: string; title_es: string; instructions_en?: string | null; instructions_es?: string | null;
+  day_offset: number | null; sort_order: number; requires_checkin: boolean; requires_note: boolean;
+  due_hour: number | null; link_url: string | null; resource_kind: string | null; resource_id: string | null; file_path: string | null;
+};
+
+/** Activities a participant sees on a given challenge day: day-specific first, then throughout. */
+export function activitiesForDay(acts: ChallengeActivity[], day: number) {
+  return acts
+    .filter(a => a.day_offset == null || a.day_offset === day)
+    .sort((a, b) => (a.day_offset == null ? 1 : 0) - (b.day_offset == null ? 1 : 0) || a.sort_order - b.sort_order);
+}
+
+export const MESSAGE_KINDS = ['welcome', 'start_reminder', 'daily_prompt', 'checkin_reminder', 'announcement', 'completion'] as const;
+export type ChallengeMessageKind = (typeof MESSAGE_KINDS)[number];
+
+export type ChallengeMessage = {
+  id?: string; kind: ChallengeMessageKind; send_offset_days: number; send_hour: number;
+  title_en: string; title_es: string; body_en: string; body_es: string;
+  channel: string; enabled: boolean; paused: boolean; sort_order: number;
+};
+
+/**
+ * When a message goes out, as a YYYY-MM-DD challenge-local date.
+ * welcome is relative to the join date, completion to the end date, everything else to the start date.
+ */
+export function messageSendDate(kind: ChallengeMessageKind, offset: number, startsOn: string, endsOn: string, joinDate?: string): string {
+  if (kind === 'welcome') return addDays(joinDate ?? startsOn, offset);
+  if (kind === 'completion') return addDays(endsOn, offset);
+  return addDays(startsOn, offset);
+}
+
+/** Lifecycle label: draft overrides the date-based phase. */
+export const lifecycleOf = (c: { status?: string | null }, phase: Phase): 'draft' | Phase =>
+  c.status === 'draft' ? 'draft' : phase;
+
+/** Validation issues for the builder; only fields relevant to the chosen model are checked. */
+export function challengeIssues(f: {
+  title_en: string; title_es: string; starts_on: string; ends_on: string;
+  model: ChallengeModel; goal_target: string; capacity: string;
+}, today: string): string[] {
+  const out: string[] = [];
+  if (!f.title_en.trim() && !f.title_es.trim()) out.push('title');
+  if (!f.starts_on) out.push('start');
+  if (!f.ends_on || f.ends_on < f.starts_on) out.push('end');
+  if (f.model === 'goal' && (!Number(f.goal_target) || Number(f.goal_target) < 1)) out.push('goal');
+  if (f.capacity && Number(f.capacity) < 1) out.push('capacity');
+  return out;
+}
+
+/** A message row is sendable configuration only when it has text in at least one language. */
+export const messageHasContent = (m: Pick<ChallengeMessage, 'title_en' | 'title_es' | 'body_en' | 'body_es'>) =>
+  !!(m.title_en.trim() || m.title_es.trim() || m.body_en.trim() || m.body_es.trim());
