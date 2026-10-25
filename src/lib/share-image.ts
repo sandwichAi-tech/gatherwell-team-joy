@@ -21,8 +21,8 @@ export async function renderShareImage(format:ShareFormat,o:Options):Promise<Blo
  const logo=await loadShareImage(logoAsset.url).catch(()=>null);if(logo){const w=wide?195:240;g.drawImage(logo,l.textX,y,w,w*logo.naturalHeight/logo.naturalWidth);}y+=wide?64:70;
  let size=l.titleSize;let lines:string[]=[];for(;size>=32;size-=2){g.font=font(size,700);lines=fitLines(o.title,l.textWidth,3,s=>g.measureText(s).width);if(lines.length*size*1.16<=l.titleHeight)break;}
  g.fillStyle=ivory;lines.forEach((line,i)=>g.fillText(line,l.textX,y+i*size*1.16));y+=l.titleHeight+12;
- const fields=[o.date,o.place,o.host??''].filter(Boolean);const lineHeight=l.dateSize*1.35;
- g.font=font(l.dateSize,500);g.fillStyle=concrete;for(const field of fields){const count=Math.min(2,Math.floor((l.footerTop-24-y)/lineHeight));if(count<=0)break;for(const line of fitLines(field,l.textWidth,count,s=>g.measureText(s).width)){g.fillText(line,l.textX,y);y+=lineHeight;}y+=8;}
+ const fields=[o.date,o.place,o.host??''].filter(Boolean);const detailSize=format==='square'?28:l.dateSize;const lineHeight=detailSize*1.35;
+ g.font=font(detailSize,500);g.fillStyle=concrete;for(const [index,field] of fields.entries()){const reserved=(fields.length-index-1)*(lineHeight+8);const count=Math.min(2,Math.floor((l.footerTop-24-y-reserved)/lineHeight));if(count<=0)break;for(const line of fitLines(field,l.textWidth,count,s=>g.measureText(s).width)){g.fillText(line,l.textX,y);y+=lineHeight;}y+=8;}
  g.font=font(wide?22:26);g.fillStyle=ivory;const url=displayShareUrl(o.link);const shown=g.measureText(url).width<=l.textWidth?url:'zoheewell.com';g.fillText(shown,l.textX,l.footerTop);
  return new Promise(resolve=>c.toBlob(resolve,'image/png'));
 }
