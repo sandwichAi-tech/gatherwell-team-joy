@@ -7,7 +7,6 @@ import { Check, Lock } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { GuestShell } from '@/components/guest-shell';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
-import { supabase } from '@/integrations/supabase/client';
 import { isLive } from '@/lib/resource-flow';
 import { supabase } from '@/integrations/supabase/client';
 import { canAccessOfferQuery, enrollFree, enrollmentState, publicOfferQuery, type PublicOffer } from '@/lib/content';
