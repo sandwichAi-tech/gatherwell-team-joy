@@ -22,6 +22,7 @@ import { useFeature } from '@/lib/feature-flags';
 import { isAdminQuery } from '@/lib/site-media';
 import { AccountMenu } from '@/components/account-menu';
 import { insightsNavigationLabel, navigationPathActive, showInsightsNavigation } from '@/lib/insights-navigation';
+import { splitMobileNav } from '@/lib/mobile-nav';
 import { ListSkeleton, QueryFeedback } from '@/components/launch-states';
 
 type Theme = 'system' | 'light' | 'dark';
@@ -59,8 +60,7 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
  const navLabel = (key: string) => key === 'insights' ? insightsNavigationLabel(i18n.resolvedLanguage, t) : t(`nav.${key}`);
  const current = navTabs.find(tab => isActive(tab.path)) ?? tabs[0];
  // Mobile bar stays fixed at five slots: four primary destinations plus a More menu for the rest.
- const primaryTabs = navTabs.slice(0, 4);
- const moreTabs = navTabs.slice(4);
+ const { primary: primaryTabs, more: moreTabs } = splitMobileNav(navTabs);
  const moreActive = moreTabs.some(tab => isActive(tab.path));
  useEffect(() => {
   const stored = localStorage.getItem('gatherwell-theme');
