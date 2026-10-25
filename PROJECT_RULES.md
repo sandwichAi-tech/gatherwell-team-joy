@@ -133,7 +133,7 @@ Smooth page transitions. Keep the bundle light.
 ADDENDUM (Oct 2026, confirmed rules — additive, nothing above removed):
 - Mobile-first with 44–48px tap targets. Every user-facing word in English and Latin American Spanish via i18n.
 - No physical product catalog; host services (tickets, memberships, courses, downloads) are allowed; external "Shop" link optional.
-- Never show product sales, team volume, commissions or income claims (hosts' own ticket/offer/thank-you revenue on Earnings and Plan is allowed). Otherwise activity only: events, RSVPs, check-ins, trainings, challenges, badges.
+- Never show product sales, team volume, commissions or income claims (hosts' own ticket/offer/thank-you revenue on Earnings and Plan is allowed; approved 2026-10-25 referral exception below). Otherwise activity only: events, RSVPs, check-ins, trainings, challenges, badges.
 - No health, medical, weight-loss or income claims anywhere.
 - Never mention any outside company or brand in the app.
 - API keys come later: any feature needing an outside service (Claude, Resend, Mailgun, Twilio, Stripe, Google Maps) goes in a backend function that reads the key from Lovable Cloud secrets; if the key is missing, use a realistic mock and a small "Not connected yet" note. Never hard-code keys or put them in front-end code.
@@ -149,3 +149,10 @@ ADDENDUM (Oct 2026, confirmed rules — additive, nothing above removed):
 
 ## Launch mode
 Launch mode: the app shows only what serves three jobs. Leader: see the organization's week and help hosts run what works. Host: fill gatherings and follow up. Guest: get there easily and feel welcome. Everything else stays behind a feature flag until users ask for it.
+
+
+## Referral commission exception (approved 2026-10-25, rows 56–58)
+- Referral commissions may appear only (a) in the opt-in referral-program area (/referrals) to the host who owns or manages the item, and (b) in each referrer's own private earnings view (/referrals/mine).
+- Never show team volume, downline income, public earnings, income claims, or another person's earnings. Referrers never see buyer identity.
+- No reward for self-referrals, for the host, or when purchaser and referrer share any team relationship. Team-only events are ineligible. Free items use ordinary sharing.
+- Totals stay at zero until real payments are confirmed; beta payouts are manual records only and never imply ZoheeWell moved money.

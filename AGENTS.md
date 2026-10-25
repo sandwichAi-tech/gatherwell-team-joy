@@ -35,9 +35,7 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - All AI (assistant + src/lib/ai/*, smart.functions.ts) runs server-side via Claude, model in assistant/config.ts; no key → preview text, not counted. Cards act on confirm.
 - Plans/limits live in billing_accounts, team_licenses, license_seats; effective_plan()+plan_limits() decide limits (triggers, new rows only). Stripe: billing.functions.ts + /api/public/stripe/webhook only; no key → sheet.
 - Platform admin: /admin data and actions go only through src/lib/admin.functions.ts and every action writes admin_audit; reports come from report_content() or the claims trigger.
-- Platform safety uses caller-scoped admin_safety RPCs (bounded, throttled, atomic, audited); bans stay a managed-auth operation and never imply deletion.
-- Account restrictions commit via service-only RPC after caller validation; managed-auth failures use checked compensation (Auth and DB writes share no transaction).
-- Admin retries use admin_retry_message() (atomic requeue + audit); delivery stays in the outbox processor.
+- Safety: caller-scoped admin_safety RPCs (bounded, throttled, audited); bans are managed-auth, never deletion; restrictions commit via service-only RPC with checked compensation; retries use admin_retry_message(), delivery stays in the outbox processor.
 - Public follows use get_public_host/get_public_team; iCal token is its only credential.
 
 - ResponsiveSheet owns header/footer/scroll body; pass primary actions via footer.
@@ -52,9 +50,10 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Platform fees are calculated only from versioned fee_rules (DB calc_platform_fee_cents, mirrored and tested in src/lib/fees.ts); orders snapshot the rule so history never recalculates.
 - Database role regressions live in tests/database and run only by explicit invocation against a disposable copy; never connect these fixture-writing tests to production, preview, or the ordinary automated suite.
 - Consent acceptances resolve version/hash in database triggers, and flag changes append server-owned config history; clients never choose snapshots or write audit history.
-- Identity: one auth user = one profile; return paths go only through src/lib/return-to.ts (mirrored by is_safe_return_path) and emailed links use single-use auth_intents; 18+ is attested via confirm_adult() and enforced by triggers/checkout functions; view_mode is display-only; guest rows are linked only by claim_guest_records() with merges kept for audit.
+- Identity: one auth user = one profile; return paths only via src/lib/return-to.ts (is_safe_return_path); emailed links use single-use auth_intents; 18+ via confirm_adult() + triggers; view_mode display-only; guest rows link only via claim_guest_records().
 
 - WhichPlan guides pricing; no capability tables.
 - Templates copy as drafts. Resource journeys use scoped entitlements and idempotent in-app delivery; event association saves atomically. Coach consent uses verified accounts or hashed expiring links; without a sender anonymous requests stay pending. Segments expose counts only.
 
+- Referral attribution/rewards/status are server-owned (0119 RPCs + orders_referral_hook), mirrored in src/lib/referrals.ts; landing reuses the analytics device id.
 - Event images use share-image.ts for all outputs; admin menu uses role checks.
