@@ -5,7 +5,7 @@ export type OfferKind = 'membership' | 'course' | 'download';
 export type Offer = {
   id: string; host_id: string; team_id: string; kind: OfferKind; title_en: string; title_es: string;
   description_en: string | null; description_es: string | null; includes_en: string[]; includes_es: string[];
-  price_cents: number; cover_style: number; cover_url: string | null; file_path: string | null; drip_days: number; founding_seats: number | null; founding_price_cents: number | null; community_seats?: number | null; status: 'draft' | 'published' | 'archived'; created_at: string;
+  price_cents: number; cover_style: number; cover_url: string | null; file_path: string | null; drip_days: number; founding_seats: number | null; founding_price_cents: number | null; community_seats?: number | null; status: 'draft' | 'published' | 'archived'; created_at: string; available_from?: string | null; available_tz?: string | null;
 };
 export type Purchase = { id: string; offer_id: string; status: string; cancel_at_period_end: boolean; renews_at: string | null; amount_cents: number; created_at: string; stripe_subscription_id: string | null; paused_until?: string | null };
 
