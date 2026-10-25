@@ -14,3 +14,17 @@ export const publicHostCover = createServerFn({ method: 'GET' })
     const { data: signed } = await supabaseAdmin.storage.from('media').createSignedUrl(path, 3600);
     return signed?.signedUrl ?? null;
   });
+
+/** Signs only the cover of a published public/unlisted offer; never accepts a storage path. */
+export const publicOfferCover = createServerFn({ method: 'GET' })
+  .inputValidator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
+    const { data: offer, error } = await supabaseAdmin.rpc('get_public_offer', { _id: data.id });
+    if (error || !offer || typeof offer !== 'object' || Array.isArray(offer)) return null;
+    const hostId = offer['host_id'];
+    const path = offer['cover_url'];
+    if (typeof hostId !== 'string' || typeof path !== 'string' || !path.startsWith(`${hostId}/`)) return null;
+    const { data: signed } = await supabaseAdmin.storage.from('media').createSignedUrl(path, 3600);
+    return signed?.signedUrl ?? null;
+  });

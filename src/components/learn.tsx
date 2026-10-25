@@ -14,7 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { workspaceQuery } from '@/lib/account';
 import { COVER_STYLES } from '@/lib/gatherings';
 import {
-  ancestorsQuery, effectiveType, embedUrl, icsFor, isUpcomingLive, learnFileUrl, learnQuery, lessonTitle, lessonsOf, listOf, pick, recipesQuery,
+  ancestorsQuery, effectiveType, embedUrl, icsFor, isUpcomingLive, learnFileUrl, learnQuery, lessonTitle, lessonsOf, listOf, pick, recipesQuery, visibleLessons,
   remindersQuery, RECIPE_TAGS, populatedTracks, trackStats, trackTitle, type LearnData, type Lesson, type Recipe, type Track,
 } from '@/lib/learn';
 import { myLearningQuery } from '@/lib/content';
@@ -129,12 +129,15 @@ function BackLink({ to, params, label }: { to: string; params?: Record<string, s
 
 export function TrackPage({ id }: { id: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
-  const { data, isLoading, isError, refetch } = useLearn();
+  const { data, isLoading, isError, refetch, leader, teamId } = useLearn();
   if (isError) return <RetryState retry={() => void refetch()} />;
   if (isLoading || !data) return <ListSkeleton />;
   const track = data.tracks.find(tr => tr.id === id);
   if (!track) return <section className="panel"><BackLink to="/learn" label={t('learn.title')} /><p className="auth-subtitle">{t('learnHub.notFound')}</p></section>;
-  const s = trackStats(data, id); const title = trackTitle(track, lang);
+  // Participants see published lessons only; leaders of the track's team also see drafts (labeled).
+  const showDrafts = leader && track.team_id === teamId;
+  const outline = visibleLessons(data, id, showDrafts);
+  const s = trackStats(data, id, outline); const title = trackTitle(track, lang);
   return <>
     <BackLink to="/learn" label={t('learn.title')} />
     <section className="track-hero"><LearnCover path={track.cover_url} style={track.cover_style} title={title} className="is-wide" />
@@ -143,10 +146,10 @@ export function TrackPage({ id }: { id: string }) {
         <div className="track-foot"><ProgressRing value={s.pct} size={52} label={t('learnHub.progressLabel', { done: s.done, total: s.count })} /><span className="track-facts">{t('learnHub.progressLabel', { done: s.done, total: s.count })} · {minutesLabel(t, s.minutes)}</span></div>
         {s.next && <Button asChild className="continue-button"><Link to="/learn/lesson/$id" params={{ id: s.next.id }}>{s.done ? t('learnHub.continueWhere') : t('learnHub.start')}<ArrowRight /></Link></Button>}</div></section>
     {s.complete && <CompletionCard title={title} />}
-    <ol className="lesson-list">{lessonsOf(data, id).map((l, i) => { const type = effectiveType(l); const Icon = TYPE_ICON[type]; const done = data.done.has(l.id); return <li key={l.id}>
+    <ol className="lesson-list">{outline.map((l, i) => { const type = effectiveType(l); const Icon = TYPE_ICON[type]; const done = data.done.has(l.id); return <li key={l.id}>
       <Link to="/learn/lesson/$id" params={{ id: l.id }} className={`lesson-row ${done ? 'is-done' : ''}`}>
         <span className="lesson-index">{done ? <Check /> : i + 1}</span>
-        <span className="lesson-info"><strong>{lessonTitle(l, lang)}</strong><small><Icon />{t(`learnHub.type.${l.type === 'live' && l.replay_url ? 'replay' : type}`)}{l.duration_minutes ? ` · ${minutesLabel(t, l.duration_minutes)}` : ''}{l.type === 'live' && l.live_starts_at && !l.replay_url ? ` · ${fmtWhen(l.live_starts_at, lang)}` : ''}</small></span>
+        <span className="lesson-info"><strong>{lessonTitle(l, lang)}</strong><small><Icon />{t(`learnHub.type.${l.type === 'live' && l.replay_url ? 'replay' : type}`)}{l.duration_minutes ? ` · ${minutesLabel(t, l.duration_minutes)}` : ''}{l.type === 'live' && l.live_starts_at && !l.replay_url ? ` · ${fmtWhen(l.live_starts_at, lang)}` : ''}{!l.is_published ? ` · ${t('templates.draft')}` : ''}</small></span>
         <ArrowRight />
       </Link></li>; })}</ol>
   </>;
@@ -188,14 +191,17 @@ function LinkCard({ url }: { url: string }) {
 
 export function LessonPage({ id }: { id: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en'; const qc = useQueryClient(); const navigate = useNavigate();
-  const { data, isLoading, isError, refetch, userId, leader } = useLearn();
+  const { data, isLoading, isError, refetch, userId, leader, teamId } = useLearn();
   const [busy, setBusy] = useState(false); const [justDone, setJustDone] = useState(false);
   if (isError) return <RetryState retry={() => void refetch()} />;
   if (isLoading || !data) return <ListSkeleton />;
   const lesson = data.lessons.find(l => l.id === id);
   if (!lesson) return <section className="panel"><BackLink to="/learn" label={t('learn.title')} /><p className="auth-subtitle">{t('learnHub.notFound')}</p></section>;
   const track = data.tracks.find(tr => tr.id === lesson.track_id)!;
-  const list = lessonsOf(data, track.id); const idx = list.findIndex(l => l.id === id);
+  // Draft lessons are leader-only: a participant with a direct link gets the not-found state.
+  const showDrafts = leader && track.team_id === teamId;
+  if (!lesson.is_published && !showDrafts) return <section className="panel"><BackLink to="/learn" label={t('learn.title')} /><p className="auth-subtitle">{t('learnHub.notFound')}</p></section>;
+  const list = visibleLessons(data, track.id, showDrafts); const idx = list.findIndex(l => l.id === id);
   const done = data.done.has(id); const s = trackStats(data, track.id);
   const next = list.slice(idx + 1).find(l => !data.done.has(l.id)) ?? list[idx + 1] ?? null;
   const notes = pick(lang, lesson.notes_en, lesson.notes_es);

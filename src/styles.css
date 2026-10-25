@@ -2606,3 +2606,19 @@ a.gw-cat-chip:hover{background:#fff}
 .curriculum-title small { color: var(--muted-foreground); }
 .curriculum-actions { display: inline-flex; gap: .15rem; flex-shrink: 0; }
 .curriculum-edit { display: grid; gap: .6rem; }
+
+/* ---- Public offering cards (coach page) ---- */
+.offering-cards { display: grid; gap: .85rem; }
+.offering-link { text-decoration: none; color: inherit; display: block; }
+.offering-card { display: flex; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); transition: transform .15s ease; }
+.offering-link:hover .offering-card { transform: translateY(-1px); }
+.offering-card.is-button { align-items: center; justify-content: space-between; gap: .75rem; padding: .85rem 1rem; }
+.offering-card.is-button strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.offering-card.is-callout { flex-direction: column; gap: .35rem; padding: 1.1rem 1.25rem; }
+.offering-card.is-callout small { overflow-wrap: anywhere; }
+.offering-card.is-preview { flex-direction: column; }
+.offering-card-cover { min-height: 120px; background-size: cover; background-position: center; position: relative; }
+.offering-card-cover .offer-cover-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.offering-card-body { display: grid; gap: .3rem; padding: .9rem 1rem; }
+.offering-card-body small { color: var(--muted-foreground); overflow-wrap: anywhere; }
+.offering-card-foot { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-top: .35rem; flex-wrap: wrap; }

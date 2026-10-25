@@ -6228,6 +6228,17 @@
         "down": "Bajar",
         "deleteTitle": "¿Eliminar esta lección?",
         "deleteText": "Los participantes pierden esta lección y su progreso. Esto no se puede deshacer."
+      },
+      "visibilityLabel": "Quién puede verlo",
+      "visibility": {
+        "team": "Mi equipo",
+        "public": "Página pública",
+        "unlisted": "Cualquiera con el enlace"
+      },
+      "visibilityHint": {
+        "team": "Solo los miembros de tu equipo ven este recurso.",
+        "public": "Aparece en tu página pública de anfitrión y en Descubrir.",
+        "unlisted": "No aparece en ninguna lista; las personas necesitan el enlace directo."
       }
     }
   },

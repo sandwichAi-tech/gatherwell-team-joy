@@ -3,7 +3,9 @@ import { GetCoachUpdates } from '@/components/coach-updates';
 import { CoachTrustSection, VerifiedMark, useIsVerified } from '@/components/coach-trust';
 import { CopyButton, ShareButton } from '@/components/copy-button';
 import { FeaturedBadges } from '@/components/recognition';
-import { publicHostCover } from '@/lib/host-cover.functions';
+import { publicHostCover, publicOfferCover } from '@/lib/host-cover.functions';
+import { publicCardModel, type PublicOffering } from '@/lib/public-cards';
+import { COVER_STYLES } from '@/lib/gatherings';
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -23,7 +25,7 @@ import { formatWhen } from '@/lib/guest';
 import { initialsOf, mediaUrl } from '@/lib/account';
 
 type Upcoming = { id: string; title: string; starts_at: string; timezone: string; location_name: string | null; online: boolean; cover_style: number | null };
-type HostOffering = { kind: string; id: string; title: string; summary: string | null; price_cents: number | null };
+type HostOffering = PublicOffering & { kind: string; id: string };
 type HostLink = { label: string; url: string; kind: 'website' | 'social' };
 type HostPage = { id: string; name: string | null; org: string | null; avatar_url: string | null; cover_url: string | null; coverSrc?: string | null; city: string | null; bio: string | null; shop_url: string | null; categories: string[]; languages: string[]; accessibility: string | null; links: HostLink[]; followers: number; following: boolean; upcoming: Upcoming[]; offerings: HostOffering[] };
 type TeamPage = { id: string; name: string; cover_url: string | null; leader: { name: string | null; slug: string | null; avatar_url: string | null } | null; members: number; followers: number; following: boolean; upcoming: Upcoming[] };
@@ -39,6 +41,38 @@ export const pageQuery = (kind: 'host' | 'team', slug: string) => ({
 });
 
 function HostSeal({ id }: { id: string }) { return useIsVerified(id) ? <> <VerifiedMark compact /></> : null; }
+
+/** One resource card on the public coach page, rendered with the saved Presentation settings. */
+function OfferingCard({ o, lang }: { o: HostOffering; lang: string }) {
+  const { t } = useTranslation();
+  const model = publicCardModel(o, lang, t('resources.untitled'), t(o.price_cents ? 'resources.item.ctaBuy' : 'resources.item.ctaGet'));
+  const price = o.price_cents ? new Intl.NumberFormat(lang, { style: 'currency', currency: 'USD' }).format(o.price_cents / 100) : t('offers.free');
+  const cover = useQuery({ queryKey: ['public-offer-cover', o.id], queryFn: () => publicOfferCover({ data: { id: o.id } }), enabled: !!model.coverPath, staleTime: 50 * 60 * 1000 });
+  const kind = t(`offers.kind.${o.kind}`);
+  const inner = model.layout === 'button'
+    ? <span className="offering-card is-button" style={{ background: model.colors.bg, color: model.colors.fg }}>
+        <strong>{model.title}</strong>
+        <span className="card-preview-cta" style={{ background: model.colors.fg, color: model.colors.bg }}>{model.cta}</span>
+      </span>
+    : model.layout === 'callout'
+      ? <span className="offering-card is-callout" style={{ background: model.colors.bg, color: model.colors.fg }}>
+          <span className="eyebrow" style={{ color: model.colors.fg }}>{kind}</span>
+          <strong>{model.title}</strong>
+          {model.subtitle && <small>{model.subtitle}</small>}
+          <span className="offering-card-foot"><span className="card-preview-cta" style={{ background: model.colors.fg, color: model.colors.bg }}>{model.cta}</span><small>{price}</small></span>
+        </span>
+      : <span className="offering-card is-preview">
+          <span className="offering-card-cover" style={{ backgroundImage: COVER_STYLES[model.coverStyle % COVER_STYLES.length] }}>
+            {cover.data && <BrandImage src={cover.data} alt={model.title} className="offer-cover-photo" />}
+          </span>
+          <span className="offering-card-body">
+            <strong>{model.title}</strong>
+            {model.subtitle && <small>{model.subtitle}</small>}
+            <span className="offering-card-foot"><span className="card-preview-cta" style={{ background: model.colors.bg, color: model.colors.fg }}>{model.cta}</span><small>{kind} · {price}</small></span>
+          </span>
+        </span>;
+  return <Link to="/o/$id" params={{ id: o.id }} className="offering-link" aria-label={`${model.title}, ${kind}, ${price}`}>{inner}</Link>;
+}
 
 function Avatar({ path, name, size = 96 }: { path: string | null; name: string | null; size?: number }) {
   const { data: url } = useQuery({ queryKey: ['media-url', path], queryFn: () => mediaUrl(path), enabled: !!path, staleTime: 50 * 60 * 1000 });
@@ -86,9 +120,7 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
     {host && <CoachTrustSection hostId={host.id} />}
     {host && host.offerings.length > 0 && <section className="follow-upcoming">
       <h2>{t('follow.offerings')}</h2>
-      <ul className="follow-list">{host.offerings.map(o => <li key={o.id}><Link to="/o/$id" params={{ id: o.id }} className="follow-event">
-        <span><strong>{o.title}</strong><small>{t(`offers.kind.${o.kind}`)} · {o.price_cents ? new Intl.NumberFormat(i18n.resolvedLanguage, { style: 'currency', currency: 'USD' }).format(o.price_cents / 100) : t('offers.free')}</small></span>
-        <GwIcon name="ChevronRight" /></Link></li>)}</ul>
+      <ul className="follow-list offering-cards">{host.offerings.map(o => <li key={o.id}><OfferingCard o={o} lang={i18n.resolvedLanguage ?? 'en'} /></li>)}</ul>
     </section>}
     <section className="follow-upcoming">
       <h2>{t('follow.upcoming')}</h2>
