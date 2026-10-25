@@ -119,7 +119,7 @@ function ChallengeCommsSection({ teamId, setup }: { teamId: string; setup: Setup
     queryFn: async () => ((await supabase.from('challenge_messages').select('*, challenges!inner(title_en, title_es, starts_on, ends_on, team_id)').eq('challenges.team_id', teamId).order('sort_order')).data ?? []) as unknown as ChallengeMsgRow[],
   });
   const toggle = async (m: ChallengeMsgRow, field: 'enabled' | 'paused') => {
-    const { error } = await supabase.from('challenge_messages').update({ [field]: !m[field] }).eq('id', m.id);
+    const { error } = await supabase.from('challenge_messages').update(field === 'enabled' ? { enabled: !m.enabled } : { paused: !m.paused }).eq('id', m.id);
     if (error) { toast.error(t('profile.saveError')); return; }
     await qc.invalidateQueries({ queryKey: ['challenge-comms', teamId] });
   };
