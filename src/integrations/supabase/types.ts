@@ -7045,13 +7045,19 @@ export type Database = {
           _kinds?: string[]
           _lang?: string
           _lat?: number
+          _limit?: number
           _lng?: number
           _minors?: boolean
+          _offset?: number
           _q?: string
           _radius_km?: number
           _sort?: string
           _to?: string
         }
+        Returns: Json
+      }
+      discover_coaches: {
+        Args: { _cat?: string; _limit?: number; _offset?: number; _q?: string }
         Returns: Json
       }
       due_followup_events: { Args: never; Returns: string[] }
@@ -7524,6 +7530,7 @@ export type Database = {
         }[]
       }
       promote_waitlist: { Args: { _event: string }; Returns: undefined }
+      public_cover_paths: { Args: { _refs: Json }; Returns: Json }
       public_upcoming: { Args: { _host: string; _team: string }; Returns: Json }
       publish_host_update: { Args: { _id: string }; Returns: number }
       queue_broadcast: { Args: { _id: string }; Returns: number }
