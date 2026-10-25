@@ -2123,9 +2123,6 @@ a.gw-cat-chip:hover{background:#fff}
 .gw-home-path:hover{border-color:var(--primary)}
 .gw-home-path:focus-visible{outline:3px solid var(--ring);outline-offset:2px}
 /* Attendee band + final CTA */
-.gw-home-band{display:grid;gap:20px;align-items:center}
-.gw-home-band-copy .gw-h2{margin-bottom:0}
-.gw-home-band-copy p{margin:8px 0 0;color:var(--muted-foreground);max-width:520px}
 .gw-home-final{text-align:center}
 .gw-home-final .gw-final-ctas{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
 .gw-home-priceline{margin:24px 0 0;font-size:15px}
