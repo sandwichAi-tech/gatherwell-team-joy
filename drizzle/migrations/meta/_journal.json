@@ -715,6 +715,13 @@
       "when": 1792886522771,
       "tag": "0101_discover_covers_coaches",
       "breakpoints": true
+    },
+    {
+      "idx": 102,
+      "version": "7",
+      "when": 1792897292592,
+      "tag": "0102_allow_communications_return_path",
+      "breakpoints": true
     }
   ]
 }
