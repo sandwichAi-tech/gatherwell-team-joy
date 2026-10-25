@@ -4,9 +4,9 @@ import { z } from 'zod';
 import { CreateResourcePage } from '@/components/create-resource';
 import { gatherwellHead } from '@/lib/gatherwell-head';
 
-const search = z.object({ type: z.string().optional().catch(undefined) });
+const search = z.object({ type: z.string().optional().catch(undefined), id: z.string().uuid().optional().catch(undefined) });
 export const Route = createFileRoute('/_authenticated/_app/learn_/create')({
   validateSearch: search,
   head: () => gatherwellHead('learn', 'resources.create.title'),
-  component: function Page() { return <FeatureRoute flag="feature_learn"><CreateResourcePage type={Route.useSearch().type} /></FeatureRoute>; },
+  component: function Page() { return <FeatureRoute flag="feature_learn"><CreateResourcePage type={Route.useSearch().type} id={Route.useSearch().id} /></FeatureRoute>; },
 });
