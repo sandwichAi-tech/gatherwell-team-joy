@@ -49,6 +49,11 @@ export function PublicOfferPage({ id }: { id: string }) {
   if (!o) return <GuestShell><section className="panel empty-state"><Lock /><p>{t('offers.notFound')}</p></section></GuestShell>;
 
   const title = offerTitle(o, lang);
+  const subtitle = pick2(lang, o.subtitle_en, o.subtitle_es);
+  const promo = pick2(lang, o.promo_en, o.promo_es);
+  const customCta = pick2(lang, o.cta_en, o.cta_es);
+  const pair = accentPair(o.accent ?? 'plum');
+  const cover = useQuery({ queryKey: ['public-offer-cover', id], queryFn: () => publicOfferCover({ data: { id } }), enabled: !!o.cover_url, staleTime: 50 * 60 * 1000 });
   const summary = pick2(lang, o.summary_en, o.summary_es);
   const description = offerText(o, lang);
   const includes = offerIncludes(o, lang);
