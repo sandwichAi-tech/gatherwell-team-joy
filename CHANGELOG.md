@@ -1,5 +1,11 @@
 # ZoheeWell Change Log
 
+## v0.41.3 — Home network and Resources translation repairs (2026-10-25)
+- Added missing `home.networkLabel/networkTitle/networkText/networkAction` in English and Spanish, with localized call-site defaults on Home and the network eyebrow. CTA remains `/network`, behind existing auth/feature rules; public homepage is unchanged.
+- Kept `resources.create` as the creation-flow namespace; added string leaf `resources.create.button` and repaired all three incorrect object-key button calls with localized fallbacks. Existing creation sheet → `/learn/create?type=video` → `/learn/manage?tab=tracks&new=video` verified; no authorization changes.
+- 466 tests across 55 files passed, including translation value-shape and protected CTA-route regressions. Latest automatic harness typecheck/production build `build OK`. Browser verified EN/ES at 390/1280 on signed-in Home/Resources, network CTA and Video editor; signed-out Home/creation redirect to login; public homepage has no network keys; zero captured console/page errors.
+- No database/data/role changes, fixtures, providers or publishing. Signed-in member denial and screen-reader narration were not exercised with a second account in this focused pass; existing guards/server permissions are unchanged.
+
 ## v0.41.2 — Admin, resource Communication and coach preferences (2026-10-25)
 - Preserved verified owner role; prominent separate platform administration entry, site-media route guard and fail-closed server role checks.
 - Resource journeys select authorized offerings/audiences, execute idempotent entitlement-bound in-app notifications, stop on archive and expose scoped activity. Event selection saves atomically; existing event automation behavior retained.
