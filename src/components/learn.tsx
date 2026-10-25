@@ -129,12 +129,15 @@ function BackLink({ to, params, label }: { to: string; params?: Record<string, s
 
 export function TrackPage({ id }: { id: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
-  const { data, isLoading, isError, refetch } = useLearn();
+  const { data, isLoading, isError, refetch, leader, teamId } = useLearn();
   if (isError) return <RetryState retry={() => void refetch()} />;
   if (isLoading || !data) return <ListSkeleton />;
   const track = data.tracks.find(tr => tr.id === id);
   if (!track) return <section className="panel"><BackLink to="/learn" label={t('learn.title')} /><p className="auth-subtitle">{t('learnHub.notFound')}</p></section>;
-  const s = trackStats(data, id); const title = trackTitle(track, lang);
+  // Participants see published lessons only; leaders of the track's team also see drafts (labeled).
+  const showDrafts = leader && track.team_id === teamId;
+  const outline = visibleLessons(data, id, showDrafts);
+  const s = trackStats(data, id, outline); const title = trackTitle(track, lang);
   return <>
     <BackLink to="/learn" label={t('learn.title')} />
     <section className="track-hero"><LearnCover path={track.cover_url} style={track.cover_style} title={title} className="is-wide" />

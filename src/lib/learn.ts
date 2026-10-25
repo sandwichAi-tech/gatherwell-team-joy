@@ -41,8 +41,8 @@ export const visibleLessons = (data: LearnData, trackId: string, showDrafts: boo
 /** Empty tracks stay editable in management, but are not offered to readers. */
 export const populatedTracks = (tracks: Track[], lessons: Pick<Lesson, 'track_id'>[]) =>
   tracks.filter(track => lessons.some(lesson => lesson.track_id === track.id));
-export function trackStats(data: LearnData, trackId: string) {
-  const list = lessonsOf(data, trackId);
+export function trackStats(data: LearnData, trackId: string, listOverride?: Lesson[]) {
+  const list = listOverride ?? lessonsOf(data, trackId);
   const done = list.filter(l => data.done.has(l.id)).length;
   const minutes = list.reduce((n, l) => n + (l.duration_minutes ?? 0), 0);
   const next = list.find(l => !data.done.has(l.id)) ?? null;
