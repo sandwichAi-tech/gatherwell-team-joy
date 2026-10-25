@@ -35,9 +35,7 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - All AI (assistant + src/lib/ai/*, smart.functions.ts) runs server-side via Claude, model in assistant/config.ts; no key → preview text, not counted. Cards act on confirm.
 - Plans/limits live in billing_accounts, team_licenses, license_seats; effective_plan()+plan_limits() decide limits (triggers, new rows only). Stripe: billing.functions.ts + /api/public/stripe/webhook only; no key → sheet.
 - Platform admin: /admin data and actions go only through src/lib/admin.functions.ts and every action writes admin_audit; reports come from report_content() or the claims trigger.
-- Platform safety uses caller-scoped admin_safety RPCs (bounded, throttled, atomic, audited); bans stay a managed-auth operation and never imply deletion.
-- Account restrictions commit via service-only RPC after caller validation; managed-auth failures use checked compensation (Auth and DB writes share no transaction).
-- Admin retries use admin_retry_message() (atomic requeue + audit); delivery stays in the outbox processor.
+- Safety: caller-scoped admin_safety RPCs (bounded, throttled, audited); bans are managed-auth, never deletion; restrictions commit via service-only RPC with checked compensation; retries use admin_retry_message(), delivery stays in the outbox processor.
 - Public follows use get_public_host/get_public_team; iCal token is its only credential.
 
 - ResponsiveSheet owns header/footer/scroll body; pass primary actions via footer.
