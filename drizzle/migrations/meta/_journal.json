@@ -750,6 +750,13 @@
       "when": 1792939541866,
       "tag": "0106_resource_journey_access_guards",
       "breakpoints": true
+    },
+    {
+      "idx": 107,
+      "version": "7",
+      "when": 1792940140858,
+      "tag": "0107_resource_activity_privacy",
+      "breakpoints": true
     }
   ]
 }
