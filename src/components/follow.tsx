@@ -72,7 +72,7 @@ function OfferingCard({ o, lang }: { o: HostOffering; lang: string }) {
             <span className="offering-card-foot"><span className="card-preview-cta" style={{ background: model.colors.bg, color: model.colors.fg }}>{model.cta}</span><small>{kind} · {price}</small></span>
           </span>
         </span>;
-  return <Link to="/o/$id" params={{ id: o.id }} className="offering-link" aria-label={`${model.title}, ${kind}, ${price}`}>{inner}</Link>;
+  return <Link to={route.to} params={{ id: route.id }} className="offering-link" aria-label={`${model.title}, ${kind}, ${price}`}>{inner}</Link>;
 }
 
 function Avatar({ path, name, size = 96 }: { path: string | null; name: string | null; size?: number }) {
