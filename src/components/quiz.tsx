@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
 import { confirmAction } from '@/components/confirm-dialog';
+import { LangFields, LangPair } from '@/components/lang-fields';
 
 function Field({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
   return <div className="form-field"><label className="field-label" htmlFor={id}>{label}</label>{children}</div>;
@@ -83,7 +84,7 @@ export function LearnerQuizList({ offerId }: { offerId: string }) {
   </section>;
 }
 
-function QuizEditor({ quiz, offer, lessons, onClose }: { quiz: Partial<Quiz>; offer: Offer; lessons: { id: string; title_en: string | null; title_es: string | null }[]; onClose: () => void }) {
+export function QuizEditor({ quiz, offer, lessons, onClose }: { quiz: Partial<Quiz>; offer: Offer; lessons: { id: string; title_en: string | null; title_es: string | null }[]; onClose: () => void }) {
   const { t } = useTranslation();
   const qc = useQueryClient();
   const [f, setF] = useState({
@@ -146,14 +147,9 @@ function QuizEditor({ quiz, offer, lessons, onClose }: { quiz: Partial<Quiz>; of
   };
   return <ResponsiveSheet open onOpenChange={o => !o && onClose()} title={quiz.id ? t('quiz.edit') : t('quiz.new')}>
     <div className="edit-form">
-      <div className="bilingual">
-        {Field({ id: 'qz-en', label: `${t('templates.title')} · EN`, children: <Input id="qz-en" className="field-input" maxLength={120} value={f.title_en} onChange={e => setF({ ...f, title_en: e.target.value })} /> })}
-        {Field({ id: 'qz-es', label: `${t('templates.title')} · ES`, children: <Input id="qz-es" className="field-input" maxLength={120} value={f.title_es} onChange={e => setF({ ...f, title_es: e.target.value })} /> })}
-      </div>
-      <div className="bilingual">
-        {Field({ id: 'qz-ien', label: `${t('quiz.instructions')} · EN`, children: <Textarea id="qz-ien" rows={2} className="field-textarea" maxLength={600} value={f.instructions_en} onChange={e => setF({ ...f, instructions_en: e.target.value })} /> })}
-        {Field({ id: 'qz-ies', label: `${t('quiz.instructions')} · ES`, children: <Textarea id="qz-ies" rows={2} className="field-textarea" maxLength={600} value={f.instructions_es} onChange={e => setF({ ...f, instructions_es: e.target.value })} /> })}
-      </div>
+      <LangFields idPrefix="qz" titleEn={f.title_en} titleEs={f.title_es} descEn={f.instructions_en} descEs={f.instructions_es}
+        onChange={p => setF(x => ({ ...x, title_en: p.titleEn ?? x.title_en, title_es: p.titleEs ?? x.title_es, instructions_en: p.descEn ?? x.instructions_en, instructions_es: p.descEs ?? x.instructions_es }))}
+        titleLabel={t('templates.title')} descLabel={t('quiz.instructions')} descMax={600} descRows={2} />
       <div className="form-field"><span className="field-label">{t('quiz.attachTo')}</span>
         <select className="field-input" value={f.lesson_id} onChange={e => setF({ ...f, lesson_id: e.target.value })}>
           <option value="">{t('quiz.finalQuiz')}</option>
@@ -262,10 +258,7 @@ function QuestionEditor({ question, onClose }: { question: Partial<QuizQuestion>
         <select className="field-input" value={f.type} onChange={e => setF({ ...f, type: e.target.value as QuizQuestion['type'] })}>
           {(['single', 'multi', 'truefalse', 'short'] as const).map(tp => <option key={tp} value={tp}>{t(`quiz.type.${tp}`)}</option>)}
         </select></div>
-      <div className="bilingual">
-        {Field({ id: 'qq-en', label: `${t('quiz.prompt')} · EN`, children: <Textarea id="qq-en" rows={2} className="field-textarea" maxLength={500} value={f.prompt_en} onChange={e => setF({ ...f, prompt_en: e.target.value })} /> })}
-        {Field({ id: 'qq-es', label: `${t('quiz.prompt')} · ES`, children: <Textarea id="qq-es" rows={2} className="field-textarea" maxLength={500} value={f.prompt_es} onChange={e => setF({ ...f, prompt_es: e.target.value })} /> })}
-      </div>
+      <LangPair id="qq-prompt" label={t('quiz.prompt')} en={f.prompt_en} es={f.prompt_es} onEn={v => setF({ ...f, prompt_en: v })} onEs={v => setF({ ...f, prompt_es: v })} multiline rows={2} maxLength={500} />
       {Field({ id: 'qq-pts', label: t('quiz.pointsLabel'), children: <Input id="qq-pts" type="number" min={0.5} step={0.5} className="field-input" value={f.points} onChange={e => setF({ ...f, points: e.target.value })} /> })}
       {f.type !== 'short' ? <div className="form-field"><span className="field-label">{t('quiz.options')}</span>
         <ol className="order-list">{options.map((o, i) => <li key={i}>
@@ -281,10 +274,7 @@ function QuestionEditor({ question, onClose }: { question: Partial<QuizQuestion>
         {Field({ id: 'qq-acc', label: t('quiz.acceptedAnswers'), children: <Textarea id="qq-acc" rows={3} className="field-textarea" maxLength={1000} value={f.accepted} onChange={e => setF({ ...f, accepted: e.target.value })} /> })}
         <label className="switch-row"><Switch checked={f.allow_manual} onCheckedChange={v => setF({ ...f, allow_manual: v })} /><span><strong>{t('quiz.manualGrading')}</strong><small>{t('quiz.manualGradingText')}</small></span></label>
       </>}
-      <div className="bilingual">
-        {Field({ id: 'qq-xen', label: `${t('quiz.explanation')} · EN`, children: <Textarea id="qq-xen" rows={2} className="field-textarea" maxLength={500} value={f.explanation_en} onChange={e => setF({ ...f, explanation_en: e.target.value })} /> })}
-        {Field({ id: 'qq-xes', label: `${t('quiz.explanation')} · ES`, children: <Textarea id="qq-xes" rows={2} className="field-textarea" maxLength={500} value={f.explanation_es} onChange={e => setF({ ...f, explanation_es: e.target.value })} /> })}
-      </div>
+      <LangPair id="qq-explain" label={t('quiz.explanation')} en={f.explanation_en} es={f.explanation_es} onEn={v => setF({ ...f, explanation_en: v })} onEs={v => setF({ ...f, explanation_es: v })} multiline rows={2} maxLength={500} />
       <Button className="onboarding-continue" disabled={busy || !valid} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
       {question.id && <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('quiz.deleteQuestion')}</Button>}
     </div>
