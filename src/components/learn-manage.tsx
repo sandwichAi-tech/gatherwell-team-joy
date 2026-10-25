@@ -190,8 +190,12 @@ function TracksTab({ teamId, newType }: { teamId: string; newType?: string | und
     <div className="section-heading"><h2>{t('learnHub.teamTracks')}</h2><Button onClick={() => setEditing({ cover_style: own.length % COVER_STYLES.length })}><Plus />{t('learnHub.newTrack')}</Button></div>
     {own.length ? <div className="manage-tracks">{own.map(tr => <article key={tr.id} className="manage-track">
       <div className="manage-track-head"><LearnCover path={tr.cover_url} style={tr.cover_style} title={trackTitle(tr, i18n.resolvedLanguage)} className="is-thumb" />
-        <div className="order-title"><strong>{trackTitle(tr, i18n.resolvedLanguage)}</strong><small>{[tr.is_start_here ? t('learnHub.startHere') : null, t(tr.is_published ? 'templates.published' : 'templates.draft')].filter(Boolean).join(' · ')}</small></div>
-        <Button variant="secondary" size="sm" onClick={() => setEditing(tr)}><Pencil />{t('templates.edit')}</Button></div>
+        <div className="order-title"><strong>{trackTitle(tr, i18n.resolvedLanguage)}</strong><small>{(() => { const st = data ? trackState(tr.is_published, lessonsOf(data, tr.id)) : null; const opens = tr.available_from && !isLive(tr.available_from) ? t('resources.item.scheduled', { date: new Date(tr.available_from).toLocaleString(i18n.resolvedLanguage) }) : null;
+          return [tr.is_start_here ? t('learnHub.startHere') : null, st ? t(`resources.item.trackStateLabel.${st.key}`, { live: st.live, total: st.total }) : t(tr.is_published ? 'templates.published' : 'templates.draft'), opens].filter(Boolean).join(' · '); })()}</small></div>
+        <div className="sheet-actions">
+          <Button asChild variant="ghost" size="sm"><Link to="/learn/track/$id" params={{ id: tr.id }}><Eye />{t('resources.item.previewTitle')}</Link></Button>
+          <Button asChild variant="secondary" size="sm"><Link to="/learn/create" search={{ type: 'video', id: tr.id }}><Pencil />{t('templates.edit')}</Link></Button>
+          <Button variant="ghost" size="sm" onClick={() => setEditing(tr)}>{t('resources.item.trackStatus')}</Button></div></div>
       {data && <LessonOrder track={tr} lessons={lessonsOf(data, tr.id)} onEdit={setLesson} />}
     </article>)}</div> : <EmptyState compact icon="BookOpen" text={t('learnHub.noTracksYet')} />}
     <TrackEditor track={editing ?? (flowEditing ? { cover_style: own.length % COVER_STYLES.length } : null)} teamId={teamId} onClose={closeTrack} preset={editing ? null : flow} />

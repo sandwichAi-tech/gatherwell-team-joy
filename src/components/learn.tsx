@@ -7,6 +7,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { toast } from 'sonner';
+import { isLive } from '@/lib/resource-flow';
 import { ArrowLeft, ArrowRight, Bell, BellRing, Bookmark, BookmarkCheck, CalendarPlus, Check, Clock, ExternalLink, FileText, Link2, Play, Radio, Settings2, Share2, Video, Waveform, Download } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { useGatherwell } from '@/components/gatherwell-shell';
@@ -138,6 +139,11 @@ export function TrackPage({ id }: { id: string }) {
   const showDrafts = leader && track.team_id === teamId;
   const outline = visibleLessons(data, id, showDrafts);
   const s = trackStats(data, id, outline); const title = trackTitle(track, lang);
+  const opensAt = (track as { available_from?: string | null }).available_from;
+  // Before activation, participants see an honest scheduled state and no lessons (the server also withholds them).
+  if (!isLive(opensAt) && !showDrafts) return <section className="panel"><BackLink to="/learn" label={t('learn.title')} />
+    <h1>{title}</h1><p className="chip" role="status">{t('resources.item.notYet')}</p>
+    <p className="auth-subtitle">{t('resources.item.notYetText', { date: new Date(opensAt!).toLocaleString(lang) })}</p></section>;
   return <>
     <BackLink to="/learn" label={t('learn.title')} />
     <section className="track-hero"><LearnCover path={track.cover_url} style={track.cover_style} title={title} className="is-wide" />
