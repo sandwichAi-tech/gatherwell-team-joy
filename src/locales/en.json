@@ -6200,7 +6200,13 @@
       "template_missing": "failed (template removed)",
       "no_recipient": "failed (no reachable recipient)",
       "unknown_step": "failed (unknown step)"
-    }
+    },
+    "offeringScopeTitle": "Events and resources",
+    "offeringScopeHint": "Automations and journeys currently support event registration, reminders and cancellations. Resource enrollment triggers and coach announcement subscriptions are not connected yet.",
+    "resourcesLink": "Manage resources",
+    "relatedEvent": "Related event",
+    "allEvents": "All workspace events",
+    "attendeeAudience": "Audience: registered attendees of the selected event. Selecting all events applies to workspace event registrations."
   },
   "payReady": {
     "title": "Getting paid",

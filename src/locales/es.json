@@ -6200,7 +6200,13 @@
       "template_missing": "falló (plantilla eliminada)",
       "no_recipient": "falló (sin destinatario)",
       "unknown_step": "falló (paso desconocido)"
-    }
+    },
+    "offeringScopeTitle": "Eventos y recursos",
+    "offeringScopeHint": "Las automatizaciones y recorridos admiten inscripciones, recordatorios y cancelaciones de eventos. Los activadores de inscripción a recursos y las suscripciones a anuncios de coaches aún no están conectados.",
+    "resourcesLink": "Administrar recursos",
+    "relatedEvent": "Evento relacionado",
+    "allEvents": "Todos los eventos del espacio",
+    "attendeeAudience": "Audiencia: personas inscritas al evento seleccionado. Todos los eventos se aplica a las inscripciones de eventos del espacio."
   },
   "payReady": {
     "title": "Cómo cobrar",
