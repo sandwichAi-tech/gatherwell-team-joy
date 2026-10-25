@@ -18,7 +18,6 @@ import { toast } from 'sonner';
 import { Plus, Check, Download, Lock, ChevronRight, Pencil, Upload, FileText, CalendarDays } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { useGatherwell } from '@/components/gatherwell-shell';

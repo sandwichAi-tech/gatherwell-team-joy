@@ -11,7 +11,6 @@ import { toast } from 'sonner';
 import { ArrowDown, ArrowLeft, ArrowUp, GripVertical, Pencil, Plus, Trash2, Upload } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { supabase } from '@/integrations/supabase/client';
