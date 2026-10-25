@@ -6,6 +6,7 @@ import { publicShareImage } from '@/lib/public-media.functions';
 import { GuestShell } from '@/components/guest-shell';
 import { FollowPage } from '@/components/follow';
 import { RetryState } from '@/components/launch-states';
+import { publicIndexing } from '@/lib/seo';
 
 export const Route = createFileRoute('/t/$slug')({
   loader: async ({ context, params }) => {

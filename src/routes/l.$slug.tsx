@@ -7,6 +7,7 @@ import { publicLocationPhotos } from '@/lib/locations.functions';
 import { GuestShell } from '@/components/guest-shell';
 import { LocationPublicPage } from '@/components/locations';
 import { RetryState } from '@/components/launch-states';
+import { publicIndexing } from '@/lib/seo';
 
 export const Route = createFileRoute('/l/$slug')({
   loader: async ({ context, params }) => {
