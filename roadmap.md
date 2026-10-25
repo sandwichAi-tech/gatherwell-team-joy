@@ -1,5 +1,10 @@
 # Roadmap
 
+## Reopened image creator and persistent admin navigation
+- [ ] Unify Square/Story/Wide composition and exports; focal cropping, safe text bounds and canonical footer.
+- [ ] Global authorized Admin dashboard menu, desktop/mobile EN/ES return flow.
+- [ ] Layout/auth tests, full suite, automatic build/typecheck and actual export verification.
+
 ## Newly added Website Notes — translation repair
 - [x] Home network EN/ES strings, localized fallback safety and real /network CTA.
 - [x] Resource create string leaf, existing chooser → type-specific editor actions and unchanged authorization.
