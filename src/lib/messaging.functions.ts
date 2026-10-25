@@ -108,7 +108,7 @@ export const listMessageJourneys = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     const { data: journeys, error } = await context.supabase
       .from('message_journeys')
-      .select('id, name, start_trigger, status, created_at')
+      .select('id, name, start_trigger, status, created_at, offer_id')
       .eq('team_id', data.teamId)
       .order('created_at', { ascending: true });
     if (error) throw new Error(error.message);
@@ -121,8 +121,13 @@ export const listMessageJourneys = createServerFn({ method: 'POST' })
 
 export const saveMessageJourney = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { teamId: string; id?: string | null; name: string; start_trigger: string; steps: unknown[] }) => input)
+  .inputValidator((input: { teamId: string; id?: string | null; name: string; start_trigger: string; steps: unknown[]; offerId?: string }) => input)
   .handler(async ({ data, context }) => {
+    if (data.start_trigger === 'resource_enrollment') {
+      if (!data.offerId) throw new Error('resource_required');
+      const { data:id,error }=await context.supabase.rpc('save_resource_journey',{_team:data.teamId,_id:data.id??null,_offer:data.offerId,_name:data.name,_steps:data.steps as never});
+      if(error)throw new Error(error.message);return {id};
+    }
     const { data: id, error } = await context.supabase.rpc('save_message_journey', {
       _team: data.teamId, _id: data.id ?? null, _name: data.name, _start_trigger: data.start_trigger,
       _steps: data.steps,
@@ -157,5 +162,7 @@ export const getJourneyRuns = createServerFn({ method: 'POST' })
       _team: data.teamId, _journey: data.journeyId ?? null, _limit: data.limit ?? 20,
     } as never);
     if (error) throw new Error(error.message);
-    return rows;
+    const {data:resource,error:resourceError}=await context.supabase.from('resource_journey_runs').select('id,journey_id,status,current_step,steps_snapshot,next_run_at,note,created_at,offers(title_en)').eq('team_id',data.teamId).order('created_at',{ascending:false}).limit(data.limit??20);
+    if(resourceError)throw new Error(resourceError.message);
+    return [...(rows??[]),...(resource??[]).map(r=>({...r,journey_name:'',event_title:r.offers?.title_en??'',step_count:Array.isArray(r.steps_snapshot)?r.steps_snapshot.length:0,current_step_kind:null}))];
   });

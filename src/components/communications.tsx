@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { GwIcon } from '@/components/gw-icon';
 import {
-  MESSAGE_CHANNELS, MESSAGE_TRIGGERS, JOURNEY_CONDITIONS, TEMPLATE_VARIABLES,
+  MESSAGE_CHANNELS, MESSAGE_TRIGGERS, JOURNEY_TRIGGERS, JOURNEY_CONDITIONS, TEMPLATE_VARIABLES,
   validateTemplateDraft, validateAutomationDraft, validateJourneySteps, journeyCanActivate, moveStep,
   type JourneyStep, type MessageChannel, type MessageTrigger,
 } from '@/lib/messaging';
@@ -27,7 +27,7 @@ import {
 
 type Template = { id: string; team_id: string | null; name: string; channel: string; language: string; subject: string | null; body: string; variables: string[]; audience: string; archived: boolean };
 type Automation = { id: string; name: string; trigger: string; timing_hours: number; audience: string; channel: string; template_id: string | null; event_id: string | null; status: string };
-type Journey = { id: string; name: string; start_trigger: string; status: string; steps: { id: string; sort_order: number; kind: string; config: Record<string, unknown> }[] };
+type Journey = { id: string; name: string; start_trigger: string; status: string; offer_id?: string | null; steps: { id: string; sort_order: number; kind: string; config: Record<string, unknown> }[] };
 type Setup = { email: boolean; sms: boolean; inApp: boolean };
 
 const MANAGER_ROLES = ['owner', 'admin', 'host'];
@@ -446,7 +446,9 @@ function JourneyEditor({ teamId, journey, templates, onClose, onSaved }: { teamI
   const { t } = useTranslation();
   const saveFn = useServerFn(saveMessageJourney);
   const [name, setName] = useState(journey?.name ?? '');
-  const [trigger, setTrigger] = useState<MessageTrigger>((journey?.start_trigger as MessageTrigger) ?? 'registration_confirmation');
+  const [trigger, setTrigger] = useState<string>(journey?.start_trigger ?? 'registration_confirmation');
+  const [offerId,setOfferId]=useState(journey?.offer_id??'');
+  const {data:offers=[]}=useQuery({queryKey:['message-resources',teamId],queryFn:async()=>{const {data,error}=await supabase.from('offers').select('id,title_en').eq('team_id',teamId).order('created_at',{ascending:false}).limit(100);if(error)throw error;return data??[];}});
   const [steps, setSteps] = useState<JourneyStep[]>(() => (journey?.steps ?? []).map(s => {
     if (s.kind === 'wait') return { kind: 'wait', hours: Number(s.config['hours'] ?? 24) };
     if (s.kind === 'send') return { kind: 'send', template_id: String(s.config['template_id'] ?? '') };
@@ -465,7 +467,7 @@ function JourneyEditor({ teamId, journey, templates, onClose, onSaved }: { teamI
     if (validation) { toast.error(t(`comms.err.${validation}`)); return; }
     setBusy(true);
     try {
-      await saveFn({ data: { teamId, id: journey?.id ?? null, name, start_trigger: trigger, steps } });
+      await saveFn({ data: { teamId, id: journey?.id ?? null, name, start_trigger: trigger, steps, ...(trigger==='resource_enrollment'?{offerId}: {}) } });
       toast.success(t('comms.savedDraft')); onSaved();
     } catch (e) { toast.error(rpcError(t, e)); }
     setBusy(false);
@@ -480,9 +482,10 @@ function JourneyEditor({ teamId, journey, templates, onClose, onSaved }: { teamI
     <div className="form-section">
       <label className="field-label" htmlFor="mj-trigger">{t('comms.startTrigger')}</label>
       <select id="mj-trigger" className="field-input" value={trigger} onChange={e => setTrigger(e.target.value as MessageTrigger)}>
-        {MESSAGE_TRIGGERS.map(tr => <option key={tr} value={tr}>{t(`comms.trigger.${tr}`)}</option>)}
+        {JOURNEY_TRIGGERS.map(tr => <option key={tr} value={tr}>{t(`comms.trigger.${tr}`)}</option>)}
       </select>
     </div>
+    {trigger==='resource_enrollment'&&<label className="field-label">{t('comms.relatedResource')}<select className="field-input" value={offerId} onChange={e=>setOfferId(e.target.value)}><option value="">{t('comms.chooseResource')}</option>{offers.map(o=><option key={o.id} value={o.id}>{o.title_en}</option>)}</select><small>{t('comms.resourceScope')}</small></label>}
 
     <div className="form-section">
       <span className="field-label">{t('comms.steps')}</span>

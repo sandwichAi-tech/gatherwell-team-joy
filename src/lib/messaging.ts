@@ -9,10 +9,11 @@ export type MessageChannel = (typeof MESSAGE_CHANNELS)[number];
 
 /** Triggers the platform can truthfully fire today (DB triggers enqueue into notification_outbox). */
 export const MESSAGE_TRIGGERS = ['registration_confirmation', 'event_reminder', 'event_cancellation'] as const;
+export const JOURNEY_TRIGGERS = [...MESSAGE_TRIGGERS, 'resource_enrollment'] as const;
 export type MessageTrigger = (typeof MESSAGE_TRIGGERS)[number];
 
 /** Conditions a journey step can actually evaluate against platform data. */
-export const JOURNEY_CONDITIONS = ['rsvp_status_going', 'event_not_full', 'not_checked_in'] as const;
+export const JOURNEY_CONDITIONS = ['rsvp_status_going', 'event_not_full', 'not_checked_in', 'enrollment_active'] as const;
 export type JourneyCondition = (typeof JOURNEY_CONDITIONS)[number];
 
 export const JOURNEY_STEP_KINDS = ['wait', 'send', 'condition'] as const;
