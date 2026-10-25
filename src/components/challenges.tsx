@@ -166,6 +166,25 @@ function PhotoGallery({ paths }: { paths: string[] }) {
     {urls.length ? <div className="photo-grid">{urls.map(u => <a key={u} href={u} target="_blank" rel="noopener noreferrer"><img src={u} alt={t('challenges.progressPhoto')} loading="lazy" /></a>)}</div> : <EmptyState compact icon="Camera" text={t('challenges.noPhotos')} />}</section>;
 }
 
+/** One assigned activity on the participant view: instructions, due time, and its link/resource/file. */
+function ActivityRow({ a, lang }: { a: ChallengeActivity; lang: string }) {
+  const { t } = useTranslation();
+  const { data: fileUrl } = useQuery({ queryKey: ['challenge-file', a.file_path], queryFn: () => learnFileUrl(a.file_path), enabled: !!a.file_path, staleTime: 50 * 60_000 });
+  const title = pick(lang, a.title_en, a.title_es); const instructions = pick(lang, a.instructions_en, a.instructions_es);
+  const res = a.resource_kind === 'offer' && a.resource_id ? { to: '/offer/$id', params: { id: a.resource_id } }
+    : a.resource_kind === 'track' && a.resource_id ? { to: '/learn/track/$id', params: { id: a.resource_id } }
+    : a.resource_kind === 'recipe' && a.resource_id ? { to: '/learn/recipe/$id', params: { id: a.resource_id } } : null;
+  return <li className="challenge-activity">
+    <div className="lesson-info"><strong>{title}</strong>{instructions ? <small>{instructions}</small> : null}
+      <small>{[a.due_hour != null ? t('challenges.dueAt', { hour: a.due_hour }) : null, a.requires_checkin ? t('challenges.builder.requiresCheckin') : null, a.requires_note ? t('challenges.builder.requiresNote') : null].filter(Boolean).join(' · ')}</small></div>
+    <div className="offer-row-actions">
+      {res && <Button asChild variant="secondary" size="sm"><Link to={res.to} params={res.params}>{t('resources.open')}</Link></Button>}
+      {a.link_url && /^https?:\/\/\S+$/i.test(a.link_url) && <Button asChild variant="secondary" size="sm"><a href={a.link_url} target="_blank" rel="noopener noreferrer">{t('challenges.openLink')}</a></Button>}
+      {fileUrl && <Button asChild variant="secondary" size="sm"><a href={fileUrl} target="_blank" rel="noopener noreferrer">{t('challenges.openFile')}</a></Button>}
+    </div>
+  </li>;
+}
+
 export function ChallengePage({ id }: { id: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en'; const qc = useQueryClient();
   const { userId } = useGatherwell(); const { data: workspace } = useQuery(workspaceQuery(userId));
