@@ -125,9 +125,9 @@ function LessonEditor({ lesson, teamId, onClose, preset }: { lesson: (Partial<Le
   const urlLabel = f.type === 'video' ? 'learnHub.videoLink' : f.type === 'pdf' ? 'learnHub.pdfLink' : f.type === 'audio' ? 'learnHub.audioLink' : 'learnHub.link';
   return <ResponsiveSheet open={!!lesson} onOpenChange={o => !o && onClose()} title={preset && !lesson?.id ? t(`resources.preset.lesson.${preset}`) : lesson?.id ? t('learnHub.editLesson') : t('learnHub.newLesson')} description={preset && !lesson?.id ? t(`resources.preset.lessonText.${preset}`) : undefined}>
     <div className="edit-form">
-      <div className="bilingual"><Field id="ls-en" label={`${t('templates.title')} · EN`}><Input id="ls-en" className="field-input" maxLength={140} value={f.title_en} onChange={set('title_en')} /></Field>
-        <Field id="ls-es" label={`${t('templates.title')} · ES`}><Input id="ls-es" className="field-input" maxLength={140} value={f.title_es} onChange={set('title_es')} /></Field></div>
-      <TranslatePair pairs={[['title_en', 'title_es'], ['notes_en', 'notes_es']]} f={f} setF={setF} />
+      <LangFields idPrefix="ls" titleEn={f.title_en} titleEs={f.title_es} descEn={f.notes_en} descEs={f.notes_es}
+        onChange={p => setF(x => ({ ...x, title_en: p.titleEn ?? x.title_en, title_es: p.titleEs ?? x.title_es, notes_en: p.descEn ?? x.notes_en, notes_es: p.descEs ?? x.notes_es }))}
+        titleLabel={t('templates.title')} descLabel={t('learnHub.notes')} titleMax={140} descMax={4000} descRows={4} />
       {preset && !lesson?.id ? <p className="chip lesson-preset-chip">{t(`learnHub.type.${f.type}`)}</p> :
         <div className="form-field"><span className="field-label">{t('learnHub.lessonType')}</span>
           <div className="type-choices">{(['video', 'pdf', 'audio', 'link', 'live'] as const).map(ty => <button type="button" key={ty} className={`choice-card ${f.type === ty ? 'is-selected' : ''}`} aria-pressed={f.type === ty} onClick={() => setF({ ...f, type: ty })}><strong>{t(`learnHub.type.${ty}`)}</strong></button>)}</div></div>}
@@ -144,8 +144,6 @@ function LessonEditor({ lesson, teamId, onClose, preset }: { lesson: (Partial<Le
         <Field id="ls-replay" label={t('learnHub.replayLink')}><Input id="ls-replay" type="url" className="field-input" placeholder="https://" value={f.replay} onChange={set('replay')} /></Field>
         <p className="field-hint">{t('learnHub.replayHint')}</p></>}
       <Field id="ls-dur" label={t('learnHub.duration')}><Input id="ls-dur" type="number" min={1} max={600} className="field-input" value={f.duration} onChange={set('duration')} /></Field>
-      <div className="bilingual"><Field id="ln-en" label={`${t('learnHub.notes')} · EN`}><Textarea id="ln-en" rows={4} className="field-textarea" maxLength={4000} value={f.notes_en} onChange={set('notes_en')} /></Field>
-        <Field id="ln-es" label={`${t('learnHub.notes')} · ES`}><Textarea id="ln-es" rows={4} className="field-textarea" maxLength={4000} value={f.notes_es} onChange={set('notes_es')} /></Field></div>
       <Button className="onboarding-continue" disabled={busy || !ok} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
       {lesson?.id && <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('learnHub.deleteLesson')}</Button>}
     </div>
