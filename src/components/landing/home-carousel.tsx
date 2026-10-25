@@ -3,14 +3,17 @@ import { useTranslation } from 'react-i18next';
 import { BrandImage } from '@/components/brand-image';
 import { GwIcon } from '@/components/gw-icon';
 import { CAROUSEL_SLIDES } from '@/lib/homepage';
+import { track } from '@/lib/landing';
 
 /** Must match the gap in .gw-carousel (styles.css). */
 const GAP_PX = 16;
 
 /**
- * Homepage marketing carousel: approved category imagery with a short caption.
- * Native scroll-snap gives touch swipe/drag for free; buttons and arrow keys move one
- * card at a time. Never auto-advances, so reduced-motion users lose nothing.
+ * Homepage marketing carousel: approved category imagery with a short caption, and
+ * every slide is a real link (host an event, build a course, discover events or
+ * coaches). Native scroll-snap gives touch swipe/drag for free; buttons and arrow
+ * keys move one card at a time. Never auto-advances, so reduced-motion users lose
+ * nothing.
  */
 export function HomeCarousel() {
   const { t } = useTranslation();
@@ -49,11 +52,14 @@ export function HomeCarousel() {
     <div className="gw-container">
       <ul ref={trackRef} className="gw-carousel" tabIndex={0} aria-label={t('home.carousel.label')} onKeyDown={onKey}>
         {CAROUSEL_SLIDES.map((s, i) => <li key={s.key} className="gw-carousel-card" aria-roledescription="slide" aria-label={`${t(`home.carousel.slides.${s.key}.title`)} — ${t('home.carousel.slideOf', { n: i + 1, count })}`}>
-          <BrandImage slot={s.slot} alt="" className="gw-carousel-photo" aspect={4 / 3} sizes="(min-width: 1024px) 400px, 86vw" priority />
-          <div className="gw-carousel-caption">
-            <span className="gw-carousel-cat">{t(`home.carousel.slides.${s.key}.title`)}</span>
-            <span className="gw-carousel-line">{t(`home.carousel.slides.${s.key}.line`)}</span>
-          </div>
+          <a href={s.href} className="gw-carousel-link" onClick={() => track('carousel_slide_click', { slide: s.key })}>
+            <BrandImage slot={s.slot} alt="" className="gw-carousel-photo" aspect={3 / 2} sizes="(min-width: 1024px) 400px, 86vw" priority={i === 0} />
+            <span className="gw-carousel-caption">
+              <span className="gw-carousel-cat">{t(`home.carousel.slides.${s.key}.title`)}</span>
+              <span className="gw-carousel-line">{t(`home.carousel.slides.${s.key}.line`)}</span>
+              <span className="gw-carousel-cta">{t(`home.carousel.slides.${s.key}.cta`)}<GwIcon name="ArrowRight" size={16} /></span>
+            </span>
+          </a>
         </li>)}
       </ul>
       <div className="gw-carousel-nav">

@@ -38,10 +38,10 @@
     "previewNote": "Sample preview. This action is not connected yet.",
     "save": "Save"
   },
-  "home": {
+"home":   {
     "meta": {
-      "title": "ZoheeWell · Bring people together",
-      "description": "Create, sell, and run events, retreats, courses, and memberships—all in one place. Start hosting free on ZoheeWell."
+      "title": "ZoheeWell · Host events, courses, and community in one place",
+      "description": "ZoheeWell helps wellness hosts and coaches create events and retreats, sell tickets, teach courses, and grow their community. Create your first event free."
     },
     "nav": {
       "hosts": "For Hosts",
@@ -50,38 +50,42 @@
     },
     "cta": {
       "start": "Start hosting",
-      "startFree": "Start hosting free",
-      "explore": "Explore what's happening",
+      "createEvent": "Create an event",
+      "discover": "Discover events",
       "exploreAll": "Explore events and learning"
     },
     "soon": "Coming soon",
     "hero": {
-      "eyebrow": "For hosts, creators & community builders",
-      "title": "Bring people together. We'll handle the rest.",
-      "lede": "Create, sell, and run events, retreats, courses, and memberships—all in one place.",
+      "eyebrow": "For hosts, coaches & community builders",
+      "title": "One home for your events, courses, and community.",
+      "lede": "Create events and retreats, sell tickets, teach courses, and keep your people close — without juggling five different tools.",
       "tagline": "Life is better together."
     },
     "carousel": {
-      "label": "What you can host on ZoheeWell",
+      "label": "What you can do on ZoheeWell",
       "prev": "Previous slide",
       "next": "Next slide",
       "slideOf": "{{n}} of {{count}}",
       "slides": {
-        "events": {
-          "title": "Events",
-          "line": "Fill every seat."
+        "hostEvents": {
+          "title": "Host events & retreats",
+          "line": "Tickets, waivers, and check-in, handled.",
+          "cta": "Start hosting"
         },
-        "retreats": {
-          "title": "Retreats",
-          "line": "Multi-day, handled."
+        "teach": {
+          "title": "Teach courses & resources",
+          "line": "Lessons, quizzes, and guides in one place.",
+          "cta": "Start building"
         },
-        "courses": {
-          "title": "Courses",
-          "line": "Teach once, reach many."
+        "discoverEvents": {
+          "title": "Find something worth showing up for",
+          "line": "Browse public events and retreats.",
+          "cta": "Explore events"
         },
-        "communities": {
-          "title": "Communities",
-          "line": "Keep people coming back."
+        "coaches": {
+          "title": "Meet the hosts",
+          "line": "Follow coaches and their upcoming events.",
+          "cta": "Meet coaches"
         }
       }
     },
@@ -89,24 +93,42 @@
       "label": "Host toolkit",
       "title": "Everything you need to host",
       "cards": {
-        "createSell": {
-          "title": "Create & sell",
-          "body": "Events, retreats, tickets, courses and memberships—free or paid."
+        "events": {
+          "title": "Events & retreats",
+          "body": "One-time or multi-day, with tickets, waitlists, waivers, and QR check-in.",
+          "cta": "Create an event"
         },
-        "runConnect": {
-          "title": "Run & connect",
-          "body": "Invites, reminders, check-in and updates keep everyone in sync."
+        "learning": {
+          "title": "Courses, resources & quizzes",
+          "body": "Build lessons, guides, downloads, and quizzes — free or paid.",
+          "cta": "Start building"
         },
-        "teachGrow": {
-          "title": "Teach & grow",
-          "body": "Lessons, resources and a public profile help your community grow."
+        "communications": {
+          "title": "Communications & journeys",
+          "body": "Reminders, updates, and automated follow-ups by email; SMS when enabled.",
+          "cta": "Plan messages"
+        },
+        "profile": {
+          "title": "Public profile & discovery",
+          "body": "A public page and a Discover listing so new people can find you.",
+          "cta": "Set up your profile"
+        },
+        "payments": {
+          "title": "Payments & plans",
+          "body": "Start free. Platform fees run 5% to 0.5% by plan; card payments switch on after Stripe setup.",
+          "cta": "See pricing"
         }
       },
       "seeAll": "See all host tools"
     },
     "attend": {
-      "title": "Looking for something to join?",
-      "body": "Find events, retreats and courses near you—or online."
+      "title": "For people discovering wellness",
+      "body": "Browse public events, resources, and coaches — no account needed to look.",
+      "paths": {
+        "events": "Events",
+        "resources": "Resources",
+        "coaches": "Coaches"
+      }
     },
     "pricing": {
       "label": "Pricing",
@@ -133,7 +155,7 @@
       "line": "Privacy-first, fully bilingual, accessible by design, and honest about what's live."
     },
     "final": {
-      "title": "Ready to bring people together?"
+      "title": "Ready to host your first event?"
     },
     "paymentsSoon": "Payments coming soon",
     "footer": {

@@ -134,7 +134,7 @@ export function formatDistance(km: number, lang: string) {
   return `${number(mi)} mi`;
 }
 
-export type AnalyticsEvent = 'hero_find_click' | 'hero_host_click' | 'category_click' | 'feed_rsvp_click' | 'sticky_cta_click' | 'sticky_cta_view' | 'location_prompt_accept' | 'location_prompt_decline';
+export type AnalyticsEvent = 'hero_find_click' | 'hero_host_click' | 'category_click' | 'feed_rsvp_click' | 'sticky_cta_click' | 'sticky_cta_view' | 'location_prompt_accept' | 'location_prompt_decline' | 'carousel_slide_click' | 'home_tool_click' | 'home_discover_path_click';
 
 /** Landing events go through the shared analytics helper. */
 export function track(event: AnalyticsEvent, props: Record<string, string | number | boolean | null | undefined> = {}) {

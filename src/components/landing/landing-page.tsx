@@ -10,7 +10,7 @@ import { HomeCarousel } from '@/components/landing/home-carousel';
 import { LandingFrame, StickyFindBar } from '@/components/landing/landing-chrome';
 import { track } from '@/lib/landing';
 import { QueryFeedback } from '@/components/launch-states';
-import { HOME_TOOL_CARDS } from '@/lib/homepage';
+import { HOME_DISCOVER_PATHS, HOME_TOOL_CARDS } from '@/lib/homepage';
 
 export function LandingPage() {
   return <LandingFrame>
@@ -28,9 +28,10 @@ export function LandingPage() {
   </LandingFrame>;
 }
 
-function StartHosting({ className = 'gw-btn gw-btn-primary gw-btn-lg', where }: { className?: string; where: string }) {
+/** Primary host-first action: signed-out visitors go through sign-in/onboarding and land on event creation. */
+function CreateEvent({ className = 'gw-btn gw-btn-primary gw-btn-lg', where }: { className?: string; where: string }) {
   const { t } = useTranslation();
-  return <Link to="/login" search={{ intent: 'host' }} className={className} onClick={() => track('hero_host_click', { variant: where })}>{t('home.cta.startFree')}<GwIcon name="ArrowRight" size={18} /></Link>;
+  return <Link to="/login" search={{ intent: 'host' }} className={className} onClick={() => track('hero_host_click', { variant: where })}>{t('home.cta.createEvent')}<GwIcon name="ArrowRight" size={18} /></Link>;
 }
 
 function Hero() {
@@ -41,8 +42,8 @@ function Hero() {
       <h1 id="home-h1" className="gw-display gw-hero-h1">{t('home.hero.title')}</h1>
       <p className="gw-lede">{t('home.hero.lede')}</p>
       <div className="gw-hero-ctas">
-        <StartHosting where="hero" />
-        <Link to="/discover" className="gw-btn gw-btn-secondary gw-btn-lg" onClick={() => track('hero_find_click', { variant: 'hero' })}>{t('home.cta.explore')}</Link>
+        <CreateEvent where="hero" />
+        <Link to="/discover" className="gw-btn gw-btn-secondary gw-btn-lg" onClick={() => track('hero_find_click', { variant: 'hero' })}>{t('home.cta.discover')}</Link>
       </div>
       <p className="gw-home-tagline">{t('home.hero.tagline')}</p>
     </div>
@@ -55,9 +56,14 @@ function Toolkit() {
     <span className="gw-label">{t('home.tools.label')}</span>
     <h2 id="tools-title" className="gw-display gw-h2">{t('home.tools.title')}</h2>
     <ul className="gw-home-cards">{HOME_TOOL_CARDS.map(c => <li key={c.key}>
-      <span className="gw-home-tool-icon" aria-hidden="true"><GwIcon name={c.icon} variant="marketing" size={20} /></span>
-      <h3>{t(`home.tools.cards.${c.key}.title`)}</h3>
-      <p>{t(`home.tools.cards.${c.key}.body`)}</p>
+      <a href={c.href} className="gw-home-tool" onClick={() => track('home_tool_click', { tool: c.key })}>
+        <span className="gw-home-tool-icon" aria-hidden="true"><GwIcon name={c.icon} variant="marketing" size={20} /></span>
+        <span className="gw-home-tool-body">
+          <h3>{t(`home.tools.cards.${c.key}.title`)}</h3>
+          <p>{t(`home.tools.cards.${c.key}.body`)}</p>
+          <span className="gw-home-tool-cta">{t(`home.tools.cards.${c.key}.cta`)}<GwIcon name="ArrowRight" size={16} /></span>
+        </span>
+      </a>
     </li>)}</ul>
     <Link to="/hosts" className="gw-see-all">{t('home.tools.seeAll')}<GwIcon name="ArrowRight" size={16} /></Link>
   </div></section>;
@@ -65,12 +71,16 @@ function Toolkit() {
 
 function AttendeeBand() {
   const { t } = useTranslation();
-  return <section className="gw-home-sec gw-band gw-band-white" aria-labelledby="att-title"><div className="gw-container gw-home-band">
-    <div className="gw-home-band-copy">
-      <h2 id="att-title" className="gw-display gw-h2">{t('home.attend.title')}</h2>
-      <p>{t('home.attend.body')}</p>
-    </div>
-    <Link to="/discover" className="gw-btn gw-btn-secondary gw-btn-lg">{t('home.cta.exploreAll')}</Link>
+  return <section className="gw-home-sec gw-band gw-band-white" aria-labelledby="att-title"><div className="gw-container">
+    <h2 id="att-title" className="gw-display gw-h2">{t('home.attend.title')}</h2>
+    <p className="gw-home-attend-lede">{t('home.attend.body')}</p>
+    <ul className="gw-home-paths">{HOME_DISCOVER_PATHS.map(p => <li key={p.key}>
+      <a href={p.href} className="gw-home-path" onClick={() => track('home_discover_path_click', { path: p.key })}>
+        <span className="gw-home-tool-icon" aria-hidden="true"><GwIcon name={p.icon} variant="marketing" size={20} /></span>
+        <span>{t(`home.attend.paths.${p.key}`)}</span>
+        <GwIcon name="ArrowRight" size={16} />
+      </a>
+    </li>)}</ul>
   </div></section>;
 }
 
@@ -78,7 +88,7 @@ function FinalCta() {
   const { t } = useTranslation();
   return <section className="gw-home-sec gw-band gw-band-canvas" aria-labelledby="final-title"><div className="gw-container gw-home-final">
     <h2 id="final-title" className="gw-display gw-h2">{t('home.final.title')}</h2>
-    <div className="gw-final-ctas"><StartHosting where="final" /><Link to="/discover" className="gw-btn gw-btn-secondary gw-btn-lg">{t('home.cta.exploreAll')}</Link></div>
+    <div className="gw-final-ctas"><CreateEvent where="final" /><Link to="/discover" className="gw-btn gw-btn-secondary gw-btn-lg">{t('home.cta.exploreAll')}</Link></div>
     <p className="gw-home-priceline">{t('home.pricing.teaser')} <Link to="/pricing" className="gw-textlink">{t('home.pricing.see')}</Link></p>
     <p className="gw-fine">{t('home.trust.line')}</p>
   </div></section>;
