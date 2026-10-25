@@ -253,6 +253,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
           url: l.url ?? '', storagePath: l.storage_path, replay: l.replay_url ?? '',
           live: l.live_starts_at ? toLocalInput(new Date(l.live_starts_at)) : '', meeting: '',
         } }));
+        setVisibility(tr.data.visibility === 'public' || tr.data.visibility === 'unlisted' ? tr.data.visibility : 'team');
         setLoaded({ entity: 'track', id: initialId, status: tr.data.is_published ? 'published' : 'draft' });
         setLoadingItem(false);
         return;
@@ -379,7 +380,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
       cover_url: item.coverPath, cover_style: item.coverStyle, ...presentationCols,
     };
     if (isTrackFlow(type) && lessonType) {
-      const row = { ...base, is_published: publish };
+      const row = { ...base, is_published: publish, visibility, host_id: userId, resource_kind: lessonType };
       const tr = loaded?.entity === 'track'
         ? await db.from('tracks').update(row).eq('id', loaded.id).select('id').single()
         : await db.from('tracks').insert({ ...row, team_id: teamId, sort_order: Date.now() % 1_000_000 }).select('id').single();
