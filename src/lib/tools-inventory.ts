@@ -12,7 +12,7 @@ export type ToolSectionId =
 export type ToolId =
   | 'events' | 'eventNew' | 'blueprints'
   | 'learn' | 'learnCreate' | 'learnManage' | 'learnTemplates'
-  | 'offers' | 'promos' | 'earnings'
+  | 'offers' | 'promos' | 'referrals' | 'earnings'
   | 'communications' | 'followups'
   | 'team' | 'teamSettings' | 'teamInsights' | 'teamMap' | 'plan' | 'planSeats'
   | 'insights'
