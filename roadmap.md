@@ -1,5 +1,14 @@
 # Roadmap
 
+## Website Notes beta-quality pass (2026-10-25)
+- [ ] Home copy safety, real-record links, member/invite and monthly attendance destinations.
+- [ ] Existing platform admin access, owner identification and Owner Guide.
+- [ ] Insights date comparisons, definitions, drilldowns and attention signals.
+- [ ] Top-level Communication navigation and resource-related messaging.
+- [ ] Coach-specific public updates preferences and private subscriber segments; delivery depends on an appropriate configured provider.
+- [ ] Separate challenge creation and adaptive standard/retreat/multi-event builder.
+- [ ] Automated suite, live authorization checks, EN/ES mobile/desktop accessibility review and documentation.
+
 ## v0.33 custom coach public links
 - Done: /h/$slug pressure-test, custom slug editor with server-side validation/reserved words/uniqueness/rate limit, old-slug alias redirects, EN/ES, browser QA 16/16.
 - Open: screen-reader pass on the slug editor; second-account browser pass.
