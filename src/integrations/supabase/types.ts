@@ -1835,6 +1835,191 @@ export type Database = {
           },
         ]
       }
+      event_waiver_acceptances: {
+        Row: {
+          accepted_at: string
+          content_sha256: string
+          event_id: string
+          id: string
+          order_ref: string | null
+          rsvp_id: string
+          source: string
+          user_id: string | null
+          version: number
+          waiver_id: string
+        }
+        Insert: {
+          accepted_at?: string
+          content_sha256: string
+          event_id: string
+          id?: string
+          order_ref?: string | null
+          rsvp_id: string
+          source?: string
+          user_id?: string | null
+          version: number
+          waiver_id: string
+        }
+        Update: {
+          accepted_at?: string
+          content_sha256?: string
+          event_id?: string
+          id?: string
+          order_ref?: string | null
+          rsvp_id?: string
+          source?: string
+          user_id?: string | null
+          version?: number
+          waiver_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_waiver_acceptances_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_waiver_acceptances_rsvp_id_fkey"
+            columns: ["rsvp_id"]
+            isOneToOne: false
+            referencedRelation: "rsvps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_waiver_acceptances_waiver_id_fkey"
+            columns: ["waiver_id"]
+            isOneToOne: false
+            referencedRelation: "event_waivers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_waiver_versions: {
+        Row: {
+          body_en: string
+          body_es: string
+          content_sha256: string
+          created_at: string
+          file_name: string | null
+          file_path: string | null
+          kind: string
+          required: boolean
+          title_en: string
+          title_es: string
+          version: number
+          waiver_id: string
+        }
+        Insert: {
+          body_en: string
+          body_es: string
+          content_sha256: string
+          created_at?: string
+          file_name?: string | null
+          file_path?: string | null
+          kind: string
+          required: boolean
+          title_en: string
+          title_es: string
+          version: number
+          waiver_id: string
+        }
+        Update: {
+          body_en?: string
+          body_es?: string
+          content_sha256?: string
+          created_at?: string
+          file_name?: string | null
+          file_path?: string | null
+          kind?: string
+          required?: boolean
+          title_en?: string
+          title_es?: string
+          version?: number
+          waiver_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_waiver_versions_waiver_id_fkey"
+            columns: ["waiver_id"]
+            isOneToOne: false
+            referencedRelation: "event_waivers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_waivers: {
+        Row: {
+          archived_at: string | null
+          body_en: string
+          body_es: string
+          content_sha256: string
+          created_at: string
+          created_by: string | null
+          event_id: string
+          file_name: string | null
+          file_path: string | null
+          id: string
+          kind: string
+          position: number
+          required: boolean
+          team_id: string | null
+          title_en: string
+          title_es: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          archived_at?: string | null
+          body_en?: string
+          body_es?: string
+          content_sha256?: string
+          created_at?: string
+          created_by?: string | null
+          event_id: string
+          file_name?: string | null
+          file_path?: string | null
+          id?: string
+          kind?: string
+          position?: number
+          required?: boolean
+          team_id?: string | null
+          title_en?: string
+          title_es?: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          archived_at?: string | null
+          body_en?: string
+          body_es?: string
+          content_sha256?: string
+          created_at?: string
+          created_by?: string | null
+          event_id?: string
+          file_name?: string | null
+          file_path?: string | null
+          id?: string
+          kind?: string
+          position?: number
+          required?: boolean
+          team_id?: string | null
+          title_en?: string
+          title_es?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_waivers_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           accessibility_notes: string | null
@@ -1879,6 +2064,7 @@ export type Database = {
           offer_id: string | null
           online_url: string | null
           pass_fee: boolean
+          policy_config: Json | null
           price_cents: number | null
           public_rsvp_at: string | null
           recurrence: string
@@ -1954,6 +2140,7 @@ export type Database = {
           offer_id?: string | null
           online_url?: string | null
           pass_fee?: boolean
+          policy_config?: Json | null
           price_cents?: number | null
           public_rsvp_at?: string | null
           recurrence?: string
@@ -2029,6 +2216,7 @@ export type Database = {
           offer_id?: string | null
           online_url?: string | null
           pass_fee?: boolean
+          policy_config?: Json | null
           price_cents?: number | null
           public_rsvp_at?: string | null
           recurrence?: string
@@ -7365,6 +7553,10 @@ export type Database = {
         Returns: undefined
       }
       chat_platform: { Args: { _url: string }; Returns: string }
+      check_event_waivers: {
+        Args: { _accepted: Json; _event: string }
+        Returns: undefined
+      }
       check_in_code: { Args: { _code: string; _event: string }; Returns: Json }
       check_in_rsvp: {
         Args: { _rsvp: string; _undo?: boolean }
@@ -7549,10 +7741,28 @@ export type Database = {
       event_seats_used: { Args: { _event: string }; Returns: number }
       event_summary: { Args: { _event: string }; Returns: Json }
       event_waiver: { Args: { _event: string }; Returns: Json }
+      event_waiver_file_path: {
+        Args: {
+          _code: string
+          _token: string
+          _version: number
+          _waiver: string
+        }
+        Returns: string
+      }
       event_waiver_k: {
         Args: { _event: string; _token: string }
         Returns: Json
       }
+      event_waiver_list: {
+        Args: { _event: string; _token?: string }
+        Returns: Json
+      }
+      event_waiver_sha: {
+        Args: { w: Database["public"]["Tables"]["event_waivers"]["Row"] }
+        Returns: string
+      }
+      event_waiver_status: { Args: { _event: string }; Returns: Json }
       export_my_data: { Args: never; Returns: Json }
       feature_badge: {
         Args: { _id: string; _slot: number }
@@ -7815,6 +8025,7 @@ export type Database = {
       my_coach_updates: { Args: { _slug: string }; Returns: Json }
       my_consent_history: { Args: never; Returns: Json }
       my_contact_threads: { Args: never; Returns: Json }
+      my_event_waiver_acceptances: { Args: { _code: string }; Returns: Json }
       my_following: { Args: never; Returns: Json }
       my_invite_code: { Args: never; Returns: string }
       my_learning: { Args: never; Returns: Json }
@@ -7943,6 +8154,7 @@ export type Database = {
           team_id: string
         }[]
       }
+      policy_text_sha: { Args: { _t: string }; Returns: string }
       post_challenge_encouragement: {
         Args: { _c: string; _message: string }
         Returns: undefined
@@ -8033,6 +8245,31 @@ export type Database = {
           _token: string
           _updates_opt_in: boolean
           _waiver_name: string
+        }
+        Returns: {
+          code: string
+          status: string
+        }[]
+      }
+      register_attendance_waivers: {
+        Args: {
+          _answers: Json
+          _email: string
+          _event_id: string
+          _first: string
+          _language: string
+          _last: string
+          _mail: boolean
+          _phone: string
+          _plus_ones: number
+          _sms: boolean
+          _status: string
+          _terms_ok: boolean
+          _tier_id: string
+          _token: string
+          _updates_opt_in: boolean
+          _waiver_name: string
+          _waivers: Json
         }
         Returns: {
           code: string
@@ -8417,6 +8654,10 @@ export type Database = {
         Args: { _event: string; _location: string }
         Returns: undefined
       }
+      set_event_policy: {
+        Args: { _config: Json; _event: string; _text: string }
+        Returns: undefined
+      }
       set_event_retreat: {
         Args: { _ends_at: string; _event: string; _retreat: Json }
         Returns: undefined
@@ -8482,6 +8723,10 @@ export type Database = {
       start_quiz_attempt: { Args: { _quiz: string }; Returns: Json }
       storage_allows: { Args: { _bytes: number }; Returns: boolean }
       storage_used_bytes: { Args: { _uid: string }; Returns: number }
+      store_event_waivers: {
+        Args: { _accepted: Json; _ref: string; _rsvp: string; _source: string }
+        Returns: undefined
+      }
       submit_quiz: { Args: { _attempt: string }; Returns: Json }
       submit_verification: {
         Args: { _credentials: Json; _identity: string; _years: number }

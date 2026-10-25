@@ -40,7 +40,7 @@ const V5_FEE_PERCENT: Record<PlanId, number> = { free: 5, growth: 3, pro: 2 };
 const V5_LICENSE_FEE_PERCENT: Record<string, number> = { team25: 1, team100: 0.5 };
 
 /** App errors with their own wording; anything else is the provider's message. */
-const CHECKOUT_ERRORS = ['already_on_plan', 'already_on_license', 'price_mismatch', 'price_not_found', 'founding_free', 'no_subscription', 'no_period_end'];
+const CHECKOUT_ERRORS = ['waiver_required', 'waiver_stale', 'already_on_plan', 'already_on_license', 'price_mismatch', 'price_not_found', 'founding_free', 'no_subscription', 'no_period_end'];
 
 /** Says so once when the provider returns after a paid checkout. */
 function useCheckoutNotice() {

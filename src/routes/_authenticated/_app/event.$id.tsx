@@ -36,6 +36,7 @@ import { ShareKit } from '@/components/share-kit';
 import { NetworkShareToggle } from '@/components/network-share';
 import { MembersOnlyPicker } from '@/components/offers';
 import { WaiverEventToggle } from '@/components/waiver';
+import { EventWaiversManager } from '@/components/event-waivers';
 import { RsvpSettingsPanel } from '@/components/rsvp-questions';
 import { EventComments, GroupChatLink } from '@/components/conversation';
 import { HostUpdates } from '@/components/host-updates';
@@ -190,6 +191,7 @@ function EventDetailPage() {
       {isHost && event.visibility === 'public' && event.status === 'published' && <Feature flag="feature_network"><NetworkShareToggle eventId={event.id} /></Feature>}
       {manages && <RsvpSettingsPanel eventId={event.id} initial={{ questions: ((event as any).rsvp_questions ?? []), require_approval: !!(event as any).require_approval, visibility: event.visibility, invite_token: (event as any).invite_token ?? '', price_cents: (event as any).price_cents ?? null }} />}
       {isHost && <WaiverEventToggle eventId={event.id} teamId={event.team_id} value={!!(event as { requires_waiver?: boolean }).requires_waiver} />}
+      {manages && <EventWaiversManager eventId={event.id} userId={userId} />}
       {isHost && <MembersOnlyPicker table="events" id={event.id} teamId={event.team_id} />}
       {isHost && event.status === 'published' && <EarlyAccessPanel eventId={event.id} hostId={event.host_id} />}
     </ResponsiveSheet>

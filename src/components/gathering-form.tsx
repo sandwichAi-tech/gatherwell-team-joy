@@ -1,7 +1,6 @@
 import { blueprintDefaults } from '@/lib/blueprint-defaults';
 import { useFeature } from '@/lib/feature-flags';
-import { RefundSelect } from '@/components/refund-line';
-import { asRefundPolicy, type RefundPolicy } from '@/lib/refunds';
+import { policyFromEvent, policyIssues, policyPayload } from '@/lib/event-policy';
 import { PriceGuidance } from '@/components/coach-launch';
 import { RetreatEditor, cleanRetreat } from '@/components/retreat';
 import { EventDetailsSections, detailsFromEvent, detailsPayload, emptyDetails, type EventDetails } from '@/components/event-details-form';
@@ -60,7 +59,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const [place, setPlace] = useState<'person' | 'online' | 'hybrid'>('person'); const [locationName, setLocationName] = useState(''); const [address, setAddress] = useState('');
   const [details, setDetails] = useState<EventDetails>(emptyDetails);
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null); const [note, setNote] = useState(''); const [url, setUrl] = useState('');
-  const [price, setPrice] = useState(''); const [refund, setRefund] = useState<RefundPolicy>('24h'); const [limit, setLimit] = useState<null | 'gatherings' | 'storage'>(null);
+  const [price, setPrice] = useState(''); const [limit, setLimit] = useState<null | 'gatherings' | 'storage'>(null);
   const [capacity, setCapacity] = useState(''); const [communitySeats, setCommunitySeats] = useState(''); const [coverFee, setCoverFee] = useState(false); const [visibility, setVisibility] = useState<'public' | 'team' | 'invite'>('public');
   const [descEn, setDescEn] = useState(''); const [descEs, setDescEs] = useState(''); const [descTab, setDescTab] = useState<'en' | 'es'>(lang);
   const [wholeSeries, setWholeSeries] = useState(false); const [tpl, setTpl] = useState<{ id: string; title: string } | null>(null);
@@ -93,10 +92,9 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       const mins = e.ends_at ? Math.max(5, Math.round((new Date(e.ends_at).getTime() - new Date(e.starts_at).getTime()) / 60000)) : 60;
       setDuration(mins); setCustomDuration(!DURATIONS.includes(mins as 60));
       setPlace(isOnline(e) ? 'online' : e.online_url ? 'hybrid' : 'person'); setLocationName(e.location_name ?? ''); setAddress(e.address ?? ''); setNote(e.meeting_note ?? ''); setUrl(e.online_url ?? '');
-      setDetails(detailsFromEvent(e as Record<string, unknown>));
+      { const d = detailsFromEvent(e as Record<string, unknown>); const p = policyFromEvent(e as never, t as never); setDetails({ ...d, cancellation: p.text, policy: p.config }); }
       setCoords(e.lat != null && e.lng != null ? { lat: e.lat, lng: e.lng } : null);
       setCoverFee(!!(e as { cover_service_fee?: boolean }).cover_service_fee);
-      setRefund(asRefundPolicy((e as { refund_policy?: string }).refund_policy));
       setPrice((e as { price_cents?: number | null }).price_cents ? String(((e as { price_cents: number }).price_cents / 100)) : '');
       { const x = e as { team_registration?: boolean; team_min?: number; team_max?: number; team_price_mode?: string }; setTeamReg({ on: !!x.team_registration, min: x.team_min ?? 2, max: x.team_max ?? 6, mode: x.team_price_mode === 'team' ? 'team' : 'person' }); }
       { const rt = asRetreat((e as { retreat?: unknown }).retreat); if (rt) { setRetreatOn(true); setRetreat(rt); if (e.ends_at) setRetreatEnd(toLocalInput(new Date(e.ends_at))); } }
@@ -150,7 +148,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const savePrice = async (id: string) => {
     if (!canSell && !priceCents) return null;
     const { data: ev } = await supabase.from('events').select('series_id').eq('id', id).maybeSingle();
-    const q = supabase.from('events').update({ price_cents: priceCents, refund_policy: refund, pass_fee: planStatus?.pass_fee ?? false, cover_service_fee: !!priceCents && coverFee, community_seats: priceCents && Number(communitySeats) > 0 ? Math.min(100, Number(communitySeats)) : null });
+    const q = supabase.from('events').update({ price_cents: priceCents, pass_fee: planStatus?.pass_fee ?? false, cover_service_fee: !!priceCents && coverFee, community_seats: priceCents && Number(communitySeats) > 0 ? Math.min(100, Number(communitySeats)) : null });
     const { error } = ev?.series_id ? await q.eq('series_id', ev.series_id) : await q.eq('id', id);
     return error;
   };
@@ -193,10 +191,19 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (error) { toast.error(rpcError(t, error)); return false; }
     return true;
   };
+  const savePolicy = async (id: string) => {
+    const pp = policyPayload(details.policy, details.cancellation);
+    const { error } = await supabase.rpc('set_event_policy', { _event: id, _config: pp.config as never, _text: pp.text });
+    if (error) { const k = ['policy_review_required', 'policy_text_required', 'policy_mismatch', 'policy_percent', 'policy_deadline'].find(x => error.message.includes(x)); toast.error(k ? t(`policy.errors.${k}`) : rpcError(t, error)); return false; }
+    return true;
+  };
   const submit = async (publish: boolean) => {
     setTried(true); if (!valid) { toast.error(t('gathering.fixFields')); return; }
     if (multi && !validSessions(sessions, new Date(start).toISOString())) { toast.error(t('sessions.invalid')); return; }
     if (!detailsJson) { toast.error(t('gathering.fixFields')); return; }
+    { const live = publish || (editing && source?.event.status === 'published');
+      const pi = policyIssues(details.policy, details.cancellation, !!priceCents, live);
+      if (pi.length) { toast.error(t(`policy.issues.${pi[0]}${pi[0] === 'contradiction' ? (priceCents ? 'Paid' : 'Free') : pi[0] === 'mismatch' ? (priceCents ? 'Paid' : 'Free') : ''}`)); document.getElementById('g-cancel-preset')?.scrollIntoView({ block: 'center' }); return; } }
     if (priceCents && visibility === 'team') { toast.error(t('templates.teamFree')); return; }
     if (priceCents && publish && !canSell) { toast.error(t('billing.payoutsRequired')); return; }
     setBusy(true);
@@ -209,11 +216,12 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       { const result = await supabase.rpc('set_event_sessions', { _event: eventId ?? '', _sessions: (multi ? sessions : []) as never }); if (result.error) { toast.error(t('sessions.invalid')); return; } }
       await saveCover(eventId!);
       if (!(await saveDetails(eventId!))) return;
+      if (!(await savePolicy(eventId!))) return;
       if (publish && source?.event.status === 'draft') { const r = await supabase.from('events').update({ status: 'published' }).eq('id', eventId??''); if(r.error){toast.error(rpcError(t,r.error));return;} }
       await queryClient.invalidateQueries(); toast.success(t('gathering.saved'));
       void navigate({ to: '/event/$id', params: { id: eventId! } }); return;
     }
-    const staged=multi||retreatOn;
+    const staged=multi||retreatOn||details.policy.mode==='custom';
     const { data, error } = await supabase.rpc('create_gathering_at', { _team: teamId, _p: payload(), _publish: publish&&!staged, _weekly: false }); if (!error) { trackEvent('gathering_created', { weekly }); if (publish&&!staged) trackEvent('gathering_published'); if (templateId) trackEvent('template_launched'); }
     setBusy(false);
     if (error?.message?.includes('plan_limit_gatherings')) { setLimit('gatherings'); return; }
@@ -225,6 +233,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (multi) { const result = await supabase.rpc('set_event_sessions', { _event: data, _sessions: sessions as never }); if (result.error) { toast.error(t('sessions.invalid')); void navigate({to:'/gathering/$id/edit',params:{id:data}}); return; } }
     await saveCover(data);
     if (!(await saveDetails(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
+    if (!(await savePolicy(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
     if (publish&&staged) {const published=await supabase.from('events').update({status:'published'}).eq('id',data);if(published.error){toast.error(rpcError(t,published.error));void navigate({to:'/gathering/$id/edit',params:{id:data}});return;}}
     await queryClient.invalidateQueries();
     if (publish) setDone({ id: data, visibility }); else { toast.success(t('gathering.draftSaved')); void navigate({ to: '/event/$id', params: { id: data } }); }
@@ -365,7 +374,6 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
           <Input id="g-price" type="text" inputMode="decimal" className="field-input" disabled={!canSell && !price} value={price} onChange={e => setPrice(e.target.value.replace(/[^\d.]/g, '').slice(0, 7))} placeholder="$0" />
           <small className="field-hint">{canSell ? t('billing.priceHint') : t('billing.priceNeedsPayouts')}</small>
           <PriceGuidance category={category} />
-          {!!priceCents && <RefundSelect id="g-refund" value={refund} onChange={setRefund} />}
           {!!priceCents && <label className="settings-row is-static gathering-cover-fee"><span className="settings-label">{t('billing.coverFee')}<small className="field-hint">{coverFee ? t('billing.coverFeeOn') : t('billing.coverFeeOff')}</small></span><Switch aria-label={t('billing.coverFee')} checked={coverFee} onCheckedChange={setCoverFee} /></label>}
           {!!priceCents && <><label className="field-label" htmlFor="g-cseats">{t('community.seatsField')}</label><Input id="g-cseats" inputMode="numeric" className="field-input" value={communitySeats} onChange={e => setCommunitySeats(e.target.value.replace(/\D/g, '').slice(0, 3))} placeholder={t('community.seatsNone')} /><small className="field-hint">{t('community.seatsHint')}</small></>}</div>
         <div><span className="field-label">{t('gathering.visibility')}</span>

@@ -4,6 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { useRef } from 'react';
+import { buildPolicyText, emptyPolicy, normalizePolicyText, policyIssues, presetsFor, sha256Hex, type PolicyConfig, type PolicyMode } from '@/lib/event-policy';
 import { formatMoney } from '@/lib/billing';
 import { AGE_BANDS } from '@/lib/identity';
 import { PaidBlockedNote } from '@/components/payments-readiness';
@@ -14,14 +17,14 @@ export type EventDetails = {
   summaryEn: string; summaryEs: string; language: 'en' | 'es';
   mapUrl: string; regOpens: string; regCloses: string; waitlist: boolean;
   tagsInput: string; contactEmail: string; contactPhone: string;
-  accessibility: string; bring: string; cancellation: string;
+  accessibility: string; bring: string; cancellation: string; policy: PolicyConfig;
   allowsMinors: boolean; minAge: string;
   tiers: TicketTier[]; addons: Addon[];
 };
 
 export const emptyDetails: EventDetails = {
   summaryEn: '', summaryEs: '', language: 'en', mapUrl: '', regOpens: '', regCloses: '', waitlist: true,
-  tagsInput: '', contactEmail: '', contactPhone: '', accessibility: '', bring: '', cancellation: '',
+  tagsInput: '', contactEmail: '', contactPhone: '', accessibility: '', bring: '', cancellation: '', policy: emptyPolicy(),
   allowsMinors: false, minAge: '', tiers: [], addons: [],
 };
 
@@ -39,7 +42,7 @@ export function detailsFromEvent(e: SourceEvent): EventDetails {
     mapUrl: s('map_url'), regOpens: local(e['reg_opens_at']), regCloses: local(e['reg_closes_at']),
     waitlist: e['waitlist_enabled'] !== false, tagsInput: Array.isArray(e['tags']) ? (e['tags'] as string[]).join(', ') : '',
     contactEmail: s('contact_email'), contactPhone: s('contact_phone'),
-    accessibility: s('accessibility_notes'), bring: s('what_to_bring'), cancellation: s('cancellation_policy'),
+    accessibility: s('accessibility_notes'), bring: s('what_to_bring'), cancellation: s('cancellation_policy'), policy: emptyPolicy(),
     allowsMinors: !!e.allows_minors, minAge: e['min_age'] != null ? String(e['min_age']) : '',
     tiers: Array.isArray(e['ticket_tiers']) ? (e['ticket_tiers'] as TicketTier[]) : [],
     addons: Array.isArray(e['addons']) ? (e['addons'] as Addon[]) : [],
@@ -61,28 +64,111 @@ export function detailsPayload(d: EventDetails): Record<string, unknown> | null 
     map_url: d.mapUrl.trim(), reg_opens_at: iso(d.regOpens), reg_closes_at: iso(d.regCloses),
     waitlist_enabled: d.waitlist, tags: parseTags(d.tagsInput),
     contact_email: d.contactEmail.trim(), contact_phone: d.contactPhone.trim(),
-    accessibility_notes: d.accessibility.trim(), what_to_bring: d.bring.trim(), cancellation_policy: d.cancellation.trim(),
+    accessibility_notes: d.accessibility.trim(), what_to_bring: d.bring.trim(),
     allows_minors: d.allowsMinors, min_age: d.allowsMinors && d.minAge ? Number(d.minAge) : '',
     ticket_tiers: tiers, addons,
   };
 }
 
-/** Prewritten cancellation/refund policy choices; the attendee-facing text stays editable per event. */
-export function PolicyPicker({ id, paid, value, onChange }: { id: string; paid: boolean; value: string; onChange: (v: string) => void }) {
+/**
+ * Cancellation/refund policy: concise presets or a guided custom builder whose fields generate an
+ * editable plain-language draft. Manual edits are kept; publishing a custom policy needs explicit review.
+ */
+export function PolicyPicker({ id, paid, config, text, onChange }: { id: string; paid: boolean; config: PolicyConfig; text: string; onChange: (c: PolicyConfig, text: string) => void }) {
   const { t } = useTranslation();
-  const presets = paid ? ['paid_24h', 'paid_7d', 'paid_none'] : ['free_anytime', 'free_notify'];
-  const matched = presets.find(p => t(`policy.text.${p}`) === value);
-  const selected = matched ?? (value.trim() ? 'custom' : '');
-  return <>
-    <select id={id} className="field-input" value={selected} aria-label={t('builder.cancellation')}
-      onChange={e => { const v = e.target.value; if (v === 'custom') onChange(value.trim() ? value : ''); else if (v) onChange(t(`policy.text.${v}`)); else onChange(''); }}>
+  const tt = t as unknown as (k: string, o?: Record<string, unknown>) => string;
+  const customText = useRef<{ text: string; edited: boolean } | null>(config.mode === 'custom' ? { text, edited: config.edited } : null);
+  const presets = presetsFor(paid);
+  const issues = policyIssues(config, text, paid, false);
+  const setField = (patch: Partial<PolicyConfig>) => {
+    const next = { ...config, ...patch, reviewedSha: null };
+    onChange(next, next.edited ? text : buildPolicyText(next, paid, tt));
+  };
+  const pick = (mode: PolicyMode) => {
+    if (config.mode === 'custom') customText.current = { text, edited: config.edited };
+    if (mode === 'custom') {
+      const kept = customText.current;
+      const next = { ...config, mode, edited: kept?.edited ?? false, reviewedSha: null };
+      onChange(next, kept?.edited ? kept.text : buildPolicyText(next, paid, tt));
+      return;
+    }
+    const next = { ...config, mode, edited: false, reviewedSha: null };
+    onChange(next, mode ? tt(`policy.text.${mode}`) : '');
+  };
+  const review = async (on: boolean) => onChange({ ...config, reviewedSha: on ? await sha256Hex(normalizePolicyText(text)) : null }, text);
+  const n = (v: string) => v.replace(/\D/g, '').slice(0, 3);
+  const custom = config.mode === 'custom';
+  return <div className="policy-builder">
+    <select id={id} className="field-input" value={config.mode} aria-describedby={`${id}-hint`}
+      onChange={e => pick(e.target.value as PolicyMode)}>
       <option value="">{t('policy.none')}</option>
       {presets.map(p => <option key={p} value={p}>{t(`policy.preset.${p}`)}</option>)}
+      {!presets.includes(config.mode) && config.mode && config.mode !== 'custom' && <option value={config.mode}>{t(`policy.preset.${config.mode}`)}</option>}
       <option value="custom">{t('policy.preset.custom')}</option>
     </select>
-    <Textarea rows={3} maxLength={1000} className="field-textarea" value={value} onChange={e => onChange(e.target.value)} placeholder={t('builder.cancellationPlaceholder')} aria-label={t('policy.textLabel')} />
-    <small className="field-hint">{t('policy.customHint')}</small>
-  </>;
+    {issues.includes('mismatch') && <p className="field-error" role="alert">{t(paid ? 'policy.issues.mismatchPaid' : 'policy.issues.mismatchFree')}</p>}
+    {custom && <fieldset className="policy-fields">
+      <legend className="field-label">{t('policy.build.title')}</legend>
+      {paid && <div className="form-field">
+        <label className="field-label" htmlFor={`${id}-refund`}>{t('policy.build.refundQ')}</label>
+        <select id={`${id}-refund`} className="field-input" value={config.refund} onChange={e => setField({ refund: e.target.value as PolicyConfig['refund'] })}>
+          {(['full', 'percent', 'credit', 'none'] as const).map(k => <option key={k} value={k}>{t(`policy.build.refund_${k}`)}</option>)}
+        </select>
+      </div>}
+      {(!paid || config.refund !== 'none') && <div className="form-field">
+        <span className="field-label" id={`${id}-dl-label`}>{t(paid ? 'policy.build.deadlineQ' : 'policy.build.freeDeadlineQ')}</span>
+        <div className="two-col">
+          <Input id={`${id}-dl`} inputMode="numeric" className="field-input" value={config.deadline} onChange={e => setField({ deadline: n(e.target.value) })} aria-labelledby={`${id}-dl-label`} aria-invalid={issues.includes('deadline')} />
+          <select className="field-input" value={config.unit} onChange={e => setField({ unit: e.target.value === 'days' ? 'days' : 'hours' })} aria-label={t('policy.build.unit')}>
+            <option value="hours">{t('policy.build.hours')}</option><option value="days">{t('policy.build.days')}</option>
+          </select>
+        </div>
+        {issues.includes('deadline') && <p className="field-error">{t('policy.issues.deadline')}</p>}
+      </div>}
+      {paid && config.refund === 'percent' && <div className="form-field">
+        <label className="field-label" htmlFor={`${id}-pct`}>{t('policy.build.percentQ')}</label>
+        <Input id={`${id}-pct`} inputMode="numeric" className="field-input" value={config.percent} onChange={e => setField({ percent: n(e.target.value) })} aria-invalid={issues.includes('percent')} />
+        {issues.includes('percent') && <p className="field-error">{t('policy.issues.percent')}</p>}
+      </div>}
+      {paid && config.refund !== 'none' && <div className="form-field">
+        <label className="field-label" htmlFor={`${id}-proc`}>{t('policy.build.processingQ')}</label>
+        <Input id={`${id}-proc`} inputMode="numeric" className="field-input" value={config.processingDays} onChange={e => setField({ processingDays: n(e.target.value) })} />
+      </div>}
+      <label className="settings-row is-static"><span className="settings-label">{t(paid ? 'policy.build.transferQ' : 'policy.build.freeTransferQ')}</span>
+        <Switch checked={config.transfer} onCheckedChange={v => setField({ transfer: v })} aria-label={t(paid ? 'policy.build.transferQ' : 'policy.build.freeTransferQ')} /></label>
+      <div className="form-field">
+        <label className="field-label" htmlFor={`${id}-host`}>{t('policy.build.hostQ')}</label>
+        <select id={`${id}-host`} className="field-input" value={config.hostCancel} onChange={e => setField({ hostCancel: e.target.value === 'reschedule_or_full' ? 'reschedule_or_full' : 'full' })}>
+          <option value="full">{t(paid ? 'policy.build.host_full' : 'policy.build.free_host_full')}</option>
+          <option value="reschedule_or_full">{t(paid ? 'policy.build.host_reschedule' : 'policy.build.free_host_reschedule')}</option>
+        </select>
+      </div>
+      <div className="form-field">
+        <label className="field-label" htmlFor={`${id}-exc`}>{t('policy.build.exceptionsQ')}</label>
+        <Input id={`${id}-exc`} className="field-input" maxLength={200} value={config.exceptions} onChange={e => setField({ exceptions: e.target.value })} placeholder={t('policy.build.exceptionsPh')} />
+      </div>
+      <div className="form-field">
+        <label className="field-label" htmlFor={`${id}-contact`}>{t('policy.build.contactQ')}</label>
+        <Input id={`${id}-contact`} className="field-input" maxLength={120} value={config.contact} onChange={e => setField({ contact: e.target.value })} placeholder={t('policy.build.contactPh')} />
+      </div>
+      <p className="field-hint">{t('policy.build.aiOff')}</p>
+    </fieldset>}
+    {config.mode && <div className="form-field">
+      <label className="field-label" htmlFor={`${id}-text`}>{t('policy.textLabel')}</label>
+      <Textarea id={`${id}-text`} rows={4} maxLength={1000} className="field-textarea" value={text}
+        onChange={e => onChange({ ...config, edited: custom ? true : config.edited, mode: custom ? 'custom' : config.mode, reviewedSha: null }, e.target.value)} />
+      {custom && config.edited && <Button type="button" variant="ghost" onClick={() => { const next = { ...config, edited: false, reviewedSha: null }; onChange(next, buildPolicyText(next, paid, tt)); }}>{t('policy.build.regenerate')}</Button>}
+      {issues.includes('text') && <p className="field-error">{t('policy.issues.text')}</p>}
+      {issues.includes('contradiction') && <p className="field-error" role="alert">{t(paid ? 'policy.issues.contradictionPaid' : 'policy.issues.contradictionFree')}</p>}
+    </div>}
+    <small id={`${id}-hint`} className="field-hint">{t('policy.customHint')}</small>
+    {config.mode && normalizePolicyText(text) && <div className="policy-preview" aria-label={t('policy.previewLabel')}>
+      <span className="eyebrow">{t('policy.previewLabel')}</span><p>{normalizePolicyText(text)}</p>
+    </div>}
+    {custom && normalizePolicyText(text) && <label className="guest-consent">
+      <Checkbox checked={!!config.reviewedSha} onCheckedChange={v => void review(!!v)} /><span>{t('policy.reviewConfirm')}</span>
+    </label>}
+  </div>;
 }
 
 export function EventDetailsSections({ value, onChange, priceCents, lang }: { value: EventDetails; onChange: (d: EventDetails) => void; priceCents: number | null; lang: 'en' | 'es' }) {
@@ -142,7 +228,7 @@ export function EventDetailsSections({ value, onChange, priceCents, lang }: { va
       <label className="field-label" htmlFor="g-bring">{t('builder.bring')}</label>
       <Textarea id="g-bring" rows={2} maxLength={1000} className="field-textarea" value={value.bring} onChange={e => set({ bring: e.target.value })} placeholder={t('builder.bringPlaceholder')} />
       <label className="field-label" htmlFor="g-cancel-preset">{t('builder.cancellation')}</label>
-      <PolicyPicker id="g-cancel-preset" paid={!!priceCents} value={value.cancellation} onChange={v => set({ cancellation: v })} />
+      <PolicyPicker id="g-cancel-preset" paid={!!priceCents} config={value.policy} text={value.cancellation} onChange={(policy, cancellation) => set({ policy, cancellation })} />
     </section>
 
     <section className="form-section">
