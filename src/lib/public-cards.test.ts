@@ -1,0 +1,53 @@
+import { describe, expect, it } from 'vitest';
+import { boundText, publicCardModel } from './public-cards';
+
+describe('publicCardModel', () => {
+  const base = { kind: 'download', id: '1', title_en: 'Guide', title_es: 'Guía' };
+
+  it('picks the active language with fallback to the other', () => {
+    expect(publicCardModel(base, 'en', 'Untitled', 'Get it').title).toBe('Guide');
+    expect(publicCardModel(base, 'es', 'Untitled', 'Get it').title).toBe('Guía');
+    expect(publicCardModel({ ...base, title_es: null }, 'es', 'Untitled', 'Get it').title).toBe('Guide');
+  });
+
+  it('falls back to the default title and CTA when empty', () => {
+    const m = publicCardModel({ kind: 'download', id: '1' }, 'en', 'Untitled', 'Get it free');
+    expect(m.title).toBe('Untitled');
+    expect(m.cta).toBe('Get it free');
+    expect(m.subtitle).toBe('');
+  });
+
+  it('uses the custom CTA and subtitle when saved', () => {
+    const m = publicCardModel({ ...base, cta_en: 'Open the guide', subtitle_en: 'Short line' }, 'en', 'U', 'D');
+    expect(m.cta).toBe('Open the guide');
+    expect(m.subtitle).toBe('Short line');
+  });
+
+  it('whitelists layout and accent, falling back to preview/plum', () => {
+    expect(publicCardModel({ ...base, card_layout: 'callout', accent: 'terracotta' }, 'en', 'U', 'D').layout).toBe('callout');
+    expect(publicCardModel({ ...base, card_layout: 'neon-grid', accent: 'hotpink' }, 'en', 'U', 'D').layout).toBe('preview');
+    expect(publicCardModel({ ...base, accent: 'hotpink' }, 'en', 'U', 'D').colors).toEqual(publicCardModel(base, 'en', 'U', 'D').colors);
+  });
+
+  it('bounds long text with an ellipsis', () => {
+    const long = 'x'.repeat(200);
+    const m = publicCardModel({ ...base, title_en: long, subtitle_en: long }, 'en', 'U', 'D');
+    expect(m.title.length).toBeLessThanOrEqual(90);
+    expect(m.title.endsWith('…')).toBe(true);
+    expect(m.subtitle.length).toBeLessThanOrEqual(140);
+  });
+
+  it('marks paid offerings and defaults missing covers to the gradient', () => {
+    expect(publicCardModel({ ...base, price_cents: 2500 }, 'en', 'U', 'D').paid).toBe(true);
+    expect(publicCardModel(base, 'en', 'U', 'D').paid).toBe(false);
+    expect(publicCardModel(base, 'en', 'U', 'D').coverPath).toBeNull();
+    expect(publicCardModel(base, 'en', 'U', 'D').coverStyle).toBe(0);
+  });
+});
+
+describe('boundText', () => {
+  it('leaves short text alone and cuts long text', () => {
+    expect(boundText('hi', 10)).toBe('hi');
+    expect(boundText('hello world!', 8)).toBe('hello…');
+  });
+});
