@@ -1,5 +1,14 @@
 # ZoheeWell Change Log
 
+## v0.35 — Discover tabs, card images and coach discovery (2026-10-25)
+- Public /discover now has three tabs — Events, Resources, Coaches — with the active tab and every filter shareable through the URL. Event-only controls (format, dates, location, radius, venues) never render on the Resources or Coaches tabs.
+- Event and resource cards show real images again: discover_catalog returns cover fields, and a server function (publicCovers) batch-signs only storage paths that a SQL validator re-confirms belong to published, public items — caller-supplied paths are never signed. Items without an uploaded cover get a deterministic branded gradient with the first letter; no broken-image icons anywhere.
+- New Discover Coaches tab lists only published public profiles via a bounded discover_coaches listing; city appears only when the host made it public. Coach cards link to the real /h/{slug} page.
+- Catalog and coach queries are bounded and paginated (48/24 per page with Load more). Empty states are honest and actionable: "create an event in your area", notify-me and invite-a-host actions.
+- Fixed a JSX parse error in the Discover filters (fragment around the events-only controls replaced with separate valid conditionals) and added the new cover fields to the Saved page's item mapping.
+- Cleaned up temporary fixtures: removed the two published test events ("TEST template (delete me)", "Sunset walk (test delete)") from the public catalog.
+- Verification: 403/403 tests (48 files), typecheck and production build OK; browser checks at 390px/1280px EN/ES covering all three tabs, shareable filter URLs, event-only filter isolation, zero broken images, keyboard focus order, 200% zoom and reduced motion with no horizontal overflow or console errors. Not verified: screen-reader narration; coach cards with uploaded cover photos (no published coach in the preview backend has one — gradient fallback path verified instead).
+
 ## v0.34.1 — Header reflow at high zoom (2026-10-24)
 - Fixed the shared signed-in header overflowing horizontally at 200% zoom (previously affected /tools, /events and every signed-in page): below 480px the header now lets the brand mark shrink and wraps the action controls (notifications, Discover, assistant, profile) onto additional rows. No control is hidden and every tap target stays 44–48px.
 - Verified /tools and /events at 390px and 1280px, normal and 200% zoom, EN/ES: zero horizontal overflow in all ten combinations; keyboard focus order and visible outlines confirmed at 200% zoom. Focused tests (32/32), typecheck and build OK.

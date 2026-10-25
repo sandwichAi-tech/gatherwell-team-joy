@@ -37,11 +37,11 @@ const savedDetailsQuery = (rows: SavedRow[] | undefined) => queryOptions({
     const items: CatalogItem[] = [];
     for (const e of ev.data ?? []) {
       if (e.status !== 'published' || e.visibility !== 'public') continue; // saved item went private/draft
-      items.push({ kind: 'event', id: e.id, title: e.title, summary: e.summary_en ?? '', category: null, tags: null, starts_at: e.starts_at, timezone: e.timezone, format: (e.format as CatalogItem['format']) ?? 'person', price_cents: e.price_cents, language: null, location_name: e.location_name, distance_km: null, created_at: '', host_name: null, host_slug: null, url: `/e/${e.id}` });
+      items.push({ kind: 'event', id: e.id, title: e.title, summary: e.summary_en ?? '', category: null, tags: null, starts_at: e.starts_at, timezone: e.timezone, format: (e.format as CatalogItem['format']) ?? 'person', price_cents: e.price_cents, language: null, location_name: e.location_name, distance_km: null, created_at: '', host_name: null, host_slug: null, url: `/e/${e.id}`, cover_path: null, cover_style: null, cover_focal: null, cover_alt: null, cover_overlay: null });
     }
     for (const o of of.data ?? []) {
       if (o.status !== 'published' || o.visibility !== 'public') continue;
-      items.push({ kind: (o.kind as CatalogItem['kind']) ?? 'course', id: o.id, title: o.title_en, summary: o.summary_en ?? '', category: null, tags: null, starts_at: null, timezone: null, format: 'online', price_cents: o.price_cents, language: null, location_name: null, distance_km: null, created_at: '', host_name: null, host_slug: null, url: `/o/${o.id}` });
+      items.push({ kind: (o.kind as CatalogItem['kind']) ?? 'course', id: o.id, title: o.title_en, summary: o.summary_en ?? '', category: null, tags: null, starts_at: null, timezone: null, format: 'online', price_cents: o.price_cents, language: null, location_name: null, distance_km: null, created_at: '', host_name: null, host_slug: null, url: `/o/${o.id}`, cover_path: null, cover_style: null, cover_focal: null, cover_alt: null, cover_overlay: null });
     }
     return items;
   },
