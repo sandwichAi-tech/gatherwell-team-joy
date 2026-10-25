@@ -6023,7 +6023,8 @@
       "guide": "Guías y PDF",
       "file": "Archivos y descargas",
       "link": "Enlaces",
-      "recipe": "Recetas"
+      "recipe": "Recetas",
+      "live": "Sesiones en vivo"
     },
     "typeChip": {
       "course": "Curso",
@@ -6239,7 +6240,8 @@
         "team": "Solo los miembros de tu equipo ven este recurso.",
         "public": "Aparece en tu página pública de anfitrión y en Descubrir.",
         "unlisted": "No aparece en ninguna lista; las personas necesitan el enlace directo."
-      }
+      },
+      "trackAccessNote": "Gratis después de iniciar sesión. «Página pública» también lo muestra en tu página pública de anfitrión."
     }
   },
   "templatesR": {
