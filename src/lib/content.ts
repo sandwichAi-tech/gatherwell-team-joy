@@ -10,6 +10,10 @@ export type BillingInterval = 'month' | 'year' | null;
 export type PublicOffer = {
   id: string; kind: 'membership' | 'course' | 'download';
   title_en: string; title_es: string; summary_en: string | null; summary_es: string | null;
+  subtitle_en?: string | null; subtitle_es?: string | null;
+  cta_en?: string | null; cta_es?: string | null;
+  card_layout?: string | null; accent?: string | null;
+  promo_en?: string | null; promo_es?: string | null;
   description_en: string | null; description_es: string | null;
   includes_en: string[]; includes_es: string[]; category: string | null; tags: string[];
   cover_style: number; cover_url: string | null; host_name: string | null; coauthor_name: string | null;

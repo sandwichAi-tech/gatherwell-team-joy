@@ -35,6 +35,9 @@ export const learnQuery = (userId: string) => queryOptions({
 });
 
 export const lessonsOf = (data: LearnData, trackId: string) => data.lessons.filter(l => l.track_id === trackId);
+/** Participant outline: published lessons only; leaders of the track's team also see drafts. */
+export const visibleLessons = (data: LearnData, trackId: string, showDrafts: boolean) =>
+  lessonsOf(data, trackId).filter(l => showDrafts || l.is_published);
 /** Empty tracks stay editable in management, but are not offered to readers. */
 export const populatedTracks = (tracks: Track[], lessons: Pick<Lesson, 'track_id'>[]) =>
   tracks.filter(track => lessons.some(lesson => lesson.track_id === track.id));
