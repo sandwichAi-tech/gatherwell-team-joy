@@ -146,10 +146,10 @@ export function TrackPage({ id }: { id: string }) {
         <div className="track-foot"><ProgressRing value={s.pct} size={52} label={t('learnHub.progressLabel', { done: s.done, total: s.count })} /><span className="track-facts">{t('learnHub.progressLabel', { done: s.done, total: s.count })} · {minutesLabel(t, s.minutes)}</span></div>
         {s.next && <Button asChild className="continue-button"><Link to="/learn/lesson/$id" params={{ id: s.next.id }}>{s.done ? t('learnHub.continueWhere') : t('learnHub.start')}<ArrowRight /></Link></Button>}</div></section>
     {s.complete && <CompletionCard title={title} />}
-    <ol className="lesson-list">{lessonsOf(data, id).map((l, i) => { const type = effectiveType(l); const Icon = TYPE_ICON[type]; const done = data.done.has(l.id); return <li key={l.id}>
+    <ol className="lesson-list">{outline.map((l, i) => { const type = effectiveType(l); const Icon = TYPE_ICON[type]; const done = data.done.has(l.id); return <li key={l.id}>
       <Link to="/learn/lesson/$id" params={{ id: l.id }} className={`lesson-row ${done ? 'is-done' : ''}`}>
         <span className="lesson-index">{done ? <Check /> : i + 1}</span>
-        <span className="lesson-info"><strong>{lessonTitle(l, lang)}</strong><small><Icon />{t(`learnHub.type.${l.type === 'live' && l.replay_url ? 'replay' : type}`)}{l.duration_minutes ? ` · ${minutesLabel(t, l.duration_minutes)}` : ''}{l.type === 'live' && l.live_starts_at && !l.replay_url ? ` · ${fmtWhen(l.live_starts_at, lang)}` : ''}</small></span>
+        <span className="lesson-info"><strong>{lessonTitle(l, lang)}</strong><small><Icon />{t(`learnHub.type.${l.type === 'live' && l.replay_url ? 'replay' : type}`)}{l.duration_minutes ? ` · ${minutesLabel(t, l.duration_minutes)}` : ''}{l.type === 'live' && l.live_starts_at && !l.replay_url ? ` · ${fmtWhen(l.live_starts_at, lang)}` : ''}{!l.is_published ? ` · ${t('templates.draft')}` : ''}</small></span>
         <ArrowRight />
       </Link></li>; })}</ol>
   </>;
