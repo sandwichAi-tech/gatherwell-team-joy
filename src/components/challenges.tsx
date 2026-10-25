@@ -85,68 +85,6 @@ export function ChallengesSection({ startCreate = false }: { startCreate?: boole
   </section>;
 }
 
-export function ChallengeEditor({ draft, teamId, onClose }: { draft: Partial<Challenge> | null; teamId: string; onClose: () => void }) {
-  const { t, i18n } = useTranslation(); const qc = useQueryClient(); const { userId } = useGatherwell();
-  const enT = i18n.getFixedT('en'); const esT = i18n.getFixedT('es');
-  const today = localDate();
-  const empty = { title_en: '', title_es: '', description_en: '', description_es: '', daily_prompt_en: '', daily_prompt_es: '', starts_on: addDays(today, 1), ends_on: addDays(today, 21), cover_url: null as string | null, cover_style: 0 };
-  const [f, setF] = useState(empty); const [busy, setBusy] = useState(false); const [starter, setStarter] = useState<Starter | null>(null);
-  const { data: planSt } = useQuery(planStatusQuery(userId)); const canSell = planSt?.connect_status === 'active';
-  const [paid, setPaid] = useState(false); const [price, setPrice] = useState('');
-  useEffect(() => { setPaid(!!draft?.is_paid); setPrice(draft?.price_cents ? String(draft.price_cents / 100) : ''); }, [draft]);
-  useEffect(() => { if (draft) { setStarter(null); setF(draft.id ? { title_en: draft.title_en ?? '', title_es: draft.title_es ?? '', description_en: draft.description_en ?? '', description_es: draft.description_es ?? '', daily_prompt_en: draft.daily_prompt_en ?? '', daily_prompt_es: draft.daily_prompt_es ?? '', starts_on: draft.starts_on ?? empty.starts_on, ends_on: draft.ends_on ?? empty.ends_on, cover_url: draft.cover_url ?? null, cover_style: draft.cover_style ?? 0 } : empty); } }, [draft]); // eslint-disable-line react-hooks/exhaustive-deps
-  const useStarter = (k: Starter) => {
-    setStarter(k);
-    const g = (fx: typeof enT, key: string) => fx(`challenges.starter.${k}.${key}`);
-    setF({ ...f, title_en: g(enT, 'title'), title_es: g(esT, 'title'), description_en: g(enT, 'description'), description_es: g(esT, 'description'), daily_prompt_en: g(enT, 'prompt'), daily_prompt_es: g(esT, 'prompt'), ends_on: addDays(f.starts_on, STARTER_DAYS[k] - 1), cover_style: STARTERS.indexOf(k) });
-  };
-  const { data: types = [] } = useQuery({ queryKey: ['challenge-types'], enabled: !!draft && !draft.id, queryFn: async () => (await supabase.from('challenge_types').select('*').eq('is_published', true).order('sort_order')).data ?? [] });
-  const [typeId, setTypeId] = useState<string | null>(null);
-  const useType = (ct: (typeof types)[number]) => { setStarter(null); setTypeId(ct.id); setF({ ...f, title_en: ct.title_en, title_es: ct.title_es, description_en: ct.description_en ?? '', description_es: ct.description_es ?? '', daily_prompt_en: ct.daily_prompt_en ?? '', daily_prompt_es: ct.daily_prompt_es ?? '', ends_on: addDays(f.starts_on, ct.duration_days - 1) }); };
-  const set = (k: keyof typeof empty) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
-  const L = (k: 'title' | 'description' | 'daily_prompt') => `${k}_${i18n.resolvedLanguage === 'es' ? 'es' : 'en'}` as keyof typeof empty;
-  const ok = !!(f.title_en.trim() || f.title_es.trim()) && f.starts_on && f.ends_on >= f.starts_on;
-  const save = async () => {
-    setBusy(true);
-    const both = (k: 'title' | 'description' | 'daily_prompt') => { const en = f[`${k}_en`].trim(), es = f[`${k}_es`].trim(); return { en: en || es, es: es || en }; };
-    const tt = both('title'), dd = both('description'), pp = both('daily_prompt');
-    const row = { title_en: tt.en, title_es: tt.es, description_en: dd.en || null, description_es: dd.es || null, daily_prompt_en: pp.en || null, daily_prompt_es: pp.es || null, starts_on: f.starts_on, ends_on: f.ends_on, cover_url: f.cover_url, cover_style: f.cover_style, ...(canSell || !paid ? { is_paid: paid && !!price, price_cents: paid && price ? Math.round(Number(price) * 100) : null } : {}) };
-    const res = draft?.id ? await supabase.from('challenges').update(row).eq('id', draft.id) : await supabase.from('challenges').insert({ ...row, team_id: teamId, created_by: userId });
-    setBusy(false);
-    if (res.error) { toast.error(t(rpcErrorKey(res.error))); return; }
-    toast.success(t('templates.saved')); await qc.invalidateQueries({ queryKey: ['challenges'] }); onClose();
-  };
-  const remove = async () => {
-    if (!draft?.id || !(await confirmAction({ title: t('challenges.confirmDelete'), destructive: true }))) return;
-    const res = await supabase.from('challenges').delete().eq('id', draft.id);
-    if (res.error) { toast.error(t(rpcErrorKey(res.error))); return; }
-    await qc.invalidateQueries({ queryKey: ['challenges'] }); onClose();
-  };
-  const field = (id: string, label: string, k: keyof typeof empty, area = false) => <div className="form-field"><label className="field-label" htmlFor={id}>{label}</label>{area ? <Textarea id={id} rows={3} maxLength={1000} className="field-textarea" value={f[k] as string} onChange={set(k)} /> : <Input id={id} maxLength={120} className="field-input" value={f[k] as string} onChange={set(k)} />}{area && <ClaimGuard text={f[k] as string} lang={String(k).endsWith('_es') ? 'es' : 'en'} onUse={v => setF({ ...f, [k]: v })} />}</div>;
-  return <ResponsiveSheet open={!!draft} onOpenChange={o => !o && onClose()} title={draft?.id ? t('challenges.edit') : t('challenges.new')} description={t('challenges.claimRule')}>
-    <div className="edit-form">
-      {!draft?.id && <div className="form-field"><span className="field-label">{t('challenges.startFrom')}</span>
-        <div className="starter-grid">{STARTERS.map(k => <button type="button" key={k} className={`choice-card ${starter === k ? 'is-selected' : ''}`} aria-pressed={starter === k} onClick={() => useStarter(k)}><strong>{t(`challenges.starter.${k}.title`)}</strong><small>{t('challenges.days', { count: STARTER_DAYS[k] })}</small></button>)}
-          {types.map(ct => <button type="button" key={ct.id} className={`choice-card ${typeId === ct.id ? 'is-selected' : ''}`} aria-pressed={typeId === ct.id} onClick={() => useType(ct)}><strong>{i18n.resolvedLanguage === 'es' ? ct.title_es : ct.title_en}</strong><small>{t('challenges.days', { count: ct.duration_days })}</small></button>)}</div></div>}
-      {field('ch-t', t('templates.title'), L('title'))}
-      <div className="choice-pair">
-        <div className="form-field"><label className="field-label" htmlFor="ch-start">{t('challenges.startsOn')}</label><Input id="ch-start" type="date" className="field-input" value={f.starts_on} onChange={e => { const len = Math.max(0, (new Date(f.ends_on).getTime() - new Date(f.starts_on).getTime()) / 86_400_000); setF({ ...f, starts_on: e.target.value, ends_on: e.target.value ? addDays(e.target.value, len) : f.ends_on }); }} /></div>
-        <div className="form-field"><label className="field-label" htmlFor="ch-end">{t('challenges.endsOn')}</label><Input id="ch-end" type="date" min={f.starts_on} className="field-input" value={f.ends_on} onChange={set('ends_on')} /></div>
-      </div>
-      {field('ch-d', t('templates.description'), L('description'), true)}
-      {field('ch-p', t('challenges.dailyPrompt'), L('daily_prompt'), true)}
-      <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
-        <GatheringCover path={f.cover_url} style={f.cover_style} title={f.title_en || f.title_es || 'C'} className="cover-preview" />
-        <div className="cover-styles">{COVER_STYLES.map((bg, i) => <button key={i} type="button" className={`cover-swatch ${!f.cover_url && f.cover_style === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} aria-label={`${t('onboarding.cover')} ${i + 1}`} aria-pressed={!f.cover_url && f.cover_style === i} onClick={() => setF({ ...f, cover_url: null, cover_style: i })} />)}</div>
-        <label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={async r => { try { setF({ ...f, cover_url: await uploadMedia(userId, r.file, 'cover') }); } catch { toast.error(t('profile.saveError')); } }} /></label></div>
-      <label className={`switch-row ${canSell ? '' : 'is-disabled'}`}><Switch checked={paid} disabled={!canSell} onCheckedChange={setPaid} /><span><strong>{t('challenges.paid')}</strong><small>{canSell ? t('billing.priceHint') : t('billing.priceNeedsPayouts')}</small></span></label>
-      {paid && canSell && <div><label className="field-label" htmlFor="c-price">{t('billing.price')}</label><Input id="c-price" inputMode="decimal" className="field-input" value={price} onChange={e => setPrice(e.target.value.replace(/[^\d.]/g, '').slice(0, 7))} placeholder="$0" /></div>}
-      <Button className="onboarding-continue" disabled={busy || !ok} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
-      {draft?.id && <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('challenges.delete')}</Button>}
-    </div>
-  </ResponsiveSheet>;
-}
-
 async function storyCard(name: string, title: string, days: number, line: string, daysLabel: string) {
   await document.fonts?.ready;
   const c = document.createElement('canvas'); c.width = 1080; c.height = 1920; const x = c.getContext('2d')!;
