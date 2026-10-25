@@ -14,6 +14,10 @@ describe('workspace roles', () => {
 });
 
 describe('role capability matrix (mirrors public.team_capability)', () => {
+  it('Communication is available only to owners, admins and hosts', () => {
+    for (const role of ['owner', 'admin', 'host'] as const) expect(roleAllows(role, 'messages')).toBe(true);
+    for (const role of ['content_editor', 'checkin', 'moderator', 'analyst', 'member'] as const) expect(roleAllows(role, 'messages')).toBe(false);
+  });
   const ALL: WorkspaceCapability[] = ['members', 'settings', 'content', 'billing_view', 'events', 'invites', 'audit', 'assign', 'moderate', 'analytics', 'checkin'];
 
   it('owner and admin hold the full management set, never checkin', () => {

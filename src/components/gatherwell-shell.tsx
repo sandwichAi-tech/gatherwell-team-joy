@@ -48,7 +48,7 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
  const wsRole = workspace ? ((workspace.ownerId === userId ? 'owner' : workspace.workspaceRole) as 'owner' | WorkspaceRole) : null;
  const canContent = workspace?.role === 'leader' || roleAllows(wsRole, 'content');
  const canManageTeam = workspace?.role === 'leader' || roleAllows(wsRole, 'members');
- const coachTabs = [...tabs.slice(0, 4), ...(canContent || canManageTeam ? [{ key: 'communications', path: '/communications', icon: Megaphone } as const] : []), tabs[4]];
+ const coachTabs = [...tabs.slice(0, 4), ...(roleAllows(wsRole, 'messages') ? [{ key: 'communications', path: '/communications', icon: Megaphone } as const] : []), tabs[4]];
  const navTabs = (profile?.role_intent === 'guest' ? guestTabs : coachTabs).filter(tab => tab.key !== 'learn' || learnOn);
  const isActive = (path: string) => pathname === path || (pathname.startsWith(`${path}/`));
  const current = navTabs.find(tab => isActive(tab.path)) ?? tabs[0];

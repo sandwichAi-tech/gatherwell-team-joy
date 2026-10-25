@@ -20,7 +20,12 @@ export const getAttendanceHistory = createServerFn({ method: 'POST' }).middlewar
       const old = grouped.get(event.id);
       grouped.set(event.id, { ...event, count: (old?.count ?? 0) + 1 });
     }
-    return [...grouped.values()];
+    const permitted = await Promise.all([...grouped.values()].map(async event => {
+      const { data: allowed, error } = await context.supabase.rpc('can_access_event_participants', { _event: event.id });
+      if (error) throw new Error(error.message);
+      return allowed ? event : null;
+    }));
+    return permitted.filter(event => event !== null);
   });
 
 /** Caller's own host analytics (hosted/co-hosted events, owned offers, real order ledger). */

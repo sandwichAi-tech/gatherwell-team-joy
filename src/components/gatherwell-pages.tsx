@@ -62,11 +62,11 @@ function HomeRealData() {
   const { t, i18n } = useTranslation(); const { workspace } = useAccount();
   const teamId = workspace?.teamId; const manage = !!workspace && workspace.role !== 'member';
   const q = useQuery({ queryKey: ['home-real', teamId, manage], enabled: !!teamId, queryFn: async () => {
-    const now = new Date(); const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    const now = new Date(); const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString(); const monthEnd = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)).toISOString();
     const [members, upcoming, checkins] = await Promise.all([
       supabase.from('team_members').select('user_id', { count: 'exact', head: true }).eq('team_id', teamId ?? ''),
       supabase.from('events').select('id, title, starts_at, location_name', { count: 'exact' }).eq('team_id', teamId ?? '').eq('status', 'published').gte('starts_at', now.toISOString()).order('starts_at').limit(3),
-      manage ? supabase.from('rsvps').select('id, events!inner(team_id)', { count: 'exact', head: true }).eq('events.team_id', teamId ?? '').gte('checked_in_at', monthStart) : Promise.resolve({ count: null }),
+      manage ? supabase.from('rsvps').select('id, events!inner(team_id)', { count: 'exact', head: true }).eq('events.team_id', teamId ?? '').gte('checked_in_at', monthStart).lt('checked_in_at', monthEnd) : Promise.resolve({ count: null }),
     ]);
     return { members: members.count ?? 0, upcomingCount: upcoming.count ?? 0, upcoming: upcoming.data ?? [], checkins: checkins.count };
   } });

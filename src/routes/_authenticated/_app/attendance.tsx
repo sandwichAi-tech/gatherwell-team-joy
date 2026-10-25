@@ -4,7 +4,7 @@ import { AttendancePage } from '@/components/attendance-page';
 import { gatherwellHead } from '@/lib/gatherwell-head';
 export const Route = createFileRoute('/_authenticated/_app/attendance')({
   validateSearch: z.object({ month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/).optional() }),
-  head: () => gatherwellHead('insights'),
+  head: () => gatherwellHead('insights', 'attendanceHistory.title'),
   component: Attendance,
 });
 function Attendance() {
