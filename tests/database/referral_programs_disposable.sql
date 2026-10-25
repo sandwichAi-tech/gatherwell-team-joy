@@ -11,7 +11,7 @@ DECLARE z record; pid uuid; c1 text; c2 text; rid uuid; n int; o1 uuid := gen_ra
 BEGIN
   SELECT * INTO z FROM zz_ids;
   -- Fixtures (bypassing app triggers is not needed: inserts run as table owner in this transaction).
-  INSERT INTO teams(id, name, owner_id) VALUES (z.team, 'ZZ-TEST team', z.host);
+  INSERT INTO teams(id, name, slug, owner_id) VALUES (z.team, 'ZZ-TEST team', 'zz-test-' || substr(z.team::text,1,8), z.host);
   INSERT INTO team_members(team_id, user_id, role) VALUES (z.team, z.teammate, 'member'), (z.team, z.team_ref, 'member');
   INSERT INTO events(id, team_id, host_id, title, starts_at, price_cents, visibility, status) VALUES
     (z.ev, z.team, z.host, 'ZZ-TEST paid', now() + interval '10 days', 4000, 'public', 'published'),
