@@ -48,6 +48,7 @@ describe('publicCardModel', () => {
 describe('boundText', () => {
   it('leaves short text alone and cuts long text', () => {
     expect(boundText('hi', 10)).toBe('hi');
-    expect(boundText('hello world!', 8)).toBe('hello…');
+    expect(boundText('hello world!', 8)).toBe('hello w…');
+    expect(boundText('hello world!', 8).length).toBeLessThanOrEqual(8);
   });
 });
