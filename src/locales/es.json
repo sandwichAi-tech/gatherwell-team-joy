@@ -3850,6 +3850,52 @@
     "cancel": "Cancelar"
   },
   "marketing": {
+    "about": {
+      "metaTitle": "Acerca de",
+      "metaDesc": "ZoheeWell les da a anfitriones, coaches y equipos de bienestar un solo lugar conectado para eventos, cursos, comunicación y descubrimiento. Conoce qué estamos construyendo y por qué.",
+      "label": "Acerca de ZoheeWell",
+      "title": "La vida es mejor en compañía.",
+      "sub": "ZoheeWell es un solo lugar conectado para las personas que reúnen comunidades de bienestar: eventos y retiros, cursos y recursos, comunicación y una página pública donde nuevas personas pueden encontrarte.",
+      "ctaHost": "Crea un evento",
+      "ctaDiscover": "Descubre eventos",
+      "whatLabel": "Qué es",
+      "whatTitle": "Un solo lugar en vez de cinco herramientas",
+      "whatBody": "Hoy los anfitriones alternan entre una página de boletos, un chat grupal, una hoja de cálculo, una app de pagos y un enlace en la bio. ZoheeWell reúne las piezas: crea un evento o retiro, comparte un solo enlace, recibe confirmaciones y registra asistencia, enseña con cursos y quizzes, y mantén viva la conversación — en inglés y español.",
+      "whoLabel": "A quién sirve",
+      "whoTitle": "Hecho para personas que reúnen personas",
+      "whoSub": "ZoheeWell le da la bienvenida a coaches independientes, estudios, educadores, creadores y organizadores de comunidades de todo tipo. Muchos de nuestros primeros anfitriones vienen de redes de bienestar basadas en relaciones — comunidades construidas a partir de la invitación personal — y la plataforma está diseñada para servirles a ellos y a todos los demás.",
+      "who": [
+        { "title": "Anfitriones y coaches", "body": "Organiza clases, talleres, retiros y retos con confirmaciones, listas de espera, recordatorios y registro con QR." },
+        { "title": "Maestros y creadores", "body": "Crea cursos, lecciones, quizzes, recetas y recursos descargables a los que tu gente puede volver." },
+        { "title": "Equipos y líderes", "body": "Da a tu equipo herramientas compartidas, roles y un centro de comunicaciones con plantillas y recorridos." },
+        { "title": "Participantes", "body": "Descubre eventos, recursos y coaches públicos — y confirma como invitado, sin necesidad de cuenta." }
+      ],
+      "useLabel": "Cómo funciona",
+      "useTitle": "Dos lados del mismo encuentro",
+      "uses": [
+        { "title": "Para anfitriones", "body": "Crea un evento en minutos, comparte tu página pública y haz crecer una comunidad con la que puedes comunicarte directamente. El acceso de pago llega a medida que se configuran los pagos — los eventos y recursos gratuitos ya funcionan hoy." },
+        { "title": "Para participantes", "body": "Explora Descubrir para encontrar próximos eventos, recursos y coaches cerca de ti. Guarda lo que te encanta y confirma en un toque." }
+      ],
+      "betaLabel": "Dónde estamos",
+      "betaTitle": "Una beta temprana, construida con cuidado",
+      "betaBody": "ZoheeWell está en beta. Algunas capacidades — como los boletos de pago y los SMS — se activan a medida que se configuran sus proveedores, y lo decimos con honestidad en el producto en lugar de fingir. Preferimos ganarnos la confianza poco a poco antes que prometer de más.",
+      "finalTitle": "Reúne a tu gente."
+    },
+    "careers": {
+      "metaTitle": "Empleo",
+      "metaDesc": "Trabaja en ZoheeWell: infraestructura para las personas que reúnen comunidades de bienestar. No hay vacantes por ahora — esto es lo que estamos construyendo y cómo mantenerte en contacto.",
+      "label": "Empleo",
+      "title": "Ayuda a las personas a reunirse.",
+      "sub": "ZoheeWell es un equipo pequeño en etapa temprana que construye un solo lugar conectado para anfitriones de bienestar, coaches y sus comunidades.",
+      "workLabel": "El trabajo",
+      "workTitle": "Lo que estamos construyendo",
+      "workBody": "Hacemos que sea sencillo para un anfitrión organizar un evento o retiro, enseñar un curso y mantenerse cerca de su comunidad — en inglés y español, en cualquier teléfono. Es trabajo cuidadoso, poco glamuroso y significativo: la accesibilidad, la privacidad y la honestidad sobre lo que está listo van antes que las funciones llamativas.",
+      "rolesLabel": "Vacantes",
+      "rolesTitle": "No hay vacantes por ahora",
+      "rolesBody": "No estamos contratando en este momento, y preferimos decirlo con claridad antes que acumular solicitudes que no podemos honrar. Si quieres presentarte para el futuro, puedes contactar al equipo a través de Soporte — sin promesas, pero leemos lo que llega.",
+      "contactCta": "Contactar al equipo",
+      "aboutCta": "Acerca de ZoheeWell"
+    },
     "navPricing": "Precios",
     "navHost": "Para anfitriones",
     "discover": "Descubrir",
