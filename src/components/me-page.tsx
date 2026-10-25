@@ -37,6 +37,7 @@ import { GwFeatureTile, type GwIconName } from '@/components/gw-icon';
 import { HostProfilePanel } from '@/components/host-profile';
 import { QRCodeSVG } from 'qrcode.react';
 import { Share2, QrCode, Trash2 } from '@/components/icons';
+import { CopyButton, ShareButton } from '@/components/copy-button';
 import { initialsOf, mediaUrl, profileQuery, teamsQuery, uploadMedia, workspaceQuery } from '@/lib/account';
 
 const HTTPS_URL = /^https:\/\/[^\s/]+\.[^\s]+$/i;
