@@ -210,6 +210,9 @@ export function MePage() {
   const linkRow = (icon: GwIconName, label: string, to: string, trailing?: ReactNode, search?: Record<string, string>) => <Link className="settings-row" to={to} search={search as never}><GwFeatureTile name={icon} size={24} className="settings-tile" /><span className="settings-label">{label}</span>{trailing ?? <ChevronRight className="settings-chevron" />}</Link>;
   const staticRow = (icon: GwIconName, label: string, control: ReactNode) => <div className="settings-row is-static"><GwFeatureTile name={icon} size={24} className="settings-tile" /><span className="settings-label">{label}</span>{control}</div>;
 
+  const isHost = !!workspace && workspace.role !== 'member';
+  // The Share/QR panel always points at the coach's canonical public page; the invite link is only a fallback for members without one.
+  const publicUrl = profile?.slug ? `${window.location.origin}/h/${profile.slug}` : null;
   const panelIcons: Record<Exclude<Panel, null>, GwIconName> = { qr: 'QrCode', gatherings: 'CalendarDays', challenges: 'Flag', badges: 'Award', teams: 'UsersRound', notifications: 'Bell', updates: 'Megaphone', inbox: 'MessageCircle', support: 'LifeBuoy', plan: 'CreditCard', purchases: 'CreditCard', invite: 'UserPlus', calendar: 'CalendarPlus', hostProfile: 'Globe2', privacy: 'ShieldCheck' };
   const panels: Record<Exclude<Panel, null>, { title: string; icon: GwIconName; body: ReactNode }> = {
     gatherings: { title: t('profile.myGatherings'), icon: 'CalendarDays', body: <MyGatheringsList userId={userId} /> },
