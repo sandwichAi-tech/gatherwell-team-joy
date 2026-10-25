@@ -1,23 +1,39 @@
 import type { GwIconName } from '@/components/gw-icon';
 
-/** Three concise host outcome cards on the homepage; the full tool catalog lives on /hosts. */
-export const HOME_TOOL_CARDS: { key: 'createSell' | 'runConnect' | 'teachGrow'; icon: GwIconName }[] = [
-  { key: 'createSell', icon: 'CalendarPlus' },
-  { key: 'runConnect', icon: 'QrCode' },
-  { key: 'teachGrow', icon: 'BookOpen' },
-];
-
 /**
- * Marketing carousel slides. These use approved site_media category imagery only —
- * never event records — so no draft, template, test or non-discoverable content can
- * surface on the public homepage.
+ * Homepage marketing carousel slides. Each slide communicates one product value and
+ * links to a real destination — never a dead slide. Imagery uses approved site_media
+ * category slots only — never event records — so no draft, template, test or
+ * non-discoverable content can surface on the public homepage.
+ * hrefs are plain paths: /login?intent=host and /login?next=… go through the existing
+ * sign-in/onboarding flow (next paths must stay allowlisted in src/lib/return-to.ts
+ * and public.is_safe_return_path), /discover tabs are public.
  */
 export const CAROUSEL_SLIDES = [
-  { key: 'events', slot: 'feed_default_run' },
-  { key: 'retreats', slot: 'feed_default_hike' },
-  { key: 'courses', slot: 'leaders_band' },
-  { key: 'communities', slot: 'feed_default_walk' },
+  { key: 'hostEvents', slot: 'feed_default_run', href: '/login?intent=host' },
+  { key: 'teach', slot: 'leaders_band', href: '/login?next=/learn' },
+  { key: 'discoverEvents', slot: 'feed_default_hike', href: '/discover?tab=events' },
+  { key: 'coaches', slot: 'feed_default_walk', href: '/discover?tab=coaches' },
 ] as const;
+
+/**
+ * Host toolkit cards on the homepage. Five purpose-based cards with real routes and
+ * truthful availability; the full tool catalog lives on /hosts and (signed in) /tools.
+ */
+export const HOME_TOOL_CARDS: { key: 'events' | 'learning' | 'communications' | 'profile' | 'payments'; icon: GwIconName; href: string }[] = [
+  { key: 'events', icon: 'CalendarPlus', href: '/login?intent=host' },
+  { key: 'learning', icon: 'GraduationCap', href: '/login?next=/learn' },
+  { key: 'communications', icon: 'Megaphone', href: '/login?next=/communications' },
+  { key: 'profile', icon: 'Compass', href: '/login?next=/me' },
+  { key: 'payments', icon: 'CreditCard', href: '/pricing' },
+];
+
+/** Direct public paths for people browsing wellness — no account needed to look. */
+export const HOME_DISCOVER_PATHS: { key: 'events' | 'resources' | 'coaches'; icon: GwIconName; href: string }[] = [
+  { key: 'events', icon: 'CalendarCheck', href: '/discover?tab=events' },
+  { key: 'resources', icon: 'BookOpen', href: '/discover?tab=resources' },
+  { key: 'coaches', icon: 'UsersRound', href: '/discover?tab=coaches' },
+];
 
 /**
  * Approved public plans (USD, 2026-10-24). Annual = two months free (10x monthly).
