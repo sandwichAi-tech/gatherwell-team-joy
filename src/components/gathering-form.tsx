@@ -35,6 +35,7 @@ import { checklistOf, eventDetailQuery, templatesQuery } from '@/lib/templates';
 import { UpgradeSheet } from '@/components/plan-page';
 import { planStatusQuery } from '@/lib/billing';
 import { validSessions, type EventSession } from '@/lib/event-sessions';
+import { eventFormats, formatOf, type EventFormat } from '@/lib/event-format';
 
 type Props = { eventId?: string | undefined; templateId?: string | undefined; fromId?: string | undefined };
 const DURATIONS = [30, 60, 90, 120] as const;
@@ -164,6 +165,13 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const weekly = !retreatOn && dates.length > 1;
   const retreatBad = retreatOn && (!retreatEnd || !startDate || new Date(retreatEnd) <= startDate);
 
+  // Format cards: switching format keeps everything already entered and reveals the matching sections.
+  const pickFormat = (v: EventFormat) => {
+    const on = v === 'retreat'; setRetreatOn(on); setMulti(v === 'multi'); setRule(r => ({ ...r, kind: 'none' })); setFull(true);
+    if (v === 'multi' && !sessions.length && startDate) setSessions([0, 1].map(i => ({ title: '', starts_at: new Date(startDate.getTime() + i * 86400000).toISOString(), ends_at: new Date(startDate.getTime() + i * 86400000 + 3600000).toISOString(), place: '' })));
+    if (on && !retreatEnd && startDate) { const end = new Date(startDate); end.setDate(end.getDate() + 2); setRetreatEnd(toLocalInput(end)); }
+  };
+
   const payload = () => ({
     category, category_label: category === 'more' ? categoryLabel.trim() : '', title: title.trim(), cover_url: coverPath ?? '', cover_style: coverStyle, starts_at: new Date(start).toISOString(), duration_minutes: duration,
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, location_name: place !== 'online' ? locationName : '', address: place !== 'online' ? address : '',
@@ -255,12 +263,17 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         {tpl && <span className="chip">{t('gathering.fromTemplate', { title: tpl.title })}</span>}
       </header>
 
-      <section className="form-section"><label className="field-label" htmlFor="g-experience">{t('builder.experience.label')}</label>
-        <select id="g-experience" className="field-input" value={multi ? 'multi' : retreatOn ? 'retreat' : 'standard'} onChange={e => {
-          const on = e.target.value === 'retreat'; setRetreatOn(on); setMulti(e.target.value === 'multi'); setRule(r=>({...r,kind:'none'})); setFull(true);
-          if(e.target.value === 'multi' && !sessions.length && startDate) setSessions([0,1].map(i=>({title:'',starts_at:new Date(startDate.getTime()+i*86400000).toISOString(),ends_at:new Date(startDate.getTime()+i*86400000+3600000).toISOString(),place:''})));
-          if (on && !retreatEnd && startDate) { const end = new Date(startDate); end.setDate(end.getDate() + 2); setRetreatEnd(toLocalInput(end)); }
-        }}><option value="standard">{t('builder.experience.standard')}</option>{(retreatsOn || retreatOn) && <option value="retreat">{t('builder.experience.retreat')}</option>}{!source?.event.series_id && <option value="multi">{t('builder.experience.multi')}</option>}</select>
+      <section className="form-section">
+        <span className="field-label" id="g-format-label">{t('builder.experience.label')}</span>
+        <div className="format-cards" role="radiogroup" aria-labelledby="g-format-label">
+          {eventFormats({ retreatsEnabled: retreatsOn, retreatActive: retreatOn, isSeries: !!source?.event.series_id }).map(f => {
+            const selected = formatOf(multi, retreatOn) === f;
+            return <button key={f} type="button" role="radio" aria-checked={selected} className={`format-card ${selected ? 'is-selected' : ''}`} onClick={() => pickFormat(f)}>
+              <strong>{t(`builder.experience.${f}`)}</strong>
+              <small>{t(`builder.experience.desc.${f}`)}</small>
+            </button>;
+          })}
+        </div>
       </section>
       {multi && <section className="form-section"><p>{t('sessions.scope')}</p>{sessions.map((s,i)=><fieldset key={i} className="form-section"><legend>{t('sessions.session',{count:i+1})}</legend>{(['title','starts_at','ends_at','place'] as const).map(key=><label key={key} className="field-label">{t(`sessions.${key}`)}<Input type={key.endsWith('_at')?'datetime-local':'text'} value={key.endsWith('_at')?toLocalInput(new Date(s[key])):s[key]} maxLength={key==='title'?100:300} onChange={e=>setSessions(rows=>rows.map((row,j)=>j===i?{...row,[key]:key.endsWith('_at')&&e.target.value?new Date(e.target.value).toISOString():e.target.value}:row))}/></label>)}<Button variant="ghost" onClick={()=>setSessions(rows=>rows.filter((_,j)=>j!==i))}>{t('sessions.remove')}</Button></fieldset>)}<Button variant="secondary" disabled={sessions.length>=20} onClick={()=>setSessions(rows=>[...rows,{title:'',starts_at:new Date().toISOString(),ends_at:new Date(Date.now()+3600000).toISOString(),place:''}])}>{t('builder.experience.add')}</Button></section>}
 

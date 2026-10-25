@@ -1,6 +1,7 @@
 import { RefundLine, RefundSelect } from '@/components/refund-line';
 import { asRefundPolicy, type RefundPolicy } from '@/lib/refunds';
 import { FoundingSeal } from '@/components/founding';
+import { LangFields, LangPair } from '@/components/lang-fields';
 import { VerifiedMark, useIsVerified } from '@/components/coach-trust';
 import { PromoField } from '@/components/promo-field';
 import { promoDiscount, type Promo } from '@/lib/promo';
@@ -17,7 +18,6 @@ import { toast } from 'sonner';
 import { Plus, Check, Download, Lock, ChevronRight, Pencil, Upload, FileText, CalendarDays } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { useGatherwell } from '@/components/gatherwell-shell';
@@ -133,18 +133,10 @@ function OfferEditor({ offer, teamId, onClose, bundleMode }: { offer: Partial<Of
     <div className="edit-form">
       <div className="form-field"><span className="field-label">{t('offers.type')}</span>
         <div className="choice-pair offer-kinds" role="group" aria-label={t('offers.type')}>{KINDS.map(k => <button key={k} type="button" disabled={!!offer?.id} className={`choice-card ${f.kind === k ? 'is-selected' : ''}`} aria-pressed={f.kind === k} onClick={() => setF({ ...f, kind: k })}><strong>{t(`offers.kind.${k}`)}</strong><small>{t(`offers.kindText.${k}`)}</small></button>)}</div></div>
-      <div className="bilingual">
-        {field('of-ten', `${t('templates.title')} · EN`, <Input id="of-ten" className="field-input" maxLength={120} value={f.title_en} placeholder={t('offers.titlePlaceholder')} onChange={e => setF({ ...f, title_en: e.target.value })} />)}
-        {field('of-tes', `${t('templates.title')} · ES`, <Input id="of-tes" className="field-input" maxLength={120} value={f.title_es} onChange={e => setF({ ...f, title_es: e.target.value })} />)}
-      </div>
-      <div className="bilingual">
-        {field('of-den', `${t('offers.description')} · EN`, <Textarea id="of-den" rows={3} className="field-textarea" maxLength={1200} value={f.description_en} onChange={e => setF({ ...f, description_en: e.target.value })} />)}
-        {field('of-des', `${t('offers.description')} · ES`, <Textarea id="of-des" rows={3} className="field-textarea" maxLength={1200} value={f.description_es} onChange={e => setF({ ...f, description_es: e.target.value })} />)}
-      </div>
-      <div className="bilingual">
-        {field('of-ien', `${t('offers.includes')} · EN`, <Textarea id="of-ien" rows={3} className="field-textarea" value={f.inc_en} placeholder={t('offers.includesPlaceholder')} onChange={e => setF({ ...f, inc_en: e.target.value })} />)}
-        {field('of-ies', `${t('offers.includes')} · ES`, <Textarea id="of-ies" rows={3} className="field-textarea" value={f.inc_es} onChange={e => setF({ ...f, inc_es: e.target.value })} />)}
-      </div>
+      <LangFields idPrefix="of" titleEn={f.title_en} titleEs={f.title_es} descEn={f.description_en} descEs={f.description_es}
+        onChange={p => setF(x => ({ ...x, title_en: p.titleEn ?? x.title_en, title_es: p.titleEs ?? x.title_es, description_en: p.descEn ?? x.description_en, description_es: p.descEs ?? x.description_es }))}
+        titleLabel={t('templates.title')} descLabel={t('offers.description')} descMax={1200} titlePlaceholder={t('offers.titlePlaceholder')} />
+      <LangPair id="of-inc" label={t('offers.includes')} en={f.inc_en} es={f.inc_es} onEn={v => setF({ ...f, inc_en: v })} onEs={v => setF({ ...f, inc_es: v })} multiline rows={3} placeholder={t('offers.includesPlaceholder')} />
       {field('of-price', f.kind === 'download' ? t('offers.price') : t('offers.priceMonthly'), <Input id="of-price" className="field-input" inputMode="decimal" value={f.price} placeholder="0" onChange={e => setF({ ...f, price: e.target.value.replace(/[^0-9.]/g, '') })} />)}
       {priceNum > 0 && <RefundSelect id="of-refund" value={f.refund} onChange={v => setF({ ...f, refund: v })} />}
       <p className="muted-small">{t('offers.feeNote')}</p>

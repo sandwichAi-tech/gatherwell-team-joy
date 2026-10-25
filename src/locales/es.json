@@ -5164,7 +5164,12 @@
       "multi": "Experiencia con varios eventos",
       "session": "Sesión",
       "add": "Agregar sesión",
-      "hint": "Una experiencia con varias sesiones programadas. La inscripción corresponde a toda la experiencia."
+      "hint": "Una experiencia con varias sesiones programadas. La inscripción corresponde a toda la experiencia.",
+      "desc": {
+        "standard": "Un evento en una hora y un lugar principales.",
+        "retreat": "Una experiencia de varios días con hospedaje, viaje y programa.",
+        "multi": "Una serie o programa coordinado con varias sesiones."
+      }
     }
   },
   "tickets": {
@@ -6025,6 +6030,18 @@
       "bundle": {
         "hint": "Guarda primero lo básico. Después abre el paquete para agregar texto, archivos, enlaces y contenido integrado en cualquier orden."
       }
+    },
+    "builder": {
+      "typeLabel": "Tipo de recurso",
+      "switchTitle": "¿Cambiar el tipo de recurso?",
+      "switchText": "Los detalles que ingresaste para este tipo no aplican al nuevo y se descartarán. Tu título, descripción y portada se conservan.",
+      "switchConfirm": "Cambiar tipo",
+      "pickCourse": "Curso al que pertenece este quiz",
+      "pickCoursePlaceholder": "Elige un curso",
+      "noCourses": "Necesitas un curso antes de agregar un quiz. Crea uno primero y vuelve aquí.",
+      "courseNote": "Después de guardar, agrega secciones, lecciones y quizzes desde la página del curso.",
+      "publishHint": "Apagado guarda un borrador que puedes publicar después.",
+      "quizReady": "Borrador del quiz creado — ahora agrega tus preguntas."
     }
   },
   "templatesR": {
@@ -6434,5 +6451,9 @@
     "unsubscribed": "Te diste de baja de las novedades de este coach.",
     "confirmedStatus": "Tus preferencias de correo están confirmadas para este coach.",
     "unconfirmedStatus": "Confirma tus preferencias seleccionadas para este coach."
+  },
+  "langFields": {
+    "add": "Agregar traducción en {{lang}}",
+    "hide": "Ocultar {{lang}} por ahora"
   }
 }

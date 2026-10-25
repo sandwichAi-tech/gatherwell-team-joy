@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CREATE_TYPES, createDestination, isTrackFlow, lessonEditorConfig, lessonPresetFor, parseCreateType, quizParentDestination } from './create-resource';
+import { CREATE_TYPES, createDestination, emptyBuilderDraft, isOfferFlow, isTrackFlow, lessonEditorConfig, lessonPresetFor, offerKindFor, parseCreateType, quizParentDestination, typeContentAtRisk } from './create-resource';
 
 describe('create resource type parsing', () => {
   it('accepts every supported type and rejects unknown values', () => {
@@ -73,5 +73,33 @@ describe('focused lesson editor controls', () => {
     expect(c.showsLiveFields).toBe(true);
     expect(c.showsUrl).toBe(false);
     expect(c.uploadAccept).toBeNull();
+  });
+});
+
+describe('single dynamic builder', () => {
+  it('maps offer-backed types to their offer kind', () => {
+    expect(offerKindFor('course')).toBe('course');
+    expect(offerKindFor('file')).toBe('download');
+    expect(offerKindFor('bundle')).toBe('download');
+    expect(offerKindFor('video')).toBeNull();
+    expect(offerKindFor('recipe')).toBeNull();
+    expect(isOfferFlow('course')).toBe(true);
+    expect(isOfferFlow('quiz')).toBe(false);
+  });
+  it('warns only when type-specific content would be lost', () => {
+    const d = emptyBuilderDraft();
+    expect(typeContentAtRisk(d, 'video', 'recipe')).toBe(false); // nothing entered yet
+    d.lesson.url = 'https://example.com/v';
+    expect(typeContentAtRisk(d, 'video', 'recipe')).toBe(true); // media link cannot become a recipe
+    expect(typeContentAtRisk(d, 'video', 'audio')).toBe(false); // stays inside the track flow
+    expect(typeContentAtRisk(d, 'video', 'video')).toBe(false);
+    const r = emptyBuilderDraft();
+    r.recipe.ingEn = 'rice';
+    expect(typeContentAtRisk(r, 'recipe', 'video')).toBe(true);
+    const o = emptyBuilderDraft();
+    o.offer.price = '10';
+    expect(typeContentAtRisk(o, 'course', 'video')).toBe(true);
+    expect(typeContentAtRisk(o, 'course', 'bundle')).toBe(false); // price carries between offer kinds
+    expect(typeContentAtRisk(emptyBuilderDraft(), 'quiz', 'video')).toBe(false);
   });
 });

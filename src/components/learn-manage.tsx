@@ -1,6 +1,6 @@
 import { CropFileInput } from '@/components/image-crop';
 import { EmptyState } from '@/components/launch-states';
-import { useTranslateFill } from '@/lib/assistant-client';
+import { LangFields, LangPair } from '@/components/lang-fields';
 import { confirmAction } from '@/components/confirm-dialog';
 import { MembersOnlyPicker } from '@/components/offers';
 import { useEffect, useState } from 'react';
@@ -8,10 +8,9 @@ import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Languages, ArrowDown, ArrowLeft, ArrowUp, GripVertical, Pencil, Plus, Trash2, Upload } from '@/components/icons';
+import { ArrowDown, ArrowLeft, ArrowUp, GripVertical, Pencil, Plus, Trash2, Upload } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { supabase } from '@/integrations/supabase/client';
@@ -29,18 +28,11 @@ function errMsg(t: (k: string) => string, e: unknown) {
   return t('profile.saveError');
 }
 
-/** One Translate action for a form's bilingual pairs: fills each empty side from its filled partner. */
-function TranslatePair<T extends Record<string, unknown>>({ pairs, f, setF }: { pairs: [keyof T & string, keyof T & string][]; f: T; setF: React.Dispatch<React.SetStateAction<T>> }) {
-  const { t } = useTranslation(); const tr = useTranslateFill(); const [busy, setBusy] = useState(false);
-  const go = async () => { setBusy(true); try { for (const [en, es] of pairs) { const a = String(f[en] ?? ''), b = String(f[es] ?? ''); if (a.trim() && b.trim()) continue; if (!a.trim() && !b.trim()) continue; await tr.run(a, b, v => setF(x => ({ ...x, [en]: v })), v => setF(x => ({ ...x, [es]: v }))); } } catch { toast.error(t('error.message')); } finally { setBusy(false); } };
-  return <div className="label-row"><button type="button" className="translate-button" disabled={busy} onClick={go}><Languages />{busy ? t('assistant.translating') : t('templates.translate')}</button>{tr.preview && <small className="not-connected">{t('assistant.previewTranslateNote')}</small>}</div>;
-}
-
-function Field({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
+export function Field({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
   return <div className="form-field"><label className="field-label" htmlFor={id}>{label}</label>{children}</div>;
 }
 
-function CoverPicker({ teamId, path, styleIdx, title, onPath, onStyle }: { teamId: string; path: string | null; styleIdx: number; title: string; onPath: (p: string | null) => void; onStyle: (n: number) => void }) {
+export function CoverPicker({ teamId, path, styleIdx, title, onPath, onStyle }: { teamId: string; path: string | null; styleIdx: number; title: string; onPath: (p: string | null) => void; onStyle: (n: number) => void }) {
   const { t } = useTranslation(); const [busy, setBusy] = useState(false);
   return <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
     <LearnCover path={path} style={styleIdx} title={title || 'L'} className="is-wide" />
@@ -70,11 +62,9 @@ function TrackEditor({ track, teamId, onClose, preset }: { track: Partial<Track>
   };
   return <ResponsiveSheet open={!!track} onOpenChange={o => !o && onClose()} title={preset && !track?.id ? t(`resources.preset.track.${preset}`) : track?.id ? t('learnHub.editTrack') : t('learnHub.newTrack')} description={preset && !track?.id ? t(`resources.preset.trackText.${preset}`) : undefined}>
     <div className="edit-form">
-      <div className="bilingual"><Field id="tr-en" label={`${t('templates.title')} · EN`}><Input id="tr-en" className="field-input" maxLength={120} value={f.title_en} onChange={e => setF({ ...f, title_en: e.target.value })} /></Field>
-        <Field id="tr-es" label={`${t('templates.title')} · ES`}><Input id="tr-es" className="field-input" maxLength={120} value={f.title_es} onChange={e => setF({ ...f, title_es: e.target.value })} /></Field></div>
-      <TranslatePair pairs={[['title_en', 'title_es'], ['description_en', 'description_es']]} f={f} setF={setF} />
-      <div className="bilingual"><Field id="trd-en" label={`${t('templates.description')} · EN`}><Textarea id="trd-en" rows={3} className="field-textarea" maxLength={1000} value={f.description_en} onChange={e => setF({ ...f, description_en: e.target.value })} /></Field>
-        <Field id="trd-es" label={`${t('templates.description')} · ES`}><Textarea id="trd-es" rows={3} className="field-textarea" maxLength={1000} value={f.description_es} onChange={e => setF({ ...f, description_es: e.target.value })} /></Field></div>
+      <LangFields idPrefix="tr" titleEn={f.title_en} titleEs={f.title_es} descEn={f.description_en} descEs={f.description_es}
+        onChange={p => setF(x => ({ ...x, title_en: p.titleEn ?? x.title_en, title_es: p.titleEs ?? x.title_es, description_en: p.descEn ?? x.description_en, description_es: p.descEs ?? x.description_es }))}
+        titleLabel={t('templates.title')} descLabel={t('templates.description')} />
       <CoverPicker teamId={teamId} path={f.cover_url} styleIdx={f.cover_style} title={f.title_en || f.title_es} onPath={p => setF(x => ({ ...x, cover_url: p }))} onStyle={n => setF(x => ({ ...x, cover_style: n }))} />
       <label className="switch-row"><Switch checked={f.is_start_here} onCheckedChange={v => setF({ ...f, is_start_here: v })} /><span><strong>{t('learnHub.markStartHere')}</strong><small>{t('learnHub.markStartHereText')}</small></span></label>
       <label className="switch-row"><Switch checked={f.is_published} onCheckedChange={v => setF({ ...f, is_published: v })} /><span><strong>{t('learnHub.publishTrack')}</strong><small>{t('learnHub.publishTrackText')}</small></span></label>
@@ -134,9 +124,9 @@ function LessonEditor({ lesson, teamId, onClose, preset }: { lesson: (Partial<Le
   const urlLabel = f.type === 'video' ? 'learnHub.videoLink' : f.type === 'pdf' ? 'learnHub.pdfLink' : f.type === 'audio' ? 'learnHub.audioLink' : 'learnHub.link';
   return <ResponsiveSheet open={!!lesson} onOpenChange={o => !o && onClose()} title={preset && !lesson?.id ? t(`resources.preset.lesson.${preset}`) : lesson?.id ? t('learnHub.editLesson') : t('learnHub.newLesson')} description={preset && !lesson?.id ? t(`resources.preset.lessonText.${preset}`) : undefined}>
     <div className="edit-form">
-      <div className="bilingual"><Field id="ls-en" label={`${t('templates.title')} · EN`}><Input id="ls-en" className="field-input" maxLength={140} value={f.title_en} onChange={set('title_en')} /></Field>
-        <Field id="ls-es" label={`${t('templates.title')} · ES`}><Input id="ls-es" className="field-input" maxLength={140} value={f.title_es} onChange={set('title_es')} /></Field></div>
-      <TranslatePair pairs={[['title_en', 'title_es'], ['notes_en', 'notes_es']]} f={f} setF={setF} />
+      <LangFields idPrefix="ls" titleEn={f.title_en} titleEs={f.title_es} descEn={f.notes_en} descEs={f.notes_es}
+        onChange={p => setF(x => ({ ...x, title_en: p.titleEn ?? x.title_en, title_es: p.titleEs ?? x.title_es, notes_en: p.descEn ?? x.notes_en, notes_es: p.descEs ?? x.notes_es }))}
+        titleLabel={t('templates.title')} descLabel={t('learnHub.notes')} titleMax={140} descMax={4000} descRows={4} />
       {preset && !lesson?.id ? <p className="chip lesson-preset-chip">{t(`learnHub.type.${f.type}`)}</p> :
         <div className="form-field"><span className="field-label">{t('learnHub.lessonType')}</span>
           <div className="type-choices">{(['video', 'pdf', 'audio', 'link', 'live'] as const).map(ty => <button type="button" key={ty} className={`choice-card ${f.type === ty ? 'is-selected' : ''}`} aria-pressed={f.type === ty} onClick={() => setF({ ...f, type: ty })}><strong>{t(`learnHub.type.${ty}`)}</strong></button>)}</div></div>}
@@ -153,8 +143,6 @@ function LessonEditor({ lesson, teamId, onClose, preset }: { lesson: (Partial<Le
         <Field id="ls-replay" label={t('learnHub.replayLink')}><Input id="ls-replay" type="url" className="field-input" placeholder="https://" value={f.replay} onChange={set('replay')} /></Field>
         <p className="field-hint">{t('learnHub.replayHint')}</p></>}
       <Field id="ls-dur" label={t('learnHub.duration')}><Input id="ls-dur" type="number" min={1} max={600} className="field-input" value={f.duration} onChange={set('duration')} /></Field>
-      <div className="bilingual"><Field id="ln-en" label={`${t('learnHub.notes')} · EN`}><Textarea id="ln-en" rows={4} className="field-textarea" maxLength={4000} value={f.notes_en} onChange={set('notes_en')} /></Field>
-        <Field id="ln-es" label={`${t('learnHub.notes')} · ES`}><Textarea id="ln-es" rows={4} className="field-textarea" maxLength={4000} value={f.notes_es} onChange={set('notes_es')} /></Field></div>
       <Button className="onboarding-continue" disabled={busy || !ok} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
       {lesson?.id && <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('learnHub.deleteLesson')}</Button>}
     </div>
@@ -233,17 +221,15 @@ function RecipeEditor({ recipe, teamId, onClose }: { recipe: Partial<Recipe> | n
     if (res.error) { toast.error(errMsg(t, res.error)); return; }
     await qc.invalidateQueries({ queryKey: ['recipes', userId] }); onClose();
   };
-  const ta = (id: string, label: string, k: 'ing_en' | 'ing_es' | 'steps_en' | 'steps_es') => <Field id={id} label={label}><Textarea id={id} rows={5} className="field-textarea" value={f[k]} onChange={e => setF({ ...f, [k]: e.target.value })} /></Field>;
   return <ResponsiveSheet open={!!recipe} onOpenChange={o => !o && onClose()} title={recipe?.id ? t('learnHub.editRecipe') : t('learnHub.addRecipe')} description={t('learnHub.recipeRule')}>
     <div className="edit-form">
-      <div className="bilingual"><Field id="rc-en" label={`${t('templates.title')} · EN`}><Input id="rc-en" className="field-input" maxLength={120} value={f.title_en} onChange={e => setF({ ...f, title_en: e.target.value })} /></Field>
-        <Field id="rc-es" label={`${t('templates.title')} · ES`}><Input id="rc-es" className="field-input" maxLength={120} value={f.title_es} onChange={e => setF({ ...f, title_es: e.target.value })} /></Field></div>
+      <LangPair id="rc-title" label={t('templates.title')} en={f.title_en} es={f.title_es} onEn={v => setF({ ...f, title_en: v })} onEs={v => setF({ ...f, title_es: v })} maxLength={120} />
       <Field id="rc-prep" label={t('learnHub.prepLabel')}><Input id="rc-prep" type="number" min={1} max={600} className="field-input" value={f.prep} onChange={e => setF({ ...f, prep: e.target.value })} /></Field>
       <div className="form-field"><span className="field-label">{t('learnHub.tagsLabel')}</span><div className="filter-chips">{RECIPE_TAGS.map(tag => { const on = f.tags.includes(tag); return <button type="button" key={tag} className={`filter-chip ${on ? 'is-active' : ''}`} aria-pressed={on} onClick={() => setF({ ...f, tags: on ? f.tags.filter(x => x !== tag) : [...f.tags, tag] })}>{t(`learnHub.tags.${tag}`)}</button>; })}</div></div>
       <CoverPicker teamId={teamId} path={f.cover_url} styleIdx={f.cover_style} title={f.title_en || f.title_es} onPath={p => setF(x => ({ ...x, cover_url: p }))} onStyle={n => setF(x => ({ ...x, cover_style: n }))} />
       <p className="field-hint">{t('learnHub.onePerLine')}</p>
-      <div className="bilingual">{ta('rc-ie', `${t('learnHub.ingredients')} · EN`, 'ing_en')}{ta('rc-is', `${t('learnHub.ingredients')} · ES`, 'ing_es')}</div>
-      <div className="bilingual">{ta('rc-se', `${t('learnHub.steps')} · EN`, 'steps_en')}{ta('rc-ss', `${t('learnHub.steps')} · ES`, 'steps_es')}</div>
+      <LangPair id="rc-ing" label={t('learnHub.ingredients')} en={f.ing_en} es={f.ing_es} onEn={v => setF({ ...f, ing_en: v })} onEs={v => setF({ ...f, ing_es: v })} multiline rows={5} />
+      <LangPair id="rc-steps" label={t('learnHub.steps')} en={f.steps_en} es={f.steps_es} onEn={v => setF({ ...f, steps_en: v })} onEs={v => setF({ ...f, steps_es: v })} multiline rows={5} />
       <Button className="onboarding-continue" disabled={busy || !ok} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
       {recipe?.id && <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('learnHub.deleteRecipe')}</Button>}
     </div>

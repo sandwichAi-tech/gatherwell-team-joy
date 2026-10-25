@@ -5164,7 +5164,12 @@
       "multi": "Multi-event experience",
       "session": "Session",
       "add": "Add session",
-      "hint": "One experience with multiple scheduled sessions. Registration applies to the whole experience."
+      "hint": "One experience with multiple scheduled sessions. Registration applies to the whole experience.",
+      "desc": {
+        "standard": "One event at one primary time and place.",
+        "retreat": "A multi-day hosted experience with lodging, travel and program details.",
+        "multi": "A coordinated series or program with multiple sessions."
+      }
     }
   },
   "tickets": {
@@ -6025,6 +6030,18 @@
       "bundle": {
         "hint": "Save the basics first. Then open the bundle to add text, files, links and embeds in any order."
       }
+    },
+    "builder": {
+      "typeLabel": "Resource type",
+      "switchTitle": "Change resource type?",
+      "switchText": "The details you entered for this type don't apply to the new one and will be discarded. Your title, description and cover stay.",
+      "switchConfirm": "Change type",
+      "pickCourse": "Course this quiz belongs to",
+      "pickCoursePlaceholder": "Choose a course",
+      "noCourses": "You need a course before you can add a quiz. Create one first, then come back.",
+      "courseNote": "After saving, add sections, lessons and quizzes from the course page.",
+      "publishHint": "Off saves a draft you can publish later.",
+      "quizReady": "Quiz draft created — now add your questions."
     }
   },
   "templatesR": {
@@ -6434,5 +6451,9 @@
     "unsubscribed": "Unsubscribed from this coach.",
     "confirmedStatus": "Your email preferences are confirmed for this coach.",
     "unconfirmedStatus": "Confirm your selected preferences for this coach."
+  },
+  "langFields": {
+    "add": "Add {{lang}} translation",
+    "hide": "Hide {{lang}} for now"
   }
 }

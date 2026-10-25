@@ -2535,3 +2535,12 @@ a.gw-cat-chip:hover{background:#fff}
 }
 
 :root{--share-plum:#302338;--share-ivory:#F8F5F0;--share-concrete:#D8D0C6}
+
+/* Event format cards (create/edit event) */
+.format-cards{display:grid;gap:10px}
+.format-card{display:grid;gap:4px;min-height:64px;padding:14px 16px;border:1px solid var(--border);border-radius:16px;background:var(--card);color:var(--foreground);text-align:left;transition:border-color .15s ease-out,box-shadow .15s ease-out}
+.format-card:hover,.format-card:focus-visible{border-color:var(--primary)}
+.format-card.is-selected{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary)}
+.format-card small{color:var(--muted-foreground);font-size:14px}
+@media (min-width:768px){.format-cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.builder-panel{display:grid;gap:16px}
