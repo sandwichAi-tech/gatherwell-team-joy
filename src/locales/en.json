@@ -15,7 +15,8 @@
     "updates": "Updates",
     "inbox": "Messages",
     "support": "Support",
-    "insights": "Insights"
+    "insights": "Insights",
+    "communications": "Communication"
   },
   "common": {
     "create": "Create",
@@ -38,7 +39,7 @@
     "previewNote": "Sample preview. This action is not connected yet.",
     "save": "Save"
   },
-"home":   {
+  "home": {
     "meta": {
       "title": "ZoheeWell · Host events, courses, and community in one place",
       "description": "ZoheeWell helps wellness hosts and coaches create events and retreats, sell tickets, teach courses, and grow their community. Create your first event free."
@@ -160,9 +161,16 @@
     "paymentsSoon": "Payments coming soon",
     "footer": {
       "hostTools": "Host tools"
-    }
+    },
+    "eyebrow": "YOUR COMMUNITY, CONNECTED",
+    "greeting": "Welcome back, {{name}}",
+    "greetingFallback": "Welcome back",
+    "subtitle": "Bring people together, see what’s next, and keep your community moving.",
+    "upcoming": "Upcoming events",
+    "viewAll": "View all",
+    "statsLabel": "Your community at a glance"
   },
-  "faqPage":   {
+  "faqPage": {
     "meta": {
       "title": "FAQ · ZoheeWell",
       "description": "Answers about hosting events and courses, pricing, payments, privacy, and discovering wellness events, resources, and coaches on ZoheeWell."
@@ -2263,8 +2271,11 @@
       "terms": "Terms",
       "privacy": "Privacy",
       "credits": "Photography credits",
-      "copyright": "© 2026 ZoheeWell"
-    , "faq": "FAQ", "about": "About", "careers": "Careers"},
+      "copyright": "© 2026 ZoheeWell",
+      "faq": "FAQ",
+      "about": "About",
+      "careers": "Careers"
+    },
     "sticky": {
       "find": "Find an event"
     },
@@ -3103,7 +3114,14 @@
         "answered": "Answered",
         "closed": "Closed"
       }
-    }
+    },
+    "ownerGuide": {
+      "title": "Owner Guide",
+      "signIn": "Sign in with your existing account at /admin-login. Open Me → Admin dashboard, or go to /admin. Only platform administrators can enter.",
+      "sections": "Users includes coaches and account restrictions. Offerings inspects events and resources. Teams controls communities. Settings controls feature availability and plan configuration. Support handles help requests. Audit records administrative changes.",
+      "limits": "Email, SMS, payments and wallet delivery require their respective setup. Simulated message records are not delivered."
+    },
+    "dashboardLink": "Admin dashboard"
   },
   "legalDocs": {
     "draft": "Draft — pending legal review",
@@ -3868,16 +3886,34 @@
       "whoTitle": "Built for people who gather people",
       "whoSub": "ZoheeWell welcomes independent coaches, studios, educators, creators, and community builders of every kind. Many of our earliest hosts come from relationship-led wellness networks — communities built on personal invitation — and the platform is designed to serve them and everyone beyond them.",
       "who": [
-        { "title": "Hosts and coaches", "body": "Run classes, workshops, retreats, and challenges with RSVPs, waitlists, reminders, and QR check-in." },
-        { "title": "Teachers and creators", "body": "Build courses, lessons, quizzes, recipes, and downloadable resources your people can return to." },
-        { "title": "Teams and leaders", "body": "Give your team shared tools, roles, and a communications hub with templates and journeys." },
-        { "title": "Participants", "body": "Discover public events, resources, and coaches — and RSVP as a guest, no account needed." }
+        {
+          "title": "Hosts and coaches",
+          "body": "Run classes, workshops, retreats, and challenges with RSVPs, waitlists, reminders, and QR check-in."
+        },
+        {
+          "title": "Teachers and creators",
+          "body": "Build courses, lessons, quizzes, recipes, and downloadable resources your people can return to."
+        },
+        {
+          "title": "Teams and leaders",
+          "body": "Give your team shared tools, roles, and a communications hub with templates and journeys."
+        },
+        {
+          "title": "Participants",
+          "body": "Discover public events, resources, and coaches — and RSVP as a guest, no account needed."
+        }
       ],
       "useLabel": "How it works",
       "useTitle": "Two sides of the same gathering",
       "uses": [
-        { "title": "For hosts", "body": "Create an event in minutes, share your public page, and grow a community you can reach directly. Paid access arrives as payments are configured — free events and resources work today." },
-        { "title": "For participants", "body": "Browse Discover for upcoming events, resources, and coaches near you. Save what you love and RSVP in a tap." }
+        {
+          "title": "For hosts",
+          "body": "Create an event in minutes, share your public page, and grow a community you can reach directly. Paid access arrives as payments are configured — free events and resources work today."
+        },
+        {
+          "title": "For participants",
+          "body": "Browse Discover for upcoming events, resources, and coaches near you. Save what you love and RSVP in a tap."
+        }
       ],
       "betaLabel": "Where we are",
       "betaTitle": "An early beta, built carefully",
@@ -5090,6 +5126,15 @@
     },
     "errors": {
       "reg_window": "Registration must open before it closes."
+    },
+    "experience": {
+      "label": "Event format",
+      "standard": "Standard event",
+      "retreat": "Retreat",
+      "multi": "Multi-event experience",
+      "session": "Session",
+      "add": "Add session",
+      "hint": "One experience with multiple scheduled sessions. Registration applies to the whole experience."
     }
   },
   "tickets": {
@@ -6172,7 +6217,9 @@
     "eyebrow": "Your workspace",
     "title": "Tools",
     "subtitle": "Everything you can manage, in one place.",
-    "badge": { "setup": "Paid sales: setup needed" },
+    "badge": {
+      "setup": "Paid sales: setup needed"
+    },
     "emptyTitle": "No management tools yet",
     "emptyText": "You're here as a member. When you host or join a team with a hosting role, your tools will appear here.",
     "emptyAction": "Back to Home",
@@ -6188,31 +6235,106 @@
       "help": "Help"
     },
     "tools": {
-      "events": { "title": "Events", "desc": "Manage your events, guests and check-in." },
-      "eventNew": { "title": "Create an event", "desc": "One-time, recurring or multi-day—free or paid." },
-      "blueprints": { "title": "Event blueprints", "desc": "Reusable event setups you can launch again." },
-      "learn": { "title": "Resources", "desc": "Browse and manage courses, guides and more." },
-      "learnCreate": { "title": "Create a resource", "desc": "Video, audio, guide, quiz, link, live session and more." },
-      "learnManage": { "title": "Manage content", "desc": "Edit tracks, lessons, recipes and drafts." },
-      "learnTemplates": { "title": "Templates", "desc": "Start from bilingual starters or your team's templates." },
-      "offers": { "title": "Offers", "desc": "Courses, memberships and one-time purchases." },
-      "promos": { "title": "Promo codes", "desc": "Discounts for events, challenges and offers." },
-      "earnings": { "title": "Earnings", "desc": "Your sales and payout status." },
-      "communications": { "title": "Communications", "desc": "Templates, automations, journeys and message history." },
-      "followups": { "title": "Follow-ups", "desc": "Suggested next steps with your people." },
-      "team": { "title": "Team space", "desc": "Members, roles and invitations." },
-      "teamSettings": { "title": "Team settings", "desc": "Name, join code and workspace preferences." },
-      "teamInsights": { "title": "Team insights", "desc": "How your team is doing at a glance." },
-      "teamMap": { "title": "Member map", "desc": "Where your members are gathered." },
-      "plan": { "title": "Plan & billing", "desc": "Your plan, platform fees and payment setup." },
-      "planSeats": { "title": "Seats", "desc": "Who fills your builder seats." },
-      "insights": { "title": "Insights", "desc": "Event and content performance." },
-      "hostProfile": { "title": "Public profile", "desc": "Your public host page and custom link." },
-      "locations": { "title": "Locations", "desc": "Places you host, shown on your public page." },
-      "verify": { "title": "Get verified", "desc": "Build trust with a verified badge." },
-      "admin": { "title": "Admin console", "desc": "Platform overview, flags, reports and safety." },
-      "adminMedia": { "title": "Site media", "desc": "Photos and artwork shown across the site." },
-      "support": { "title": "Support", "desc": "Get help or report a problem." }
+      "events": {
+        "title": "Events",
+        "desc": "Manage your events, guests and check-in."
+      },
+      "eventNew": {
+        "title": "Create an event",
+        "desc": "One-time, recurring or multi-day—free or paid."
+      },
+      "blueprints": {
+        "title": "Event blueprints",
+        "desc": "Reusable event setups you can launch again."
+      },
+      "learn": {
+        "title": "Resources",
+        "desc": "Browse and manage courses, guides and more."
+      },
+      "learnCreate": {
+        "title": "Create a resource",
+        "desc": "Video, audio, guide, quiz, link, live session and more."
+      },
+      "learnManage": {
+        "title": "Manage content",
+        "desc": "Edit tracks, lessons, recipes and drafts."
+      },
+      "learnTemplates": {
+        "title": "Templates",
+        "desc": "Start from bilingual starters or your team's templates."
+      },
+      "offers": {
+        "title": "Offers",
+        "desc": "Courses, memberships and one-time purchases."
+      },
+      "promos": {
+        "title": "Promo codes",
+        "desc": "Discounts for events, challenges and offers."
+      },
+      "earnings": {
+        "title": "Earnings",
+        "desc": "Your sales and payout status."
+      },
+      "communications": {
+        "title": "Communications",
+        "desc": "Templates, automations, journeys and message history."
+      },
+      "followups": {
+        "title": "Follow-ups",
+        "desc": "Suggested next steps with your people."
+      },
+      "team": {
+        "title": "Team space",
+        "desc": "Members, roles and invitations."
+      },
+      "teamSettings": {
+        "title": "Team settings",
+        "desc": "Name, join code and workspace preferences."
+      },
+      "teamInsights": {
+        "title": "Team insights",
+        "desc": "How your team is doing at a glance."
+      },
+      "teamMap": {
+        "title": "Member map",
+        "desc": "Where your members are gathered."
+      },
+      "plan": {
+        "title": "Plan & billing",
+        "desc": "Your plan, platform fees and payment setup."
+      },
+      "planSeats": {
+        "title": "Seats",
+        "desc": "Who fills your builder seats."
+      },
+      "insights": {
+        "title": "Insights",
+        "desc": "Event and content performance."
+      },
+      "hostProfile": {
+        "title": "Public profile",
+        "desc": "Your public host page and custom link."
+      },
+      "locations": {
+        "title": "Locations",
+        "desc": "Places you host, shown on your public page."
+      },
+      "verify": {
+        "title": "Get verified",
+        "desc": "Build trust with a verified badge."
+      },
+      "admin": {
+        "title": "Admin console",
+        "desc": "Platform overview, flags, reports and safety."
+      },
+      "adminMedia": {
+        "title": "Site media",
+        "desc": "Photos and artwork shown across the site."
+      },
+      "support": {
+        "title": "Support",
+        "desc": "Get help or report a problem."
+      }
     }
   }
 }
