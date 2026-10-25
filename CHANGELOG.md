@@ -1,5 +1,11 @@
 # ZoheeWell Change Log
 
+## v0.41.4 — Event image composition and persistent admin return (2026-10-25)
+- Event Square/Story/Wide images now come from one renderer used for preview, download, native file sharing and event-detail Story download. Photos fill each canvas using the saved focal point and blend through multi-stop Midnight Plum fades; official Warm Ivory logo, Noto Sans and explicit title/details/footer bounds prevent overlap. Long text wraps or clamps; internal preview hosts and invite tokens are never shown, using `zoheewell.com/e/{id}` only when it fits, otherwise `zoheewell.com`.
+- The global account avatar is now a menu on every signed-in app page. Platform admins see a separate “Platform administration” section with Admin dashboard / Panel de administración; non-admins see only Your profile. `/admin` route and data role checks remain unchanged.
+- Verification: existing Book Club record exports read-only at exact sizes; preview, download and native-share bytes match. Long Spanish stress exports checked. Real admin `/admin` → `/events` → menu → `/admin` passed in EN/ES at 1280/390. 474 tests / 57 files passed; latest automatic typecheck/build clean. No data, role, fixture, provider or publishing changes.
+- Limitation: live signed-in non-admin browser denial and screen-reader narration were not run; the new non-admin menu test and existing server/route guards cover denial.
+
 ## v0.41.3 — Home network and Resources translation repairs (2026-10-25)
 - Added missing `home.networkLabel/networkTitle/networkText/networkAction` in English and Spanish, with localized call-site defaults on Home and the network eyebrow. CTA remains `/network`, behind existing auth/feature rules; public homepage is unchanged.
 - Kept `resources.create` as the creation-flow namespace; added string leaf `resources.create.button` and repaired all three incorrect object-key button calls with localized fallbacks. Existing creation sheet → `/learn/create?type=video` → `/learn/manage?tab=tracks&new=video` verified; no authorization changes.

@@ -1,5 +1,10 @@
 # Roadmap
 
+## Reopened image creator and persistent admin navigation
+- [x] Unified Square/Story/Wide previews, downloads, native file shares and event-detail Story export; focal cropping, blended fades, bounded text and canonical footer.
+- [x] Global authorized Admin dashboard menu with verified /admin → Events → /admin return on EN/ES desktop/mobile.
+- [x] Layout and admin-menu tests; 474-test suite, automatic build/typecheck and actual 1080×1080, 1080×1920, 1200×675 export verification.
+
 ## Newly added Website Notes — translation repair
 - [x] Home network EN/ES strings, localized fallback safety and real /network CTA.
 - [x] Resource create string leaf, existing chooser → type-specific editor actions and unchanged authorization.

@@ -172,9 +172,9 @@ function CreateStep({ profile, onDone }: { profile: Prof; onDone: (k: StartKind,
 
 function useStarter(kind: StartKind, id: string) {
   return useQuery({ queryKey: ['qs-starter', kind, id], queryFn: async () => {
-    if (kind === 'circle') { const { data } = await supabase.from('offers').select('id, title_en, title_es, price_cents, cover_style').eq('id', id).maybeSingle(); return data ? { title: '', title_en: data.title_en, title_es: data.title_es, starts_at: null as string | null, timezone: null as string | null, place: '', price: data.price_cents, cover_style: data.cover_style as number | null, cover_url: null as string | null, draft: false } : null; }
-    const { data } = await supabase.from('events').select('id, title, starts_at, timezone, location_name, price_cents, cover_style, cover_url, status').eq('id', id).maybeSingle();
-    return data ? { title: data.title, title_en: '', title_es: '', starts_at: data.starts_at, timezone: data.timezone, place: data.location_name ?? '', price: data.price_cents, cover_style: data.cover_style, cover_url: data.cover_url, draft: data.status !== 'published' } : null;
+    if (kind === 'circle') { const { data } = await supabase.from('offers').select('id, title_en, title_es, price_cents, cover_style').eq('id', id).maybeSingle(); return data ? { title: '', title_en: data.title_en, title_es: data.title_es, starts_at: null as string | null, timezone: null as string | null, place: '', price: data.price_cents, cover_style: data.cover_style as number | null, cover_url: null as string | null, cover_focal: '50% 50%', draft: false } : null; }
+    const { data } = await supabase.from('events').select('id, title, starts_at, timezone, location_name, price_cents, cover_style, cover_url, cover_focal, status').eq('id', id).maybeSingle();
+    return data ? { title: data.title, title_en: '', title_es: '', starts_at: data.starts_at, timezone: data.timezone, place: data.location_name ?? '', price: data.price_cents, cover_style: data.cover_style, cover_url: data.cover_url, cover_focal: data.cover_focal, draft: data.status !== 'published' } : null;
   } });
 }
 const starterLink = (kind: StartKind, id: string) => `${window.location.origin}${kind === 'circle' ? '/offer/' : '/e/'}${id}`;
@@ -198,7 +198,7 @@ function ShareStep({ kind, id, onNext, onBack }: { kind: StartKind; id: string; 
       <CopyButton text={message} label={t('quickStart.copyWa')} />
     </section>
     {kind !== 'circle' && d.starts_at ? <section className="panel qs-section"><h2>{t('quickStart.images')}</h2>
-      <ShareKit title={title} startsAt={d.starts_at} timezone={d.timezone} place={d.place} link={link} coverPath={d.cover_url} coverStyle={d.cover_style} /></section>
+      <ShareKit title={title} startsAt={d.starts_at} timezone={d.timezone} place={d.place} link={link} coverPath={d.cover_url} coverStyle={d.cover_style} focal={d.cover_focal} /></section>
       : <p className="field-hint">{t('quickStart.circleImages')}</p>}
     <div className="qs-nav"><Button variant="secondary" onClick={onBack}>{t('quickStart.back')}</Button><Button onClick={onNext}>{t('quickStart.next')}</Button></div>
   </div>;

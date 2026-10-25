@@ -38,7 +38,7 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Platform safety uses caller-scoped admin_safety RPCs (bounded, throttled, atomic, audited); bans stay a managed-auth operation and never imply deletion.
 - Account restrictions commit via service-only RPC after caller validation; managed-auth failures use checked compensation (Auth and DB writes share no transaction).
 - Admin retries use admin_retry_message() (atomic requeue + audit); delivery stays in the outbox processor.
-- Follows/calendar: public pages read only via get_public_host/get_public_team; iCal via /api/public/calendar/$token (token is the only credential).
+- Public follows use get_public_host/get_public_team; iCal token is its only credential.
 
 - ResponsiveSheet owns header/footer/scroll body; pass primary actions via footer.
 - Guest RSVP uses a single selected contact field and optional name/guest details; normalize reminder consent against supplied destinations to preserve explicit opt-ins when fields are cleared.
@@ -54,5 +54,7 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Consent acceptances resolve version/hash in database triggers, and flag changes append server-owned config history; clients never choose snapshots or write audit history.
 - Identity: one auth user = one profile; return paths go only through src/lib/return-to.ts (mirrored by is_safe_return_path) and emailed links use single-use auth_intents; 18+ is attested via confirm_adult() and enforced by triggers/checkout functions; view_mode is display-only; guest rows are linked only by claim_guest_records() with merges kept for audit.
 
-- Pricing guidance lives in WhichPlan; no capability tables (features are shared).
+- WhichPlan guides pricing; no capability tables.
 - Templates copy as drafts. Resource journeys use scoped entitlements and idempotent in-app delivery; event association saves atomically. Coach consent uses verified accounts or hashed expiring links; without a sender anonymous requests stay pending. Segments expose counts only.
+
+- Event images use share-image.ts for all outputs; admin menu uses role checks.

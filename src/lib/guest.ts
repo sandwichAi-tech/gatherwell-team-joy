@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { COVER_STYLES } from '@/lib/gatherings';
+import { renderShareImage, loadShareImage } from '@/lib/share-image';
 import type { TicketTier } from '@/lib/registration';
 import { downloadIcsFile, googleCalendarUrl as googleUrl } from '@/lib/ics';
 
@@ -78,39 +78,8 @@ export const guestLink = (id: string, token: string | null = inviteToken()) => `
 
 /** 1080x1920 story image in the premium plum style. */
 export async function storyImage(opts: { title: string; date: string; link: string; coverUrl: string | null; coverStyle: number | null; brand: string }) {
-  const c = document.createElement('canvas'); c.width = 1080; c.height = 1920;
-  const g = c.getContext('2d')!;
-  g.fillStyle = '#2F2340'; g.fillRect(0, 0, 1080, 1920);
-  const coverH = 1180;
-  let drewPhoto = false;
-  if (opts.coverUrl) {
-    try {
-      const img = await new Promise<HTMLImageElement>((res, rej) => { const i = new Image(); i.crossOrigin = 'anonymous'; i.onload = () => res(i); i.onerror = rej; i.src = opts.coverUrl!; });
-      const s = Math.max(1080 / img.width, coverH / img.height);
-      g.drawImage(img, (1080 - img.width * s) / 2, (coverH - img.height * s) / 2, img.width * s, img.height * s);
-      drewPhoto = true;
-    } catch { /* fall back to gradient */ }
-  }
-  if (!drewPhoto) {
-    const stops = ((COVER_STYLES[(opts.coverStyle ?? 0) % COVER_STYLES.length] ?? COVER_STYLES[0]).match(/#[0-9A-F]{6}/gi) ?? ['#2F2340', '#7A5FA8']);
-    const grad = g.createLinearGradient(0, 0, 1080, coverH);
-    stops.forEach((col, i) => grad.addColorStop(i / Math.max(1, stops.length - 1), col));
-    g.fillStyle = grad; g.fillRect(0, 0, 1080, coverH);
-  }
-  const fade = g.createLinearGradient(0, coverH - 420, 0, coverH);
-  fade.addColorStop(0, 'rgba(47,35,64,0)'); fade.addColorStop(1, 'rgba(47,35,64,1)');
-  g.fillStyle = fade; g.fillRect(0, coverH - 420, 1080, 420);
-  const font = (w: number, s: number) => `${w} ${s}px Inter, system-ui, sans-serif`;
-  g.fillStyle = '#F3C6A5'; g.font = font(600, 34); g.fillText(opts.brand.toUpperCase(), 96, 1300);
-  g.fillStyle = '#FFFFFF'; g.font = font(700, 92);
-  const words = opts.title.split(/\s+/); let line = ''; let y = 1430; const lines: string[] = [];
-  for (const w of words) { const t = line ? `${line} ${w}` : w; if (g.measureText(t).width > 888 && line) { lines.push(line); line = w; } else line = t; }
-  lines.push(line);
-  lines.slice(0, 3).forEach(l => { g.fillText(l, 96, y); y += 108; });
-  g.fillStyle = '#D2CADA'; g.font = font(500, 44); g.fillText(opts.date, 96, y + 30);
-  g.strokeStyle = 'rgba(255,255,255,.18)'; g.lineWidth = 2; g.beginPath(); g.moveTo(96, 1740); g.lineTo(984, 1740); g.stroke();
-  g.fillStyle = '#FFFFFF'; g.font = font(500, 38); g.fillText(opts.link.replace(/^https?:\/\//, ''), 96, 1812);
-  const blob = await new Promise<Blob | null>(r => c.toBlob(r, 'image/png'));
+  const cover = opts.coverUrl ? await loadShareImage(opts.coverUrl).catch(() => null) : null;
+  const blob = await renderShareImage('story', { ...opts, place: '', cover });
   if (!blob) return;
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = url; a.download = 'gathering-story.png'; a.click();

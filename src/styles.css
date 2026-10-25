@@ -2534,3 +2534,5 @@ a.gw-cat-chip:hover{background:#fff}
   .app-header .brand-logo { width: 132px; min-width: 0; }
   .app-header .header-actions { flex: 1 1 auto; min-width: 0; flex-wrap: wrap; justify-content: flex-end; gap: 4px; }
 }
+
+:root{--share-plum:#302338;--share-ivory:#F8F5F0;--share-concrete:#D8D0C6}
