@@ -4,11 +4,13 @@ DO $$ BEGIN IF current_setting('app.disposable_database',true) IS DISTINCT FROM 
 CREATE FUNCTION pg_temp.ok(b boolean,l text) RETURNS void LANGUAGE plpgsql AS $$BEGIN IF b IS DISTINCT FROM true THEN RAISE EXCEPTION 'FAIL %',l; END IF; RAISE NOTICE 'PASS %',l; END$$;
 INSERT INTO auth.users(id,email) VALUES ('00000000-0000-0000-0000-0000000000a1','g1@example.invalid'),('00000000-0000-0000-0000-0000000000a2','g2@example.invalid');
 INSERT INTO profiles(id,slug,full_name) VALUES ('00000000-0000-0000-0000-0000000000a1','zz-g-host','G Host'),('00000000-0000-0000-0000-0000000000a2','zz-g-learner','G Learner');
-INSERT INTO teams(id,owner_id) VALUES ('10000000-0000-0000-0000-0000000000a1','00000000-0000-0000-0000-0000000000a1');
+INSERT INTO teams(id,owner_id,name,slug) VALUES ('10000000-0000-0000-0000-0000000000a1','00000000-0000-0000-0000-0000000000a1','G Team','zz-g-team');
 INSERT INTO offers(id,team_id,host_id,status,kind,title_en,visibility,available_from) VALUES ('20000000-0000-0000-0000-0000000000a1','10000000-0000-0000-0000-0000000000a1','00000000-0000-0000-0000-0000000000a1','published','course','G Course','public', now()+interval '1 day');
+SELECT set_config('request.jwt.claim.sub','00000000-0000-0000-0000-0000000000a1',true);
 INSERT INTO tracks(id,team_id,offer_id,title_en,title_es,is_published) VALUES ('30000000-0000-0000-0000-0000000000a1','10000000-0000-0000-0000-0000000000a1','20000000-0000-0000-0000-0000000000a1','G','G',true);
 INSERT INTO lessons(id,track_id,title_en,title_es,type,is_published,sort_order) VALUES ('40000000-0000-0000-0000-0000000000a1','30000000-0000-0000-0000-0000000000a1','L1','L1','pdf',true,1),('40000000-0000-0000-0000-0000000000a2','30000000-0000-0000-0000-0000000000a1','Draft','Draft','text',false,2);
-INSERT INTO entitlements(offer_id,user_id,source) VALUES ('20000000-0000-0000-0000-0000000000a1','00000000-0000-0000-0000-0000000000a2','free');
+SELECT set_config('request.jwt.claim.sub','',true);
+INSERT INTO entitlements(offer_id,user_id,source,kind) VALUES ('20000000-0000-0000-0000-0000000000a1','00000000-0000-0000-0000-0000000000a2','free','resource');
 SELECT set_config('request.jwt.claim.sub','00000000-0000-0000-0000-0000000000a2',true);
 SELECT pg_temp.ok(NOT can_access_offer('20000000-0000-0000-0000-0000000000a1'),'entitled learner blocked before activation');
 DO $$BEGIN PERFORM set_lesson_progress('40000000-0000-0000-0000-0000000000a1',true); RAISE EXCEPTION 'should fail'; EXCEPTION WHEN OTHERS THEN IF SQLERRM NOT IN ('no_access','not_available') THEN RAISE; END IF; END$$;
