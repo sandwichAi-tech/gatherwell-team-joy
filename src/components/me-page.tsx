@@ -226,7 +226,20 @@ export function MePage() {
     invite: { title: t('welcome.title'), icon: 'UserPlus', body: <InviteFriendsPanel /> },
     calendar: { title: t('follow.feedTitle'), icon: 'CalendarPlus', body: <CalendarFeedPanel userId={userId} /> },
     purchases: { title: t('offers.purchases'), icon: 'CreditCard', body: <PurchasesPanel /> },
-    qr: { title: t('profile.qrTitle'), icon: 'QrCode', body: <div className="qr-panel">{inviteUrl ? <div className="qr-code"><QRCodeSVG value={inviteUrl} size={280} level="M" marginSize={2} /></div> : <p className="auth-subtitle">{t('publicEvent.loading')}</p>}<p className="auth-subtitle">{t('profile.qrText')}</p></div> },
+    qr: { title: t('profile.qrTitle'), icon: 'QrCode', body: <div className="qr-panel">
+      {publicUrl ? <>
+        <div className="qr-code"><QRCodeSVG value={publicUrl} size={280} level="M" marginSize={2} /></div>
+        <code className="slug-url" data-testid="share-public-url">{publicUrl}</code>
+        <div className="feed-actions"><CopyButton text={publicUrl} label={t('hostProfile.slug.copy')} /><ShareButton url={publicUrl} /></div>
+        <p className="auth-subtitle">{t('profile.qrText')}</p>
+      </> : isHost ? <>
+        <p className="auth-subtitle">{t('profile.noPublicPage')}</p>
+        <Button variant="secondary" onClick={() => setPanel('hostProfile')}><Globe2 />{t('hostProfile.title')}</Button>
+      </> : inviteUrl ? <>
+        <div className="qr-code"><QRCodeSVG value={inviteUrl} size={280} level="M" marginSize={2} /></div>
+        <p className="auth-subtitle">{t('profile.qrInviteText')}</p>
+      </> : <p className="auth-subtitle">{t('publicEvent.loading')}</p>}
+    </div> },
     plan: { title: t('profile.plan'), icon: 'CreditCard', body: <><p className="plan-name">{t(`plans.${workspace?.plan ?? 'free'}`)}</p><p className="auth-subtitle">{workspace?.name ?? t('workspace.none')}</p></> },
     hostProfile: { title: t('hostProfile.title'), icon: 'Globe2', body: <HostProfilePanel userId={userId} /> },
     privacy: { title: t('profile.privacyData'), icon: 'ShieldCheck', body: <PrivacyDataPanel /> },
