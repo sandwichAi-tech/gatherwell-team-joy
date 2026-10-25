@@ -1,5 +1,14 @@
 # ZoheeWell Change Log
 
+## v0.38 — Site-wide SEO/AEO policy (2026-10-25)
+- New `src/lib/seo.ts`: single canonical base (`SITE_URL = https://zoheewell.com`), `publicIndexing()` (canonical + og:url pair) and `NOINDEX_META` helpers; no preview/service URLs are ever emitted.
+- Indexable public routes now carry unique title/description plus canonical and og:url: `/`, `/discover`, `/pricing`, `/faq`, `/hosts`, `/studios`, `/terms`, `/privacy`, `/credits`, `/legal/*`, `/e/$id`, `/h/$slug`, `/l/$slug`, `/t/$slug`, `/o/$id`, `/verify/$number`.
+- noindex enforced on every non-indexable surface: `/login`, `/admin-login`, `/join/$code`, `/onboarding`, `/unsubscribe/$token`, all signed-in app routes (via `gatherwellHead` + per-route robots meta), token/code routes, filtered Discover permutations (now including non-default tabs), and unresolvable event fallbacks.
+- Structured data: Organization+WebSite on `/` only; FAQPage on `/faq` only; new Event JSON-LD on `/e/$id` (real public fields only — status, attendance mode, Place/VirtualLocation, organizer, Offer only with a real price else `isAccessibleForFree`); `/h/$slug` schema upgraded to ProfilePage wrapping Person/Organization. No Course schema (public offer pages don't expose enough verified structure), no BreadcrumbList (routes are ≤2 levels), no hreflang (EN/ES share one URL via client state).
+- robots.txt: sitemap directive repointed from the old preview domain to `https://zoheewell.com/sitemap.xml`; Disallow list extended to every auth/token/account/admin surface. Sitemap rebuilt on the production domain: 13 canonical public routes, `/login` removed, `/hosts` and `/studios` added, no lastmod (no authoritative page-specific timestamps).
+- New `docs/SEO-AEO-AUDIT.md`: route policy, schema inventory, validation commands, limitations, and go-live actions (Search Console/Bing verification, sitemap submission, analytics/consent decision, performance monitoring, content governance).
+- Verified: 433 tests (10 new SEO policy tests), typecheck clean, build OK; browser/source checks confirmed SSR title/description/canonical/og:url/robots/JSON-LD on 16 route variants, 404 status on malformed paths, Event and ProfilePage schema on live public pages, and noindex on auth/token/filtered routes.
+
 ## v0.37 — Public FAQ page (2026-10-25)
 - New public /faq page: 25 questions in 7 categories (About ZoheeWell, Hosting events, Resources & courses, Pricing & payments, Discovering & privacy, Teams & roles, Support & troubleshooting), with a search filter that narrows questions and auto-expands matches, plus an honest empty state.
 - Accessible button-based accordions throughout: aria-expanded/aria-controls, region roles labelled by their question, keyboard operation, 3px visible focus, correct H1→H2→H3 order, and reduced-motion-safe chevrons.
