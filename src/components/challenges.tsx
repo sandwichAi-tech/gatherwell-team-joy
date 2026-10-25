@@ -1,6 +1,5 @@
 import { PromoField } from '@/components/promo-field';
 import { promoDiscount, type Promo } from '@/lib/promo';
-import { CropFileInput } from '@/components/image-crop';
 import { EmptyState } from '@/components/launch-states';
 import { trackEvent } from '@/lib/analytics';
 import { confirmAction } from '@/components/confirm-dialog';
@@ -8,28 +7,27 @@ import { ListSkeleton, RetryState } from '@/components/launch-states';
 import { useServerFn } from '@tanstack/react-start';
 import { usePaymentGate } from '@/components/plan-page';
 import { startChallengeCheckout } from '@/lib/billing.functions';
-import { planStatusQuery, formatMoney } from '@/lib/billing';
-import { ClaimGuard } from '@/components/smart';
+import { formatMoney } from '@/lib/billing';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ArrowLeft, ArrowRight, Camera, Check, Download, Flame, Lock, Megaphone, Pencil, Plus, Trash2, Upload } from '@/components/icons';
+import { ArrowLeft, ArrowRight, Camera, Check, Download, Flame, Lock, Megaphone, Pencil, Plus, X } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { GatheringCover } from '@/components/gathering-cover';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { supabase } from '@/integrations/supabase/client';
-import { firstName, initialsOf, profileQuery, uploadMedia, workspaceQuery } from '@/lib/account';
-import { COVER_STYLES } from '@/lib/gatherings';
+import { firstName, initialsOf, profileQuery, workspaceQuery } from '@/lib/account';
 import { ancestorsQuery, compressImage } from '@/lib/learn';
+import { ChallengeBuilder } from '@/components/challenge-builder';
+import { learnFileUrl } from '@/lib/learn';
 import {
-  addDays, challengePhotoUrls, challengesQuery, dayNumber, leaderboardQuery, lengthOf, localDate, localHour, myCheckinsQuery, phaseOf, pick, rpcErrorKey,
-  STARTER_DAYS, STARTERS, streaksOf, titleOf, userTz, type Challenge, type ChallengeItem, type Phase, type Starter,
+  activitiesForDay, addDays, challengePhotoUrls, challengesQuery, dayNumber, goalProgress, leaderboardQuery, lengthOf, lifecycleOf, localDate, localHour, modelOf, myCheckinsQuery, phaseOf, pick, rpcErrorKey,
+  streaksOf, titleOf, userTz, type Challenge, type ChallengeActivity, type ChallengeItem, type ChallengeMessage, type Phase,
 } from '@/lib/challenges';
 
 function useChallenges() {
@@ -81,70 +79,8 @@ export function ChallengesSection({ startCreate = false }: { startCreate?: boole
       <div className="segmented-tabs" role="tablist">{(['active', 'upcoming', 'past'] as const).map(k => <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? 'is-active' : ''} onClick={() => setTab(k)}>{t(`challenges.phase.${k}`)} <span className="tab-count">{groups[k].length}</span></button>)}</div>
       {groups[tab].length ? <div className="challenge-list">{groups[tab].map(c => <ChallengeRow key={c.id} c={c} />)}</div> : <p className="auth-subtitle">{t(`challenges.none.${tab}`)}</p>}
     </> : <p className="auth-subtitle">{t('challenges.noneYet')}</p>}
-    {leader && <ChallengeEditor draft={editing} teamId={teamId} onClose={() => setEditing(null)} />}
+    {leader && <ChallengeBuilder draft={editing} teamId={teamId} onClose={() => setEditing(null)} />}
   </section>;
-}
-
-export function ChallengeEditor({ draft, teamId, onClose }: { draft: Partial<Challenge> | null; teamId: string; onClose: () => void }) {
-  const { t, i18n } = useTranslation(); const qc = useQueryClient(); const { userId } = useGatherwell();
-  const enT = i18n.getFixedT('en'); const esT = i18n.getFixedT('es');
-  const today = localDate();
-  const empty = { title_en: '', title_es: '', description_en: '', description_es: '', daily_prompt_en: '', daily_prompt_es: '', starts_on: addDays(today, 1), ends_on: addDays(today, 21), cover_url: null as string | null, cover_style: 0 };
-  const [f, setF] = useState(empty); const [busy, setBusy] = useState(false); const [starter, setStarter] = useState<Starter | null>(null);
-  const { data: planSt } = useQuery(planStatusQuery(userId)); const canSell = planSt?.connect_status === 'active';
-  const [paid, setPaid] = useState(false); const [price, setPrice] = useState('');
-  useEffect(() => { setPaid(!!draft?.is_paid); setPrice(draft?.price_cents ? String(draft.price_cents / 100) : ''); }, [draft]);
-  useEffect(() => { if (draft) { setStarter(null); setF(draft.id ? { title_en: draft.title_en ?? '', title_es: draft.title_es ?? '', description_en: draft.description_en ?? '', description_es: draft.description_es ?? '', daily_prompt_en: draft.daily_prompt_en ?? '', daily_prompt_es: draft.daily_prompt_es ?? '', starts_on: draft.starts_on ?? empty.starts_on, ends_on: draft.ends_on ?? empty.ends_on, cover_url: draft.cover_url ?? null, cover_style: draft.cover_style ?? 0 } : empty); } }, [draft]); // eslint-disable-line react-hooks/exhaustive-deps
-  const useStarter = (k: Starter) => {
-    setStarter(k);
-    const g = (fx: typeof enT, key: string) => fx(`challenges.starter.${k}.${key}`);
-    setF({ ...f, title_en: g(enT, 'title'), title_es: g(esT, 'title'), description_en: g(enT, 'description'), description_es: g(esT, 'description'), daily_prompt_en: g(enT, 'prompt'), daily_prompt_es: g(esT, 'prompt'), ends_on: addDays(f.starts_on, STARTER_DAYS[k] - 1), cover_style: STARTERS.indexOf(k) });
-  };
-  const { data: types = [] } = useQuery({ queryKey: ['challenge-types'], enabled: !!draft && !draft.id, queryFn: async () => (await supabase.from('challenge_types').select('*').eq('is_published', true).order('sort_order')).data ?? [] });
-  const [typeId, setTypeId] = useState<string | null>(null);
-  const useType = (ct: (typeof types)[number]) => { setStarter(null); setTypeId(ct.id); setF({ ...f, title_en: ct.title_en, title_es: ct.title_es, description_en: ct.description_en ?? '', description_es: ct.description_es ?? '', daily_prompt_en: ct.daily_prompt_en ?? '', daily_prompt_es: ct.daily_prompt_es ?? '', ends_on: addDays(f.starts_on, ct.duration_days - 1) }); };
-  const set = (k: keyof typeof empty) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
-  const L = (k: 'title' | 'description' | 'daily_prompt') => `${k}_${i18n.resolvedLanguage === 'es' ? 'es' : 'en'}` as keyof typeof empty;
-  const ok = !!(f.title_en.trim() || f.title_es.trim()) && f.starts_on && f.ends_on >= f.starts_on;
-  const save = async () => {
-    setBusy(true);
-    const both = (k: 'title' | 'description' | 'daily_prompt') => { const en = f[`${k}_en`].trim(), es = f[`${k}_es`].trim(); return { en: en || es, es: es || en }; };
-    const tt = both('title'), dd = both('description'), pp = both('daily_prompt');
-    const row = { title_en: tt.en, title_es: tt.es, description_en: dd.en || null, description_es: dd.es || null, daily_prompt_en: pp.en || null, daily_prompt_es: pp.es || null, starts_on: f.starts_on, ends_on: f.ends_on, cover_url: f.cover_url, cover_style: f.cover_style, ...(canSell || !paid ? { is_paid: paid && !!price, price_cents: paid && price ? Math.round(Number(price) * 100) : null } : {}) };
-    const res = draft?.id ? await supabase.from('challenges').update(row).eq('id', draft.id) : await supabase.from('challenges').insert({ ...row, team_id: teamId, created_by: userId });
-    setBusy(false);
-    if (res.error) { toast.error(t(rpcErrorKey(res.error))); return; }
-    toast.success(t('templates.saved')); await qc.invalidateQueries({ queryKey: ['challenges'] }); onClose();
-  };
-  const remove = async () => {
-    if (!draft?.id || !(await confirmAction({ title: t('challenges.confirmDelete'), destructive: true }))) return;
-    const res = await supabase.from('challenges').delete().eq('id', draft.id);
-    if (res.error) { toast.error(t(rpcErrorKey(res.error))); return; }
-    await qc.invalidateQueries({ queryKey: ['challenges'] }); onClose();
-  };
-  const field = (id: string, label: string, k: keyof typeof empty, area = false) => <div className="form-field"><label className="field-label" htmlFor={id}>{label}</label>{area ? <Textarea id={id} rows={3} maxLength={1000} className="field-textarea" value={f[k] as string} onChange={set(k)} /> : <Input id={id} maxLength={120} className="field-input" value={f[k] as string} onChange={set(k)} />}{area && <ClaimGuard text={f[k] as string} lang={String(k).endsWith('_es') ? 'es' : 'en'} onUse={v => setF({ ...f, [k]: v })} />}</div>;
-  return <ResponsiveSheet open={!!draft} onOpenChange={o => !o && onClose()} title={draft?.id ? t('challenges.edit') : t('challenges.new')} description={t('challenges.claimRule')}>
-    <div className="edit-form">
-      {!draft?.id && <div className="form-field"><span className="field-label">{t('challenges.startFrom')}</span>
-        <div className="starter-grid">{STARTERS.map(k => <button type="button" key={k} className={`choice-card ${starter === k ? 'is-selected' : ''}`} aria-pressed={starter === k} onClick={() => useStarter(k)}><strong>{t(`challenges.starter.${k}.title`)}</strong><small>{t('challenges.days', { count: STARTER_DAYS[k] })}</small></button>)}
-          {types.map(ct => <button type="button" key={ct.id} className={`choice-card ${typeId === ct.id ? 'is-selected' : ''}`} aria-pressed={typeId === ct.id} onClick={() => useType(ct)}><strong>{i18n.resolvedLanguage === 'es' ? ct.title_es : ct.title_en}</strong><small>{t('challenges.days', { count: ct.duration_days })}</small></button>)}</div></div>}
-      {field('ch-t', t('templates.title'), L('title'))}
-      <div className="choice-pair">
-        <div className="form-field"><label className="field-label" htmlFor="ch-start">{t('challenges.startsOn')}</label><Input id="ch-start" type="date" className="field-input" value={f.starts_on} onChange={e => { const len = Math.max(0, (new Date(f.ends_on).getTime() - new Date(f.starts_on).getTime()) / 86_400_000); setF({ ...f, starts_on: e.target.value, ends_on: e.target.value ? addDays(e.target.value, len) : f.ends_on }); }} /></div>
-        <div className="form-field"><label className="field-label" htmlFor="ch-end">{t('challenges.endsOn')}</label><Input id="ch-end" type="date" min={f.starts_on} className="field-input" value={f.ends_on} onChange={set('ends_on')} /></div>
-      </div>
-      {field('ch-d', t('templates.description'), L('description'), true)}
-      {field('ch-p', t('challenges.dailyPrompt'), L('daily_prompt'), true)}
-      <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
-        <GatheringCover path={f.cover_url} style={f.cover_style} title={f.title_en || f.title_es || 'C'} className="cover-preview" />
-        <div className="cover-styles">{COVER_STYLES.map((bg, i) => <button key={i} type="button" className={`cover-swatch ${!f.cover_url && f.cover_style === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} aria-label={`${t('onboarding.cover')} ${i + 1}`} aria-pressed={!f.cover_url && f.cover_style === i} onClick={() => setF({ ...f, cover_url: null, cover_style: i })} />)}</div>
-        <label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={async r => { try { setF({ ...f, cover_url: await uploadMedia(userId, r.file, 'cover') }); } catch { toast.error(t('profile.saveError')); } }} /></label></div>
-      <label className={`switch-row ${canSell ? '' : 'is-disabled'}`}><Switch checked={paid} disabled={!canSell} onCheckedChange={setPaid} /><span><strong>{t('challenges.paid')}</strong><small>{canSell ? t('billing.priceHint') : t('billing.priceNeedsPayouts')}</small></span></label>
-      {paid && canSell && <div><label className="field-label" htmlFor="c-price">{t('billing.price')}</label><Input id="c-price" inputMode="decimal" className="field-input" value={price} onChange={e => setPrice(e.target.value.replace(/[^\d.]/g, '').slice(0, 7))} placeholder="$0" /></div>}
-      <Button className="onboarding-continue" disabled={busy || !ok} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
-      {draft?.id && <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('challenges.delete')}</Button>}
-    </div>
-  </ResponsiveSheet>;
 }
 
 async function storyCard(name: string, title: string, days: number, line: string, daysLabel: string) {
@@ -226,6 +162,25 @@ function PhotoGallery({ paths }: { paths: string[] }) {
     {urls.length ? <div className="photo-grid">{urls.map(u => <a key={u} href={u} target="_blank" rel="noopener noreferrer"><img src={u} alt={t('challenges.progressPhoto')} loading="lazy" /></a>)}</div> : <EmptyState compact icon="Camera" text={t('challenges.noPhotos')} />}</section>;
 }
 
+/** One assigned activity on the participant view: instructions, due time, and its link/resource/file. */
+function ActivityRow({ a, lang }: { a: ChallengeActivity; lang: string }) {
+  const { t } = useTranslation();
+  const { data: fileUrl } = useQuery({ queryKey: ['challenge-file', a.file_path], queryFn: () => learnFileUrl(a.file_path), enabled: !!a.file_path, staleTime: 50 * 60_000 });
+  const title = pick(lang, a.title_en, a.title_es); const instructions = pick(lang, a.instructions_en, a.instructions_es);
+  const res = a.resource_kind === 'offer' && a.resource_id ? { to: '/offer/$id', params: { id: a.resource_id } }
+    : a.resource_kind === 'track' && a.resource_id ? { to: '/learn/track/$id', params: { id: a.resource_id } }
+    : a.resource_kind === 'recipe' && a.resource_id ? { to: '/learn/recipe/$id', params: { id: a.resource_id } } : null;
+  return <li className="challenge-activity">
+    <div className="lesson-info"><strong>{title}</strong>{instructions ? <small>{instructions}</small> : null}
+      <small>{[a.due_hour != null ? t('challenges.dueAt', { hour: a.due_hour }) : null, a.requires_checkin ? t('challenges.builder.requiresCheckin') : null, a.requires_note ? t('challenges.builder.requiresNote') : null].filter(Boolean).join(' · ')}</small></div>
+    <div className="offer-row-actions">
+      {res && <Button asChild variant="secondary" size="sm"><Link to={res.to} params={res.params}>{t('resources.open')}</Link></Button>}
+      {a.link_url && /^https?:\/\/\S+$/i.test(a.link_url) && <Button asChild variant="secondary" size="sm"><a href={a.link_url} target="_blank" rel="noopener noreferrer">{t('challenges.openLink')}</a></Button>}
+      {fileUrl && <Button asChild variant="secondary" size="sm"><a href={fileUrl} target="_blank" rel="noopener noreferrer">{t('challenges.openFile')}</a></Button>}
+    </div>
+  </li>;
+}
+
 export function ChallengePage({ id }: { id: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en'; const qc = useQueryClient();
   const { userId } = useGatherwell(); const { data: workspace } = useQuery(workspaceQuery(userId));
@@ -237,7 +192,10 @@ export function ChallengePage({ id }: { id: string }) {
   const { data: joinedRow, refetch: refetchJoin } = useQuery({ queryKey: ['challenge-joined', id, userId], queryFn: async () => !!(await supabase.from('challenge_members').select('challenge_id').eq('challenge_id', id).eq('user_id', userId).maybeSingle()).data });
   const { data: mine = [] } = useQuery(myCheckinsQuery(userId, id));
   const { data: board = [] } = useQuery(leaderboardQuery(id));
+  const { data: activities = [] } = useQuery({ queryKey: ['challenge-activities', id], queryFn: async () => ((await supabase.from('challenge_activities').select('*').eq('challenge_id', id).order('sort_order')).data ?? []) as ChallengeActivity[] });
+  const { data: messages = [] } = useQuery({ queryKey: ['challenge-messages', id], queryFn: async () => ((await supabase.from('challenge_messages').select('*').eq('challenge_id', id).order('sort_order')).data ?? []) as ChallengeMessage[] });
   const [sheetDate, setSheetDate] = useState<string | null>(null); const [editing, setEditing] = useState<Partial<Challenge> | null>(null); const [busy, setBusy] = useState(false);
+  const [welcomeGone, setWelcomeGone] = useState(false);
   const payGate = usePaymentGate(); const payChallenge = useServerFn(startChallengeCheckout); const [promo, setPromo] = useState<Promo | null>(null);
   if (isError) return <RetryState retry={() => void refetch()} />;
   if (isLoading) return <ListSkeleton />;
@@ -257,15 +215,28 @@ export function ChallengePage({ id }: { id: string }) {
   };
   const title = titleOf(c, lang); const prompt = pick(lang, c.daily_prompt_en, c.daily_prompt_es); const desc = pick(lang, c.description_en, c.description_es);
   const timeOf = (iso: string) => new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', { hour: 'numeric', minute: '2-digit' }).format(new Date(iso));
+  const lifecycle = lifecycleOf(c, phase);
+  const full = c.capacity != null && board.length >= c.capacity;
+  const model = modelOf(c);
+  const goal = model === 'goal' ? goalProgress(c.goal_target, s.total) : null;
+  const todayActs = activitiesForDay(activities, dayNumber(c, today));
+  const welcome = messages.find(m => m.kind === 'welcome' && m.enabled && !m.paused);
+  const welcomeTitle = welcome ? pick(lang, welcome.title_en, welcome.title_es) : '';
+  const welcomeBody = welcome ? pick(lang, welcome.body_en, welcome.body_es) : '';
   return <>
     <Link to="/team" hash="challenges" className="back-link"><ArrowLeft />{t('challenges.title')}</Link>
     {payGate.sheet}
     <GatheringCover path={c.cover_url} style={c.cover_style} title={title} className="challenge-hero" />
     <div className="lesson-head"><span className="eyebrow">{phase === 'active' ? t('challenges.dayOf', { day: dayNumber(c, today), total: len }) : t(`challenges.phase.${phase}`)}</span>
-      <h1>{title}</h1><p className="track-facts">{fmtDate(c.starts_on, lang)} – {fmtDate(c.ends_on, lang)} · {t('challenges.joinedCount', { count: board.length })}{c.is_paid && c.price_cents ? ` · ${formatMoney(c.price_cents, lang)}` : ''}</p>
+      {lifecycle === 'draft' && <span className="chip">{t('templates.draft')}</span>}
+      <h1>{title}</h1><p className="track-facts">{fmtDate(c.starts_on, lang)} – {fmtDate(c.ends_on, lang)} · {t('challenges.joinedCount', { count: board.length })}{c.capacity ? ` / ${c.capacity}` : ''}{c.is_paid && c.price_cents ? ` · ${formatMoney(c.price_cents, lang)}` : ''} · {t(`challenges.model.${model}`)}</p>
       {desc && <p className="challenge-desc">{desc}</p>}
       {!joined && phase !== 'past' && c.is_paid && !!c.price_cents && <PromoField kind="challenge" target={id} discountCents={promoDiscount(c.price_cents, promo)} value={promo} onChange={setPromo} />}
-      <div className="recipe-actions">{!joined && phase !== 'past' && <Button disabled={busy} onClick={join}>{t('challenges.joinChallenge')}</Button>}{leader && <Button variant="secondary" onClick={() => setEditing(c)}><Pencil />{t('challenges.edit')}</Button>}</div></div>
+      <div className="recipe-actions">{!joined && phase !== 'past' && <Button disabled={busy || full} onClick={join}>{full ? t('challenges.full') : t('challenges.joinChallenge')}</Button>}{leader && <Button variant="secondary" onClick={() => setEditing(c)}><Pencil />{t('challenges.edit')}</Button>}</div></div>
+
+    {joined && welcome && (welcomeTitle || welcomeBody) && !welcomeGone && <section className="panel challenge-welcome" role="status">
+      <div className="section-heading"><h2>{welcomeTitle || t('challenges.msg.welcome')}</h2><Button variant="ghost" size="icon" aria-label={t('common.close')} onClick={() => setWelcomeGone(true)}><X /></Button></div>
+      {welcomeBody && <p>{welcomeBody}</p>}</section>}
 
     {joined && s.total >= len && <Finisher c={c} days={len} />}
 
@@ -274,19 +245,27 @@ export function ChallengePage({ id }: { id: string }) {
         : <Button className="checkin-big" onClick={() => setSheetDate(today)}><Check />{t('challenges.checkInToday')}</Button>}
       {canYesterday && <button type="button" className="text-link yesterday-link" onClick={() => setSheetDate(yesterday)}>{t('challenges.checkInYesterday')}</button>}</section>}
 
+    {joined && phase === 'active' && todayActs.length > 0 && <section className="panel" aria-label={t('challenges.todayActivities')}>
+      <div className="section-heading"><h2>{t('challenges.todayActivities')}</h2></div>
+      <ul className="offer-list compact">{todayActs.map((a, i) => <ActivityRow key={a.id ?? i} a={a} lang={lang} />)}</ul></section>}
+
     {joined && <section className="panel"><div className="streak-row">
       <div className={`streak ${s.current > 0 ? 'is-lit' : ''}`}><Flame className="streak-flame" aria-hidden="true" /><strong>{s.current}</strong><span>{t('challenges.currentStreak')}</span></div>
       <div className="streak"><strong>{s.best}</strong><span>{t('challenges.bestStreak')}</span></div>
       <div className="streak"><strong>{s.total}/{len}</strong><span>{t('challenges.checkIns')}</span></div></div>
+      {goal && goal.target > 0 && <div className="goal-progress">
+        <div className="goal-progress-head"><strong>{t('challenges.goalProgress', { done: goal.done, target: goal.target })}</strong>{c.goal_unit ? <span>{c.goal_unit}</span> : null}</div>
+        <progress value={goal.pct} max={1} aria-label={t('challenges.goalProgress', { done: goal.done, target: goal.target })} />
+        {goal.complete && <p className="field-hint" role="status">{t('challenges.goalComplete')}</p>}</div>}
       <div className="day-grid" role="list" aria-label={t('challenges.calendar')}>{Array.from({ length: len }, (_, i) => { const d = addDays(c.starts_on, i); const on = dates.has(d); return <span role="listitem" key={d} className={`day-cell ${on ? 'is-on' : ''} ${d === today ? 'is-today' : ''} ${d > today ? 'is-future' : ''}`} aria-label={`${fmtDate(d, lang)}${on ? ` · ${t('challenges.checkedIn')}` : ''}`}>{on ? <Check /> : i + 1}</span>; })}</div></section>}
 
-    <section className="panel"><div className="section-heading"><div><h2>{t('challenges.leaderboard')}</h2><p>{t('challenges.leaderboardNote')}</p></div>{meRow && <span className="chip">{t('challenges.yourRank', { rank: meRow.rank })}</span>}</div>
+    {c.leaderboard_on && <section className="panel"><div className="section-heading"><div><h2>{t('challenges.leaderboard')}</h2><p>{t('challenges.leaderboardNote')}</p></div>{meRow && <span className="chip">{t('challenges.yourRank', { rank: meRow.rank })}</span>}</div>
       {top.length ? <ol className="board">{top.map(r => <li key={r.user_id} className={r.user_id === userId ? 'is-me' : ''}><span className="board-rank">{r.rank}</span><span className="initial-avatar">{initialsOf(r.full_name)}</span><span className="lesson-info"><strong>{r.full_name || t('teamSpace.someone')}</strong><small>{t('challenges.streakShort', { count: r.current_streak })} · {t('challenges.bestShort', { count: r.best_streak })}</small></span><strong className="board-count">{r.checkins}</strong></li>)}</ol> : <EmptyState compact icon="Camera" text={t('challenges.boardEmpty')} />}
-      {meRow && meRow.rank > 10 && <p className="board-me">{t('challenges.youreRank', { rank: meRow.rank })}</p>}</section>
+      {meRow && meRow.rank > 10 && <p className="board-me">{t('challenges.youreRank', { rank: meRow.rank })}</p>}</section>}
 
     {joined && <PhotoGallery paths={mine.map(m => m.photo_path).filter((p): p is string => !!p)} />}
     {leader && <LeaderPanel c={c} />}
     {sheetDate && <CheckInSheet open={!!sheetDate} onClose={() => setSheetDate(null)} c={c} date={sheetDate} />}
-    {leader && workspace && <ChallengeEditor draft={editing} teamId={c.team_id || workspace.teamId} onClose={() => { setEditing(null); void qc.invalidateQueries({ queryKey: ['challenge', id] }); }} />}
+    {leader && workspace && <ChallengeBuilder draft={editing} teamId={c.team_id || workspace.teamId} onClose={() => { setEditing(null); void qc.invalidateQueries({ queryKey: ['challenge', id] }); }} />}
   </>;
 }

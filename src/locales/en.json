@@ -1935,7 +1935,105 @@
       "not_allowed": "You don't have access to this challenge."
     },
     "noneYet": "No challenges yet.",
-    "start": "Start a challenge"
+    "start": "Start a challenge",
+    "full": "Challenge is full",
+    "dueAt": "Due by {{hour}}:00",
+    "openLink": "Open link",
+    "openFile": "Open file",
+    "todayActivities": "Today's activities",
+    "goalProgress": "{{done}} of {{target}}",
+    "goalComplete": "Goal reached — well done!",
+    "goalTarget": "Goal target",
+    "goalUnit": "Unit (optional)",
+    "goalUnitHint": "e.g. workouts, walks, minutes",
+    "leaderboardToggle": "Show leaderboard",
+    "leaderboardToggleText": "Participants see rankings and points. Off keeps progress private.",
+    "capacity": "Capacity",
+    "capacityN": "{{count}} spots",
+    "pointsNote": "Each check-in earns a point. The leaderboard ranks participants by points.",
+    "model": {
+      "label": "Challenge model",
+      "streak": "Streak / consistency",
+      "goal": "Goal / threshold",
+      "points": "Leaderboard / points"
+    },
+    "modelText": {
+      "streak": "Participants check in each day and build a streak.",
+      "goal": "Participants work toward a total target, like 12 workouts.",
+      "points": "Check-ins earn points and the leaderboard ranks everyone."
+    },
+    "frequency": {
+      "label": "Check-in rhythm",
+      "daily": "Daily",
+      "weekly": "Weekly"
+    },
+    "enrollment": {
+      "label": "Enrollment",
+      "open": "Open to the team",
+      "invite": "Invite only"
+    },
+    "msg": {
+      "welcome": "Welcome",
+      "start_reminder": "Start reminder",
+      "daily_prompt": "Daily prompt",
+      "checkin_reminder": "Check-in reminder",
+      "announcement": "Announcement",
+      "completion": "Completion"
+    },
+    "msgText": {
+      "welcome": "Shown to each participant when they join.",
+      "start_reminder": "Sent before the challenge starts.",
+      "daily_prompt": "A recurring nudge during the challenge.",
+      "checkin_reminder": "Reminds participants who have not checked in.",
+      "announcement": "An ad hoc note to all participants.",
+      "completion": "Sent when the challenge ends."
+    },
+    "builder": {
+      "steps": "Creation steps",
+      "step": {
+        "basics": "Basics",
+        "model": "Model & rules",
+        "activities": "Activities",
+        "messages": "Messages",
+        "review": "Review"
+      },
+      "back": "Back",
+      "next": "Next",
+      "untitled": "Untitled challenge",
+      "tzNote": "Times use your time zone: {{tz}}",
+      "activitiesHint": "Activities are what participants do. Attach a resource, link or file, and choose when each is available.",
+      "activity": "Activity {{count}}",
+      "addActivity": "Add activity",
+      "activityDay": "Available",
+      "throughout": "Throughout the challenge",
+      "dayN": "Day {{day}}",
+      "dueTime": "Due hour (optional)",
+      "requiresCheckin": "Requires check-in",
+      "requiresNote": "Requires a note",
+      "link": "External link",
+      "attachResource": "Attach a resource",
+      "noResource": "None",
+      "file": "File",
+      "removeActivityTitle": "Remove this activity?",
+      "removeActivityText": "Its title, links and attachments will be removed from the challenge.",
+      "messagesHint": "Scheduled messages go to all participants in-app. Email and text delivery need a configured provider; the schedule is kept either way.",
+      "msgEnabled": "Enabled",
+      "msgOffset": "Day offset",
+      "msgHour": "Hour (0–23)",
+      "msgBody": "Message",
+      "msgChannel": "Channel: {{channel}}. Participants control their own notification preferences.",
+      "reviewTitle": "Summary",
+      "reviewHint": "Save as a draft to keep editing, or publish so the team can join. You can edit future and running challenges later.",
+      "summaryActs": "{{count}} activities",
+      "summaryMsgs": "{{count}} messages on",
+      "issue": {
+        "title": "Add a title",
+        "start": "Pick a start date",
+        "end": "The end date must be on or after the start",
+        "goal": "Set a goal target of at least 1",
+        "capacity": "Capacity must be at least 1"
+      }
+    }
   },
   "recognition": {
     "title": "Recognition",
@@ -6256,7 +6354,13 @@
     "resourceContext": "Resource",
     "audienceLabel": "Authorized audience",
     "enrolledAudience": "New enrolled participants with active access",
-    "resourceActivation": "New enrollments only. In-app delivery is available; archived resources and revoked access stop pending messages."
+    "resourceActivation": "New enrollments only. In-app delivery is available; archived resources and revoked access stop pending messages.",
+    "challengesTitle": "Challenge messages",
+    "challengesHint": "Scheduled messages from your team challenges. Pause a future item or open the challenge to edit it.",
+    "challengeAudience": "Audience: all participants",
+    "challengePaused": "paused",
+    "challengeDisabled": "off",
+    "resume": "Resume"
   },
   "payReady": {
     "title": "Getting paid",

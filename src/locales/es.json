@@ -1935,7 +1935,105 @@
       "not_allowed": "No tienes acceso a este reto."
     },
     "noneYet": "Aún no hay retos.",
-    "start": "Iniciar un reto"
+    "start": "Iniciar un reto",
+    "full": "El reto está lleno",
+    "dueAt": "Vence a las {{hour}}:00",
+    "openLink": "Abrir enlace",
+    "openFile": "Abrir archivo",
+    "todayActivities": "Actividades de hoy",
+    "goalProgress": "{{done}} de {{target}}",
+    "goalComplete": "¡Meta alcanzada — bien hecho!",
+    "goalTarget": "Meta objetivo",
+    "goalUnit": "Unidad (opcional)",
+    "goalUnitHint": "ej. entrenamientos, caminatas, minutos",
+    "leaderboardToggle": "Mostrar tabla de posiciones",
+    "leaderboardToggleText": "Los participantes ven posiciones y puntos. Apagada, el progreso es privado.",
+    "capacity": "Capacidad",
+    "capacityN": "{{count}} lugares",
+    "pointsNote": "Cada registro suma un punto. La tabla ordena a los participantes por puntos.",
+    "model": {
+      "label": "Modelo del reto",
+      "streak": "Racha / constancia",
+      "goal": "Meta / umbral",
+      "points": "Tabla / puntos"
+    },
+    "modelText": {
+      "streak": "Los participantes registran cada día y construyen una racha.",
+      "goal": "Los participantes avanzan hacia una meta total, como 12 entrenamientos.",
+      "points": "Los registros suman puntos y la tabla ordena a todos."
+    },
+    "frequency": {
+      "label": "Ritmo de registro",
+      "daily": "Diario",
+      "weekly": "Semanal"
+    },
+    "enrollment": {
+      "label": "Inscripción",
+      "open": "Abierto al equipo",
+      "invite": "Solo con invitación"
+    },
+    "msg": {
+      "welcome": "Bienvenida",
+      "start_reminder": "Recordatorio de inicio",
+      "daily_prompt": "Mensaje diario",
+      "checkin_reminder": "Recordatorio de registro",
+      "announcement": "Anuncio",
+      "completion": "Finalización"
+    },
+    "msgText": {
+      "welcome": "Se muestra a cada participante al unirse.",
+      "start_reminder": "Se envía antes de que empiece el reto.",
+      "daily_prompt": "Un recordatorio recurrente durante el reto.",
+      "checkin_reminder": "Recuerda a quienes no han registrado.",
+      "announcement": "Una nota puntual para todos los participantes.",
+      "completion": "Se envía cuando termina el reto."
+    },
+    "builder": {
+      "steps": "Pasos de creación",
+      "step": {
+        "basics": "Básicos",
+        "model": "Modelo y reglas",
+        "activities": "Actividades",
+        "messages": "Mensajes",
+        "review": "Revisión"
+      },
+      "back": "Atrás",
+      "next": "Siguiente",
+      "untitled": "Reto sin título",
+      "tzNote": "Los horarios usan tu zona horaria: {{tz}}",
+      "activitiesHint": "Las actividades son lo que hacen los participantes. Adjunta un recurso, enlace o archivo y elige cuándo está disponible cada una.",
+      "activity": "Actividad {{count}}",
+      "addActivity": "Agregar actividad",
+      "activityDay": "Disponible",
+      "throughout": "Durante todo el reto",
+      "dayN": "Día {{day}}",
+      "dueTime": "Hora límite (opcional)",
+      "requiresCheckin": "Requiere registro",
+      "requiresNote": "Requiere una nota",
+      "link": "Enlace externo",
+      "attachResource": "Adjuntar un recurso",
+      "noResource": "Ninguno",
+      "file": "Archivo",
+      "removeActivityTitle": "¿Quitar esta actividad?",
+      "removeActivityText": "Su título, enlaces y adjuntos se quitarán del reto.",
+      "messagesHint": "Los mensajes programados llegan a todos los participantes en la app. El envío por correo o texto requiere un proveedor configurado; la programación se conserva de todos modos.",
+      "msgEnabled": "Activado",
+      "msgOffset": "Día relativo",
+      "msgHour": "Hora (0–23)",
+      "msgBody": "Mensaje",
+      "msgChannel": "Canal: {{channel}}. Cada participante controla sus propias preferencias de notificación.",
+      "reviewTitle": "Resumen",
+      "reviewHint": "Guarda como borrador para seguir editando, o publica para que el equipo se una. Puedes editar retos futuros y en curso después.",
+      "summaryActs": "{{count}} actividades",
+      "summaryMsgs": "{{count}} mensajes activos",
+      "issue": {
+        "title": "Agrega un título",
+        "start": "Elige una fecha de inicio",
+        "end": "La fecha de fin debe ser igual o posterior al inicio",
+        "goal": "Define una meta de al menos 1",
+        "capacity": "La capacidad debe ser al menos 1"
+      }
+    }
   },
   "recognition": {
     "title": "Reconocimiento",
@@ -6256,7 +6354,13 @@
     "resourceContext": "Recurso",
     "audienceLabel": "Público autorizado",
     "enrolledAudience": "Nuevos participantes inscritos con acceso activo",
-    "resourceActivation": "Solo nuevas inscripciones. Los mensajes dentro de la app están disponibles; los recursos archivados y el acceso revocado detienen los mensajes pendientes."
+    "resourceActivation": "Solo nuevas inscripciones. Los mensajes dentro de la app están disponibles; los recursos archivados y el acceso revocado detienen los mensajes pendientes.",
+    "challengesTitle": "Mensajes de retos",
+    "challengesHint": "Mensajes programados de los retos de tu equipo. Pausa un elemento futuro o abre el reto para editarlo.",
+    "challengeAudience": "Audiencia: todos los participantes",
+    "challengePaused": "en pausa",
+    "challengeDisabled": "apagado",
+    "resume": "Reanudar"
   },
   "payReady": {
     "title": "Cómo cobrar",

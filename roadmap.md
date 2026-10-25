@@ -1,6 +1,6 @@
-# Creator-experience pass (3 Website Notes) — DONE
+# Challenge experience pass — DONE
 
-- [x] P1: Event format option cards (Standard/Retreat/Multi-event) at top of GatheringForm
-- [x] P2: Shared active-language Title/Description + "Add translation" across track/lesson/recipe/offer/quiz editors
-- [x] P3: Single dynamic resource builder at /learn/create with type dropdown, dynamic fields, loss warning, draft save
-- [x] 500 tests, typecheck, build OK; browser EN/ES at 320/375/390/1280px; fixtures cleaned
+- [x] P1: step-based challenge builder (basics/model/activities/messages/review), goal/streak/points models, draft/publish lifecycle, participant Today + goal progress + conditional leaderboard
+- [x] P2: challenge messages (6 kinds) in builder + Communications hub section with pause/edit and honest channel labels
+- [x] P3: activities attach resources/links/files with day availability; participant view renders them
+- [x] Migration 0111 applied; 510 tests, typecheck, build OK; EN/ES 320/375/390/1280 verified; fixtures cleaned

@@ -515,6 +515,71 @@ export type Database = {
           },
         ]
       }
+      challenge_activities: {
+        Row: {
+          challenge_id: string
+          created_at: string
+          day_offset: number | null
+          due_hour: number | null
+          file_path: string | null
+          id: string
+          instructions_en: string | null
+          instructions_es: string | null
+          link_url: string | null
+          requires_checkin: boolean
+          requires_note: boolean
+          resource_id: string | null
+          resource_kind: string | null
+          sort_order: number
+          title_en: string
+          title_es: string
+        }
+        Insert: {
+          challenge_id: string
+          created_at?: string
+          day_offset?: number | null
+          due_hour?: number | null
+          file_path?: string | null
+          id?: string
+          instructions_en?: string | null
+          instructions_es?: string | null
+          link_url?: string | null
+          requires_checkin?: boolean
+          requires_note?: boolean
+          resource_id?: string | null
+          resource_kind?: string | null
+          sort_order?: number
+          title_en?: string
+          title_es?: string
+        }
+        Update: {
+          challenge_id?: string
+          created_at?: string
+          day_offset?: number | null
+          due_hour?: number | null
+          file_path?: string | null
+          id?: string
+          instructions_en?: string | null
+          instructions_es?: string | null
+          link_url?: string | null
+          requires_checkin?: boolean
+          requires_note?: boolean
+          resource_id?: string | null
+          resource_kind?: string | null
+          sort_order?: number
+          title_en?: string
+          title_es?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_activities_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       challenge_checkins: {
         Row: {
           challenge_id: string
@@ -579,6 +644,65 @@ export type Database = {
           },
         ]
       }
+      challenge_messages: {
+        Row: {
+          body_en: string
+          body_es: string
+          challenge_id: string
+          channel: string
+          created_at: string
+          enabled: boolean
+          id: string
+          kind: string
+          paused: boolean
+          send_hour: number
+          send_offset_days: number
+          sort_order: number
+          title_en: string
+          title_es: string
+        }
+        Insert: {
+          body_en?: string
+          body_es?: string
+          challenge_id: string
+          channel?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          kind: string
+          paused?: boolean
+          send_hour?: number
+          send_offset_days?: number
+          sort_order?: number
+          title_en?: string
+          title_es?: string
+        }
+        Update: {
+          body_en?: string
+          body_es?: string
+          challenge_id?: string
+          channel?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          kind?: string
+          paused?: boolean
+          send_hour?: number
+          send_offset_days?: number
+          sort_order?: number
+          title_en?: string
+          title_es?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_messages_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       challenge_types: {
         Row: {
           created_at: string
@@ -626,6 +750,7 @@ export type Database = {
       }
       challenges: {
         Row: {
+          capacity: number | null
           cover_style: number
           cover_url: string | null
           created_at: string
@@ -635,15 +760,24 @@ export type Database = {
           description_en: string | null
           description_es: string | null
           ends_on: string
+          enrollment: string
+          frequency: string
+          goal_target: number | null
+          goal_unit: string | null
           id: string
           is_paid: boolean
+          leaderboard_on: boolean
+          model: string
           price_cents: number | null
           starts_on: string
+          status: string
           team_id: string
+          timezone: string | null
           title_en: string
           title_es: string
         }
         Insert: {
+          capacity?: number | null
           cover_style?: number
           cover_url?: string | null
           created_at?: string
@@ -653,15 +787,24 @@ export type Database = {
           description_en?: string | null
           description_es?: string | null
           ends_on: string
+          enrollment?: string
+          frequency?: string
+          goal_target?: number | null
+          goal_unit?: string | null
           id?: string
           is_paid?: boolean
+          leaderboard_on?: boolean
+          model?: string
           price_cents?: number | null
           starts_on: string
+          status?: string
           team_id: string
+          timezone?: string | null
           title_en?: string
           title_es?: string
         }
         Update: {
+          capacity?: number | null
           cover_style?: number
           cover_url?: string | null
           created_at?: string
@@ -671,11 +814,19 @@ export type Database = {
           description_en?: string | null
           description_es?: string | null
           ends_on?: string
+          enrollment?: string
+          frequency?: string
+          goal_target?: number | null
+          goal_unit?: string | null
           id?: string
           is_paid?: boolean
+          leaderboard_on?: boolean
+          model?: string
           price_cents?: number | null
           starts_on?: string
+          status?: string
           team_id?: string
+          timezone?: string | null
           title_en?: string
           title_es?: string
         }
