@@ -6605,18 +6605,21 @@ export type Database = {
           cta_es: string | null
           description_en: string | null
           description_es: string | null
+          host_id: string | null
           id: string
           is_published: boolean
           is_start_here: boolean
           offer_id: string | null
           promo_en: string | null
           promo_es: string | null
+          resource_kind: string | null
           sort_order: number
           subtitle_en: string | null
           subtitle_es: string | null
           team_id: string
           title_en: string
           title_es: string
+          visibility: string
         }
         Insert: {
           accent?: string
@@ -6628,18 +6631,21 @@ export type Database = {
           cta_es?: string | null
           description_en?: string | null
           description_es?: string | null
+          host_id?: string | null
           id?: string
           is_published?: boolean
           is_start_here?: boolean
           offer_id?: string | null
           promo_en?: string | null
           promo_es?: string | null
+          resource_kind?: string | null
           sort_order?: number
           subtitle_en?: string | null
           subtitle_es?: string | null
           team_id: string
           title_en?: string
           title_es?: string
+          visibility?: string
         }
         Update: {
           accent?: string
@@ -6651,18 +6657,21 @@ export type Database = {
           cta_es?: string | null
           description_en?: string | null
           description_es?: string | null
+          host_id?: string | null
           id?: string
           is_published?: boolean
           is_start_here?: boolean
           offer_id?: string | null
           promo_en?: string | null
           promo_es?: string | null
+          resource_kind?: string | null
           sort_order?: number
           subtitle_en?: string | null
           subtitle_es?: string | null
           team_id?: string
           title_en?: string
           title_es?: string
+          visibility?: string
         }
         Relationships: [
           {

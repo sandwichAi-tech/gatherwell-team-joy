@@ -62,3 +62,25 @@ describe('visibleLessons (course outline draft filtering)', () => {
     expect(visibleLessons(data, 'T', true).map(l => l.id)).toEqual(['a', 'b', 'c']);
   });
 });
+
+describe('publicCardRoute / publicKindKey (cross-model cards)', () => {
+  it('routes offers to the offer landing and tracks to the track access route', async () => {
+    const { publicCardRoute } = await import('./public-cards');
+    expect(publicCardRoute({ id: 'a', entity: 'offer' })).toEqual({ to: '/o/$id', id: 'a' });
+    expect(publicCardRoute({ id: 'b', entity: 'track' })).toEqual({ to: '/learn/track/$id', id: 'b' });
+    expect(publicCardRoute({ id: 'c' })).toEqual({ to: '/o/$id', id: 'c' }); // legacy rows without entity stay offers
+  });
+  it('picks the type label namespace per model', async () => {
+    const { publicKindKey } = await import('./public-cards');
+    expect(publicKindKey({ kind: 'download', entity: 'offer' })).toBe('offers.kind.download');
+    expect(publicKindKey({ kind: 'video', entity: 'track' })).toBe('resources.types.video');
+    expect(publicKindKey({ kind: 'link', entity: 'track' })).toBe('resources.types.link');
+  });
+  it('track cards render through the shared card model with fallbacks', async () => {
+    const { publicCardModel } = await import('./public-cards');
+    const m = publicCardModel({ id: 't', kind: 'video', entity: 'track', title_en: 'Morning video', card_layout: 'callout', accent: 'terracotta' }, 'es', 'Sin título', 'Ver');
+    expect(m.title).toBe('Morning video'); // es missing falls back to en
+    expect(m.layout).toBe('callout');
+    expect(m.paid).toBe(false); // track resources are free after sign-in
+  });
+});

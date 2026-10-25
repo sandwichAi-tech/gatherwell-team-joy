@@ -253,6 +253,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
           url: l.url ?? '', storagePath: l.storage_path, replay: l.replay_url ?? '',
           live: l.live_starts_at ? toLocalInput(new Date(l.live_starts_at)) : '', meeting: '',
         } }));
+        setVisibility(tr.data.visibility === 'public' || tr.data.visibility === 'unlisted' ? tr.data.visibility : 'team');
         setLoaded({ entity: 'track', id: initialId, status: tr.data.is_published ? 'published' : 'draft' });
         setLoadingItem(false);
         return;
@@ -379,7 +380,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
       cover_url: item.coverPath, cover_style: item.coverStyle, ...presentationCols,
     };
     if (isTrackFlow(type) && lessonType) {
-      const row = { ...base, is_published: publish };
+      const row = { ...base, is_published: publish, visibility, host_id: userId, resource_kind: lessonType };
       const tr = loaded?.entity === 'track'
         ? await db.from('tracks').update(row).eq('id', loaded.id).select('id').single()
         : await db.from('tracks').insert({ ...row, team_id: teamId, sort_order: Date.now() % 1_000_000 }).select('id').single();
@@ -584,13 +585,14 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
 
         {/* ---- Access / Checkout ---- */}
         {section === 'access' && <>
+          {(offerKindFor(type) || isTrackFlow(type)) && <div className="form-field"><span className="field-label">{t('resources.item.visibilityLabel')}</span>
+            <div className="filter-chips" role="radiogroup" aria-label={t('resources.item.visibilityLabel')}>
+              {(['team', 'public', 'unlisted'] as const).map(v => <button key={v} type="button" role="radio" aria-checked={visibility === v}
+                className={`filter-chip ${visibility === v ? 'is-active' : ''}`} onClick={() => setVisibility(v)}>{t(`resources.item.visibility.${v}`)}</button>)}
+            </div>
+            <p className="field-hint">{t(`resources.item.visibilityHint.${visibility}`)}</p></div>}
+          {isTrackFlow(type) && <p className="muted-small">{t('resources.item.trackAccessNote')}</p>}
           {offerKindFor(type) ? <>
-            <div className="form-field"><span className="field-label">{t('resources.item.visibilityLabel')}</span>
-              <div className="filter-chips" role="radiogroup" aria-label={t('resources.item.visibilityLabel')}>
-                {(['team', 'public', 'unlisted'] as const).map(v => <button key={v} type="button" role="radio" aria-checked={visibility === v}
-                  className={`filter-chip ${visibility === v ? 'is-active' : ''}`} onClick={() => setVisibility(v)}>{t(`resources.item.visibility.${v}`)}</button>)}
-              </div>
-              <p className="field-hint">{t(`resources.item.visibilityHint.${visibility}`)}</p></div>
             <div className="form-field"><span className="field-label">{t('resources.item.accessLabel')}</span>
               <div className="filter-chips" role="radiogroup" aria-label={t('resources.item.accessLabel')}>
                 <button type="button" role="radio" aria-checked={item.access.free} className={`filter-chip ${item.access.free ? 'is-active' : ''}`} onClick={() => patchItem({ access: { ...item.access, free: true } })}>{t('resources.item.free')}</button>

@@ -6023,7 +6023,8 @@
       "guide": "Guides & PDFs",
       "file": "Files & downloads",
       "link": "Links",
-      "recipe": "Recipes"
+      "recipe": "Recipes",
+      "live": "Live sessions"
     },
     "typeChip": {
       "course": "Course",
@@ -6239,7 +6240,8 @@
         "team": "Only members of your team see this resource.",
         "public": "Listed on your public coach page and in Discover.",
         "unlisted": "Not listed anywhere; people need the direct link."
-      }
+      },
+      "trackAccessNote": "Free after sign-in. “Public page” also lists it on your public coach page."
     }
   },
   "templatesR": {
