@@ -1,3 +1,4 @@
+// Admin sign-in with password reset entry (see /reset-password).
 import { useEffect, useState, type FormEvent } from 'react';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
