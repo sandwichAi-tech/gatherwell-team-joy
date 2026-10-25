@@ -89,6 +89,7 @@ export function CommunicationsPage() {
 
     {setup && <SetupBanner setup={setup} />}
     {canManage && <CoachSubscriberSegments />}
+    {canManage && <ChallengeCommsSection teamId={teamId} setup={setup ?? null} />}
     <section className="comms-section"><h2>{t('comms.offeringScopeTitle')}</h2><p className="field-hint">{t('comms.offeringScopeHint')}</p><Button asChild variant="secondary"><Link to="/learn" search={{ tab: 'mine' }}>{t('comms.resourcesLink')}</Link></Button></section>
 
     {!canManage && <p className="empty-state" role="note">{t('comms.membersReadOnly')}</p>}
@@ -103,6 +104,45 @@ export function CommunicationsPage() {
     {tab === 'automations' && <AutomationsTab teamId={teamId ?? ''} automations={automations ?? []} templates={templates ?? []} loading={loadingAutomations} canManage={canManage} setup={setup ?? null} onChanged={refresh} />}
     {tab === 'journeys' && <JourneysTab teamId={teamId ?? ''} journeys={journeys ?? []} templates={templates ?? []} loading={loadingJourneys} canManage={canManage} setup={setup ?? null} onChanged={refresh} />}
   </div>;
+}
+
+type ChallengeMsgRow = { id: string; challenge_id: string; kind: string; send_offset_days: number; send_hour: number; title_en: string; title_es: string; body_en: string; body_es: string; channel: string; enabled: boolean; paused: boolean; challenges: { title_en: string; title_es: string; starts_on: string; ends_on: string } };
+
+/** Challenge communications alongside event/resource messaging: same hub, honest channel labels. */
+function ChallengeCommsSection({ teamId, setup }: { teamId: string; setup: Setup | null }) {
+  const { t, i18n } = useTranslation();
+  const lang = i18n.resolvedLanguage ?? 'en';
+  const qc = useQueryClient();
+  const { data = [] } = useQuery({
+    queryKey: ['challenge-comms', teamId],
+    queryFn: async () => ((await supabase.from('challenge_messages').select('*, challenges!inner(title_en, title_es, starts_on, ends_on, team_id)').eq('challenges.team_id', teamId).order('sort_order')).data ?? []) as unknown as ChallengeMsgRow[],
+  });
+  const toggle = async (m: ChallengeMsgRow, field: 'enabled' | 'paused') => {
+    const { error } = await supabase.from('challenge_messages').update({ [field]: !m[field] }).eq('id', m.id);
+    if (error) { toast.error(t('profile.saveError')); return; }
+    await qc.invalidateQueries({ queryKey: ['challenge-comms', teamId] });
+  };
+  if (!data.length) return null;
+  const fmtDay = (iso: string) => new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', { month: 'short', day: 'numeric' }).format(new Date(`${iso}T12:00:00Z`));
+  return <section className="comms-section" aria-label={t('comms.challengesTitle')}>
+    <h2>{t('comms.challengesTitle')}</h2>
+    <p className="field-hint">{t('comms.challengesHint')}</p>
+    <ul className="offer-list compact">{data.map(m => {
+      const when = fmtDay(messageSendDate(m.kind as ChallengeMessageKind, m.send_offset_days, m.challenges.starts_on, m.challenges.ends_on));
+      const channelReady = m.channel === 'in_app' || (m.channel === 'email' ? setup?.email : setup?.sms);
+      return <li key={m.id} className="offer-row">
+        <div className="offer-row-main">
+          <strong>{lang === 'es' ? m.title_es || m.title_en : m.title_en || m.title_es || t(`challenges.msg.${m.kind}`)}</strong>
+          <small>{m.challenges.title_en} · {t(`challenges.msg.${m.kind}`)} · {when} {String(m.send_hour).padStart(2, '0')}:00 · {t(`comms.channel.${m.channel}`)}{channelReady ? '' : ` · ${t('comms.setupRequired')}`}</small>
+          <small>{t('comms.challengeAudience')}{m.paused ? ` · ${t('comms.challengePaused')}` : m.enabled ? '' : ` · ${t('comms.challengeDisabled')}`}</small>
+        </div>
+        <div className="offer-row-actions">
+          <Button variant="ghost" size="sm" onClick={() => void toggle(m, 'paused')}>{t(m.paused ? 'comms.resume' : 'comms.pause')}</Button>
+          <Button asChild variant="secondary" size="sm"><Link to="/challenge/$id" params={{ id: m.challenge_id }}>{t('templates.edit')}</Link></Button>
+        </div>
+      </li>;
+    })}</ul>
+  </section>;
 }
 
 function SetupBanner({ setup }: { setup: Setup }) {
