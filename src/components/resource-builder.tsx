@@ -137,7 +137,7 @@ function Curriculum({ trackId, teamId, lang }: { trackId: string; teamId: string
     void load();
   };
   const removeLesson = async (l: Lesson) => {
-    const ok = await confirmAction({ title: t('resources.item.curriculum.deleteTitle'), body: t('resources.item.curriculum.deleteText'), confirmLabel: t('common.delete'), destructive: true });
+    const ok = await confirmAction({ title: t('resources.item.curriculum.deleteTitle'), body: t('resources.item.curriculum.deleteText'), confirmLabel: t('resources.item.deleteLesson'), destructive: true });
     if (!ok) return;
     const { error } = await db.from('lessons').delete().eq('id', l.id);
     if (error) { toast.error(t('profile.saveError')); return; }
@@ -164,7 +164,7 @@ function Curriculum({ trackId, teamId, lang }: { trackId: string; teamId: string
             onEn={v => setForm(f => ({ ...f, titleEn: v }))} onEs={v => setForm(f => ({ ...f, titleEs: v }))} maxLength={120} />
           <Field id={`clt-${l.id}`} label={t('resources.item.curriculum.lessonType')}>
             <select id={`clt-${l.id}`} className="field-input" value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
-              {['video', 'pdf', 'audio', 'link', 'text'].map(x => <option key={x} value={x}>{t(`learnHub.lessonTypes.${x}`)}</option>)}
+              {['video', 'pdf', 'audio', 'link', 'text'].map(x => <option key={x} value={x}>{t(`resources.item.lessonTypes.${x}`)}</option>)}
             </select>
           </Field>
           {form.type !== 'text' && <Field id={`clu-${l.id}`} label={t('learnHub.link')}>
@@ -175,16 +175,16 @@ function Curriculum({ trackId, teamId, lang }: { trackId: string; teamId: string
           <label className="switch-row"><Switch checked={form.published} onCheckedChange={v => setForm(f => ({ ...f, published: v }))} /><span><strong>{t('offers.publish')}</strong><small>{t(form.published ? 'templates.published' : 'templates.draft')}</small></span></label>
           <div className="sheet-actions">
             <Button type="button" size="sm" disabled={busy} onClick={() => void saveLesson(l.id)}><Save />{t('common.save')}</Button>
-            <Button type="button" variant="ghost" size="sm" onClick={() => setEditing(null)}>{t('common.cancel')}</Button>
+            <Button type="button" variant="ghost" size="sm" onClick={() => setEditing(null)}>{t('resources.item.cancelEdit')}</Button>
           </div>
         </div> : <div className="curriculum-summary">
           <span className="curriculum-title"><strong>{lang === 'es' ? l.title_es || l.title_en : l.title_en || l.title_es}</strong>
-            <small>{t(`learnHub.lessonTypes.${l.type}`, { defaultValue: l.type })}{!l.is_published ? ` · ${t('templates.draft')}` : ''}</small></span>
+            <small>{t(`resources.item.lessonTypes.${l.type}`, { defaultValue: l.type })}{!l.is_published ? ` · ${t('templates.draft')}` : ''}</small></span>
           <span className="curriculum-actions">
             <button type="button" className="icon-button" aria-label={t('resources.item.curriculum.up')} disabled={busy || i === 0} onClick={() => void move(l, -1)}><ArrowUp /></button>
             <button type="button" className="icon-button" aria-label={t('resources.item.curriculum.down')} disabled={busy || i === lessons.length - 1} onClick={() => void move(l, 1)}><ArrowDown /></button>
             <button type="button" className="icon-button" aria-label={t('resources.edit')} onClick={() => startEdit(l)}><Pencil /></button>
-            <button type="button" className="icon-button" aria-label={t('common.delete')} onClick={() => void removeLesson(l)}><Trash2 /></button>
+            <button type="button" className="icon-button" aria-label={t('resources.item.deleteLesson')} onClick={() => void removeLesson(l)}><Trash2 /></button>
           </span>
         </div>}
       </li>)}
@@ -467,11 +467,11 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
       onClose={() => void navigate({ to: '/offer/$id', params: { id: createdQuiz.offer.id }, search: { panel: 'quiz' } })} />;
   }
 
-  if (loadingItem) return <section className="panel builder-panel"><p className="muted-small">{t('common.loading')}</p></section>;
+  if (loadingItem) return <section className="panel builder-panel"><p className="muted-small">{t('publicEvent.loading')}</p></section>;
   if (loadError) return <section className="panel builder-panel">
     <Link to="/learn" className="back-link"><ArrowLeft />{t('resources.title')}</Link>
     <p className="auth-subtitle">{t('resources.item.notFound')}</p>
-    <Button variant="secondary" onClick={() => { loadedOnce.current = false; setLoadError(false); setLoadingItem(true); }}>{t('common.retry')}</Button>
+    <Button variant="secondary" onClick={() => { loadedOnce.current = false; setLoadError(false); setLoadingItem(true); }}>{t('error.retry')}</Button>
   </section>;
 
   const preview = <>

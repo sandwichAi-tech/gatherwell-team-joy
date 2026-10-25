@@ -6140,6 +6140,95 @@
       "courseNote": "After saving, add sections, lessons and quizzes from the course page.",
       "publishHint": "Off saves a draft you can publish later.",
       "quizReady": "Quiz draft created — now add your questions."
+    },
+    "item": {
+      "sections": "Resource sections",
+      "tabs": {
+        "presentation": "Presentation",
+        "content": "Content",
+        "access": "Access",
+        "options": "Options",
+        "preview": "Preview"
+      },
+      "subtitle": "Subtitle",
+      "subtitleHint": "One short line under the title",
+      "ctaLabel": "Button text",
+      "ctaGet": "Get it free",
+      "ctaBuy": "Buy now",
+      "layoutLabel": "Card layout",
+      "layout": {
+        "button": "Button",
+        "callout": "Callout",
+        "preview": "Preview"
+      },
+      "accentLabel": "Highlight color",
+      "accent": {
+        "plum": "Midnight Plum",
+        "terracotta": "Adobe Terracotta",
+        "concrete": "Warm Concrete",
+        "ivory": "Warm Ivory"
+      },
+      "promoLabel": "Landing page description",
+      "richTextHint": "your text",
+      "richTextSafe": "Headings, lists, bold, italic and https links are kept; anything else is removed for safety.",
+      "rtHeading": "Heading",
+      "rtBold": "Bold",
+      "rtItalic": "Italic",
+      "rtList": "List",
+      "rtLink": "Link",
+      "accessLabel": "Access",
+      "free": "Free",
+      "paid": "Paid",
+      "freeAccessNote": "Free resources open right after the participant taps the button and signs in.",
+      "teamAccessNote": "This resource is free for your team. Publish it when you are ready for members to see it.",
+      "paidBlocked": "Paid publishing unlocks once payment setup is complete. You can still save a draft.",
+      "noOptions": "No extra options for this type.",
+      "previewTitle": "Participant preview",
+      "cardOnPage": "Card on your public page",
+      "landingTitle": "Landing page",
+      "previewFreeNote": "The button starts the free access flow.",
+      "previewPaidNote": "Checkout appears here once payment setup is complete.",
+      "status": {
+        "draft": "Draft",
+        "published": "Published"
+      },
+      "unsaved": "unsaved changes",
+      "reopenTitle": "Edit resource",
+      "typeLocked": "The type of a saved resource stays fixed so existing participants keep their access.",
+      "notFound": "We could not find that resource. It may have been removed.",
+      "issues": "Before saving: {{fields}}",
+      "issue": {
+        "title": "add a title",
+        "url": "add a valid link",
+        "live_time": "pick a start time",
+        "course": "choose a course",
+        "price": "set a price of at least $0.50",
+        "file": "attach the file"
+      },
+      "cancelEdit": "Cancel",
+      "deleteLesson": "Delete lesson",
+      "lessonTypes": {
+        "video": "Video",
+        "pdf": "PDF",
+        "audio": "Audio",
+        "link": "Link",
+        "text": "Text",
+        "live": "Live",
+        "file": "File"
+      },
+      "curriculum": {
+        "title": "Curriculum",
+        "add": "Add lesson",
+        "empty": "No lessons yet. Add the first one.",
+        "newLesson": "New lesson",
+        "saveFirst": "Save a draft first, then build the curriculum here.",
+        "lessonType": "Lesson type",
+        "instructions": "Instructions",
+        "up": "Move up",
+        "down": "Move down",
+        "deleteTitle": "Delete this lesson?",
+        "deleteText": "Participants lose this lesson and its progress. This cannot be undone."
+      }
     }
   },
   "templatesR": {
