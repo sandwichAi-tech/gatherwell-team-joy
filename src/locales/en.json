@@ -162,6 +162,141 @@
       "hostTools": "Host tools"
     }
   },
+  "faqPage":   {
+    "meta": {
+      "title": "FAQ · ZoheeWell",
+      "description": "Answers about hosting events and courses, pricing, payments, privacy, and discovering wellness events, resources, and coaches on ZoheeWell."
+    },
+    "eyebrow": "Help center",
+    "title": "Frequently asked questions",
+    "sub": "Straight answers for hosts, coaches, and the people who join them.",
+    "searchPlaceholder": "Search questions",
+    "searchLabel": "Search frequently asked questions",
+    "total": "{{count}} questions",
+    "matches": "{{count}} matching questions",
+    "empty": "No questions match your search. Try a different word, or send us your question through Support.",
+    "finalTitle": "Still curious? The best way to learn is to host.",
+    "categories": {
+      "about": "About ZoheeWell",
+      "hosting": "Hosting events",
+      "resources": "Resources & courses",
+      "pricing": "Pricing & payments",
+      "discover": "Discovering & privacy",
+      "teams": "Teams & roles",
+      "support": "Support & troubleshooting"
+    },
+    "linkLabels": {
+      "discover": "Explore Discover",
+      "coaches": "Meet coaches",
+      "pricing": "See pricing",
+      "createEvent": "Create an event",
+      "communications": "Open Communications",
+      "startBuilding": "Start building",
+      "support": "Go to Support"
+    },
+    "items": {
+      "whatIs": {
+        "q": "What is ZoheeWell?",
+        "a": "ZoheeWell is one place where wellness hosts, coaches, and creators run their work: create events and retreats, sell tickets, teach courses, share resources, and stay in touch with their community. People looking for something to join can browse public events, resources, and coaches — no account needed to look."
+      },
+      "whoFor": {
+        "q": "Who is ZoheeWell for?",
+        "a": "Hosts, coaches, educators, fitness professionals, creators, and community organizers — and everyone who wants to discover what they offer. Accounts are for people 18 and older; an adult can register a minor for an eligible event with separate guardian consent."
+      },
+      "cost": {
+        "q": "Is ZoheeWell free?",
+        "a": "Browsing Discover is free and needs no account, and guests can RSVP to events without one. Hosts start on the Free plan at $0 and only choose a paid plan when they need more room to grow."
+      },
+      "create": {
+        "q": "How do I create an event?",
+        "a": "Create a free account, then start a new event from your Events page. Add the details, choose free or paid tickets, and share your link. One-time and recurring events are both supported."
+      },
+      "rsvp": {
+        "q": "How do RSVPs, capacity, and waitlists work?",
+        "a": "You set the capacity for each event. Guests RSVP from your link without needing an account, and when an event fills up, interested people can join the waitlist."
+      },
+      "checkin": {
+        "q": "How does check-in work?",
+        "a": "Each registration gets a QR code. At the door, you or your check-in staff scan codes from the event's check-in page — no printed lists needed."
+      },
+      "reminders": {
+        "q": "Can I send reminders and follow-ups?",
+        "a": "Yes. The Communications hub includes bilingual templates, automations for registrations, reminders, and cancellations, and multi-step journeys. Email is built in; SMS is a paid option that works once it is configured for your account."
+      },
+      "retreats": {
+        "q": "Can I run a retreat or multi-day event?",
+        "a": "Yes. Events can span multiple days, with tickets, waivers, and guardian consent when an adult registers a minor. Schedules and details live on the event page."
+      },
+      "types": {
+        "q": "What can I share besides events?",
+        "a": "Videos, audio, guides and PDFs, downloadable files, links, live sessions, and recipes — plus full courses with sections, lessons, and quizzes. Everything starts as a draft until you choose to publish."
+      },
+      "paid": {
+        "q": "Can I charge for resources and courses?",
+        "a": "Yes — one-off purchases and recurring subscriptions are supported. Paid sales require card payments to be set up through Stripe, and ZoheeWell shows you exactly what is missing before a paid item can go live. Free resources work with no setup at all."
+      },
+      "templates": {
+        "q": "Can I reuse content across events and resources?",
+        "a": "Yes. Start from bilingual starter templates, save your own, and copy them as drafts — including event blueprints for the gatherings you run again and again."
+      },
+      "plans": {
+        "q": "How much does ZoheeWell cost?",
+        "a": "Free is $0. Paid plans are Advanced at $49/mo, Pro at $99/mo, Team 25 at $199/mo, and Organization at $499/mo with assisted setup. Annual billing costs ten times the monthly price, so you get two months free. Pricing may change after the pilot, and we will tell you before any change affects you."
+      },
+      "fee": {
+        "q": "What fees apply to paid sales?",
+        "a": "A ZoheeWell platform fee applies to paid sales and gets lower as your plan grows: 5% on Free, 3% on Advanced, 2% on Pro, 1% on Team 25, and 0.5% on Organization. Free offerings have no platform fee. Stripe processing is separate."
+      },
+      "founding": {
+        "q": "What is the founding host offer?",
+        "a": "Personally invited founding hosts get six months of complete access from activation — no card and no automatic conversion, with 30 days' notice before access ends. Founding hosts who choose annual billing by the end of access get 20% off their first paid year; this offer does not stack with the normal annual discount."
+      },
+      "payout": {
+        "q": "How do I get paid?",
+        "a": "You are the seller of record. Card payments run through a Stripe connected account that you set up from your plan and payments settings. ZoheeWell shows a readiness checklist and tells you exactly what is left before paid items can go live."
+      },
+      "refunds": {
+        "q": "How do refunds and cancellations work?",
+        "a": "You set the cancellation and refund policy for each event — choose a template or write your own, and attendees see it before they register. Refunds themselves are handled by you as the seller through your Stripe account."
+      },
+      "sms": {
+        "q": "Are there other charges?",
+        "a": "Optional channels like SMS are paid add-ons that only apply if you turn them on. Any charges are shown before you enable them."
+      },
+      "find": {
+        "q": "How do I find events, resources, or coaches?",
+        "a": "Open Discover and browse the Events, Resources, and Coaches tabs. Search and filters help you narrow things down by category, date, and location. Everything listed is public — no account needed to look."
+      },
+      "coachProfile": {
+        "q": "What is a public coach profile?",
+        "a": "Hosts can publish a public page with their own link, showing the details, upcoming events, and offerings they choose to share. If a host has not published a profile, nothing is shown."
+      },
+      "location": {
+        "q": "Is my location public?",
+        "a": "Hosts choose whether their city appears on their public profile. Events show the location details the host chose to make public, and everything else stays private."
+      },
+      "account": {
+        "q": "Do I need an account to attend?",
+        "a": "No — guests can RSVP from an event link without an account. A free account lets you save events, keep your registrations in one place, and access resources you have purchased or enrolled in."
+      },
+      "team": {
+        "q": "Can I work with a team?",
+        "a": "Yes. Teams let several people run events and content together. Builder seats cover the owner, admins, hosts, and content editors; check-in staff, analysts, and moderators never use a seat."
+      },
+      "whoManages": {
+        "q": "Who can see and manage my content?",
+        "a": "Only people you assign. A host or manager sees participants for the offerings they manage, and team leadership alone never reveals attendee contact details."
+      },
+      "help": {
+        "q": "How do I get help?",
+        "a": "Use the Support page to send us a message — billing, technical, and account questions all land in the same place. If you are signed out, you will be asked to sign in first so we can reply to the right account."
+      },
+      "trouble": {
+        "q": "Something is not working — what should I try?",
+        "a": "Check your connection and refresh the page first; ZoheeWell is built for phones and desktops, including slower connections. If the problem continues, send it to us through Support with a screenshot if you can."
+      }
+    }
+  },
   "events": {
     "title": "Events",
     "eyebrow": "Workspace",
@@ -2127,7 +2262,7 @@
       "privacy": "Privacy",
       "credits": "Photography credits",
       "copyright": "© 2026 ZoheeWell"
-    },
+    , "faq": "FAQ"},
     "sticky": {
       "find": "Find an event"
     },
@@ -3838,7 +3973,7 @@
       },
       {
         "q": "Can I start for free?",
-        "a": "Yes. The Free plan includes four gatherings a month and up to 30 guests per gathering."
+        "a": "Yes. The Free plan is $0 and includes the core hosting tools; paid plans add more room to grow."
       },
       {
         "q": "Can my team use this together?",

@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as CreditsRouteImport } from './routes/credits'
 import { Route as DiscoverRouteImport } from './routes/discover'
+import { Route as FaqRouteImport } from './routes/faq'
 import { Route as HostsRouteImport } from './routes/hosts'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as PricingRouteImport } from './routes/pricing'
@@ -115,6 +116,11 @@ const CreditsRoute = CreditsRouteImport.update({
 const DiscoverRoute = DiscoverRouteImport.update({
   id: '/discover',
   path: '/discover',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HostsRoute = HostsRouteImport.update({
@@ -540,6 +546,7 @@ export interface FileRoutesByFullPath {
   '/admin-login': typeof AdminLoginRoute
   '/credits': typeof CreditsRoute
   '/discover': typeof DiscoverRoute
+  '/faq': typeof FaqRoute
   '/hosts': typeof HostsRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
@@ -623,6 +630,7 @@ export interface FileRoutesByTo {
   '/admin-login': typeof AdminLoginRoute
   '/credits': typeof CreditsRoute
   '/discover': typeof DiscoverRoute
+  '/faq': typeof FaqRoute
   '/hosts': typeof HostsRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
@@ -708,6 +716,7 @@ export interface FileRoutesById {
   '/admin-login': typeof AdminLoginRoute
   '/credits': typeof CreditsRoute
   '/discover': typeof DiscoverRoute
+  '/faq': typeof FaqRoute
   '/hosts': typeof HostsRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
@@ -794,6 +803,7 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/credits'
     | '/discover'
+    | '/faq'
     | '/hosts'
     | '/login'
     | '/pricing'
@@ -877,6 +887,7 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/credits'
     | '/discover'
+    | '/faq'
     | '/hosts'
     | '/login'
     | '/pricing'
@@ -961,6 +972,7 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/credits'
     | '/discover'
+    | '/faq'
     | '/hosts'
     | '/login'
     | '/pricing'
@@ -1047,6 +1059,7 @@ export interface RootRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   CreditsRoute: typeof CreditsRoute
   DiscoverRoute: typeof DiscoverRoute
+  FaqRoute: typeof FaqRoute
   HostsRoute: typeof HostsRoute
   LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
@@ -1112,6 +1125,13 @@ declare module '@tanstack/react-router' {
       path: '/discover'
       fullPath: '/discover'
       preLoaderRoute: typeof DiscoverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hosts': {
@@ -1789,6 +1809,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   CreditsRoute: CreditsRoute,
   DiscoverRoute: DiscoverRoute,
+  FaqRoute: FaqRoute,
   HostsRoute: HostsRoute,
   LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,

@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 const BASE = 'https://gatherwell-team-joy.lovable.app';
-const PATHS = ['/', '/discover', '/login', '/terms', '/privacy', '/credits', '/legal/host', '/legal/guest', '/legal/sms', '/legal/cookies'];
+const PATHS = ['/', '/discover', '/pricing', '/faq', '/login', '/terms', '/privacy', '/credits', '/legal/host', '/legal/guest', '/legal/sms', '/legal/cookies'];
 
 export const Route = createFileRoute('/sitemap.xml')({
   server: {

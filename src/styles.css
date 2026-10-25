@@ -1614,6 +1614,26 @@ a.gw-cat-chip:hover{background:#fff}
 .gw-landing .gw-faq summary svg{flex-shrink:0;transition:transform .16s}
 .gw-landing .gw-faq details[open] summary svg{transform:rotate(180deg)}
 .gw-landing .gw-faq details p{color:var(--body);line-height:1.7;padding-bottom:24px}
+/* Public FAQ page (/faq): search + button accordions */
+.gw-faq-search{display:flex;align-items:center;gap:10px;margin-top:28px;max-width:480px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:0 16px;color:var(--muted-foreground)}
+.gw-faq-search:focus-within{border-color:var(--primary);outline:3px solid var(--ring);outline-offset:2px}
+.gw-faq-search input{flex:1;min-width:0;min-height:48px;border:0;background:transparent;font:inherit;color:var(--foreground);outline:none}
+.gw-faq-count{margin:12px 0 0;font-size:13px;color:var(--muted-foreground)}
+.gw-faq-sec{padding:32px 0}
+.gw-faq-sec .gw-h2{margin-bottom:8px}
+.gw-faq-list{display:flex;flex-direction:column}
+.gw-faq-item{border-bottom:1px solid var(--border)}
+.gw-faq-q{margin:0}
+.gw-faq-q button{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;min-height:56px;padding:14px 0;border:0;background:transparent;color:var(--foreground);font:inherit;font-size:17px;font-weight:700;text-align:left;cursor:pointer;border-radius:8px}
+.gw-faq-q button:focus-visible{outline:3px solid var(--ring);outline-offset:2px}
+.gw-faq-q button svg{flex-shrink:0;transition:transform .16s}
+.gw-faq-q button[aria-expanded="true"] svg{transform:rotate(180deg)}
+.gw-faq-a p{margin:0;color:var(--body);line-height:1.7;max-width:720px}
+.gw-faq-a>p:first-child{padding-bottom:16px}
+.gw-faq-links{display:flex;flex-wrap:wrap;gap:8px 20px;padding-bottom:20px}
+.gw-faq-links .gw-textlink{display:inline-flex;align-items:center;gap:4px;font-size:14px}
+.gw-faq-empty{margin:0;color:var(--muted-foreground);font-size:16px}
+@media (prefers-reduced-motion:reduce){.gw-faq-q button svg{transition:none}}
 .gw-landing .gw-final-host{text-align:center}
 .gw-landing .gw-final-host p{margin:16px 0 24px;font-size:18px;color:var(--body)}
 .gw-landing .gw-final-host .gw-btn{margin-top:24px}
