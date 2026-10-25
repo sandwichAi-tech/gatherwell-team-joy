@@ -162,6 +162,141 @@
       "hostTools": "Herramientas para anfitriones"
     }
   },
+  "faqPage":   {
+    "meta": {
+      "title": "Preguntas frecuentes · ZoheeWell",
+      "description": "Respuestas sobre cómo organizar eventos y cursos, precios, pagos, privacidad y cómo descubrir eventos de bienestar, recursos y coaches en ZoheeWell."
+    },
+    "eyebrow": "Centro de ayuda",
+    "title": "Preguntas frecuentes",
+    "sub": "Respuestas claras para anfitriones, coaches y las personas que se les unen.",
+    "searchPlaceholder": "Buscar preguntas",
+    "searchLabel": "Buscar en las preguntas frecuentes",
+    "total": "{{count}} preguntas",
+    "matches": "{{count}} preguntas encontradas",
+    "empty": "Ninguna pregunta coincide con tu búsqueda. Prueba con otra palabra o envíanos tu pregunta desde Soporte.",
+    "finalTitle": "¿Sigues con dudas? La mejor forma de aprender es organizando.",
+    "categories": {
+      "about": "Sobre ZoheeWell",
+      "hosting": "Cómo organizar eventos",
+      "resources": "Recursos y cursos",
+      "pricing": "Precios y pagos",
+      "discover": "Descubrimiento y privacidad",
+      "teams": "Equipos y roles",
+      "support": "Soporte y solución de problemas"
+    },
+    "linkLabels": {
+      "discover": "Explora Descubrir",
+      "coaches": "Conoce coaches",
+      "pricing": "Ver precios",
+      "createEvent": "Crea un evento",
+      "communications": "Abrir Comunicaciones",
+      "startBuilding": "Empieza a crear",
+      "support": "Ir a Soporte"
+    },
+    "items": {
+      "whatIs": {
+        "q": "¿Qué es ZoheeWell?",
+        "a": "ZoheeWell es un solo lugar donde anfitriones, coaches y creadores de bienestar gestionan su trabajo: crean eventos y retiros, venden boletos, enseñan cursos, comparten recursos y se mantienen en contacto con su comunidad. Quienes buscan algo a qué unirse pueden explorar eventos, recursos y coaches públicos, sin necesidad de una cuenta."
+      },
+      "whoFor": {
+        "q": "¿Para quién es ZoheeWell?",
+        "a": "Para anfitriones, coaches, educadores, profesionales del fitness, creadores y organizadores de comunidades, y para todas las personas que quieren descubrir lo que ofrecen. Las cuentas son para mayores de 18 años; un adulto puede registrar a un menor en un evento elegible con el consentimiento por separado de su madre, padre o tutor."
+      },
+      "cost": {
+        "q": "¿ZoheeWell es gratis?",
+        "a": "Explorar Descubrir es gratis y no requiere cuenta, y los invitados pueden confirmar asistencia a eventos sin una. Los anfitriones comienzan con el plan Gratis a $0 y solo eligen un plan de pago cuando necesitan más espacio para crecer."
+      },
+      "create": {
+        "q": "¿Cómo creo un evento?",
+        "a": "Crea una cuenta gratuita y luego inicia un evento nuevo desde tu página de Eventos. Agrega los detalles, elige boletos gratis o de pago y comparte tu enlace. Se admiten eventos únicos y recurrentes."
+      },
+      "rsvp": {
+        "q": "¿Cómo funcionan las confirmaciones, la capacidad y las listas de espera?",
+        "a": "Tú defines la capacidad de cada evento. Los invitados confirman desde tu enlace sin necesidad de una cuenta y, cuando un evento se llena, las personas interesadas pueden unirse a la lista de espera."
+      },
+      "checkin": {
+        "q": "¿Cómo funciona el registro de llegada?",
+        "a": "Cada registro recibe un código QR. En la entrada, tú o tu personal de registro escanean los códigos desde la página de registro del evento, sin listas impresas."
+      },
+      "reminders": {
+        "q": "¿Puedo enviar recordatorios y seguimientos?",
+        "a": "Sí. El centro de Comunicaciones incluye plantillas bilingües, automatizaciones para registros, recordatorios y cancelaciones, y recorridos de varios pasos. El correo está incluido; los SMS son una opción de pago que funciona una vez configurada en tu cuenta."
+      },
+      "retreats": {
+        "q": "¿Puedo organizar un retiro o un evento de varios días?",
+        "a": "Sí. Los eventos pueden durar varios días, con boletos, exenciones y consentimiento de la madre, el padre o el tutor cuando un adulto registra a un menor. Los horarios y detalles viven en la página del evento."
+      },
+      "types": {
+        "q": "¿Qué puedo compartir además de eventos?",
+        "a": "Videos, audio, guías y PDF, archivos descargables, enlaces, sesiones en vivo y recetas, además de cursos completos con secciones, lecciones y quizzes. Todo comienza como borrador hasta que decidas publicarlo."
+      },
+      "paid": {
+        "q": "¿Puedo cobrar por recursos y cursos?",
+        "a": "Sí: se admiten compras únicas y suscripciones recurrentes. Las ventas de pago requieren configurar los pagos con tarjeta a través de Stripe, y ZoheeWell te muestra exactamente lo que falta antes de que un artículo de pago pueda publicarse. Los recursos gratuitos funcionan sin ninguna configuración."
+      },
+      "templates": {
+        "q": "¿Puedo reutilizar contenido entre eventos y recursos?",
+        "a": "Sí. Comienza con plantillas bilingües, guarda las tuyas y cópialas como borradores, incluidos los modelos de evento para los encuentros que repites con frecuencia."
+      },
+      "plans": {
+        "q": "¿Cuánto cuesta ZoheeWell?",
+        "a": "Gratis es $0. Los planes de pago son Avanzado a $49/mes, Pro a $99/mes, Equipo 25 a $199/mes y Organización a $499/mes con configuración asistida. El pago anual cuesta diez veces el precio mensual, así que obtienes dos meses gratis. Los precios pueden cambiar después del piloto y te avisaremos antes de que cualquier cambio te afecte."
+      },
+      "fee": {
+        "q": "¿Qué tarifas se aplican a las ventas de pago?",
+        "a": "Se aplica una tarifa de plataforma de ZoheeWell a las ventas de pago, y disminuye a medida que crece tu plan: 5% en Gratis, 3% en Avanzado, 2% en Pro, 1% en Equipo 25 y 0.5% en Organización. Lo gratuito no tiene tarifa de plataforma. El procesamiento de Stripe es aparte."
+      },
+      "founding": {
+        "q": "¿Qué es la oferta para anfitriones fundadores?",
+        "a": "Los anfitriones fundadores invitados personalmente reciben seis meses de acceso completo desde la activación, sin tarjeta y sin cambio automático a un plan de pago, con un aviso de 30 días antes de que termine el acceso. Si eligen el pago anual antes de que termine el acceso, obtienen 20% de descuento en su primer año de pago; esta oferta no se combina con el descuento anual normal."
+      },
+      "payout": {
+        "q": "¿Cómo recibo mis pagos?",
+        "a": "Tú eres el vendedor registrado. Los pagos con tarjeta se procesan mediante una cuenta conectada de Stripe que configuras desde tus ajustes de plan y pagos. ZoheeWell muestra una lista de verificación y te indica exactamente lo que falta antes de que los artículos de pago puedan publicarse."
+      },
+      "refunds": {
+        "q": "¿Cómo funcionan los reembolsos y las cancelaciones?",
+        "a": "Tú defines la política de cancelación y reembolso de cada evento: elige una plantilla o escribe la tuya, y los asistentes la ven antes de registrarse. Los reembolsos los gestionas tú como vendedor a través de tu cuenta de Stripe."
+      },
+      "sms": {
+        "q": "¿Hay otros cargos?",
+        "a": "Los canales opcionales como los SMS son complementos de pago que solo aplican si los activas. Cualquier cargo se muestra antes de habilitarlos."
+      },
+      "find": {
+        "q": "¿Cómo encuentro eventos, recursos o coaches?",
+        "a": "Abre Descubrir y explora las pestañas Eventos, Recursos y Coaches. La búsqueda y los filtros te ayudan a acotar por categoría, fecha y ubicación. Todo lo listado es público: no necesitas una cuenta para mirar."
+      },
+      "coachProfile": {
+        "q": "¿Qué es un perfil público de coach?",
+        "a": "Los anfitriones pueden publicar una página pública con su propio enlace, mostrando los detalles, próximos eventos y ofertas que decidan compartir. Si un anfitrión no ha publicado un perfil, no se muestra nada."
+      },
+      "location": {
+        "q": "¿Mi ubicación es pública?",
+        "a": "Los anfitriones eligen si su ciudad aparece en su perfil público. Los eventos muestran los detalles de ubicación que el anfitrión decidió hacer públicos, y todo lo demás permanece privado."
+      },
+      "account": {
+        "q": "¿Necesito una cuenta para asistir?",
+        "a": "No: los invitados pueden confirmar asistencia desde el enlace de un evento sin una cuenta. Una cuenta gratuita te permite guardar eventos, tener tus registros en un solo lugar y acceder a los recursos que hayas comprado o en los que te hayas inscrito."
+      },
+      "team": {
+        "q": "¿Puedo trabajar con un equipo?",
+        "a": "Sí. Los equipos permiten que varias personas gestionen eventos y contenido juntas. Los asientos de creación cubren al propietario, administradores, anfitriones y editores de contenido; el personal de registro, los analistas y los moderadores nunca usan un asiento."
+      },
+      "whoManages": {
+        "q": "¿Quién puede ver y gestionar mi contenido?",
+        "a": "Solo las personas que tú asignes. Un anfitrión o gestor ve a los participantes de las ofertas que administra, y el liderazgo del equipo por sí solo nunca revela los datos de contacto de los asistentes."
+      },
+      "help": {
+        "q": "¿Cómo obtengo ayuda?",
+        "a": "Usa la página de Soporte para enviarnos un mensaje: las preguntas de facturación, técnicas y de cuenta llegan al mismo lugar. Si no has iniciado sesión, se te pedirá hacerlo primero para que podamos responder a la cuenta correcta."
+      },
+      "trouble": {
+        "q": "Algo no funciona, ¿qué puedo intentar?",
+        "a": "Revisa tu conexión y actualiza la página primero; ZoheeWell está hecho para teléfonos y computadoras, incluso con conexiones lentas. Si el problema continúa, envíanoslo desde Soporte con una captura de pantalla si puedes."
+      }
+    }
+  },
   "events": {
     "title": "Reuniones",
     "eyebrow": "Espacio",
@@ -2127,7 +2262,7 @@
       "privacy": "Privacidad",
       "credits": "Créditos fotográficos",
       "copyright": "© 2026 ZoheeWell"
-    },
+    , "faq": "Preguntas frecuentes"},
     "sticky": {
       "find": "Encontrar una reunión"
     },
@@ -3838,7 +3973,7 @@
       },
       {
         "q": "¿Puedo empezar gratis?",
-        "a": "Sí. El plan Gratis incluye cuatro reuniones al mes y hasta 30 invitados por reunión."
+        "a": "Sí. El plan Gratis es $0 e incluye las herramientas esenciales para organizar; los planes de pago agregan más espacio para crecer."
       },
       {
         "q": "¿Puede usarlo todo mi equipo?",
