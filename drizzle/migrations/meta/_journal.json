@@ -813,6 +813,13 @@
       "when": 1792963273623,
       "tag": "0115_resource_activation_completion_guards",
       "breakpoints": true
+    },
+    {
+      "idx": 116,
+      "version": "7",
+      "when": 1792964588228,
+      "tag": "0116_event_policy_and_waivers",
+      "breakpoints": true
     }
   ]
 }
