@@ -6220,7 +6220,9 @@
       "condition_skip": "terminó antes (condición no cumplida)",
       "template_missing": "falló (plantilla eliminada)",
       "no_recipient": "falló (sin destinatario)",
-      "unknown_step": "falló (paso desconocido)"
+      "unknown_step": "falló (paso desconocido)",
+      "resource_unavailable": "Recurso archivado o no disponible",
+      "setup_required_email": "Los recorridos de recursos solo admiten mensajes dentro de la app"
     },
     "offeringScopeTitle": "Eventos y recursos",
     "offeringScopeHint": "Las automatizaciones de eventos admiten inscripciones, recordatorios y cancelaciones. Los recorridos de recursos empiezan con una nueva inscripción válida y admiten espera, envío y condiciones de acceso activo.",
@@ -6230,7 +6232,13 @@
     "attendeeAudience": "Audiencia: personas inscritas al evento seleccionado. Todos los eventos se aplica a las inscripciones de eventos del espacio.",
     "relatedResource": "Recurso relacionado",
     "chooseResource": "Elige un recurso",
-    "resourceScope": "Audiencia: nuevos estudiantes inscritos con acceso válido. Solo correo y mensajes internos; sin SMS. Usa mensajes de inscripción, no promociones."
+    "resourceScope": "Audiencia: nuevos estudiantes inscritos con acceso válido. Solo correo y mensajes internos; sin SMS. Usa mensajes de inscripción, no promociones.",
+    "sampleResource": "Tu recurso",
+    "eventContext": "Evento",
+    "resourceContext": "Recurso",
+    "audienceLabel": "Público autorizado",
+    "enrolledAudience": "Nuevos participantes inscritos con acceso activo",
+    "resourceActivation": "Solo nuevas inscripciones. Los mensajes dentro de la app están disponibles; los recursos archivados y el acceso revocado detienen los mensajes pendientes."
   },
   "payReady": {
     "title": "Cómo cobrar",
@@ -6398,16 +6406,16 @@
   },
   "coachUpdates": {
     "title": "Recibir novedades",
-    "request": "Solicitar confirmación",
+    "request": "Guardar solicitud de novedades",
     "email": "Correo electrónico",
     "announcements": "Anuncios del coach",
     "events": "Nuevos eventos",
     "resources": "Nuevos recursos y programas",
     "adult": "Tengo 18 años o más",
-    "consent": "Preferencias opcionales por correo solo para este coach. Confirma por correo; administra o cancela con tu enlace privado. No incluye SMS.",
-    "setup": "Las novedades por correo requieren configurar el envío. No se confirma una suscripción ni entrega hasta que estén disponibles la confirmación y el envío.",
+    "consent": "Elige novedades opcionales por correo de este coach únicamente. Una cuenta verificada o un enlace privado confirma tu consentimiento. Puedes administrar tus preferencias o darte de baja cuando quieras.",
+    "setup": "Las campañas por correo aún no están habilitadas. Tus preferencias y los mensajes de recursos dentro de la app siguen funcionando.",
     "pending": "Revisa tu correo para confirmar. No estás suscrito hasta confirmar.",
-    "error": "No se pudo solicitar la confirmación. Inténtalo más tarde.",
+    "error": "No se pudieron guardar o cargar tus preferencias. Inténtalo de nuevo.",
     "manage": "Administrar novedades del coach",
     "confirm": "Confirmar preferencias seleccionadas",
     "unsubscribe": "Cancelar suscripción a este coach",
@@ -6418,6 +6426,12 @@
     "segment_announcements": "Anuncios",
     "segment_new_events": "Nuevos eventos",
     "segment_new_resources": "Nuevos recursos",
-    "loading": "Cargando…"
+    "loading": "Cargando…",
+    "pendingNoSender": "Solicitud guardada, pendiente de confirmar el correo. No se envió ningún correo. Inicia sesión con un correo verificado para confirmar y administrar tus preferencias ahora.",
+    "savePreferences": "Guardar preferencias",
+    "accountConfirm": "Inicia sesión para confirmar preferencias",
+    "unsubscribed": "Te diste de baja de las novedades de este coach.",
+    "confirmedStatus": "Tus preferencias de correo están confirmadas para este coach.",
+    "unconfirmedStatus": "Confirma tus preferencias seleccionadas para este coach."
   }
 }

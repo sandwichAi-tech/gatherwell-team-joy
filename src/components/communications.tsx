@@ -22,12 +22,12 @@ import {
 import {
   getMessagingSetup, listMessageTemplates, saveMessageTemplate, duplicateMessageTemplate, archiveMessageTemplate,
   listMessageAutomations, saveMessageAutomation, setAutomationStatus,
-  listMessageJourneys, saveMessageJourney, setJourneyStatus, getAutomationActivity, getJourneyRuns,
+  listMessageJourneys, saveMessageJourney, setJourneyStatus, getAutomationActivity, getJourneyRuns, listCommunicationOfferings,
 } from '@/lib/messaging.functions';
 
 type Template = { id: string; team_id: string | null; name: string; channel: string; language: string; subject: string | null; body: string; variables: string[]; audience: string; archived: boolean };
 type Automation = { id: string; name: string; trigger: string; timing_hours: number; audience: string; channel: string; template_id: string | null; event_id: string | null; status: string };
-type Journey = { id: string; name: string; start_trigger: string; status: string; offer_id?: string | null; steps: { id: string; sort_order: number; kind: string; config: Record<string, unknown> }[] };
+type Journey = { id: string; name: string; start_trigger: string; status: string; offer_id?: string | null; event_id?: string | null; steps: { id: string; sort_order: number; kind: string; config: Record<string, unknown> }[] };
 type Setup = { email: boolean; sms: boolean; inApp: boolean };
 
 const MANAGER_ROLES = ['owner', 'admin', 'host'];
@@ -36,6 +36,7 @@ function samplePreview(body: string, t: (k: string) => string) {
   return body
     .replaceAll('{{name}}', t('comms.sampleName'))
     .replaceAll('{{event}}', t('comms.sampleEvent'))
+    .replaceAll('{{resource}}', t('comms.sampleResource'))
     .replaceAll('{{date}}', t('comms.sampleDate'))
     .replaceAll('{{host}}', t('comms.sampleHost'));
 }
@@ -55,19 +56,19 @@ export function CommunicationsPage() {
   const templatesFn = useServerFn(listMessageTemplates);
   const { data: templates, isLoading: loadingTemplates } = useQuery({
     queryKey: ['message-templates', teamId], enabled: !!teamId,
-    queryFn: () => templatesFn({ data: { teamId: teamId! } }) as Promise<Template[]>,
+    queryFn: () => templatesFn({ data: { teamId: teamId ?? '' } }) as Promise<Template[]>,
   });
 
   const automationsFn = useServerFn(listMessageAutomations);
   const { data: automations, isLoading: loadingAutomations } = useQuery({
     queryKey: ['message-automations', teamId], enabled: !!teamId,
-    queryFn: () => automationsFn({ data: { teamId: teamId! } }) as Promise<Automation[]>,
+    queryFn: () => automationsFn({ data: { teamId: teamId ?? '' } }) as Promise<Automation[]>,
   });
 
   const journeysFn = useServerFn(listMessageJourneys);
   const { data: journeys, isLoading: loadingJourneys } = useQuery({
     queryKey: ['message-journeys', teamId], enabled: !!teamId,
-    queryFn: () => journeysFn({ data: { teamId: teamId! } }) as Promise<Journey[]>,
+    queryFn: () => journeysFn({ data: { teamId: teamId ?? '' } }) as Promise<Journey[]>,
   });
 
   const refresh = () => {
@@ -75,9 +76,10 @@ export function CommunicationsPage() {
     void qc.invalidateQueries({ queryKey: ['message-automations', teamId] });
     void qc.invalidateQueries({ queryKey: ['message-journeys', teamId] });
     void qc.invalidateQueries({ queryKey: ['automation-activity', teamId] });
+    void qc.invalidateQueries({ queryKey: ['journey-runs', teamId] });
   };
 
-  if (!ws) return <div className="page"><p className="empty-state">{t('comms.noTeam')}</p></div>;
+  if (!ws || !teamId) return <div className="page"><p className="empty-state">{t('comms.noTeam')}</p></div>;
 
   return <div className="page comms-page">
     <header className="page-header">
@@ -97,9 +99,9 @@ export function CommunicationsPage() {
     </div>
     <p className="field-hint comms-tab-hint">{t(`comms.tabHint.${tab}`)}</p>
 
-    {tab === 'templates' && <TemplatesTab teamId={teamId!} templates={templates ?? []} loading={loadingTemplates} canManage={canManage} onChanged={refresh} />}
-    {tab === 'automations' && <AutomationsTab teamId={teamId!} automations={automations ?? []} templates={templates ?? []} loading={loadingAutomations} canManage={canManage} setup={setup ?? null} onChanged={refresh} />}
-    {tab === 'journeys' && <JourneysTab teamId={teamId!} journeys={journeys ?? []} templates={templates ?? []} loading={loadingJourneys} canManage={canManage} setup={setup ?? null} onChanged={refresh} />}
+    {tab === 'templates' && <TemplatesTab teamId={teamId ?? ''} templates={templates ?? []} loading={loadingTemplates} canManage={canManage} onChanged={refresh} />}
+    {tab === 'automations' && <AutomationsTab teamId={teamId ?? ''} automations={automations ?? []} templates={templates ?? []} loading={loadingAutomations} canManage={canManage} setup={setup ?? null} onChanged={refresh} />}
+    {tab === 'journeys' && <JourneysTab teamId={teamId ?? ''} journeys={journeys ?? []} templates={templates ?? []} loading={loadingJourneys} canManage={canManage} setup={setup ?? null} onChanged={refresh} />}
   </div>;
 }
 
@@ -232,7 +234,7 @@ function TemplateEditor({ teamId, template, onClose, onSaved }: { teamId: string
       <label className="field-label" htmlFor="mt-body">{t('comms.body')}</label>
       <textarea id="mt-body" className="field-input" rows={6} maxLength={channel === 'sms' ? 480 : 4000} value={body} onChange={e => setBody(e.target.value)} />
       <div className="chip-row" aria-label={t('comms.variables')}>
-        {TEMPLATE_VARIABLES.map(v => <button key={v} type="button" className="preset-chip" onClick={() => setBody(b => `${b}{{${v}}}`)}>{`{{${v}}}`}</button>)}
+        {TEMPLATE_VARIABLES.map(v => <Button key={v} type="button" variant="ghost" className="preset-chip" onClick={() => setBody(b => `${b}{{${v}}}`)}>{`{{${v}}}`}</Button>)}
       </div>
       <small className="field-hint">{t('comms.variablesHint')}</small>
     </div>
@@ -314,10 +316,9 @@ function AutomationEditor({ teamId, automation, templates, onClose, onSaved }: {
   const [channel, setChannel] = useState<MessageChannel>((automation?.channel as MessageChannel) ?? 'email');
   const [templateId, setTemplateId] = useState(automation?.template_id ?? '');
   const [eventId, setEventId] = useState(automation?.event_id ?? '');
-  const { data: events = [] } = useQuery({ queryKey: ['message-events', teamId], queryFn: async () => {
-    const { data, error } = await supabase.from('events').select('id,title').eq('team_id', teamId).order('starts_at', { ascending: false }).limit(100);
-    if (error) throw error; return data ?? [];
-  } });
+  const offeringFn = useServerFn(listCommunicationOfferings);
+  const { data: choices } = useQuery({ queryKey: ['communication-offerings', teamId], queryFn: () => offeringFn({ data: { teamId } }) });
+  const events = choices?.events ?? [];
   const [busy, setBusy] = useState(false);
 
   const eligible = templates.filter(x => !x.archived && x.channel === channel);
@@ -334,7 +335,7 @@ function AutomationEditor({ teamId, automation, templates, onClose, onSaved }: {
   };
 
   return <ResponsiveSheet open onOpenChange={onClose} title={automation ? t('comms.editAutomation') : t('comms.createAutomation')}
-    footer={<Button className="guest-primary" disabled={busy} onClick={() => void save()}>{busy ? t('onboarding.saving') : t('comms.saveDraft')}</Button>}>
+    footer={<Button className="guest-primary" disabled={busy || (trigger === 'resource_enrollment' && !offerId)} onClick={() => void save()}>{busy ? t('onboarding.saving') : t('comms.saveDraft')}</Button>}>
     <div className="form-section">
       <label className="field-label" htmlFor="ma-name">{t('comms.name')}</label>
       <Input id="ma-name" className="field-input" maxLength={120} value={name} onChange={e => setName(e.target.value)} />
@@ -385,7 +386,7 @@ function JourneysTab({ teamId, journeys, templates, loading, canManage, setup, o
   const runsFn = useServerFn(getJourneyRuns);
   const { data: runs } = useQuery({
     queryKey: ['journey-runs', teamId], enabled: showRuns,
-    queryFn: () => runsFn({ data: { teamId, limit: 20 } }) as Promise<{ id: string; journey_id: string; journey_name: string; event_title: string; status: string; current_step: number; step_count: number; current_step_kind: string | null; next_run_at: string; note: string | null; created_at: string }[]>,
+    queryFn: () => runsFn({ data: { teamId, limit: 20 } }) as Promise<{ id: string; journey_id: string; journey_name: string; event_title: string; context: string; status: string; current_step: number; step_count: number; current_step_kind: string | null; next_run_at: string; note: string | null; created_at: string }[]>,
   });
 
   const setStatus = async (j: Journey, status: string) => {
@@ -426,7 +427,7 @@ function JourneysTab({ teamId, journeys, templates, loading, canManage, setup, o
     {showRuns && <section className="guest-card" aria-label={t('comms.runs')}>
       {!runs?.length && <p className="empty-state">{t('comms.noRuns')}</p>}
       {runs?.map(r => <p key={r.id} className="comms-activity-row">
-        <strong>{r.journey_name}</strong> · {r.event_title} — {t(`comms.runStatus.${r.status}`)}
+        <strong>{r.journey_name}</strong> · {t(r.context === 'resource' ? 'comms.resourceContext' : 'comms.eventContext')}: {r.event_title} — {t(`comms.runStatus.${r.status}`)}
         {r.status === 'running' || r.status === 'paused' ? ` · ${t('comms.runStep', { n: r.current_step, total: r.step_count })}` : ''}
         {r.note ? ` · ${t(`comms.runNote.${r.note}`, { defaultValue: r.note })}` : ''}
       </p>)}
@@ -443,12 +444,16 @@ function stepLabel(kind: string, config: Record<string, unknown>, templates: Tem
 }
 
 function JourneyEditor({ teamId, journey, templates, onClose, onSaved }: { teamId: string; journey: Journey | null; templates: Template[]; onClose: () => void; onSaved: () => void }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const saveFn = useServerFn(saveMessageJourney);
   const [name, setName] = useState(journey?.name ?? '');
   const [trigger, setTrigger] = useState<string>(journey?.start_trigger ?? 'registration_confirmation');
   const [offerId,setOfferId]=useState(journey?.offer_id??'');
-  const {data:offers=[]}=useQuery({queryKey:['message-resources',teamId],queryFn:async()=>{const {data,error}=await supabase.from('offers').select('id,title_en').eq('team_id',teamId).order('created_at',{ascending:false}).limit(100);if(error)throw error;return data??[];}});
+  const [eventId, setEventId] = useState(journey?.event_id ?? '');
+  const offeringFn = useServerFn(listCommunicationOfferings);
+  const { data: choices } = useQuery({ queryKey: ['communication-offerings', teamId], queryFn: () => offeringFn({ data: { teamId } }) });
+  const offers = choices?.resources ?? [];
+  const events = choices?.events ?? [];
   const [steps, setSteps] = useState<JourneyStep[]>(() => (journey?.steps ?? []).map(s => {
     if (s.kind === 'wait') return { kind: 'wait', hours: Number(s.config['hours'] ?? 24) };
     if (s.kind === 'send') return { kind: 'send', template_id: String(s.config['template_id'] ?? '') };
@@ -456,7 +461,8 @@ function JourneyEditor({ teamId, journey, templates, onClose, onSaved }: { teamI
   }));
   const [busy, setBusy] = useState(false);
 
-  const eligible = useMemo(() => templates.filter(x => !x.archived), [templates]);
+  const eligible = useMemo(() => templates.filter(x => !x.archived && (trigger !== 'resource_enrollment' || x.channel === 'in_app')), [templates, trigger]);
+  const conditions = JOURNEY_CONDITIONS.filter(c => trigger === 'resource_enrollment' ? c === 'enrollment_active' : c !== 'enrollment_active');
   const templateOk = (id: string) => eligible.some(x => x.id === id);
   const validation = validateJourneySteps(steps, templateOk);
 
@@ -464,29 +470,33 @@ function JourneyEditor({ teamId, journey, templates, onClose, onSaved }: { teamI
 
   const save = async () => {
     if (!name.trim()) { toast.error(t('comms.err.invalid_name')); return; }
+    if (trigger === 'resource_enrollment' && !offerId) { toast.error(t('comms.chooseResource')); return; }
     if (validation) { toast.error(t(`comms.err.${validation}`)); return; }
     setBusy(true);
     try {
-      await saveFn({ data: { teamId, id: journey?.id ?? null, name, start_trigger: trigger, steps, ...(trigger==='resource_enrollment'?{offerId}: {}) } });
+      await saveFn({ data: { teamId, id: journey?.id ?? null, name, start_trigger: trigger, steps, ...(trigger==='resource_enrollment'?{offerId}: {eventId}) } });
       toast.success(t('comms.savedDraft')); onSaved();
     } catch (e) { toast.error(rpcError(t, e)); }
     setBusy(false);
   };
 
   return <ResponsiveSheet open onOpenChange={onClose} title={journey ? t('comms.editJourney') : t('comms.createJourney')}
-    footer={<Button className="guest-primary" disabled={busy} onClick={() => void save()}>{busy ? t('onboarding.saving') : t('comms.saveDraft')}</Button>}>
+    footer={<Button className="guest-primary" disabled={busy || (trigger === 'resource_enrollment' && !offerId)} onClick={() => void save()}>{busy ? t('onboarding.saving') : t('comms.saveDraft')}</Button>}>
     <div className="form-section">
       <label className="field-label" htmlFor="mj-name">{t('comms.name')}</label>
       <Input id="mj-name" className="field-input" maxLength={120} value={name} onChange={e => setName(e.target.value)} />
     </div>
     <div className="form-section">
       <label className="field-label" htmlFor="mj-trigger">{t('comms.startTrigger')}</label>
-      <select id="mj-trigger" className="field-input" value={trigger} onChange={e => setTrigger(e.target.value as MessageTrigger)}>
+      <select id="mj-trigger" className="field-input" value={trigger} onChange={e => { setTrigger(e.target.value); setSteps([]); }}>
         {JOURNEY_TRIGGERS.map(tr => <option key={tr} value={tr}>{t(`comms.trigger.${tr}`)}</option>)}
       </select>
     </div>
-    {trigger==='resource_enrollment'&&<label className="field-label">{t('comms.relatedResource')}<select className="field-input" value={offerId} onChange={e=>setOfferId(e.target.value)}><option value="">{t('comms.chooseResource')}</option>{offers.map(o=><option key={o.id} value={o.id}>{o.title_en}</option>)}</select><small>{t('comms.resourceScope')}</small></label>}
+    {trigger==='resource_enrollment'&&<label className="field-label">{t('comms.relatedResource')}<select className="field-input" value={offerId} onChange={e=>setOfferId(e.target.value)}><option value="">{t('comms.chooseResource')}</option>{offers.map(o=><option key={o.id} value={o.id}>{i18n.resolvedLanguage === 'es' ? o.title_es || o.title_en : o.title_en}</option>)}</select><small>{t('comms.resourceScope')}</small></label>}
 
+    {trigger !== 'resource_enrollment' && <label className="field-label">{t('comms.relatedEvent')}<select className="field-input" value={eventId} onChange={e => setEventId(e.target.value)}><option value="">{t('comms.allEvents')}</option>{events.map(e => <option key={e.id} value={e.id}>{e.title}</option>)}</select></label>}
+    <label className="field-label">{t('comms.audienceLabel')}<select className="field-input" value={trigger === 'resource_enrollment' ? 'enrolled' : 'attendees'} onChange={() => {}}><option value={trigger === 'resource_enrollment' ? 'enrolled' : 'attendees'}>{t(trigger === 'resource_enrollment' ? 'comms.enrolledAudience' : 'comms.attendeeAudience')}</option></select></label>
+    {trigger === 'resource_enrollment' && <p className="field-hint">{t('comms.resourceActivation')}</p>}
     <div className="form-section">
       <span className="field-label">{t('comms.steps')}</span>
       <ol className="comms-step-editor">
@@ -501,7 +511,7 @@ function JourneyEditor({ teamId, journey, templates, onClose, onSaved }: { teamI
               {eligible.map(x => <option key={x.id} value={x.id}>{x.name} · {t(`comms.channel.${x.channel}`)}</option>)}
             </select>}
             {s.kind === 'condition' && <select className="field-input" value={s.condition} onChange={e => updateStep(i, { kind: 'condition', condition: e.target.value as typeof s.condition })} aria-label={t('comms.step.conditionLabel')}>
-              {JOURNEY_CONDITIONS.map(c => <option key={c} value={c}>{t(`comms.condition.${c}`)}</option>)}
+              {conditions.map(c => <option key={c} value={c}>{t(`comms.condition.${c}`)}</option>)}
             </select>}
           </div>
           <div className="comms-step-actions" role="group" aria-label={t('comms.stepActions', { n: i + 1 })}>
@@ -514,7 +524,7 @@ function JourneyEditor({ teamId, journey, templates, onClose, onSaved }: { teamI
       <div className="chip-row">
         <Button variant="ghost" onClick={() => setSteps(ss => [...ss, { kind: 'wait', hours: 24 }])}>{t('comms.addWait')}</Button>
         <Button variant="ghost" onClick={() => setSteps(ss => [...ss, { kind: 'send', template_id: '' }])}>{t('comms.addSend')}</Button>
-        <Button variant="ghost" onClick={() => setSteps(ss => [...ss, { kind: 'condition', condition: 'rsvp_status_going' }])}>{t('comms.addCondition')}</Button>
+        <Button variant="ghost" onClick={() => setSteps(ss => [...ss, { kind: 'condition', condition: trigger === 'resource_enrollment' ? 'enrollment_active' : 'rsvp_status_going' }])}>{t('comms.addCondition')}</Button>
       </div>
       {validation && <p className="field-hint comms-warning" role="alert">{t(`comms.err.${validation}`)}</p>}
       {!journeyCanActivate(steps) && !validation && <p className="field-hint">{t('comms.needSendStep')}</p>}
