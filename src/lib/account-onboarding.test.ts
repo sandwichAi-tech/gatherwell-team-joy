@@ -14,7 +14,7 @@ describe('Onboarding completion cache', () => {
     maybeSingle.mockResolvedValue({ data: confirmed, error: null });
     const client = new QueryClient();
     // Stale row from before the 18+ confirmation: no adult_confirmed_at.
-    client.setQueryData(profileQuery('u1').queryKey, { id: 'u1', onboarded: false, adult_confirmed_at: null });
+    client.setQueryData(profileQuery('u1').queryKey, { id: 'u1', onboarded: false, adult_confirmed_at: null } as never);
     await markProfileOnboarded(client, 'u1');
     expect(client.getQueryData(profileQuery('u1').queryKey)).toEqual({ ...confirmed, onboarded: true });
   });
