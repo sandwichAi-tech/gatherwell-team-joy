@@ -743,6 +743,13 @@
       "when": 1792939352577,
       "tag": "0105_resource_enrollment_journeys",
       "breakpoints": true
+    },
+    {
+      "idx": 106,
+      "version": "7",
+      "when": 1792939541866,
+      "tag": "0106_resource_journey_access_guards",
+      "breakpoints": true
     }
   ]
 }
