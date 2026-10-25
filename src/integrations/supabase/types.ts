@@ -2916,6 +2916,7 @@ export type Database = {
         Row: {
           created_at: string
           current_step: number
+          entitlement_id: string | null
           event_id: string
           id: string
           journey_id: string
@@ -2930,6 +2931,7 @@ export type Database = {
         Insert: {
           created_at?: string
           current_step?: number
+          entitlement_id?: string | null
           event_id: string
           id?: string
           journey_id: string
@@ -2944,6 +2946,7 @@ export type Database = {
         Update: {
           created_at?: string
           current_step?: number
+          entitlement_id?: string | null
           event_id?: string
           id?: string
           journey_id?: string
@@ -2956,6 +2959,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "message_journey_runs_entitlement_id_fkey"
+            columns: ["entitlement_id"]
+            isOneToOne: false
+            referencedRelation: "entitlements"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "message_journey_runs_event_id_fkey"
             columns: ["event_id"]
@@ -3024,6 +3034,7 @@ export type Database = {
           created_by: string | null
           id: string
           name: string
+          offer_id: string | null
           start_trigger: string
           status: string
           team_id: string
@@ -3034,6 +3045,7 @@ export type Database = {
           created_by?: string | null
           id?: string
           name: string
+          offer_id?: string | null
           start_trigger?: string
           status?: string
           team_id: string
@@ -3044,12 +3056,20 @@ export type Database = {
           created_by?: string | null
           id?: string
           name?: string
+          offer_id?: string | null
           start_trigger?: string
           status?: string
           team_id?: string
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "message_journeys_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "message_journeys_team_id_fkey"
             columns: ["team_id"]
@@ -5150,6 +5170,73 @@ export type Database = {
           },
         ]
       }
+      resource_journey_runs: {
+        Row: {
+          created_at: string
+          current_step: number
+          entitlement_id: string
+          id: string
+          journey_id: string
+          next_run_at: string
+          note: string | null
+          offer_id: string
+          status: string
+          steps_snapshot: Json
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_step?: number
+          entitlement_id: string
+          id?: string
+          journey_id: string
+          next_run_at?: string
+          note?: string | null
+          offer_id: string
+          status?: string
+          steps_snapshot: Json
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_step?: number
+          entitlement_id?: string
+          id?: string
+          journey_id?: string
+          next_run_at?: string
+          note?: string | null
+          offer_id?: string
+          status?: string
+          steps_snapshot?: Json
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resource_journey_runs_entitlement_id_fkey"
+            columns: ["entitlement_id"]
+            isOneToOne: false
+            referencedRelation: "entitlements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_journey_runs_journey_id_fkey"
+            columns: ["journey_id"]
+            isOneToOne: false
+            referencedRelation: "message_journeys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_journey_runs_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       resource_templates: {
         Row: {
           created_at: string
@@ -6846,6 +6933,7 @@ export type Database = {
       admin_user_detail: { Args: { _id: string }; Returns: Json }
       admin_users: { Args: { _q: string }; Returns: Json }
       advance_journey_runs: { Args: { _limit?: number }; Returns: number }
+      advance_resource_journeys: { Args: { _limit?: number }; Returns: number }
       ai_usage_status: { Args: never; Returns: Json }
       archive_host_update: { Args: { _id: string }; Returns: undefined }
       archive_message_template: {
@@ -7924,6 +8012,16 @@ export type Database = {
           _text: string
         }
         Returns: undefined
+      }
+      save_resource_journey: {
+        Args: {
+          _id: string
+          _name: string
+          _offer: string
+          _steps: Json
+          _team: string
+        }
+        Returns: string
       }
       save_resource_template: {
         Args: {
