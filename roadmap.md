@@ -4,11 +4,12 @@
 - [x] Current compile reports resolved without rollback; full automated verification rerun.
 - [x] Home copy, real-record card links, member/invite destinations and permission-scoped UTC monthly attendance history.
 - [x] Existing protected /admin, admin-only Me link and bilingual Owner Guide.
-- [ ] Owner role assignment: multiple Nick profiles exist; account identity must be confirmed before any privileged role grant.
+- [x] Owner login/account: Nick confirms nickc35@gmail.com has a verified admin role and login works; preserve the existing role.
 - [x] Insights event-date cohort comparison, definitions, event/resource drilldowns and draft/waitlist attention signals.
 - [x] Capability-aware top-level Communication and existing automation event/audience selector; existing event journeys preserved.
 - [x] Resource enrollment journeys: entitlement-bound wait/send/condition execution, scoped runs and pause/resume; in-app activation only.
-- [ ] Coach preferences/token management/count segments implemented; email delivery and complete opt-in readback blocked by sender configuration. Segment-targeted campaign sending remains unimplemented.
+- [ ] Finish provider-independent coach opt-in, confirmation/status, preferences, unsubscribe and aggregate segments; campaign sending stays gated.
+- [ ] Verify admin entry/route/data denial, resource enrollment-to-in-app execution, two-coach/token isolation, mobile/keyboard and full automated checks.
 - [x] Separate /challenges launch reuses the real editor; Standard/Retreat selector retains existing feature gate and persistence.
 - [x] Multi-event experience: bounded validated sessions, whole-event admission and schedule; private draft save/readback verified and fixture removed.
 - [x] Full automated suite (439), harness typecheck/production build, EN/ES 390/1280px screens, keyboard card navigation and previous 640px zoom reflow.
