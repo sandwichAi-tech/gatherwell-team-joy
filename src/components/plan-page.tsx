@@ -221,6 +221,7 @@ export function PlanPage() {
     <section className="panel settings-list">
       {ws?.role === 'leader' && <Link className="settings-row" to="/plan/seats"><UsersRound className="settings-icon" /><span className="settings-label">{t('billing.seats')}</span><ChevronRight className="settings-chevron" /></Link>}
       <Link className="settings-row" to="/earnings"><BarChart3 className="settings-icon" /><span className="settings-label">{t('billing.earnings')}</span><ChevronRight className="settings-chevron" /></Link>
+      <Link className="settings-row" to="/referrals"><Share2 className="settings-icon" /><span className="settings-label">{t('referral.coach.title')}</span><ChevronRight className="settings-chevron" /></Link>
     </section>
 
     <PaymentsReadiness />
@@ -346,6 +347,7 @@ export function EarningsPage() {
     <div className="stats-grid">{stat(t('billing.ticketSales'), formatMoney(sales, lang))}{stat(t('billing.platformFees'), formatMoney(fees, lang))}{stat(t('billing.serviceCovered'), formatMoney(coveredService, lang))}{stat(t('billing.payouts'), formatMoney(sales - fees - coveredService, lang))}{stat(t('billing.ticketsSold'), paid.length)}</div>
     {guestService > 0 && <p className="field-hint">{t('billing.guestServiceNote', { amount: formatMoney(guestService, lang) })}</p>}
     <PromoUsageCard />
+    <section className="panel settings-list"><Link className="settings-row" to="/referrals"><Share2 className="settings-icon" /><span className="settings-label">{t('referral.coach.title')}<small className="field-hint">{t('referral.coach.subtitle')}</small></span><ChevronRight className="settings-chevron" /></Link></section>
     <ReferralCard format={c => formatMoney(c, lang)} />
     <WelcomeRewardsCard />
     {!pays.length ? <section className="panel"><EmptyState compact icon="CreditCard" text={t('billing.noSales')} /></section> : [...groups.entries()].map(([eid, list]) => {

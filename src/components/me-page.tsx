@@ -283,6 +283,7 @@ export function MePage() {
     <SettingsGroup title={t('profile.groupActivity')}>
       {linkRow('BellRing', t('following.title'), '/following')}
       {linkRow('Bookmark', t('saved.title'), '/saved')}
+      <Link className="settings-row" to="/referrals/mine"><GwFeatureTile name="Share2" size={24} className="settings-tile" /><span className="settings-label">{t('referral.mine.title')}</span><ChevronRight className="settings-chevron" /></Link>
       <Link className="settings-row" to="/progress"><GwFeatureTile name="Flame" size={24} className="settings-tile" /><span className="settings-label">{t('progress.title')}</span><ChevronRight className="settings-chevron" /></Link>
       {row('CalendarDays', t('profile.myGatherings'), () => setPanel('gatherings'))}
       {row('Flag', t('profile.myChallenges'), () => setPanel('challenges'))}

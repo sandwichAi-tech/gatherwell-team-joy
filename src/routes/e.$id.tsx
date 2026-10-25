@@ -27,6 +27,7 @@ import i18n from '@/lib/i18n';
 import { supabase } from '@/integrations/supabase/client';
 import { formatMoney } from '@/lib/billing';
 import { ReportButton } from '@/components/report-button';
+import { ReferralShareCard, useReferralCapture } from '@/components/referrals';
 import { RetryState } from '@/components/launch-states';
 import { SITE_URL, publicIndexing } from '@/lib/seo';
 
@@ -90,6 +91,7 @@ function PublicEventBody() {
   const { data: hostPhoto } = useQuery({ queryKey: ['media-url', event?.host?.avatar_url], queryFn: () => mediaUrl(event?.host?.avatar_url), enabled: !!event?.host?.avatar_url });
   useEffect(() => { rememberRef(id, new URLSearchParams(window.location.search).get('ref')); rememberInvite(new URLSearchParams(window.location.search).get('inv')); }, [id]);
   const [signedIn, setSignedIn] = useState(false);
+  useReferralCapture();
   useEffect(() => { void supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session)); }, []);
   const [intent, setIntent] = useState<'going' | 'maybe' | null>(null);
   const [result, setResult] = useState<RsvpResult | null>(null);
@@ -192,6 +194,7 @@ function PublicEventBody() {
           </div>}
         {price && !event.my_code && <CommunitySeatCard kind="event" target={id} signedIn={signedIn} />}
         <CalendarButtons event={event} />
+        {(event.price_cents ?? 0) > 0 && <ReferralShareCard kind="event" id={id} signedIn={signedIn} />}
       </>}
       <Polls eventId={id} code={event.my_code} />
       <PhotoRoll eventId={id} code={event.my_code} canAdd={!!event.my_code} />

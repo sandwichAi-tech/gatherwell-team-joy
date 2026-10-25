@@ -1,3 +1,4 @@
+import { claimReferralVisits } from '@/components/referrals';
 import { Toaster } from '@/components/ui/sonner';
 import { ConfirmHost } from '@/components/confirm-dialog';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -143,6 +144,7 @@ function RootComponent() {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       // A saved invite or return path never carries over to a different account on this device.
       if (event === "SIGNED_OUT") { clearPendingInvite(); try { sessionStorage.removeItem("zw-next"); } catch { /* storage unavailable */ } }
+      if (event === "SIGNED_IN") claimReferralVisits();
       void router.invalidate();
       if (event !== "SIGNED_OUT") void queryClient.invalidateQueries();
     });

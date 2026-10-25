@@ -1,3 +1,4 @@
+import { ReferralShareCard, useReferralCapture } from '@/components/referrals';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -40,6 +41,7 @@ export function PublicOfferPage({ id }: { id: string }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const userId = useUserId();
+  useReferralCapture();
   const q = useQuery(publicOfferQuery(id));
   const access = useQuery({ ...canAccessOfferQuery(id, userId), enabled: !!userId });
   const coverPath = q.data?.cover_url ?? null;
@@ -122,6 +124,7 @@ export function PublicOfferPage({ id }: { id: string }) {
           <p className="muted-small" role="status">{t(window2 === 'not_yet' ? 'content.enrollNotOpen' : 'content.enrollClosed')}</p>}
         {!userId && !owned && <p className="muted-small">{t('content.guestBrowseNote')}</p>}
       </section>
+      {paid && <ReferralShareCard kind="offer" id={id} signedIn={!!userId} />}
     </article>
   </GuestShell>;
 }

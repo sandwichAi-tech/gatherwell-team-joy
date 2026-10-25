@@ -66,6 +66,7 @@ export function buildToolSections(input: ToolsInput): ToolSection[] {
   add('selling', cap('content') ? [
     { id: 'offers', to: '/offers', icon: 'Store', badge: sellBadge },
     { id: 'promos', to: '/promos', icon: 'Gift', badge: sellBadge },
+    { id: 'referrals', to: '/referrals', icon: 'Share2', badge: sellBadge },
     { id: 'earnings', to: '/earnings', icon: 'CreditCard', badge: sellBadge },
   ] : []);
 
