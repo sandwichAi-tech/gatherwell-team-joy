@@ -47,11 +47,14 @@ function Avatar({ path, name, size = 96 }: { path: string | null; name: string |
 export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string }) {
   const { t, i18n } = useTranslation();
   const q = useQuery(pageQuery(kind, slug));
+  // Owners get an edit action instead of the Follow button; visitors never see owner controls.
+  const viewer = useQuery({ queryKey: ['viewer-id'], queryFn: async () => (await supabase.auth.getUser()).data.user?.id ?? null, staleTime: 60_000 });
   if (q.isLoading) return <ListSkeleton />;
   if (q.isError) return <RetryState retry={() => void q.refetch()} />;
   const d = q.data;
   if (!d) return <EmptyState icon="Compass" title={t('follow.notFoundTitle')} text={t('follow.notFound')} action={<Button asChild variant="secondary"><Link to="/discover">{t('follow.discover')}</Link></Button>} />;
   const host = kind === 'host' ? d as HostPage : null; const team = kind === 'team' ? d as TeamPage : null;
+  const isOwner = !!viewer.data && viewer.data === d.id;
   const name = host?.name ?? team?.name ?? '';
   const avatarPath = host?.avatar_url ?? team?.leader?.avatar_url ?? null;
   return <div className="follow-page">
