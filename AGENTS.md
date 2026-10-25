@@ -48,11 +48,11 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Resources reuses /learn routes and the feature_learn gate; reader lists omit zero-lesson tracks and empty sections while management retains them. Authoring is type-first: /learn/create?type=… (src/lib/create-resource.ts) routes into the existing track/lesson, offer, quiz and recipe editors with presets — no second authoring backend.
 - Home’s brief uses getDailyBrief with caller-scoped reads; no AI, snapshots, contacts or shared user cache. Attendance is RLS-scoped; Insights compares UTC event cohorts, not lifetime ledgers.
 - Admin password sign-in uses the public /admin-login page and existing Cloud Auth accounts; getAdminAccess validates the authenticated role before navigation, while every admin data handler retains its own role check, so the sign-in screen never grants privileges.
-- Blueprints reuse templates and TemplateEditor; defaults omit dates/places and host RLS keeps drafts private. Challenge launch reuses ChallengeEditor; event formats retain existing retreat persistence.
+- Blueprints/challenges reuse existing editors; drafts stay private. Experience sessions use existing events and whole-event admission.
 - Platform fees are calculated only from versioned fee_rules (DB calc_platform_fee_cents, mirrored and tested in src/lib/fees.ts); orders snapshot the rule so history never recalculates.
 - Database role regressions live in tests/database and run only by explicit invocation against a disposable copy; never connect these fixture-writing tests to production, preview, or the ordinary automated suite.
 - Consent acceptances resolve version/hash in database triggers, and flag changes append server-owned config history; clients never choose snapshots or write audit history.
 - Identity: one auth user = one profile; return paths go only through src/lib/return-to.ts (mirrored by is_safe_return_path) and emailed links use single-use auth_intents; 18+ is attested via confirm_adult() and enforced by triggers/checkout functions; view_mode is display-only; guest rows are linked only by claim_guest_records() with merges kept for audit.
 
 - Pricing guidance lives in WhichPlan; no capability tables (features are shared).
-- Resource templates (team_id null = starter) copy only via use/save_resource_template RPCs into existing content as drafts; no parallel system.
+- Resource templates copy via existing RPCs as drafts. Resource journeys use entitlement-bound runs with messages+participant checks and in-app-only activation. Coach preferences are service-owned, token-managed, sender-gated; segments expose counts only.

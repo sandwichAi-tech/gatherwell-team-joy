@@ -1,6 +1,6 @@
 # Website Notes pass — 2026-10-25
 
-This pass is **partial**, not closure of every tracker item.
+This pass is **partial**, not closure of every tracker item. Updated after compile recovery and migrations 0103–0107.
 
 ## Available now
 - Home copy matches the request, in EN/ES. Names come from the signed-in profile with a first-name fallback.
@@ -12,16 +12,16 @@ This pass is **partial**, not closure of every tracker item.
 
 ## Remaining work and dependencies
 1. **Owner account:** more than one Nick profile was found. Confirm the intended account through authorized identity before changing roles. No email is guessed, no shared password exists, and no role was granted.
-2. **Resource communications:** enrollment-specific triggers, offerings attribution, audience authorization and journey execution remain engineering work. The current interface explicitly says they are not connected.
-3. **Coach updates:** preference-specific public opt-in, verification, secure manage/unsubscribe links and private segments are not implemented. These are announcements, not fulfillment emails; they must not use the managed app-email service as marketing. Delivery needs an appropriate marketing-email service; configuring one alone will not finish the missing subscription work. No SMS promise.
-4. **Multi-event experience:** distinct bounded session storage and public display, registration/attendance semantics, server validation, access policies and tests remain engineering work. Existing recurring events and retreat itineraries are not substitutes.
+2. **Resource communications:** enrollment-specific journeys now use entitlement-bound runs, existing templates, wait/send/enrollment-active steps, pause/resume and capability+participant-scoped activity. Only in-app activation is allowed. Enrollment-to-notification readback remains unverified; email requires a consent-aware sending implementation, not simply adding credentials.
+3. **Coach updates:** preference-specific public opt-in, token confirmation/manage/unsubscribe and private aggregate segments are implemented. Requests are blocked until confirmation and marketing senders exist. Full email opt-in readback/delivery is unverified. Segment-targeted campaigns are not connected; this requires further engineering. No SMS promise.
+4. **Multi-event experience:** implemented as 2–20 bounded validated sessions on existing events; registration/tickets/check-in cover the whole experience, not individual sessions. Private draft saved and two sessions read back through the event UI. Fixture removed. Signed-out schedule denial/published readback has not been exercised with a new published experience.
 5. **Verification:** second-account isolation and live non-admin denial are unverified for this pass; existing server role checks and row policies were inspected, not bypassed. Nonempty attendance, automation save/readback, new retreat save/readback, Saturday Fit Camp published-event link and screen-reader narration are unverified.
 
 ## Checks completed
-- Full suite: 437 tests / 51 files.
+- Full suite: 439 tests / 52 files.
 - Typecheck and production build: automatic harness, latest entry clean; no manual duplicate build.
 - Browser: signed-out redirects on Home/attendance/admin/challenges; signed-in current requesting account; 32 EN/ES page states at 390/1280px; 640px zoom-reflow proxy on four pages in both languages; keyboard Home card action; View all; invitation sheet; Owner Guide; challenge editor; future/invalid Insights ranges; automation selector.
 - No document-wide horizontal overflow in checked states. Six-item mobile navigation intentionally scrolls internally; desktop bottom navigation stays hidden.
-- No fixtures created, existing rows untouched, no publishing/providers/credentials.
+- Continuation: EN/ES 390/1280px Discover tabs, Communication resource chooser and experience builder checked; no page errors/overflow. Private experience save/readback verified, temporary event removed. No publishing/providers/credentials; schema migrations were applied to the existing backend.
 
 The last source SHA must be read after platform-managed commit; an earlier SHA is not proof these latest documentation changes are committed.
