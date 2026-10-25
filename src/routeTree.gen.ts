@@ -61,6 +61,7 @@ import { Route as AuthenticatedAppOffersRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAppPlanRouteImport } from './routes/_authenticated/_app/plan'
 import { Route as AuthenticatedAppProgressRouteImport } from './routes/_authenticated/_app/progress'
 import { Route as AuthenticatedAppPromosRouteImport } from './routes/_authenticated/_app/promos'
+import { Route as AuthenticatedAppReferralsRouteImport } from './routes/_authenticated/_app/referrals'
 import { Route as AuthenticatedAppSavedRouteImport } from './routes/_authenticated/_app/saved'
 import { Route as AuthenticatedAppStartRouteImport } from './routes/_authenticated/_app/start'
 import { Route as AuthenticatedAppSupportRouteImport } from './routes/_authenticated/_app/support'
@@ -81,6 +82,7 @@ import { Route as AuthenticatedAppLearnRecipesRouteImport } from './routes/_auth
 import { Route as AuthenticatedAppLearnTemplatesRouteImport } from './routes/_authenticated/_app/learn_.templates'
 import { Route as AuthenticatedAppOfferIdRouteImport } from './routes/_authenticated/_app/offer.$id'
 import { Route as AuthenticatedAppPlanSeatsRouteImport } from './routes/_authenticated/_app/plan_.seats'
+import { Route as AuthenticatedAppReferralsMineRouteImport } from './routes/_authenticated/_app/referrals_.mine'
 import { Route as AuthenticatedAppTeamInsightsRouteImport } from './routes/_authenticated/_app/team_.insights'
 import { Route as AuthenticatedAppTeamMapRouteImport } from './routes/_authenticated/_app/team_.map'
 import { Route as AuthenticatedAppTeamSettingsRouteImport } from './routes/_authenticated/_app/team_.settings'
@@ -369,6 +371,12 @@ const AuthenticatedAppPromosRoute = AuthenticatedAppPromosRouteImport.update({
   path: '/promos',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppReferralsRoute =
+  AuthenticatedAppReferralsRouteImport.update({
+    id: '/referrals',
+    path: '/referrals',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppSavedRoute = AuthenticatedAppSavedRouteImport.update({
   id: '/saved',
   path: '/saved',
@@ -476,6 +484,12 @@ const AuthenticatedAppPlanSeatsRoute =
   AuthenticatedAppPlanSeatsRouteImport.update({
     id: '/plan_/seats',
     path: '/plan/seats',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
+const AuthenticatedAppReferralsMineRoute =
+  AuthenticatedAppReferralsMineRouteImport.update({
+    id: '/referrals_/mine',
+    path: '/referrals/mine',
     getParentRoute: () => AuthenticatedAppRouteRoute,
   } as any)
 const AuthenticatedAppTeamInsightsRoute =
@@ -630,6 +644,7 @@ export interface FileRoutesByFullPath {
   '/plan': typeof AuthenticatedAppPlanRoute
   '/progress': typeof AuthenticatedAppProgressRoute
   '/promos': typeof AuthenticatedAppPromosRoute
+  '/referrals': typeof AuthenticatedAppReferralsRoute
   '/saved': typeof AuthenticatedAppSavedRoute
   '/start': typeof AuthenticatedAppStartRoute
   '/support': typeof AuthenticatedAppSupportRoute
@@ -649,6 +664,7 @@ export interface FileRoutesByFullPath {
   '/learn/templates': typeof AuthenticatedAppLearnTemplatesRoute
   '/offer/$id': typeof AuthenticatedAppOfferIdRoute
   '/plan/seats': typeof AuthenticatedAppPlanSeatsRoute
+  '/referrals/mine': typeof AuthenticatedAppReferralsMineRoute
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
   '/team/settings': typeof AuthenticatedAppTeamSettingsRoute
@@ -720,6 +736,7 @@ export interface FileRoutesByTo {
   '/plan': typeof AuthenticatedAppPlanRoute
   '/progress': typeof AuthenticatedAppProgressRoute
   '/promos': typeof AuthenticatedAppPromosRoute
+  '/referrals': typeof AuthenticatedAppReferralsRoute
   '/saved': typeof AuthenticatedAppSavedRoute
   '/start': typeof AuthenticatedAppStartRoute
   '/support': typeof AuthenticatedAppSupportRoute
@@ -739,6 +756,7 @@ export interface FileRoutesByTo {
   '/learn/templates': typeof AuthenticatedAppLearnTemplatesRoute
   '/offer/$id': typeof AuthenticatedAppOfferIdRoute
   '/plan/seats': typeof AuthenticatedAppPlanSeatsRoute
+  '/referrals/mine': typeof AuthenticatedAppReferralsMineRoute
   '/team/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/team/map': typeof AuthenticatedAppTeamMapRoute
   '/team/settings': typeof AuthenticatedAppTeamSettingsRoute
@@ -813,6 +831,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/plan': typeof AuthenticatedAppPlanRoute
   '/_authenticated/_app/progress': typeof AuthenticatedAppProgressRoute
   '/_authenticated/_app/promos': typeof AuthenticatedAppPromosRoute
+  '/_authenticated/_app/referrals': typeof AuthenticatedAppReferralsRoute
   '/_authenticated/_app/saved': typeof AuthenticatedAppSavedRoute
   '/_authenticated/_app/start': typeof AuthenticatedAppStartRoute
   '/_authenticated/_app/support': typeof AuthenticatedAppSupportRoute
@@ -832,6 +851,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/learn_/templates': typeof AuthenticatedAppLearnTemplatesRoute
   '/_authenticated/_app/offer/$id': typeof AuthenticatedAppOfferIdRoute
   '/_authenticated/_app/plan_/seats': typeof AuthenticatedAppPlanSeatsRoute
+  '/_authenticated/_app/referrals_/mine': typeof AuthenticatedAppReferralsMineRoute
   '/_authenticated/_app/team_/insights': typeof AuthenticatedAppTeamInsightsRoute
   '/_authenticated/_app/team_/map': typeof AuthenticatedAppTeamMapRoute
   '/_authenticated/_app/team_/settings': typeof AuthenticatedAppTeamSettingsRoute
@@ -905,6 +925,7 @@ export interface FileRouteTypes {
     | '/plan'
     | '/progress'
     | '/promos'
+    | '/referrals'
     | '/saved'
     | '/start'
     | '/support'
@@ -924,6 +945,7 @@ export interface FileRouteTypes {
     | '/learn/templates'
     | '/offer/$id'
     | '/plan/seats'
+    | '/referrals/mine'
     | '/team/insights'
     | '/team/map'
     | '/team/settings'
@@ -995,6 +1017,7 @@ export interface FileRouteTypes {
     | '/plan'
     | '/progress'
     | '/promos'
+    | '/referrals'
     | '/saved'
     | '/start'
     | '/support'
@@ -1014,6 +1037,7 @@ export interface FileRouteTypes {
     | '/learn/templates'
     | '/offer/$id'
     | '/plan/seats'
+    | '/referrals/mine'
     | '/team/insights'
     | '/team/map'
     | '/team/settings'
@@ -1087,6 +1111,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/plan'
     | '/_authenticated/_app/progress'
     | '/_authenticated/_app/promos'
+    | '/_authenticated/_app/referrals'
     | '/_authenticated/_app/saved'
     | '/_authenticated/_app/start'
     | '/_authenticated/_app/support'
@@ -1106,6 +1131,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/learn_/templates'
     | '/_authenticated/_app/offer/$id'
     | '/_authenticated/_app/plan_/seats'
+    | '/_authenticated/_app/referrals_/mine'
     | '/_authenticated/_app/team_/insights'
     | '/_authenticated/_app/team_/map'
     | '/_authenticated/_app/team_/settings'
@@ -1534,6 +1560,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppPromosRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/referrals': {
+      id: '/_authenticated/_app/referrals'
+      path: '/referrals'
+      fullPath: '/referrals'
+      preLoaderRoute: typeof AuthenticatedAppReferralsRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/saved': {
       id: '/_authenticated/_app/saved'
       path: '/saved'
@@ -1672,6 +1705,13 @@ declare module '@tanstack/react-router' {
       path: '/plan/seats'
       fullPath: '/plan/seats'
       preLoaderRoute: typeof AuthenticatedAppPlanSeatsRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/referrals_/mine': {
+      id: '/_authenticated/_app/referrals_/mine'
+      path: '/referrals/mine'
+      fullPath: '/referrals/mine'
+      preLoaderRoute: typeof AuthenticatedAppReferralsMineRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
     '/_authenticated/_app/team_/insights': {
@@ -1826,6 +1866,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppPlanRoute: typeof AuthenticatedAppPlanRoute
   AuthenticatedAppProgressRoute: typeof AuthenticatedAppProgressRoute
   AuthenticatedAppPromosRoute: typeof AuthenticatedAppPromosRoute
+  AuthenticatedAppReferralsRoute: typeof AuthenticatedAppReferralsRoute
   AuthenticatedAppSavedRoute: typeof AuthenticatedAppSavedRoute
   AuthenticatedAppStartRoute: typeof AuthenticatedAppStartRoute
   AuthenticatedAppSupportRoute: typeof AuthenticatedAppSupportRoute
@@ -1843,6 +1884,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppLearnTemplatesRoute: typeof AuthenticatedAppLearnTemplatesRoute
   AuthenticatedAppOfferIdRoute: typeof AuthenticatedAppOfferIdRoute
   AuthenticatedAppPlanSeatsRoute: typeof AuthenticatedAppPlanSeatsRoute
+  AuthenticatedAppReferralsMineRoute: typeof AuthenticatedAppReferralsMineRoute
   AuthenticatedAppTeamInsightsRoute: typeof AuthenticatedAppTeamInsightsRoute
   AuthenticatedAppTeamMapRoute: typeof AuthenticatedAppTeamMapRoute
   AuthenticatedAppTeamSettingsRoute: typeof AuthenticatedAppTeamSettingsRoute
@@ -1879,6 +1921,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppPlanRoute: AuthenticatedAppPlanRoute,
   AuthenticatedAppProgressRoute: AuthenticatedAppProgressRoute,
   AuthenticatedAppPromosRoute: AuthenticatedAppPromosRoute,
+  AuthenticatedAppReferralsRoute: AuthenticatedAppReferralsRoute,
   AuthenticatedAppSavedRoute: AuthenticatedAppSavedRoute,
   AuthenticatedAppStartRoute: AuthenticatedAppStartRoute,
   AuthenticatedAppSupportRoute: AuthenticatedAppSupportRoute,
@@ -1896,6 +1939,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppLearnTemplatesRoute: AuthenticatedAppLearnTemplatesRoute,
   AuthenticatedAppOfferIdRoute: AuthenticatedAppOfferIdRoute,
   AuthenticatedAppPlanSeatsRoute: AuthenticatedAppPlanSeatsRoute,
+  AuthenticatedAppReferralsMineRoute: AuthenticatedAppReferralsMineRoute,
   AuthenticatedAppTeamInsightsRoute: AuthenticatedAppTeamInsightsRoute,
   AuthenticatedAppTeamMapRoute: AuthenticatedAppTeamMapRoute,
   AuthenticatedAppTeamSettingsRoute: AuthenticatedAppTeamSettingsRoute,

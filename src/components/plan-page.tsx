@@ -13,7 +13,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { AlertCircle, ArrowLeft, Check, ChevronRight, CreditCard, UsersRound, BarChart3 } from '@/components/icons';
+import { AlertCircle, ArrowLeft, Check, ChevronRight, CreditCard, UsersRound, BarChart3, Share2 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { ResponsiveSheet } from '@/components/responsive-sheet';

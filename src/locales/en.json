@@ -6707,6 +6707,10 @@
       "support": {
         "title": "Support",
         "desc": "Get help or report a problem."
+      },
+      "referrals": {
+        "title": "Referral programs",
+        "desc": "Optional rewards for sharing paid items."
       }
     }
   },
@@ -6829,6 +6833,124 @@
       "fileType": "Choose a PDF up to 10 MB.",
       "upload": "We couldn't upload that file. Please try again.",
       "save": "We couldn't save the waiver. Check the title and text and try again."
+    }
+  },
+  "referral": {
+    "code": "Code",
+    "copyLink": "Copy referral link",
+    "on": "On",
+    "off": "Off",
+    "paused": "Paused",
+    "unnamed": "Member",
+    "sale": "Sale {{amount}}",
+    "notConnected": "Payments aren't connected yet, so there are no confirmed sales and every total stays at zero. Rewards appear only after a real purchase is confirmed.",
+    "manualNote": "Payouts are manual in beta: you send money outside ZoheeWell and record it here. ZoheeWell never transfers referral money.",
+    "kind": {
+      "percent": "Percentage",
+      "flat": "Flat amount"
+    },
+    "status": {
+      "pending": "Pending",
+      "available": "Available",
+      "paid": "Paid",
+      "reversed": "Reversed"
+    },
+    "filters": {
+      "item": "Item",
+      "referrer": "Referrer",
+      "status": "Status",
+      "from": "From",
+      "to": "To",
+      "all": "All"
+    },
+    "stats": {
+      "clicks": "Link visits",
+      "signups": "Signed-in visitors",
+      "conversions": "Confirmed purchases",
+      "revenue": "Referred sales",
+      "clicksN_one": "{{count}} visit",
+      "clicksN_other": "{{count}} visits",
+      "conversionsN_one": "{{count}} purchase",
+      "conversionsN_other": "{{count}} purchases"
+    },
+    "coach": {
+      "title": "Referral programs",
+      "subtitle": "Optional rewards for people who share your paid events and resources.",
+      "programs": "Paid items",
+      "freeNote": "Free items use ordinary sharing and never offer a reward. Team-only events can't have a program.",
+      "noItems": "No eligible paid items yet. Paid public events and paid resources or courses appear here.",
+      "setup": "Set up",
+      "edit": "Edit",
+      "setupFor": "Referral program for {{title}}",
+      "activity": "Activity",
+      "noRewards": "No confirmed referred purchases yet.",
+      "sheetTitle": "Referral program",
+      "save": "Save program",
+      "saved": "Referral program saved",
+      "enable": "Program on",
+      "enableHint": "Off by default. Turning it off stops new rewards; earned rewards stay.",
+      "rewardType": "Reward type",
+      "percentLabel": "Percent of the sale (1–90)",
+      "flatLabel": "Amount per purchase (USD)",
+      "example": "Example: on a {{price}} purchase, the referrer earns {{reward}}.",
+      "window": "Attribution window:",
+      "windowValue": "{{days}} days, last valid link visit (fixed for beta)."
+    },
+    "terms": {
+      "title": "Program terms",
+      "eligibility": "Only confirmed purchases of this paid item count. Free items and team-only events are not eligible.",
+      "attribution": "The purchase is credited to the last valid referral link the buyer opened within {{days}} days. One purchase earns at most one reward.",
+      "blocked": "No reward for referring yourself, for the host, or when the buyer and referrer share any team.",
+      "states": "Pending rewards become available 14 days after a confirmed purchase. Paid means the host recorded a manual payout.",
+      "refunds": "If a purchase is refunded, cancelled or disputed, its pending or available reward is reversed.",
+      "payouts": "Payouts are manual in beta. The host pays outside ZoheeWell and records it; ZoheeWell never sends money."
+    },
+    "payout": {
+      "recordFor": "Record payout for {{name}}",
+      "title": "Record a manual payout",
+      "manualOnly": "This only records a payment you already sent outside ZoheeWell. No money moves here.",
+      "date": "Date you paid",
+      "reference": "Reference (optional)",
+      "note": "Note (optional)",
+      "confirm": "I already sent this payment outside ZoheeWell.",
+      "confirmRequired": "Confirm you already sent this payment.",
+      "save": "Record {{amount}}",
+      "recorded": "Payout recorded",
+      "ledger": "Payout ledger",
+      "ledgerHint": "Records you entered. ZoheeWell did not transfer these amounts.",
+      "none": "No payouts recorded.",
+      "recordedOn": "Recorded as paid {{date}}"
+    },
+    "share": {
+      "title": "Share and earn",
+      "body": "The host offers {{reward}} per confirmed purchase (about {{example}} here) through your private link, credited for {{days}} days.",
+      "get": "Get my referral link"
+    },
+    "mine": {
+      "title": "My referral earnings",
+      "open": "Open my referral earnings",
+      "subtitle": "Your private links and rewards. Only you can see this.",
+      "honest": "Amounts count only confirmed purchases. Payouts are sent by hosts outside ZoheeWell; buyer details are never shown.",
+      "links": "My links",
+      "noLinks": "No referral links yet. Open a paid event or resource with a referral program to get yours.",
+      "rewards": "Rewards",
+      "noRewards": "No rewards yet.",
+      "payouts": "Payout history",
+      "how": "How referrals work"
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "invalid": "Enter a whole number greater than zero.",
+      "invalid_reward": "Enter a valid reward.",
+      "notPaid": "Only paid items can have a referral program.",
+      "ineligible": "This item isn't eligible: it must be paid and not team-only.",
+      "percentTooHigh": "Percentage can't be more than 90%.",
+      "percent_too_high": "Percentage can't be more than 90%.",
+      "flatTooHigh": "The reward must be less than the item price.",
+      "flat_too_high": "The reward must be less than the item price.",
+      "payout_date": "Choose today or an earlier date.",
+      "payout_invalid": "Some rewards are no longer available. Refresh and try again.",
+      "payout_empty": "Choose at least one reward."
     }
   }
 }
