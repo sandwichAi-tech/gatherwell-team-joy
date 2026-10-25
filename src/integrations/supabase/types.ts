@@ -7998,6 +7998,17 @@ export type Database = {
         }
         Returns: undefined
       }
+      save_event_communication_journey: {
+        Args: {
+          _event: string
+          _id: string
+          _name: string
+          _steps: Json
+          _team: string
+          _trigger: string
+        }
+        Returns: string
+      }
       save_event_cover: {
         Args: {
           _alt: string

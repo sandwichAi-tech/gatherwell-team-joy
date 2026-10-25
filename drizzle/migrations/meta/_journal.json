@@ -771,6 +771,13 @@
       "when": 1792942302681,
       "tag": "0109_resource_communication_execution",
       "breakpoints": true
+    },
+    {
+      "idx": 110,
+      "version": "7",
+      "when": 1792942797797,
+      "tag": "0110_atomic_event_journey_scope",
+      "breakpoints": true
     }
   ]
 }
