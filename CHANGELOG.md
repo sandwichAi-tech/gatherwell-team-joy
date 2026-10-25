@@ -442,3 +442,7 @@
 - Mark complete goes through one server-checked, idempotent call; draft/inaccessible/not-yet-open lessons are refused; entitled non-members can now complete.
 - PDF lessons: signed viewer plus Open and Download actions, loading state instead of an empty player.
 - "Resource templates" renamed "Resource blueprints" / "Modelos de recursos"; blueprint example text can't be published (database guard + editor warning); track lists show track vs lesson publication.
+
+## Event policy & waivers (rows 6, 64)
+- Cancellation/refund policy: presets or a guided custom builder (deadline, refund full/% /credit/none, transfer, host cancel/reschedule, processing time, exceptions, contact) that drafts editable plain-language text; manual edits are kept across switches; custom text needs explicit review before publishing, enforced in the database (set_event_policy + publish guard). Free events never promise refunds; paid custom terms are the exact text shown before checkout and in the checkout message. The duplicate refund selector was removed. No AI drafting (not configured) — honest note shown.
+- Event waivers: zero or more per event (waiver/release/health/safety/media), text and/or private PDF, required/optional, automatic versioning with SHA-256, immutable version and acceptance history. Required items block "going" RSVP and checkout server-side; never prechecked; files must be opened first. Attendees see what they accepted on confirmation and ticket; hosts see per-attendee status and CSV export (names and consent only). Migrations 0116–0118.
