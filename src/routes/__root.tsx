@@ -91,6 +91,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: i18n.t("brand") },
       { property: "og:description", content: i18n.t("meta.home") },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "ZoheeWell" },
       { name: "twitter:card", content: "summary_large_image" },
 
     ],

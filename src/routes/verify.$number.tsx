@@ -3,16 +3,21 @@ import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { Check, AlertCircle } from '@/components/icons';
 import { verifyCertificate } from '@/lib/quizzes';
+import { publicIndexing } from '@/lib/seo';
 
 export const Route = createFileRoute('/verify/$number')({
-  head: () => ({ meta: [
+  head: ({ params }) => {
+    const indexing = publicIndexing(`/verify/${params.number}`);
+    return { meta: [
     { title: 'Certificate verification · ZoheeWell' },
     { name: 'description', content: 'Verify a ZoheeWell course certificate by its certificate number.' },
     { property: 'og:title', content: 'Certificate verification · ZoheeWell' },
     { property: 'og:description', content: 'Verify a ZoheeWell course certificate by its certificate number.' },
     { property: 'og:type', content: 'website' },
     { name: 'twitter:card', content: 'summary' },
-  ] }),
+    ...indexing.meta,
+  ], links: indexing.links };
+  },
   component: function VerifyPage() {
     const { number } = Route.useParams();
     const { t, i18n } = useTranslation();

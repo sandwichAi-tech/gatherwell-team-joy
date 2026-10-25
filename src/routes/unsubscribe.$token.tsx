@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { AuthFrame, pageHead, setLanguage } from '@/components/auth-frame';
 import { supabase } from '@/integrations/supabase/client';
+import { NOINDEX_META } from '@/lib/seo';
 
-export const Route = createFileRoute('/unsubscribe/$token')({ head: () => pageHead('unsubscribe.title', 'meta.unsubscribe'), component: UnsubscribePage });
+export const Route = createFileRoute('/unsubscribe/$token')({ head: () => { const h = pageHead('unsubscribe.title', 'meta.unsubscribe'); return { meta: [...h.meta, { ...NOINDEX_META }] }; }, component: UnsubscribePage });
 
 type Prefs = { email: string; language: string; all_off: boolean; reminders: boolean; announcements: boolean; badges: boolean; followups: boolean };
 

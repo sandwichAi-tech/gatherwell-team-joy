@@ -5,6 +5,7 @@ import { hasActiveFilters } from '@/lib/discovery';
 import i18n from '@/lib/i18n';
 import { publicShareImage } from '@/lib/public-media.functions';
 import { RetryState } from '@/components/launch-states';
+import { SITE_URL } from '@/lib/seo';
 
 const str = (v: unknown) => (typeof v === 'string' && v ? v : undefined);
 const one = (v: unknown) => (v === 1 || v === '1' ? (1 as const) : undefined);
@@ -34,19 +35,19 @@ export const Route = createFileRoute('/discover')({
   head: ({ matches, loaderData }) => {
     const title = i18n.t('landing.meta.discoverTitle');
     const description = i18n.t('landing.meta.discover');
-    // Filtered permutations are not indexed; only the clean catalog is.
+    // Filtered permutations and non-default tabs are not indexed; only the clean catalog is.
     const search = (matches.at(-1)?.search ?? {}) as DiscoverSearch;
-    const filtered = hasActiveFilters(searchToFilters(search, null)) || !!search.sort;
+    const filtered = hasActiveFilters(searchToFilters(search, null)) || !!search.sort || (search.tab !== undefined && search.tab !== 'events');
     return {
       meta: [
         { title }, { name: 'description', content: description },
         { property: 'og:title', content: title }, { property: 'og:description', content: description },
-        { property: 'og:type', content: 'website' }, { property: 'og:url', content: 'https://zoheewell.com/discover' },
+        { property: 'og:type', content: 'website' }, { property: 'og:url', content: `${SITE_URL}/discover` },
         { name: 'twitter:card', content: 'summary_large_image' },
         ...(filtered ? [{ name: 'robots', content: 'noindex, follow' }] : []),
         ...(loaderData ? [{ property: 'og:image', content: loaderData }, { name: 'twitter:image', content: loaderData }] : []),
       ],
-      links: [{ rel: 'canonical', href: 'https://zoheewell.com/discover' }],
+      links: [{ rel: 'canonical', href: `${SITE_URL}/discover` }],
     };
   },
   loader: ({ context: _context }) => publicShareImage({ data: { slot: 'og_share_image' } }).catch(() => null),

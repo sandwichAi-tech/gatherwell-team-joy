@@ -8,11 +8,12 @@ import { clearPendingInvite, initialsOf, parseJoinCode, savePendingInvite } from
 import { JOIN_BY_KEY } from '@/lib/recognition';
 import { publicShareImage } from '@/lib/public-media.functions';
 import { RetryState } from '@/components/launch-states';
+import { NOINDEX_META } from '@/lib/seo';
 import i18n from '@/lib/i18n';
 
 export const Route = createFileRoute('/join/$code')({
   loader: () => publicShareImage({ data: { slot: 'og_share_image' } }).catch(() => null),
-  head: ({ loaderData }) => { const h = pageHead('join.cta', 'meta.join'); return { meta: [...h.meta, ...(loaderData ? [{ property: 'og:image', content: loaderData }, { name: 'twitter:image', content: loaderData }] : [])] }; },
+  head: ({ loaderData }) => { const h = pageHead('join.cta', 'meta.join'); return { meta: [...h.meta, { ...NOINDEX_META }, ...(loaderData ? [{ property: 'og:image', content: loaderData }, { name: 'twitter:image', content: loaderData }] : [])] }; },
   errorComponent: ({ reset }) => <AuthFrame><RetryState retry={reset} /></AuthFrame>,
   notFoundComponent: () => <AuthFrame>{i18n.t('join.invalid')}</AuthFrame>,
   component: JoinPage,

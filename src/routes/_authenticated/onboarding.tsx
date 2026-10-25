@@ -18,8 +18,9 @@ import { JOIN_BY_KEY } from '@/lib/recognition';
 import { takeNext } from '@/lib/return-to';
 import { recordPendingHostInvite } from '@/lib/discovery';
 import { clearPendingInvite, pendingInvite, initialsOf, joinLink, parseJoinCode, profileQuery, uploadMedia, workspaceQuery } from '@/lib/account';
+import { NOINDEX_META } from '@/lib/seo';
 
-export const Route = createFileRoute('/_authenticated/onboarding')({ head: () => pageHead('onboarding.nameTitle', 'meta.onboarding'), component: Onboarding });
+export const Route = createFileRoute('/_authenticated/onboarding')({ head: () => { const h = pageHead('onboarding.nameTitle', 'meta.onboarding'); return { meta: [...h.meta, { ...NOINDEX_META }] }; }, component: Onboarding });
 
 type Step = 'adult' | 'start' | 'name' | 'place' | 'role' | 'team';
 type Start = 'find' | 'create' | 'invite';

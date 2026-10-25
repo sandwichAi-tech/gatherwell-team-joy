@@ -4,13 +4,15 @@ import { useTranslation } from 'react-i18next';
 import { LandingFrame } from '@/components/landing/landing-chrome';
 import { siteMediaQuery } from '@/lib/site-media';
 import i18n from '@/lib/i18n';
+import { publicIndexing } from '@/lib/seo';
 
 export const Route = createFileRoute('/credits')({
   ssr: false,
   head: () => {
     const title = i18n.t('landing.meta.creditsTitle');
     const description = i18n.t('landing.meta.credits');
-    return { meta: [{ title }, { name: 'description', content: description }, { property: 'og:title', content: title }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }] };
+    const indexing = publicIndexing('/credits');
+    return { meta: [{ title }, { name: 'description', content: description }, { property: 'og:title', content: title }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }, ...indexing.meta], links: indexing.links };
   },
   component: CreditsPage,
 });

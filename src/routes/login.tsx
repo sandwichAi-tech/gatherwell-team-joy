@@ -8,6 +8,7 @@ import { AuthFrame, pageHead } from '@/components/auth-frame';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable';
 import { pendingInvite } from '@/lib/account';
+import { NOINDEX_META } from '@/lib/seo';
 import { rememberNext, safeReturnPath, takeNext } from '@/lib/return-to';
 
 type LoginSearch = { intent?: 'host'; next?: string; i?: string };
@@ -17,7 +18,7 @@ export const Route = createFileRoute('/login')({
     ...(typeof s['next'] === 'string' && safeReturnPath(s['next']) ? { next: s['next'] as string } : {}),
     ...(typeof s['i'] === 'string' && /^[0-9a-f]{48}$/.test(s['i'] as string) ? { i: s['i'] as string } : {}),
   }),
-  head: () => pageHead('auth.title', 'meta.login'), component: LoginPage,
+  head: () => { const h = pageHead('auth.title', 'meta.login'); return { meta: [...h.meta, { ...NOINDEX_META }] }; }, component: LoginPage,
 });
 
 function GoogleMark() {

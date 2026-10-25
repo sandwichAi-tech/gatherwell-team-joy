@@ -7,11 +7,12 @@ import { EmptyState, ListSkeleton, RetryState } from '@/components/launch-states
 import { OfferCover } from '@/components/offers';
 import { ChevronRight } from '@/components/icons';
 import { isLive, offerTitle, purchasesQuery } from '@/lib/offers';
+import { NOINDEX_META } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authenticated/_app/circles')({
   head: () => {
     const title = `${i18n.t('myCircles.title')} · ${i18n.t('brand')}`; const description = i18n.t('myCircles.meta');
-    return { meta: [{ title }, { name: 'description', content: description }, { property: 'og:title', content: title }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }] };
+    return { meta: [{ title }, { name: 'description', content: description }, { property: 'og:title', content: title }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }, { ...NOINDEX_META }] };
   },
   component: MyCircles,
 });

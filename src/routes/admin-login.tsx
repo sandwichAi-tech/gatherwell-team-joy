@@ -9,9 +9,10 @@ import { Input } from '@/components/ui/input';
 import { GwIcon } from '@/components/gw-icon';
 import { supabase } from '@/integrations/supabase/client';
 import { getAdminAccess } from '@/lib/admin.functions';
+import { NOINDEX_META } from '@/lib/seo';
 
 export const Route = createFileRoute('/admin-login')({
-  head: () => pageHead('auth.adminTitle', 'auth.adminSubtitle'),
+  head: () => { const h = pageHead('auth.adminTitle', 'auth.adminSubtitle'); return { meta: [...h.meta, { ...NOINDEX_META }] }; },
   component: AdminLogin,
 });
 
