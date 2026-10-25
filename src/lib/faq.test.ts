@@ -4,6 +4,10 @@ import es from '@/locales/es.json';
 import { FAQ_CATEGORIES, FAQ_ITEM_COUNT, buildFaqJsonLd } from './faq';
 import { safeReturnPath } from './return-to';
 
+// JSON imports have literal types; index them loosely in tests.
+type FaqDict = { categories: Record<string, string>; linkLabels: Record<string, string>; items: Record<string, { q: string; a: string }> };
+const dict = (l: typeof en): FaqDict => l.faqPage as unknown as FaqDict;
+
 describe('FAQ structure', () => {
   it('has seven categories and 25 questions', () => {
     expect(FAQ_CATEGORIES.map(c => c.id)).toEqual(['about', 'hosting', 'resources', 'pricing', 'discover', 'teams', 'support']);
