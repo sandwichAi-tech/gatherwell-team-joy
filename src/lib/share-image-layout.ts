@@ -6,7 +6,7 @@ export function shareLayout(format: ShareFormat) {
  return {width,height,margin,textX,textTop,textWidth:width-textX-margin,footerTop:height-margin-40,titleSize:wide?52:format==='story'?80:62,titleHeight:wide?205:format==='story'?290:225,dateSize:wide?25:32,photoWidth:wide?780:width,photoHeight:wide?height:format==='story'?1320:720};
 }
 export function coverCrop(iw:number,ih:number,w:number,h:number,focal='50% 50%') {
- const parts=focal.split(' ').map(x=>Math.min(1,Math.max(0,(parseFloat(x)||50)/100)));
+ const parts=focal.split(' ').map(x=>{const n=parseFloat(x);return Math.min(1,Math.max(0,(Number.isFinite(n)?n:50)/100));});
  const scale=Math.max(w/iw,h/ih);const sw=w/scale,sh=h/scale;
  return {sx:Math.max(0,Math.min(iw-sw,iw*(parts[0]??.5)-sw/2)),sy:Math.max(0,Math.min(ih-sh,ih*(parts[1]??.5)-sh/2)),sw,sh};
 }
