@@ -41,12 +41,12 @@ export const Route = createFileRoute('/discover')({
       meta: [
         { title }, { name: 'description', content: description },
         { property: 'og:title', content: title }, { property: 'og:description', content: description },
-        { property: 'og:type', content: 'website' }, { property: 'og:url', content: 'https://zoheewell.com/discover' },
+        { property: 'og:type', content: 'website' }, { property: 'og:url', content: `${SITE_URL}/discover` },
         { name: 'twitter:card', content: 'summary_large_image' },
         ...(filtered ? [{ name: 'robots', content: 'noindex, follow' }] : []),
         ...(loaderData ? [{ property: 'og:image', content: loaderData }, { name: 'twitter:image', content: loaderData }] : []),
       ],
-      links: [{ rel: 'canonical', href: 'https://zoheewell.com/discover' }],
+      links: [{ rel: 'canonical', href: `${SITE_URL}/discover` }],
     };
   },
   loader: ({ context: _context }) => publicShareImage({ data: { slot: 'og_share_image' } }).catch(() => null),
