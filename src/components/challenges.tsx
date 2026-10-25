@@ -218,15 +218,28 @@ export function ChallengePage({ id }: { id: string }) {
   };
   const title = titleOf(c, lang); const prompt = pick(lang, c.daily_prompt_en, c.daily_prompt_es); const desc = pick(lang, c.description_en, c.description_es);
   const timeOf = (iso: string) => new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', { hour: 'numeric', minute: '2-digit' }).format(new Date(iso));
+  const lifecycle = lifecycleOf(c, phase);
+  const full = c.capacity != null && board.length >= c.capacity;
+  const model = modelOf(c);
+  const goal = model === 'goal' ? goalProgress(c.goal_target, s.total) : null;
+  const todayActs = activitiesForDay(activities, dayNumber(c, today));
+  const welcome = messages.find(m => m.kind === 'welcome' && m.enabled && !m.paused);
+  const welcomeTitle = welcome ? pick(lang, welcome.title_en, welcome.title_es) : '';
+  const welcomeBody = welcome ? pick(lang, welcome.body_en, welcome.body_es) : '';
   return <>
     <Link to="/team" hash="challenges" className="back-link"><ArrowLeft />{t('challenges.title')}</Link>
     {payGate.sheet}
     <GatheringCover path={c.cover_url} style={c.cover_style} title={title} className="challenge-hero" />
     <div className="lesson-head"><span className="eyebrow">{phase === 'active' ? t('challenges.dayOf', { day: dayNumber(c, today), total: len }) : t(`challenges.phase.${phase}`)}</span>
-      <h1>{title}</h1><p className="track-facts">{fmtDate(c.starts_on, lang)} – {fmtDate(c.ends_on, lang)} · {t('challenges.joinedCount', { count: board.length })}{c.is_paid && c.price_cents ? ` · ${formatMoney(c.price_cents, lang)}` : ''}</p>
+      {lifecycle === 'draft' && <span className="chip">{t('templates.draft')}</span>}
+      <h1>{title}</h1><p className="track-facts">{fmtDate(c.starts_on, lang)} – {fmtDate(c.ends_on, lang)} · {t('challenges.joinedCount', { count: board.length })}{c.capacity ? ` / ${c.capacity}` : ''}{c.is_paid && c.price_cents ? ` · ${formatMoney(c.price_cents, lang)}` : ''} · {t(`challenges.model.${model}`)}</p>
       {desc && <p className="challenge-desc">{desc}</p>}
       {!joined && phase !== 'past' && c.is_paid && !!c.price_cents && <PromoField kind="challenge" target={id} discountCents={promoDiscount(c.price_cents, promo)} value={promo} onChange={setPromo} />}
-      <div className="recipe-actions">{!joined && phase !== 'past' && <Button disabled={busy} onClick={join}>{t('challenges.joinChallenge')}</Button>}{leader && <Button variant="secondary" onClick={() => setEditing(c)}><Pencil />{t('challenges.edit')}</Button>}</div></div>
+      <div className="recipe-actions">{!joined && phase !== 'past' && <Button disabled={busy || full} onClick={join}>{full ? t('challenges.full') : t('challenges.joinChallenge')}</Button>}{leader && <Button variant="secondary" onClick={() => setEditing(c)}><Pencil />{t('challenges.edit')}</Button>}</div></div>
+
+    {joined && welcome && (welcomeTitle || welcomeBody) && !welcomeGone && <section className="panel challenge-welcome" role="status">
+      <div className="section-heading"><h2>{welcomeTitle || t('challenges.msg.welcome')}</h2><Button variant="ghost" size="icon" aria-label={t('common.close')} onClick={() => setWelcomeGone(true)}><X /></Button></div>
+      {welcomeBody && <p>{welcomeBody}</p>}</section>}
 
     {joined && s.total >= len && <Finisher c={c} days={len} />}
 
@@ -235,15 +248,23 @@ export function ChallengePage({ id }: { id: string }) {
         : <Button className="checkin-big" onClick={() => setSheetDate(today)}><Check />{t('challenges.checkInToday')}</Button>}
       {canYesterday && <button type="button" className="text-link yesterday-link" onClick={() => setSheetDate(yesterday)}>{t('challenges.checkInYesterday')}</button>}</section>}
 
+    {joined && phase === 'active' && todayActs.length > 0 && <section className="panel" aria-label={t('challenges.todayActivities')}>
+      <div className="section-heading"><h2>{t('challenges.todayActivities')}</h2></div>
+      <ul className="offer-list compact">{todayActs.map((a, i) => <ActivityRow key={a.id ?? i} a={a} lang={lang} />)}</ul></section>}
+
     {joined && <section className="panel"><div className="streak-row">
       <div className={`streak ${s.current > 0 ? 'is-lit' : ''}`}><Flame className="streak-flame" aria-hidden="true" /><strong>{s.current}</strong><span>{t('challenges.currentStreak')}</span></div>
       <div className="streak"><strong>{s.best}</strong><span>{t('challenges.bestStreak')}</span></div>
       <div className="streak"><strong>{s.total}/{len}</strong><span>{t('challenges.checkIns')}</span></div></div>
+      {goal && goal.target > 0 && <div className="goal-progress">
+        <div className="goal-progress-head"><strong>{t('challenges.goalProgress', { done: goal.done, target: goal.target })}</strong>{c.goal_unit ? <span>{c.goal_unit}</span> : null}</div>
+        <progress value={goal.pct} max={1} aria-label={t('challenges.goalProgress', { done: goal.done, target: goal.target })} />
+        {goal.complete && <p className="field-hint" role="status">{t('challenges.goalComplete')}</p>}</div>}
       <div className="day-grid" role="list" aria-label={t('challenges.calendar')}>{Array.from({ length: len }, (_, i) => { const d = addDays(c.starts_on, i); const on = dates.has(d); return <span role="listitem" key={d} className={`day-cell ${on ? 'is-on' : ''} ${d === today ? 'is-today' : ''} ${d > today ? 'is-future' : ''}`} aria-label={`${fmtDate(d, lang)}${on ? ` · ${t('challenges.checkedIn')}` : ''}`}>{on ? <Check /> : i + 1}</span>; })}</div></section>}
 
-    <section className="panel"><div className="section-heading"><div><h2>{t('challenges.leaderboard')}</h2><p>{t('challenges.leaderboardNote')}</p></div>{meRow && <span className="chip">{t('challenges.yourRank', { rank: meRow.rank })}</span>}</div>
+    {c.leaderboard_on && <section className="panel"><div className="section-heading"><div><h2>{t('challenges.leaderboard')}</h2><p>{t('challenges.leaderboardNote')}</p></div>{meRow && <span className="chip">{t('challenges.yourRank', { rank: meRow.rank })}</span>}</div>
       {top.length ? <ol className="board">{top.map(r => <li key={r.user_id} className={r.user_id === userId ? 'is-me' : ''}><span className="board-rank">{r.rank}</span><span className="initial-avatar">{initialsOf(r.full_name)}</span><span className="lesson-info"><strong>{r.full_name || t('teamSpace.someone')}</strong><small>{t('challenges.streakShort', { count: r.current_streak })} · {t('challenges.bestShort', { count: r.best_streak })}</small></span><strong className="board-count">{r.checkins}</strong></li>)}</ol> : <EmptyState compact icon="Camera" text={t('challenges.boardEmpty')} />}
-      {meRow && meRow.rank > 10 && <p className="board-me">{t('challenges.youreRank', { rank: meRow.rank })}</p>}</section>
+      {meRow && meRow.rank > 10 && <p className="board-me">{t('challenges.youreRank', { rank: meRow.rank })}</p>}</section>}
 
     {joined && <PhotoGallery paths={mine.map(m => m.photo_path).filter((p): p is string => !!p)} />}
     {leader && <LeaderPanel c={c} />}
