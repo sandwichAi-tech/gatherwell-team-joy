@@ -2622,3 +2622,17 @@ a.gw-cat-chip:hover{background:#fff}
 .offering-card-body { display: grid; gap: .3rem; padding: .9rem 1rem; }
 .offering-card-body small { color: var(--muted-foreground); overflow-wrap: anywhere; }
 .offering-card-foot { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-top: .35rem; flex-wrap: wrap; }
+
+/* Event policy builder + event waivers (rows 6 / 64) */
+.policy-builder { display: grid; gap: 0.75rem; }
+.policy-fields { display: grid; gap: 0.75rem; border: 1px solid var(--border); border-radius: 14px; padding: 0.875rem; margin: 0; }
+.policy-preview, .waiver-preview { border-left: 3px solid var(--primary); background: var(--muted); border-radius: 10px; padding: 0.75rem 0.875rem; }
+.policy-preview p { margin: 0.25rem 0 0; white-space: pre-wrap; }
+.plain-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.event-waivers { display: grid; gap: 0.75rem; }
+.ew-item { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; border: 1px solid var(--border); border-radius: 12px; padding: 0.75rem; }
+.ew-item > div:first-child { min-width: 0; flex: 1 1 14rem; }
+.button-like { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 48px; padding: 0 1rem; border-radius: 12px; border: 1px solid var(--border); background: var(--card); font-weight: 600; cursor: pointer; }
+.button-like:focus-within { outline: 2px solid var(--ring); outline-offset: 2px; }
+.ew-status td[data-state="missing"] { color: var(--destructive); font-weight: 600; }
+.my-waivers summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; flex-wrap: wrap; gap: 0.25rem; }
