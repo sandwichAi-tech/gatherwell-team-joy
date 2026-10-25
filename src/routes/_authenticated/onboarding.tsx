@@ -17,7 +17,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { JOIN_BY_KEY } from '@/lib/recognition';
 import { takeNext } from '@/lib/return-to';
 import { recordPendingHostInvite } from '@/lib/discovery';
-import { clearPendingInvite, pendingInvite, initialsOf, joinLink, parseJoinCode, profileQuery, uploadMedia, workspaceQuery } from '@/lib/account';
+import { clearPendingInvite, pendingInvite, initialsOf, joinLink, markProfileOnboarded, parseJoinCode, profileQuery, uploadMedia, workspaceQuery } from '@/lib/account';
 import { NOINDEX_META } from '@/lib/seo';
 
 export const Route = createFileRoute('/_authenticated/onboarding')({ head: () => { const h = pageHead('onboarding.nameTitle', 'meta.onboarding'); return { meta: [...h.meta, { ...NOINDEX_META }] }; }, component: Onboarding });
@@ -91,8 +91,8 @@ function Onboarding() {
     trackEvent('signup'); trackEvent('onboarding_complete');
     clearPendingInvite();
     await recordPendingHostInvite(); // invite-a-host attribution; idempotent, self-referral rejected server-side
-    // Mark the cached profile onboarded so the app gate lets Home through immediately.
-    queryClient.setQueryData(profileQuery(user.id).queryKey, p => (p ? { ...p, onboarded: true } : p));
+    // Refetch the profile so the app gate sees the confirmed adult state, not a stale cached row.
+    await markProfileOnboarded(queryClient, user.id);
     await queryClient.invalidateQueries({ queryKey: ['workspace', user.id] }).catch(() => null);
     // Resume the deep link that started sign-in; otherwise use the chosen start.
     const dest = takeNext() ?? (role === 'host' || role === 'leader' ? '/start' : start === 'find' ? '/discover' : '/home');

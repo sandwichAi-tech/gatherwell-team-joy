@@ -16,7 +16,8 @@
     "inbox": "Messages",
     "support": "Support",
     "insights": "Insights",
-    "communications": "Communication"
+    "communications": "Communication",
+    "more": "More"
   },
   "common": {
     "create": "Create",
@@ -3148,12 +3149,6 @@
         "answered": "Answered",
         "closed": "Closed"
       }
-    },
-    "ownerGuide": {
-      "title": "Owner Guide",
-      "signIn": "Sign in with your existing account at /admin-login. Open Me → Admin dashboard, or go to /admin. Only platform administrators can enter.",
-      "sections": "Users includes coaches and account restrictions. Offerings inspects events and resources. Teams controls communities. Settings controls feature availability and plan configuration. Support handles help requests. Audit records administrative changes.",
-      "limits": "Email, SMS, payments and wallet delivery require their respective setup. Simulated message records are not delivered."
     },
     "dashboardLink": "Admin dashboard",
     "platformGroup": "Platform administration"

@@ -9,9 +9,10 @@ import { TeamSwitcher } from '@/components/team-switcher';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { ClientOnly, Link, useNavigate, useRouterState } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Home, CalendarDays, UsersRound, BookOpen, UserRound, Plus, Sparkles, ArrowUpRight, Megaphone, Flag, X, CircleHelp, Compass, BarChart3 } from '@/components/icons';
+import { Home, CalendarDays, UsersRound, BookOpen, UserRound, Plus, Sparkles, ArrowUpRight, Megaphone, Flag, X, CircleHelp, Compass, BarChart3, MoreHorizontal } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent, DrawerTitle, DrawerDescription } from '@/components/ui/drawer';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { profileQuery, workspaceQuery, initialsOf, firstName } from '@/lib/account';
@@ -21,6 +22,7 @@ import { useFeature } from '@/lib/feature-flags';
 import { isAdminQuery } from '@/lib/site-media';
 import { AccountMenu } from '@/components/account-menu';
 import { insightsNavigationLabel, navigationPathActive, showInsightsNavigation } from '@/lib/insights-navigation';
+import { splitMobileNav } from '@/lib/mobile-nav';
 import { ListSkeleton, QueryFeedback } from '@/components/launch-states';
 
 type Theme = 'system' | 'light' | 'dark';
@@ -57,6 +59,9 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
  const isActive = (path: string) => navigationPathActive(pathname, path);
  const navLabel = (key: string) => key === 'insights' ? insightsNavigationLabel(i18n.resolvedLanguage, t) : t(`nav.${key}`);
  const current = navTabs.find(tab => isActive(tab.path)) ?? tabs[0];
+ // Mobile bar stays fixed at five slots: four primary destinations plus a More menu for the rest.
+ const { primary: primaryTabs, more: moreTabs } = splitMobileNav(navTabs);
+ const moreActive = moreTabs.some(tab => isActive(tab.path));
  useEffect(() => {
   const stored = localStorage.getItem('gatherwell-theme');
   if (stored === 'dark' || stored === 'light' || stored === 'system') updateTheme(stored);
@@ -82,13 +87,13 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
     <header className="app-header">
      <Link to="/home" className="brand mobile-brand"><BrandLogo /><span className="sr-only">{t('brand')}</span></Link>
      <span className="desktop-header-label">{t('common.workspaceLabel')}<span>/</span><strong>{navLabel(current.key)}</strong></span>
-     <div className="header-actions"><Link to="/notifications" className="header-bell" aria-label={t('notifications.title')}><GwIcon name="Bell" size={20}/>{unread > 0 && <span className="header-bell-badge" aria-label={t('notifications.unread')}>{unread > 99 ? '99+' : unread}</span>}</Link><Link to="/discover" className="gw-app-discover" aria-label={t('marketing.discover')}><GwIcon name="Compass" size={20}/><span>{t('marketing.discover')}</span></Link><Button variant="ghost" size="icon" className="assistant-button" aria-label={t('common.assistant')} title={t('common.assistant')} onClick={() => openSheet('assistant')}><Sparkles /></Button><AccountMenu initials={initials} isAdmin={isAdmin} /></div>
+     <div className="header-actions"><Link to="/notifications" className="header-bell" aria-label={t('notifications.title')}><GwIcon name="Bell" size={20}/>{unread > 0 && <span className="header-bell-badge" aria-label={t('notifications.unread')}>{unread > 99 ? '99+' : unread}</span>}</Link><Link to="/discover" className="gw-app-discover" aria-label={t('marketing.discover')}><GwIcon name="Compass" size={20}/><span>{t('marketing.discover')}</span></Link><Button variant="ghost" size="icon" className="assistant-button" aria-label={t('common.assistant')} title={t('common.assistant')} onClick={() => openSheet('assistant')}><Sparkles /></Button><AccountMenu initials={initials} isAdmin={isAdmin} userId={userId} canSwitchToAttending={!!profile && profile.role_intent !== 'guest'} /></div>
     </header>
     <main id="main-content" className="page-content"><ClientOnly fallback={<ListSkeleton />}><PlatformNotices teamId={workspace?.teamId} /><QueryFeedback /><div key={pathname} className="page-transition">{children}</div></ClientOnly></main>
    </div>
    {userId && <ClientOnly><BadgeEarnedWatcher /><PushPrompt userId={userId} /></ClientOnly>}
    {pathname !== '/me' && <Button size="icon" className="floating-create" onClick={() => openSheet('create')} aria-label={t('common.create')} title={t('common.create')}><Plus /></Button>}
-   <nav className={`bottom-nav ${navTabs.length > 5 ? 'expanded-nav' : ''} ${profile?.role_intent === 'guest' ? 'attendee-nav' : ''}`} aria-label={t('nav.label')}>{navTabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: false }} aria-current={isActive(path) ? 'page' : undefined} className={`bottom-link ${isActive(path) ? 'is-active' : ''}`}><Icon /><span>{navLabel(key)}</span></Link>)}</nav>
+   <nav className="bottom-nav" aria-label={t('nav.label')}>{primaryTabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: false }} aria-current={isActive(path) ? 'page' : undefined} className={`bottom-link ${isActive(path) ? 'is-active' : ''}`}><Icon /><span>{navLabel(key)}</span></Link>)}{moreTabs.length > 0 && <DropdownMenu><DropdownMenuTrigger asChild><button type="button" className={`bottom-link bottom-more ${moreActive ? 'is-active' : ''}`} aria-label={t('nav.more')}><MoreHorizontal /><span>{t('nav.more')}</span></button></DropdownMenuTrigger><DropdownMenuContent side="top" align="end" sideOffset={8} className="bottom-more-menu">{moreTabs.map(({ key, path, icon: Icon }) => <DropdownMenuItem key={key} asChild><Link to={path} aria-current={isActive(path) ? 'page' : undefined}><Icon /><span>{navLabel(key)}</span></Link></DropdownMenuItem>)}</DropdownMenuContent></DropdownMenu>}</nav>
    {userId && <ClientOnly><AssistantPanel open={sheet === 'assistant'} onOpenChange={o => setSheet(o ? 'assistant' : null)} screen={current.key as typeof tabs[number]['key']} name={firstName(profile?.full_name)} /></ClientOnly>}
     {sheet !== null && sheet !== 'assistant' && <Drawer open onOpenChange={open => { if (!open) { setSheet(null); setDetail(null); } }} shouldScaleBackground={false}>
     <DrawerContent className="gatherwell-sheet"><div className="sheet-heading"><div><DrawerTitle>{detail ? detail.title : sheet === 'create' ? t('create.title') : sheet ? t(`placeholder.${sheet}`) : ''}</DrawerTitle><DrawerDescription className={sheet === 'create' ? 'mt-3' : 'sr-only'}>{sheet === 'create' ? t('create.description') : t('common.comingSoon')}</DrawerDescription></div><Button variant="ghost" size="icon" onClick={() => setSheet(null)} aria-label={t('common.close')}><X /></Button></div>
