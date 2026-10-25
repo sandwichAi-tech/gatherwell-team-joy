@@ -1,5 +1,12 @@
 # ZoheeWell Change Log
 
+## v0.41.5 — Top-level Insights navigation (2026-10-25)
+- Shared `gatherwell-shell.tsx` adds the existing `/insights` dashboard after Communication in desktop and scrollable mobile menus, using the existing BarChart3 icon and `nav.insights` labels (Insights / Estadísticas). No duplicate route or dashboard; every common signed-in coach page uses this shell.
+- New `insights-navigation.ts` gates visibility to hosts, owners/admins, analysts and legacy leaders outside guest view. Own-host analytics remain caller-scoped; team analytics retain their separate analytics capability check. Members, content editors, moderators and check-in-only roles receive no new menu entry. Authentication/data guards and records are unchanged.
+- Active styling and aria-current cover `/insights` and nested paths. Existing bilingual labels are reused with localized scalar fallback against missing keys/objects. New `insights-navigation.test.ts` covers roles, guests, exact/nested path matching and fallback safety.
+- Full suite: 478 tests / 58 files passed; automatic typecheck/production build OK. Authenticated real dashboard navigation Events → Insights → Events → Insights passed with keyboard and pointer in EN/ES at 1280/390; inspected screenshots, no horizontal page overflow and zero console/page errors. Fresh signed-out context redirected to `/login` after auth hydration. No fixtures, database, role, provider or publish changes.
+- Limitations: no second-account signed-in browser isolation/denial or screen-reader narration check. Existing server scopes unchanged; focused role denial tests passed. Mobile primary menu retains its existing horizontal scroll to keep full-size targets.
+
 ## v0.41.4 — Event image composition and persistent admin return (2026-10-25)
 - Event Square/Story/Wide images now come from one renderer used for preview, download, native file sharing and event-detail Story download. Photos fill each canvas using the saved focal point and blend through multi-stop Midnight Plum fades; official Warm Ivory logo, Noto Sans and explicit title/details/footer bounds prevent overlap. Long text wraps or clamps; internal preview hosts and invite tokens are never shown, using `zoheewell.com/e/{id}` only when it fits, otherwise `zoheewell.com`.
 - The global account avatar is now a menu on every signed-in app page. Platform admins see a separate “Platform administration” section with Admin dashboard / Panel de administración; non-admins see only Your profile. `/admin` route and data role checks remain unchanged.

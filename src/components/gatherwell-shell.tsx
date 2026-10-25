@@ -20,6 +20,7 @@ import type { WorkspaceRole } from '@/components/workspace-settings';
 import { useFeature } from '@/lib/feature-flags';
 import { isAdminQuery } from '@/lib/site-media';
 import { AccountMenu } from '@/components/account-menu';
+import { insightsNavigationLabel, navigationPathActive, showInsightsNavigation } from '@/lib/insights-navigation';
 import { ListSkeleton, QueryFeedback } from '@/components/launch-states';
 
 type Theme = 'system' | 'light' | 'dark';
@@ -30,7 +31,7 @@ const tabs = [{ key: 'home', path: '/home', icon: Home }, { key: 'events', path:
 const guestTabs = [{ key: 'home', path: '/home', icon: Home }, { key: 'discover', path: '/discover', icon: Compass }, { key: 'circles', path: '/circles', icon: UsersRound }, { key: 'learn', path: '/learn', icon: BookOpen }, { key: 'progress', path: '/progress', icon: BarChart3 }, { key: 'me', path: '/me', icon: UserRound }] as const;
 const creations = [{ key: 'event', icon: CalendarDays }, { key: 'announcement', icon: Megaphone }, { key: 'challenge', icon: Flag }, { key: 'training', icon: BookOpen }] as const;
 export function GatherwellShell({ children, userId }: { children: ReactNode; userId: string }) {
- const { t } = useTranslation();
+ const { t, i18n } = useTranslation();
  const { data: profile } = useQuery(profileQuery(userId));
  const { data: workspace } = useQuery(workspaceQuery(userId));
  const { data: isAdmin = false } = useQuery(isAdminQuery(userId));
@@ -51,9 +52,10 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
  const wsRole = workspace ? ((workspace.ownerId === userId ? 'owner' : workspace.workspaceRole) as 'owner' | WorkspaceRole) : null;
  const canContent = workspace?.role === 'leader' || roleAllows(wsRole, 'content');
  const canManageTeam = workspace?.role === 'leader' || roleAllows(wsRole, 'members');
- const coachTabs = [...tabs.slice(0, 4), ...(roleAllows(wsRole, 'messages') ? [{ key: 'communications', path: '/communications', icon: Megaphone } as const] : []), tabs[4]];
+ const coachTabs = [...tabs.slice(0, 4), ...(roleAllows(wsRole, 'messages') ? [{ key: 'communications', path: '/communications', icon: Megaphone } as const] : []), ...(showInsightsNavigation(wsRole, workspace?.role === 'leader', profile?.role_intent === 'guest') ? [{ key: 'insights', path: '/insights', icon: BarChart3 } as const] : []), tabs[4]];
  const navTabs = (profile?.role_intent === 'guest' ? guestTabs : coachTabs).filter(tab => tab.key !== 'learn' || learnOn);
- const isActive = (path: string) => pathname === path || (pathname.startsWith(`${path}/`));
+ const isActive = (path: string) => navigationPathActive(pathname, path);
+ const navLabel = (key: string) => key === 'insights' ? insightsNavigationLabel(i18n.resolvedLanguage, t) : t(`nav.${key}`);
  const current = navTabs.find(tab => isActive(tab.path)) ?? tabs[0];
  useEffect(() => {
   const stored = localStorage.getItem('gatherwell-theme');
@@ -74,19 +76,19 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
     <Link to="/home" className="brand" aria-label={t('brand')}><BrandLogo /><span className="sr-only">{t('brand')}</span></Link>
     <div className="workspace-card"><span className="initial-avatar" aria-label={profile?.full_name ?? t('common.you')}>{initials}</span><div><strong>{workspace?.name ?? t('workspace.none')}</strong><p>{workspace ? t(`plans.${workspace.plan}`) : profile?.full_name}</p></div></div>
     <TeamSwitcher userId={userId} className="sidebar-switcher" />
-    <nav className="sidebar-nav" aria-label={t('nav.label')}>{navTabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: true }} className={`sidebar-link ${isActive(path) ? 'is-active' : ''}`}><Icon /><span>{t(`nav.${key}`)}</span></Link>)}{profile?.role_intent !== 'guest' && <Link to="/discover" className="sidebar-link"><GwIcon name="Compass"/><span>{t('marketing.discover')}</span></Link>}</nav>
+    <nav className="sidebar-nav" aria-label={t('nav.label')}>{navTabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: false }} aria-current={isActive(path) ? 'page' : undefined} className={`sidebar-link ${isActive(path) ? 'is-active' : ''}`}><Icon /><span>{navLabel(key)}</span></Link>)}{profile?.role_intent !== 'guest' && <Link to="/discover" className="sidebar-link"><GwIcon name="Compass"/><span>{t('marketing.discover')}</span></Link>}</nav>
    </aside>
    <div className="app-main">
     <header className="app-header">
      <Link to="/home" className="brand mobile-brand"><BrandLogo /><span className="sr-only">{t('brand')}</span></Link>
-     <span className="desktop-header-label">{t('common.workspaceLabel')}<span>/</span><strong>{t(`nav.${current.key}`)}</strong></span>
+     <span className="desktop-header-label">{t('common.workspaceLabel')}<span>/</span><strong>{navLabel(current.key)}</strong></span>
      <div className="header-actions"><Link to="/notifications" className="header-bell" aria-label={t('notifications.title')}><GwIcon name="Bell" size={20}/>{unread > 0 && <span className="header-bell-badge" aria-label={t('notifications.unread')}>{unread > 99 ? '99+' : unread}</span>}</Link><Link to="/discover" className="gw-app-discover" aria-label={t('marketing.discover')}><GwIcon name="Compass" size={20}/><span>{t('marketing.discover')}</span></Link><Button variant="ghost" size="icon" className="assistant-button" aria-label={t('common.assistant')} title={t('common.assistant')} onClick={() => openSheet('assistant')}><Sparkles /></Button><AccountMenu initials={initials} isAdmin={isAdmin} /></div>
     </header>
     <main id="main-content" className="page-content"><ClientOnly fallback={<ListSkeleton />}><PlatformNotices teamId={workspace?.teamId} /><QueryFeedback /><div key={pathname} className="page-transition">{children}</div></ClientOnly></main>
    </div>
    {userId && <ClientOnly><BadgeEarnedWatcher /><PushPrompt userId={userId} /></ClientOnly>}
    {pathname !== '/me' && <Button size="icon" className="floating-create" onClick={() => openSheet('create')} aria-label={t('common.create')} title={t('common.create')}><Plus /></Button>}
-   <nav className={`bottom-nav ${navTabs.length > 5 ? 'expanded-nav' : ''} ${profile?.role_intent === 'guest' ? 'attendee-nav' : ''}`} aria-label={t('nav.label')}>{navTabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: true }} className={`bottom-link ${isActive(path) ? 'is-active' : ''}`}><Icon /><span>{t(`nav.${key}`)}</span></Link>)}</nav>
+   <nav className={`bottom-nav ${navTabs.length > 5 ? 'expanded-nav' : ''} ${profile?.role_intent === 'guest' ? 'attendee-nav' : ''}`} aria-label={t('nav.label')}>{navTabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: false }} aria-current={isActive(path) ? 'page' : undefined} className={`bottom-link ${isActive(path) ? 'is-active' : ''}`}><Icon /><span>{navLabel(key)}</span></Link>)}</nav>
    {userId && <ClientOnly><AssistantPanel open={sheet === 'assistant'} onOpenChange={o => setSheet(o ? 'assistant' : null)} screen={current.key as typeof tabs[number]['key']} name={firstName(profile?.full_name)} /></ClientOnly>}
     {sheet !== null && sheet !== 'assistant' && <Drawer open onOpenChange={open => { if (!open) { setSheet(null); setDetail(null); } }} shouldScaleBackground={false}>
     <DrawerContent className="gatherwell-sheet"><div className="sheet-heading"><div><DrawerTitle>{detail ? detail.title : sheet === 'create' ? t('create.title') : sheet ? t(`placeholder.${sheet}`) : ''}</DrawerTitle><DrawerDescription className={sheet === 'create' ? 'mt-3' : 'sr-only'}>{sheet === 'create' ? t('create.description') : t('common.comingSoon')}</DrawerDescription></div><Button variant="ghost" size="icon" onClick={() => setSheet(null)} aria-label={t('common.close')}><X /></Button></div>
