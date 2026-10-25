@@ -198,7 +198,10 @@ export function LessonPage({ id }: { id: string }) {
   const lesson = data.lessons.find(l => l.id === id);
   if (!lesson) return <section className="panel"><BackLink to="/learn" label={t('learn.title')} /><p className="auth-subtitle">{t('learnHub.notFound')}</p></section>;
   const track = data.tracks.find(tr => tr.id === lesson.track_id)!;
-  const list = lessonsOf(data, track.id); const idx = list.findIndex(l => l.id === id);
+  // Draft lessons are leader-only: a participant with a direct link gets the not-found state.
+  const showDrafts = leader && track.team_id === teamId;
+  if (!lesson.is_published && !showDrafts) return <section className="panel"><BackLink to="/learn" label={t('learn.title')} /><p className="auth-subtitle">{t('learnHub.notFound')}</p></section>;
+  const list = visibleLessons(data, track.id, showDrafts); const idx = list.findIndex(l => l.id === id);
   const done = data.done.has(id); const s = trackStats(data, track.id);
   const next = list.slice(idx + 1).find(l => !data.done.has(l.id)) ?? list[idx + 1] ?? null;
   const notes = pick(lang, lesson.notes_en, lesson.notes_es);
