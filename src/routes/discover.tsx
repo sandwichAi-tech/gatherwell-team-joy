@@ -5,6 +5,7 @@ import { hasActiveFilters } from '@/lib/discovery';
 import i18n from '@/lib/i18n';
 import { publicShareImage } from '@/lib/public-media.functions';
 import { RetryState } from '@/components/launch-states';
+import { SITE_URL } from '@/lib/seo';
 
 const str = (v: unknown) => (typeof v === 'string' && v ? v : undefined);
 const one = (v: unknown) => (v === 1 || v === '1' ? (1 as const) : undefined);
