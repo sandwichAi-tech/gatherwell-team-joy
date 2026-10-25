@@ -8,5 +8,5 @@ export function EventSessions({ eventId, token }: { eventId: string; token?: str
   const {data,error}=await supabase.rpc('public_event_sessions',{_event:eventId,...(token ? {_token:token}: {})}); if(error)throw error; return data as unknown as EventSession[];
  } });
  if(!q.data?.length)return null;
- return <section className="form-section"><h2>{t('sessions.heading')}</h2><p>{t('sessions.scope')}</p><ol>{q.data.map((s,i)=><li key={i} className="event-row"><div><h3>{s.title}</h3><p>{new Date(s.starts_at).toLocaleString(i18n.resolvedLanguage)} – {new Date(s.ends_at).toLocaleString(i18n.resolvedLanguage)}</p>{s.place&&<p>{s.place}</p>}</div></li>)}</ol></section>;
+ return <section className="form-section"><h2>{t('sessions.heading')}</h2><p>{t('sessions.scope')}</p><ol className="m-0 list-none p-0">{q.data.map((s,i)=><li key={i} className="min-w-0 border-t border-border py-4"><h3 className="break-words">{s.title}</h3><p className="break-words">{new Date(s.starts_at).toLocaleString(i18n.resolvedLanguage)} – {new Date(s.ends_at).toLocaleString(i18n.resolvedLanguage)}</p>{s.place&&<p className="break-words">{s.place}</p>}</li>)}</ol></section>;
 }
