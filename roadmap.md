@@ -1,5 +1,9 @@
 # Roadmap
 
+## Insights primary navigation
+- [x] Reuse /insights in the shared desktop/mobile shell with scoped visibility, bilingual fallback and nested active state.
+- [ ] Full tests, automatic typecheck/build and authenticated EN/ES desktop/mobile menu return verification.
+
 ## Reopened image creator and persistent admin navigation
 - [x] Unified Square/Story/Wide previews, downloads, native file shares and event-detail Story export; focal cropping, blended fades, bounded text and canonical footer.
 - [x] Global authorized Admin dashboard menu with verified /admin → Events → /admin return on EN/ES desktop/mobile.
