@@ -52,16 +52,16 @@ function TypeChooser() {
   </>;
 }
 
-export function CreateResourcePage({ type }: { type?: string | undefined }) {
+export function CreateResourcePage({ type, id }: { type?: string | undefined; id?: string | undefined }) {
   const { t } = useTranslation();
   const { workspace } = useLearn(); const canCreate = useCanCreate();
   const parsed = parseCreateType(type);
 
   if (!workspace) return <ListSkeleton />;
   if (!canCreate) return <section className="panel"><Link to="/learn" className="back-link"><ArrowLeft />{t('resources.title')}</Link><p className="auth-subtitle">{t('resources.create.creatorsOnly')}</p></section>;
-  // A picked type opens the single dynamic builder — no detour through unrelated pages.
+  // A picked type (or an existing item via ?id=) opens the single dynamic builder.
   // No key: the builder must stay mounted across type switches so shared input survives.
-  if (parsed) return <ResourceBuilder initialType={parsed} />;
+  if (parsed) return <ResourceBuilder initialType={parsed} initialId={id} />;
   return <>
     <Link to="/learn" className="back-link"><ArrowLeft />{t('resources.create.back')}</Link>
     <div className="page-heading"><div><span className="eyebrow">{t('resources.title')}</span><h1>{t('resources.create.title')}</h1><p>{t('resources.create.sentence')}</p></div>
