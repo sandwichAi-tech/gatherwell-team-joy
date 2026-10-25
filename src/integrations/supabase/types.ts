@@ -3766,8 +3766,10 @@ export type Database = {
       }
       offers: {
         Row: {
+          accent: string
           accessibility_notes: string | null
           billing_interval: string | null
+          card_layout: string
           category: string | null
           cert_expiry_months: number | null
           cert_issuer: string | null
@@ -3783,6 +3785,8 @@ export type Database = {
           cover_style: number
           cover_url: string | null
           created_at: string
+          cta_en: string | null
+          cta_es: string | null
           currency: string
           description_en: string | null
           description_es: string | null
@@ -3801,8 +3805,12 @@ export type Database = {
           license_en: string | null
           license_es: string | null
           price_cents: number
+          promo_en: string | null
+          promo_es: string | null
           refund_policy: string
           status: string
+          subtitle_en: string | null
+          subtitle_es: string | null
           summary_en: string | null
           summary_es: string | null
           support_email: string | null
@@ -3815,8 +3823,10 @@ export type Database = {
           visibility: string
         }
         Insert: {
+          accent?: string
           accessibility_notes?: string | null
           billing_interval?: string | null
+          card_layout?: string
           category?: string | null
           cert_expiry_months?: number | null
           cert_issuer?: string | null
@@ -3832,6 +3842,8 @@ export type Database = {
           cover_style?: number
           cover_url?: string | null
           created_at?: string
+          cta_en?: string | null
+          cta_es?: string | null
           currency?: string
           description_en?: string | null
           description_es?: string | null
@@ -3850,8 +3862,12 @@ export type Database = {
           license_en?: string | null
           license_es?: string | null
           price_cents?: number
+          promo_en?: string | null
+          promo_es?: string | null
           refund_policy?: string
           status?: string
+          subtitle_en?: string | null
+          subtitle_es?: string | null
           summary_en?: string | null
           summary_es?: string | null
           support_email?: string | null
@@ -3864,8 +3880,10 @@ export type Database = {
           visibility?: string
         }
         Update: {
+          accent?: string
           accessibility_notes?: string | null
           billing_interval?: string | null
+          card_layout?: string
           category?: string | null
           cert_expiry_months?: number | null
           cert_issuer?: string | null
@@ -3881,6 +3899,8 @@ export type Database = {
           cover_style?: number
           cover_url?: string | null
           created_at?: string
+          cta_en?: string | null
+          cta_es?: string | null
           currency?: string
           description_en?: string | null
           description_es?: string | null
@@ -3899,8 +3919,12 @@ export type Database = {
           license_en?: string | null
           license_es?: string | null
           price_cents?: number
+          promo_en?: string | null
+          promo_es?: string | null
           refund_policy?: string
           status?: string
+          subtitle_en?: string | null
+          subtitle_es?: string | null
           summary_en?: string | null
           summary_es?: string | null
           support_email?: string | null
@@ -5083,51 +5107,75 @@ export type Database = {
       }
       recipes: {
         Row: {
+          accent: string
+          card_layout: string
           cover_style: number
           cover_url: string | null
           created_at: string
           created_by: string | null
+          cta_en: string | null
+          cta_es: string | null
           id: string
           ingredients: Json
           is_published: boolean
           prep_minutes: number | null
           private_owner: string | null
+          promo_en: string | null
+          promo_es: string | null
           sort_order: number
           steps: Json
+          subtitle_en: string | null
+          subtitle_es: string | null
           tags: string[]
           team_id: string | null
           title_en: string
           title_es: string
         }
         Insert: {
+          accent?: string
+          card_layout?: string
           cover_style?: number
           cover_url?: string | null
           created_at?: string
           created_by?: string | null
+          cta_en?: string | null
+          cta_es?: string | null
           id?: string
           ingredients?: Json
           is_published?: boolean
           prep_minutes?: number | null
           private_owner?: string | null
+          promo_en?: string | null
+          promo_es?: string | null
           sort_order?: number
           steps?: Json
+          subtitle_en?: string | null
+          subtitle_es?: string | null
           tags?: string[]
           team_id?: string | null
           title_en?: string
           title_es?: string
         }
         Update: {
+          accent?: string
+          card_layout?: string
           cover_style?: number
           cover_url?: string | null
           created_at?: string
           created_by?: string | null
+          cta_en?: string | null
+          cta_es?: string | null
           id?: string
           ingredients?: Json
           is_published?: boolean
           prep_minutes?: number | null
           private_owner?: string | null
+          promo_en?: string | null
+          promo_es?: string | null
           sort_order?: number
           steps?: Json
+          subtitle_en?: string | null
+          subtitle_es?: string | null
           tags?: string[]
           team_id?: string | null
           title_en?: string
@@ -6548,46 +6596,70 @@ export type Database = {
       }
       tracks: {
         Row: {
+          accent: string
+          card_layout: string
           cover_style: number
           cover_url: string | null
           created_at: string
+          cta_en: string | null
+          cta_es: string | null
           description_en: string | null
           description_es: string | null
           id: string
           is_published: boolean
           is_start_here: boolean
           offer_id: string | null
+          promo_en: string | null
+          promo_es: string | null
           sort_order: number
+          subtitle_en: string | null
+          subtitle_es: string | null
           team_id: string
           title_en: string
           title_es: string
         }
         Insert: {
+          accent?: string
+          card_layout?: string
           cover_style?: number
           cover_url?: string | null
           created_at?: string
+          cta_en?: string | null
+          cta_es?: string | null
           description_en?: string | null
           description_es?: string | null
           id?: string
           is_published?: boolean
           is_start_here?: boolean
           offer_id?: string | null
+          promo_en?: string | null
+          promo_es?: string | null
           sort_order?: number
+          subtitle_en?: string | null
+          subtitle_es?: string | null
           team_id: string
           title_en?: string
           title_es?: string
         }
         Update: {
+          accent?: string
+          card_layout?: string
           cover_style?: number
           cover_url?: string | null
           created_at?: string
+          cta_en?: string | null
+          cta_es?: string | null
           description_en?: string | null
           description_es?: string | null
           id?: string
           is_published?: boolean
           is_start_here?: boolean
           offer_id?: string | null
+          promo_en?: string | null
+          promo_es?: string | null
           sort_order?: number
+          subtitle_en?: string | null
+          subtitle_es?: string | null
           team_id?: string
           title_en?: string
           title_es?: string
