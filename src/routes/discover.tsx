@@ -35,9 +35,9 @@ export const Route = createFileRoute('/discover')({
   head: ({ matches, loaderData }) => {
     const title = i18n.t('landing.meta.discoverTitle');
     const description = i18n.t('landing.meta.discover');
-    // Filtered permutations are not indexed; only the clean catalog is.
+    // Filtered permutations and non-default tabs are not indexed; only the clean catalog is.
     const search = (matches.at(-1)?.search ?? {}) as DiscoverSearch;
-    const filtered = hasActiveFilters(searchToFilters(search, null)) || !!search.sort;
+    const filtered = hasActiveFilters(searchToFilters(search, null)) || !!search.sort || (search.tab !== undefined && search.tab !== 'events');
     return {
       meta: [
         { title }, { name: 'description', content: description },
