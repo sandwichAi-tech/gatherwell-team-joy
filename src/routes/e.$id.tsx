@@ -1,4 +1,5 @@
 import { RefundLine } from '@/components/refund-line';
+import { EventSessions } from '@/components/event-sessions';
 import { CommunitySeatCard } from '@/components/community-seats';
 import { serviceFee } from '@/lib/plan-fees';
 import { RetreatDetails } from '@/components/retreat';
@@ -172,6 +173,7 @@ function PublicEventBody() {
         {(event.contact_email || event.contact_phone) && <><strong>{t('builder.contact')}</strong><p>{[event.contact_email, event.contact_phone].filter(Boolean).join(' · ')}</p></>}
       </section>}
       {asRetreat(event.retreat) && <RetreatDetails retreat={asRetreat(event.retreat)!} startsAt={event.starts_at} endsAt={event.ends_at} priceCents={price?.price_cents ?? null} />}
+      <EventSessions eventId={id} />
 
       <section className="guest-going" aria-live="polite">
         {!event.hide_guest_list && (event.initials?.length ?? 0) > 0 && <div className="guest-avatars" aria-hidden="true">{event.initials!.map((i, n) => <span key={n} className="initial-avatar">{i}</span>)}</div>}
