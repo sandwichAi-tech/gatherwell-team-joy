@@ -85,7 +85,7 @@ export function policyIssues(c: PolicyConfig, text: string, paid: boolean, publi
       if (c.refund === 'percent' && (!Number.isInteger(p) || p < 1 || p > 99)) out.push('percent');
       // A "no refunds" policy whose text still promises a refund contradicts itself.
       if (c.refund === 'none' && /\b(full refund|reembolso completo)\b/i.test(body) && !/host|anfitri/i.test(body)) out.push('contradiction');
-    } else if (/\b(refund|reembolso)/i.test(body) && !c.edited) out.push('contradiction');
+    } else if (/(refund|reembolso)/i.test(body)) out.push('contradiction');
     if (publish && body) out.push(...(c.reviewedSha ? [] : (['review'] as PolicyIssue[])));
   }
   return out;
