@@ -138,15 +138,11 @@ export const saveMessageJourney = createServerFn({ method: 'POST' })
       const { data:id,error }=await context.supabase.rpc('save_resource_journey',{_team:data.teamId,_id:data.id??null,_offer:data.offerId,_name:data.name,_steps:data.steps as never} as never);
       if(error)throw new Error(error.message);return {id};
     }
-    const { data: id, error } = await context.supabase.rpc('save_message_journey', {
-      _team: data.teamId, _id: data.id ?? null, _name: data.name, _start_trigger: data.start_trigger,
-      _steps: data.steps,
+    const { data: id, error } = await context.supabase.rpc('save_event_communication_journey', {
+      _team: data.teamId, _id: data.id ?? null, _name: data.name, _trigger: data.start_trigger,
+      _event: data.eventId || null, _steps: data.steps,
     } as never);
     if (error) throw new Error(error.message);
-    if (typeof id === 'string') {
-      const { error: scopeError } = await context.supabase.rpc('set_communication_event', { _journey: id, _event: data.eventId || null } as never);
-      if (scopeError) throw new Error(scopeError.message);
-    }
     return { id };
   });
 
