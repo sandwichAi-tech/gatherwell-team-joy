@@ -1,5 +1,11 @@
 # ZoheeWell Change Log
 
+## v0.39 — Public About & Careers pages (2026-10-25)
+- New public `/about`: mission-led hero ("Life is better together."), what ZoheeWell is (one connected home instead of five tools), who it serves (hosts/coaches, teachers/creators, teams/leaders, participants — wellness-network communities described inclusively, never MLM-only), how hosts and participants use it, and an honest beta-stage section. CTAs: Create an event (sign-in host intent) and Discover events.
+- New public `/careers`: candid mission/work section and an explicit "No open roles right now" state — no invented positions, application form, salary, or talent pool. One low-pressure contact path through the existing support route (via sign-in return flow), plus a link to About. No JobPosting schema.
+- Both pages: full EN/ES parity, one h1 with clean heading order, unique title/description, canonical + og:url on https://zoheewell.com per the SEO/AEO policy, added to the sitemap (now 15 routes) and to the public footer Company column in all public layouts.
+- Verified: 433 tests, typecheck/build clean; browser QA at 390/1280 in EN/ES confirmed metadata, footer links, CTA destinations, keyboard focus, 200% zoom + reduced motion with no overflow or console errors.
+
 ## v0.38 — Site-wide SEO/AEO policy (2026-10-25)
 - New `src/lib/seo.ts`: single canonical base (`SITE_URL = https://zoheewell.com`), `publicIndexing()` (canonical + og:url pair) and `NOINDEX_META` helpers; no preview/service URLs are ever emitted.
 - Indexable public routes now carry unique title/description plus canonical and og:url: `/`, `/discover`, `/pricing`, `/faq`, `/hosts`, `/studios`, `/terms`, `/privacy`, `/credits`, `/legal/*`, `/e/$id`, `/h/$slug`, `/l/$slug`, `/t/$slug`, `/o/$id`, `/verify/$number`.
