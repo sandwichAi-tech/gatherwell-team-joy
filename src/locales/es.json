@@ -16,7 +16,8 @@
     "inbox": "Mensajes",
     "support": "Soporte",
     "insights": "Estadísticas",
-    "communications": "Comunicación"
+    "communications": "Comunicación",
+    "more": "Más"
   },
   "common": {
     "create": "Crear",
@@ -3148,12 +3149,6 @@
         "answered": "Respondidas",
         "closed": "Cerradas"
       }
-    },
-    "ownerGuide": {
-      "title": "Guía para propietarios",
-      "signIn": "Inicia sesión con tu cuenta existente en /admin-login. Abre Yo → Panel de administración o visita /admin. Solo pueden entrar administradores de la plataforma.",
-      "sections": "Usuarios incluye coaches y restricciones de cuentas. Ofertas permite revisar eventos y recursos. Equipos controla comunidades. Configuración controla funciones y planes. Soporte gestiona solicitudes. Auditoría registra cambios administrativos.",
-      "limits": "El correo, SMS, pagos y pases requieren su configuración correspondiente. Los mensajes simulados no se entregan."
     },
     "dashboardLink": "Panel de administración",
     "platformGroup": "Administración de la plataforma"
