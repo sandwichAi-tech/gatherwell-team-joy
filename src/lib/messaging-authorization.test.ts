@@ -6,6 +6,11 @@ vi.mock('@/integrations/supabase/auth-middleware', () => ({ requireSupabaseAuth:
 import { getJourneyRuns, listCommunicationOfferings, saveMessageJourney } from './messaging.functions';
 type Handler = (args: { data: Record<string, unknown>; context: { supabase: { rpc: ReturnType<typeof vi.fn> } } }) => Promise<unknown>;
 describe('Communication server authorization boundaries', () => {
+ it('saves event journey and authorized event association atomically', async () => {
+  const rpc = vi.fn().mockResolvedValue({ data: 'saved-journey', error: null });
+  expect(await (saveMessageJourney as unknown as Handler)({ data: { teamId: 'own-team', eventId: 'own-event', name: 'Reminder', start_trigger: 'event_reminder', steps: [] }, context: { supabase: { rpc } } })).toEqual({ id: 'saved-journey' });
+  expect(rpc).toHaveBeenCalledExactlyOnceWith('save_event_communication_journey', { _team: 'own-team', _id: null, _event: 'own-event', _name: 'Reminder', _trigger: 'event_reminder', _steps: [] });
+ });
  it('uses caller-scoped offering choices and propagates denied access', async () => {
   const rpc = vi.fn().mockResolvedValue({ error: { message: 'forbidden' } });
   await expect((listCommunicationOfferings as unknown as Handler)({ data: { teamId: 'other-team' }, context: { supabase: { rpc } } })).rejects.toThrow('forbidden');
