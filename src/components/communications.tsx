@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { CoachSubscriberSegments } from './coach-updates';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { useTranslation } from 'react-i18next';
@@ -85,6 +86,7 @@ export function CommunicationsPage() {
     </header>
 
     {setup && <SetupBanner setup={setup} />}
+    {canManage && <CoachSubscriberSegments />}
     <section className="comms-section"><h2>{t('comms.offeringScopeTitle')}</h2><p className="field-hint">{t('comms.offeringScopeHint')}</p><Button asChild variant="secondary"><Link to="/learn" search={{ tab: 'mine' }}>{t('comms.resourcesLink')}</Link></Button></section>
 
     {!canManage && <p className="empty-state" role="note">{t('comms.membersReadOnly')}</p>}
