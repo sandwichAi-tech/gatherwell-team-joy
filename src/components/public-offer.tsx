@@ -14,6 +14,10 @@ import { COVER_STYLES } from '@/lib/gatherings';
 import { formatMoney } from '@/lib/billing';
 import { minutesLabel } from '@/components/learn';
 import { rememberNext } from '@/lib/return-to';
+import { BrandImage } from '@/components/brand-image';
+import { RichTextView } from '@/components/rich-text';
+import { publicOfferCover } from '@/lib/host-cover.functions';
+import { accentPair } from '@/lib/resource-item';
 
 /** Client-only session check; the page server-renders signed-out either way. */
 function useUserId() {

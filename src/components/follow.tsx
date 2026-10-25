@@ -4,7 +4,7 @@ import { CoachTrustSection, VerifiedMark, useIsVerified } from '@/components/coa
 import { CopyButton, ShareButton } from '@/components/copy-button';
 import { FeaturedBadges } from '@/components/recognition';
 import { publicHostCover, publicOfferCover } from '@/lib/host-cover.functions';
-import { publicCardModel } from '@/lib/public-cards';
+import { publicCardModel, type PublicOffering } from '@/lib/public-cards';
 import { COVER_STYLES } from '@/lib/gatherings';
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
