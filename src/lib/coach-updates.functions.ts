@@ -13,7 +13,7 @@ export const requestCoachUpdates = createServerFn({method:'POST'})
   if(!s.email||!s.announcements)return {ok:false,reason:'setup_required'};
   const url=new URL(data.origin);
   if(url.protocol!=='https:' && url.origin!=='http://localhost:8080')throw new Error('invalid_origin');
-  if(!['zoheewell.com','www.zoheewell.com','localhost'].includes(url.hostname)&&!url.hostname.endsWith('.lovable.app'))throw new Error('invalid_origin');
+  if(!['https://zoheewell.com','https://www.zoheewell.com','https://gatherwell-team-joy.lovable.app','https://id-preview--d56c15d9-a849-4fc3-a192-501da269084f.lovable.app','http://localhost:8080'].includes(url.origin))throw new Error('invalid_origin');
   const {supabaseAdmin}=await import('@/integrations/supabase/client.server');
   const {error}=await supabaseAdmin.rpc('request_coach_updates',{_slug:data.slug,_email:data.email,_language:data.language,_announcements:data.announcements,_events:data.events,_resources:data.resources,_adult:data.adult,_base:url.origin});
   if(error)throw new Error(error.message);return {ok:true,reason:'confirmation_pending'};

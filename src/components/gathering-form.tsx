@@ -193,18 +193,20 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (priceCents && publish && !canSell) { toast.error(t('billing.payoutsRequired')); return; }
     setBusy(true);
     if (editing) {
+      if (multi || source?.event.experience_sessions && Array.isArray(source.event.experience_sessions) && source.event.experience_sessions.length) { const cleared=await supabase.rpc('set_event_sessions',{_event:eventId??'',_sessions:[]});if(cleared.error){setBusy(false);toast.error(t('sessions.invalid'));return;} }
       const { error } = await supabase.rpc('update_gathering', { _event: eventId!, _p: payload(), _whole_series: wholeSeries });
-      if (!error && publish && source?.event.status === 'draft') { const r = await supabase.from('events').update({ status: 'published' }).eq('id', eventId!); if (r.error) { setBusy(false); toast.error(rpcError(t, r.error)); return; } }
       setBusy(false);
       if (error) { toast.error(rpcError(t, error)); return; }
       await savePrice(eventId!); await saveTeamReg(eventId!); if (!(await saveRetreat(eventId!))) return;
       { const result = await supabase.rpc('set_event_sessions', { _event: eventId ?? '', _sessions: (multi ? sessions : []) as never }); if (result.error) { toast.error(t('sessions.invalid')); return; } }
       await saveCover(eventId!);
       if (!(await saveDetails(eventId!))) return;
+      if (publish && source?.event.status === 'draft') { const r = await supabase.from('events').update({ status: 'published' }).eq('id', eventId??''); if(r.error){toast.error(rpcError(t,r.error));return;} }
       await queryClient.invalidateQueries(); toast.success(t('gathering.saved'));
       void navigate({ to: '/event/$id', params: { id: eventId! } }); return;
     }
-    const { data, error } = await supabase.rpc('create_gathering_at', { _team: teamId, _p: payload(), _publish: publish, _weekly: false }); if (!error) { trackEvent('gathering_created', { weekly }); if (publish) trackEvent('gathering_published'); if (templateId) trackEvent('template_launched'); }
+    const staged=multi||retreatOn;
+    const { data, error } = await supabase.rpc('create_gathering_at', { _team: teamId, _p: payload(), _publish: publish&&!staged, _weekly: false }); if (!error) { trackEvent('gathering_created', { weekly }); if (publish&&!staged) trackEvent('gathering_published'); if (templateId) trackEvent('template_launched'); }
     setBusy(false);
     if (error?.message?.includes('plan_limit_gatherings')) { setLimit('gatherings'); return; }
     if (error || !data) { toast.error(rpcError(t, error)); return; }
@@ -215,6 +217,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (multi) { const result = await supabase.rpc('set_event_sessions', { _event: data, _sessions: sessions as never }); if (result.error) { toast.error(t('sessions.invalid')); void navigate({to:'/gathering/$id/edit',params:{id:data}}); return; } }
     await saveCover(data);
     if (!(await saveDetails(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
+    if (publish&&staged) {const published=await supabase.from('events').update({status:'published'}).eq('id',data);if(published.error){toast.error(rpcError(t,published.error));void navigate({to:'/gathering/$id/edit',params:{id:data}});return;}}
     await queryClient.invalidateQueries();
     if (publish) setDone({ id: data, visibility }); else { toast.success(t('gathering.draftSaved')); void navigate({ to: '/event/$id', params: { id: data } }); }
   };

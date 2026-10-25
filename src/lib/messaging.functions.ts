@@ -125,7 +125,7 @@ export const saveMessageJourney = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     if (data.start_trigger === 'resource_enrollment') {
       if (!data.offerId) throw new Error('resource_required');
-      const { data:id,error }=await context.supabase.rpc('save_resource_journey',{_team:data.teamId,_id:data.id??null,_offer:data.offerId,_name:data.name,_steps:data.steps as never});
+      const { data:id,error }=await context.supabase.rpc('save_resource_journey',{_team:data.teamId,_id:data.id??null,_offer:data.offerId,_name:data.name,_steps:data.steps as never} as never);
       if(error)throw new Error(error.message);return {id};
     }
     const { data: id, error } = await context.supabase.rpc('save_message_journey', {
