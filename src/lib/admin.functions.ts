@@ -4,12 +4,12 @@ import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { canRetryMessage } from './mail-retry';
 import { safetyAction, safetySearch, safetyPage, safetyRestrictionIsSelf, type SafetyRow } from './admin-safety';
 
-type Ctx = { supabase: { rpc: (fn: 'has_role', args: { _user_id: string; _role: 'admin' }) => PromiseLike<{ data: boolean | null }> }; userId: string };
+type Ctx = { supabase: { rpc: (fn: 'has_role', args: { _user_id: string; _role: 'admin' }) => PromiseLike<{ data: boolean | null; error?: unknown }> }; userId: string };
 
 /** Every admin function starts here: the caller's own session must hold the admin role. */
 async function assertAdmin(context: Ctx) {
-  const { data } = await context.supabase.rpc('has_role', { _user_id: context.userId, _role: 'admin' });
-  if (!data) throw new Error('forbidden');
+  const { data, error } = await context.supabase.rpc('has_role', { _user_id: context.userId, _role: 'admin' });
+  if (error || data !== true) throw new Error('forbidden');
   const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
   return supabaseAdmin;
 }
@@ -25,8 +25,8 @@ const note = z.string().trim().max(500).optional();
 
 /** Used by the /admin page to decide between the console and the polite "not available" page. */
 export const getAdminAccess = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth]).handler(async ({ context }) => {
-  const { data } = await context.supabase.rpc('has_role', { _user_id: context.userId, _role: 'admin' });
-  return { admin: !!data };
+  const { data, error } = await context.supabase.rpc('has_role', { _user_id: context.userId, _role: 'admin' });
+  return { admin: !error && data === true };
 });
 
 export const listSafety = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])

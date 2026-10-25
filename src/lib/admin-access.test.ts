@@ -29,4 +29,12 @@ describe('Admin sign-in access', () => {
     const rpc = vi.fn().mockResolvedValue({ data: false, error: null });
     expect(await check({ context: { userId: 'regular-user', supabase: { rpc } } })).toEqual({ admin: false });
   });
+  it.each([null, false])('denies a missing or negative role result %s', async data => {
+    const rpc = vi.fn().mockResolvedValue({ data, error: null });
+    expect(await check({ context: { userId: 'regular-user', supabase: { rpc } } })).toEqual({ admin: false });
+  });
+  it('fails closed on a role lookup error even with stale true data', async () => {
+    const rpc = vi.fn().mockResolvedValue({ data: true, error: { message: 'unavailable' } });
+    expect(await check({ context: { userId: 'regular-user', supabase: { rpc } } })).toEqual({ admin: false });
+  });
 });
