@@ -6103,7 +6103,8 @@
     "trigger": {
       "registration_confirmation": "Alguien se registra",
       "event_reminder": "El evento se acerca",
-      "event_cancellation": "El evento se cancela"
+      "event_cancellation": "El evento se cancela",
+      "resource_enrollment": "Inscripción a un recurso"
     },
     "triggerHint": {
       "registration_confirmation": "Se envía justo después de que un invitado o miembro aparta su lugar.",
@@ -6152,7 +6153,8 @@
     "condition": {
       "rsvp_status_going": "El registro está confirmado",
       "event_not_full": "El evento no está lleno",
-      "not_checked_in": "El invitado no ha registrado entrada"
+      "not_checked_in": "El invitado no ha registrado entrada",
+      "enrollment_active": "La inscripción sigue activa"
     },
     "stepActions": "Acciones del paso {{n}}",
     "moveUp": "Subir el paso {{n}}",
@@ -6202,11 +6204,14 @@
       "unknown_step": "falló (paso desconocido)"
     },
     "offeringScopeTitle": "Eventos y recursos",
-    "offeringScopeHint": "Las automatizaciones y recorridos admiten inscripciones, recordatorios y cancelaciones de eventos. Los activadores de inscripción a recursos y las suscripciones a anuncios de coaches aún no están conectados.",
+    "offeringScopeHint": "Las automatizaciones de eventos admiten inscripciones, recordatorios y cancelaciones. Los recorridos de recursos empiezan con una nueva inscripción válida y admiten espera, envío y condiciones de acceso activo.",
     "resourcesLink": "Administrar recursos",
     "relatedEvent": "Evento relacionado",
     "allEvents": "Todos los eventos del espacio",
-    "attendeeAudience": "Audiencia: personas inscritas al evento seleccionado. Todos los eventos se aplica a las inscripciones de eventos del espacio."
+    "attendeeAudience": "Audiencia: personas inscritas al evento seleccionado. Todos los eventos se aplica a las inscripciones de eventos del espacio.",
+    "relatedResource": "Recurso relacionado",
+    "chooseResource": "Elige un recurso",
+    "resourceScope": "Audiencia: nuevos estudiantes inscritos con acceso válido. Solo correo y mensajes internos; sin SMS. Usa mensajes de inscripción, no promociones."
   },
   "payReady": {
     "title": "Cómo cobrar",

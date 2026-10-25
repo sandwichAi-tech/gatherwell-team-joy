@@ -6103,7 +6103,8 @@
     "trigger": {
       "registration_confirmation": "Someone registers",
       "event_reminder": "Event is coming up",
-      "event_cancellation": "Event is cancelled"
+      "event_cancellation": "Event is cancelled",
+      "resource_enrollment": "Resource enrollment"
     },
     "triggerHint": {
       "registration_confirmation": "Sends right after a guest or member saves their spot.",
@@ -6152,7 +6153,8 @@
     "condition": {
       "rsvp_status_going": "Registration is confirmed",
       "event_not_full": "Event is not full",
-      "not_checked_in": "Guest hasn't checked in"
+      "not_checked_in": "Guest hasn't checked in",
+      "enrollment_active": "Enrollment remains active"
     },
     "stepActions": "Step {{n}} actions",
     "moveUp": "Move step {{n}} up",
@@ -6202,11 +6204,14 @@
       "unknown_step": "failed (unknown step)"
     },
     "offeringScopeTitle": "Events and resources",
-    "offeringScopeHint": "Automations and journeys currently support event registration, reminders and cancellations. Resource enrollment triggers and coach announcement subscriptions are not connected yet.",
+    "offeringScopeHint": "Event automations support registration, reminders and cancellations. Resource journeys start from a new valid enrollment, with wait, send and active-enrollment conditions.",
     "resourcesLink": "Manage resources",
     "relatedEvent": "Related event",
     "allEvents": "All workspace events",
-    "attendeeAudience": "Audience: registered attendees of the selected event. Selecting all events applies to workspace event registrations."
+    "attendeeAudience": "Audience: registered attendees of the selected event. Selecting all events applies to workspace event registrations.",
+    "relatedResource": "Related resource",
+    "chooseResource": "Choose a resource",
+    "resourceScope": "Audience: newly enrolled learners with valid access. Email and in-app only; no resource SMS. Use enrollment fulfillment messages, not promotions."
   },
   "payReady": {
     "title": "Getting paid",
