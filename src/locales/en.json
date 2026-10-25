@@ -422,7 +422,8 @@
     "privacy": "ZoheeWell privacy.",
     "event": "An event on ZoheeWell.",
     "unsubscribe": "Choose which ZoheeWell emails you receive.",
-    "insights": "Real counts from your events, courses, resources and sales."
+    "insights": "Real counts from your events, courses, resources and sales.",
+    "resetPassword": "Choose a new password for your account."
   },
   "stats": {
     "members": {
@@ -553,7 +554,25 @@
     "signingIn": "Signing in…",
     "passwordError": "Email or password is incorrect. Please try again.",
     "adminOnly": "This account does not have admin access.",
-    "regularSignIn": "Back to regular sign in"
+    "regularSignIn": "Back to regular sign in",
+    "forgot": "Forgot password?",
+    "resetTitle": "Reset your password",
+    "resetSubtitle": "Enter your email and we'll send you a secure link to set a new password.",
+    "resetSend": "Send reset link",
+    "resetSending": "Sending…",
+    "resetSent": "If an account exists for {{email}}, a reset link is on its way. Check your inbox.",
+    "resetBack": "Back to admin sign-in",
+    "newPasswordTitle": "Set a new password",
+    "newPasswordSubtitle": "Choose a new password for your account.",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "passwordShort": "Use at least 8 characters.",
+    "passwordMismatch": "Passwords do not match.",
+    "savePassword": "Save new password",
+    "savingPassword": "Saving…",
+    "passwordSaved": "Your password was updated. Sign in again to continue.",
+    "recoveryMissing": "This reset link is invalid or has expired. Request a new one.",
+    "checkingLink": "Checking your link…"
   },
   "onboarding": {
     "back": "Back",

@@ -422,7 +422,8 @@
     "privacy": "Privacidad de ZoheeWell.",
     "event": "Un evento en ZoheeWell.",
     "unsubscribe": "Elige qué correos de ZoheeWell quieres recibir.",
-    "insights": "Cifras reales de tus eventos, cursos, recursos y ventas."
+    "insights": "Cifras reales de tus eventos, cursos, recursos y ventas.",
+    "resetPassword": "Elige una nueva contraseña para tu cuenta."
   },
   "stats": {
     "members": {
@@ -553,7 +554,25 @@
     "signingIn": "Entrando…",
     "passwordError": "El correo o la contraseña son incorrectos. Inténtalo de nuevo.",
     "adminOnly": "Esta cuenta no tiene acceso de administración.",
-    "regularSignIn": "Volver al inicio de sesión"
+    "regularSignIn": "Volver al inicio de sesión",
+    "forgot": "¿Olvidaste tu contraseña?",
+    "resetTitle": "Restablece tu contraseña",
+    "resetSubtitle": "Escribe tu correo y te enviaremos un enlace seguro para crear una nueva contraseña.",
+    "resetSend": "Enviar enlace",
+    "resetSending": "Enviando…",
+    "resetSent": "Si existe una cuenta para {{email}}, te enviamos un enlace. Revisa tu bandeja de entrada.",
+    "resetBack": "Volver al acceso de administración",
+    "newPasswordTitle": "Crea una nueva contraseña",
+    "newPasswordSubtitle": "Elige una nueva contraseña para tu cuenta.",
+    "newPassword": "Nueva contraseña",
+    "confirmPassword": "Confirma la nueva contraseña",
+    "passwordShort": "Usa al menos 8 caracteres.",
+    "passwordMismatch": "Las contraseñas no coinciden.",
+    "savePassword": "Guardar contraseña",
+    "savingPassword": "Guardando…",
+    "passwordSaved": "Tu contraseña se actualizó. Vuelve a iniciar sesión para continuar.",
+    "recoveryMissing": "Este enlace no es válido o ya venció. Solicita uno nuevo.",
+    "checkingLink": "Revisando tu enlace…"
   },
   "onboarding": {
     "back": "Atrás",
