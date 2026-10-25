@@ -57,4 +57,4 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - WhichPlan guides pricing; no capability tables.
 - Templates copy as drafts. Resource journeys use scoped entitlements and idempotent in-app delivery; event association saves atomically. Coach consent uses verified accounts or hashed expiring links; without a sender anonymous requests stay pending. Segments expose counts only.
 
-- Event image previews/downloads/file shares use share-image.ts and tested layout bounds; account-menu uses caller-role results, not client claims.
+- Event images use share-image.ts for all outputs; admin menu uses role checks.
