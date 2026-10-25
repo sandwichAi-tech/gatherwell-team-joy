@@ -1,6 +1,6 @@
 import { CropFileInput } from '@/components/image-crop';
 import { EmptyState } from '@/components/launch-states';
-import { useTranslateFill } from '@/lib/assistant-client';
+import { LangFields, LangPair } from '@/components/lang-fields';
 import { confirmAction } from '@/components/confirm-dialog';
 import { MembersOnlyPicker } from '@/components/offers';
 import { useEffect, useState } from 'react';
@@ -29,18 +29,11 @@ function errMsg(t: (k: string) => string, e: unknown) {
   return t('profile.saveError');
 }
 
-/** One Translate action for a form's bilingual pairs: fills each empty side from its filled partner. */
-function TranslatePair<T extends Record<string, unknown>>({ pairs, f, setF }: { pairs: [keyof T & string, keyof T & string][]; f: T; setF: React.Dispatch<React.SetStateAction<T>> }) {
-  const { t } = useTranslation(); const tr = useTranslateFill(); const [busy, setBusy] = useState(false);
-  const go = async () => { setBusy(true); try { for (const [en, es] of pairs) { const a = String(f[en] ?? ''), b = String(f[es] ?? ''); if (a.trim() && b.trim()) continue; if (!a.trim() && !b.trim()) continue; await tr.run(a, b, v => setF(x => ({ ...x, [en]: v })), v => setF(x => ({ ...x, [es]: v }))); } } catch { toast.error(t('error.message')); } finally { setBusy(false); } };
-  return <div className="label-row"><button type="button" className="translate-button" disabled={busy} onClick={go}><Languages />{busy ? t('assistant.translating') : t('templates.translate')}</button>{tr.preview && <small className="not-connected">{t('assistant.previewTranslateNote')}</small>}</div>;
-}
-
-function Field({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
+export function Field({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
   return <div className="form-field"><label className="field-label" htmlFor={id}>{label}</label>{children}</div>;
 }
 
-function CoverPicker({ teamId, path, styleIdx, title, onPath, onStyle }: { teamId: string; path: string | null; styleIdx: number; title: string; onPath: (p: string | null) => void; onStyle: (n: number) => void }) {
+export function CoverPicker({ teamId, path, styleIdx, title, onPath, onStyle }: { teamId: string; path: string | null; styleIdx: number; title: string; onPath: (p: string | null) => void; onStyle: (n: number) => void }) {
   const { t } = useTranslation(); const [busy, setBusy] = useState(false);
   return <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
     <LearnCover path={path} style={styleIdx} title={title || 'L'} className="is-wide" />
