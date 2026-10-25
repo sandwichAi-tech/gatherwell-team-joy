@@ -8,6 +8,8 @@ import { accentPair, type Accent, type CardLayout } from '@/lib/resource-item';
 
 export type PublicOffering = {
   kind: string; id: string;
+  /** 'offer' rows open the offer landing; 'track' rows open the canonical track access route. */
+  entity?: 'offer' | 'track';
   title?: string | null; title_en?: string | null; title_es?: string | null;
   summary?: string | null; summary_en?: string | null; summary_es?: string | null;
   subtitle_en?: string | null; subtitle_es?: string | null;
@@ -50,4 +52,14 @@ export function publicCardModel(o: PublicOffering, lang: string, fallbackTitle: 
     coverPath: o.cover_url ?? null,
     paid: (o.price_cents ?? 0) > 0,
   };
+}
+
+/** Canonical destination for a public card: offers keep the /o landing; tracks use the signed-in track access route. */
+export function publicCardRoute(o: Pick<PublicOffering, 'id' | 'entity'>): { to: '/o/$id' | '/learn/track/$id'; id: string } {
+  return o.entity === 'track' ? { to: '/learn/track/$id', id: o.id } : { to: '/o/$id', id: o.id };
+}
+
+/** Translation key for the card's type label, per underlying model. */
+export function publicKindKey(o: Pick<PublicOffering, 'kind' | 'entity'>): string {
+  return o.entity === 'track' ? `resources.types.${o.kind}` : `offers.kind.${o.kind}`;
 }
