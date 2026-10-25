@@ -1,5 +1,10 @@
 # Roadmap
 
+## Newly added Website Notes — translation repair
+- [ ] Home network EN/ES strings, fallback safety and real /network CTA.
+- [ ] Resource create string leaf, existing chooser actions and unchanged authorization.
+- [ ] Regression/full tests, automatic typecheck/build and bilingual mobile/desktop browser checks.
+
 ## Website Notes beta-quality pass (2026-10-25)
 - [x] Current compile reports resolved without rollback; full automated verification rerun.
 - [x] Home copy, real-record card links, member/invite destinations and permission-scoped UTC monthly attendance history.

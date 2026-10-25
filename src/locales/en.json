@@ -168,7 +168,11 @@
     "subtitle": "Bring people together, see what’s next, and keep your community moving.",
     "upcoming": "Upcoming events",
     "viewAll": "View all",
-    "statsLabel": "Your community at a glance"
+    "statsLabel": "Your community at a glance",
+    "networkLabel": "YOUR HOST NETWORK",
+    "networkTitle": "Grow your community, together",
+    "networkText": "Connect with other hosts, share events, and bring your communities together.",
+    "networkAction": "Explore your network"
   },
   "faqPage": {
     "meta": {
@@ -5900,7 +5904,8 @@
         "pick": "Choose a course",
         "new": "New course",
         "empty": "You don't have a course yet. Create one first — it starts as a draft."
-      }
+      },
+      "button": "Create resource"
     },
     "untitled": "Untitled",
     "tabs": {

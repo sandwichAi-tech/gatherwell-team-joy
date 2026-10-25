@@ -168,7 +168,11 @@
     "subtitle": "Reúne a las personas, descubre lo que viene y mantén activa a tu comunidad.",
     "upcoming": "Próximos eventos",
     "viewAll": "Ver todos",
-    "statsLabel": "Tu comunidad de un vistazo"
+    "statsLabel": "Tu comunidad de un vistazo",
+    "networkLabel": "TU RED DE ANFITRIONES",
+    "networkTitle": "Haz crecer tu comunidad en compañía",
+    "networkText": "Conecta con otros anfitriones, comparte eventos y reúne a sus comunidades.",
+    "networkAction": "Explorar tu red"
   },
   "faqPage": {
     "meta": {
@@ -5900,7 +5904,8 @@
         "pick": "Elige un curso",
         "new": "Curso nuevo",
         "empty": "Aún no tienes un curso. Crea uno primero — empieza como borrador."
-      }
+      },
+      "button": "Crear recurso"
     },
     "untitled": "Sin título",
     "tabs": {
