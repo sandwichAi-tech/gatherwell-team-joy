@@ -1,5 +1,12 @@
 # ZoheeWell Change Log
 
+## v0.42 — Onboarding 18+ fix, stable mobile nav, menu mode switch, admin cleanup (2026-10-25)
+- Onboarding: `finish()` now refetches the profile via `markProfileOnboarded` before marking it onboarded, so the app gate never reads a stale row missing `adult_confirmed_at` — the cause of new accounts looping back to the 18+ step after confirming. `confirm_adult` stays idempotent; failures keep the localized error + retry.
+- Mobile navigation: the horizontally scrolling bottom bar is replaced by a fixed five-slot bar — four primary destinations plus a labeled More menu (Communication, Insights, Me) with correct active states. Desktop sidebar unchanged.
+- Account menu: "Switch to attending" / "Cambiar a asistir" added for hosting accounts, sharing one `useSwitchMode` behavior with the Me page; the menu closes and lands on the attending home.
+- Admin console: the superseded Owner Guide panel, its EN/ES strings and styles removed; all management tabs and access protections unchanged.
+- Tests: 486 passed (new `mobile-nav`, `account-onboarding`, extended `account-menu` suites); typecheck and production build OK; browser-verified EN/ES at 320/375/390/1280px with zero console errors.
+
 ## v0.41.5 — Top-level Insights navigation (2026-10-25)
 - Shared `gatherwell-shell.tsx` adds the existing `/insights` dashboard after Communication in desktop and scrollable mobile menus, using the existing BarChart3 icon and `nav.insights` labels (Insights / Estadísticas). No duplicate route or dashboard; every common signed-in coach page uses this shell.
 - New `insights-navigation.ts` gates visibility to hosts, owners/admins, analysts and legacy leaders outside guest view. Own-host analytics remain caller-scoped; team analytics retain their separate analytics capability check. Members, content editors, moderators and check-in-only roles receive no new menu entry. Authentication/data guards and records are unchanged.
