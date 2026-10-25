@@ -231,28 +231,28 @@ export function DiscoverPage({ search }: { search: DiscoverSearch }) {
             onClick={() => set({ kind: kinds.includes(k) ? (kinds.filter(x => x !== k).join(',') || undefined) : [...kinds, k].join(',') })}>{t(`discover.kind.${k}`)}</button>)}
         </div>}
         <CategoryRow selected={search.cat ?? null} onSelect={c => set({ cat: c ?? undefined })} />
-        {tab === 'events' && (
+        {tab === 'events' ? (
           <div className="chip-row" role="group" aria-label={t('discover.formatLabel')}>
             {(['person', 'online', 'hybrid'] as const).map(f => <button key={f} type="button" className={`chip${search.format === f ? ' selected' : ''}`} aria-pressed={search.format === f} onClick={() => set({ format: search.format === f ? undefined : f })}>{t(`discover.format.${f}`)}</button>)}
             <button type="button" className={`chip${search.lang === 'es' ? ' selected' : ''}`} aria-pressed={search.lang === 'es'} onClick={() => set({ lang: search.lang === 'es' ? undefined : 'es' })}>{t('discover.spanish')}</button>
             <button type="button" className={`chip${search.access === 1 ? ' selected' : ''}`} aria-pressed={search.access === 1} onClick={() => set({ access: search.access === 1 ? undefined : 1 })}>{t('discover.accessible')}</button>
             <button type="button" className={`chip${search.minors === 1 ? ' selected' : ''}`} aria-pressed={search.minors === 1} onClick={() => set({ minors: search.minors === 1 ? undefined : 1 })}>{t('discover.family')}</button>
           </div>
-        )}
-        {tab === 'events' && (
+        ) : null}
+        {tab === 'events' ? (
           <div className="chip-row catalog-dates" role="group" aria-label={t('discover.datesLabel')}>
             <label className="catalog-date"><span>{t('discover.from')}</span><input type="date" value={search.from ?? ''} onChange={e => set({ from: e.target.value || undefined })} /></label>
             <label className="catalog-date"><span>{t('discover.to')}</span><input type="date" value={search.to ?? ''} onChange={e => set({ to: e.target.value || undefined })} /></label>
           </div>
-        )}
-        {tab === 'events' && (
+        ) : null}
+        {tab === 'events' ? (
           <LocationFilter near={near} onNear={c => { setNear(c); if (c) set({ lat: c.lat, lng: c.lng, r: search.r ?? 50 }); else set({ lat: undefined, lng: undefined, place: undefined }); }} autoAsk={search.near === 1} />
-        )}
-        {tab === 'events' && filters.near && (
+        ) : null}
+        {tab === 'events' && filters.near ? (
           <div className="chip-row" role="group" aria-label={t('discover.radiusLabel')}>
             {[25, 50, 100].map(r => <button key={r} type="button" className={`chip${(search.r ?? 50) === r ? ' selected' : ''}`} aria-pressed={(search.r ?? 50) === r} onClick={() => set({ r })}>{t('discover.km', { km: r })}</button>)}
           </div>
-        )}
+        ) : null}
         {tab !== 'coaches' && <div className="chip-row" role="group" aria-label={t('discover.sortLabel')}>
           <button type="button" className={`chip${search.free === 1 ? ' selected' : ''}`} aria-pressed={search.free === 1} onClick={() => set({ free: search.free === 1 ? undefined : 1 })}>{t('discover.free')}</button>
           <button type="button" className={`chip${search.free === 0 ? ' selected' : ''}`} aria-pressed={search.free === 0} onClick={() => set({ free: search.free === 0 ? undefined : 0 })}>{t('discover.paid')}</button>

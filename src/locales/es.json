@@ -6103,7 +6103,8 @@
     "trigger": {
       "registration_confirmation": "Alguien se registra",
       "event_reminder": "El evento se acerca",
-      "event_cancellation": "El evento se cancela"
+      "event_cancellation": "El evento se cancela",
+      "resource_enrollment": "Inscripción a un recurso"
     },
     "triggerHint": {
       "registration_confirmation": "Se envía justo después de que un invitado o miembro aparta su lugar.",
@@ -6152,7 +6153,8 @@
     "condition": {
       "rsvp_status_going": "El registro está confirmado",
       "event_not_full": "El evento no está lleno",
-      "not_checked_in": "El invitado no ha registrado entrada"
+      "not_checked_in": "El invitado no ha registrado entrada",
+      "enrollment_active": "La inscripción sigue activa"
     },
     "stepActions": "Acciones del paso {{n}}",
     "moveUp": "Subir el paso {{n}}",
@@ -6202,11 +6204,14 @@
       "unknown_step": "falló (paso desconocido)"
     },
     "offeringScopeTitle": "Eventos y recursos",
-    "offeringScopeHint": "Las automatizaciones y recorridos admiten inscripciones, recordatorios y cancelaciones de eventos. Los activadores de inscripción a recursos y las suscripciones a anuncios de coaches aún no están conectados.",
+    "offeringScopeHint": "Las automatizaciones de eventos admiten inscripciones, recordatorios y cancelaciones. Los recorridos de recursos empiezan con una nueva inscripción válida y admiten espera, envío y condiciones de acceso activo.",
     "resourcesLink": "Administrar recursos",
     "relatedEvent": "Evento relacionado",
     "allEvents": "Todos los eventos del espacio",
-    "attendeeAudience": "Audiencia: personas inscritas al evento seleccionado. Todos los eventos se aplica a las inscripciones de eventos del espacio."
+    "attendeeAudience": "Audiencia: personas inscritas al evento seleccionado. Todos los eventos se aplica a las inscripciones de eventos del espacio.",
+    "relatedResource": "Recurso relacionado",
+    "chooseResource": "Elige un recurso",
+    "resourceScope": "Audiencia: nuevos estudiantes inscritos con acceso válido. Solo correo y mensajes internos; sin SMS. Usa mensajes de inscripción, no promociones."
   },
   "payReady": {
     "title": "Cómo cobrar",
@@ -6360,5 +6365,40 @@
     "month": "Mes",
     "empty": "No hay registros de asistencia en este mes.",
     "count": "{{count}} registros de asistencia"
+  },
+  "sessions": {
+    "heading": "Programa de la experiencia",
+    "scope": "Una inscripción, boleto y registro de asistencia cubre toda la experiencia. Las sesiones no tienen admisión independiente.",
+    "session": "Sesión {{count}}",
+    "title": "Título",
+    "starts_at": "Inicio",
+    "ends_at": "Fin",
+    "place": "Nombre público del lugar",
+    "remove": "Quitar sesión",
+    "invalid": "Agrega de 2 a 20 sesiones ordenadas, sin superposición, dentro de 31 días del inicio."
+  },
+  "coachUpdates": {
+    "title": "Recibir novedades",
+    "request": "Solicitar confirmación",
+    "email": "Correo electrónico",
+    "announcements": "Anuncios del coach",
+    "events": "Nuevos eventos",
+    "resources": "Nuevos recursos y programas",
+    "adult": "Tengo 18 años o más",
+    "consent": "Preferencias opcionales por correo solo para este coach. Confirma por correo; administra o cancela con tu enlace privado. No incluye SMS.",
+    "setup": "Las novedades por correo requieren configurar el envío. No se confirma una suscripción ni entrega hasta que estén disponibles la confirmación y el envío.",
+    "pending": "Revisa tu correo para confirmar. No estás suscrito hasta confirmar.",
+    "error": "No se pudo solicitar la confirmación. Inténtalo más tarde.",
+    "manage": "Administrar novedades del coach",
+    "confirm": "Confirmar preferencias seleccionadas",
+    "unsubscribe": "Cancelar suscripción a este coach",
+    "saved": "Preferencias guardadas para este coach.",
+    "invalid": "El enlace no es válido o caducó. Solicita uno nuevo desde la página del coach.",
+    "segments": "Tus suscriptores",
+    "segment_confirmed": "Suscriptores confirmados",
+    "segment_announcements": "Anuncios",
+    "segment_new_events": "Nuevos eventos",
+    "segment_new_resources": "Nuevos recursos",
+    "loading": "Cargando…"
   }
 }

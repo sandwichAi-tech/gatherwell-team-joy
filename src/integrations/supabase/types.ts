@@ -737,6 +737,59 @@ export type Database = {
         }
         Relationships: []
       }
+      coach_subscriptions: {
+        Row: {
+          announcements: boolean
+          coach_id: string
+          confirmed_at: string | null
+          created_at: string
+          email: string
+          id: string
+          language: string
+          new_events: boolean
+          new_resources: boolean
+          token_expires_at: string
+          token_hash: string
+          updated_at: string
+        }
+        Insert: {
+          announcements?: boolean
+          coach_id: string
+          confirmed_at?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          language?: string
+          new_events?: boolean
+          new_resources?: boolean
+          token_expires_at?: string
+          token_hash: string
+          updated_at?: string
+        }
+        Update: {
+          announcements?: boolean
+          coach_id?: string
+          confirmed_at?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          language?: string
+          new_events?: boolean
+          new_resources?: boolean
+          token_expires_at?: string
+          token_hash?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coach_subscriptions_coach_id_fkey"
+            columns: ["coach_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coach_verifications: {
         Row: {
           created_at: string
@@ -1639,6 +1692,7 @@ export type Database = {
           discussion_enabled: boolean
           early_offer_id: string | null
           ends_at: string | null
+          experience_sessions: Json
           format: string
           hide_guest_list: boolean
           host_id: string
@@ -1713,6 +1767,7 @@ export type Database = {
           discussion_enabled?: boolean
           early_offer_id?: string | null
           ends_at?: string | null
+          experience_sessions?: Json
           format?: string
           hide_guest_list?: boolean
           host_id?: string
@@ -1787,6 +1842,7 @@ export type Database = {
           discussion_enabled?: boolean
           early_offer_id?: string | null
           ends_at?: string | null
+          experience_sessions?: Json
           format?: string
           hide_guest_list?: boolean
           host_id?: string
@@ -2860,6 +2916,7 @@ export type Database = {
         Row: {
           created_at: string
           current_step: number
+          entitlement_id: string | null
           event_id: string
           id: string
           journey_id: string
@@ -2874,6 +2931,7 @@ export type Database = {
         Insert: {
           created_at?: string
           current_step?: number
+          entitlement_id?: string | null
           event_id: string
           id?: string
           journey_id: string
@@ -2888,6 +2946,7 @@ export type Database = {
         Update: {
           created_at?: string
           current_step?: number
+          entitlement_id?: string | null
           event_id?: string
           id?: string
           journey_id?: string
@@ -2900,6 +2959,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "message_journey_runs_entitlement_id_fkey"
+            columns: ["entitlement_id"]
+            isOneToOne: false
+            referencedRelation: "entitlements"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "message_journey_runs_event_id_fkey"
             columns: ["event_id"]
@@ -2968,6 +3034,7 @@ export type Database = {
           created_by: string | null
           id: string
           name: string
+          offer_id: string | null
           start_trigger: string
           status: string
           team_id: string
@@ -2978,6 +3045,7 @@ export type Database = {
           created_by?: string | null
           id?: string
           name: string
+          offer_id?: string | null
           start_trigger?: string
           status?: string
           team_id: string
@@ -2988,12 +3056,20 @@ export type Database = {
           created_by?: string | null
           id?: string
           name?: string
+          offer_id?: string | null
           start_trigger?: string
           status?: string
           team_id?: string
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "message_journeys_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "message_journeys_team_id_fkey"
             columns: ["team_id"]
@@ -5094,6 +5170,73 @@ export type Database = {
           },
         ]
       }
+      resource_journey_runs: {
+        Row: {
+          created_at: string
+          current_step: number
+          entitlement_id: string
+          id: string
+          journey_id: string
+          next_run_at: string
+          note: string | null
+          offer_id: string
+          status: string
+          steps_snapshot: Json
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_step?: number
+          entitlement_id: string
+          id?: string
+          journey_id: string
+          next_run_at?: string
+          note?: string | null
+          offer_id: string
+          status?: string
+          steps_snapshot: Json
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_step?: number
+          entitlement_id?: string
+          id?: string
+          journey_id?: string
+          next_run_at?: string
+          note?: string | null
+          offer_id?: string
+          status?: string
+          steps_snapshot?: Json
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resource_journey_runs_entitlement_id_fkey"
+            columns: ["entitlement_id"]
+            isOneToOne: false
+            referencedRelation: "entitlements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_journey_runs_journey_id_fkey"
+            columns: ["journey_id"]
+            isOneToOne: false
+            referencedRelation: "message_journeys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_journey_runs_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       resource_templates: {
         Row: {
           created_at: string
@@ -6790,6 +6933,7 @@ export type Database = {
       admin_user_detail: { Args: { _id: string }; Returns: Json }
       admin_users: { Args: { _q: string }; Returns: Json }
       advance_journey_runs: { Args: { _limit?: number }; Returns: number }
+      advance_resource_journeys: { Args: { _limit?: number }; Returns: number }
       ai_usage_status: { Args: never; Returns: Json }
       archive_host_update: { Args: { _id: string }; Returns: undefined }
       archive_message_template: {
@@ -6959,7 +7103,9 @@ export type Database = {
       close_contact_thread: { Args: { _thread: string }; Returns: undefined }
       close_support_ticket: { Args: { _ticket: string }; Returns: undefined }
       coach_checklist: { Args: never; Returns: Json }
+      coach_subscriber_segments: { Args: never; Returns: Json }
       coach_trust: { Args: { _host: string }; Returns: Json }
+      coach_update_preferences: { Args: { _token: string }; Returns: Json }
       comment_feed: { Args: { _event: string; _topic: string }; Returns: Json }
       community_requests: {
         Args: { _kind: string; _target: string }
@@ -7531,6 +7677,10 @@ export type Database = {
       }
       promote_waitlist: { Args: { _event: string }; Returns: undefined }
       public_cover_paths: { Args: { _refs: Json }; Returns: Json }
+      public_event_sessions: {
+        Args: { _event: string; _token?: string }
+        Returns: Json
+      }
       public_upcoming: { Args: { _host: string; _team: string }; Returns: Json }
       publish_host_update: { Args: { _id: string }; Returns: number }
       queue_broadcast: { Args: { _id: string }; Returns: number }
@@ -7619,6 +7769,19 @@ export type Database = {
       report_content: {
         Args: { _id: string; _note: string; _reason: string; _type: string }
         Returns: boolean
+      }
+      request_coach_updates: {
+        Args: {
+          _adult: boolean
+          _announcements: boolean
+          _base: string
+          _email: string
+          _events: boolean
+          _language: string
+          _resources: boolean
+          _slug: string
+        }
+        Returns: undefined
       }
       request_community_seat: {
         Args: {
@@ -7762,6 +7925,15 @@ export type Database = {
         Args: { _body: string; _host: string; _rating: number }
         Returns: undefined
       }
+      save_coach_update_preferences: {
+        Args: {
+          _announcements: boolean
+          _events: boolean
+          _resources: boolean
+          _token: string
+        }
+        Returns: undefined
+      }
       save_event_cover: {
         Args: {
           _alt: string
@@ -7841,6 +8013,16 @@ export type Database = {
         }
         Returns: undefined
       }
+      save_resource_journey: {
+        Args: {
+          _id: string
+          _name: string
+          _offer: string
+          _steps: Json
+          _team: string
+        }
+        Returns: string
+      }
       save_resource_template: {
         Args: {
           _source: string
@@ -7895,6 +8077,10 @@ export type Database = {
       }
       set_event_retreat: {
         Args: { _ends_at: string; _event: string; _retreat: Json }
+        Returns: undefined
+      }
+      set_event_sessions: {
+        Args: { _event: string; _sessions: Json }
         Returns: undefined
       }
       set_journey_status: {

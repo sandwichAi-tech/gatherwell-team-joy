@@ -34,6 +34,7 @@ import { useMapsKey, loadMaps } from '@/lib/maps-client';
 import { checklistOf, eventDetailQuery, templatesQuery } from '@/lib/templates';
 import { UpgradeSheet } from '@/components/plan-page';
 import { planStatusQuery } from '@/lib/billing';
+import { validSessions, type EventSession } from '@/lib/event-sessions';
 
 type Props = { eventId?: string | undefined; templateId?: string | undefined; fromId?: string | undefined };
 const DURATIONS = [30, 60, 90, 120] as const;
@@ -71,6 +72,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const [full, setFull] = useState(editing || !!templateId || !!fromId);
   const [retreatsOn] = useFeature('feature_retreats');
   const [retreatOn, setRetreatOn] = useState(false); const [retreat, setRetreat] = useState<Retreat>(emptyRetreat); const [retreatEnd, setRetreatEnd] = useState(''); const [galleryBusy, setGalleryBusy] = useState(false);
+  const [multi, setMulti] = useState(false); const [sessions, setSessions] = useState<EventSession[]>([]);
 
   // Prefill once from template, the gathering being edited, or the one being duplicated.
   useEffect(() => {
@@ -97,6 +99,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       setPrice((e as { price_cents?: number | null }).price_cents ? String(((e as { price_cents: number }).price_cents / 100)) : '');
       { const x = e as { team_registration?: boolean; team_min?: number; team_max?: number; team_price_mode?: string }; setTeamReg({ on: !!x.team_registration, min: x.team_min ?? 2, max: x.team_max ?? 6, mode: x.team_price_mode === 'team' ? 'team' : 'person' }); }
       { const rt = asRetreat((e as { retreat?: unknown }).retreat); if (rt) { setRetreatOn(true); setRetreat(rt); if (e.ends_at) setRetreatEnd(toLocalInput(new Date(e.ends_at))); } }
+      if (Array.isArray(e.experience_sessions) && e.experience_sessions.length) { setMulti(true); setSessions(e.experience_sessions as unknown as EventSession[]); }
       setCommunitySeats((e as { community_seats?: number | null }).community_seats ? String((e as { community_seats: number }).community_seats) : '');
       setCapacity(e.capacity ? String(e.capacity) : ''); setVisibility(e.visibility === 'team' ? 'team' : e.visibility === 'invite' ? 'invite' : 'public');
       if (editing) setStart(toLocalInput(new Date(e.starts_at)));
@@ -184,22 +187,26 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   };
   const submit = async (publish: boolean) => {
     setTried(true); if (!valid) { toast.error(t('gathering.fixFields')); return; }
+    if (multi && !validSessions(sessions, new Date(start).toISOString())) { toast.error(t('sessions.invalid')); return; }
     if (!detailsJson) { toast.error(t('gathering.fixFields')); return; }
     if (priceCents && visibility === 'team') { toast.error(t('templates.teamFree')); return; }
     if (priceCents && publish && !canSell) { toast.error(t('billing.payoutsRequired')); return; }
     setBusy(true);
     if (editing) {
+      if (multi || source?.event.experience_sessions && Array.isArray(source.event.experience_sessions) && source.event.experience_sessions.length) { const cleared=await supabase.rpc('set_event_sessions',{_event:eventId??'',_sessions:[]});if(cleared.error){setBusy(false);toast.error(t('sessions.invalid'));return;} }
       const { error } = await supabase.rpc('update_gathering', { _event: eventId!, _p: payload(), _whole_series: wholeSeries });
-      if (!error && publish && source?.event.status === 'draft') { const r = await supabase.from('events').update({ status: 'published' }).eq('id', eventId!); if (r.error) { setBusy(false); toast.error(rpcError(t, r.error)); return; } }
       setBusy(false);
       if (error) { toast.error(rpcError(t, error)); return; }
       await savePrice(eventId!); await saveTeamReg(eventId!); if (!(await saveRetreat(eventId!))) return;
+      { const result = await supabase.rpc('set_event_sessions', { _event: eventId ?? '', _sessions: (multi ? sessions : []) as never }); if (result.error) { toast.error(t('sessions.invalid')); return; } }
       await saveCover(eventId!);
       if (!(await saveDetails(eventId!))) return;
+      if (publish && source?.event.status === 'draft') { const r = await supabase.from('events').update({ status: 'published' }).eq('id', eventId??''); if(r.error){toast.error(rpcError(t,r.error));return;} }
       await queryClient.invalidateQueries(); toast.success(t('gathering.saved'));
       void navigate({ to: '/event/$id', params: { id: eventId! } }); return;
     }
-    const { data, error } = await supabase.rpc('create_gathering_at', { _team: teamId, _p: payload(), _publish: publish, _weekly: false }); if (!error) { trackEvent('gathering_created', { weekly }); if (publish) trackEvent('gathering_published'); if (templateId) trackEvent('template_launched'); }
+    const staged=multi||retreatOn;
+    const { data, error } = await supabase.rpc('create_gathering_at', { _team: teamId, _p: payload(), _publish: publish&&!staged, _weekly: false }); if (!error) { trackEvent('gathering_created', { weekly }); if (publish&&!staged) trackEvent('gathering_published'); if (templateId) trackEvent('template_launched'); }
     setBusy(false);
     if (error?.message?.includes('plan_limit_gatherings')) { setLimit('gatherings'); return; }
     if (error || !data) { toast.error(rpcError(t, error)); return; }
@@ -207,8 +214,10 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (priceCents) await savePrice(data);
     if (teamReg.on) await saveTeamReg(data);
     if (retreatOn && !(await saveRetreat(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
+    if (multi) { const result = await supabase.rpc('set_event_sessions', { _event: data, _sessions: sessions as never }); if (result.error) { toast.error(t('sessions.invalid')); void navigate({to:'/gathering/$id/edit',params:{id:data}}); return; } }
     await saveCover(data);
     if (!(await saveDetails(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
+    if (publish&&staged) {const published=await supabase.from('events').update({status:'published'}).eq('id',data);if(published.error){toast.error(rpcError(t,published.error));void navigate({to:'/gathering/$id/edit',params:{id:data}});return;}}
     await queryClient.invalidateQueries();
     if (publish) setDone({ id: data, visibility }); else { toast.success(t('gathering.draftSaved')); void navigate({ to: '/event/$id', params: { id: data } }); }
   };
@@ -247,11 +256,13 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       </header>
 
       <section className="form-section"><label className="field-label" htmlFor="g-experience">{t('builder.experience.label')}</label>
-        <select id="g-experience" className="field-input" value={retreatOn ? 'retreat' : 'standard'} onChange={e => {
-          const on = e.target.value === 'retreat'; setRetreatOn(on); setFull(true);
+        <select id="g-experience" className="field-input" value={multi ? 'multi' : retreatOn ? 'retreat' : 'standard'} onChange={e => {
+          const on = e.target.value === 'retreat'; setRetreatOn(on); setMulti(e.target.value === 'multi'); setRule(r=>({...r,kind:'none'})); setFull(true);
+          if(e.target.value === 'multi' && !sessions.length && startDate) setSessions([0,1].map(i=>({title:'',starts_at:new Date(startDate.getTime()+i*86400000).toISOString(),ends_at:new Date(startDate.getTime()+i*86400000+3600000).toISOString(),place:''})));
           if (on && !retreatEnd && startDate) { const end = new Date(startDate); end.setDate(end.getDate() + 2); setRetreatEnd(toLocalInput(end)); }
-        }}><option value="standard">{t('builder.experience.standard')}</option>{(retreatsOn || retreatOn) && <option value="retreat">{t('builder.experience.retreat')}</option>}</select>
+        }}><option value="standard">{t('builder.experience.standard')}</option>{(retreatsOn || retreatOn) && <option value="retreat">{t('builder.experience.retreat')}</option>}{!source?.event.series_id && <option value="multi">{t('builder.experience.multi')}</option>}</select>
       </section>
+      {multi && <section className="form-section"><p>{t('sessions.scope')}</p>{sessions.map((s,i)=><fieldset key={i} className="form-section"><legend>{t('sessions.session',{count:i+1})}</legend>{(['title','starts_at','ends_at','place'] as const).map(key=><label key={key} className="field-label">{t(`sessions.${key}`)}<Input type={key.endsWith('_at')?'datetime-local':'text'} value={key.endsWith('_at')?toLocalInput(new Date(s[key])):s[key]} maxLength={key==='title'?100:300} onChange={e=>setSessions(rows=>rows.map((row,j)=>j===i?{...row,[key]:key.endsWith('_at')&&e.target.value?new Date(e.target.value).toISOString():e.target.value}:row))}/></label>)}<Button variant="ghost" onClick={()=>setSessions(rows=>rows.filter((_,j)=>j!==i))}>{t('sessions.remove')}</Button></fieldset>)}<Button variant="secondary" disabled={sessions.length>=20} onClick={()=>setSessions(rows=>[...rows,{title:'',starts_at:new Date().toISOString(),ends_at:new Date(Date.now()+3600000).toISOString(),place:''}])}>{t('builder.experience.add')}</Button></section>}
 
       {!editing && !templateId && !fromId && (() => { const list = templates.filter(x => x.is_published || x.created_by === userId).slice(0, 8); return list.length > 0 && <section className="form-section blueprint-pick" aria-label={t('templates.startFrom')}>
         <span className="field-label">{t('templates.startFrom')}</span>
@@ -375,7 +386,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         {retreatBad && tried && <p className="field-error">{t('retreat.errors.invalid_retreat_dates')}</p>}
       </section>
 
-      {retreatOn ? null : !editing ? <section className="form-section">
+      {retreatOn || multi ? null : !editing ? <section className="form-section">
         <label className="field-label" htmlFor="g-repeat">{t('gathering.repeat')}</label>
         <select id="g-repeat" className="field-input" value={rule.kind} onChange={e => setRule(r => ({ ...r, kind: e.target.value as RepeatKind }))}>
           {REPEATS.map(k => <option key={k} value={k}>{t(`gathering.repeats.${k}`)}</option>)}

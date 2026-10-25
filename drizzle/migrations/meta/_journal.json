@@ -722,6 +722,41 @@
       "when": 1792897292592,
       "tag": "0102_allow_communications_return_path",
       "breakpoints": true
+    },
+    {
+      "idx": 103,
+      "version": "7",
+      "when": 1792939071499,
+      "tag": "0103_event_experience_sessions",
+      "breakpoints": true
+    },
+    {
+      "idx": 104,
+      "version": "7",
+      "when": 1792939207591,
+      "tag": "0104_coach_updates_preferences",
+      "breakpoints": true
+    },
+    {
+      "idx": 105,
+      "version": "7",
+      "when": 1792939352577,
+      "tag": "0105_resource_enrollment_journeys",
+      "breakpoints": true
+    },
+    {
+      "idx": 106,
+      "version": "7",
+      "when": 1792939541866,
+      "tag": "0106_resource_journey_access_guards",
+      "breakpoints": true
+    },
+    {
+      "idx": 107,
+      "version": "7",
+      "when": 1792940140858,
+      "tag": "0107_resource_activity_privacy",
+      "breakpoints": true
     }
   ]
 }

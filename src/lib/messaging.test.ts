@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  MESSAGE_CHANNELS, MESSAGE_TRIGGERS, JOURNEY_CONDITIONS,
+  MESSAGE_CHANNELS, MESSAGE_TRIGGERS, JOURNEY_TRIGGERS, JOURNEY_CONDITIONS,
   extractVariables, validateTemplateDraft, validateAutomationDraft, validateJourneySteps, journeyCanActivate, moveStep,
   type JourneyStep,
 } from './messaging';
@@ -13,8 +13,9 @@ describe('message channel and trigger allowlists', () => {
     expect(MESSAGE_TRIGGERS).toEqual(['registration_confirmation', 'event_reminder', 'event_cancellation']);
   });
   it('only offers conditions the platform can evaluate', () => {
-    expect(JOURNEY_CONDITIONS).toEqual(['rsvp_status_going', 'event_not_full', 'not_checked_in']);
+    expect(JOURNEY_CONDITIONS).toEqual(['rsvp_status_going', 'event_not_full', 'not_checked_in', 'enrollment_active']);
   });
+  it('resource journeys support authoritative enrollment starts without enabling event automations for resources',()=>expect(JOURNEY_TRIGGERS).toEqual([...MESSAGE_TRIGGERS,'resource_enrollment']));
 });
 
 describe('extractVariables', () => {

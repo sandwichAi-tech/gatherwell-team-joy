@@ -1,5 +1,12 @@
 # ZoheeWell Change Log
 
+## v0.41.1 — Compile recovery and remaining Website Notes implementation (2026-10-25)
+- Discover event-only conditionals and resource RPC typing compile cleanly; prior Home/admin/Insights work preserved.
+- Migrations 0103–0107 add validated experience sessions, service-owned coach preferences and entitlement-bound resource journeys. Experience admission remains whole-event, not per-session. Resource run access requires both messaging and offering participant capabilities; active resource journeys permit in-app sending only, including template/step mutation guards.
+- Coach opt-in/manage/unsubscribe and aggregate segments are implemented but requests remain sender-gated. No marketing email is represented as delivered; subscriber-segment campaign sending is still not connected.
+- 439 tests / 52 files pass. Harness typecheck/production build clean. EN/ES phone/desktop Discover tabs and new editors render without page errors/overflow. A real private experience draft saved and its two sessions read back; screenshot inspection caught and corrected schedule text constrained to the date-tile column. Test draft removed.
+- Outstanding: verified owner identity/role grant, second-account live isolation/non-admin denial, resource journey enrollment-to-notification readback, email confirmation/delivery, screen-reader narration and additional legacy save/readback checks. No deployment or provider credentials.
+
 ## v0.41 — Website Notes partial implementation pass (2026-10-25)
 - Restored requested dashboard copy in English and Spanish with fallback-safe greeting; Home metric cards are semantic links to members, upcoming events and UTC monthly attendance. View all works at zero count; Invite your team uses the existing invitation sheet rather than an unchecked clipboard write. Actual event IDs and existing brief destinations remain unchanged.
 - Added authenticated /attendance with bounded aggregate reads, existing participant-access checks and no contact fields. Home attendance uses the same permission-scoped path. No schema changes or role grants.
