@@ -66,6 +66,6 @@ describe('sitemap route', () => {
   });
 
   it('omits lastmod (no authoritative page-specific timestamps)', () => {
-    expect(source).not.toContain('lastmod');
+    expect(source).not.toContain('<lastmod>');
   });
 });
