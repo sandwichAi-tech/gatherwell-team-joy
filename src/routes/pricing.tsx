@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { PricingPage } from '@/components/landing/pricing-page';
+import { PricingPage } from '@/components/landing/marketing-pages';
 import { RetryState } from '@/components/launch-states';
 import i18n from '@/lib/i18n';
 import { publicIndexing } from '@/lib/seo';
