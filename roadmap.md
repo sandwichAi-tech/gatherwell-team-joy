@@ -1,6 +1,7 @@
 # Roadmap
 
 ## Website Notes beta-quality pass (2026-10-25)
+- [ ] Current continuation: diagnose editor compile reports without rollback; complete remaining implementation and rerun full verification.
 - [x] Home copy, real-record card links, member/invite destinations and permission-scoped UTC monthly attendance history.
 - [x] Existing protected /admin, admin-only Me link and bilingual Owner Guide.
 - [ ] Owner role assignment: multiple Nick profiles exist; account identity must be confirmed before any privileged role grant.
