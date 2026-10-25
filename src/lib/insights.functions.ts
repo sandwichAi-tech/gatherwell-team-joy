@@ -3,6 +3,25 @@ import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import type { Json } from '@/integrations/supabase/types';
 import type { HostAnalytics, TeamAnalytics } from './insights';
+import { monthBounds } from './analytics-period';
+
+/** RLS filters attendance to the caller's participant-access scopes; no contacts returned. */
+export const getAttendanceHistory = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/) }).parse(d))
+  .handler(async ({ data, context }) => {
+    const bounds = monthBounds(data.month);
+    const { data: rows, error } = await context.supabase.from('rsvps').select('event_id, events!inner(id,title,starts_at)')
+      .gte('checked_in_at', bounds.start).lt('checked_in_at', bounds.end).limit(5000);
+    if (error) throw new Error(error.message);
+    const grouped = new Map<string, { id: string; title: string; starts_at: string; count: number }>();
+    for (const row of rows ?? []) {
+      const event = row.events;
+      if (!event) continue;
+      const old = grouped.get(event.id);
+      grouped.set(event.id, { ...event, count: (old?.count ?? 0) + 1 });
+    }
+    return [...grouped.values()];
+  });
 
 /** Caller's own host analytics (hosted/co-hosted events, owned offers, real order ledger). */
 export const getHostAnalytics = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
