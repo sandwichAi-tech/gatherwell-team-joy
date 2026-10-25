@@ -8,6 +8,7 @@ import { AuthFrame, pageHead } from '@/components/auth-frame';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable';
 import { pendingInvite } from '@/lib/account';
+import { NOINDEX_META } from '@/lib/seo';
 import { rememberNext, safeReturnPath, takeNext } from '@/lib/return-to';
 
 type LoginSearch = { intent?: 'host'; next?: string; i?: string };
