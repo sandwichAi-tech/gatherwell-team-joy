@@ -13,7 +13,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { AlertCircle, ArrowLeft, Check, ChevronRight, CreditCard, UsersRound, BarChart3 } from '@/components/icons';
+import { AlertCircle, ArrowLeft, Check, ChevronRight, CreditCard, UsersRound, BarChart3, Share2 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
@@ -221,6 +221,7 @@ export function PlanPage() {
     <section className="panel settings-list">
       {ws?.role === 'leader' && <Link className="settings-row" to="/plan/seats"><UsersRound className="settings-icon" /><span className="settings-label">{t('billing.seats')}</span><ChevronRight className="settings-chevron" /></Link>}
       <Link className="settings-row" to="/earnings"><BarChart3 className="settings-icon" /><span className="settings-label">{t('billing.earnings')}</span><ChevronRight className="settings-chevron" /></Link>
+      <Link className="settings-row" to="/referrals"><Share2 className="settings-icon" /><span className="settings-label">{t('referral.coach.title')}</span><ChevronRight className="settings-chevron" /></Link>
     </section>
 
     <PaymentsReadiness />
@@ -346,6 +347,7 @@ export function EarningsPage() {
     <div className="stats-grid">{stat(t('billing.ticketSales'), formatMoney(sales, lang))}{stat(t('billing.platformFees'), formatMoney(fees, lang))}{stat(t('billing.serviceCovered'), formatMoney(coveredService, lang))}{stat(t('billing.payouts'), formatMoney(sales - fees - coveredService, lang))}{stat(t('billing.ticketsSold'), paid.length)}</div>
     {guestService > 0 && <p className="field-hint">{t('billing.guestServiceNote', { amount: formatMoney(guestService, lang) })}</p>}
     <PromoUsageCard />
+    <section className="panel settings-list"><Link className="settings-row" to="/referrals"><Share2 className="settings-icon" /><span className="settings-label">{t('referral.coach.title')}<small className="field-hint">{t('referral.coach.subtitle')}</small></span><ChevronRight className="settings-chevron" /></Link></section>
     <ReferralCard format={c => formatMoney(c, lang)} />
     <WelcomeRewardsCard />
     {!pays.length ? <section className="panel"><EmptyState compact icon="CreditCard" text={t('billing.noSales')} /></section> : [...groups.entries()].map(([eid, list]) => {

@@ -2636,3 +2636,13 @@ a.gw-cat-chip:hover{background:#fff}
 .button-like:focus-within { outline: 2px solid var(--ring); outline-offset: 2px; }
 .ew-status td[data-state="missing"] { color: var(--destructive); font-weight: 600; }
 .my-waivers summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; flex-wrap: wrap; gap: 0.25rem; }
+
+/* Referral programs (rows 56–58) */
+.referral-filter-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin:12px 0}
+.referral-filter-grid .field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.referral-link-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
+.referral-link-row>span:first-child{display:flex;flex-direction:column;min-width:0;overflow-wrap:anywhere}
+.referral-terms ul{margin:8px 0 0;padding-left:18px;display:grid;gap:6px;color:var(--body)}
+.referral-terms h3{font-size:15px;font-weight:600}
+.referral-code strong{letter-spacing:.08em}
+.chip.referral-reversed{text-decoration:line-through}

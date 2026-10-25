@@ -834,6 +834,20 @@
       "when": 1792964937199,
       "tag": "0118_event_waivers_going_only",
       "breakpoints": true
+    },
+    {
+      "idx": 119,
+      "version": "7",
+      "when": 1792971746840,
+      "tag": "0119_referral_programs",
+      "breakpoints": true
+    },
+    {
+      "idx": 120,
+      "version": "7",
+      "when": 1792972322756,
+      "tag": "0120_referral_payout_lock_fix",
+      "breakpoints": true
     }
   ]
 }

@@ -6707,6 +6707,10 @@
       "support": {
         "title": "Soporte",
         "desc": "Obtén ayuda o reporta un problema."
+      },
+      "referrals": {
+        "title": "Programas de referidos",
+        "desc": "Recompensas opcionales por compartir artículos pagados."
       }
     }
   },
@@ -6829,6 +6833,124 @@
       "fileType": "Elige un PDF de hasta 10 MB.",
       "upload": "No pudimos subir ese archivo. Inténtalo de nuevo.",
       "save": "No pudimos guardar la exención. Revisa el título y el texto e inténtalo de nuevo."
+    }
+  },
+  "referral": {
+    "code": "Código",
+    "copyLink": "Copiar enlace de referido",
+    "on": "Activo",
+    "off": "Inactivo",
+    "paused": "En pausa",
+    "unnamed": "Miembro",
+    "sale": "Venta {{amount}}",
+    "notConnected": "Los pagos aún no están conectados, así que no hay ventas confirmadas y todos los totales quedan en cero. Las recompensas aparecen solo después de confirmar una compra real.",
+    "manualNote": "En beta los pagos son manuales: envías el dinero fuera de ZoheeWell y lo registras aquí. ZoheeWell nunca transfiere dinero de referidos.",
+    "kind": {
+      "percent": "Porcentaje",
+      "flat": "Monto fijo"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "available": "Disponible",
+      "paid": "Pagada",
+      "reversed": "Revertida"
+    },
+    "filters": {
+      "item": "Artículo",
+      "referrer": "Referidor",
+      "status": "Estado",
+      "from": "Desde",
+      "to": "Hasta",
+      "all": "Todos"
+    },
+    "stats": {
+      "clicks": "Visitas al enlace",
+      "signups": "Visitantes con sesión",
+      "conversions": "Compras confirmadas",
+      "revenue": "Ventas referidas",
+      "clicksN_one": "{{count}} visita",
+      "clicksN_other": "{{count}} visitas",
+      "conversionsN_one": "{{count}} compra",
+      "conversionsN_other": "{{count}} compras"
+    },
+    "coach": {
+      "title": "Programas de referidos",
+      "subtitle": "Recompensas opcionales para quienes comparten tus eventos y recursos pagados.",
+      "programs": "Artículos pagados",
+      "freeNote": "Los artículos gratuitos se comparten de forma normal y nunca ofrecen recompensa. Los eventos solo para el equipo no pueden tener programa.",
+      "noItems": "Aún no hay artículos pagados elegibles. Aquí aparecen eventos públicos pagados y recursos o cursos pagados.",
+      "setup": "Configurar",
+      "edit": "Editar",
+      "setupFor": "Programa de referidos para {{title}}",
+      "activity": "Actividad",
+      "noRewards": "Aún no hay compras referidas confirmadas.",
+      "sheetTitle": "Programa de referidos",
+      "save": "Guardar programa",
+      "saved": "Programa de referidos guardado",
+      "enable": "Programa activo",
+      "enableHint": "Inactivo por defecto. Al desactivarlo se detienen nuevas recompensas; las ganadas se conservan.",
+      "rewardType": "Tipo de recompensa",
+      "percentLabel": "Porcentaje de la venta (1–90)",
+      "flatLabel": "Monto por compra (USD)",
+      "example": "Ejemplo: en una compra de {{price}}, quien refiere gana {{reward}}.",
+      "window": "Ventana de atribución:",
+      "windowValue": "{{days}} días, última visita válida al enlace (fija en beta)."
+    },
+    "terms": {
+      "title": "Términos del programa",
+      "eligibility": "Solo cuentan las compras confirmadas de este artículo pagado. Los artículos gratuitos y los eventos solo para el equipo no son elegibles.",
+      "attribution": "La compra se acredita al último enlace de referido válido que abrió la persona compradora en los últimos {{days}} días. Cada compra genera como máximo una recompensa.",
+      "blocked": "No hay recompensa por referirte a ti, por la persona anfitriona ni cuando quien compra y quien refiere comparten algún equipo.",
+      "states": "Las recompensas pendientes pasan a disponibles 14 días después de una compra confirmada. Pagada significa que la persona anfitriona registró un pago manual.",
+      "refunds": "Si una compra se reembolsa, cancela o disputa, su recompensa pendiente o disponible se revierte.",
+      "payouts": "En beta los pagos son manuales. La persona anfitriona paga fuera de ZoheeWell y lo registra; ZoheeWell nunca envía dinero."
+    },
+    "payout": {
+      "recordFor": "Registrar pago para {{name}}",
+      "title": "Registrar un pago manual",
+      "manualOnly": "Esto solo registra un pago que ya enviaste fuera de ZoheeWell. Aquí no se mueve dinero.",
+      "date": "Fecha en que pagaste",
+      "reference": "Referencia (opcional)",
+      "note": "Nota (opcional)",
+      "confirm": "Ya envié este pago fuera de ZoheeWell.",
+      "confirmRequired": "Confirma que ya enviaste este pago.",
+      "save": "Registrar {{amount}}",
+      "recorded": "Pago registrado",
+      "ledger": "Registro de pagos",
+      "ledgerHint": "Registros que ingresaste. ZoheeWell no transfirió estos montos.",
+      "none": "No hay pagos registrados.",
+      "recordedOn": "Registrado como pagado el {{date}}"
+    },
+    "share": {
+      "title": "Comparte y gana",
+      "body": "La persona anfitriona ofrece {{reward}} por compra confirmada (unos {{example}} aquí) a través de tu enlace privado, acreditada por {{days}} días.",
+      "get": "Obtener mi enlace de referido"
+    },
+    "mine": {
+      "title": "Mis ganancias por referidos",
+      "open": "Abrir mis ganancias por referidos",
+      "subtitle": "Tus enlaces privados y recompensas. Solo tú puedes verlos.",
+      "honest": "Los montos cuentan solo compras confirmadas. Las personas anfitrionas pagan fuera de ZoheeWell; nunca se muestran datos de quien compra.",
+      "links": "Mis enlaces",
+      "noLinks": "Aún no tienes enlaces de referido. Abre un evento o recurso pagado con programa de referidos para obtener el tuyo.",
+      "rewards": "Recompensas",
+      "noRewards": "Aún no hay recompensas.",
+      "payouts": "Historial de pagos",
+      "how": "Cómo funcionan los referidos"
+    },
+    "errors": {
+      "generic": "Algo salió mal. Inténtalo de nuevo.",
+      "invalid": "Ingresa un número entero mayor que cero.",
+      "invalid_reward": "Ingresa una recompensa válida.",
+      "notPaid": "Solo los artículos pagados pueden tener programa de referidos.",
+      "ineligible": "Este artículo no es elegible: debe ser pagado y no solo para el equipo.",
+      "percentTooHigh": "El porcentaje no puede superar el 90 %.",
+      "percent_too_high": "El porcentaje no puede superar el 90 %.",
+      "flatTooHigh": "La recompensa debe ser menor que el precio del artículo.",
+      "flat_too_high": "La recompensa debe ser menor que el precio del artículo.",
+      "payout_date": "Elige hoy o una fecha anterior.",
+      "payout_invalid": "Algunas recompensas ya no están disponibles. Actualiza e inténtalo de nuevo.",
+      "payout_empty": "Elige al menos una recompensa."
     }
   }
 }
