@@ -81,7 +81,7 @@ export function ChallengesSection({ startCreate = false }: { startCreate?: boole
       <div className="segmented-tabs" role="tablist">{(['active', 'upcoming', 'past'] as const).map(k => <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? 'is-active' : ''} onClick={() => setTab(k)}>{t(`challenges.phase.${k}`)} <span className="tab-count">{groups[k].length}</span></button>)}</div>
       {groups[tab].length ? <div className="challenge-list">{groups[tab].map(c => <ChallengeRow key={c.id} c={c} />)}</div> : <p className="auth-subtitle">{t(`challenges.none.${tab}`)}</p>}
     </> : <p className="auth-subtitle">{t('challenges.noneYet')}</p>}
-    {leader && <ChallengeEditor draft={editing} teamId={teamId} onClose={() => setEditing(null)} />}
+    {leader && <ChallengeBuilder draft={editing} teamId={teamId} onClose={() => setEditing(null)} />}
   </section>;
 }
 
@@ -287,6 +287,6 @@ export function ChallengePage({ id }: { id: string }) {
     {joined && <PhotoGallery paths={mine.map(m => m.photo_path).filter((p): p is string => !!p)} />}
     {leader && <LeaderPanel c={c} />}
     {sheetDate && <CheckInSheet open={!!sheetDate} onClose={() => setSheetDate(null)} c={c} date={sheetDate} />}
-    {leader && workspace && <ChallengeEditor draft={editing} teamId={c.team_id || workspace.teamId} onClose={() => { setEditing(null); void qc.invalidateQueries({ queryKey: ['challenge', id] }); }} />}
+    {leader && workspace && <ChallengeBuilder draft={editing} teamId={c.team_id || workspace.teamId} onClose={() => { setEditing(null); void qc.invalidateQueries({ queryKey: ['challenge', id] }); }} />}
   </>;
 }
