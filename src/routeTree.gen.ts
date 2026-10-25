@@ -40,6 +40,7 @@ import { Route as VerifyNumberRouteImport } from './routes/verify.$number'
 import { Route as AuthenticatedAppAlertsRouteImport } from './routes/_authenticated/_app/alerts'
 import { Route as AuthenticatedAppAttendanceRouteImport } from './routes/_authenticated/_app/attendance'
 import { Route as AuthenticatedAppBlueprintsRouteImport } from './routes/_authenticated/_app/blueprints'
+import { Route as AuthenticatedAppChallengesRouteImport } from './routes/_authenticated/_app/challenges'
 import { Route as AuthenticatedAppCirclesRouteImport } from './routes/_authenticated/_app/circles'
 import { Route as AuthenticatedAppCommunicationsRouteImport } from './routes/_authenticated/_app/communications'
 import { Route as AuthenticatedAppEarningsRouteImport } from './routes/_authenticated/_app/earnings'
@@ -250,6 +251,12 @@ const AuthenticatedAppBlueprintsRoute =
   AuthenticatedAppBlueprintsRouteImport.update({
     id: '/blueprints',
     path: '/blueprints',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
+const AuthenticatedAppChallengesRoute =
+  AuthenticatedAppChallengesRouteImport.update({
+    id: '/challenges',
+    path: '/challenges',
     getParentRoute: () => AuthenticatedAppRouteRoute,
   } as any)
 const AuthenticatedAppCirclesRoute = AuthenticatedAppCirclesRouteImport.update({
@@ -590,6 +597,7 @@ export interface FileRoutesByFullPath {
   '/alerts': typeof AuthenticatedAppAlertsRoute
   '/attendance': typeof AuthenticatedAppAttendanceRoute
   '/blueprints': typeof AuthenticatedAppBlueprintsRoute
+  '/challenges': typeof AuthenticatedAppChallengesRoute
   '/circles': typeof AuthenticatedAppCirclesRoute
   '/communications': typeof AuthenticatedAppCommunicationsRoute
   '/earnings': typeof AuthenticatedAppEarningsRoute
@@ -677,6 +685,7 @@ export interface FileRoutesByTo {
   '/alerts': typeof AuthenticatedAppAlertsRoute
   '/attendance': typeof AuthenticatedAppAttendanceRoute
   '/blueprints': typeof AuthenticatedAppBlueprintsRoute
+  '/challenges': typeof AuthenticatedAppChallengesRoute
   '/circles': typeof AuthenticatedAppCirclesRoute
   '/communications': typeof AuthenticatedAppCommunicationsRoute
   '/earnings': typeof AuthenticatedAppEarningsRoute
@@ -767,6 +776,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/alerts': typeof AuthenticatedAppAlertsRoute
   '/_authenticated/_app/attendance': typeof AuthenticatedAppAttendanceRoute
   '/_authenticated/_app/blueprints': typeof AuthenticatedAppBlueprintsRoute
+  '/_authenticated/_app/challenges': typeof AuthenticatedAppChallengesRoute
   '/_authenticated/_app/circles': typeof AuthenticatedAppCirclesRoute
   '/_authenticated/_app/communications': typeof AuthenticatedAppCommunicationsRoute
   '/_authenticated/_app/earnings': typeof AuthenticatedAppEarningsRoute
@@ -856,6 +866,7 @@ export interface FileRouteTypes {
     | '/alerts'
     | '/attendance'
     | '/blueprints'
+    | '/challenges'
     | '/circles'
     | '/communications'
     | '/earnings'
@@ -943,6 +954,7 @@ export interface FileRouteTypes {
     | '/alerts'
     | '/attendance'
     | '/blueprints'
+    | '/challenges'
     | '/circles'
     | '/communications'
     | '/earnings'
@@ -1032,6 +1044,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/alerts'
     | '/_authenticated/_app/attendance'
     | '/_authenticated/_app/blueprints'
+    | '/_authenticated/_app/challenges'
     | '/_authenticated/_app/circles'
     | '/_authenticated/_app/communications'
     | '/_authenticated/_app/earnings'
@@ -1346,6 +1359,13 @@ declare module '@tanstack/react-router' {
       path: '/blueprints'
       fullPath: '/blueprints'
       preLoaderRoute: typeof AuthenticatedAppBlueprintsRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/challenges': {
+      id: '/_authenticated/_app/challenges'
+      path: '/challenges'
+      fullPath: '/challenges'
+      preLoaderRoute: typeof AuthenticatedAppChallengesRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
     '/_authenticated/_app/circles': {
@@ -1747,6 +1767,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppAlertsRoute: typeof AuthenticatedAppAlertsRoute
   AuthenticatedAppAttendanceRoute: typeof AuthenticatedAppAttendanceRoute
   AuthenticatedAppBlueprintsRoute: typeof AuthenticatedAppBlueprintsRoute
+  AuthenticatedAppChallengesRoute: typeof AuthenticatedAppChallengesRoute
   AuthenticatedAppCirclesRoute: typeof AuthenticatedAppCirclesRoute
   AuthenticatedAppCommunicationsRoute: typeof AuthenticatedAppCommunicationsRoute
   AuthenticatedAppEarningsRoute: typeof AuthenticatedAppEarningsRoute
@@ -1799,6 +1820,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppAlertsRoute: AuthenticatedAppAlertsRoute,
   AuthenticatedAppAttendanceRoute: AuthenticatedAppAttendanceRoute,
   AuthenticatedAppBlueprintsRoute: AuthenticatedAppBlueprintsRoute,
+  AuthenticatedAppChallengesRoute: AuthenticatedAppChallengesRoute,
   AuthenticatedAppCirclesRoute: AuthenticatedAppCirclesRoute,
   AuthenticatedAppCommunicationsRoute: AuthenticatedAppCommunicationsRoute,
   AuthenticatedAppEarningsRoute: AuthenticatedAppEarningsRoute,
