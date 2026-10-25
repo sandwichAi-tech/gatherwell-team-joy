@@ -217,6 +217,9 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const [refund, setRefund] = useState<RefundPolicy>('24h');
   const [visibility, setVisibility] = useState<'team' | 'public' | 'unlisted'>('team');
   const [drip, setDrip] = useState(7);
+  const [activeFrom, setActiveFrom] = useState('');
+  const submitting = useRef(false);
+  const tz = typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC';
   const [courseId, setCourseId] = useState('');
   const [createdQuiz, setCreatedQuiz] = useState<{ quizId: string; offer: Offer } | null>(null);
   const [busy, setBusy] = useState(false);
@@ -253,6 +256,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
           url: l.url ?? '', storagePath: l.storage_path, replay: l.replay_url ?? '',
           live: l.live_starts_at ? toLocalInput(new Date(l.live_starts_at)) : '', meeting: '',
         } }));
+        setActiveFrom(tr.data.available_from ? toLocalInput(new Date(tr.data.available_from)) : '');
         setVisibility(tr.data.visibility === 'public' || tr.data.visibility === 'unlisted' ? tr.data.visibility : 'team');
         setLoaded({ entity: 'track', id: initialId, status: tr.data.is_published ? 'published' : 'draft' });
         setLoadingItem(false);
@@ -275,6 +279,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
           ingEn: listOf(rc.data.ingredients, 'en').join('\n'), ingEs: listOf(rc.data.ingredients, 'es').join('\n'),
           stepsEn: listOf(rc.data.steps, 'en').join('\n'), stepsEs: listOf(rc.data.steps, 'es').join('\n'),
         } }));
+        setActiveFrom(rc.data.available_from ? toLocalInput(new Date(rc.data.available_from)) : '');
         setLoaded({ entity: 'recipe', id: initialId, status: rc.data.is_published ? 'published' : 'draft' });
         setLoadingItem(false);
         return;
@@ -297,6 +302,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
         setDraft(d => ({ ...d, offer: { price: o.price_cents ? (o.price_cents / 100).toString() : '', filePath: o.file_path } }));
         setRefund((o as any).refund_policy ?? '24h'); setDrip(o.drip_days ?? 7);
         setVisibility(((o as any).visibility === 'public' || (o as any).visibility === 'unlisted' ? (o as any).visibility : 'team'));
+        setActiveFrom(o.available_from ? toLocalInput(new Date(o.available_from)) : '');
         let trackId: string | undefined;
         if (o.kind === 'course') {
           const linked = await db.from('tracks').select('id').eq('offer_id', initialId).limit(1).maybeSingle();
@@ -310,6 +316,11 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
     })();
   }, [initialId]);
 
+  const stepsRef = useRef<HTMLDivElement>(null);
+  const goStep = (s: ItemSection) => {
+    setSection(s);
+    requestAnimationFrame(() => stepsRef.current?.querySelector<HTMLButtonElement>('[aria-selected="true"]')?.focus());
+  };
   const patchItem = (p: Partial<ItemState>) => setItem(s => ({ ...s, ...p }));
   const patchLesson = (p: Partial<BuilderDraft['lesson']>) => setDraft(d => ({ ...d, lesson: { ...d.lesson, ...p } }));
   const patchRecipe = (p: Partial<BuilderDraft['recipe']>) => setDraft(d => ({ ...d, recipe: { ...d.recipe, ...p } }));
@@ -354,16 +365,25 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
     lessonUrl: draft.lesson.url, live: draft.lesson.live, filePath: draft.offer.filePath, courseId, publish: true,
   });
   const paidBlocked = paid && !sellReady;
+  const placeholder = hasPlaceholder(item.titleEn, item.titleEs, item.descEn, item.descEs, item.subtitleEn, item.subtitleEs);
   const canSave = issues.length === 0 && (progress === null || progress === 100) && !busy;
-  const canPublish = canSave && !paidBlocked;
+  const canPublish = canSave && !paidBlocked && !placeholder;
+  const nav = stepNav(sections, sections.includes(section) ? section : 'presentation');
+  const wasPublished = loaded?.status === 'published';
 
-  const finish = async (ok: boolean, go?: () => void) => {
+  const finish = async (ok: boolean, published?: { entity: 'track' | 'recipe' | 'offer'; id: string | undefined }, err?: string) => {
     setBusy(false);
-    if (!ok) { toast.error(t('profile.saveError')); return; } // state is kept — the same button retries
-    toast.success(t('templates.saved'));
+    // State is kept on failure — the same button retries.
+    if (!ok) { toast.error(t(err?.includes('blueprint_placeholder') ? 'resources.item.placeholderBlock' : 'resources.item.saveFailed')); return; }
     await qc.invalidateQueries();
-    go?.();
+    if (published?.id) {
+      toast.success(t(wasPublished ? 'resources.item.updatedToast' : 'resources.item.publishedToast'));
+      void navigate(publishedDestination(published.entity, published.id));
+      return;
+    }
+    toast.success(t('resources.item.draftToast'));
   };
+  const activation = { available_from: activationIso(activeFrom), available_tz: activeFrom ? tz : null };
 
   const presentationCols = {
     subtitle_en: item.subtitleEn.trim() || null, subtitle_es: item.subtitleEs.trim() || null,
@@ -373,18 +393,23 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   };
 
   const save = async (publish: boolean) => {
+    if (submitting.current) return; // one submission at a time: no duplicate records
+    submitting.current = true;
+    try { await saveOnce(publish); } finally { submitting.current = false; }
+  };
+  const saveOnce = async (publish: boolean) => {
     setBusy(true);
     const base = {
       title_en: item.titleEn.trim(), title_es: item.titleEs.trim(),
       description_en: item.descEn.trim() || null, description_es: item.descEs.trim() || null,
-      cover_url: item.coverPath, cover_style: item.coverStyle, ...presentationCols,
+      cover_url: item.coverPath, cover_style: item.coverStyle, ...presentationCols, ...activation,
     };
     if (isTrackFlow(type) && lessonType) {
       const row = { ...base, is_published: publish, visibility, host_id: userId, resource_kind: lessonType };
       const tr = loaded?.entity === 'track'
         ? await db.from('tracks').update(row).eq('id', loaded.id).select('id').single()
         : await db.from('tracks').insert({ ...row, team_id: teamId, sort_order: Date.now() % 1_000_000 }).select('id').single();
-      if (tr.error) return finish(false);
+      if (tr.error) return finish(false, undefined, tr.error.message);
       const trackId = tr.data.id as string;
       const lessonRow = {
         title_en: base.title_en, title_es: base.title_es, type: lessonType, track_id: trackId,
@@ -399,16 +424,16 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
       const ls = existing
         ? await db.from('lessons').update(lessonRow).eq('id', existing.id)
         : await db.from('lessons').insert({ ...lessonRow, sort_order: 1 });
-      if (ls.error) return finish(false);
+      if (ls.error) return finish(false, undefined, ls.error.message);
       if (lessonType === 'live' && draft.lesson.meeting.trim() && !existing) await supabase.from('lesson_live_links').insert({ lesson_id: ls.data?.id ?? existing?.id, url: draft.lesson.meeting.trim() });
       setLoaded({ entity: 'track', id: trackId, status: publish ? 'published' : 'draft' });
       setSnapshot(itemSnapshot(item));
-      return finish(true);
+      return finish(true, publish ? { entity: 'track', id: trackId } : undefined);
     }
     if (type === 'recipe') {
       const lines = (s: string) => s.split('\n').map(x => x.trim()).filter(Boolean).slice(0, 40).map(x => x.slice(0, 300));
       const row = {
-        title_en: base.title_en, title_es: base.title_es, cover_url: base.cover_url, cover_style: base.cover_style, ...presentationCols,
+        title_en: base.title_en, title_es: base.title_es, cover_url: base.cover_url, cover_style: base.cover_style, ...presentationCols, ...activation,
         is_published: publish,
         prep_minutes: parseInt(draft.recipe.prep, 10) > 0 ? Math.min(600, parseInt(draft.recipe.prep, 10)) : null,
         tags: draft.recipe.tags,
@@ -416,10 +441,12 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
         steps: { en: lines(draft.recipe.stepsEn), es: lines(draft.recipe.stepsEs) },
       };
       const r = loaded?.entity === 'recipe'
-        ? await db.from('recipes').update(row).eq('id', loaded.id)
-        : await db.from('recipes').insert({ ...row, team_id: teamId, created_by: userId });
-      if (!r.error) { setLoaded(l => l ?? { entity: 'recipe', id: initialId!, status: publish ? 'published' : 'draft' }); setSnapshot(itemSnapshot(item)); }
-      return finish(!r.error);
+        ? await db.from('recipes').update(row).eq('id', loaded.id).select('id').single()
+        : await db.from('recipes').insert({ ...row, team_id: teamId, created_by: userId }).select('id').single();
+      if (r.error) return finish(false, undefined, r.error.message);
+      const rid = r.data.id as string;
+      setLoaded({ entity: 'recipe', id: rid, status: publish ? 'published' : 'draft' }); setSnapshot(itemSnapshot(item));
+      return finish(true, publish ? { entity: 'recipe', id: rid } : undefined);
     }
     const kind = offerKindFor(type);
     if (kind) {
@@ -429,7 +456,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
         status: (publish ? 'published' : 'draft') as 'published' | 'draft', visibility,
       };
       const r = loaded?.entity === 'offer' ? await saveOffer(row, loaded.id) : await saveOffer({ ...row, includes_en: [], includes_es: [], team_id: teamId, host_id: userId });
-      if (r.error) { setBusy(false); toast.error(t(String(r.error.message).includes('payouts_required') ? 'billing.payoutsRequired' : 'offers.saveError')); return; }
+      if (r.error) { const m = String(r.error.message); if (!m.includes('payouts_required')) return finish(false, undefined, m); setBusy(false); toast.error(t('billing.payoutsRequired')); return; }
       let offerId = loaded?.id as string;
       if (!loaded) {
         const mine = await db.from('offers').select('id').eq('host_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle();
@@ -446,7 +473,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
       }
       setLoaded({ entity: 'offer', id: offerId, status: publish ? 'published' : 'draft', trackId });
       setSnapshot(itemSnapshot(item));
-      return finish(true);
+      return finish(true, publish ? { entity: 'offer', id: offerId } : undefined);
     }
     // quiz: create a draft quiz on the chosen course, then open the question builder inline.
     const offer = courses.find(o => o.id === courseId);
@@ -477,6 +504,10 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
     <Button variant="secondary" onClick={() => { loadedOnce.current = false; setLoadError(false); setLoadingItem(true); }}>{t('error.retry')}</Button>
   </section>;
 
+  const activationField = <Field id="rb-active" label={t('resources.item.activeFrom')}>
+    <Input id="rb-active" type="datetime-local" className="field-input" value={activeFrom} onChange={e => setActiveFrom(e.target.value)} aria-describedby="rb-active-hint" />
+    <p id="rb-active-hint" className="field-hint">{t('resources.item.activeFromHint', { tz })}</p>
+  </Field>;
   const preview = <>
     <div className="form-field"><span className="field-label">{t('resources.item.cardOnPage')}</span><CardPreview item={item} type={type} lang={lang} cta={cta} /></div>
     <div className="form-field"><span className="field-label">{t('resources.item.landingTitle')}</span><LandingPreview item={item} type={type} lang={lang} cta={cta} paid={paid} /></div>
@@ -501,7 +532,8 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
           {loaded && <p className="field-hint">{t('resources.item.typeLocked')}</p>}
         </Field>
 
-        <div className="segmented-tabs builder-steps" role="tablist" aria-label={t('resources.item.sections')}>
+        <p className="muted-small" aria-live="polite">{t('resources.item.stepOf', { n: nav.index + 1, total: nav.total })}</p>
+        <div ref={stepsRef} className="segmented-tabs builder-steps" role="tablist" aria-label={t('resources.item.sections')}>
           {sections.map((s, i) => <button key={s} type="button" role="tab" aria-selected={section === s} className={section === s ? 'is-active' : ''} onClick={() => setSection(s)}>
             {i + 1}. {t(`resources.item.tabs.${s}`)}
           </button>)}
@@ -575,6 +607,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
             <Button asChild variant="secondary" size="sm"><Link to="/offers" search={{ new: 'course' }}><GraduationCap />{t('resources.create.quizParent.new')}</Link></Button>
           </div>}
 
+          {!sections.includes('access') && type !== 'quiz' && activationField}
           {/* Promotional landing copy — public, separate from protected content. */}
           {type !== 'quiz' && <div className="form-field">
             <RichTextEditor id="rb-promo" label={`${t('resources.item.promoLabel')} · ${lang.toUpperCase()}`}
@@ -591,6 +624,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
                 className={`filter-chip ${visibility === v ? 'is-active' : ''}`} onClick={() => setVisibility(v)}>{t(`resources.item.visibility.${v}`)}</button>)}
             </div>
             <p className="field-hint">{t(`resources.item.visibilityHint.${visibility}`)}</p></div>}
+          {activationField}
           {isTrackFlow(type) && <p className="muted-small">{t('resources.item.trackAccessNote')}</p>}
           {offerKindFor(type) ? <>
             <div className="form-field"><span className="field-label">{t('resources.item.accessLabel')}</span>
@@ -623,16 +657,20 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
         {/* ---- Preview (all sizes; desktop also shows the aside) ---- */}
         {section === 'preview' && <div className="item-preview-mobile">{preview}</div>}
 
+        {placeholder && <p className="field-hint" role="alert">{t('resources.item.placeholderBlock')}</p>}
         {issues.length > 0 && <p className="field-hint" role="alert">{t('resources.item.issues', { fields: issues.map(i => t(`resources.item.issue.${i}`)).join(', ') })}</p>}
 
         <div className="sheet-actions builder-actions">
-          <Button variant="secondary" disabled={!canSave} onClick={() => void save(false)}>
+          {nav.prev && <Button variant="ghost" onClick={() => goStep(nav.prev!)}><ArrowLeft />{t('resources.item.back')}</Button>}
+          <Button variant="secondary" disabled={!canSave} aria-busy={busy} onClick={() => void save(false)}>
             <Save />{busy ? t('onboarding.saving') : t('gathering.saveDraft')}
           </Button>
-          <Button className="onboarding-continue" disabled={!canPublish} onClick={() => void save(true)}
-            title={paidBlocked ? t('resources.item.paidBlocked') : undefined}>
-            {busy ? t('onboarding.saving') : t('offers.publish')}
-          </Button>
+          {nav.next
+            ? <Button className="onboarding-continue" onClick={() => goStep(nav.next!)}>{t('resources.item.next')}<ArrowRight /></Button>
+            : <Button className="onboarding-continue" disabled={!canPublish} aria-busy={busy} onClick={() => void save(true)}
+                title={paidBlocked ? t('resources.item.paidBlocked') : undefined}>
+                {busy ? t('onboarding.saving') : t(wasPublished ? 'resources.item.update' : 'offers.publish')}
+              </Button>}
         </div>
       </section>
 
