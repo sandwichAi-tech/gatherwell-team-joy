@@ -257,7 +257,7 @@ export function MePage() {
       name={profile?.full_name} city={profile?.city} team={workspace?.name} role={workspace ? t(`roles.${workspace.role}`) : null} badge={workspace?.customBadge} bio={profile?.bio}
       actions={<>
         <Button variant="secondary" className="gw-hero-edit" onClick={() => setEditing(true)}><Pencil />{t('profile.edit')}</Button>
-        <Button variant="secondary" size="icon" className="gw-hero-icon" aria-label={t('profile.share')} title={t('profile.share')} onClick={() => setPanel('invite')}><Share2 /></Button>
+        <Button variant="secondary" size="icon" className="gw-hero-icon" aria-label={t('profile.share')} title={t('profile.share')} onClick={() => setPanel('qr')}><Share2 /></Button>
         <Button variant="secondary" size="icon" className="gw-hero-icon" aria-label={t('profile.qrTitle')} title={t('profile.qrTitle')} onClick={() => setPanel('qr')}><QrCode /></Button>
       </>}
     />
