@@ -5,7 +5,8 @@
 - [x] P3: activities attach resources/links/files with day availability; participant view renders them
 - [x] Migration 0111 applied; 510 tests, typecheck, build OK; EN/ES 320/375/390/1280 verified; fixtures cleaned
 
-## Referral program (rows 56–58) — approved 2026-10-25, start after policy/waiver pass
-- [ ] Opt-in per paid item, % or flat, 30-day last click; block self + any shared-team pair; team-only events ineligible
-- [ ] Commissions visible only to owning host (program area) and each referrer's own earnings; update PROJECT_RULES + CHANGELOG exception
-- [ ] Totals stay zero until payments connected; lifecycle tested only with removable fixtures
+## Referral program (rows 56–58) — built 2026-10-25
+- [x] Opt-in per paid item, % or flat, 30-day last click; block self + any shared-team pair; team-only events ineligible
+- [x] Commissions visible only to owning host (program area) and each referrer's own earnings; update PROJECT_RULES + CHANGELOG exception
+- [x] Totals stay zero until payments connected; lifecycle tested only with removable fixtures
+- [ ] Browser-test program setup sheet + link copy/share with a real eligible paid item (blocked: no paid items until payouts connect)

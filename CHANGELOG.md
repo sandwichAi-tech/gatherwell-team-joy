@@ -1,5 +1,11 @@
 # ZoheeWell Change Log
 
+## 2026-10-25 — Referral programs (Website Notes rows 56–58)
+- Opt-in per paid public event or paid resource/course; percent (1–90) or flat (< price) reward, server-computed; fixed 30-day last-valid-click window.
+- Host area /referrals (setup, filters, aggregates, manual payout ledger); referrer view /referrals/mine; share card on /e/$id and /o/$id; links use ?rc=CODE.
+- Self, host and any shared-team pair never earn; one reward per order; refunds/cancellations/disputes reverse pending/available rewards; orders trigger is the provider hook.
+- PROJECT_RULES gains the narrow approved commission-display exception.
+
 ## v0.42 — Onboarding 18+ fix, stable mobile nav, menu mode switch, admin cleanup (2026-10-25)
 - Onboarding: `finish()` now refetches the profile via `markProfileOnboarded` before marking it onboarded, so the app gate never reads a stale row missing `adult_confirmed_at` — the cause of new accounts looping back to the 18+ step after confirming. `confirm_adult` stays idempotent; failures keep the localized error + retry.
 - Mobile navigation: the horizontally scrolling bottom bar is replaced by a fixed five-slot bar — four primary destinations plus a labeled More menu (Communication, Insights, Me) with correct active states. Desktop sidebar unchanged.
