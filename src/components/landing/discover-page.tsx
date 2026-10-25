@@ -231,7 +231,7 @@ export function DiscoverPage({ search }: { search: DiscoverSearch }) {
             onClick={() => set({ kind: kinds.includes(k) ? (kinds.filter(x => x !== k).join(',') || undefined) : [...kinds, k].join(',') })}>{t(`discover.kind.${k}`)}</button>)}
         </div>}
         <CategoryRow selected={search.cat ?? null} onSelect={c => set({ cat: c ?? undefined })} />
-        {tab === 'events' && <>
+        {tab === 'events' && (
           <div className="chip-row" role="group" aria-label={t('discover.formatLabel')}>
             {(['person', 'online', 'hybrid'] as const).map(f => <button key={f} type="button" className={`chip${search.format === f ? ' selected' : ''}`} aria-pressed={search.format === f} onClick={() => set({ format: search.format === f ? undefined : f })}>{t(`discover.format.${f}`)}</button>)}
             <button type="button" className={`chip${search.lang === 'es' ? ' selected' : ''}`} aria-pressed={search.lang === 'es'} onClick={() => set({ lang: search.lang === 'es' ? undefined : 'es' })}>{t('discover.spanish')}</button>
