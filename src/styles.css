@@ -2558,3 +2558,50 @@ a.gw-cat-chip:hover{background:#fff}
 .goal-progress-head{display:flex;justify-content:space-between;align-items:baseline}
 .goal-progress progress{width:100%;height:10px;border-radius:8px;overflow:hidden}
 .challenge-welcome{border-color:var(--primary)}
+
+/* ---- Item-level resource editor ---- */
+.item-editor { display: grid; gap: 1rem; align-items: start; }
+@media (min-width: 1100px) {
+  .item-editor { grid-template-columns: minmax(0, 1fr) 340px; }
+  .item-preview-aside { display: block; position: sticky; top: 5rem; }
+  .item-preview-mobile { display: none; }
+}
+.item-preview-aside { display: none; padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); }
+.item-preview-aside .eyebrow { display: inline-flex; gap: .35rem; align-items: center; margin-bottom: .75rem; }
+.status-chip { align-self: start; white-space: nowrap; }
+.builder-actions { margin-top: 1rem; }
+
+.card-preview { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+.card-preview.is-button { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .85rem 1rem; }
+.card-preview.is-button strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card-preview.is-callout { padding: 1.25rem; display: grid; gap: .4rem; }
+.card-preview.is-callout p { margin: 0; font-size: .92rem; overflow-wrap: anywhere; }
+.card-preview.is-preview .card-preview-body { padding: .9rem 1rem; display: grid; gap: .35rem; }
+.card-preview.is-preview p { margin: 0; font-size: .92rem; color: var(--muted-foreground); overflow-wrap: anywhere; }
+.card-preview-cta { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: .55rem 1.1rem; border-radius: 999px; font-weight: 600; font-size: .95rem; width: fit-content; }
+
+.landing-preview { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--card); }
+.landing-preview-body { padding: 1rem; display: grid; gap: .5rem; }
+.landing-preview-body h3 { margin: 0; overflow-wrap: anywhere; }
+.rich-text h3, .rich-text h4 { margin: .6rem 0 .2rem; }
+.rich-text p { margin: .3rem 0; }
+.rich-text ul, .rich-text ol { margin: .3rem 0; padding-left: 1.3rem; }
+.rich-text a { color: var(--primary); text-decoration: underline; }
+
+.accent-swatches { display: flex; gap: .6rem; flex-wrap: wrap; }
+.accent-swatch { width: 48px; height: 48px; border-radius: 12px; border: 2px solid transparent; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.accent-swatch.is-active { border-color: var(--primary); }
+
+.rich-toolbar { display: flex; gap: .25rem; margin-bottom: .4rem; }
+.rich-tool { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 10px; background: var(--card); color: var(--foreground); cursor: pointer; }
+.rich-tool:hover { background: var(--accent); }
+.rich-input { font-family: inherit; }
+
+.curriculum-list { list-style: none; margin: .5rem 0 0; padding: 0; display: grid; gap: .5rem; }
+.curriculum-row { border: 1px solid var(--border); border-radius: 12px; padding: .6rem .75rem; }
+.curriculum-summary { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+.curriculum-title { display: grid; min-width: 0; }
+.curriculum-title strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.curriculum-title small { color: var(--muted-foreground); }
+.curriculum-actions { display: inline-flex; gap: .15rem; flex-shrink: 0; }
+.curriculum-edit { display: grid; gap: .6rem; }
