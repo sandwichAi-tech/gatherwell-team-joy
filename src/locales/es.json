@@ -38,10 +38,10 @@
     "previewNote": "Vista de ejemplo. Esta acción aún no está conectada.",
     "save": "Guardar"
   },
-  "home": {
+"home":   {
     "meta": {
-      "title": "ZoheeWell · Une a las personas",
-      "description": "Crea, vende y opera eventos, retiros, cursos y membresías, todo en un solo lugar. Comienza a organizar gratis en ZoheeWell."
+      "title": "ZoheeWell · Eventos, cursos y comunidad en un solo lugar",
+      "description": "ZoheeWell ayuda a anfitriones y coaches de bienestar a crear eventos y retiros, vender boletos, enseñar cursos y hacer crecer su comunidad. Crea tu primer evento gratis."
     },
     "nav": {
       "hosts": "Para anfitriones",
@@ -50,38 +50,42 @@
     },
     "cta": {
       "start": "Empieza a organizar",
-      "startFree": "Comienza a organizar gratis",
-      "explore": "Explora qué está pasando",
+      "createEvent": "Crea un evento",
+      "discover": "Descubre eventos",
       "exploreAll": "Explora eventos y aprendizaje"
     },
     "soon": "Próximamente",
     "hero": {
-      "eyebrow": "Para anfitriones, creadores y comunidades",
-      "title": "Une a las personas. Nosotros nos encargamos del resto.",
-      "lede": "Crea, vende y opera eventos, retiros, cursos y membresías, todo en un solo lugar.",
+      "eyebrow": "Para anfitriones, coaches y comunidades",
+      "title": "Un solo lugar para tus eventos, cursos y comunidad.",
+      "lede": "Crea eventos y retiros, vende boletos, enseña cursos y mantén cerca a tu gente, sin alternar entre cinco herramientas.",
       "tagline": "La vida es mejor juntos."
     },
     "carousel": {
-      "label": "Lo que puedes organizar en ZoheeWell",
+      "label": "Lo que puedes hacer en ZoheeWell",
       "prev": "Diapositiva anterior",
       "next": "Diapositiva siguiente",
       "slideOf": "{{n}} de {{count}}",
       "slides": {
-        "events": {
-          "title": "Eventos",
-          "line": "Llena cada lugar."
+        "hostEvents": {
+          "title": "Organiza eventos y retiros",
+          "line": "Boletos, exenciones y registro, resueltos.",
+          "cta": "Empieza a organizar"
         },
-        "retreats": {
-          "title": "Retiros",
-          "line": "Varios días, sin estrés."
+        "teach": {
+          "title": "Enseña cursos y recursos",
+          "line": "Lecciones, quizzes y guías en un solo lugar.",
+          "cta": "Empieza a crear"
         },
-        "courses": {
-          "title": "Cursos",
-          "line": "Enseña una vez, llega a muchos."
+        "discoverEvents": {
+          "title": "Encuentra algo que valga la pena",
+          "line": "Explora eventos y retiros públicos.",
+          "cta": "Explora eventos"
         },
-        "communities": {
-          "title": "Comunidades",
-          "line": "Haz que la gente vuelva."
+        "coaches": {
+          "title": "Conoce a los anfitriones",
+          "line": "Sigue a coaches y sus próximos eventos.",
+          "cta": "Conoce coaches"
         }
       }
     },
@@ -89,24 +93,42 @@
       "label": "Herramientas para anfitriones",
       "title": "Todo lo que necesitas para organizar",
       "cards": {
-        "createSell": {
-          "title": "Crea y vende",
-          "body": "Eventos, retiros, boletos, cursos y membresías, gratis o de pago."
+        "events": {
+          "title": "Eventos y retiros",
+          "body": "De un día o varios, con boletos, listas de espera, exenciones y registro con QR.",
+          "cta": "Crea un evento"
         },
-        "runConnect": {
-          "title": "Opera y conecta",
-          "body": "Invitaciones, recordatorios, registro de llegada y avisos mantienen a todos al día."
+        "learning": {
+          "title": "Cursos, recursos y quizzes",
+          "body": "Crea lecciones, guías, descargas y quizzes, gratis o de pago.",
+          "cta": "Empieza a crear"
         },
-        "teachGrow": {
-          "title": "Enseña y crece",
-          "body": "Lecciones, recursos y un perfil público ayudan a crecer tu comunidad."
+        "communications": {
+          "title": "Comunicaciones y recorridos",
+          "body": "Recordatorios, avisos y seguimientos automáticos por correo; SMS cuando esté habilitado.",
+          "cta": "Planifica mensajes"
+        },
+        "profile": {
+          "title": "Perfil público y descubrimiento",
+          "body": "Una página pública y presencia en Descubrir para que nuevas personas te encuentren.",
+          "cta": "Configura tu perfil"
+        },
+        "payments": {
+          "title": "Pagos y planes",
+          "body": "Empieza gratis. Tarifas de plataforma de 5% a 0.5% según el plan; los pagos con tarjeta se activan tras configurar Stripe.",
+          "cta": "Ver precios"
         }
       },
       "seeAll": "Ver todas las herramientas"
     },
     "attend": {
-      "title": "¿Buscas algo a qué unirte?",
-      "body": "Encuentra eventos, retiros y cursos cerca de ti o en línea."
+      "title": "Para quienes descubren el bienestar",
+      "body": "Explora eventos, recursos y coaches públicos, sin necesidad de una cuenta.",
+      "paths": {
+        "events": "Eventos",
+        "resources": "Recursos",
+        "coaches": "Coaches"
+      }
     },
     "pricing": {
       "label": "Precios",
@@ -133,7 +155,7 @@
       "line": "Privacidad primero, totalmente bilingüe, accesible por diseño y honesto sobre lo que está disponible."
     },
     "final": {
-      "title": "¿Listo para reunir a tu gente?"
+      "title": "¿Lista o listo para organizar tu primer evento?"
     },
     "paymentsSoon": "Pagos próximamente",
     "footer": {
