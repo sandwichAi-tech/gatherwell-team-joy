@@ -2544,3 +2544,17 @@ a.gw-cat-chip:hover{background:#fff}
 .format-card small{color:var(--muted-foreground);font-size:14px}
 @media (min-width:768px){.format-cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .builder-panel{display:grid;gap:16px}
+
+/* Challenge builder + participant upgrades */
+.builder-steps{flex-wrap:wrap}
+.builder-activity{border:1px solid var(--border);border-radius:16px;padding:16px;display:grid;gap:12px}
+.builder-activity legend{font-weight:600;padding:0 6px}
+.builder-activity-actions{display:flex;gap:8px;justify-content:flex-end}
+.builder-nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.builder-summary{display:grid;gap:8px}
+.builder-issues{color:var(--destructive);font-size:14px;display:grid;gap:4px;padding-left:18px}
+.challenge-activity{display:flex;align-items:center;gap:12px;padding:10px 0}
+.goal-progress{display:grid;gap:6px;margin:12px 0}
+.goal-progress-head{display:flex;justify-content:space-between;align-items:baseline}
+.goal-progress progress{width:100%;height:10px;border-radius:8px;overflow:hidden}
+.challenge-welcome{border-color:var(--primary)}

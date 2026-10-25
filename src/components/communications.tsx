@@ -10,6 +10,7 @@ import { workspaceQuery } from '@/lib/account';
 import { supabase } from '@/integrations/supabase/client';
 import { Link } from '@tanstack/react-router';
 import { rpcError } from '@/lib/gatherings';
+import { messageSendDate, type ChallengeMessageKind } from '@/lib/challenges';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
