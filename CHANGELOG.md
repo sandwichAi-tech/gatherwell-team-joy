@@ -435,3 +435,10 @@
 - Event form's bare "Setup required" pill replaced with an honest blocked note (platform vs payout reason) linking to the checklist; the note hides itself once the coach can actually sell.
 - New getPaymentsReadiness server function (auth-required, reads own billing row via RLS); readinessSteps/canSellPaid mapper unit-tested (5 tests).
 - Verified: 388 tests, 12/12 browser checks EN/ES 390/1280 + 200% zoom, anon billing read denied. Not simulatable: fully coach-ready state (needs a real Connect account) and live checkout.
+
+## Resources flow pass (rows 53–55, 59–62, 65)
+- Builder: step counter, Back/Next, Save draft on every step, Publish/Update only on the final Preview step; one-shot submit; success exits to the item's detail page; failures keep content with a retryable error.
+- Optional "Available from" date (with time zone) on tracks, offers and recipes; access, completion and private media stay closed before it (migration 0115).
+- Mark complete goes through one server-checked, idempotent call; draft/inaccessible/not-yet-open lessons are refused; entitled non-members can now complete.
+- PDF lessons: signed viewer plus Open and Download actions, loading state instead of an empty player.
+- "Resource templates" renamed "Resource blueprints" / "Modelos de recursos"; blueprint example text can't be published (database guard + editor warning); track lists show track vs lesson publication.
