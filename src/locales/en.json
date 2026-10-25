@@ -3151,7 +3151,8 @@
       "sections": "Users includes coaches and account restrictions. Offerings inspects events and resources. Teams controls communities. Settings controls feature availability and plan configuration. Support handles help requests. Audit records administrative changes.",
       "limits": "Email, SMS, payments and wallet delivery require their respective setup. Simulated message records are not delivered."
     },
-    "dashboardLink": "Admin dashboard"
+    "dashboardLink": "Admin dashboard",
+    "platformGroup": "Platform administration"
   },
   "legalDocs": {
     "draft": "Draft — pending legal review",
@@ -6232,7 +6233,7 @@
     "attendeeAudience": "Audience: registered attendees of the selected event. Selecting all events applies to workspace event registrations.",
     "relatedResource": "Related resource",
     "chooseResource": "Choose a resource",
-    "resourceScope": "Audience: newly enrolled learners with valid access. Email and in-app only; no resource SMS. Use enrollment fulfillment messages, not promotions.",
+    "resourceScope": "Audience: new enrolled learners with active access. Resource journeys deliver in-app messages only; email campaigns require separate sending setup.",
     "sampleResource": "Your resource",
     "eventContext": "Event",
     "resourceContext": "Resource",

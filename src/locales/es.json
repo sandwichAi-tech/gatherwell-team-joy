@@ -3151,7 +3151,8 @@
       "sections": "Usuarios incluye coaches y restricciones de cuentas. Ofertas permite revisar eventos y recursos. Equipos controla comunidades. Configuración controla funciones y planes. Soporte gestiona solicitudes. Auditoría registra cambios administrativos.",
       "limits": "El correo, SMS, pagos y pases requieren su configuración correspondiente. Los mensajes simulados no se entregan."
     },
-    "dashboardLink": "Panel de administración"
+    "dashboardLink": "Panel de administración",
+    "platformGroup": "Administración de la plataforma"
   },
   "legalDocs": {
     "draft": "Borrador — pendiente de revisión legal",
@@ -6232,7 +6233,7 @@
     "attendeeAudience": "Audiencia: personas inscritas al evento seleccionado. Todos los eventos se aplica a las inscripciones de eventos del espacio.",
     "relatedResource": "Recurso relacionado",
     "chooseResource": "Elige un recurso",
-    "resourceScope": "Audiencia: nuevos estudiantes inscritos con acceso válido. Solo correo y mensajes internos; sin SMS. Usa mensajes de inscripción, no promociones.",
+    "resourceScope": "Público: nuevos participantes inscritos con acceso activo. Los recorridos de recursos solo envían mensajes dentro de la app; las campañas por correo requieren configuración de envío.",
     "sampleResource": "Tu recurso",
     "eventContext": "Evento",
     "resourceContext": "Recurso",
