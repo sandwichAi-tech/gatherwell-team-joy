@@ -38,32 +38,94 @@ export type CatalogItem = {
   host_name: string | null;
   host_slug: string | null;
   url: string;
+  cover_path: string | null;
+  cover_style: number | null;
+  cover_focal: string | null;
+  cover_alt: string | null;
+  cover_overlay: number | null;
 };
+
+/** One page of catalog results. The RPC is bounded server-side (max 100). */
+export const CATALOG_PAGE_SIZE = 48;
+export const COACH_PAGE_SIZE = 24;
+
+export async function fetchCatalogPage(f: DiscoverFilters, page: number): Promise<CatalogItem[]> {
+  const { data, error } = await supabase.rpc('discover_catalog', {
+    _q: f.q || null,
+    _kinds: f.kinds?.length ? f.kinds : null,
+    _cat: f.cat || null,
+    _from: f.from ? new Date(f.from).toISOString() : null,
+    _to: f.to ? new Date(`${f.to}T23:59:59`).toISOString() : null,
+    _format: f.format || null,
+    _free: f.free ?? null,
+    _lang: f.lang || null,
+    _accessible: f.accessible ?? false,
+    _minors: f.minors ?? false,
+    _lat: f.near?.lat ?? null,
+    _lng: f.near?.lng ?? null,
+    _radius_km: f.near?.radiusKm ?? null,
+    _sort: f.sort ?? 'soonest',
+    _limit: CATALOG_PAGE_SIZE,
+    _offset: page * CATALOG_PAGE_SIZE,
+  } as never);
+  if (error) throw error;
+  return (data ?? []) as unknown as CatalogItem[];
+}
 
 export const discoverCatalogQuery = (f: DiscoverFilters) => queryOptions({
   queryKey: ['discover-catalog', f],
-  queryFn: async () => {
-    const { data, error } = await supabase.rpc('discover_catalog', {
-      _q: f.q || null,
-      _kinds: f.kinds?.length ? f.kinds : null,
-      _cat: f.cat || null,
-      _from: f.from ? new Date(f.from).toISOString() : null,
-      _to: f.to ? new Date(`${f.to}T23:59:59`).toISOString() : null,
-      _format: f.format || null,
-      _free: f.free ?? null,
-      _lang: f.lang || null,
-      _accessible: f.accessible ?? false,
-      _minors: f.minors ?? false,
-      _lat: f.near?.lat ?? null,
-      _lng: f.near?.lng ?? null,
-      _radius_km: f.near?.radiusKm ?? null,
-      _sort: f.sort ?? 'soonest',
-    } as never);
-    if (error) throw error;
-    return (data ?? []) as unknown as CatalogItem[];
-  },
+  queryFn: () => fetchCatalogPage(f, 0),
   staleTime: 60_000,
 });
+
+// ---- Discover coaches ----
+
+export type CoachItem = {
+  id: string;
+  slug: string;
+  name: string | null;
+  org: string | null;
+  avatar_path: string | null;
+  cover_path: string | null;
+  city: string | null; // only present when the host made their city public
+  bio: string | null;
+  categories: string[];
+  languages: string[];
+  followers: number;
+  upcoming_count: number;
+  offerings_count: number;
+};
+
+export async function fetchCoachesPage(q: string | undefined, cat: string | undefined, page: number): Promise<CoachItem[]> {
+  const { data, error } = await supabase.rpc('discover_coaches', {
+    _q: q || null,
+    _cat: cat || null,
+    _limit: COACH_PAGE_SIZE,
+    _offset: page * COACH_PAGE_SIZE,
+  } as never);
+  if (error) throw error;
+  return (data ?? []) as unknown as CoachItem[];
+}
+
+// ---- Card images ----
+
+export type CoverRef = { kind: 'event' | 'offer' | 'host'; id: string };
+
+/** Refs for batch-signing card images: catalog items plus coach covers/avatars. */
+export function coverRefsFor(items: CatalogItem[], coaches: CoachItem[]): CoverRef[] {
+  const refs: CoverRef[] = [];
+  for (const i of items) if (i.cover_path) refs.push({ kind: i.kind === 'event' ? 'event' : 'offer', id: i.id });
+  for (const c of coaches) if (c.cover_path || c.avatar_path) refs.push({ kind: 'host', id: c.id });
+  return refs.slice(0, 60);
+}
+
+/** Deterministic gradient slot when an item has no uploaded cover, so cards never show a broken image. */
+export function fallbackCoverStyle(id: string, stored: number | null | undefined): number {
+  if (typeof stored === 'number' && Number.isFinite(stored)) return Math.abs(Math.trunc(stored));
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  return h % 6;
+}
 
 /** True when any filter is active — drives noindex on filtered permutations. */
 export function hasActiveFilters(f: DiscoverFilters): boolean {
