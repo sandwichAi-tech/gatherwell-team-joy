@@ -35,6 +35,7 @@ import { checklistOf, eventDetailQuery, templatesQuery } from '@/lib/templates';
 import { UpgradeSheet } from '@/components/plan-page';
 import { planStatusQuery } from '@/lib/billing';
 import { validSessions, type EventSession } from '@/lib/event-sessions';
+import { eventFormats, formatOf, type EventFormat } from '@/lib/event-format';
 
 type Props = { eventId?: string | undefined; templateId?: string | undefined; fromId?: string | undefined };
 const DURATIONS = [30, 60, 90, 120] as const;
@@ -163,6 +164,13 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const dates = startDate && !editing ? expandRepeat(startDate, rule) : [];
   const weekly = !retreatOn && dates.length > 1;
   const retreatBad = retreatOn && (!retreatEnd || !startDate || new Date(retreatEnd) <= startDate);
+
+  // Format cards: switching format keeps everything already entered and reveals the matching sections.
+  const pickFormat = (v: EventFormat) => {
+    const on = v === 'retreat'; setRetreatOn(on); setMulti(v === 'multi'); setRule(r => ({ ...r, kind: 'none' })); setFull(true);
+    if (v === 'multi' && !sessions.length && startDate) setSessions([0, 1].map(i => ({ title: '', starts_at: new Date(startDate.getTime() + i * 86400000).toISOString(), ends_at: new Date(startDate.getTime() + i * 86400000 + 3600000).toISOString(), place: '' })));
+    if (on && !retreatEnd && startDate) { const end = new Date(startDate); end.setDate(end.getDate() + 2); setRetreatEnd(toLocalInput(end)); }
+  };
 
   const payload = () => ({
     category, category_label: category === 'more' ? categoryLabel.trim() : '', title: title.trim(), cover_url: coverPath ?? '', cover_style: coverStyle, starts_at: new Date(start).toISOString(), duration_minutes: duration,
