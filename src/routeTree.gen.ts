@@ -38,6 +38,7 @@ import { Route as TSlugRouteImport } from './routes/t.$slug'
 import { Route as UnsubscribeTokenRouteImport } from './routes/unsubscribe.$token'
 import { Route as VerifyNumberRouteImport } from './routes/verify.$number'
 import { Route as AuthenticatedAppAlertsRouteImport } from './routes/_authenticated/_app/alerts'
+import { Route as AuthenticatedAppAttendanceRouteImport } from './routes/_authenticated/_app/attendance'
 import { Route as AuthenticatedAppBlueprintsRouteImport } from './routes/_authenticated/_app/blueprints'
 import { Route as AuthenticatedAppCirclesRouteImport } from './routes/_authenticated/_app/circles'
 import { Route as AuthenticatedAppCommunicationsRouteImport } from './routes/_authenticated/_app/communications'
@@ -239,6 +240,12 @@ const AuthenticatedAppAlertsRoute = AuthenticatedAppAlertsRouteImport.update({
   path: '/alerts',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppAttendanceRoute =
+  AuthenticatedAppAttendanceRouteImport.update({
+    id: '/attendance',
+    path: '/attendance',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppBlueprintsRoute =
   AuthenticatedAppBlueprintsRouteImport.update({
     id: '/blueprints',
@@ -581,6 +588,7 @@ export interface FileRoutesByFullPath {
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/verify/$number': typeof VerifyNumberRoute
   '/alerts': typeof AuthenticatedAppAlertsRoute
+  '/attendance': typeof AuthenticatedAppAttendanceRoute
   '/blueprints': typeof AuthenticatedAppBlueprintsRoute
   '/circles': typeof AuthenticatedAppCirclesRoute
   '/communications': typeof AuthenticatedAppCommunicationsRoute
@@ -667,6 +675,7 @@ export interface FileRoutesByTo {
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/verify/$number': typeof VerifyNumberRoute
   '/alerts': typeof AuthenticatedAppAlertsRoute
+  '/attendance': typeof AuthenticatedAppAttendanceRoute
   '/blueprints': typeof AuthenticatedAppBlueprintsRoute
   '/circles': typeof AuthenticatedAppCirclesRoute
   '/communications': typeof AuthenticatedAppCommunicationsRoute
@@ -756,6 +765,7 @@ export interface FileRoutesById {
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/verify/$number': typeof VerifyNumberRoute
   '/_authenticated/_app/alerts': typeof AuthenticatedAppAlertsRoute
+  '/_authenticated/_app/attendance': typeof AuthenticatedAppAttendanceRoute
   '/_authenticated/_app/blueprints': typeof AuthenticatedAppBlueprintsRoute
   '/_authenticated/_app/circles': typeof AuthenticatedAppCirclesRoute
   '/_authenticated/_app/communications': typeof AuthenticatedAppCommunicationsRoute
@@ -844,6 +854,7 @@ export interface FileRouteTypes {
     | '/unsubscribe/$token'
     | '/verify/$number'
     | '/alerts'
+    | '/attendance'
     | '/blueprints'
     | '/circles'
     | '/communications'
@@ -930,6 +941,7 @@ export interface FileRouteTypes {
     | '/unsubscribe/$token'
     | '/verify/$number'
     | '/alerts'
+    | '/attendance'
     | '/blueprints'
     | '/circles'
     | '/communications'
@@ -1018,6 +1030,7 @@ export interface FileRouteTypes {
     | '/unsubscribe/$token'
     | '/verify/$number'
     | '/_authenticated/_app/alerts'
+    | '/_authenticated/_app/attendance'
     | '/_authenticated/_app/blueprints'
     | '/_authenticated/_app/circles'
     | '/_authenticated/_app/communications'
@@ -1319,6 +1332,13 @@ declare module '@tanstack/react-router' {
       path: '/alerts'
       fullPath: '/alerts'
       preLoaderRoute: typeof AuthenticatedAppAlertsRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
+    '/_authenticated/_app/attendance': {
+      id: '/_authenticated/_app/attendance'
+      path: '/attendance'
+      fullPath: '/attendance'
+      preLoaderRoute: typeof AuthenticatedAppAttendanceRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
     '/_authenticated/_app/blueprints': {
@@ -1725,6 +1745,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppAlertsRoute: typeof AuthenticatedAppAlertsRoute
+  AuthenticatedAppAttendanceRoute: typeof AuthenticatedAppAttendanceRoute
   AuthenticatedAppBlueprintsRoute: typeof AuthenticatedAppBlueprintsRoute
   AuthenticatedAppCirclesRoute: typeof AuthenticatedAppCirclesRoute
   AuthenticatedAppCommunicationsRoute: typeof AuthenticatedAppCommunicationsRoute
@@ -1776,6 +1797,7 @@ interface AuthenticatedAppRouteRouteChildren {
 
 const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppAlertsRoute: AuthenticatedAppAlertsRoute,
+  AuthenticatedAppAttendanceRoute: AuthenticatedAppAttendanceRoute,
   AuthenticatedAppBlueprintsRoute: AuthenticatedAppBlueprintsRoute,
   AuthenticatedAppCirclesRoute: AuthenticatedAppCirclesRoute,
   AuthenticatedAppCommunicationsRoute: AuthenticatedAppCommunicationsRoute,
