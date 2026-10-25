@@ -1,5 +1,12 @@
 # Roadmap
 
+## Website Notes priority group (2026-10-25)
+- [x] P1 onboarding 18+ blocker: finish() now refetches the profile before caching onboarded, so the app gate never sees a stale pre-confirmation row; confirm_adult was already idempotent. Browser-verified fresh-account path on the ZZ-TEST fixture (reset → gate → confirm → /start → refresh/sign-out-in stay unlocked), fixture restored exactly. Real email-link signup not possible in sandbox (magic-link only).
+- [x] P2 mobile nav: fixed five-slot bar (4 primary + More) replaces horizontal scroll; Communication/Insights/Me inside More with active state; verified EN/ES at 320/375/390px, no overflow, fixed while scrolling; desktop sidebar unchanged.
+- [x] P3 profile menu mode switch: shared useSwitchMode hook used by Me and the account menu; verified switch to attending (guest nav, menu closes) and back to hosting; profile restored to host/hosting/onboarded.
+- [x] P4 admin owner-guide removed from console + locales + styles; all 15 admin tabs intact.
+- [x] 486 tests, harness typecheck/build OK, zero console errors. Unverified: screen-reader narration, real-device safe-area, non-admin second-account browser pass.
+
 ## Insights primary navigation
 - [x] Reuse /insights in the shared desktop/mobile shell with scoped visibility, bilingual fallback and nested active state.
 - [x] 478 tests; automatic typecheck/build OK; EN/ES 390/1280 keyboard menu return, selected state, signed-out login redirect and zero console errors. Second-account browser isolation and screen-reader narration unverified; no data/guard changes.
