@@ -32,7 +32,9 @@ const rewardLabel = (kind: RewardKind, value: number, lang: string) => kind === 
 
 /** Builds the RPC arguments; empty filters mean "all". */
 export function filterArgs(f: CoachFilters) {
-  return { _program: f.program || undefined, _referrer: f.referrer || undefined, _status: f.status || undefined, _from: f.from || undefined, _to: f.to || undefined };
+  const out: { _program?: string; _referrer?: string; _status?: string; _from?: string; _to?: string } = {};
+  if (f.program) out._program = f.program; if (f.referrer) out._referrer = f.referrer; if (f.status) out._status = f.status; if (f.from) out._from = f.from; if (f.to) out._to = f.to;
+  return out;
 }
 
 /** Landing capture on public event/offer pages: records ?rc= once per visit for this device (no personal data). */
@@ -106,12 +108,12 @@ export function CoachReferralsPage() {
     return [...(ev.data ?? []).map(e => ({ kind: 'event' as const, id: e.id, title: e.title, price_cents: e.price_cents ?? 0 })),
       ...(of.data ?? []).map(o => ({ kind: 'offer' as const, id: o.id, title: (lang === 'es' ? o.title_es || o.title_en : o.title_en || o.title_es) ?? '', price_cents: o.price_cents ?? 0 }))] as Item[];
   } });
-  const [edit, setEdit] = useState<{ item: Item; program?: Program } | null>(null);
+  const [edit, setEdit] = useState<{ item: Item; program?: Program | undefined } | null>(null);
   const [payFor, setPayFor] = useState<{ id: string; name: string } | null>(null);
   const refresh = () => qc.invalidateQueries({ queryKey: ['referrals-coach'] });
   const programs = dash.data?.programs ?? [];
   const rows = useMemo(() => {
-    const map = new Map<string, { item: Item; program?: Program }>();
+    const map = new Map<string, { item: Item; program?: Program | undefined }>();
     for (const i of items.data ?? []) map.set(i.id, { item: i });
     for (const p of programs) map.set(p.item_id, { item: { kind: p.item_kind, id: p.item_id, title: p.title, price_cents: p.price_cents }, program: p });
     return [...map.values()];
@@ -181,7 +183,7 @@ export function referralErrorKey(message: string | undefined) {
   return 'referral.errors.generic';
 }
 
-function ProgramSheet({ item, program, onClose, onSaved }: { item: Item; program?: Program; onClose: () => void; onSaved: () => void }) {
+function ProgramSheet({ item, program, onClose, onSaved }: { item: Item; program?: Program | undefined; onClose: () => void; onSaved: () => void }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
   const [enabled, setEnabled] = useState(program?.enabled ?? false);
   const [kind, setKind] = useState<RewardKind>(program?.reward_kind ?? 'percent');

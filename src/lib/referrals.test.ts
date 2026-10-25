@@ -50,7 +50,7 @@ describe('refund reversal', () => {
 describe('links, filters and errors', () => {
   it('builds canonical links with rc param', () => { expect(referralUrl('https://zoheewell.com', 'event', 'e1', 'ABCDEFGH')).toBe('https://zoheewell.com/e/e1?rc=ABCDEFGH'); expect(referralUrl('https://x', 'offer', 'o1', 'ABCDEFGH')).toBe('https://x/o/o1?rc=ABCDEFGH'); });
   it('accepts only valid codes', () => { expect(readRefParam('abcdefgh')).toBe('ABCDEFGH'); expect(readRefParam('ABC')).toBeNull(); expect(readRefParam('ABCDEFG1')).toBeNull(); expect(readRefParam(null)).toBeNull(); });
-  it('empty filters mean all', () => expect(filterArgs({ program: '', referrer: '', status: '', from: '', to: '' })).toEqual({ _program: undefined, _referrer: undefined, _status: undefined, _from: undefined, _to: undefined }));
+  it('empty filters mean all', () => expect(filterArgs({ program: '', referrer: '', status: '', from: '', to: '' })).toEqual({}));
   it('passes filters through', () => expect(filterArgs({ program: 'p', referrer: 'r', status: 'paid', from: '2026-10-01', to: '2026-10-31' })._status).toBe('paid'));
   it('maps server errors', () => { expect(referralErrorKey('referral_flat_too_high')).toBe('referral.errors.flat_too_high'); expect(referralErrorKey('boom')).toBe('referral.errors.generic'); });
 });
