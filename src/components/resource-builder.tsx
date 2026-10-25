@@ -584,13 +584,14 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
 
         {/* ---- Access / Checkout ---- */}
         {section === 'access' && <>
+          {(offerKindFor(type) || isTrackFlow(type)) && <div className="form-field"><span className="field-label">{t('resources.item.visibilityLabel')}</span>
+            <div className="filter-chips" role="radiogroup" aria-label={t('resources.item.visibilityLabel')}>
+              {(['team', 'public', 'unlisted'] as const).map(v => <button key={v} type="button" role="radio" aria-checked={visibility === v}
+                className={`filter-chip ${visibility === v ? 'is-active' : ''}`} onClick={() => setVisibility(v)}>{t(`resources.item.visibility.${v}`)}</button>)}
+            </div>
+            <p className="field-hint">{t(`resources.item.visibilityHint.${visibility}`)}</p></div>}
+          {isTrackFlow(type) && <p className="muted-small">{t('resources.item.trackAccessNote')}</p>}
           {offerKindFor(type) ? <>
-            <div className="form-field"><span className="field-label">{t('resources.item.visibilityLabel')}</span>
-              <div className="filter-chips" role="radiogroup" aria-label={t('resources.item.visibilityLabel')}>
-                {(['team', 'public', 'unlisted'] as const).map(v => <button key={v} type="button" role="radio" aria-checked={visibility === v}
-                  className={`filter-chip ${visibility === v ? 'is-active' : ''}`} onClick={() => setVisibility(v)}>{t(`resources.item.visibility.${v}`)}</button>)}
-              </div>
-              <p className="field-hint">{t(`resources.item.visibilityHint.${visibility}`)}</p></div>
             <div className="form-field"><span className="field-label">{t('resources.item.accessLabel')}</span>
               <div className="filter-chips" role="radiogroup" aria-label={t('resources.item.accessLabel')}>
                 <button type="button" role="radio" aria-checked={item.access.free} className={`filter-chip ${item.access.free ? 'is-active' : ''}`} onClick={() => patchItem({ access: { ...item.access, free: true } })}>{t('resources.item.free')}</button>
