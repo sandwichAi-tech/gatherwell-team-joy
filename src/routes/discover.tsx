@@ -12,6 +12,7 @@ const one = (v: unknown) => (v === 1 || v === '1' ? (1 as const) : undefined);
 export const Route = createFileRoute('/discover')({
   // Catalog is fetched client-side; SSR shell stays fast and crawlers get the head tags.
   validateSearch: (s: Record<string, unknown>): DiscoverSearch => ({
+    ...(s['tab'] === 'events' || s['tab'] === 'resources' || s['tab'] === 'coaches' ? { tab: s['tab'] } : {}),
     ...(str(s['q']) ? { q: str(s['q']) } : {}),
     ...(str(s['kind']) ? { kind: str(s['kind']) } : {}),
     ...(isCategory(s['cat']) ? { cat: s['cat'] } : {}),
