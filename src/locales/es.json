@@ -1818,7 +1818,10 @@
     "noTracks": "Aún no hay rutas.",
     "uploadAudio": "Archivo de audio",
     "audioHint": "MP3, M4A o WAV hasta 200 MB. O pega un enlace abajo.",
-    "audioLink": "Enlace de audio (HTTPS)"
+    "audioLink": "Enlace de audio (HTTPS)",
+    "downloadPdf": "Descargar",
+    "completeError": "No pudimos guardar tu progreso. Inténtalo de nuevo.",
+    "completeSaved": "Marcada como completada"
   },
   "challenges": {
     "title": "Retos",
@@ -5928,7 +5931,7 @@
   "resources": {
     "title": "Recursos",
     "sentence": "Cursos, guías, sesiones en vivo, recetas y más de tu equipo y de ZoheeWell.",
-    "templatesButton": "Plantillas de recursos",
+    "templatesButton": "Modelos de recursos",
     "create": {
       "title": "¿Qué vas a crear?",
       "sentence": "Elige el tipo de recurso. Cada uno abre un editor hecho para ese tipo, y todo empieza como borrador.",
@@ -5942,8 +5945,8 @@
       "helpCourse": "Una ruta estructurada con secciones, lecciones, cuestionarios opcionales y certificados.",
       "helpBundleTitle": "Un paquete mixto",
       "helpBundle": "Un solo paquete con texto, archivos, enlaces y contenido integrado para abrir o descargar.",
-      "template": "Empezar desde una plantilla",
-      "templateText": "Plantillas iniciales de ZoheeWell o las estructuras guardadas de tu equipo.",
+      "template": "Empezar desde un modelo",
+      "templateText": "Modelos iniciales de ZoheeWell o los modelos guardados de tu equipo.",
       "types": {
         "video": {
           "name": "Video",
@@ -6057,7 +6060,7 @@
     "start": "Empezar",
     "review": "Repasar",
     "edit": "Editar",
-    "saveTemplate": "Guardar como plantilla",
+    "saveTemplate": "Guardar como modelo",
     "continueHeading": "Continúa donde te quedaste",
     "nextLive": "Próximas sesiones en vivo",
     "upcoming": "Próximas",
@@ -6088,14 +6091,14 @@
       },
       "mine": {
         "title": "Aún no has creado un recurso",
-        "text": "Empieza desde cero o con una plantilla de recursos. Todo empieza como borrador."
+        "text": "Empieza desde cero o con un modelo de recurso. Todo empieza como borrador."
       }
     },
     "createSheet": {
       "title": "Crear recurso",
       "text": "Elige qué quieres hacer. Todo empieza como borrador hasta que lo publiques.",
-      "fromTemplate": "Empezar con una plantilla",
-      "fromTemplateText": "Plantillas de ZoheeWell o de tu equipo."
+      "fromTemplate": "Empezar con un modelo",
+      "fromTemplateText": "Modelos de ZoheeWell o de tu equipo."
     },
     "preset": {
       "track": {
@@ -6204,7 +6207,8 @@
         "live_time": "elige una hora de inicio",
         "course": "elige un curso",
         "price": "define un precio de al menos $0.50",
-        "file": "adjunta el archivo"
+        "file": "adjunta el archivo",
+        "placeholder": "texto de ejemplo del modelo"
       },
       "cancelEdit": "Cancelar",
       "deleteLesson": "Eliminar lección",
@@ -6241,19 +6245,35 @@
         "public": "Aparece en tu página pública de anfitrión y en Descubrir.",
         "unlisted": "No aparece en ninguna lista; las personas necesitan el enlace directo."
       },
-      "trackAccessNote": "Gratis después de iniciar sesión. «Página pública» también lo muestra en tu página pública de anfitrión."
+      "trackAccessNote": "Gratis después de iniciar sesión. «Página pública» también lo muestra en tu página pública de anfitrión.",
+      "next": "Siguiente",
+      "back": "Atrás",
+      "stepOf": "Paso {{n}} de {{total}}",
+      "update": "Actualizar",
+      "publishedToast": "Publicado. Ya está disponible para quienes pueden verlo.",
+      "updatedToast": "Cambios guardados y publicados.",
+      "draftToast": "Borrador guardado",
+      "saveFailed": "No pudimos guardar. Tu trabajo sigue aquí; inténtalo de nuevo.",
+      "activeFrom": "Disponible desde (opcional)",
+      "activeFromHint": "Déjalo vacío para que esté disponible en cuanto se publique. Zona horaria: {{tz}}",
+      "scheduled": "Programado · disponible {{date}}",
+      "notYet": "Aún no está disponible",
+      "notYetText": "Este recurso se abre el {{date}}.",
+      "placeholderBlock": "Reemplaza el texto de ejemplo del modelo antes de publicar.",
+      "trackStatus": "Estado del recurso",
+      "lessonStatus": "Estado de la lección"
     }
   },
   "templatesR": {
-    "title": "Plantillas de recursos",
-    "sentence": "Estructuras reutilizables para cursos, guías, sesiones y recetas. Son distintas de los Modelos de eventos.",
+    "title": "Modelos de recursos",
+    "sentence": "Estructuras reutilizables para cursos, guías, sesiones y recetas. Son distintas de los Modelos de evento.",
     "starters": "Básicas de ZoheeWell",
-    "mine": "Mis plantillas",
+    "mine": "Mis modelos",
     "starterChip": "Básica de ZoheeWell",
-    "teamChip": "Plantilla del equipo",
-    "use": "Usar plantilla",
+    "teamChip": "Modelo del equipo",
+    "use": "Usar modelo",
     "using": "Creando borrador…",
-    "created": "Borrador creado. Reemplaza los textos de ejemplo y publica cuando estés listo.",
+    "created": "Borrador creado. Reemplaza todos los textos de ejemplo y publica cuando estés listo.",
     "parts_one": "{{count}} parte",
     "parts_other": "{{count}} partes",
     "needsAssets_one": "{{count}} archivo por subir después de copiar",
@@ -6264,20 +6284,20 @@
       "download": "Crea un paquete de recursos en borrador",
       "recipe": "Crea una receta en borrador"
     },
-    "delete": "Eliminar plantilla",
-    "deleteConfirm": "¿Eliminar esta plantilla? Los recursos ya creados con ella no cambian.",
-    "deleted": "Plantilla eliminada",
-    "emptyMine": "Tu equipo aún no tiene plantillas",
-    "emptyMineText": "Guarda uno de tus recursos como plantilla desde Creados por mí y reutilízalo cuando quieras.",
+    "delete": "Eliminar modelo",
+    "deleteConfirm": "¿Eliminar este modelo? Los recursos ya creados con él no cambian.",
+    "deleted": "Modelo eliminado",
+    "emptyMine": "Tu equipo aún no tiene modelos",
+    "emptyMineText": "Guarda uno de tus recursos como modelo desde Creados por mí y reutilízalo cuando quieras.",
     "emptyMineAction": "Ir a Creados por mí",
-    "creatorsOnly": "Las plantillas de recursos son para anfitriones y creadores del equipo.",
-    "saveTitle": "Guardar como plantilla",
+    "creatorsOnly": "Los modelos de recursos son para anfitriones y creadores del equipo.",
+    "saveTitle": "Guardar como modelo",
     "saveText": "Guarda la estructura y el texto para tu equipo. No se copian archivos subidos, personas, progreso, ventas ni enlaces en vivo.",
-    "nameEn": "Nombre de la plantilla (inglés)",
-    "nameEs": "Nombre de la plantilla (español)",
-    "save": "Guardar plantilla",
+    "nameEn": "Nombre del modelo (inglés)",
+    "nameEs": "Nombre del modelo (español)",
+    "save": "Guardar modelo",
     "saving": "Guardando…",
-    "saved": "Plantilla guardada"
+    "saved": "Modelo guardado"
   },
   "comms": {
     "title": "Comunicaciones",
@@ -6533,8 +6553,8 @@
         "desc": "Edita rutas, lecciones, recetas y borradores."
       },
       "learnTemplates": {
-        "title": "Plantillas",
-        "desc": "Comienza con ejemplos bilingües o las plantillas de tu equipo."
+        "title": "Modelos de recursos",
+        "desc": "Comienza con ejemplos bilingües o los modelos de tu equipo."
       },
       "offers": {
         "title": "Ofertas",
