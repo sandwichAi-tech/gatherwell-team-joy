@@ -141,7 +141,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
           _guardian_name: minor.gName.trim(), _guardian_relationship: minor.gRel, _guardian_email: minor.gEmail.trim(), _guardian_phone: minor.gPhone.trim(),
           _language: i18n.resolvedLanguage === 'es' ? 'es' : 'en', _sms: consent.sms, _mail: consent.mail, _token: inviteToken() ?? '' });
         const row = (Array.isArray(data) ? data[0] : null) as { code: string; status: string } | null;
-        if (err || !row) { const k = rsvpErrorKey(err); setError(t(k === 'guest.errors.generic' ? 'guest.errors.save_failed' : k)); return; }
+        if (err || !row) { const k = waiverErrorKey(err?.message) ?? rsvpErrorKey(err); setError(t(k === 'guest.errors.generic' ? 'guest.errors.save_failed' : k)); return; }
         trackEvent('rsvp', { status: row.status, minor: true });
         onDone({ code: row.code, status: row.status as RsvpResult['status'] });
       } catch { setError(t('guest.errors.save_failed')); } finally { setBusy(false); }
