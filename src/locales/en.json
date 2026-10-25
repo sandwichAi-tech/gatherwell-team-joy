@@ -2111,8 +2111,8 @@
     },
     "discover": {
       "label": "Discover",
-      "title": "Events near you",
-      "sub": "Upcoming public events. RSVP in a tap.",
+      "title": "Find something worth showing up for",
+      "sub": "Browse upcoming events, courses and coaches near you. Join free to save what you love and RSVP in a tap.",
       "today": "Today",
       "weekend": "This weekend",
       "week": "This week",
