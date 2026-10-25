@@ -9,6 +9,7 @@ import { CopyButton, copyText } from '@/components/copy-button';
 import { mediaUrl } from '@/lib/account';
 import { shareCaption } from '@/lib/smart.functions';
 import { trackEvent } from '@/lib/analytics';
+import { getPublicEventMeta } from '@/lib/public-event.functions';
 
 import { renderShareImage, loadShareImage as loadImg } from '@/lib/share-image';
 import type { ShareFormat } from '@/lib/share-image-layout';
@@ -25,6 +26,7 @@ export function ShareKit({ title, startsAt, timezone, place, link, coverPath, co
   const [caption, setCaption] = useState<{ en: string; es: string; preview: boolean } | null>(null);
   const [writing, setWriting] = useState(false);
   const getCaption = useServerFn(shareCaption);
+  const getPublicCover = useServerFn(getPublicEventMeta);
   const fmt = (l: string) => new Date(startsAt).toLocaleString(l, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', ...(timezone ? { timeZone: timezone } : {}) });
   const date = fmt(lang === 'es' ? 'es-MX' : 'en-US');
 
@@ -32,7 +34,11 @@ export function ShareKit({ title, startsAt, timezone, place, link, coverPath, co
     let alive = true; const made: string[] = [];
     void (async () => {
       const wideUrl = await mediaUrl(coverPath).catch(() => null);
-      const wideImg = wideUrl ? await loadImg(wideUrl).catch(() => null) : null;
+      let wideImg = wideUrl ? await loadImg(wideUrl).catch(() => null) : null;
+      if (!wideImg && coverPath) {
+        const id = new URL(link).pathname.match(/^\/e\/([a-f0-9-]{36})$/)?.[1];
+        if (id) { const publicCover = await getPublicCover({ data: { id } }).catch(() => null); if (publicCover?.image) wideImg = await loadImg(publicCover.image).catch(() => null); }
+      }
       const base = { title, date, place, link, coverStyle, brand: t('brand'), focal, host };
       for (const f of ['square', 'story', 'wide'] as ShareFormat[]) {
         const blob = await renderShareImage(f, { ...base, cover: wideImg });
@@ -42,7 +48,7 @@ export function ShareKit({ title, startsAt, timezone, place, link, coverPath, co
       }
     })();
     return () => { alive = false; made.forEach(u => URL.revokeObjectURL(u)); setImages({}); };
-  }, [title, date, place, link, coverPath, coverStyle, focal, host, t]);
+  }, [title, date, place, link, coverPath, coverStyle, focal, host, t, getPublicCover]);
 
   const fallbackCaption = `${t('shareKit.fallbackCaption', { title, date, link })}`;
   const captionText = caption ? `${caption.en}\n\n${caption.es}` : fallbackCaption;
