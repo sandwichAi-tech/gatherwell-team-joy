@@ -500,17 +500,17 @@ function JourneyEditor({ teamId, journey, templates, onClose, onSaved }: { teamI
     <div className="form-section">
       <span className="field-label">{t('comms.steps')}</span>
       <ol className="comms-step-editor">
-        {steps.map((s, i) => <li key={i} className="comms-step-row">
+        {steps.map((s, i) => <li key={i} className="comms-step-row flex-wrap">
           <span className="comms-step-num" aria-hidden="true">{i + 1}</span>
-          <div className="comms-step-body">
+          <div className="comms-step-body min-w-0 basis-48">
             {s.kind === 'wait' && <label>{t('comms.step.waitHours')}
               <Input type="number" min={1} max={720} value={s.hours} onChange={e => updateStep(i, { kind: 'wait', hours: Number(e.target.value) })} aria-label={t('comms.step.waitHours')} />
             </label>}
-            {s.kind === 'send' && <select className="field-input" value={s.template_id} onChange={e => updateStep(i, { kind: 'send', template_id: e.target.value })} aria-label={t('comms.step.sendLabel')}>
+            {s.kind === 'send' && <select className="field-input w-full min-w-0" value={s.template_id} onChange={e => updateStep(i, { kind: 'send', template_id: e.target.value })} aria-label={t('comms.step.sendLabel')}>
               <option value="">{t('comms.chooseTemplate')}</option>
               {eligible.map(x => <option key={x.id} value={x.id}>{x.name} · {t(`comms.channel.${x.channel}`)}</option>)}
             </select>}
-            {s.kind === 'condition' && <select className="field-input" value={s.condition} onChange={e => updateStep(i, { kind: 'condition', condition: e.target.value as typeof s.condition })} aria-label={t('comms.step.conditionLabel')}>
+            {s.kind === 'condition' && <select className="field-input w-full min-w-0" value={s.condition} onChange={e => updateStep(i, { kind: 'condition', condition: e.target.value as typeof s.condition })} aria-label={t('comms.step.conditionLabel')}>
               {conditions.map(c => <option key={c} value={c}>{t(`comms.condition.${c}`)}</option>)}
             </select>}
           </div>
