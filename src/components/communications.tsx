@@ -85,7 +85,7 @@ export function CommunicationsPage() {
     </header>
 
     {setup && <SetupBanner setup={setup} />}
-    <section className="comms-section"><h2>{t('comms.offeringScopeTitle')}</h2><p className="field-hint">{t('comms.offeringScopeHint')}</p><Button asChild variant="secondary"><Link to="/learn" search={{ tab: 'hosting' }}>{t('comms.resourcesLink')}</Link></Button></section>
+    <section className="comms-section"><h2>{t('comms.offeringScopeTitle')}</h2><p className="field-hint">{t('comms.offeringScopeHint')}</p><Button asChild variant="secondary"><Link to="/learn" search={{ tab: 'mine' }}>{t('comms.resourcesLink')}</Link></Button></section>
 
     {!canManage && <p className="empty-state" role="note">{t('comms.membersReadOnly')}</p>}
 
