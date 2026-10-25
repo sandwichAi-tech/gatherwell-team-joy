@@ -1,5 +1,12 @@
 # ZoheeWell Change Log
 
+## v0.40 — Coach public page Share & QR fix (2026-10-25)
+- Root cause: the Me-page Share button opened the invite-friends panel and the QR code encoded the `/i/{code}` invite link — neither pointed at the coach's public `/h/{slug}` page, so shared links never opened the public profile.
+- Me page: Share and QR now open one share panel that uses the coach's canonical public URL (`{origin}/h/{slug}`, environment-safe via `window.location.origin`) with QR code, copy and native-share buttons. Hosts without a public page get a clear prompt into the Public host profile editor; members without a slug keep the invite-link fallback. Invite friends stays on its own settings row.
+- Public `/h/{slug}`: the signed-in owner now sees an "Edit my public page" action instead of the Follow button; visitors never see owner controls. Offer cards now label paid resources with their real price (USD) and free ones as Free.
+- i18n: updated `profile.share`/`profile.qrText`, added `profile.qrInviteText`, `profile.noPublicPage`, `follow.editMyPage` in EN + Latin-American ES.
+- Verified: 433/433 tests, typecheck/build clean; browser QA confirmed Share/QR URL equality, signed-out load with no login redirect, owner edit action, old-alias redirect to the canonical slug, unpublished/unknown slugs show "This page isn't available" with no data leak, city hidden when not public, free offer label and real offer detail route, ES rendering, keyboard focus, reduced motion, and no horizontal overflow at 390px/1280px or 200% zoom. All temporary fixtures (test slug, alias, offer) removed.
+
 ## v0.39 — Public About & Careers pages (2026-10-25)
 - New public `/about`: mission-led hero ("Life is better together."), what ZoheeWell is (one connected home instead of five tools), who it serves (hosts/coaches, teachers/creators, teams/leaders, participants — wellness-network communities described inclusively, never MLM-only), how hosts and participants use it, and an honest beta-stage section. CTAs: Create an event (sign-in host intent) and Discover events.
 - New public `/careers`: candid mission/work section and an explicit "No open roles right now" state — no invented positions, application form, salary, or talent pool. One low-pressure contact path through the existing support route (via sign-in return flow), plus a link to About. No JobPosting schema.
