@@ -792,6 +792,13 @@
       "when": 1792953355012,
       "tag": "0112_resource_item_presentation",
       "breakpoints": true
+    },
+    {
+      "idx": 113,
+      "version": "7",
+      "when": 1792954489184,
+      "tag": "0113_public_offer_presentation",
+      "breakpoints": true
     }
   ]
 }
