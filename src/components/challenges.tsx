@@ -199,6 +199,7 @@ export function ChallengePage({ id }: { id: string }) {
   const { data: activities = [] } = useQuery({ queryKey: ['challenge-activities', id], queryFn: async () => ((await supabase.from('challenge_activities').select('*').eq('challenge_id', id).order('sort_order')).data ?? []) as ChallengeActivity[] });
   const { data: messages = [] } = useQuery({ queryKey: ['challenge-messages', id], queryFn: async () => ((await supabase.from('challenge_messages').select('*').eq('challenge_id', id).order('sort_order')).data ?? []) as ChallengeMessage[] });
   const [sheetDate, setSheetDate] = useState<string | null>(null); const [editing, setEditing] = useState<Partial<Challenge> | null>(null); const [busy, setBusy] = useState(false);
+  const [welcomeGone, setWelcomeGone] = useState(false);
   const payGate = usePaymentGate(); const payChallenge = useServerFn(startChallengeCheckout); const [promo, setPromo] = useState<Promo | null>(null);
   if (isError) return <RetryState retry={() => void refetch()} />;
   if (isLoading) return <ListSkeleton />;
