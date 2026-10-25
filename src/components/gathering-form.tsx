@@ -371,8 +371,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       <EventDetailsSections value={details} onChange={setDetails} priceCents={priceCents} lang={lang} />
 
       <section className="form-section">
-        {(retreatsOn || retreatOn) && <><label className="guest-consent"><input type="checkbox" checked={retreatOn} onChange={e => { setRetreatOn(e.target.checked); if (e.target.checked && !retreatEnd && startDate) { const d = new Date(startDate); d.setDate(d.getDate() + 2); d.setHours(12, 0, 0, 0); setRetreatEnd(toLocalInput(d)); } }} /><span><strong>{t('retreat.toggle')}</strong><br /><small className="field-hint">{t('retreat.toggleHint')}</small></span></label>
-        {retreatOn && <RetreatEditor value={retreat} onChange={setRetreat} end={retreatEnd} setEnd={setRetreatEnd} priceCents={priceCents} onUpload={uploadGallery} uploading={galleryBusy} />}</>}
+        {retreatOn && <RetreatEditor value={retreat} onChange={setRetreat} end={retreatEnd} setEnd={setRetreatEnd} priceCents={priceCents} onUpload={uploadGallery} uploading={galleryBusy} />}
         {retreatBad && tried && <p className="field-error">{t('retreat.errors.invalid_retreat_dates')}</p>}
       </section>
 
