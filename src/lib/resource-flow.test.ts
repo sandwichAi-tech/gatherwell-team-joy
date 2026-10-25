@@ -35,7 +35,7 @@ describe('one-shot publish', () => {
     const a = run(); const b = run();
     release(); await a; await b;
     expect(calls).toBe(1);
-    await run(); expect(calls).toBe(2);
+    const c = run(); release(); await c; expect(calls).toBe(2);
   });
 });
 
