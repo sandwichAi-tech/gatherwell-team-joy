@@ -6261,7 +6261,13 @@
       "notYetText": "This resource opens on {{date}}.",
       "placeholderBlock": "Replace the blueprint example text before publishing.",
       "trackStatus": "Resource status",
-      "lessonStatus": "Lesson status"
+      "lessonStatus": "Lesson status",
+      "trackStateLabel": {
+        "draft": "Draft",
+        "published": "Published",
+        "publishedEmpty": "Published · no lessons published yet ({{total}} drafts)",
+        "publishedPartial": "Published · {{live}} of {{total}} lessons published"
+      }
     }
   },
   "templatesR": {

@@ -6261,7 +6261,13 @@
       "notYetText": "Este recurso se abre el {{date}}.",
       "placeholderBlock": "Reemplaza el texto de ejemplo del modelo antes de publicar.",
       "trackStatus": "Estado del recurso",
-      "lessonStatus": "Estado de la lección"
+      "lessonStatus": "Estado de la lección",
+      "trackStateLabel": {
+        "draft": "Borrador",
+        "published": "Publicado",
+        "publishedEmpty": "Publicado · aún no hay lecciones publicadas ({{total}} borradores)",
+        "publishedPartial": "Publicado · {{live}} de {{total}} lecciones publicadas"
+      }
     }
   },
   "templatesR": {

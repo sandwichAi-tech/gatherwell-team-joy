@@ -8,7 +8,7 @@ import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ArrowDown, ArrowLeft, ArrowUp, GripVertical, Pencil, Plus, Trash2, Upload } from '@/components/icons';
+import { ArrowDown, ArrowLeft, ArrowUp, Eye, GripVertical, Pencil, Plus, Trash2, Upload } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -18,6 +18,7 @@ import { COVER_STYLES } from '@/lib/gatherings';
 import { compressImage, lessonTitle, lessonsOf, listOf, RECIPE_TAGS, recipesQuery, trackTitle, uploadLearnFile, type Lesson, type LessonType, type Recipe, type Track } from '@/lib/learn';
 import { isTrackFlow, lessonEditorConfig, lessonPresetFor, parseCreateType, type TrackFlowType } from '@/lib/create-resource';
 import { LearnCover, useLearn } from '@/components/learn';
+import { isLive, trackState } from '@/lib/resource-flow';
 
 type Tab = 'tracks' | 'recipes' | 'progress';
 
@@ -194,8 +195,7 @@ function TracksTab({ teamId, newType }: { teamId: string; newType?: string | und
           return [tr.is_start_here ? t('learnHub.startHere') : null, st ? t(`resources.item.trackStateLabel.${st.key}`, { live: st.live, total: st.total }) : t(tr.is_published ? 'templates.published' : 'templates.draft'), opens].filter(Boolean).join(' · '); })()}</small></div>
         <div className="sheet-actions">
           <Button asChild variant="ghost" size="sm"><Link to="/learn/track/$id" params={{ id: tr.id }}><Eye />{t('resources.item.previewTitle')}</Link></Button>
-          <Button asChild variant="secondary" size="sm"><Link to="/learn/create" search={{ type: 'video', id: tr.id }}><Pencil />{t('templates.edit')}</Link></Button>
-          <Button variant="ghost" size="sm" onClick={() => setEditing(tr)}>{t('resources.item.trackStatus')}</Button></div></div>
+          <Button variant="secondary" size="sm" onClick={() => setEditing(tr)}><Pencil />{t('templates.edit')}</Button></div></div>
       {data && <LessonOrder track={tr} lessons={lessonsOf(data, tr.id)} onEdit={setLesson} />}
     </article>)}</div> : <EmptyState compact icon="BookOpen" text={t('learnHub.noTracksYet')} />}
     <TrackEditor track={editing ?? (flowEditing ? { cover_style: own.length % COVER_STYLES.length } : null)} teamId={teamId} onClose={closeTrack} preset={editing ? null : flow} />
