@@ -25,6 +25,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { useSwitchTeam } from '@/components/team-switcher';
+import { useSwitchMode } from '@/lib/switch-mode';
 import { setLanguage } from '@/components/auth-frame';
 import { BadgeWall, FeaturedBadges, RecognitionSummary, useHostOfMonthId } from '@/components/recognition';
 import { supabase } from '@/integrations/supabase/client';
@@ -184,15 +185,8 @@ export function MePage() {
 
   const signOut = async () => { await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut(); void navigate({ to: '/login', replace: true }); };
 
-  // Customers and hosts share one login; the mode lives on role_intent.
-  const switchMode = async (mode: 'host' | 'guest') => {
-    // View mode only changes what shows first; permissions come from team roles and event assignments.
-    const update = mode === 'host' ? { role_intent: 'host', view_mode: 'hosting', onboarded: false } : { role_intent: 'guest', view_mode: 'attending' };
-    const { error } = await supabase.from('profiles').update(update).eq('id', userId);
-    if (error) { toast.error(t('profile.saveError')); return; }
-    await queryClient.invalidateQueries({ queryKey: ['profile', userId] });
-    void navigate({ to: mode === 'host' ? '/onboarding' : '/home' });
-  };
+  // Customers and hosts share one login; the mode lives on role_intent. Shared with the account menu.
+  const switchMode = useSwitchMode(userId);
   const openDelete = async () => {
     setConfirmText(''); setDeleting(true); setSoleTeams(null);
     const { data } = await supabase.rpc('my_sole_leader_teams');
