@@ -35,7 +35,7 @@ export function InsightsPage() {
   const [from, setFrom] = useState(() => new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1)).toISOString().slice(0, 10));
   const [to, setTo] = useState(() => new Date().toISOString().slice(0, 10));
   const { data, isLoading, isError, refetch } = useQuery({ queryKey: ['host-analytics', userId], queryFn: () => hostFn() });
-  const canTeamAnalytics = roleAllows(workspace?.role as WorkspaceRole | 'owner' | undefined, 'analytics' as WorkspaceCapability);
+  const canTeamAnalytics = roleAllows(workspace?.ownerId === userId ? 'owner' : workspace?.workspaceRole, 'analytics');
   const { data: team } = useQuery({
     queryKey: ['team-analytics', workspace?.teamId],
     enabled: canTeamAnalytics && !!workspace?.teamId,

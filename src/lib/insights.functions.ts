@@ -7,11 +7,13 @@ import { monthBounds } from './analytics-period';
 
 /** RLS filters attendance to the caller's participant-access scopes; no contacts returned. */
 export const getAttendanceHistory = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/) }).parse(d))
+  .inputValidator((d: unknown) => z.object({ month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/), teamId: z.string().uuid().optional() }).parse(d))
   .handler(async ({ data, context }) => {
     const bounds = monthBounds(data.month);
-    const { data: rows, error } = await context.supabase.from('rsvps').select('event_id, events!inner(id,title,starts_at)')
-      .gte('checked_in_at', bounds.start).lt('checked_in_at', bounds.end).limit(5000);
+    let query = context.supabase.from('rsvps').select('event_id, events!inner(id,title,starts_at,team_id)')
+      .gte('checked_in_at', bounds.start).lt('checked_in_at', bounds.end).order('checked_in_at').limit(5000);
+    if (data.teamId) query = query.eq('events.team_id', data.teamId);
+    const { data: rows, error } = await query;
     if (error) throw new Error(error.message);
     const grouped = new Map<string, { id: string; title: string; starts_at: string; count: number }>();
     for (const row of rows ?? []) {
