@@ -77,15 +77,18 @@ export function PublicOfferPage({ id }: { id: string }) {
   return <GuestShell>
     <article className="offer-page">
       <div className="offer-cover is-wide" style={{ backgroundImage: COVER_STYLES[o.cover_style % COVER_STYLES.length] }}>
-        <span className="chip offer-kind">{t(`offers.kind.${o.kind}`)}</span>
+        {cover.data && <BrandImage src={cover.data} alt={title} className="offer-cover-photo" priority />}
+        <span className="chip offer-kind" style={{ background: pair.bg, color: pair.fg }}>{t(`offers.kind.${o.kind}`)}</span>
       </div>
       <section className="panel offer-body">
         <h1>{title}</h1>
+        {subtitle && <p className="auth-subtitle">{subtitle}</p>}
         {o.host_name && <p className="muted-small">{t('offers.by', { name: o.host_name })}{o.coauthor_name ? ` · ${o.coauthor_name}` : ''}</p>}
         <p className="offer-price">{priceLine(o, lang, t)}</p>
         {paid && <p className="muted-small" role="status">{t('content.paidSetupRequired')}</p>}
         {summary && <p className="offer-description"><strong>{summary}</strong></p>}
         {description && <p className="offer-description">{description}</p>}
+        <RichTextView html={promo} className="rich-text offer-promo" />
         {o.tags.length > 0 && <div className="recipe-tags">{o.tags.map(x => <span key={x} className="chip">{x}</span>)}</div>}
         {includes.length > 0 && <><h2>{t('offers.whatsIncluded')}</h2><ul className="offer-includes">{includes.map((x, i) => <li key={i}><Check />{x}</li>)}</ul></>}
         {o.accessibility_notes && <p className="muted-small">{t('content.accessibility')}: {o.accessibility_notes}</p>}
@@ -111,7 +114,7 @@ export function PublicOfferPage({ id }: { id: string }) {
 
         {owned ? <div className="offer-owned"><span className="chip"><Check className="inline-icon" />{t('offers.owned')}</span>
           <Button asChild><Link to="/offer/$id" params={{ id }}>{t('content.openInLibrary')}</Link></Button></div> :
-          window2 === 'open' && !paid ? <Button className="onboarding-continue" disabled={busy} onClick={enroll}>{t(userId ? 'content.enrollFree' : 'content.signInToEnroll')}</Button> :
+          window2 === 'open' && !paid ? <Button className="onboarding-continue" style={{ background: pair.bg, color: pair.fg }} disabled={busy} onClick={enroll}>{customCta || t(userId ? 'content.enrollFree' : 'content.signInToEnroll')}</Button> :
           window2 === 'open' && paid ? <Button className="onboarding-continue" disabled>{t('content.paidSetupRequired')}</Button> :
           <p className="muted-small" role="status">{t(window2 === 'not_yet' ? 'content.enrollNotOpen' : 'content.enrollClosed')}</p>}
         {!userId && !owned && <p className="muted-small">{t('content.guestBrowseNote')}</p>}
