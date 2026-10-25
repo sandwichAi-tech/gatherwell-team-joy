@@ -737,6 +737,59 @@ export type Database = {
         }
         Relationships: []
       }
+      coach_subscriptions: {
+        Row: {
+          announcements: boolean
+          coach_id: string
+          confirmed_at: string | null
+          created_at: string
+          email: string
+          id: string
+          language: string
+          new_events: boolean
+          new_resources: boolean
+          token_expires_at: string
+          token_hash: string
+          updated_at: string
+        }
+        Insert: {
+          announcements?: boolean
+          coach_id: string
+          confirmed_at?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          language?: string
+          new_events?: boolean
+          new_resources?: boolean
+          token_expires_at?: string
+          token_hash: string
+          updated_at?: string
+        }
+        Update: {
+          announcements?: boolean
+          coach_id?: string
+          confirmed_at?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          language?: string
+          new_events?: boolean
+          new_resources?: boolean
+          token_expires_at?: string
+          token_hash?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coach_subscriptions_coach_id_fkey"
+            columns: ["coach_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coach_verifications: {
         Row: {
           created_at: string
@@ -6962,7 +7015,9 @@ export type Database = {
       close_contact_thread: { Args: { _thread: string }; Returns: undefined }
       close_support_ticket: { Args: { _ticket: string }; Returns: undefined }
       coach_checklist: { Args: never; Returns: Json }
+      coach_subscriber_segments: { Args: never; Returns: Json }
       coach_trust: { Args: { _host: string }; Returns: Json }
+      coach_update_preferences: { Args: { _token: string }; Returns: Json }
       comment_feed: { Args: { _event: string; _topic: string }; Returns: Json }
       community_requests: {
         Args: { _kind: string; _target: string }
@@ -7627,6 +7682,19 @@ export type Database = {
         Args: { _id: string; _note: string; _reason: string; _type: string }
         Returns: boolean
       }
+      request_coach_updates: {
+        Args: {
+          _adult: boolean
+          _announcements: boolean
+          _base: string
+          _email: string
+          _events: boolean
+          _language: string
+          _resources: boolean
+          _slug: string
+        }
+        Returns: undefined
+      }
       request_community_seat: {
         Args: {
           _kind: string
@@ -7767,6 +7835,15 @@ export type Database = {
       }
       save_coach_review: {
         Args: { _body: string; _host: string; _rating: number }
+        Returns: undefined
+      }
+      save_coach_update_preferences: {
+        Args: {
+          _announcements: boolean
+          _events: boolean
+          _resources: boolean
+          _token: string
+        }
         Returns: undefined
       }
       save_event_cover: {
