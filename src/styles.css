@@ -2561,12 +2561,13 @@ a.gw-cat-chip:hover{background:#fff}
 
 /* ---- Item-level resource editor ---- */
 .item-editor { display: grid; gap: 1rem; align-items: start; }
+.item-preview-aside { padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); }
+@media (max-width: 1099px) { .item-preview-aside { display: none; } }
 @media (min-width: 1100px) {
   .item-editor { grid-template-columns: minmax(0, 1fr) 340px; }
-  .item-preview-aside { display: block; position: sticky; top: 5rem; }
+  .item-preview-aside { position: sticky; top: 5rem; }
   .item-preview-mobile { display: none; }
 }
-.item-preview-aside { display: none; padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); }
 .item-preview-aside .eyebrow { display: inline-flex; gap: .35rem; align-items: center; margin-bottom: .75rem; }
 .status-chip { align-self: start; white-space: nowrap; }
 .builder-actions { margin-top: 1rem; }
