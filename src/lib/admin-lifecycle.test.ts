@@ -6,7 +6,7 @@ vi.mock('@tanstack/react-start', () => ({ createServerFn: () => {
 vi.mock('@/integrations/supabase/auth-middleware', () => ({ requireSupabaseAuth: {} }));
 const db = vi.hoisted(() => ({ rpc: vi.fn(), from: vi.fn(), auth: { admin: { getUserById: vi.fn(), updateUserById: vi.fn() } } }));
 vi.mock('@/integrations/supabase/client.server', () => ({ supabaseAdmin: db }));
-import { adminUserAction, replyAdminTicket, closeAdminTicket } from './admin.functions';
+import { adminUserAction, replyAdminTicket, closeAdminTicket, getAdminOverview } from './admin.functions';
 type Handler = (args: { data: Record<string, unknown>; context: { userId: string; supabase: { rpc: ReturnType<typeof vi.fn> } } }) => Promise<{ ok: boolean; error?: string }>;
 const account = adminUserAction as unknown as Handler;
 const reply = replyAdminTicket as unknown as Handler;
@@ -20,6 +20,16 @@ beforeEach(() => {
   db.rpc.mockResolvedValue({ error: null });
 });
 describe('Account and Support lifecycle regressions', () => {
+  it('denies non-admin reads before privileged access', async () => {
+    const context = { userId: 'member', supabase: { rpc: vi.fn().mockResolvedValue({ data: false, error: null }) } };
+    await expect((getAdminOverview as unknown as Handler)({ data: { period: 'week' }, context })).rejects.toThrow('forbidden');
+    expect(db.from).not.toHaveBeenCalled(); expect(db.rpc).not.toHaveBeenCalled();
+  });
+  it('denies non-admin account changes before touching auth or audit', async () => {
+    const context = { userId: 'member', supabase: { rpc: vi.fn().mockResolvedValue({ data: false, error: null }) } };
+    await expect(account({ data: { userId: 'target', action: 'suspend', reason: 'Not allowed', origin: 'https://zoheewell.com' }, context })).rejects.toThrow('forbidden');
+    expect(db.auth.admin.updateUserById).not.toHaveBeenCalled(); expect(db.rpc).not.toHaveBeenCalled();
+  });
   const data = { userId: 'target', action: 'suspend', reason: 'Safety verification', origin: 'https://zoheewell.com' };
   it('rejects self-target before touching managed Auth', async () => {
     expect(await account({ data: { ...data, userId: 'actor' }, context: ctx() })).toEqual({ ok: false, error: 'self' });

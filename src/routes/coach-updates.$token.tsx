@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import type { CoachPreferenceRecord, CoachPreferences } from '@/lib/coach-updates';
 import i18n from '@/lib/i18n';
 export const Route = createFileRoute('/coach-updates/$token')({
- head: () => ({ meta: [{ title: `${i18n.t('coachUpdates.manage')} · ZoheeWell` }, { name: 'description', content: i18n.t('coachUpdates.consent') }, { property: 'og:title', content: i18n.t('coachUpdates.manage') }, { property: 'og:description', content: i18n.t('coachUpdates.consent') }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }, { name: 'robots', content: 'noindex' }], links: [{ rel: 'referrer', href: 'no-referrer' }] }),
+ head: () => ({ meta: [{ title: `${i18n.t('coachUpdates.manage')} · ZoheeWell` }, { name: 'description', content: i18n.t('coachUpdates.consent') }, { property: 'og:title', content: i18n.t('coachUpdates.manage') }, { property: 'og:description', content: i18n.t('coachUpdates.consent') }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }, { name: 'robots', content: 'noindex' }, { name: 'referrer', content: 'no-referrer' }] }),
  component: Manage,
 });
 function Manage() {
