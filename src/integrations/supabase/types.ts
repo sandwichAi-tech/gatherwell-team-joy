@@ -7741,6 +7741,15 @@ export type Database = {
       event_seats_used: { Args: { _event: string }; Returns: number }
       event_summary: { Args: { _event: string }; Returns: Json }
       event_waiver: { Args: { _event: string }; Returns: Json }
+      event_waiver_file_path: {
+        Args: {
+          _code: string
+          _token: string
+          _version: number
+          _waiver: string
+        }
+        Returns: string
+      }
       event_waiver_k: {
         Args: { _event: string; _token: string }
         Returns: Json
