@@ -115,7 +115,7 @@ export function ResourceBuilder({ initialType }: { initialType: CreateType }) {
     };
     if (isTrackFlow(type) && lessonType) {
       const tr = await supabase.from('tracks').insert({ ...base, is_published: publish, team_id: teamId, sort_order: Date.now() % 1_000_000 }).select('id').single();
-      if (tr.error) return finish(false, {});
+      if (tr.error) return finish(false);
       const ls = await supabase.from('lessons').insert({
         title_en: base.title_en, title_es: base.title_es, type: lessonType, track_id: tr.data.id, sort_order: 1,
         url: lessonType === 'live' ? null : draft.lesson.url.trim() || null,
@@ -123,9 +123,9 @@ export function ResourceBuilder({ initialType }: { initialType: CreateType }) {
         live_starts_at: lessonType === 'live' && draft.lesson.live ? new Date(draft.lesson.live).toISOString() : null,
         replay_url: lessonType === 'live' ? draft.lesson.replay.trim() || null : null,
       }).select('id').single();
-      if (ls.error) return finish(false, {});
+      if (ls.error) return finish(false);
       if (lessonType === 'live' && draft.lesson.meeting.trim()) await supabase.from('lesson_live_links').insert({ lesson_id: ls.data.id, url: draft.lesson.meeting.trim() });
-      return finish(true, { to: '/learn/manage', search: { tab: 'tracks' } });
+      return finish(true, () => void navigate({ to: '/learn/manage', search: { tab: 'tracks' } }));
     }
     if (type === 'recipe') {
       const lines = (s: string) => s.split('\n').map(x => x.trim()).filter(Boolean).slice(0, 40).map(x => x.slice(0, 300));
@@ -137,22 +137,23 @@ export function ResourceBuilder({ initialType }: { initialType: CreateType }) {
         steps: { en: lines(draft.recipe.stepsEn), es: lines(draft.recipe.stepsEs) },
         team_id: teamId, created_by: userId,
       });
-      return finish(!r.error, { to: '/learn/manage', search: { tab: 'recipes' } });
+      return finish(!r.error, () => void navigate({ to: '/learn/manage', search: { tab: 'recipes' } }));
     }
     const kind = offerKindFor(type);
     if (kind) {
-      const r = await saveOffer({
+      const row = {
         kind, ...base, price_cents: priceCents, refund_policy: refund, drip_days: drip,
         file_path: kind === 'download' ? draft.offer.filePath : null,
-        includes_en: [], includes_es: [],
-        status: publish ? 'published' : 'draft', team_id: teamId, host_id: userId,
-      });
+        includes_en: [] as string[], includes_es: [] as string[],
+        status: (publish ? 'published' : 'draft') as 'published' | 'draft', team_id: teamId, host_id: userId,
+      };
+      const r = await saveOffer(row);
       if (r.error) { setBusy(false); toast.error(t(String(r.error.message).includes('payouts_required') ? 'billing.payoutsRequired' : 'offers.saveError')); return; }
-      return finish(true, { to: '/offers' });
+      return finish(true, () => void navigate({ to: '/offers' }));
     }
     // quiz: create a draft quiz on the chosen course, then open the question builder inline.
     const offer = courses.find(o => o.id === courseId);
-    if (!offer) return finish(false, {});
+    if (!offer) return finish(false);
     const q = await supabase.from('quizzes').insert({
       title_en: base.title_en, title_es: base.title_es, offer_id: offer.id, created_by: userId,
       pass_pct: 80, cooldown_minutes: 0, is_required: false, show_score: true, reveal_answers: 'after_pass', is_published: false, sort_order: 1,
