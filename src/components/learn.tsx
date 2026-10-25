@@ -14,7 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { workspaceQuery } from '@/lib/account';
 import { COVER_STYLES } from '@/lib/gatherings';
 import {
-  ancestorsQuery, effectiveType, embedUrl, icsFor, isUpcomingLive, learnFileUrl, learnQuery, lessonTitle, lessonsOf, listOf, pick, recipesQuery,
+  ancestorsQuery, effectiveType, embedUrl, icsFor, isUpcomingLive, learnFileUrl, learnQuery, lessonTitle, lessonsOf, listOf, pick, recipesQuery, visibleLessons,
   remindersQuery, RECIPE_TAGS, populatedTracks, trackStats, trackTitle, type LearnData, type Lesson, type Recipe, type Track,
 } from '@/lib/learn';
 import { myLearningQuery } from '@/lib/content';
@@ -191,7 +191,7 @@ function LinkCard({ url }: { url: string }) {
 
 export function LessonPage({ id }: { id: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en'; const qc = useQueryClient(); const navigate = useNavigate();
-  const { data, isLoading, isError, refetch, userId, leader } = useLearn();
+  const { data, isLoading, isError, refetch, userId, leader, teamId } = useLearn();
   const [busy, setBusy] = useState(false); const [justDone, setJustDone] = useState(false);
   if (isError) return <RetryState retry={() => void refetch()} />;
   if (isLoading || !data) return <ListSkeleton />;
