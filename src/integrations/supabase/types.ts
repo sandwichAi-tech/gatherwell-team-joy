@@ -5391,6 +5391,249 @@ export type Database = {
           },
         ]
       }
+      referral_clicks: {
+        Row: {
+          clicked_at: string
+          id: number
+          link_id: string
+          user_id: string | null
+          visitor_key: string
+        }
+        Insert: {
+          clicked_at?: string
+          id?: never
+          link_id: string
+          user_id?: string | null
+          visitor_key: string
+        }
+        Update: {
+          clicked_at?: string
+          id?: never
+          link_id?: string
+          user_id?: string | null
+          visitor_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_clicks_link_id_fkey"
+            columns: ["link_id"]
+            isOneToOne: false
+            referencedRelation: "referral_links"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      referral_links: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          program_id: string
+          referrer_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          program_id: string
+          referrer_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          program_id?: string
+          referrer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_links_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "referral_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      referral_payouts: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          host_id: string
+          id: string
+          method: string
+          note: string | null
+          paid_on: string
+          recorded_by: string
+          reference: string | null
+          referrer_id: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          host_id: string
+          id?: string
+          method?: string
+          note?: string | null
+          paid_on: string
+          recorded_by: string
+          reference?: string | null
+          referrer_id: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          host_id?: string
+          id?: string
+          method?: string
+          note?: string | null
+          paid_on?: string
+          recorded_by?: string
+          reference?: string | null
+          referrer_id?: string
+        }
+        Relationships: []
+      }
+      referral_programs: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          event_id: string | null
+          host_id: string
+          id: string
+          item_kind: string
+          offer_id: string | null
+          reward_kind: string
+          reward_value: number
+          terms_version: string
+          updated_at: string
+          window_days: number
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          event_id?: string | null
+          host_id: string
+          id?: string
+          item_kind: string
+          offer_id?: string | null
+          reward_kind: string
+          reward_value: number
+          terms_version?: string
+          updated_at?: string
+          window_days?: number
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          event_id?: string | null
+          host_id?: string
+          id?: string
+          item_kind?: string
+          offer_id?: string | null
+          reward_kind?: string
+          reward_value?: number
+          terms_version?: string
+          updated_at?: string
+          window_days?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_programs_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referral_programs_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      referral_rewards: {
+        Row: {
+          available_at: string
+          created_at: string
+          host_id: string
+          id: string
+          link_id: string
+          order_id: string
+          payout_id: string | null
+          program_id: string
+          referrer_id: string
+          reversed_reason: string | null
+          reward_cents: number
+          sale_cents: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          available_at: string
+          created_at?: string
+          host_id: string
+          id?: string
+          link_id: string
+          order_id: string
+          payout_id?: string | null
+          program_id: string
+          referrer_id: string
+          reversed_reason?: string | null
+          reward_cents: number
+          sale_cents: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          available_at?: string
+          created_at?: string
+          host_id?: string
+          id?: string
+          link_id?: string
+          order_id?: string
+          payout_id?: string | null
+          program_id?: string
+          referrer_id?: string
+          reversed_reason?: string | null
+          reward_cents?: number
+          sale_cents?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_rewards_link_id_fkey"
+            columns: ["link_id"]
+            isOneToOne: false
+            referencedRelation: "referral_links"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referral_rewards_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referral_rewards_payout_id_fkey"
+            columns: ["payout_id"]
+            isOneToOne: false
+            referencedRelation: "referral_payouts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referral_rewards_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "referral_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       referral_thanks: {
         Row: {
           amount: number
@@ -7584,10 +7827,21 @@ export type Database = {
           user_id: string
         }[]
       }
+      claim_referral_visitor: { Args: { _visitor: string }; Returns: number }
       cleanup_auth_intents: { Args: never; Returns: number }
       close_contact_thread: { Args: { _thread: string }; Returns: undefined }
       close_support_ticket: { Args: { _ticket: string }; Returns: undefined }
       coach_checklist: { Args: never; Returns: Json }
+      coach_referral_dashboard: {
+        Args: {
+          _from?: string
+          _program?: string
+          _referrer?: string
+          _status?: string
+          _to?: string
+        }
+        Returns: Json
+      }
       coach_subscriber_segments: { Args: never; Returns: Json }
       coach_trust: { Args: { _host: string }; Returns: Json }
       coach_update_preferences: { Args: { _token: string }; Returns: Json }
@@ -7812,6 +8066,7 @@ export type Database = {
       get_public_offer: { Args: { _id: string }; Returns: Json }
       get_public_team: { Args: { _slug: string }; Returns: Json }
       get_quiz_for_taker: { Args: { _quiz: string }; Returns: Json }
+      get_referral_link: { Args: { _program: string }; Returns: string }
       get_rsvp_by_code: { Args: { _code: string }; Returns: Json }
       get_team_invite: {
         Args: { _code: string }
@@ -8047,6 +8302,7 @@ export type Database = {
       }
       my_progress: { Args: { _tz: string }; Returns: Json }
       my_quiz_attempts: { Args: { _quiz: string }; Returns: Json }
+      my_referral_dashboard: { Args: never; Returns: Json }
       my_referrals: { Args: never; Returns: Json }
       my_regular_hosts: {
         Args: never
@@ -8218,6 +8474,20 @@ export type Database = {
         Args: { _code: string; _ref: string }
         Returns: undefined
       }
+      record_referral_click: {
+        Args: { _code: string; _visitor: string }
+        Returns: boolean
+      }
+      record_referral_payout: {
+        Args: {
+          _note: string
+          _paid_on: string
+          _reference: string
+          _referrer: string
+          _rewards: string[]
+        }
+        Returns: string
+      }
       record_waiver: {
         Args: { _ip: string; _name: string; _rsvp: string; _source: string }
         Returns: undefined
@@ -8227,6 +8497,33 @@ export type Database = {
         Returns: undefined
       }
       redeem_welcome_reward: { Args: { _reward: string }; Returns: string }
+      referral_attribute_order: { Args: { _order: string }; Returns: string }
+      referral_item: {
+        Args: { _id: string; _kind: string }
+        Returns: {
+          eligible: boolean
+          host_id: string
+          price_cents: number
+          title: string
+        }[]
+      }
+      referral_program_for: {
+        Args: { _item: string; _kind: string }
+        Returns: Json
+      }
+      referral_release_due: { Args: never; Returns: undefined }
+      referral_reverse_order: {
+        Args: { _order: string; _reason: string }
+        Returns: number
+      }
+      referral_reward_cents: {
+        Args: { _kind: string; _sale: number; _value: number }
+        Returns: number
+      }
+      referral_shares_team: {
+        Args: { _a: string; _b: string }
+        Returns: boolean
+      }
       register_attendance: {
         Args: {
           _answers: Json
@@ -8587,6 +8884,16 @@ export type Database = {
           _text: string
         }
         Returns: undefined
+      }
+      save_referral_program: {
+        Args: {
+          _enabled: boolean
+          _item: string
+          _kind: string
+          _reward_kind: string
+          _value: number
+        }
+        Returns: string
       }
       save_resource_journey: {
         Args: {
