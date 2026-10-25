@@ -30,7 +30,7 @@ function ResetPassword() {
     const isRecovery = window.location.hash.includes('type=recovery') || new URLSearchParams(window.location.search).has('code');
     const sub = supabase.auth.onAuthStateChange((event, session) => { if (active && session && (event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN')) setReady('ok'); });
     const timer = setTimeout(() => {
-      void supabase.auth.getSession().then(({ data }) => { if (active) setReady(r => r !== 'checking' ? r : data.session && isRecovery ? 'ok' : data.session ? 'ok' : 'invalid'); });
+      void supabase.auth.getSession().then(({ data }) => { if (active) setReady(r => r !== 'checking' ? r : data.session && (isRecovery || r === 'checking') ? 'ok' : 'invalid'); });
     }, 1200);
     return () => { active = false; clearTimeout(timer); sub.data.subscription.unsubscribe(); };
   }, []);
