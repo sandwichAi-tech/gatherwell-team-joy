@@ -2,13 +2,12 @@
 -- Run explicitly against a disposable copy: psql -v ON_ERROR_STOP=1 -f tests/database/referral_programs_disposable.sql
 -- Every fixture is named ZZ-TEST and the transaction always rolls back.
 BEGIN;
-SET LOCAL session_replication_role = DEFAULT;
 CREATE TEMP TABLE zz_ids AS SELECT
   (SELECT id FROM profiles ORDER BY created_at LIMIT 1) AS host,
   gen_random_uuid() AS referrer, gen_random_uuid() AS buyer, gen_random_uuid() AS teammate, gen_random_uuid() AS team_ref,
   gen_random_uuid() AS team, gen_random_uuid() AS ev, gen_random_uuid() AS team_ev;
 DO $$
-DECLARE z record; pid uuid; code text; code2 text; rid uuid; n int; o1 uuid := gen_random_uuid(); o2 uuid := gen_random_uuid(); o3 uuid := gen_random_uuid(); res jsonb; ok boolean;
+DECLARE z record; pid uuid; c1 text; c2 text; rid uuid; n int; o1 uuid := gen_random_uuid(); o2 uuid := gen_random_uuid(); o3 uuid := gen_random_uuid(); res jsonb; ok boolean;
 BEGIN
   SELECT * INTO z FROM zz_ids;
   -- Fixtures (bypassing app triggers is not needed: inserts run as table owner in this transaction).
@@ -30,16 +29,16 @@ BEGIN
   BEGIN PERFORM get_referral_link(pid); RAISE EXCEPTION 'FAIL host link'; EXCEPTION WHEN raise_exception THEN IF SQLERRM LIKE 'FAIL%' THEN RAISE; END IF; END;
   -- 5 referrer link durable
   PERFORM set_config('request.jwt.claims', json_build_object('sub', z.referrer, 'role', 'authenticated')::text, true);
-  code := get_referral_link(pid); code2 := get_referral_link(pid);
-  IF code <> code2 OR code !~ '^[A-HJ-NP-Z2-9]{8}$' THEN RAISE EXCEPTION 'FAIL code not durable'; END IF;
+  c1 := get_referral_link(pid); c2 := get_referral_link(pid);
+  IF c1 <> c2 OR c1 !~ '^[A-HJ-NP-Z2-9]{8}$' THEN RAISE EXCEPTION 'FAIL code not durable'; END IF;
   -- 6 referrer cannot read coach dashboard of others' programs
   res := coach_referral_dashboard();
   IF jsonb_array_length(res->'programs') <> 0 THEN RAISE EXCEPTION 'FAIL referrer sees programs'; END IF;
   -- 7 anonymous click + rate limit + claim after login
   PERFORM set_config('request.jwt.claims', '', true);
-  PERFORM record_referral_click(code, '00000000-0000-4000-8000-000000000001');
-  PERFORM record_referral_click(code, '00000000-0000-4000-8000-000000000001');
-  SELECT count(*) INTO n FROM referral_clicks c JOIN referral_links l ON l.id=c.link_id WHERE l.code=code;
+  PERFORM record_referral_click(c1, '00000000-0000-4000-8000-000000000001');
+  PERFORM record_referral_click(c1, '00000000-0000-4000-8000-000000000001');
+  SELECT count(*) INTO n FROM referral_clicks c JOIN referral_links l ON l.id=c.link_id WHERE l.code=c1;
   IF n <> 1 THEN RAISE EXCEPTION 'FAIL click not idempotent %', n; END IF;
   PERFORM set_config('request.jwt.claims', json_build_object('sub', z.buyer, 'role', 'authenticated')::text, true);
   IF claim_referral_visitor('00000000-0000-4000-8000-000000000001') <> 1 THEN RAISE EXCEPTION 'FAIL claim'; END IF;
@@ -59,15 +58,15 @@ BEGIN
   IF (SELECT status FROM referral_rewards WHERE order_id=o1) <> 'reversed' THEN RAISE EXCEPTION 'FAIL refund reversal'; END IF;
   RAISE NOTICE 'ok 9 refund reversal';
   -- 10 self-referral: referrer buys via own link
-  INSERT INTO referral_clicks(link_id, visitor_key, user_id) SELECT id, gen_random_uuid(), z.referrer FROM referral_links WHERE code=code;
+  INSERT INTO referral_clicks(link_id, visitor_key, user_id) SELECT id, gen_random_uuid(), z.referrer FROM referral_links WHERE code=c1;
   INSERT INTO orders(id, idempotency_key, offering_type, event_id, host_id, buyer_user_id, status, gross_cents, platform_fee_cents, fee_rule_id, environment)
   VALUES (o2, 'zz-test-2', 'event', z.ev, z.host, z.referrer, 'paid', 4000, 200, 'zz', 'sandbox');
   IF EXISTS (SELECT 1 FROM referral_rewards WHERE order_id=o2) THEN RAISE EXCEPTION 'FAIL self-referral rewarded'; END IF;
   -- 11 same-team: teammate-referrer refers teammate-buyer
   PERFORM set_config('request.jwt.claims', json_build_object('sub', z.team_ref, 'role', 'authenticated')::text, true);
-  code2 := get_referral_link(pid);
+  c2 := get_referral_link(pid);
   PERFORM set_config('request.jwt.claims', '', true);
-  INSERT INTO referral_clicks(link_id, visitor_key, user_id) SELECT id, gen_random_uuid(), z.teammate FROM referral_links WHERE code=code2;
+  INSERT INTO referral_clicks(link_id, visitor_key, user_id) SELECT id, gen_random_uuid(), z.teammate FROM referral_links WHERE code=c2;
   INSERT INTO orders(id, idempotency_key, offering_type, event_id, host_id, buyer_user_id, status, gross_cents, platform_fee_cents, fee_rule_id, environment)
   VALUES (o3, 'zz-test-3', 'event', z.ev, z.host, z.teammate, 'paid', 4000, 200, 'zz', 'sandbox');
   IF EXISTS (SELECT 1 FROM referral_rewards WHERE order_id=o3) THEN RAISE EXCEPTION 'FAIL same-team rewarded'; END IF;
