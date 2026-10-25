@@ -62,8 +62,7 @@ export function ResourceCard({ r, creator, onSaveTemplate }: { r: ResourceCardDa
       {r.progress && r.progress.total > 1 && <progress className="attendance-progress" value={r.progress.done} max={r.progress.total} aria-hidden="true" />}
       <div className="resource-actions">
         <Button asChild variant={started ? 'default' : 'secondary'}><Link to={r.href.to} params={r.href.params ?? {}}>{action}<ArrowRight /></Link></Button>
-        {creator && (r.entity === 'course' || r.entity === 'download') && <Button asChild variant="ghost"><Link to="/offer/$id" params={{ id: r.id }}><Pencil />{t('resources.edit')}</Link></Button>}
-        {creator && edit && <Button asChild variant="ghost"><Link to={edit.to} search={edit.search}><Pencil />{t('resources.edit')}</Link></Button>}
+        {creator && <Button asChild variant="ghost"><Link to={edit.to} search={edit.search}><Pencil />{t('resources.edit')}</Link></Button>}
         {creator && onSaveTemplate && r.source === 'team' && <Button variant="ghost" onClick={() => onSaveTemplate(r)}><CopyPlus />{t('resources.saveTemplate')}</Button>}
       </div>
     </div>
