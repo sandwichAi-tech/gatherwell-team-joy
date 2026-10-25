@@ -335,7 +335,7 @@ function AutomationEditor({ teamId, automation, templates, onClose, onSaved }: {
   };
 
   return <ResponsiveSheet open onOpenChange={onClose} title={automation ? t('comms.editAutomation') : t('comms.createAutomation')}
-    footer={<Button className="guest-primary" disabled={busy || (trigger === 'resource_enrollment' && !offerId)} onClick={() => void save()}>{busy ? t('onboarding.saving') : t('comms.saveDraft')}</Button>}>
+    footer={<Button className="guest-primary" disabled={busy} onClick={() => void save()}>{busy ? t('onboarding.saving') : t('comms.saveDraft')}</Button>}>
     <div className="form-section">
       <label className="field-label" htmlFor="ma-name">{t('comms.name')}</label>
       <Input id="ma-name" className="field-input" maxLength={120} value={name} onChange={e => setName(e.target.value)} />
@@ -492,10 +492,10 @@ function JourneyEditor({ teamId, journey, templates, onClose, onSaved }: { teamI
         {JOURNEY_TRIGGERS.map(tr => <option key={tr} value={tr}>{t(`comms.trigger.${tr}`)}</option>)}
       </select>
     </div>
-    {trigger==='resource_enrollment'&&<label className="field-label">{t('comms.relatedResource')}<select className="field-input" value={offerId} onChange={e=>setOfferId(e.target.value)}><option value="">{t('comms.chooseResource')}</option>{offers.map(o=><option key={o.id} value={o.id}>{i18n.resolvedLanguage === 'es' ? o.title_es || o.title_en : o.title_en}</option>)}</select><small>{t('comms.resourceScope')}</small></label>}
+    {trigger==='resource_enrollment'&&<div className="min-w-0"><label className="field-label block" htmlFor="mj-resource">{t('comms.relatedResource')}</label><select id="mj-resource" className="field-input w-full min-w-0" value={offerId} onChange={e=>setOfferId(e.target.value)}><option value="">{t('comms.chooseResource')}</option>{offers.map(o=><option key={o.id} value={o.id}>{i18n.resolvedLanguage === 'es' ? o.title_es || o.title_en : o.title_en}</option>)}</select><p className="field-hint whitespace-normal">{t('comms.resourceScope')}</p></div>}
 
-    {trigger !== 'resource_enrollment' && <label className="field-label">{t('comms.relatedEvent')}<select className="field-input" value={eventId} onChange={e => setEventId(e.target.value)}><option value="">{t('comms.allEvents')}</option>{events.map(e => <option key={e.id} value={e.id}>{e.title}</option>)}</select></label>}
-    <label className="field-label">{t('comms.audienceLabel')}<select className="field-input" value={trigger === 'resource_enrollment' ? 'enrolled' : 'attendees'} onChange={() => {}}><option value={trigger === 'resource_enrollment' ? 'enrolled' : 'attendees'}>{t(trigger === 'resource_enrollment' ? 'comms.enrolledAudience' : 'comms.attendeeAudience')}</option></select></label>
+    {trigger !== 'resource_enrollment' && <div className="min-w-0"><label className="field-label block" htmlFor="mj-event">{t('comms.relatedEvent')}</label><select id="mj-event" className="field-input w-full min-w-0" value={eventId} onChange={e => setEventId(e.target.value)}><option value="">{t('comms.allEvents')}</option>{events.map(e => <option key={e.id} value={e.id}>{e.title}</option>)}</select></div>}
+    <div className="min-w-0"><label className="field-label block" htmlFor="mj-audience">{t('comms.audienceLabel')}</label><select id="mj-audience" className="field-input w-full min-w-0" value={trigger === 'resource_enrollment' ? 'enrolled' : 'attendees'} onChange={() => {}}><option value={trigger === 'resource_enrollment' ? 'enrolled' : 'attendees'}>{t(trigger === 'resource_enrollment' ? 'comms.enrolledAudience' : 'comms.attendeeAudience')}</option></select></div>
     {trigger === 'resource_enrollment' && <p className="field-hint">{t('comms.resourceActivation')}</p>}
     <div className="form-section">
       <span className="field-label">{t('comms.steps')}</span>
