@@ -7,6 +7,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { toast } from 'sonner';
+import { isLive } from '@/lib/resource-flow';
 import { ArrowLeft, ArrowRight, Bell, BellRing, Bookmark, BookmarkCheck, CalendarPlus, Check, Clock, ExternalLink, FileText, Link2, Play, Radio, Settings2, Share2, Video, Waveform, Download } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { useGatherwell } from '@/components/gatherwell-shell';
@@ -138,6 +139,11 @@ export function TrackPage({ id }: { id: string }) {
   const showDrafts = leader && track.team_id === teamId;
   const outline = visibleLessons(data, id, showDrafts);
   const s = trackStats(data, id, outline); const title = trackTitle(track, lang);
+  const opensAt = (track as { available_from?: string | null }).available_from;
+  // Before activation, participants see an honest scheduled state and no lessons (the server also withholds them).
+  if (!isLive(opensAt) && !showDrafts) return <section className="panel"><BackLink to="/learn" label={t('learn.title')} />
+    <h1>{title}</h1><p className="chip" role="status">{t('resources.item.notYet')}</p>
+    <p className="auth-subtitle">{t('resources.item.notYetText', { date: new Date(opensAt!).toLocaleString(lang) })}</p></section>;
   return <>
     <BackLink to="/learn" label={t('learn.title')} />
     <section className="track-hero"><LearnCover path={track.cover_url} style={track.cover_style} title={title} className="is-wide" />
@@ -175,7 +181,11 @@ function Player({ lesson }: { lesson: Lesson }) {
   }
   if (type === 'pdf') {
     const src = fileUrl ?? external;
-    return src ? <div className="pdf-frame"><iframe src={src} title={t('learnHub.type.pdf')} /><Button asChild variant="secondary"><a href={src} target="_blank" rel="noopener noreferrer"><ExternalLink />{t('learnHub.openPdf')}</a></Button></div> : <div className="player player-empty">{t('learnHub.noMedia')}</div>;
+    if (lesson.storage_path && !fileUrl) return <div className="player player-empty" aria-busy="true">{t('publicEvent.loading')}</div>;
+    return src ? <div className="pdf-frame"><iframe src={src} title={lessonTitle(lesson, lang) || t('learnHub.type.pdf')} />
+      <div className="sheet-actions"><Button asChild variant="secondary"><a href={src} target="_blank" rel="noopener noreferrer"><ExternalLink />{t('learnHub.openPdf')}</a></Button>
+        {fileUrl && <Button asChild variant="secondary"><a href={fileUrl} download><Download />{t('learnHub.downloadPdf')}</a></Button>}</div></div>
+      : <div className="player player-empty">{t('learnHub.noMedia')}</div>;
   }
   if (type === 'link') return external ? <LinkCard url={external} /> : null;
   if (type === 'audio') return fileUrl ? <div className="player player-audio"><audio src={fileUrl} controls preload="metadata" /></div> : external ? <LinkCard url={external} /> : <div className="player player-empty">{t('learnHub.noMedia')}</div>;
@@ -206,12 +216,14 @@ export function LessonPage({ id }: { id: string }) {
   const next = list.slice(idx + 1).find(l => !data.done.has(l.id)) ?? list[idx + 1] ?? null;
   const notes = pick(lang, lesson.notes_en, lesson.notes_es);
   const toggle = async () => {
+    if (busy) return; // ignore double clicks; the server call is idempotent anyway
     setBusy(true);
-    const res = done ? await supabase.from('lesson_progress').delete().match({ user_id: userId, lesson_id: id }) : await supabase.from('lesson_progress').insert({ user_id: userId, lesson_id: id });
-    setBusy(false);
-    if (res.error) { toast.error(t('profile.saveError')); return; }
-    if (!done) setJustDone(true);
+    // One server-checked path: published, accessible, already-available lessons only.
+    const res = await supabase.rpc('set_lesson_progress', { _lesson: id, _completed: !done });
+    if (res.error) { setBusy(false); toast.error(t('learnHub.completeError')); return; }
     await qc.invalidateQueries({ queryKey: ['learn', userId] });
+    setBusy(false);
+    if (!done) { setJustDone(true); toast.success(t('learnHub.completeSaved')); }
   };
   const upcomingLive = lesson.type === 'live' && !lesson.replay_url && lesson.live_starts_at;
   return <>

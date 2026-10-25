@@ -8,7 +8,7 @@ import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ArrowDown, ArrowLeft, ArrowUp, GripVertical, Pencil, Plus, Trash2, Upload } from '@/components/icons';
+import { ArrowDown, ArrowLeft, ArrowUp, Eye, GripVertical, Pencil, Plus, Trash2, Upload } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -18,12 +18,14 @@ import { COVER_STYLES } from '@/lib/gatherings';
 import { compressImage, lessonTitle, lessonsOf, listOf, RECIPE_TAGS, recipesQuery, trackTitle, uploadLearnFile, type Lesson, type LessonType, type Recipe, type Track } from '@/lib/learn';
 import { isTrackFlow, lessonEditorConfig, lessonPresetFor, parseCreateType, type TrackFlowType } from '@/lib/create-resource';
 import { LearnCover, useLearn } from '@/components/learn';
+import { hasPlaceholder, isLive, trackState } from '@/lib/resource-flow';
 
 type Tab = 'tracks' | 'recipes' | 'progress';
 
 function errMsg(t: (k: string) => string, e: unknown) {
   const m = e instanceof Error ? e.message : typeof e === 'object' && e && 'message' in e ? String((e as { message: unknown }).message) : '';
   if (m.includes('too_large')) return t('learnHub.tooLarge');
+  if (m.includes('blueprint_placeholder')) return t('resources.item.placeholderBlock');
   if (m.includes('not_allowed') || m.includes('row-level')) return t('teamSpace.notAllowed');
   return t('profile.saveError');
 }
@@ -45,7 +47,8 @@ function TrackEditor({ track, teamId, onClose, preset }: { track: Partial<Track>
   const [f, setF] = useState({ title_en: '', title_es: '', description_en: '', description_es: '', cover_url: null as string | null, cover_style: 0, is_start_here: false, is_published: false });
   const [busy, setBusy] = useState(false);
   useEffect(() => { if (track) setF({ title_en: track.title_en ?? '', title_es: track.title_es ?? '', description_en: track.description_en ?? '', description_es: track.description_es ?? '', cover_url: track.cover_url ?? null, cover_style: track.cover_style ?? 0, is_start_here: !!track.is_start_here, is_published: !!track.is_published }); }, [track]);
-  const ok = !!(f.title_en.trim() || f.title_es.trim());
+  const trackPlaceholder = f.is_published && hasPlaceholder(f.title_en, f.title_es, f.description_en, f.description_es);
+  const ok = !!(f.title_en.trim() || f.title_es.trim()) && !trackPlaceholder;
   const save = async () => {
     setBusy(true);
     const row = { ...f, title_en: f.title_en.trim(), title_es: f.title_es.trim(), description_en: f.description_en.trim() || null, description_es: f.description_es.trim() || null };
@@ -68,6 +71,7 @@ function TrackEditor({ track, teamId, onClose, preset }: { track: Partial<Track>
       <CoverPicker teamId={teamId} path={f.cover_url} styleIdx={f.cover_style} title={f.title_en || f.title_es} onPath={p => setF(x => ({ ...x, cover_url: p }))} onStyle={n => setF(x => ({ ...x, cover_style: n }))} />
       <label className="switch-row"><Switch checked={f.is_start_here} onCheckedChange={v => setF({ ...f, is_start_here: v })} /><span><strong>{t('learnHub.markStartHere')}</strong><small>{t('learnHub.markStartHereText')}</small></span></label>
       <label className="switch-row"><Switch checked={f.is_published} onCheckedChange={v => setF({ ...f, is_published: v })} /><span><strong>{t('learnHub.publishTrack')}</strong><small>{t('learnHub.publishTrackText')}</small></span></label>
+      {trackPlaceholder && <p className="field-hint" role="alert">{t('resources.item.placeholderBlock')}</p>}
       {track?.id && <MembersOnlyPicker table="tracks" id={track.id} teamId={teamId} />}
       <Button className="onboarding-continue" disabled={busy || !ok} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
       {track?.id && <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('learnHub.deleteTrack')}</Button>}
@@ -79,11 +83,11 @@ const toLocalInput = (iso?: string | null) => { if (!iso) return ''; const d = n
 
 function LessonEditor({ lesson, teamId, onClose, preset }: { lesson: (Partial<Lesson> & { track_id: string }) | null; teamId: string; onClose: () => void; preset?: LessonType | null }) {
   const { t } = useTranslation(); const qc = useQueryClient(); const { userId } = useLearn();
-  const empty = { title_en: '', title_es: '', type: (preset ?? 'video') as LessonType, url: '', storage_path: null as string | null, duration: '', live: '', meeting: '', replay: '', notes_en: '', notes_es: '' };
+  const empty = { title_en: '', title_es: '', type: (preset ?? 'video') as LessonType, url: '', storage_path: null as string | null, duration: '', live: '', meeting: '', replay: '', notes_en: '', notes_es: '', published: true };
   const [f, setF] = useState(empty); const [busy, setBusy] = useState(false); const [progress, setProgress] = useState<number | null>(null); const [fileName, setFileName] = useState('');
   useEffect(() => {
     if (!lesson) return;
-    setF({ title_en: lesson.title_en ?? '', title_es: lesson.title_es ?? '', type: (lesson.type as LessonType) ?? preset ?? 'video', url: lesson.url ?? '', storage_path: lesson.storage_path ?? null, duration: lesson.duration_minutes ? String(lesson.duration_minutes) : '', live: toLocalInput(lesson.live_starts_at), meeting: '', replay: lesson.replay_url ?? '', notes_en: lesson.notes_en ?? '', notes_es: lesson.notes_es ?? '' });
+    setF({ title_en: lesson.title_en ?? '', title_es: lesson.title_es ?? '', type: (lesson.type as LessonType) ?? preset ?? 'video', url: lesson.url ?? '', storage_path: lesson.storage_path ?? null, duration: lesson.duration_minutes ? String(lesson.duration_minutes) : '', live: toLocalInput(lesson.live_starts_at), meeting: '', replay: lesson.replay_url ?? '', notes_en: lesson.notes_en ?? '', notes_es: lesson.notes_es ?? '', published: lesson.is_published ?? true });
     setProgress(null); setFileName('');
     if (lesson.id && lesson.type === 'live') void supabase.from('lesson_live_links').select('url').eq('lesson_id', lesson.id).maybeSingle().then(({ data }) => data && setF(x => ({ ...x, meeting: data.url })));
   }, [lesson]);
@@ -94,13 +98,14 @@ function LessonEditor({ lesson, teamId, onClose, preset }: { lesson: (Partial<Le
     catch (e) { toast.error(errMsg(t, e)); setProgress(null); setFileName(''); }
   };
   const validUrl = (u: string) => !u || /^https?:\/\/\S+$/i.test(u);
+  const lessonPlaceholder = f.published && hasPlaceholder(f.title_en, f.title_es, f.notes_en, f.notes_es);
   const ok = !!(f.title_en.trim() || f.title_es.trim()) && (f.type !== 'live' || !!f.live) && validUrl(f.url) && validUrl(f.meeting) && validUrl(f.replay) && (progress === null || progress === 100);
   const save = async () => {
     if (!lesson) return; setBusy(true);
     try {
       const row = { title_en: f.title_en.trim(), title_es: f.title_es.trim(), type: f.type, url: f.type === 'live' ? null : f.url.trim() || null, storage_path: lessonEditorConfig(f.type).keepsFile ? f.storage_path : null,
         duration_minutes: parseInt(f.duration, 10) > 0 ? Math.min(600, parseInt(f.duration, 10)) : null, live_starts_at: f.type === 'live' && f.live ? new Date(f.live).toISOString() : null,
-        replay_url: f.type === 'live' ? f.replay.trim() || null : null, notes_en: f.notes_en.trim() || null, notes_es: f.notes_es.trim() || null };
+        replay_url: f.type === 'live' ? f.replay.trim() || null : null, notes_en: f.notes_en.trim() || null, notes_es: f.notes_es.trim() || null, is_published: f.published };
       let id = lesson.id;
       if (id) { const r = await supabase.from('lessons').update(row).eq('id', id); if (r.error) throw r.error; }
       else { const r = await supabase.from('lessons').insert({ ...row, track_id: lesson.track_id, sort_order: Date.now() % 1_000_000 }).select('id').single(); if (r.error) throw r.error; id = r.data.id; }
@@ -143,7 +148,9 @@ function LessonEditor({ lesson, teamId, onClose, preset }: { lesson: (Partial<Le
         <Field id="ls-replay" label={t('learnHub.replayLink')}><Input id="ls-replay" type="url" className="field-input" placeholder="https://" value={f.replay} onChange={set('replay')} /></Field>
         <p className="field-hint">{t('learnHub.replayHint')}</p></>}
       <Field id="ls-dur" label={t('learnHub.duration')}><Input id="ls-dur" type="number" min={1} max={600} className="field-input" value={f.duration} onChange={set('duration')} /></Field>
-      <Button className="onboarding-continue" disabled={busy || !ok} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
+      <label className="switch-row"><Switch checked={f.published} onCheckedChange={v => setF({ ...f, published: v })} /><span><strong>{t('resources.item.lessonStatus')}</strong><small>{t(f.published ? 'templates.published' : 'templates.draft')}</small></span></label>
+      {lessonPlaceholder && <p className="field-hint" role="alert">{t('resources.item.placeholderBlock')}</p>}
+      <Button className="onboarding-continue" disabled={busy || !ok || lessonPlaceholder} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
       {lesson?.id && <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('learnHub.deleteLesson')}</Button>}
     </div>
   </ResponsiveSheet>;
@@ -190,8 +197,11 @@ function TracksTab({ teamId, newType }: { teamId: string; newType?: string | und
     <div className="section-heading"><h2>{t('learnHub.teamTracks')}</h2><Button onClick={() => setEditing({ cover_style: own.length % COVER_STYLES.length })}><Plus />{t('learnHub.newTrack')}</Button></div>
     {own.length ? <div className="manage-tracks">{own.map(tr => <article key={tr.id} className="manage-track">
       <div className="manage-track-head"><LearnCover path={tr.cover_url} style={tr.cover_style} title={trackTitle(tr, i18n.resolvedLanguage)} className="is-thumb" />
-        <div className="order-title"><strong>{trackTitle(tr, i18n.resolvedLanguage)}</strong><small>{[tr.is_start_here ? t('learnHub.startHere') : null, t(tr.is_published ? 'templates.published' : 'templates.draft')].filter(Boolean).join(' · ')}</small></div>
-        <Button variant="secondary" size="sm" onClick={() => setEditing(tr)}><Pencil />{t('templates.edit')}</Button></div>
+        <div className="order-title"><strong>{trackTitle(tr, i18n.resolvedLanguage)}</strong><small>{(() => { const st = data ? trackState(tr.is_published, lessonsOf(data, tr.id)) : null; const opens = tr.available_from && !isLive(tr.available_from) ? t('resources.item.scheduled', { date: new Date(tr.available_from).toLocaleString(i18n.resolvedLanguage) }) : null;
+          return [tr.is_start_here ? t('learnHub.startHere') : null, st ? t(`resources.item.trackStateLabel.${st.key}`, { live: st.live, total: st.total }) : t(tr.is_published ? 'templates.published' : 'templates.draft'), opens].filter(Boolean).join(' · '); })()}</small></div>
+        <div className="sheet-actions">
+          <Button asChild variant="ghost" size="sm"><Link to="/learn/track/$id" params={{ id: tr.id }}><Eye />{t('resources.item.previewTitle')}</Link></Button>
+          <Button variant="secondary" size="sm" onClick={() => setEditing(tr)}><Pencil />{t('templates.edit')}</Button></div></div>
       {data && <LessonOrder track={tr} lessons={lessonsOf(data, tr.id)} onEdit={setLesson} />}
     </article>)}</div> : <EmptyState compact icon="BookOpen" text={t('learnHub.noTracksYet')} />}
     <TrackEditor track={editing ?? (flowEditing ? { cover_style: own.length % COVER_STYLES.length } : null)} teamId={teamId} onClose={closeTrack} preset={editing ? null : flow} />

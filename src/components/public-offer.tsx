@@ -7,6 +7,7 @@ import { Check, Lock } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { GuestShell } from '@/components/guest-shell';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
+import { isLive } from '@/lib/resource-flow';
 import { supabase } from '@/integrations/supabase/client';
 import { canAccessOfferQuery, enrollFree, enrollmentState, publicOfferQuery, type PublicOffer } from '@/lib/content';
 import { offerIncludes, offerText, offerTitle } from '@/lib/offers';
@@ -44,6 +45,7 @@ export function PublicOfferPage({ id }: { id: string }) {
   const coverPath = q.data?.cover_url ?? null;
   const cover = useQuery({ queryKey: ['public-offer-cover', id], queryFn: () => publicOfferCover({ data: { id } }), enabled: !!coverPath, staleTime: 50 * 60 * 1000 });
   const [busy, setBusy] = useState(false);
+  const avail = useQuery({ queryKey: ['resource-availability', id], queryFn: async () => (await supabase.rpc('resource_availability', { _id: id })).data ?? null, staleTime: 60_000 });
 
   if (q.isPending) return <GuestShell><ListSkeleton /></GuestShell>;
   if (q.isError) return <GuestShell><RetryState retry={() => void q.refetch()} /></GuestShell>;
@@ -112,7 +114,8 @@ export function PublicOfferPage({ id }: { id: string }) {
             <small>{t(`content.itemType.${i.type}`)}{i.is_preview ? ` · ${t('content.previewBadge')}` : ''}{!i.allow_download ? ` · ${t('content.noDownload')}` : ''}</small>
           </li>)}</ol></>}
 
-        {owned ? <div className="offer-owned"><span className="chip"><Check className="inline-icon" />{t('offers.owned')}</span>
+        {!isLive(avail.data) ? <p className="chip" role="status">{t('resources.item.notYetText', { date: new Date(avail.data!).toLocaleString(lang) })}</p> :
+         owned ? <div className="offer-owned"><span className="chip"><Check className="inline-icon" />{t('offers.owned')}</span>
           <Button asChild><Link to="/offer/$id" params={{ id }}>{t('content.openInLibrary')}</Link></Button></div> :
           window2 === 'open' && !paid ? <Button className="onboarding-continue" style={{ background: pair.bg, color: pair.fg }} disabled={busy} onClick={enroll}>{customCta || t(userId ? 'content.enrollFree' : 'content.signInToEnroll')}</Button> :
           window2 === 'open' && paid ? <Button className="onboarding-continue" disabled>{t('content.paidSetupRequired')}</Button> :

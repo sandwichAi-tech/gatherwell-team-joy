@@ -3768,6 +3768,8 @@ export type Database = {
         Row: {
           accent: string
           accessibility_notes: string | null
+          available_from: string | null
+          available_tz: string | null
           billing_interval: string | null
           card_layout: string
           category: string | null
@@ -3825,6 +3827,8 @@ export type Database = {
         Insert: {
           accent?: string
           accessibility_notes?: string | null
+          available_from?: string | null
+          available_tz?: string | null
           billing_interval?: string | null
           card_layout?: string
           category?: string | null
@@ -3882,6 +3886,8 @@ export type Database = {
         Update: {
           accent?: string
           accessibility_notes?: string | null
+          available_from?: string | null
+          available_tz?: string | null
           billing_interval?: string | null
           card_layout?: string
           category?: string | null
@@ -5108,6 +5114,8 @@ export type Database = {
       recipes: {
         Row: {
           accent: string
+          available_from: string | null
+          available_tz: string | null
           card_layout: string
           cover_style: number
           cover_url: string | null
@@ -5133,6 +5141,8 @@ export type Database = {
         }
         Insert: {
           accent?: string
+          available_from?: string | null
+          available_tz?: string | null
           card_layout?: string
           cover_style?: number
           cover_url?: string | null
@@ -5158,6 +5168,8 @@ export type Database = {
         }
         Update: {
           accent?: string
+          available_from?: string | null
+          available_tz?: string | null
           card_layout?: string
           cover_style?: number
           cover_url?: string | null
@@ -6597,6 +6609,8 @@ export type Database = {
       tracks: {
         Row: {
           accent: string
+          available_from: string | null
+          available_tz: string | null
           card_layout: string
           cover_style: number
           cover_url: string | null
@@ -6623,6 +6637,8 @@ export type Database = {
         }
         Insert: {
           accent?: string
+          available_from?: string | null
+          available_tz?: string | null
           card_layout?: string
           cover_style?: number
           cover_url?: string | null
@@ -6649,6 +6665,8 @@ export type Database = {
         }
         Update: {
           accent?: string
+          available_from?: string | null
+          available_tz?: string | null
           card_layout?: string
           cover_style?: number
           cover_url?: string | null
@@ -7639,6 +7657,7 @@ export type Database = {
         Returns: Json
       }
       has_blocked_claim: { Args: { _text: string }; Returns: boolean }
+      has_blueprint_placeholder: { Args: { _t: string[] }; Returns: boolean }
       has_entitlement: {
         Args: { _kind: string; _target: string }
         Returns: boolean
@@ -8094,6 +8113,8 @@ export type Database = {
         Args: { _action: string; _id: string; _note?: string }
         Returns: undefined
       }
+      resource_availability: { Args: { _id: string }; Returns: string }
+      resource_is_live: { Args: { _from: string }; Returns: boolean }
       resource_journey_activity: {
         Args: { _journey?: string; _limit?: number; _team: string }
         Returns: Json

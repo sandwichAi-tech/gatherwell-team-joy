@@ -1818,7 +1818,10 @@
     "noTracks": "No tracks yet.",
     "uploadAudio": "Audio file",
     "audioHint": "MP3, M4A or WAV up to 200 MB. Or paste a link below.",
-    "audioLink": "Audio link (HTTPS)"
+    "audioLink": "Audio link (HTTPS)",
+    "downloadPdf": "Download",
+    "completeError": "We could not save your progress. Try again.",
+    "completeSaved": "Marked complete"
   },
   "challenges": {
     "title": "Challenges",
@@ -5928,7 +5931,7 @@
   "resources": {
     "title": "Resources",
     "sentence": "Courses, guides, live sessions, recipes and more from your team and ZoheeWell.",
-    "templatesButton": "Resource templates",
+    "templatesButton": "Resource blueprints",
     "create": {
       "title": "What are you creating?",
       "sentence": "Pick the kind of resource. Each one opens an editor made for it, and everything starts as a draft.",
@@ -5942,8 +5945,8 @@
       "helpCourse": "A structured path with sections, lessons, optional quizzes and certificates.",
       "helpBundleTitle": "A mixed bundle",
       "helpBundle": "One package of text, files, links and embeds people can open or download.",
-      "template": "Start from a template",
-      "templateText": "ZoheeWell starters or your team's saved structures.",
+      "template": "Start from a blueprint",
+      "templateText": "ZoheeWell starters or your team's saved blueprints.",
       "types": {
         "video": {
           "name": "Video",
@@ -6057,7 +6060,7 @@
     "start": "Start",
     "review": "Review",
     "edit": "Edit",
-    "saveTemplate": "Save as template",
+    "saveTemplate": "Save as blueprint",
     "continueHeading": "Continue where you left off",
     "nextLive": "Next live sessions",
     "upcoming": "Upcoming",
@@ -6088,14 +6091,14 @@
       },
       "mine": {
         "title": "You haven't created a resource yet",
-        "text": "Start from scratch or from a resource template. Everything starts as a draft."
+        "text": "Start from scratch or from a resource blueprint. Everything starts as a draft."
       }
     },
     "createSheet": {
       "title": "Create resource",
       "text": "Choose what to make. Everything starts as a draft until you publish it.",
-      "fromTemplate": "Start from a template",
-      "fromTemplateText": "ZoheeWell starters or your team's templates."
+      "fromTemplate": "Start from a blueprint",
+      "fromTemplateText": "ZoheeWell starters or your team's blueprints."
     },
     "preset": {
       "track": {
@@ -6204,7 +6207,8 @@
         "live_time": "pick a start time",
         "course": "choose a course",
         "price": "set a price of at least $0.50",
-        "file": "attach the file"
+        "file": "attach the file",
+        "placeholder": "blueprint placeholder text"
       },
       "cancelEdit": "Cancel",
       "deleteLesson": "Delete lesson",
@@ -6241,19 +6245,41 @@
         "public": "Listed on your public coach page and in Discover.",
         "unlisted": "Not listed anywhere; people need the direct link."
       },
-      "trackAccessNote": "Free after sign-in. “Public page” also lists it on your public coach page."
+      "trackAccessNote": "Free after sign-in. “Public page” also lists it on your public coach page.",
+      "next": "Next",
+      "back": "Back",
+      "stepOf": "Step {{n}} of {{total}}",
+      "update": "Update",
+      "publishedToast": "Published. It is now live for the people who can see it.",
+      "updatedToast": "Changes saved and live.",
+      "draftToast": "Draft saved",
+      "saveFailed": "We could not save. Your work is still here — try again.",
+      "activeFrom": "Available from (optional)",
+      "activeFromHint": "Leave empty to make it available as soon as it is published. Time zone: {{tz}}",
+      "scheduled": "Scheduled · available {{date}}",
+      "notYet": "Not available yet",
+      "notYetText": "This resource opens on {{date}}.",
+      "placeholderBlock": "Replace the blueprint example text before publishing.",
+      "trackStatus": "Resource status",
+      "lessonStatus": "Lesson status",
+      "trackStateLabel": {
+        "draft": "Draft",
+        "published": "Published",
+        "publishedEmpty": "Published · no lessons published yet ({{total}} drafts)",
+        "publishedPartial": "Published · {{live}} of {{total}} lessons published"
+      }
     }
   },
   "templatesR": {
-    "title": "Resource templates",
-    "sentence": "Reusable starting structures for courses, guides, sessions and recipes. Separate from Event Blueprints.",
+    "title": "Resource blueprints",
+    "sentence": "Reusable starting structures for courses, guides, sessions and recipes. Separate from Event blueprints.",
     "starters": "ZoheeWell starters",
-    "mine": "My templates",
+    "mine": "My blueprints",
     "starterChip": "ZoheeWell starter",
-    "teamChip": "Team template",
-    "use": "Use template",
+    "teamChip": "Team blueprint",
+    "use": "Use blueprint",
     "using": "Creating draft…",
-    "created": "Draft created. Replace the placeholders, then publish when you're ready.",
+    "created": "Draft created. Replace every placeholder, then publish when you are ready.",
     "parts_one": "{{count}} part",
     "parts_other": "{{count}} parts",
     "needsAssets_one": "{{count}} file to upload after copying",
@@ -6264,20 +6290,20 @@
       "download": "Creates a draft resource bundle",
       "recipe": "Creates a draft recipe"
     },
-    "delete": "Delete template",
-    "deleteConfirm": "Delete this template? Resources already made from it stay as they are.",
-    "deleted": "Template deleted",
-    "emptyMine": "No team templates yet",
-    "emptyMineText": "Save one of your resources as a template from Created by me, then reuse it any time.",
+    "delete": "Delete blueprint",
+    "deleteConfirm": "Delete this blueprint? Resources already made from it stay as they are.",
+    "deleted": "Blueprint deleted",
+    "emptyMine": "No team blueprints yet",
+    "emptyMineText": "Save one of your resources as a blueprint from Created by me, then reuse it any time.",
     "emptyMineAction": "Go to Created by me",
-    "creatorsOnly": "Resource templates are for hosts and team builders.",
-    "saveTitle": "Save as template",
+    "creatorsOnly": "Resource blueprints are for hosts and team builders.",
+    "saveTitle": "Save as blueprint",
     "saveText": "Saves the structure and text for your team. Uploaded files, people, progress, sales and live links are not copied.",
-    "nameEn": "Template name (English)",
-    "nameEs": "Template name (Spanish)",
-    "save": "Save template",
+    "nameEn": "Blueprint name (English)",
+    "nameEs": "Blueprint name (Spanish)",
+    "save": "Save blueprint",
     "saving": "Saving…",
-    "saved": "Template saved"
+    "saved": "Blueprint saved"
   },
   "comms": {
     "title": "Communications",
@@ -6533,8 +6559,8 @@
         "desc": "Edit tracks, lessons, recipes and drafts."
       },
       "learnTemplates": {
-        "title": "Templates",
-        "desc": "Start from bilingual starters or your team's templates."
+        "title": "Resource blueprints",
+        "desc": "Start from bilingual starters or your team's blueprints."
       },
       "offers": {
         "title": "Offers",

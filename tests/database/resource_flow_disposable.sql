@@ -1,0 +1,37 @@
+\set ON_ERROR_STOP on
+BEGIN;
+DO $$ BEGIN IF current_setting('app.disposable_database',true) IS DISTINCT FROM 'YES' THEN RAISE EXCEPTION 'Disposable database only'; END IF; END $$;
+CREATE FUNCTION pg_temp.ok(b boolean,l text) RETURNS void LANGUAGE plpgsql AS $$BEGIN IF b IS DISTINCT FROM true THEN RAISE EXCEPTION 'FAIL %',l; END IF; RAISE NOTICE 'PASS %',l; END$$;
+INSERT INTO auth.users(id,email) VALUES ('00000000-0000-0000-0000-0000000000a1','g1@example.invalid'),('00000000-0000-0000-0000-0000000000a2','g2@example.invalid');
+INSERT INTO profiles(id,slug,full_name) VALUES ('00000000-0000-0000-0000-0000000000a1','zz-g-host','G Host'),('00000000-0000-0000-0000-0000000000a2','zz-g-learner','G Learner');
+INSERT INTO teams(id,owner_id,name,slug) VALUES ('10000000-0000-0000-0000-0000000000a1','00000000-0000-0000-0000-0000000000a1','G Team','zz-g-team');
+INSERT INTO offers(id,team_id,host_id,status,kind,title_en,visibility,available_from) VALUES ('20000000-0000-0000-0000-0000000000a1','10000000-0000-0000-0000-0000000000a1','00000000-0000-0000-0000-0000000000a1','published','course','G Course','public', now()+interval '1 day');
+SELECT set_config('request.jwt.claim.sub','00000000-0000-0000-0000-0000000000a1',true);
+INSERT INTO tracks(id,team_id,offer_id,title_en,title_es,is_published) VALUES ('30000000-0000-0000-0000-0000000000a1','10000000-0000-0000-0000-0000000000a1','20000000-0000-0000-0000-0000000000a1','G','G',true);
+INSERT INTO lessons(id,track_id,title_en,title_es,type,is_published,sort_order) VALUES ('40000000-0000-0000-0000-0000000000a1','30000000-0000-0000-0000-0000000000a1','L1','L1','pdf',true,1),('40000000-0000-0000-0000-0000000000a2','30000000-0000-0000-0000-0000000000a1','Draft','Draft','text',false,2);
+SELECT set_config('request.jwt.claim.sub','',true);
+INSERT INTO entitlements(offer_id,user_id,source,kind) VALUES ('20000000-0000-0000-0000-0000000000a1','00000000-0000-0000-0000-0000000000a2','free','resource');
+SELECT set_config('request.jwt.claim.sub','00000000-0000-0000-0000-0000000000a2',true);
+SELECT pg_temp.ok(NOT can_access_offer('20000000-0000-0000-0000-0000000000a1'),'entitled learner blocked before activation');
+DO $$BEGIN PERFORM set_lesson_progress('40000000-0000-0000-0000-0000000000a1',true); RAISE EXCEPTION 'should fail'; EXCEPTION WHEN OTHERS THEN IF SQLERRM NOT IN ('no_access','not_available') THEN RAISE; END IF; END$$;
+SELECT pg_temp.ok(true,'completion denied before activation');
+UPDATE offers SET available_from = now() WHERE id='20000000-0000-0000-0000-0000000000a1';
+SELECT pg_temp.ok(can_access_offer('20000000-0000-0000-0000-0000000000a1'),'entitled learner allowed at activation');
+SELECT set_lesson_progress('40000000-0000-0000-0000-0000000000a1',true);
+SELECT set_lesson_progress('40000000-0000-0000-0000-0000000000a1',true);
+SELECT pg_temp.ok((SELECT count(*)=1 FROM lesson_progress WHERE user_id='00000000-0000-0000-0000-0000000000a2'),'completion idempotent (entitled non-member)');
+SELECT pg_temp.ok((SELECT count(*)=1 FROM activity WHERE type='track_completed' AND actor_id='00000000-0000-0000-0000-0000000000a2'),'track completes counting published lessons only');
+DO $$BEGIN PERFORM set_lesson_progress('40000000-0000-0000-0000-0000000000a2',true); RAISE EXCEPTION 'should fail'; EXCEPTION WHEN OTHERS THEN IF SQLERRM<>'not_found' THEN RAISE; END IF; END$$;
+SELECT pg_temp.ok(true,'draft lesson completion denied');
+SELECT set_lesson_progress('40000000-0000-0000-0000-0000000000a1',false);
+SELECT pg_temp.ok((SELECT count(*)=0 FROM lesson_progress WHERE user_id='00000000-0000-0000-0000-0000000000a2'),'un-complete works');
+SELECT set_config('request.jwt.claim.sub','00000000-0000-0000-0000-0000000000a9',true);
+DO $$BEGIN PERFORM set_lesson_progress('40000000-0000-0000-0000-0000000000a1',true); RAISE EXCEPTION 'should fail'; EXCEPTION WHEN OTHERS THEN IF SQLERRM<>'no_access' THEN RAISE; END IF; END$$;
+SELECT pg_temp.ok(true,'non-entitled user denied');
+DO $$BEGIN UPDATE lessons SET title_en='[Your lesson title]' WHERE id='40000000-0000-0000-0000-0000000000a1'; RAISE EXCEPTION 'should fail'; EXCEPTION WHEN OTHERS THEN IF SQLERRM<>'blueprint_placeholder' THEN RAISE; END IF; END$$;
+SELECT pg_temp.ok(true,'placeholder publish blocked');
+UPDATE lessons SET title_en='[Your lesson title]' WHERE id='40000000-0000-0000-0000-0000000000a2';
+SELECT pg_temp.ok(true,'placeholder allowed in drafts');
+SELECT pg_temp.ok(resource_availability('20000000-0000-0000-0000-0000000000a1') IS NOT NULL,'public availability lookup');
+ROLLBACK;
+\echo 'Resource flow disposable assertions passed; fixtures rolled back.'
