@@ -15,10 +15,10 @@ describe('FAQ structure', () => {
   });
   it('every category and item has matched EN and ES copy', () => {
     for (const cat of FAQ_CATEGORIES) {
-      for (const l of [en, es]) expect(l.faqPage.categories[cat.id]).toBeTruthy();
+      for (const l of [en, es]) expect(dict(l).categories[cat.id]).toBeTruthy();
       for (const item of cat.items) {
         for (const l of [en, es]) {
-          const entry = l.faqPage.items[item.id];
+          const entry = dict(l).items[item.id]!;
           expect(entry.q.length).toBeGreaterThan(8);
           expect(entry.a.length).toBeGreaterThan(40);
         }
@@ -46,7 +46,7 @@ describe('FAQ links are real and signed-out safe', () => {
   });
   it('every link label exists in both languages', () => {
     for (const cat of FAQ_CATEGORIES) for (const item of cat.items) for (const link of item.links ?? []) {
-      for (const l of [en, es]) expect(l.faqPage.linkLabels[link.labelKey]).toBeTruthy();
+      for (const l of [en, es]) expect(dict(l).linkLabels[link.labelKey]).toBeTruthy();
     }
   });
   it('public destinations stay public; account routes go through login or the auth gate', () => {
@@ -104,7 +104,7 @@ describe('FAQPage JSON-LD', () => {
   it('matches the English SSR content exactly', () => {
     const ld = buildFaqJsonLd(en);
     const first = FAQ_CATEGORIES[0]!.items[0]!;
-    expect(ld.mainEntity[0]!.name).toBe(en.faqPage.items[first.id]!.q);
-    expect(ld.mainEntity[0]!.acceptedAnswer.text).toBe(en.faqPage.items[first.id]!.a);
+    expect(ld.mainEntity[0]!.name).toBe(dict(en).items[first.id]!.q);
+    expect(ld.mainEntity[0]!.acceptedAnswer.text).toBe(dict(en).items[first.id]!.a);
   });
 });
