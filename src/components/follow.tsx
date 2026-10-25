@@ -4,7 +4,7 @@ import { CoachTrustSection, VerifiedMark, useIsVerified } from '@/components/coa
 import { CopyButton, ShareButton } from '@/components/copy-button';
 import { FeaturedBadges } from '@/components/recognition';
 import { publicHostCover, publicOfferCover } from '@/lib/host-cover.functions';
-import { publicCardModel, type PublicOffering } from '@/lib/public-cards';
+import { publicCardModel, publicCardRoute, publicKindKey, type PublicOffering } from '@/lib/public-cards';
 import { COVER_STYLES } from '@/lib/gatherings';
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
@@ -47,8 +47,9 @@ function OfferingCard({ o, lang }: { o: HostOffering; lang: string }) {
   const { t } = useTranslation();
   const model = publicCardModel(o, lang, t('resources.untitled'), t(o.price_cents ? 'resources.item.ctaBuy' : 'resources.item.ctaGet'));
   const price = o.price_cents ? new Intl.NumberFormat(lang, { style: 'currency', currency: 'USD' }).format(o.price_cents / 100) : t('offers.free');
-  const cover = useQuery({ queryKey: ['public-offer-cover', o.id], queryFn: () => publicOfferCover({ data: { id: o.id } }), enabled: !!model.coverPath, staleTime: 50 * 60 * 1000 });
-  const kind = t(`offers.kind.${o.kind}`);
+  const cover = useQuery({ queryKey: ['public-offer-cover', o.id], queryFn: () => publicOfferCover({ data: { id: o.id } }), enabled: !!model.coverPath && o.entity !== 'track', staleTime: 50 * 60 * 1000 });
+  const kind = t(publicKindKey(o));
+  const route = publicCardRoute(o);
   const inner = model.layout === 'button'
     ? <span className="offering-card is-button" style={{ background: model.colors.bg, color: model.colors.fg }}>
         <strong>{model.title}</strong>
