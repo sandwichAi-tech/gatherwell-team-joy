@@ -237,17 +237,23 @@ export const startConnectOnboarding = createServerFn({ method: 'POST' })
 export const startTicketCheckout = createServerFn({ method: 'POST' })
   .inputValidator((d: unknown) => z.object({
     eventId: z.string().uuid(), first: z.string().trim().min(1).max(60), last: z.string().trim().max(60), phone: z.string().trim().max(30), email: z.string().trim().email().max(200),
-    plusOnes: z.number().int().min(0).max(3), sms: z.boolean(), mail: z.boolean(), lang: z.enum(['en', 'es']), origin, waiverName: z.string().trim().max(120).optional().default(''), promo: z.string().max(20).optional().default(''), adult: z.boolean().optional().default(false),
+    plusOnes: z.number().int().min(0).max(3), sms: z.boolean(), mail: z.boolean(), lang: z.enum(['en', 'es']), origin, waiverName: z.string().trim().max(120).optional().default(''), waivers: z.array(z.object({ id: z.string().uuid(), version: z.number().int().min(1) })).max(10).optional().default([]), promo: z.string().max(20).optional().default(''), adult: z.boolean().optional().default(false),
   }).parse(d))
   .handler(async ({ data }): Promise<Result> => {
     // Purchasers must be adults; the unchecked attestation is required server-side.
     if (data.adult !== true) return { ok: false, error: 'adult_required' };
+    {
+      // Event waivers are validated against the active versions before any checkout is attempted.
+      const { supabaseAdmin: sa } = await import('@/integrations/supabase/client.server');
+      const { error: wErr } = await sa.rpc('check_event_waivers', { _event: data.eventId, _accepted: data.waivers as never });
+      if (wErr) return { ok: false, error: wErr.message.includes('waiver_stale') ? 'waiver_stale' : 'waiver_required' };
+    }
     const { stripe, stripeKey } = await import('./billing/stripe.server');
     const { getRequestHeader } = await import('@tanstack/react-start/server');
     const waiverIp = (getRequestHeader('cf-connecting-ip') ?? getRequestHeader('x-forwarded-for') ?? '').split(',')[0]!.trim().slice(0, 64);
     if (!stripeKey()) return notConnected;
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
-    const { data: ev } = await supabaseAdmin.from('events').select('id, title, host_id, price_cents, pass_fee, cover_service_fee, status, visibility, requires_waiver, refund_policy').eq('id', data.eventId).maybeSingle();
+    const { data: ev } = await supabaseAdmin.from('events').select('id, title, host_id, price_cents, pass_fee, cover_service_fee, status, visibility, requires_waiver, refund_policy, cancellation_policy').eq('id', data.eventId).maybeSingle();
     if (!ev || ev.status !== 'published' || ev.visibility !== 'public' || !ev.price_cents) return { ok: false, error: 'not_open' };
     if (ev.requires_waiver && data.waiverName.length < 2) return { ok: false, error: 'waiver_required' };
     const { data: b } = await supabaseAdmin.from('billing_accounts').select('connect_account_id, connect_status').eq('user_id', ev.host_id).maybeSingle();
@@ -269,10 +275,10 @@ export const startTicketCheckout = createServerFn({ method: 'POST' })
       : { quantity: qty, price_data: { currency: 'usd', unit_amount: ev.price_cents, product_data: { name: ev.title } } }];
     if (booking) items.push({ quantity: 1, price_data: { currency: 'usd', unit_amount: booking, product_data: { name: data.lang === 'es' ? 'Cargo por reservación' : 'Booking fee' } } });
     if (service && !covered) items.push({ quantity: 1, price_data: { currency: 'usd', unit_amount: service, product_data: { name: data.lang === 'es' ? 'Cargo por servicio' : 'Service fee' } } });
-    const meta = { kind: 'gathering', event_id: ev.id, first: data.first, last: data.last, phone: data.phone, email: data.email, plus: String(data.plusOnes), sms: String(data.sms), mail: String(data.mail), lang: data.lang, waiver: ev.requires_waiver ? data.waiverName : '', waiver_ip: ev.requires_waiver ? waiverIp : '' };
+    const meta = { kind: 'gathering', event_id: ev.id, first: data.first, last: data.last, phone: data.phone, email: data.email, plus: String(data.plusOnes), sms: String(data.sms), mail: String(data.mail), lang: data.lang, waiver: ev.requires_waiver ? data.waiverName : '', waiver_ip: ev.requires_waiver ? waiverIp : '', ewaivers: data.waivers.map(w => `${w.id}:${w.version}`).join(',') };
     const s = await stripe<{ id: string; url: string }>('checkout/sessions', {
       mode: 'payment', customer_email: data.email, locale: data.lang === 'es' ? 'es-419' : 'en', line_items: items,
-      custom_text: { submit: { message: refundText(asRefundPolicy(ev.refund_policy), data.lang) } }, metadata: meta,
+      custom_text: { submit: { message: refundText(ev.refund_policy === 'custom' ? 'custom' : asRefundPolicy(ev.refund_policy), data.lang, ev.cancellation_policy) } }, metadata: meta,
       payment_intent_data: { application_fee_amount: fee + service, transfer_data: { destination: b.connect_account_id }, metadata: meta },
       success_url: `${data.origin}/e/${ev.id}?paid=1`, cancel_url: `${data.origin}/e/${ev.id}`,
     });

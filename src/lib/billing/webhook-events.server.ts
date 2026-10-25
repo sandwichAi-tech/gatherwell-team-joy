@@ -33,6 +33,9 @@ export async function processPaymentEvent(db: SupabaseClient, evt: PaymentEvent)
         const code = (r as { code: string }[] | null)?.[0]?.code;
         const { data: rsvp } = code ? await db.from('rsvps').select('id').eq('checkin_code', code).maybeSingle() : { data: null };
         if (rsvp?.id && m.waiver) await db.rpc('record_waiver' as never, { _rsvp: rsvp.id, _name: m.waiver, _ip: m.waiver_ip || null, _source: 'rsvp' } as never);
+        // Event waivers accepted before checkout; versions are the ones the buyer saw, recorded idempotently.
+        if (rsvp?.id && m.ewaivers) await db.rpc('store_event_waivers' as never, { _rsvp: rsvp.id, _source: 'checkout', _ref: String(m.session_id ?? m.payment_intent ?? ''),
+          _accepted: String(m.ewaivers).split(',').map(x => { const [id, v] = x.split(':'); return { id, version: Number(v) }; }).filter(x => x.id && x.version > 0) } as never);
         const { data: pay } = await db.from('payments').update({ status: 'paid', stripe_payment_intent: o.payment_intent, rsvp_id: rsvp?.id ?? null }).eq('stripe_session_id', o.id).select('amount_cents, service_fee_cents, service_fee_covered').maybeSingle();
         const { data: ev } = await db.from('events').select('title, starts_at, timezone, location_name').eq('id', m.event_id).maybeSingle();
         await db.rpc('enqueue_message', <any>{ _channel: 'email', _recipient: m.email, _language: m.lang === 'es' ? 'es' : 'en', _template: 'payment_receipt', _kind: 'transactional',
