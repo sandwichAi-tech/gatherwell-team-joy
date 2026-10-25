@@ -41,6 +41,8 @@ export function PublicOfferPage({ id }: { id: string }) {
   const userId = useUserId();
   const q = useQuery(publicOfferQuery(id));
   const access = useQuery({ ...canAccessOfferQuery(id, userId), enabled: !!userId });
+  const coverPath = q.data?.cover_url ?? null;
+  const cover = useQuery({ queryKey: ['public-offer-cover', id], queryFn: () => publicOfferCover({ data: { id } }), enabled: !!coverPath, staleTime: 50 * 60 * 1000 });
   const [busy, setBusy] = useState(false);
 
   if (q.isPending) return <GuestShell><ListSkeleton /></GuestShell>;
@@ -53,7 +55,6 @@ export function PublicOfferPage({ id }: { id: string }) {
   const promo = pick2(lang, o.promo_en, o.promo_es);
   const customCta = pick2(lang, o.cta_en, o.cta_es);
   const pair = accentPair(o.accent ?? 'plum');
-  const cover = useQuery({ queryKey: ['public-offer-cover', id], queryFn: () => publicOfferCover({ data: { id } }), enabled: !!o.cover_url, staleTime: 50 * 60 * 1000 });
   const summary = pick2(lang, o.summary_en, o.summary_es);
   const description = offerText(o, lang);
   const includes = offerIncludes(o, lang);
