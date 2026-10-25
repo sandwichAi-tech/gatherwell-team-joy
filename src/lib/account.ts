@@ -1,4 +1,4 @@
-import { queryOptions } from '@tanstack/react-query';
+import { queryOptions, type QueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 export const JOIN_CODE_KEY = 'gatherwell-join-code';
@@ -41,6 +41,16 @@ export const profileQuery = (userId: string) => queryOptions({
     return created;
   },
 });
+
+/**
+ * Refetch the profile and mark it onboarded in the cache. The app gate checks adult_confirmed_at,
+ * so writing onto a stale pre-confirmation row would bounce the new account back to onboarding.
+ */
+export async function markProfileOnboarded(client: QueryClient, userId: string) {
+  const fresh = await client.fetchQuery(profileQuery(userId));
+  client.setQueryData(profileQuery(userId).queryKey, fresh ? { ...fresh, onboarded: true } : fresh);
+  return fresh;
+}
 
 export type TeamMembership = { teamId: string; name: string; plan: string; joinCode: string; role: string; workspaceRole: string; ownerId: string; customBadge: string | null; inherited?: boolean };
 
