@@ -222,17 +222,15 @@ function RecipeEditor({ recipe, teamId, onClose }: { recipe: Partial<Recipe> | n
     if (res.error) { toast.error(errMsg(t, res.error)); return; }
     await qc.invalidateQueries({ queryKey: ['recipes', userId] }); onClose();
   };
-  const ta = (id: string, label: string, k: 'ing_en' | 'ing_es' | 'steps_en' | 'steps_es') => <Field id={id} label={label}><Textarea id={id} rows={5} className="field-textarea" value={f[k]} onChange={e => setF({ ...f, [k]: e.target.value })} /></Field>;
   return <ResponsiveSheet open={!!recipe} onOpenChange={o => !o && onClose()} title={recipe?.id ? t('learnHub.editRecipe') : t('learnHub.addRecipe')} description={t('learnHub.recipeRule')}>
     <div className="edit-form">
-      <div className="bilingual"><Field id="rc-en" label={`${t('templates.title')} · EN`}><Input id="rc-en" className="field-input" maxLength={120} value={f.title_en} onChange={e => setF({ ...f, title_en: e.target.value })} /></Field>
-        <Field id="rc-es" label={`${t('templates.title')} · ES`}><Input id="rc-es" className="field-input" maxLength={120} value={f.title_es} onChange={e => setF({ ...f, title_es: e.target.value })} /></Field></div>
+      <LangPair id="rc-title" label={t('templates.title')} en={f.title_en} es={f.title_es} onEn={v => setF({ ...f, title_en: v })} onEs={v => setF({ ...f, title_es: v })} maxLength={120} />
       <Field id="rc-prep" label={t('learnHub.prepLabel')}><Input id="rc-prep" type="number" min={1} max={600} className="field-input" value={f.prep} onChange={e => setF({ ...f, prep: e.target.value })} /></Field>
       <div className="form-field"><span className="field-label">{t('learnHub.tagsLabel')}</span><div className="filter-chips">{RECIPE_TAGS.map(tag => { const on = f.tags.includes(tag); return <button type="button" key={tag} className={`filter-chip ${on ? 'is-active' : ''}`} aria-pressed={on} onClick={() => setF({ ...f, tags: on ? f.tags.filter(x => x !== tag) : [...f.tags, tag] })}>{t(`learnHub.tags.${tag}`)}</button>; })}</div></div>
       <CoverPicker teamId={teamId} path={f.cover_url} styleIdx={f.cover_style} title={f.title_en || f.title_es} onPath={p => setF(x => ({ ...x, cover_url: p }))} onStyle={n => setF(x => ({ ...x, cover_style: n }))} />
       <p className="field-hint">{t('learnHub.onePerLine')}</p>
-      <div className="bilingual">{ta('rc-ie', `${t('learnHub.ingredients')} · EN`, 'ing_en')}{ta('rc-is', `${t('learnHub.ingredients')} · ES`, 'ing_es')}</div>
-      <div className="bilingual">{ta('rc-se', `${t('learnHub.steps')} · EN`, 'steps_en')}{ta('rc-ss', `${t('learnHub.steps')} · ES`, 'steps_es')}</div>
+      <LangPair id="rc-ing" label={t('learnHub.ingredients')} en={f.ing_en} es={f.ing_es} onEn={v => setF({ ...f, ing_en: v })} onEs={v => setF({ ...f, ing_es: v })} multiline rows={5} />
+      <LangPair id="rc-steps" label={t('learnHub.steps')} en={f.steps_en} es={f.steps_es} onEn={v => setF({ ...f, steps_en: v })} onEs={v => setF({ ...f, steps_es: v })} multiline rows={5} />
       <Button className="onboarding-continue" disabled={busy || !ok} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
       {recipe?.id && <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('learnHub.deleteRecipe')}</Button>}
     </div>
