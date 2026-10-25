@@ -215,6 +215,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const [loadingItem, setLoadingItem] = useState(!!initialId);
   const [snapshot, setSnapshot] = useState(itemSnapshot(emptyItemState()));
   const [refund, setRefund] = useState<RefundPolicy>('24h');
+  const [visibility, setVisibility] = useState<'team' | 'public' | 'unlisted'>('team');
   const [drip, setDrip] = useState(7);
   const [courseId, setCourseId] = useState('');
   const [createdQuiz, setCreatedQuiz] = useState<{ quizId: string; offer: Offer } | null>(null);
@@ -294,6 +295,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
         });
         setDraft(d => ({ ...d, offer: { price: o.price_cents ? (o.price_cents / 100).toString() : '', filePath: o.file_path } }));
         setRefund((o as any).refund_policy ?? '24h'); setDrip(o.drip_days ?? 7);
+        setVisibility(((o as any).visibility === 'public' || (o as any).visibility === 'unlisted' ? (o as any).visibility : 'team'));
         let trackId: string | undefined;
         if (o.kind === 'course') {
           const linked = await db.from('tracks').select('id').eq('offer_id', initialId).limit(1).maybeSingle();
@@ -423,7 +425,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
       const row = {
         kind, ...base, price_cents: priceCents, refund_policy: refund, drip_days: drip,
         file_path: kind === 'download' ? draft.offer.filePath : null,
-        status: (publish ? 'published' : 'draft') as 'published' | 'draft',
+        status: (publish ? 'published' : 'draft') as 'published' | 'draft', visibility,
       };
       const r = loaded?.entity === 'offer' ? await saveOffer(row, loaded.id) : await saveOffer({ ...row, includes_en: [], includes_es: [], team_id: teamId, host_id: userId });
       if (r.error) { setBusy(false); toast.error(t(String(r.error.message).includes('payouts_required') ? 'billing.payoutsRequired' : 'offers.saveError')); return; }
@@ -583,6 +585,12 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
         {/* ---- Access / Checkout ---- */}
         {section === 'access' && <>
           {offerKindFor(type) ? <>
+            <div className="form-field"><span className="field-label">{t('resources.item.visibilityLabel')}</span>
+              <div className="filter-chips" role="radiogroup" aria-label={t('resources.item.visibilityLabel')}>
+                {(['team', 'public', 'unlisted'] as const).map(v => <button key={v} type="button" role="radio" aria-checked={visibility === v}
+                  className={`filter-chip ${visibility === v ? 'is-active' : ''}`} onClick={() => setVisibility(v)}>{t(`resources.item.visibility.${v}`)}</button>)}
+              </div>
+              <p className="field-hint">{t(`resources.item.visibilityHint.${visibility}`)}</p></div>
             <div className="form-field"><span className="field-label">{t('resources.item.accessLabel')}</span>
               <div className="filter-chips" role="radiogroup" aria-label={t('resources.item.accessLabel')}>
                 <button type="button" role="radio" aria-checked={item.access.free} className={`filter-chip ${item.access.free ? 'is-active' : ''}`} onClick={() => patchItem({ access: { ...item.access, free: true } })}>{t('resources.item.free')}</button>

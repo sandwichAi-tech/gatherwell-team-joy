@@ -6228,6 +6228,17 @@
         "down": "Move down",
         "deleteTitle": "Delete this lesson?",
         "deleteText": "Participants lose this lesson and its progress. This cannot be undone."
+      },
+      "visibilityLabel": "Who can see it",
+      "visibility": {
+        "team": "My team",
+        "public": "Public page",
+        "unlisted": "Anyone with the link"
+      },
+      "visibilityHint": {
+        "team": "Only members of your team see this resource.",
+        "public": "Listed on your public coach page and in Discover.",
+        "unlisted": "Not listed anywhere; people need the direct link."
       }
     }
   },
