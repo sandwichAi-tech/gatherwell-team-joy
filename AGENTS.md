@@ -17,7 +17,7 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Keep homepage hosting paths, steps and tool inventory inside the existing landing page and reuse login intent/discovery routes; marketing copy never claims a provider or checkout is live before it is verified.
 - Keep enduring product requirements in PROJECT_RULES.md under SOURCE_OF_TRUTH.md.
 - Use react-i18next with matched English and Latin American Spanish JSON resources for all visible and accessible copy, so language changes stay instant and complete.
-- Keep shared navigation, settings, and sheets in GatherwellShell around the root Outlet; use separate leaf routes for the five tabs so deep links work.
+- Keep navigation in GatherwellShell; each tab has a leaf route. Coach Communication uses capability-aware, scrollable mobile navigation.
 - localStorage holds only language, theme and a pending invite code (cleared once the join completes); all user data lives in Lovable Cloud with team-scoped RLS.
 - Home-screen installation is manifest-only; the only service worker is public/push-sw.js (push display + click, no caching), registered only after the person turns push on, (offline not requested).
 - Visual rules live in DESIGN_RULES.md's active Blueprint v4 section; its historical sections are not active.
@@ -46,9 +46,9 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Day-60 scoreboard: raw counts come only from admin_day60(); targets and the go/adjust/rethink verdict are evaluated in src/lib/day60.ts so thresholds live in one tested place.
 - Parked features are gated by feature_* flags via src/lib/feature-flags.tsx; admins always see them and off routes throw notFound, so launch scope changes from /admin?tab=flags.
 - Resources reuses /learn routes and the feature_learn gate; reader lists omit zero-lesson tracks and empty sections while management retains them. Authoring is type-first: /learn/create?type=… (src/lib/create-resource.ts) routes into the existing track/lesson, offer, quiz and recipe editors with presets — no second authoring backend.
-- Home’s morning brief reuses getDailyBrief with authenticated caller-scoped reads and a tested pure rule mapper; no AI/daily snapshot storage, guest contacts, or shared user cache, so facts refresh and attendee codes remain private.
+- Home’s brief uses getDailyBrief with caller-scoped reads; no AI, snapshots, contacts or shared user cache. Attendance is RLS-scoped; Insights compares UTC event cohorts, not lifetime ledgers.
 - Admin password sign-in uses the public /admin-login page and existing Cloud Auth accounts; getAdminAccess validates the authenticated role before navigation, while every admin data handler retains its own role check, so the sign-in screen never grants privileges.
-- Event Blueprints reuse templates, TemplateEditor and the template-attributed event creation path; blueprint-defaults maps reusable fields and excludes dates/places; host-own RLS keeps drafts private.
+- Blueprints reuse templates and TemplateEditor; defaults omit dates/places and host RLS keeps drafts private. Challenge launch reuses ChallengeEditor; event formats retain existing retreat persistence.
 - Platform fees are calculated only from versioned fee_rules (DB calc_platform_fee_cents, mirrored and tested in src/lib/fees.ts); orders snapshot the rule so history never recalculates.
 - Database role regressions live in tests/database and run only by explicit invocation against a disposable copy; never connect these fixture-writing tests to production, preview, or the ordinary automated suite.
 - Consent acceptances resolve version/hash in database triggers, and flag changes append server-owned config history; clients never choose snapshots or write audit history.

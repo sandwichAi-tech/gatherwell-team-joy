@@ -7,4 +7,4 @@ export const Route = createFileRoute('/_authenticated/_app/challenges')({
   head: () => gatherwellHead('events'),
   component: Challenges,
 });
-function Challenges() { const { create } = Route.useSearch(); return <ChallengesSection startCreate={create} />; }
+function Challenges() { const { create } = Route.useSearch(); return <ChallengesSection startCreate={create ?? false} />; }
