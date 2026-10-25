@@ -15,7 +15,7 @@ import type { Tier } from '@/lib/recognition';
 import i18n from '@/lib/i18n';
 import { useEffect, useMemo, useState } from 'react';
 import type { TFunction } from 'i18next';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate, useRouterState } from '@tanstack/react-router';
 import { FromYourLeader, TemplatesSection } from '@/components/templates';
 import { WaiverEditorSheet } from '@/components/waiver';
 import { FileText } from '@/components/icons';
@@ -98,6 +98,8 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
   const { data: team } = useQuery(teamDetailQuery(teamId));
   const { data: tree = [] } = useQuery(teamTreeQuery(teamId));
   const [sheet, setSheet] = useState<Sheet>(null);
+  const panel = useRouterState({ select: state => state.location.search.panel });
+  useEffect(() => { if (panel === 'members' || panel === 'invite') setSheet(panel); }, [panel]);
   const [waiverOpen, setWaiverOpen] = useState(false); const canHost = isLeader || workspace.role === 'host';
   const [draftBody, setDraftBody] = useState<string | null>(null);
   useEffect(() => { const pending = takePendingAnnouncement(); if (pending) { setDraftBody(pending); if (isLeader) setSheet('announce'); else void navigator.clipboard?.writeText(pending).catch(() => {}); } }, [isLeader]);

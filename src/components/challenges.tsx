@@ -68,10 +68,11 @@ function ChallengeRow({ c }: { c: ChallengeItem }) {
   </Link>;
 }
 
-export function ChallengesSection() {
+export function ChallengesSection({ startCreate = false }: { startCreate?: boolean }) {
   const { t } = useTranslation(); const { openDetail } = useGatherwell();
   const { list, leader, teamId, isLoading } = useChallenges();
   const [tab, setTab] = useState<Phase>('active'); const [editing, setEditing] = useState<Partial<Challenge> | null>(null);
+  useEffect(() => { if (startCreate && leader) setEditing({}); }, [startCreate, leader]);
   const groups = useMemo(() => ({ active: list.filter(c => phaseOf(c) === 'active'), upcoming: list.filter(c => phaseOf(c) === 'upcoming').reverse(), past: list.filter(c => phaseOf(c) === 'past') }), [list]);
   if (isLoading) return <ListSkeleton />;
   return <section className="panel" id="challenges">

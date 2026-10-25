@@ -6,6 +6,8 @@ import type { TFunction } from 'i18next';
 import { toast } from 'sonner';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { workspaceQuery } from '@/lib/account';
+import { supabase } from '@/integrations/supabase/client';
+import { Link } from '@tanstack/react-router';
 import { rpcError } from '@/lib/gatherings';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { Button } from '@/components/ui/button';
@@ -83,6 +85,7 @@ export function CommunicationsPage() {
     </header>
 
     {setup && <SetupBanner setup={setup} />}
+    <section className="comms-section"><h2>{t('comms.offeringScopeTitle')}</h2><p className="field-hint">{t('comms.offeringScopeHint')}</p><Button asChild variant="secondary"><Link to="/learn" search={{ tab: 'mine' }}>{t('comms.resourcesLink')}</Link></Button></section>
 
     {!canManage && <p className="empty-state" role="note">{t('comms.membersReadOnly')}</p>}
 
@@ -308,6 +311,11 @@ function AutomationEditor({ teamId, automation, templates, onClose, onSaved }: {
   const [timing, setTiming] = useState(automation?.timing_hours ?? 24);
   const [channel, setChannel] = useState<MessageChannel>((automation?.channel as MessageChannel) ?? 'email');
   const [templateId, setTemplateId] = useState(automation?.template_id ?? '');
+  const [eventId, setEventId] = useState(automation?.event_id ?? '');
+  const { data: events = [] } = useQuery({ queryKey: ['message-events', teamId], queryFn: async () => {
+    const { data, error } = await supabase.from('events').select('id,title').eq('team_id', teamId).order('starts_at', { ascending: false }).limit(100);
+    if (error) throw error; return data ?? [];
+  } });
   const [busy, setBusy] = useState(false);
 
   const eligible = templates.filter(x => !x.archived && x.channel === channel);
@@ -317,7 +325,7 @@ function AutomationEditor({ teamId, automation, templates, onClose, onSaved }: {
     if (err) { toast.error(t(`comms.err.${err}`)); return; }
     setBusy(true);
     try {
-      await saveFn({ data: { teamId, id: automation?.id ?? null, name, trigger, timing_hours: timing, channel, template_id: templateId || null } });
+      await saveFn({ data: { teamId, id: automation?.id ?? null, name, trigger, timing_hours: timing, channel, template_id: templateId || null, event_id: eventId || null, audience: 'attendees' } });
       toast.success(t('comms.savedDraft')); onSaved();
     } catch (e) { toast.error(rpcError(t, e)); }
     setBusy(false);
@@ -329,6 +337,7 @@ function AutomationEditor({ teamId, automation, templates, onClose, onSaved }: {
       <label className="field-label" htmlFor="ma-name">{t('comms.name')}</label>
       <Input id="ma-name" className="field-input" maxLength={120} value={name} onChange={e => setName(e.target.value)} />
     </div>
+    <div className="form-section"><label className="field-label" htmlFor="ma-event">{t('comms.relatedEvent')}</label><select id="ma-event" className="field-input" value={eventId} onChange={e => setEventId(e.target.value)}><option value="">{t('comms.allEvents')}</option>{events.map(e => <option key={e.id} value={e.id}>{e.title}</option>)}</select><p className="field-hint">{t('comms.attendeeAudience')}</p></div>
     <div className="form-section">
       <span className="field-label">{t('comms.triggerLabel')}</span>
       <div className="stack" role="radiogroup" aria-label={t('comms.triggerLabel')}>

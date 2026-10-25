@@ -4,14 +4,14 @@ import { WORKSPACE_ROLES, type WorkspaceRole } from '@/components/workspace-sett
 
 export type WorkspaceCapability =
   | 'members' | 'settings' | 'content' | 'billing_view' | 'events'
-  | 'invites' | 'audit' | 'assign' | 'moderate' | 'analytics' | 'checkin';
+  | 'invites' | 'audit' | 'assign' | 'moderate' | 'analytics' | 'checkin' | 'messages';
 
-const ADMIN_CAPS: WorkspaceCapability[] = ['members', 'settings', 'content', 'billing_view', 'events', 'invites', 'audit', 'assign', 'moderate', 'analytics'];
+const ADMIN_CAPS: WorkspaceCapability[] = ['members', 'settings', 'content', 'billing_view', 'events', 'invites', 'audit', 'assign', 'moderate', 'analytics', 'messages'];
 
 export const ROLE_CAPABILITIES: Record<WorkspaceRole | 'owner', readonly WorkspaceCapability[]> = {
   owner: ADMIN_CAPS,
   admin: ADMIN_CAPS,
-  host: ['events', 'content'],
+  host: ['events', 'content', 'messages'],
   content_editor: ['content'],
   checkin: ['checkin'],
   moderator: ['moderate'],

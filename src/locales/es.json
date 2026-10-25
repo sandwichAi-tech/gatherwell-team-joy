@@ -15,7 +15,8 @@
     "updates": "Novedades",
     "inbox": "Mensajes",
     "support": "Soporte",
-    "insights": "Estadísticas"
+    "insights": "Estadísticas",
+    "communications": "Comunicación"
   },
   "common": {
     "create": "Crear",
@@ -38,7 +39,7 @@
     "previewNote": "Vista de ejemplo. Esta acción aún no está conectada.",
     "save": "Guardar"
   },
-"home":   {
+  "home": {
     "meta": {
       "title": "ZoheeWell · Eventos, cursos y comunidad en un solo lugar",
       "description": "ZoheeWell ayuda a anfitriones y coaches de bienestar a crear eventos y retiros, vender boletos, enseñar cursos y hacer crecer su comunidad. Crea tu primer evento gratis."
@@ -160,9 +161,16 @@
     "paymentsSoon": "Pagos próximamente",
     "footer": {
       "hostTools": "Herramientas para anfitriones"
-    }
+    },
+    "eyebrow": "TU COMUNIDAD, CONECTADA",
+    "greeting": "Te damos la bienvenida de nuevo, {{name}}",
+    "greetingFallback": "Te damos la bienvenida de nuevo",
+    "subtitle": "Reúne a las personas, descubre lo que viene y mantén activa a tu comunidad.",
+    "upcoming": "Próximos eventos",
+    "viewAll": "Ver todos",
+    "statsLabel": "Tu comunidad de un vistazo"
   },
-  "faqPage":   {
+  "faqPage": {
     "meta": {
       "title": "Preguntas frecuentes · ZoheeWell",
       "description": "Respuestas sobre cómo organizar eventos y cursos, precios, pagos, privacidad y cómo descubrir eventos de bienestar, recursos y coaches en ZoheeWell."
@@ -1148,7 +1156,17 @@
     "teamEvents30d": "{{count}} en los últimos 30 días",
     "teamNote": "Los totales del equipo son solo conteos agregados — nunca nombres ni datos de contacto de invitados.",
     "exportEvents": "Descargar CSV de eventos",
-    "exportOffers": "Descargar CSV de ofertas"
+    "exportOffers": "Descargar CSV de ofertas",
+    "periodFrom": "Desde",
+    "periodTo": "Hasta",
+    "invalidPeriod": "Elige una fecha final igual o posterior a la inicial.",
+    "periodDefinition": "Los eventos se agrupan por fecha programada en UTC. Inscritos cuenta registros activos going/maybe; asistencia cuenta entradas registradas. La comparación usa el periodo anterior de igual duración. Los totales de recursos y ventas son históricos y no se filtran por estas fechas.",
+    "previousCount": "Periodo anterior: {{count}}",
+    "attention": "Necesita tu atención",
+    "attentionEmpty": "No hay borradores ni listas de espera por revisar.",
+    "reviewDraft": "Revisa el borrador antes de publicar",
+    "reviewWaitlist": "{{count}} en espera — revisa la capacidad",
+    "lifetimeDefinition": "Totales históricos de pedidos pagados antes de reembolsos y comisiones de procesamiento. No son saldos de pagos."
   },
   "map": {
     "eyebrow": "Vista de líder",
@@ -1892,7 +1910,8 @@
       "invalid_message": "Escribe hasta 280 caracteres.",
       "not_allowed": "No tienes acceso a este reto."
     },
-    "noneYet": "Aún no hay retos."
+    "noneYet": "Aún no hay retos.",
+    "start": "Iniciar un reto"
   },
   "recognition": {
     "title": "Reconocimiento",
@@ -2263,8 +2282,11 @@
       "terms": "Términos",
       "privacy": "Privacidad",
       "credits": "Créditos fotográficos",
-      "copyright": "© 2026 ZoheeWell"
-    , "faq": "Preguntas frecuentes", "about": "Acerca de", "careers": "Empleo"},
+      "copyright": "© 2026 ZoheeWell",
+      "faq": "Preguntas frecuentes",
+      "about": "Acerca de",
+      "careers": "Empleo"
+    },
     "sticky": {
       "find": "Encontrar una reunión"
     },
@@ -3103,7 +3125,14 @@
         "answered": "Respondidas",
         "closed": "Cerradas"
       }
-    }
+    },
+    "ownerGuide": {
+      "title": "Guía para propietarios",
+      "signIn": "Inicia sesión con tu cuenta existente en /admin-login. Abre Yo → Panel de administración o visita /admin. Solo pueden entrar administradores de la plataforma.",
+      "sections": "Usuarios incluye coaches y restricciones de cuentas. Ofertas permite revisar eventos y recursos. Equipos controla comunidades. Configuración controla funciones y planes. Soporte gestiona solicitudes. Auditoría registra cambios administrativos.",
+      "limits": "El correo, SMS, pagos y pases requieren su configuración correspondiente. Los mensajes simulados no se entregan."
+    },
+    "dashboardLink": "Panel de administración"
   },
   "legalDocs": {
     "draft": "Borrador — pendiente de revisión legal",
@@ -3868,16 +3897,34 @@
       "whoTitle": "Hecho para personas que reúnen personas",
       "whoSub": "ZoheeWell le da la bienvenida a coaches independientes, estudios, educadores, creadores y organizadores de comunidades de todo tipo. Muchos de nuestros primeros anfitriones vienen de redes de bienestar basadas en relaciones — comunidades construidas a partir de la invitación personal — y la plataforma está diseñada para servirles a ellos y a todos los demás.",
       "who": [
-        { "title": "Anfitriones y coaches", "body": "Organiza clases, talleres, retiros y retos con confirmaciones, listas de espera, recordatorios y registro con QR." },
-        { "title": "Maestros y creadores", "body": "Crea cursos, lecciones, quizzes, recetas y recursos descargables a los que tu gente puede volver." },
-        { "title": "Equipos y líderes", "body": "Da a tu equipo herramientas compartidas, roles y un centro de comunicaciones con plantillas y recorridos." },
-        { "title": "Participantes", "body": "Descubre eventos, recursos y coaches públicos — y confirma como invitado, sin necesidad de cuenta." }
+        {
+          "title": "Anfitriones y coaches",
+          "body": "Organiza clases, talleres, retiros y retos con confirmaciones, listas de espera, recordatorios y registro con QR."
+        },
+        {
+          "title": "Maestros y creadores",
+          "body": "Crea cursos, lecciones, quizzes, recetas y recursos descargables a los que tu gente puede volver."
+        },
+        {
+          "title": "Equipos y líderes",
+          "body": "Da a tu equipo herramientas compartidas, roles y un centro de comunicaciones con plantillas y recorridos."
+        },
+        {
+          "title": "Participantes",
+          "body": "Descubre eventos, recursos y coaches públicos — y confirma como invitado, sin necesidad de cuenta."
+        }
       ],
       "useLabel": "Cómo funciona",
       "useTitle": "Dos lados del mismo encuentro",
       "uses": [
-        { "title": "Para anfitriones", "body": "Crea un evento en minutos, comparte tu página pública y haz crecer una comunidad con la que puedes comunicarte directamente. El acceso de pago llega a medida que se configuran los pagos — los eventos y recursos gratuitos ya funcionan hoy." },
-        { "title": "Para participantes", "body": "Explora Descubrir para encontrar próximos eventos, recursos y coaches cerca de ti. Guarda lo que te encanta y confirma en un toque." }
+        {
+          "title": "Para anfitriones",
+          "body": "Crea un evento en minutos, comparte tu página pública y haz crecer una comunidad con la que puedes comunicarte directamente. El acceso de pago llega a medida que se configuran los pagos — los eventos y recursos gratuitos ya funcionan hoy."
+        },
+        {
+          "title": "Para participantes",
+          "body": "Explora Descubrir para encontrar próximos eventos, recursos y coaches cerca de ti. Guarda lo que te encanta y confirma en un toque."
+        }
       ],
       "betaLabel": "Dónde estamos",
       "betaTitle": "Una beta temprana, construida con cuidado",
@@ -5090,6 +5137,15 @@
     },
     "errors": {
       "reg_window": "El registro debe abrir antes de cerrar."
+    },
+    "experience": {
+      "label": "Formato del evento",
+      "standard": "Evento estándar",
+      "retreat": "Retiro",
+      "multi": "Experiencia con varios eventos",
+      "session": "Sesión",
+      "add": "Agregar sesión",
+      "hint": "Una experiencia con varias sesiones programadas. La inscripción corresponde a toda la experiencia."
     }
   },
   "tickets": {
@@ -6144,7 +6200,13 @@
       "template_missing": "falló (plantilla eliminada)",
       "no_recipient": "falló (sin destinatario)",
       "unknown_step": "falló (paso desconocido)"
-    }
+    },
+    "offeringScopeTitle": "Eventos y recursos",
+    "offeringScopeHint": "Las automatizaciones y recorridos admiten inscripciones, recordatorios y cancelaciones de eventos. Los activadores de inscripción a recursos y las suscripciones a anuncios de coaches aún no están conectados.",
+    "resourcesLink": "Administrar recursos",
+    "relatedEvent": "Evento relacionado",
+    "allEvents": "Todos los eventos del espacio",
+    "attendeeAudience": "Audiencia: personas inscritas al evento seleccionado. Todos los eventos se aplica a las inscripciones de eventos del espacio."
   },
   "payReady": {
     "title": "Cómo cobrar",
@@ -6172,7 +6234,9 @@
     "eyebrow": "Tu espacio de trabajo",
     "title": "Herramientas",
     "subtitle": "Todo lo que puedes administrar, en un solo lugar.",
-    "badge": { "setup": "Ventas de pago: falta configuración" },
+    "badge": {
+      "setup": "Ventas de pago: falta configuración"
+    },
     "emptyTitle": "Aún no tienes herramientas de gestión",
     "emptyText": "Estás aquí como miembro. Cuando organices o te unas a un equipo con un rol de anfitrión, tus herramientas aparecerán aquí.",
     "emptyAction": "Volver al inicio",
@@ -6188,31 +6252,113 @@
       "help": "Ayuda"
     },
     "tools": {
-      "events": { "title": "Eventos", "desc": "Administra tus eventos, invitados y registro de entrada." },
-      "eventNew": { "title": "Crear un evento", "desc": "Único, recurrente o de varios días—gratuito o de pago." },
-      "blueprints": { "title": "Modelos de eventos", "desc": "Configuraciones reutilizables para volver a lanzar." },
-      "learn": { "title": "Recursos", "desc": "Explora y administra cursos, guías y más." },
-      "learnCreate": { "title": "Crear un recurso", "desc": "Video, audio, guía, cuestionario, enlace, sesión en vivo y más." },
-      "learnManage": { "title": "Administrar contenido", "desc": "Edita rutas, lecciones, recetas y borradores." },
-      "learnTemplates": { "title": "Plantillas", "desc": "Comienza con ejemplos bilingües o las plantillas de tu equipo." },
-      "offers": { "title": "Ofertas", "desc": "Cursos, membresías y compras únicas." },
-      "promos": { "title": "Códigos promocionales", "desc": "Descuentos para eventos, retos y ofertas." },
-      "earnings": { "title": "Ingresos", "desc": "Tus ventas y estado de cobros." },
-      "communications": { "title": "Comunicaciones", "desc": "Plantillas, automatizaciones, recorridos e historial de mensajes." },
-      "followups": { "title": "Seguimientos", "desc": "Próximos pasos sugeridos con tu gente." },
-      "team": { "title": "Espacio de equipo", "desc": "Miembros, roles e invitaciones." },
-      "teamSettings": { "title": "Configuración del equipo", "desc": "Nombre, código de acceso y preferencias del espacio." },
-      "teamInsights": { "title": "Estadísticas del equipo", "desc": "Cómo va tu equipo de un vistazo." },
-      "teamMap": { "title": "Mapa de miembros", "desc": "Dónde se reúnen tus miembros." },
-      "plan": { "title": "Plan y facturación", "desc": "Tu plan, comisiones de plataforma y configuración de pagos." },
-      "planSeats": { "title": "Asientos", "desc": "Quién ocupa tus asientos de creación." },
-      "insights": { "title": "Estadísticas", "desc": "Rendimiento de eventos y contenido." },
-      "hostProfile": { "title": "Perfil público", "desc": "Tu página pública de anfitrión y enlace personalizado." },
-      "locations": { "title": "Ubicaciones", "desc": "Lugares donde organizas, visibles en tu página pública." },
-      "verify": { "title": "Verifícate", "desc": "Genera confianza con una insignia verificada." },
-      "admin": { "title": "Consola de administración", "desc": "Resumen de la plataforma, funciones, reportes y seguridad." },
-      "adminMedia": { "title": "Medios del sitio", "desc": "Fotos e ilustraciones que se muestran en el sitio." },
-      "support": { "title": "Soporte", "desc": "Obtén ayuda o reporta un problema." }
+      "events": {
+        "title": "Eventos",
+        "desc": "Administra tus eventos, invitados y registro de entrada."
+      },
+      "eventNew": {
+        "title": "Crear un evento",
+        "desc": "Único, recurrente o de varios días—gratuito o de pago."
+      },
+      "blueprints": {
+        "title": "Modelos de eventos",
+        "desc": "Configuraciones reutilizables para volver a lanzar."
+      },
+      "learn": {
+        "title": "Recursos",
+        "desc": "Explora y administra cursos, guías y más."
+      },
+      "learnCreate": {
+        "title": "Crear un recurso",
+        "desc": "Video, audio, guía, cuestionario, enlace, sesión en vivo y más."
+      },
+      "learnManage": {
+        "title": "Administrar contenido",
+        "desc": "Edita rutas, lecciones, recetas y borradores."
+      },
+      "learnTemplates": {
+        "title": "Plantillas",
+        "desc": "Comienza con ejemplos bilingües o las plantillas de tu equipo."
+      },
+      "offers": {
+        "title": "Ofertas",
+        "desc": "Cursos, membresías y compras únicas."
+      },
+      "promos": {
+        "title": "Códigos promocionales",
+        "desc": "Descuentos para eventos, retos y ofertas."
+      },
+      "earnings": {
+        "title": "Ingresos",
+        "desc": "Tus ventas y estado de cobros."
+      },
+      "communications": {
+        "title": "Comunicaciones",
+        "desc": "Plantillas, automatizaciones, recorridos e historial de mensajes."
+      },
+      "followups": {
+        "title": "Seguimientos",
+        "desc": "Próximos pasos sugeridos con tu gente."
+      },
+      "team": {
+        "title": "Espacio de equipo",
+        "desc": "Miembros, roles e invitaciones."
+      },
+      "teamSettings": {
+        "title": "Configuración del equipo",
+        "desc": "Nombre, código de acceso y preferencias del espacio."
+      },
+      "teamInsights": {
+        "title": "Estadísticas del equipo",
+        "desc": "Cómo va tu equipo de un vistazo."
+      },
+      "teamMap": {
+        "title": "Mapa de miembros",
+        "desc": "Dónde se reúnen tus miembros."
+      },
+      "plan": {
+        "title": "Plan y facturación",
+        "desc": "Tu plan, comisiones de plataforma y configuración de pagos."
+      },
+      "planSeats": {
+        "title": "Asientos",
+        "desc": "Quién ocupa tus asientos de creación."
+      },
+      "insights": {
+        "title": "Estadísticas",
+        "desc": "Rendimiento de eventos y contenido."
+      },
+      "hostProfile": {
+        "title": "Perfil público",
+        "desc": "Tu página pública de anfitrión y enlace personalizado."
+      },
+      "locations": {
+        "title": "Ubicaciones",
+        "desc": "Lugares donde organizas, visibles en tu página pública."
+      },
+      "verify": {
+        "title": "Verifícate",
+        "desc": "Genera confianza con una insignia verificada."
+      },
+      "admin": {
+        "title": "Consola de administración",
+        "desc": "Resumen de la plataforma, funciones, reportes y seguridad."
+      },
+      "adminMedia": {
+        "title": "Medios del sitio",
+        "desc": "Fotos e ilustraciones que se muestran en el sitio."
+      },
+      "support": {
+        "title": "Soporte",
+        "desc": "Obtén ayuda o reporta un problema."
+      }
     }
+  },
+  "attendanceHistory": {
+    "title": "Historial de asistencia",
+    "definition": "Inscripciones con asistencia que puedes consultar, agrupadas por evento. El mes usa UTC. Hasta 5,000 registros.",
+    "month": "Mes",
+    "empty": "No hay registros de asistencia en este mes.",
+    "count": "{{count}} registros de asistencia"
   }
 }

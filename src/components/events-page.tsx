@@ -12,6 +12,7 @@ import { teamsQuery, workspaceQuery } from '@/lib/account';
 import { eventsTabQuery, isOnline, placeOf, type EventsTab, type Gathering } from '@/lib/gatherings';
 import { useMapsKey } from '@/lib/maps-client';
 import { MyTickets } from '@/components/my-tickets';
+import { Flag } from './icons';
 
 export function GatheringCard({ e, lang }: { e: Gathering; lang: string }) {
   const { t } = useTranslation();
@@ -45,7 +46,7 @@ export function EventsPage({ tab }: { tab: EventsTab }) {
 
   return <>
     <div className="page-heading"><div><span className="eyebrow">{t('events.eyebrow')}</span><h1>{t('events.title')}</h1><p>{t('events.liveSentence')}</p></div>
-      <div className="blueprint-page-actions"><Button asChild variant="secondary"><Link to="/blueprints">{t('templates.heading')}</Link></Button><Button asChild variant="secondary"><Link to="/communications">{t('comms.title')}</Link></Button>{canCreate && <Button asChild className="page-create"><Link to="/gathering/new"><Plus />{t('gathering.create')}</Link></Button>}</div></div>
+      <div className="blueprint-page-actions"><Button asChild variant="secondary"><Link to="/blueprints">{t('templates.heading')}</Link></Button>{workspace?.role === 'leader' && <Button asChild variant="secondary"><Link to="/challenges" search={{ create: true }}><Flag />{t('challenges.start')}</Link></Button>}{canCreate && <Button asChild className="page-create"><Link to="/gathering/new"><Plus />{t('gathering.create')}</Link></Button>}</div></div>
     <div className="insights-filters">
       <div className="segmented" role="tablist" aria-label={t('events.title')}>{(['upcoming', 'tickets', 'hosting', 'past'] as const).map(k => <Button key={k} role="tab" variant="ghost" aria-selected={tab === k} className={tab === k ? 'selected' : ''} onClick={() => setTab(k)}>{t(`events.tabs.${k}`)}</Button>)}</div>
       <div className="segmented" role="group" aria-label={t('events.view')}>

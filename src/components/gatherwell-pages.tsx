@@ -23,6 +23,9 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Check, Copy, LogOut } from '@/components/icons';
 import { supabase } from '@/integrations/supabase/client';
 import { firstName, initialsOf, joinLink, profileQuery, workspaceQuery } from '@/lib/account';
+import { useServerFn } from '@tanstack/react-start';
+import { getAttendanceHistory } from '@/lib/insights.functions';
+import { ListSkeleton, RetryState, EmptyState } from './launch-states';
 
 function useAccount() {
   const { userId } = useGatherwell();
@@ -39,7 +42,7 @@ function NextCard() {
   const item = (title: string, text: string, action: React.ReactNode, done = false) => <div className={`next-item ${done ? 'is-done' : ''}`}><span className="next-status">{done ? <Check /> : null}</span><div className="person-info"><h3>{title}</h3><p>{text}</p></div>{action}</div>;
   return <section className="panel next-panel"><span className="eyebrow">{t('next.label')}</span>
     {role === 'leader' && <>
-      {item(t('next.inviteTitle'), t('next.inviteText'), <Button variant={copied ? 'secondary' : 'default'} disabled={!workspace} onClick={async () => { if (!workspace) return; await navigator.clipboard.writeText(joinLink(workspace.joinCode)); setCopied(true); window.setTimeout(() => setCopied(false), 2000); }}>{copied ? <Check /> : <Copy />}{copied ? t('next.copied') : t('next.inviteAction')}</Button>, copied)}
+      {item(t('next.inviteTitle'), t('next.inviteText'), <Button asChild disabled={!workspace}><Link to="/team" search={{ panel: 'invite' }}><Copy />{t('next.inviteAction')}</Link></Button>)}
       {item(t('next.templateTitle'), t('next.templateText'), <Button variant={copied ? 'default' : 'secondary'} onClick={() => setDraft({ checklist: [], default_duration_minutes: 60, visibility_default: 'team' })}>{t('next.templateAction')}</Button>)}
       {workspace && <TemplateEditor draft={draft} teamId={workspace.teamId} userId={userId} onClose={() => setDraft(null)} />}
     </>}
@@ -61,22 +64,27 @@ function HomeFeatured() { const { workspace } = useAccount(); return workspace ?
 function HomeRealData() {
   const { t, i18n } = useTranslation(); const { workspace } = useAccount();
   const teamId = workspace?.teamId; const manage = !!workspace && workspace.role !== 'member';
+  const attendance = useServerFn(getAttendanceHistory);
   const q = useQuery({ queryKey: ['home-real', teamId, manage], enabled: !!teamId, queryFn: async () => {
-    const now = new Date(); const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    const now = new Date();
     const [members, upcoming, checkins] = await Promise.all([
-      supabase.from('team_members').select('user_id', { count: 'exact', head: true }).eq('team_id', teamId!),
-      supabase.from('events').select('id, title, starts_at, location_name', { count: 'exact' }).eq('team_id', teamId!).eq('status', 'published').gte('starts_at', now.toISOString()).order('starts_at').limit(3),
-      manage ? supabase.from('rsvps').select('id, events!inner(team_id)', { count: 'exact', head: true }).eq('events.team_id', teamId!).gte('checked_in_at', monthStart) : Promise.resolve({ count: null }),
+      supabase.from('team_members').select('user_id', { count: 'exact', head: true }).eq('team_id', teamId ?? ''),
+      supabase.from('events').select('id, title, starts_at, location_name', { count: 'exact' }).eq('team_id', teamId ?? '').eq('status', 'published').gte('starts_at', now.toISOString()).order('starts_at').limit(3),
+      manage && teamId ? attendance({ data: { month: now.toISOString().slice(0, 7), teamId } }).then(rows => ({ count: rows.reduce((count, event) => count + event.count, 0) })) : Promise.resolve({ count: null }),
     ]);
+    if (members.error || upcoming.error) throw new Error('home_data_unavailable');
     return { members: members.count ?? 0, upcomingCount: upcoming.count ?? 0, upcoming: upcoming.data ?? [], checkins: checkins.count };
   } });
+  if (q.isError) return <RetryState retry={() => void q.refetch()} />;
+  if (q.isLoading) return <ListSkeleton />;
   if (!q.data) return null;
   const d = q.data; const lang = i18n.resolvedLanguage ?? 'en';
   const tiles = [{ key: 'members', Icon: UsersRound, value: d.members }, { key: 'events', Icon: CalendarDays, value: d.upcomingCount }, ...(d.checkins != null ? [{ key: 'checkins', Icon: CircleCheck, value: d.checkins }] : [])];
   return <>
-    <section className="stats-grid" aria-label={t('home.statsLabel')}>{tiles.map(({ key, Icon, value }) => <article className="stat-card" key={key}><div className="stat-heading"><span>{t(`stats.${key}.label`)}</span><Icon /></div><strong className="stat-value">{value.toLocaleString(lang)}</strong></article>)}</section>
-    {d.upcoming.length > 0 && <section className="panel upcoming-panel"><div className="section-heading"><h2>{t('home.upcoming')}</h2><Button asChild variant="link"><Link to="/events">{t('home.viewAll')}<ArrowRight /></Link></Button></div>
-      <div className="event-list">{d.upcoming.map(e => <Link key={e.id} to="/event/$id" params={{ id: e.id }} className="event-row"><div className="date-tile"><span>{new Date(e.starts_at).toLocaleDateString(lang, { month: 'short' })}</span><strong>{new Date(e.starts_at).getDate()}</strong></div><div className="event-info"><h3>{e.title}</h3><p>{new Date(e.starts_at).toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' })}{e.location_name ? ` · ${e.location_name}` : ''}</p></div></Link>)}</div></section>}
+    <section className="stats-grid" aria-label={t('home.statsLabel')}>{tiles.map(({ key, Icon, value }) => <Link to={key === 'members' ? '/team' : key === 'events' ? '/events' : '/attendance'} search={key === 'members' ? { panel: 'members' } : key === 'events' ? { tab: 'upcoming' } : { month: new Date().toISOString().slice(0, 7) }} className="stat-card dashboard-stat-link" key={key}><div className="stat-heading"><span>{t(`stats.${key}.label`)}</span><Icon /></div><strong className="stat-value">{value.toLocaleString(lang)}</strong></Link>)}</section>
+    <section className="panel upcoming-panel"><div className="section-heading"><h2>{t('home.upcoming', { defaultValue: 'Upcoming events' })}</h2><Button asChild variant="link"><Link to="/events" search={{ tab: 'upcoming' }}>{t('home.viewAll', { defaultValue: 'View all' })}<ArrowRight /></Link></Button></div>
+      {!d.upcoming.length && <EmptyState compact icon="CalendarDays" text={t('events.empty.upcoming')} />}
+      <div className="event-list">{d.upcoming.map(e => <Link key={e.id} to="/event/$id" params={{ id: e.id }} className="event-row"><div className="date-tile"><span>{new Date(e.starts_at).toLocaleDateString(lang, { month: 'short' })}</span><strong>{new Date(e.starts_at).getDate()}</strong></div><div className="event-info"><h3>{e.title}</h3><p>{new Date(e.starts_at).toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' })}{e.location_name ? ` · ${e.location_name}` : ''}</p></div></Link>)}</div></section>
   </>;
 }
 
@@ -84,11 +92,13 @@ export function HomePage() {
   const { t } = useTranslation(); const { openCreate, openDetail, openPlaceholder } = useGatherwell(); const { profile } = useAccount();
   const guest = profile?.role_intent === 'guest';
   const { userId } = useGatherwell();
-  if (guest) return <><div className="greeting page-heading"><div><h1>{t('home.greeting', { name: firstName(profile?.full_name) || t('common.name') })}</h1></div></div><DailyBriefCard /><CustomerHome userId={userId} /></>;
+  const name = firstName(profile?.full_name);
+  const greeting = name ? t('home.greeting', { name, defaultValue: `Welcome back, ${name}` }) : t('home.greetingFallback', { defaultValue: 'Welcome back' });
+  if (guest) return <><div className="greeting page-heading"><div><h1>{greeting}</h1></div></div><DailyBriefCard /><CustomerHome userId={userId} /></>;
   const stats = [{ key: 'members', Icon: UsersRound }, { key: 'events', Icon: CalendarDays }, { key: 'attendance', Icon: Repeat2 }, { key: 'checkins', Icon: CircleCheck }] as const;
   return <>
     <MobileTeamSwitcher />
-    <div className="greeting page-heading"><div><span className="eyebrow">{t('home.eyebrow')}</span><h1>{t('home.greeting', { name: firstName(profile?.full_name) || t('common.name') })}</h1><p>{t('home.subtitle')}</p></div><Button className="page-create" onClick={openCreate}><Plus />{t('common.create')}</Button></div>
+    <div className="greeting page-heading"><div><span className="eyebrow">{t('home.eyebrow', { defaultValue: 'YOUR COMMUNITY, CONNECTED' })}</span><h1>{greeting}</h1><p>{t('home.subtitle', { defaultValue: 'Bring people together, see what’s next, and keep your community moving.' })}</p></div><Button className="page-create" onClick={openCreate}><Plus />{t('common.create')}</Button></div>
     <DailyBriefCard />
     <HomeRealData />
     {!guest && <FoundingCommitmentsCard />}

@@ -1,5 +1,18 @@
 # Roadmap
 
+## Website Notes beta-quality pass (2026-10-25)
+- [x] Home copy, real-record card links, member/invite destinations and permission-scoped UTC monthly attendance history.
+- [x] Existing protected /admin, admin-only Me link and bilingual Owner Guide.
+- [ ] Owner role assignment: multiple Nick profiles exist; account identity must be confirmed before any privileged role grant.
+- [x] Insights event-date cohort comparison, definitions, event/resource drilldowns and draft/waitlist attention signals.
+- [x] Capability-aware top-level Communication and existing automation event/audience selector; existing event journeys preserved.
+- [ ] Resource messaging triggers/journeys: not implemented; requires enrollment-specific execution and audience authorization work (not merely provider setup).
+- [ ] Coach public preference subscriptions, verified opt-in/manage/unsubscribe and segments: not implemented; secure subscription work remains, and actual announcement delivery needs an appropriate marketing-email service.
+- [x] Separate /challenges launch reuses the real editor; Standard/Retreat selector retains existing feature gate and persistence.
+- [ ] Multi-event experience: not implemented; distinct session persistence/registration semantics still require engineering, not relabeling recurrence or retreats.
+- [x] Full automated suite (437), harness typecheck/production build, EN/ES 390/1280px screens, keyboard card navigation and 640px zoom reflow; no fixtures created.
+- [ ] Additional verification: second-account isolation/non-admin live denial, nonempty attendance, automation save/readback, retreat persistence and screen-reader narration not verified in this pass.
+
 ## v0.33 custom coach public links
 - Done: /h/$slug pressure-test, custom slug editor with server-side validation/reserved words/uniqueness/rate limit, old-slug alias redirects, EN/ES, browser QA 16/16.
 - Open: screen-reader pass on the slug editor; second-account browser pass.

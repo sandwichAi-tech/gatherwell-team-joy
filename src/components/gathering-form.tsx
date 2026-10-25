@@ -246,6 +246,13 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         {tpl && <span className="chip">{t('gathering.fromTemplate', { title: tpl.title })}</span>}
       </header>
 
+      <section className="form-section"><label className="field-label" htmlFor="g-experience">{t('builder.experience.label')}</label>
+        <select id="g-experience" className="field-input" value={retreatOn ? 'retreat' : 'standard'} onChange={e => {
+          const on = e.target.value === 'retreat'; setRetreatOn(on); setFull(true);
+          if (on && !retreatEnd && startDate) { const end = new Date(startDate); end.setDate(end.getDate() + 2); setRetreatEnd(toLocalInput(end)); }
+        }}><option value="standard">{t('builder.experience.standard')}</option>{(retreatsOn || retreatOn) && <option value="retreat">{t('builder.experience.retreat')}</option>}</select>
+      </section>
+
       {!editing && !templateId && !fromId && (() => { const list = templates.filter(x => x.is_published || x.created_by === userId).slice(0, 8); return list.length > 0 && <section className="form-section blueprint-pick" aria-label={t('templates.startFrom')}>
         <span className="field-label">{t('templates.startFrom')}</span>
         <div className="chip-row">{list.map(x => <button key={x.id} type="button" className="preset-chip" onClick={() => void navigate({ to: '/gathering/new', search: { template: x.id } })}>{x.title}</button>)}</div>
@@ -364,8 +371,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       <EventDetailsSections value={details} onChange={setDetails} priceCents={priceCents} lang={lang} />
 
       <section className="form-section">
-        {(retreatsOn || retreatOn) && <><label className="guest-consent"><input type="checkbox" checked={retreatOn} onChange={e => { setRetreatOn(e.target.checked); if (e.target.checked && !retreatEnd && startDate) { const d = new Date(startDate); d.setDate(d.getDate() + 2); d.setHours(12, 0, 0, 0); setRetreatEnd(toLocalInput(d)); } }} /><span><strong>{t('retreat.toggle')}</strong><br /><small className="field-hint">{t('retreat.toggleHint')}</small></span></label>
-        {retreatOn && <RetreatEditor value={retreat} onChange={setRetreat} end={retreatEnd} setEnd={setRetreatEnd} priceCents={priceCents} onUpload={uploadGallery} uploading={galleryBusy} />}</>}
+        {retreatOn && <RetreatEditor value={retreat} onChange={setRetreat} end={retreatEnd} setEnd={setRetreatEnd} priceCents={priceCents} onUpload={uploadGallery} uploading={galleryBusy} />}
         {retreatBad && tried && <p className="field-error">{t('retreat.errors.invalid_retreat_dates')}</p>}
       </section>
 
