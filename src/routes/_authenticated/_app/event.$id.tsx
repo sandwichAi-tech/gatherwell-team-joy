@@ -184,6 +184,7 @@ function EventDetailPage() {
     {manages && event.status !== 'draft' && <label className="switch-row guest-hide-row"><MessageCircle className="inline-icon" /><span><strong>{t('discussion.toggle')}</strong><small>{t('discussion.toggleHelp')}</small></span><Switch checked={!!(event as { discussion_enabled?: boolean }).discussion_enabled} onCheckedChange={async v => { const { error } = await supabase.from('events').update({ discussion_enabled: v }).eq('id', id); if (error) toast.error(t('profile.saveError')); else await refresh(); }} /></label>}
     {event.status !== 'draft' && ((event as { discussion_enabled?: boolean }).discussion_enabled ? <EventComments eventId={event.id} teamId={event.team_id} me={userId} /> : !manages && <p className="muted">{t('discussion.disabled')}</p>)}
     {!manages && event.status === 'published' && <div className="guest-button-row"><ContactHostButton eventId={event.id} /></div>}
+    {manages && <EventWaiversManager eventId={event.id} userId={userId} />}
     {(manages || cohostIds.length > 0) && <CohostsPanel eventId={event.id} teamId={event.team_id} hostId={event.host_id} canEdit={event.host_id === userId || leadsTeam} />}
 
     <ResponsiveSheet open={sheet === 'share'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.share')} description={event.title}>
@@ -191,7 +192,6 @@ function EventDetailPage() {
       {isHost && event.visibility === 'public' && event.status === 'published' && <Feature flag="feature_network"><NetworkShareToggle eventId={event.id} /></Feature>}
       {manages && <RsvpSettingsPanel eventId={event.id} initial={{ questions: ((event as any).rsvp_questions ?? []), require_approval: !!(event as any).require_approval, visibility: event.visibility, invite_token: (event as any).invite_token ?? '', price_cents: (event as any).price_cents ?? null }} />}
       {isHost && <WaiverEventToggle eventId={event.id} teamId={event.team_id} value={!!(event as { requires_waiver?: boolean }).requires_waiver} />}
-      {manages && <EventWaiversManager eventId={event.id} userId={userId} />}
       {isHost && <MembersOnlyPicker table="events" id={event.id} teamId={event.team_id} />}
       {isHost && event.status === 'published' && <EarlyAccessPanel eventId={event.id} hostId={event.host_id} />}
     </ResponsiveSheet>
