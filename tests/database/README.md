@@ -1,5 +1,7 @@
 # Manual, disposable-copy database regression
 
+`website_notes_disposable.sql` covers coach-scoped verified consent, pending anonymous requests, token rejection/unsubscribe, aggregate isolation, resource enrollment save/readback, in-app delivery idempotency, archive stopping and notification/RLS ownership. It was explicitly run on an isolated local PostgreSQL fixture schema with migrations 0104–0109 on 2026-10-25; all assertions passed and fixtures rolled back. This is not proof of shared-preview browser enrollment or hosted provider delivery. Use the same independently verified disposable destination and opt-in guard below; never wire it into the ordinary automated suite.
+
 `prompt2_rls_disposable.sql` is created-only until it is run on an isolated writable database copy with the full application schema through migration 0050. It is not an application migration, not part of Vitest, and must never run automatically or manually against the production/shared preview database.
 
 1. Provision a disposable PostgreSQL copy containing this application's schema, auth helpers, roles, grants, policies, and all migrations. Disable external workers/schedules/provider sends for the copy outside this test. Do not point at production or the shared preview database.

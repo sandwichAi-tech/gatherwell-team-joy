@@ -1,5 +1,12 @@
 # ZoheeWell Change Log
 
+## v0.41.2 — Admin, resource Communication and coach preferences (2026-10-25)
+- Preserved verified owner role; prominent separate platform administration entry, site-media route guard and fail-closed server role checks.
+- Resource journeys select authorized offerings/audiences, execute idempotent entitlement-bound in-app notifications, stop on archive and expose scoped activity. Event selection saves atomically; existing event automation behavior retained.
+- Coach-specific unchecked email preferences now work through verified accounts without a campaign sender; public anonymous requests remain explicitly pending until confirmation. Private expiring token manage/unsubscribe and coach-only aggregate segments.
+- Additive migrations 0108–0110 applied. Full suite 461/54 passed; latest harness typecheck/build clean; isolated database execution/isolation/token tests pass and roll back. Mobile/desktop and Spanish browser layouts checked. No shared fixtures, role changes, credentials or publishing.
+- Unverified: actual email delivery/campaigns, shared-preview enrollment-to-inbox browser readback, signed-in non-admin browser denial, mobile keyboard containment and screen-reader narration. See docs/WEBSITE-NOTES-PASS.md.
+
 ## v0.41.1 — Compile recovery and remaining Website Notes implementation (2026-10-25)
 - Discover event-only conditionals and resource RPC typing compile cleanly; prior Home/admin/Insights work preserved.
 - Migrations 0103–0107 add validated experience sessions, service-owned coach preferences and entitlement-bound resource journeys. Experience admission remains whole-event, not per-session. Resource run access requires both messaging and offering participant capabilities; active resource journeys permit in-app sending only, including template/step mutation guards.

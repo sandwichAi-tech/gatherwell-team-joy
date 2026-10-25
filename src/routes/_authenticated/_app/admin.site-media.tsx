@@ -1,8 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, notFound } from '@tanstack/react-router';
+import { getAdminAccess } from '@/lib/admin.functions';
 import { SiteMediaAdmin } from '@/components/site-media-admin';
 import i18n from '@/lib/i18n';
 
 export const Route = createFileRoute('/_authenticated/_app/admin/site-media')({
+  beforeLoad: async () => { const access = await getAdminAccess(); if (!access.admin) throw notFound(); },
   head: () => {
     const title = `${i18n.t('siteMedia.title')} · ${i18n.t('brand')}`;
     const description = i18n.t('siteMedia.subtitle');

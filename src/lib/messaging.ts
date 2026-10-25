@@ -31,7 +31,7 @@ export const MAX_STEPS = 20;
 export const MAX_WAIT_HOURS = 720;
 
 /** Variables the renderer substitutes (render_message_vars in the database). */
-export const TEMPLATE_VARIABLES = ['name', 'event', 'date', 'host'] as const;
+export const TEMPLATE_VARIABLES = ['name', 'event', 'resource', 'date', 'host'] as const;
 
 export function extractVariables(body: string): string[] {
   const out = new Set<string>();

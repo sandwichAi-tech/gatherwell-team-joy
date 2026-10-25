@@ -55,4 +55,4 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Identity: one auth user = one profile; return paths go only through src/lib/return-to.ts (mirrored by is_safe_return_path) and emailed links use single-use auth_intents; 18+ is attested via confirm_adult() and enforced by triggers/checkout functions; view_mode is display-only; guest rows are linked only by claim_guest_records() with merges kept for audit.
 
 - Pricing guidance lives in WhichPlan; no capability tables (features are shared).
-- Resource templates copy via existing RPCs as drafts. Resource journeys use entitlement-bound runs with messages+participant checks and in-app-only activation. Coach preferences are service-owned, token-managed, sender-gated; segments expose counts only.
+- Templates copy as drafts. Resource journeys use scoped entitlements and idempotent in-app delivery; event association saves atomically. Coach consent uses verified accounts or hashed expiring links; without a sender anonymous requests stay pending. Segments expose counts only.

@@ -271,6 +271,10 @@ export function MePage() {
     {planStatus?.status === 'past_due' && <Link to="/plan" className="plan-banner" role="alert">{t('billing.pastDue')}</Link>}
     <AssistantUsage />
 
+    {isAdmin && <SettingsGroup title={t('admin.platformGroup')}>
+      {linkRow('ShieldCheck', t('admin.dashboardLink'), '/admin')}
+    </SettingsGroup>}
+
     <SettingsGroup title={t('profile.groupAccount')}>
       {row('UsersRound', t('profile.myTeams'), () => setPanel('teams'), <span className="settings-value">{workspace?.name}<ChevronRight className="settings-chevron" /></span>)}
       {linkRow('CreditCard', t('profile.plan'), '/plan', <span className="settings-value">{t(`billing.plan_${planStatus?.plan ?? 'free'}`)}<ChevronRight className="settings-chevron" /></span>)}
@@ -301,7 +305,6 @@ export function MePage() {
       {staticRow('Sun', t('me.appearance'), <div className="segmented" role="group" aria-label={t('me.appearance')}>{([{ value: 'light', Icon: Sun }, { value: 'dark', Icon: Moon }, { value: 'system', Icon: Monitor }] as const).map(({ value, Icon }) => <Button key={value} variant="ghost" size="icon" className={theme === value ? 'selected' : ''} aria-pressed={theme === value} aria-label={t(`me.${value}`)} title={t(`me.${value}`)} onClick={() => setTheme(value)}><Icon /></Button>)}</div>)}
     </SettingsGroup>
     <SettingsGroup title={isHost || isAdmin ? t('profile.groupHost') : t('toolsPage.title')}>
-      {isAdmin && linkRow('ShieldCheck', t('admin.dashboardLink'), '/admin')}
       {isHost && row('Globe2', t('hostProfile.title'), () => setPanel('hostProfile'))}
       {linkRow('SquaresFour', t('toolsPage.title'), '/tools')}
     </SettingsGroup>

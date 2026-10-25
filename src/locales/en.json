@@ -3151,7 +3151,8 @@
       "sections": "Users includes coaches and account restrictions. Offerings inspects events and resources. Teams controls communities. Settings controls feature availability and plan configuration. Support handles help requests. Audit records administrative changes.",
       "limits": "Email, SMS, payments and wallet delivery require their respective setup. Simulated message records are not delivered."
     },
-    "dashboardLink": "Admin dashboard"
+    "dashboardLink": "Admin dashboard",
+    "platformGroup": "Platform administration"
   },
   "legalDocs": {
     "draft": "Draft — pending legal review",
@@ -6220,7 +6221,9 @@
       "condition_skip": "ended early (condition not met)",
       "template_missing": "failed (template removed)",
       "no_recipient": "failed (no reachable recipient)",
-      "unknown_step": "failed (unknown step)"
+      "unknown_step": "failed (unknown step)",
+      "resource_unavailable": "Resource archived or unavailable",
+      "setup_required_email": "Resource journeys support in-app messages only"
     },
     "offeringScopeTitle": "Events and resources",
     "offeringScopeHint": "Event automations support registration, reminders and cancellations. Resource journeys start from a new valid enrollment, with wait, send and active-enrollment conditions.",
@@ -6230,7 +6233,13 @@
     "attendeeAudience": "Audience: registered attendees of the selected event. Selecting all events applies to workspace event registrations.",
     "relatedResource": "Related resource",
     "chooseResource": "Choose a resource",
-    "resourceScope": "Audience: newly enrolled learners with valid access. Email and in-app only; no resource SMS. Use enrollment fulfillment messages, not promotions."
+    "resourceScope": "Audience: new enrolled learners with active access. Resource journeys deliver in-app messages only; email campaigns require separate sending setup.",
+    "sampleResource": "Your resource",
+    "eventContext": "Event",
+    "resourceContext": "Resource",
+    "audienceLabel": "Authorized audience",
+    "enrolledAudience": "New enrolled participants with active access",
+    "resourceActivation": "New enrollments only. In-app delivery is available; archived resources and revoked access stop pending messages."
   },
   "payReady": {
     "title": "Getting paid",
@@ -6398,16 +6407,16 @@
   },
   "coachUpdates": {
     "title": "Get updates",
-    "request": "Request confirmation",
+    "request": "Save update request",
     "email": "Email",
     "announcements": "Coach announcements",
     "events": "New events",
     "resources": "New resources and programs",
     "adult": "I am 18 or older",
-    "consent": "Optional email preferences for this coach only. Confirm through email; manage or unsubscribe using your private link. No SMS subscription.",
-    "setup": "Coach email updates require sending setup. No subscription or delivery is claimed until confirmation and sending are available.",
+    "consent": "Choose optional email updates from this coach only. A verified account or private email link confirms consent. Manage or unsubscribe at any time.",
+    "setup": "Email campaigns are not enabled yet. Your preferences and in-app resource messages still work.",
     "pending": "Check your email to confirm. You are not subscribed until you confirm.",
-    "error": "Could not request confirmation. Please try again later.",
+    "error": "Could not save or load preferences. Please try again.",
     "manage": "Manage coach updates",
     "confirm": "Confirm selected preferences",
     "unsubscribe": "Unsubscribe from this coach",
@@ -6418,6 +6427,12 @@
     "segment_announcements": "Announcements",
     "segment_new_events": "New events",
     "segment_new_resources": "New resources",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "pendingNoSender": "Request saved, awaiting email confirmation. No email was sent. Sign in with a verified email to confirm and manage your preferences now.",
+    "savePreferences": "Save preferences",
+    "accountConfirm": "Sign in to confirm preferences",
+    "unsubscribed": "Unsubscribed from this coach.",
+    "confirmedStatus": "Your email preferences are confirmed for this coach.",
+    "unconfirmedStatus": "Confirm your selected preferences for this coach."
   }
 }

@@ -15,7 +15,7 @@ describe('retried messages use normal outbox delivery', () => {
     const fetch = vi.fn(); vi.stubGlobal('fetch', fetch);
     mocks.rpc.mockResolvedValue({ data: [row], error: null });
     mocks.update.mockReturnValue({ eq: mocks.eq }); mocks.eq.mockResolvedValue({ error: null });
-    expect(await processOutbox(1)).toEqual({ processed: 1, journeys: 0, simulated: 1 });
+    expect(await processOutbox(1)).toEqual({ processed: 1, journeys: 0, resourceJourneys: 0, simulated: 1 });
     expect(fetch).not.toHaveBeenCalled();
     expect(mocks.update).toHaveBeenCalledWith(expect.objectContaining({ status: 'simulated', error: null, locked_at: null }));
     expect(mocks.eq).toHaveBeenCalledWith('id', 'retry-test');
@@ -24,8 +24,13 @@ describe('retried messages use normal outbox delivery', () => {
     const fetch = vi.fn(); vi.stubGlobal('fetch', fetch);
     mocks.rpc.mockResolvedValue({ data: [{ ...row, skip_reason: 'unsubscribed' }], error: null });
     mocks.update.mockReturnValue({ eq: mocks.eq }); mocks.eq.mockResolvedValue({ error: null });
-    expect(await processOutbox(1)).toEqual({ processed: 1, journeys: 0, skipped: 1 });
+    expect(await processOutbox(1)).toEqual({ processed: 1, journeys: 0, resourceJourneys: 0, skipped: 1 });
     expect(fetch).not.toHaveBeenCalled();
     expect(mocks.update).toHaveBeenCalledWith(expect.objectContaining({ status: 'skipped', error: 'unsubscribed', sent_at: null }));
+  });
+  it('advances resource runs through the existing processor without a sending provider', async () => {
+    mocks.rpc.mockImplementation((name: string) => Promise.resolve({ data: name === 'claim_outbox' ? [] : name === 'advance_resource_journeys' ? 2 : 0, error: null }));
+    expect(await processOutbox(1)).toEqual({ processed: 0, journeys: 0, resourceJourneys: 2 });
+    expect(mocks.rpc).toHaveBeenCalledWith('advance_resource_journeys', { _limit: 50 });
   });
 });

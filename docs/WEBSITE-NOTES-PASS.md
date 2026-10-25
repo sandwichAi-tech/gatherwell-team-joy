@@ -1,27 +1,21 @@
-# Website Notes pass — 2026-10-25
+# Website Notes continuation — 2026-10-25
 
-This pass is **partial**, not closure of every tracker item. Updated after compile recovery and migrations 0103–0107.
+## Delivered in this continuation
+- `/me`: separate Platform administration section and Admin dashboard link, visible only to platform admins. `/admin` and `/admin/site-media` have role guards; server handlers fail closed on false, missing or errored role checks. Nick’s verified role was not changed. `/admin-login` remains the sign-in route.
+- `/communications`: standalone capability-aware desktop/mobile navigation; event automations remain intact. Journeys select authorized workspace events or resources and fixed permitted audiences. Event scope now saves atomically. Resource enrollment starts entitlement-bound in-app wait/send/active-access journeys; run history uses capability/participant-scoped reads, retries do not duplicate notifications, and archived resources stop pending delivery. Resource journey email/SMS activation remains unavailable.
+- `/h/{slug}`: Get updates for each public coach, including the owner; separate unchecked announcement/event/resource preferences and adult attestation. Verified account email can confirm, read, change and unsubscribe without a campaign sender. Anonymous requests save pending preferences, never establish confirmed consent without email verification, and offer sign-in with a verified email.
+- `/coach-updates/{token}`: private hashed expiring confirmation/manage tokens, status, preference changes and coach-only unsubscribe; invalid/expired links reveal no subscriber information. `/communications` shows caller-coach aggregate counts only.
+- Additive migrations 0108–0110: provider-independent consent and account ownership, scoped resource execution/notification uniqueness, atomic event journey association and scope validation. No new role grants or provider credentials; existing data retained.
 
-## Available now
-- Home copy matches the request, in EN/ES. Names come from the signed-in profile with a first-name fallback.
-- Members opens `/team?panel=members`; Upcoming and View all open `/events?tab=upcoming`; Check-ins opens `/attendance?month=YYYY-MM`. Existing event rows and morning brief retain actual IDs. Invitation opens the real team share sheet.
-- `/admin` already provides platform-wide inspection and audited management of people/coaches, offerings, teams, moderation, settings and support. Authorized admins see Me → Admin dashboard and an Owner Guide. `/admin-login` signs into existing accounts; it never assigns an admin role.
-- Insights filters **scheduled event cohorts** in UTC, not the time each registration was created. Previous period has equal duration. Resource and financial aggregates are explicitly lifetime values. Draft/waitlist rows open actual events. Empty/error states remain honest.
-- Communication is top-level for owner/admin/host roles and retains provider readiness. Automation supports selecting one existing workspace event or all events, with registered attendees as its audience.
-- Start a challenge launches the independent challenge editor. Event format selects Standard or feature-enabled Retreat, preserving existing persistence. No recurrence relabeling as a multi-event product.
+## Verification
+- Full automated suite: **461 tests / 54 files passed**. Latest automatic harness typecheck/production build reports `build OK`; no manual duplicate build was run.
+- Explicit disposable PostgreSQL fixture test passed twice with rollback: two-coach preferences and unsubscribe isolation, provider-free pending signup, invalid/forged/expired tokens, aggregates, journey save/readback, real entitlement-triggered notification, retry idempotency, archive stopping, learner notification ownership and cross-coach RLS denial. This used isolated fixture schema/migrations 0104–0109, not shared preview data or the ordinary suite.
+- Installed 0110 function existence read back from hosted database. Atomic event wrapper tested through application unit test; full isolated application-schema event trigger regression not executed.
+- Browser: signed-in `/me`, `/admin`, `/communications` at 390/1280; admin entry visible, Communication nav visible, resource/audience controls and send-step editor usable with no sheet/document overflow. Signed-out `/admin` redirects to `/login`; public coach opt-in loads at 390/1280, disabled submission before consent; invalid token gives explicit denial. Spanish Communication at 390 verified visually. EN/ES leaf keys match. No page errors in completed browser scripts.
+- Keyboard desktop dialog focus verified. Mobile drawer screenshot verified, but tab-focus containment check was negative; full mobile keyboard/focus restoration and screen-reader narration remain unverified.
+- No fixtures were created in the shared backend in this continuation. Disposable fixture rows rolled back and disposable server stopped. No production publishing/deployment.
 
-## Remaining work and dependencies
-1. **Owner account:** more than one Nick profile was found. Confirm the intended account through authorized identity before changing roles. No email is guessed, no shared password exists, and no role was granted.
-2. **Resource communications:** enrollment-specific journeys now use entitlement-bound runs, existing templates, wait/send/enrollment-active steps, pause/resume and capability+participant-scoped activity. Only in-app activation is allowed. Enrollment-to-notification readback remains unverified; email requires a consent-aware sending implementation, not simply adding credentials.
-3. **Coach updates:** preference-specific public opt-in, token confirmation/manage/unsubscribe and private aggregate segments are implemented. Requests are blocked until confirmation and marketing senders exist. Full email opt-in readback/delivery is unverified. Segment-targeted campaigns are not connected; this requires further engineering. No SMS promise.
-4. **Multi-event experience:** implemented as 2–20 bounded validated sessions on existing events; registration/tickets/check-in cover the whole experience, not individual sessions. Private draft saved and two sessions read back through the event UI. Fixture removed. Signed-out schedule denial/published readback has not been exercised with a new published experience.
-5. **Verification:** second-account isolation and live non-admin denial are unverified for this pass; existing server role checks and row policies were inspected, not bypassed. Nonempty attendance, automation save/readback, new retreat save/readback, Saturday Fit Camp published-event link and screen-reader narration are unverified.
-
-## Checks completed
-- Full suite: 439 tests / 52 files.
-- Typecheck and production build: automatic harness, latest entry clean; no manual duplicate build.
-- Browser: signed-out redirects on Home/attendance/admin/challenges; signed-in current requesting account; 32 EN/ES page states at 390/1280px; 640px zoom-reflow proxy on four pages in both languages; keyboard Home card action; View all; invitation sheet; Owner Guide; challenge editor; future/invalid Insights ranges; automation selector.
-- No document-wide horizontal overflow in checked states. Six-item mobile navigation intentionally scrolls internally; desktop bottom navigation stays hidden.
-- Continuation: EN/ES 390/1280px Discover tabs, Communication resource chooser and experience builder checked; no page errors/overflow. Private experience save/readback verified, temporary event removed. No publishing/providers/credentials; schema migrations were applied to the existing backend.
-
-The last source SHA must be read after platform-managed commit; an earlier SHA is not proof these latest documentation changes are committed.
+## Honest remaining limits
+- Campaign email is not configured. Anonymous email confirmation delivery, emailed manage-link delivery and campaigns cannot be called verified; pending visitors must use a verified account to confirm/manage now. No SMS subscription promise.
+- Subscription and resource execution checks passed at database level on an isolated copy, not through a real shared-preview enrollment-to-inbox browser save/readback. A signed-in non-admin browser session was not available, so live non-admin menu/route denial is not claimed; fail-closed route/data tests cover it.
+- Unrelated prior tracker QA (nonempty attendance, new retreat persistence, screen-reader/device checks) remains outside this continuation.

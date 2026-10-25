@@ -4,15 +4,16 @@
 - [x] Current compile reports resolved without rollback; full automated verification rerun.
 - [x] Home copy, real-record card links, member/invite destinations and permission-scoped UTC monthly attendance history.
 - [x] Existing protected /admin, admin-only Me link and bilingual Owner Guide.
-- [ ] Owner role assignment: multiple Nick profiles exist; account identity must be confirmed before any privileged role grant.
+- [x] Owner login/account: Nick confirms nickc35@gmail.com has a verified admin role and login works; preserve the existing role.
 - [x] Insights event-date cohort comparison, definitions, event/resource drilldowns and draft/waitlist attention signals.
 - [x] Capability-aware top-level Communication and existing automation event/audience selector; existing event journeys preserved.
 - [x] Resource enrollment journeys: entitlement-bound wait/send/condition execution, scoped runs and pause/resume; in-app activation only.
-- [ ] Coach preferences/token management/count segments implemented; email delivery and complete opt-in readback blocked by sender configuration. Segment-targeted campaign sending remains unimplemented.
+- [x] Provider-independent verified-account coach preferences/unsubscribe/aggregate segments; anonymous requests honestly pending without confirmation sender.
+- [x] Admin visibility/role tests, isolated resource enrollment delivery + two-coach/token/RLS checks, mobile/desktop layouts; 461 tests and latest harness build OK.
 - [x] Separate /challenges launch reuses the real editor; Standard/Retreat selector retains existing feature gate and persistence.
 - [x] Multi-event experience: bounded validated sessions, whole-event admission and schedule; private draft save/readback verified and fixture removed.
 - [x] Full automated suite (439), harness typecheck/production build, EN/ES 390/1280px screens, keyboard card navigation and previous 640px zoom reflow.
-- [ ] Additional verification: second-account isolation/non-admin live denial, nonempty attendance, automation save/readback, retreat persistence and screen-reader narration not verified in this pass.
+- [ ] Blocked verification: campaign/confirmation email (no sender), shared-preview enrollment browser readback and signed-in non-admin browser denial (second authorized account), mobile keyboard containment/screen-reader narration; earlier nonempty attendance and retreat QA remain unverified.
 
 ## v0.33 custom coach public links
 - Done: /h/$slug pressure-test, custom slug editor with server-side validation/reserved words/uniqueness/rate limit, old-slug alias redirects, EN/ES, browser QA 16/16.

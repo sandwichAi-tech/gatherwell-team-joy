@@ -96,13 +96,14 @@ export async function processOutbox(limit = 100) {
     }).eq('id', row.id);
   }
   // Advance due journey runs through the same pipeline (sends enqueue here, gates apply).
-  let journeys = 0;
+  let journeys = 0; let resourceJourneys = 0;
   try {
     const adv = await supabaseAdmin.rpc('advance_journey_runs', { _limit: 50 });
     const resourceAdv = await supabaseAdmin.rpc('advance_resource_journeys', { _limit: 50 });
     if (resourceAdv.error) console.error('[outbox] resource_journeys', resourceAdv.error.message);
+    else resourceJourneys = typeof resourceAdv.data === 'number' ? resourceAdv.data : 0;
     if (!adv.error) journeys = typeof adv.data === 'number' ? adv.data : 0;
     else console.error('[outbox] advance_journey_runs', adv.error.message);
   } catch (e) { console.error('[outbox] advance_journey_runs', e); }
-  return { processed: rows.length, journeys, ...tally };
+  return { processed: rows.length, journeys, resourceJourneys, ...tally };
 }
