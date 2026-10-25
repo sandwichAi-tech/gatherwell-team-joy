@@ -43,7 +43,9 @@ export function ResourceCard({ r, creator, onSaveTemplate }: { r: ResourceCardDa
   const Icon = TYPE_ICON[r.type];
   const started = !!r.progress && r.progress.done > 0 && r.progress.done < r.progress.total;
   const action = r.entity === 'recipe' || r.entity === 'download' || !r.progress ? t('resources.open') : started ? t('resources.continue') : r.progress.done === r.progress.total ? t('resources.review') : t('resources.start');
-  const edit = r.entity === 'track' ? { to: '/learn/manage' as const, search: { tab: 'tracks' as const } } : r.entity === 'recipe' ? { to: '/learn/manage' as const, search: { tab: 'recipes' as const } } : null;
+  // Reopen any item in the dedicated builder; the builder loads the record and adopts its true type.
+  const editType = r.entity === 'recipe' ? 'recipe' : r.entity === 'course' ? 'course' : r.entity === 'download' ? 'file' : 'video';
+  const edit = { to: '/learn/create' as const, search: { type: editType, id: r.id } };
   return <article className="resource-card" aria-label={`${title}, ${t(`resources.typeChip.${r.type}`)}, ${t(`resources.sourceChip.${r.source}`)}`}>
     {r.cover === 'offer' ? <OfferCover offer={{ cover_style: r.cover_style, cover_url: r.cover_url, kind: r.entity === 'download' ? 'download' : 'course', title_en: r.title_en, title_es: r.title_es }} wide />
       : <LearnCover path={r.cover_url} style={r.cover_style} title={title} />}
@@ -60,8 +62,7 @@ export function ResourceCard({ r, creator, onSaveTemplate }: { r: ResourceCardDa
       {r.progress && r.progress.total > 1 && <progress className="attendance-progress" value={r.progress.done} max={r.progress.total} aria-hidden="true" />}
       <div className="resource-actions">
         <Button asChild variant={started ? 'default' : 'secondary'}><Link to={r.href.to} params={r.href.params ?? {}}>{action}<ArrowRight /></Link></Button>
-        {creator && (r.entity === 'course' || r.entity === 'download') && <Button asChild variant="ghost"><Link to="/offer/$id" params={{ id: r.id }}><Pencil />{t('resources.edit')}</Link></Button>}
-        {creator && edit && <Button asChild variant="ghost"><Link to={edit.to} search={edit.search}><Pencil />{t('resources.edit')}</Link></Button>}
+        {creator && <Button asChild variant="ghost"><Link to={edit.to} search={edit.search}><Pencil />{t('resources.edit')}</Link></Button>}
         {creator && onSaveTemplate && r.source === 'team' && <Button variant="ghost" onClick={() => onSaveTemplate(r)}><CopyPlus />{t('resources.saveTemplate')}</Button>}
       </div>
     </div>

@@ -6140,6 +6140,95 @@
       "courseNote": "Después de guardar, agrega secciones, lecciones y quizzes desde la página del curso.",
       "publishHint": "Apagado guarda un borrador que puedes publicar después.",
       "quizReady": "Borrador del quiz creado — ahora agrega tus preguntas."
+    },
+    "item": {
+      "sections": "Secciones del recurso",
+      "tabs": {
+        "presentation": "Presentación",
+        "content": "Contenido",
+        "access": "Acceso",
+        "options": "Opciones",
+        "preview": "Vista previa"
+      },
+      "subtitle": "Subtítulo",
+      "subtitleHint": "Una línea corta bajo el título",
+      "ctaLabel": "Texto del botón",
+      "ctaGet": "Obtener gratis",
+      "ctaBuy": "Comprar ahora",
+      "layoutLabel": "Diseño de la tarjeta",
+      "layout": {
+        "button": "Botón",
+        "callout": "Destacado",
+        "preview": "Vista previa"
+      },
+      "accentLabel": "Color de realce",
+      "accent": {
+        "plum": "Ciruela Medianoche",
+        "terracotta": "Terracota Adobe",
+        "concrete": "Concreto Cálido",
+        "ivory": "Marfil Cálido"
+      },
+      "promoLabel": "Descripción de la página de destino",
+      "richTextHint": "tu texto",
+      "richTextSafe": "Se conservan encabezados, listas, negritas, cursivas y enlaces https; todo lo demás se elimina por seguridad.",
+      "rtHeading": "Encabezado",
+      "rtBold": "Negrita",
+      "rtItalic": "Cursiva",
+      "rtList": "Lista",
+      "rtLink": "Enlace",
+      "accessLabel": "Acceso",
+      "free": "Gratis",
+      "paid": "De pago",
+      "freeAccessNote": "Los recursos gratuitos se abren en cuanto el participante toca el botón e inicia sesión.",
+      "teamAccessNote": "Este recurso es gratuito para tu equipo. Publícalo cuando estés listo para que los miembros lo vean.",
+      "paidBlocked": "La publicación de pago se activa cuando la configuración de pagos esté completa. Puedes guardar un borrador.",
+      "noOptions": "No hay opciones adicionales para este tipo.",
+      "previewTitle": "Vista del participante",
+      "cardOnPage": "Tarjeta en tu página pública",
+      "landingTitle": "Página de destino",
+      "previewFreeNote": "El botón inicia el acceso gratuito.",
+      "previewPaidNote": "El pago aparecerá aquí cuando la configuración de pagos esté completa.",
+      "status": {
+        "draft": "Borrador",
+        "published": "Publicado"
+      },
+      "unsaved": "cambios sin guardar",
+      "reopenTitle": "Editar recurso",
+      "typeLocked": "El tipo de un recurso guardado se mantiene fijo para que los participantes conserven su acceso.",
+      "notFound": "No pudimos encontrar ese recurso. Es posible que se haya eliminado.",
+      "issues": "Antes de guardar: {{fields}}",
+      "issue": {
+        "title": "agrega un título",
+        "url": "agrega un enlace válido",
+        "live_time": "elige una hora de inicio",
+        "course": "elige un curso",
+        "price": "define un precio de al menos $0.50",
+        "file": "adjunta el archivo"
+      },
+      "cancelEdit": "Cancelar",
+      "deleteLesson": "Eliminar lección",
+      "lessonTypes": {
+        "video": "Video",
+        "pdf": "PDF",
+        "audio": "Audio",
+        "link": "Enlace",
+        "text": "Texto",
+        "live": "En vivo",
+        "file": "Archivo"
+      },
+      "curriculum": {
+        "title": "Plan de estudios",
+        "add": "Agregar lección",
+        "empty": "Aún no hay lecciones. Agrega la primera.",
+        "newLesson": "Nueva lección",
+        "saveFirst": "Guarda un borrador primero y luego arma el plan de estudios aquí.",
+        "lessonType": "Tipo de lección",
+        "instructions": "Instrucciones",
+        "up": "Subir",
+        "down": "Bajar",
+        "deleteTitle": "¿Eliminar esta lección?",
+        "deleteText": "Los participantes pierden esta lección y su progreso. Esto no se puede deshacer."
+      }
     }
   },
   "templatesR": {
