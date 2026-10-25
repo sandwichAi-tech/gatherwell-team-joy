@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { FileText, ShieldCheck, UsersRound } from '@/components/icons';
 import { WaiverAccept, useEventWaiver } from '@/components/waiver';
+import { EventWaiverStatusPanel } from '@/components/event-waivers';
 import { Check } from '@/components/icons';
 import { ArrowLeft, ArrowUp, Download, Mail, MessageSquareText, Phone, Search, UserPlus, X } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -128,6 +129,7 @@ function GuestListPage() {
           </div>
         </li></Fragment>)}</ul>}
     </section>
+    <EventWaiverStatusPanel eventId={id} />
     {buddyFor && rows.find(r => r.id === buddyFor) && <BuddySheet eventId={id} row={rows.find(r => r.id === buddyFor)!} rows={active} info={belong} onClose={() => setBuddyFor(null)} />}
     {groupsOpen && <SmallGroupsSheet eventId={id} rows={active.filter(r => r.status !== 'waitlist')} onClose={() => setGroupsOpen(false)} />}
     {signing && <DoorWaiverSheet eventId={id} rsvp={signing} onClose={() => setSigning(null)} onSaved={refresh} />}

@@ -2,6 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { QRCodeSVG } from 'qrcode.react';
+import { MyWaiverAcceptances } from '@/components/event-waivers';
 import { ArrowLeft, CalendarDays, MapPin, Printer, Video, CreditCard, AlertCircle, CheckCircle2 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { AddToCalendar } from '@/components/add-to-calendar';
@@ -117,6 +118,7 @@ function TicketDetailPage() {
       {e.meeting_note && active && <div className="ticket-note"><strong>{t('ticket.arrival')}</strong><p>{e.meeting_note}</p></div>}
       {e.accessibility_notes && <div className="ticket-note"><strong>{t('ticket.accessibility')}</strong><p>{e.accessibility_notes}</p></div>}
       {e.cancellation_policy && <div className="ticket-note"><strong>{t('ticket.cancelPolicy')}</strong><p>{e.cancellation_policy}</p></div>}
+      <MyWaiverAcceptances code={code} />
 
       <div className="ticket-actions no-print">
         <AddToCalendar event={icsEvent} filename={`${e.title.replace(/[^\w-]+/g, '-').toLowerCase()}.ics`} />
