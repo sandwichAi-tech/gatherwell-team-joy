@@ -1156,7 +1156,17 @@
     "teamEvents30d": "{{count}} in the last 30 days",
     "teamNote": "Team totals are aggregate counts only — never guest names or contact details.",
     "exportEvents": "Download events CSV",
-    "exportOffers": "Download offerings CSV"
+    "exportOffers": "Download offerings CSV",
+    "periodFrom": "From",
+    "periodTo": "Through",
+    "invalidPeriod": "Choose an end date on or after the start date.",
+    "periodDefinition": "Events are grouped by scheduled date in UTC. Registered counts active going/maybe registrations; attended counts check-ins. Comparison uses the equally long preceding period. Resource and sales totals below are lifetime totals, not filtered by these dates.",
+    "previousCount": "Previous period: {{count}}",
+    "attention": "Needs your attention",
+    "attentionEmpty": "No drafts or waitlists need review.",
+    "reviewDraft": "Review draft before publishing",
+    "reviewWaitlist": "{{count}} waitlisted — review capacity",
+    "lifetimeDefinition": "Lifetime paid-order totals before refunds and processing fees. These are not payout balances."
   },
   "map": {
     "eyebrow": "Leader view",
@@ -1900,7 +1910,8 @@
       "invalid_message": "Write up to 280 characters.",
       "not_allowed": "You don't have access to this challenge."
     },
-    "noneYet": "No challenges yet."
+    "noneYet": "No challenges yet.",
+    "start": "Start a challenge"
   },
   "recognition": {
     "title": "Recognition",
@@ -6336,5 +6347,12 @@
         "desc": "Get help or report a problem."
       }
     }
+  },
+  "attendanceHistory": {
+    "title": "Attendance history",
+    "definition": "Checked-in registrations you are permitted to view, grouped by event. Month uses UTC. Up to 5,000 records.",
+    "month": "Month",
+    "empty": "No check-ins in this month.",
+    "count": "{{count}} check-ins"
   }
 }

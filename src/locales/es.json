@@ -1156,7 +1156,17 @@
     "teamEvents30d": "{{count}} en los últimos 30 días",
     "teamNote": "Los totales del equipo son solo conteos agregados — nunca nombres ni datos de contacto de invitados.",
     "exportEvents": "Descargar CSV de eventos",
-    "exportOffers": "Descargar CSV de ofertas"
+    "exportOffers": "Descargar CSV de ofertas",
+    "periodFrom": "Desde",
+    "periodTo": "Hasta",
+    "invalidPeriod": "Elige una fecha final igual o posterior a la inicial.",
+    "periodDefinition": "Los eventos se agrupan por fecha programada en UTC. Inscritos cuenta registros activos going/maybe; asistencia cuenta entradas registradas. La comparación usa el periodo anterior de igual duración. Los totales de recursos y ventas son históricos y no se filtran por estas fechas.",
+    "previousCount": "Periodo anterior: {{count}}",
+    "attention": "Necesita tu atención",
+    "attentionEmpty": "No hay borradores ni listas de espera por revisar.",
+    "reviewDraft": "Revisa el borrador antes de publicar",
+    "reviewWaitlist": "{{count}} en espera — revisa la capacidad",
+    "lifetimeDefinition": "Totales históricos de pedidos pagados antes de reembolsos y comisiones de procesamiento. No son saldos de pagos."
   },
   "map": {
     "eyebrow": "Vista de líder",
@@ -1900,7 +1910,8 @@
       "invalid_message": "Escribe hasta 280 caracteres.",
       "not_allowed": "No tienes acceso a este reto."
     },
-    "noneYet": "Aún no hay retos."
+    "noneYet": "Aún no hay retos.",
+    "start": "Iniciar un reto"
   },
   "recognition": {
     "title": "Reconocimiento",
@@ -6336,5 +6347,12 @@
         "desc": "Obtén ayuda o reporta un problema."
       }
     }
+  },
+  "attendanceHistory": {
+    "title": "Historial de asistencia",
+    "definition": "Inscripciones con asistencia que puedes consultar, agrupadas por evento. El mes usa UTC. Hasta 5,000 registros.",
+    "month": "Mes",
+    "empty": "No hay registros de asistencia en este mes.",
+    "count": "{{count}} registros de asistencia"
   }
 }
