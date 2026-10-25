@@ -62,3 +62,45 @@ describe('pending host invite storage', () => {
     expect(pendingHostInvite(now + 60_000)).toBe('ABC123XYZ9');
   });
 });
+
+describe('fallbackCoverStyle', () => {
+  it('keeps a valid stored style index', async () => {
+    const { fallbackCoverStyle } = await import('./discovery');
+    expect(fallbackCoverStyle('any-id', 3)).toBe(3);
+    expect(fallbackCoverStyle('any-id', 0)).toBe(0);
+    expect(fallbackCoverStyle('any-id', 8)).toBe(8); // coverStyleAt clamps via modulo
+  });
+  it('is deterministic and in range when no style is stored', async () => {
+    const { fallbackCoverStyle } = await import('./discovery');
+    const a = fallbackCoverStyle('event-123', null);
+    expect(a).toBe(fallbackCoverStyle('event-123', null));
+    expect(a).toBeGreaterThanOrEqual(0);
+    expect(a).toBeLessThan(6);
+    expect(fallbackCoverStyle('event-123', undefined)).toBe(a);
+  });
+});
+
+describe('coverRefsFor', () => {
+  it('maps events/offers and coaches to signing refs, skipping items without images', async () => {
+    const { coverRefsFor } = await import('./discovery');
+    const items = [
+      { kind: 'event', id: 'e1', cover_path: 'u/cover-1.jpg' },
+      { kind: 'course', id: 'o1', cover_path: null },
+      { kind: 'download', id: 'o2', cover_path: 'u/cover-2.jpg' },
+    ] as never[];
+    const coaches = [
+      { id: 'h1', cover_path: 'u/cover-h1.jpg', avatar_path: 'u/avatar-h1.jpg' },
+      { id: 'h2', cover_path: null, avatar_path: null },
+    ] as never[];
+    expect(coverRefsFor(items, coaches)).toEqual([
+      { kind: 'event', id: 'e1' },
+      { kind: 'offer', id: 'o2' },
+      { kind: 'host', id: 'h1' },
+    ]);
+  });
+  it('bounds the batch at 60 refs', async () => {
+    const { coverRefsFor } = await import('./discovery');
+    const items = Array.from({ length: 70 }, (_, i) => ({ kind: 'event', id: `e${i}`, cover_path: 'p' })) as never[];
+    expect(coverRefsFor(items, [])).toHaveLength(60);
+  });
+});
