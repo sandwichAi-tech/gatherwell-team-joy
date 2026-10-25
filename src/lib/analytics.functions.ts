@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 
-const EVENTS = ['signup', 'onboarding_complete', 'team_joined', 'gathering_created', 'gathering_published', 'rsvp', 'checkin', 'template_launched', 'challenge_checkin', 'badge_earned', 'assistant_used', 'followup_sent', 'upgrade_clicked', 'hero_find_click', 'hero_host_click', 'category_click', 'feed_rsvp_click', 'sticky_cta_click', 'sticky_cta_view', 'location_prompt_accept', 'location_prompt_decline', 'share'] as const;
+const EVENTS = ['signup', 'onboarding_complete', 'team_joined', 'gathering_created', 'gathering_published', 'rsvp', 'checkin', 'template_launched', 'challenge_checkin', 'badge_earned', 'assistant_used', 'followup_sent', 'upgrade_clicked', 'hero_find_click', 'hero_host_click', 'category_click', 'feed_rsvp_click', 'sticky_cta_click', 'sticky_cta_view', 'location_prompt_accept', 'location_prompt_decline', 'share', 'carousel_slide_click', 'home_tool_click', 'home_discover_path_click'] as const;
 
 /** Single analytics sink. Reads POSTHOG_KEY; quietly does nothing when it is missing. Never forwards personal data. */
 export const sendAnalytics = createServerFn({ method: 'POST' })
