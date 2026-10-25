@@ -73,7 +73,7 @@ describe('custom policy builder', () => {
     const p = policyPayload(custom({ refund: 'none', reviewedSha: sha }), text);
     expect(p.text).toBe('Sales are final.');
     expect((p.config as { reviewed_sha: string }).reviewed_sha).toBe(sha);
-    expect(sha).toBe('7ae8a9e8a4b70c1de02e0cf5fbcdf8c2cca75be1eebb0e41ebc23c9a2fb1d8a7'.length === 64 ? sha : '');
+    expect(sha).toMatch(/^[0-9a-f]{64}$/);
     expect(policyPayload(emptyPolicy(), 'ignored')).toEqual({ config: {}, text: '' });
   });
   it('checkout message uses the exact custom text', () => {
