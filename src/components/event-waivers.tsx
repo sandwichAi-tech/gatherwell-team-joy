@@ -115,7 +115,7 @@ export function EventWaiversManager({ eventId, userId }: { eventId: string; user
   return <section className="panel event-waivers-manage" aria-labelledby="ew-manage-title">
     <div className="section-heading"><div><h2 id="ew-manage-title">{t('eventWaivers.manageTitle')}</h2><p className="auth-subtitle">{t('eventWaivers.manageHelp')}</p></div></div>
     {isLoading ? <p className="auth-subtitle" aria-busy="true">{t('publicEvent.loading')}</p>
-      : error ? <p className="field-error" role="alert">{t('eventWaivers.errors.load')} <Button variant="ghost" onClick={() => void refetch()}>{t('launch.retry')}</Button></p>
+      : error ? <p className="field-error" role="alert">{t('eventWaivers.errors.load')} <Button variant="ghost" onClick={() => void refetch()}>{t('error.retry')}</Button></p>
       : !data?.length ? <p className="auth-subtitle">{t('eventWaivers.empty')}</p>
       : <ul className="plain-list ew-list">{data.map(w => <li key={w.id} className="ew-item">
         <div><strong>{waiverTitle(w, lang)}</strong>
@@ -194,7 +194,7 @@ export function EventWaiverStatusPanel({ eventId }: { eventId: string }) {
     const { data: d, error: e } = await db.rpc('event_waiver_status', { _event: eventId }); if (e) throw e; return d as WaiverStatus;
   } });
   if (isLoading) return null;
-  if (error) return <p className="field-error" role="alert">{t('eventWaivers.errors.load')} <Button variant="ghost" onClick={() => void refetch()}>{t('launch.retry')}</Button></p>;
+  if (error) return <p className="field-error" role="alert">{t('eventWaivers.errors.load')} <Button variant="ghost" onClick={() => void refetch()}>{t('error.retry')}</Button></p>;
   if (!data?.waivers.length) return null;
   const label = (k: ReturnType<typeof consentState>) => t(`eventWaivers.state.${k}`);
   const missing = data.attendees.filter(a => data.waivers.some(w => consentState(w, a) === 'missing' || (w.required && consentState(w, a) === 'outdated'))).length;

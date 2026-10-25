@@ -207,7 +207,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
       {!!event.questions?.length && <RsvpQuestionsFields questions={event.questions} value={answers} onChange={setAnswers} />}
       {event.require_approval && intent === 'going' && <p className="guest-hint">{t('rsvpq.approvalHint')}</p>}
       {waiver && <WaiverAccept waiver={waiver} name={wName} accepted={wOk} onName={setWName} onAccepted={setWOk} />}
-      {intent === 'going' && ew.isError && <p className="field-error" role="alert">{t('eventWaivers.errors.load')} <Button type="button" variant="ghost" onClick={() => void ew.refetch()}>{t('launch.retry')}</Button></p>}
+      {intent === 'going' && ew.isError && <p className="field-error" role="alert">{t('eventWaivers.errors.load')} <Button type="button" variant="ghost" onClick={() => void ew.refetch()}>{t('error.retry')}</Button></p>}
       {intent === 'going' && <EventWaiversAccept waivers={eventWaivers} choices={ewChoices} onChange={setEwChoices} />}
       {!paid && needsTier(tiers) && <fieldset className="guest-tiers">
         <legend className="field-label">{t('guest.tiers.title')}</legend>
