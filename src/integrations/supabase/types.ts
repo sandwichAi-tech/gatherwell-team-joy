@@ -1639,6 +1639,7 @@ export type Database = {
           discussion_enabled: boolean
           early_offer_id: string | null
           ends_at: string | null
+          experience_sessions: Json
           format: string
           hide_guest_list: boolean
           host_id: string
@@ -1713,6 +1714,7 @@ export type Database = {
           discussion_enabled?: boolean
           early_offer_id?: string | null
           ends_at?: string | null
+          experience_sessions?: Json
           format?: string
           hide_guest_list?: boolean
           host_id?: string
@@ -1787,6 +1789,7 @@ export type Database = {
           discussion_enabled?: boolean
           early_offer_id?: string | null
           ends_at?: string | null
+          experience_sessions?: Json
           format?: string
           hide_guest_list?: boolean
           host_id?: string
@@ -7531,6 +7534,10 @@ export type Database = {
       }
       promote_waitlist: { Args: { _event: string }; Returns: undefined }
       public_cover_paths: { Args: { _refs: Json }; Returns: Json }
+      public_event_sessions: {
+        Args: { _event: string; _token?: string }
+        Returns: Json
+      }
       public_upcoming: { Args: { _host: string; _team: string }; Returns: Json }
       publish_host_update: { Args: { _id: string }; Returns: number }
       queue_broadcast: { Args: { _id: string }; Returns: number }
@@ -7895,6 +7902,10 @@ export type Database = {
       }
       set_event_retreat: {
         Args: { _ends_at: string; _event: string; _retreat: Json }
+        Returns: undefined
+      }
+      set_event_sessions: {
+        Args: { _event: string; _sessions: Json }
         Returns: undefined
       }
       set_journey_status: {

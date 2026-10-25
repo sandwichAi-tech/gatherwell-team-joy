@@ -722,6 +722,13 @@
       "when": 1792897292592,
       "tag": "0102_allow_communications_return_path",
       "breakpoints": true
+    },
+    {
+      "idx": 103,
+      "version": "7",
+      "when": 1792939071499,
+      "tag": "0103_event_experience_sessions",
+      "breakpoints": true
     }
   ]
 }
