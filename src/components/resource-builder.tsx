@@ -98,12 +98,12 @@ export function ResourceBuilder({ initialType }: { initialType: CreateType }) {
     && (!publish || type !== 'file' && type !== 'bundle' || !!draft.offer.filePath)
     && (progress === null || progress === 100);
 
-  const finish = async (ok: boolean, dest: Parameters<typeof navigate>[0]) => {
+  const finish = async (ok: boolean, go?: () => void) => {
     setBusy(false);
     if (!ok) { toast.error(t('profile.saveError')); return; }
     toast.success(t('templates.saved'));
     await qc.invalidateQueries();
-    void navigate(dest);
+    go?.();
   };
 
   const save = async () => {

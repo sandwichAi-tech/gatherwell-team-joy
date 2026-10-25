@@ -17,7 +17,7 @@ type PairProps = {
   multiline?: boolean;
   rows?: number;
   maxLength?: number;
-  placeholder?: string;
+  placeholder?: string | undefined;
 };
 
 /**
