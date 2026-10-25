@@ -36,7 +36,7 @@ const validUrl = (u: string) => !u || /^https?:\/\/\S+$/i.test(u);
 // The generated types lag behind hand-written selects; keep the cast local.
 const db = supabase as unknown as { from: (t: string) => any };
 
-type LoadedRef = { entity: 'track' | 'recipe' | 'offer'; id: string; status: 'draft' | 'published'; trackId?: string };
+type LoadedRef = { entity: 'track' | 'recipe' | 'offer'; id: string; status: 'draft' | 'published'; trackId?: string | undefined };
 
 /** Map a stored track's first lesson back onto a builder type. */
 const typeForLesson = (t?: string | null): CreateType =>
@@ -322,7 +322,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
       if (offerKindFor(type) && !offerKindFor(next)) patchOffer({ price: '', filePath: null });
     }
     setType(next);
-    if (!cardLayoutsFor(next).includes(item.cardLayout)) patchItem({ cardLayout: cardLayoutsFor(next)[0] });
+    if (!cardLayoutsFor(next).includes(item.cardLayout)) patchItem({ cardLayout: cardLayoutsFor(next)[0] ?? 'preview' });
     void navigate({ to: '/learn/create', search: { type: next }, replace: true, resetScroll: false });
   };
 
