@@ -2,14 +2,10 @@
 -- Run explicitly against a disposable copy: psql -v ON_ERROR_STOP=1 -f tests/database/referral_programs_disposable.sql
 -- Every fixture is named ZZ-TEST and the transaction always rolls back.
 BEGIN;
-CREATE TEMP TABLE zz_ids AS SELECT
-  (SELECT id FROM profiles ORDER BY created_at LIMIT 1) AS host,
-  gen_random_uuid() AS referrer, gen_random_uuid() AS buyer, gen_random_uuid() AS teammate, gen_random_uuid() AS team_ref,
-  gen_random_uuid() AS team, gen_random_uuid() AS ev, gen_random_uuid() AS team_ev;
 DO $$
 DECLARE z record; pid uuid; c1 text; c2 text; rid uuid; n int; o1 uuid := gen_random_uuid(); o2 uuid := gen_random_uuid(); o3 uuid := gen_random_uuid(); res jsonb; ok boolean;
 BEGIN
-  SELECT * INTO z FROM zz_ids;
+  SELECT (SELECT id FROM profiles ORDER BY created_at LIMIT 1) AS host, gen_random_uuid() AS referrer, gen_random_uuid() AS buyer, gen_random_uuid() AS teammate, gen_random_uuid() AS team_ref, gen_random_uuid() AS team, gen_random_uuid() AS ev, gen_random_uuid() AS team_ev INTO z;
   -- Fixtures (bypassing app triggers is not needed: inserts run as table owner in this transaction).
   PERFORM set_config('request.jwt.claims', '{"role":"service_role"}', true); -- fixture insert only
   INSERT INTO teams(id, name, slug, owner_id) VALUES (z.team, 'ZZ-TEST team', 'zz-test-' || substr(z.team::text,1,8), z.host);
@@ -95,6 +91,7 @@ BEGIN
   res := my_referral_dashboard();
   IF (res->'totals'->>'paid_cents')::int <> 0 THEN RAISE EXCEPTION 'FAIL cross-referrer leak'; END IF;
   RAISE NOTICE 'ok 14-15 referrer isolation';
-  RAISE NOTICE 'ALL REFERRAL CHECKS PASSED';
+  -- Abort deliberately so nothing persists even when the runner auto-commits.
+  RAISE EXCEPTION 'ZZ_ROLLBACK: ALL 15 REFERRAL CHECKS PASSED';
 END $$;
 ROLLBACK;
