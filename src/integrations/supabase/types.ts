@@ -3051,6 +3051,7 @@ export type Database = {
         Row: {
           created_at: string
           created_by: string | null
+          event_id: string | null
           id: string
           name: string
           offer_id: string | null
@@ -3062,6 +3063,7 @@ export type Database = {
         Insert: {
           created_at?: string
           created_by?: string | null
+          event_id?: string | null
           id?: string
           name: string
           offer_id?: string | null
@@ -3073,6 +3075,7 @@ export type Database = {
         Update: {
           created_at?: string
           created_by?: string | null
+          event_id?: string | null
           id?: string
           name?: string
           offer_id?: string | null
@@ -3082,6 +3085,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "message_journeys_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "message_journeys_offer_id_fkey"
             columns: ["offer_id"]
@@ -3356,6 +3366,8 @@ export type Database = {
           kind: string
           link: string | null
           read_at: string | null
+          resource_journey_run_id: string | null
+          resource_journey_step: number | null
           title: string
           user_id: string
         }
@@ -3367,6 +3379,8 @@ export type Database = {
           kind: string
           link?: string | null
           read_at?: string | null
+          resource_journey_run_id?: string | null
+          resource_journey_step?: number | null
           title: string
           user_id: string
         }
@@ -3378,10 +3392,20 @@ export type Database = {
           kind?: string
           link?: string | null
           read_at?: string | null
+          resource_journey_run_id?: string | null
+          resource_journey_step?: number | null
           title?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "notifications_resource_journey_run_id_fkey"
+            columns: ["resource_journey_run_id"]
+            isOneToOne: false
+            referencedRelation: "resource_journey_runs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       offer_grants: {
         Row: {
@@ -7126,6 +7150,7 @@ export type Database = {
       coach_trust: { Args: { _host: string }; Returns: Json }
       coach_update_preferences: { Args: { _token: string }; Returns: Json }
       comment_feed: { Args: { _event: string; _topic: string }; Returns: Json }
+      communication_offerings: { Args: { _team: string }; Returns: Json }
       community_requests: {
         Args: { _kind: string; _target: string }
         Returns: Json
@@ -7837,6 +7862,10 @@ export type Database = {
         Args: { _action: string; _id: string; _note?: string }
         Returns: undefined
       }
+      resource_journey_activity: {
+        Args: { _journey?: string; _limit?: number; _team: string }
+        Returns: Json
+      }
       resume_my_membership: { Args: { _offer: string }; Returns: undefined }
       retreat_checklist: { Args: { _code: string }; Returns: Json }
       revoke_certificate: {
@@ -8102,6 +8131,10 @@ export type Database = {
       }
       set_buddy_wish: {
         Args: { _code: string; _on: boolean }
+        Returns: undefined
+      }
+      set_communication_event: {
+        Args: { _event: string; _journey: string }
         Returns: undefined
       }
       set_early_access: {
