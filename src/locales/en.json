@@ -1,5 +1,6 @@
 {
   "eventReliability": {
+    "errors": {"title": "Enter an event title.", "date": "Enter a valid start date and time.", "place": "Enter a location name or address.", "online_link": "Enter a valid HTTPS join link.", "reg_window": "Registration must open before it closes.", "retreat_dates": "Enter an end after the start.", "payouts": "Set up payouts before publishing a paid event.", "tier_invalid": "Complete each ticket name, price, quantity, and sales window.", "min_age": "Enter a minimum age from 0 to 17 only when minors are allowed."},
     "priceInvalid": "Enter a price from $1 to $1,000, or leave blank for free.",
   "fixSummary": "Review the highlighted fields before publishing.",
   "required": "Required",
