@@ -7984,6 +7984,7 @@ export type Database = {
         Args: { _buyer?: string; _code: string; _kind: string; _target: string }
         Returns: Json
       }
+      checkin_blocker: { Args: { _rsvp: string }; Returns: string }
       checkin_guest_list: { Args: { _event: string }; Returns: Json }
       claim_guest_records: { Args: never; Returns: Json }
       claim_outbox: {
@@ -8460,6 +8461,7 @@ export type Database = {
         }[]
       }
       my_calendar_feeds: { Args: never; Returns: Json }
+      my_checkin_events: { Args: never; Returns: Json }
       my_coach_updates: { Args: { _slug: string }; Returns: Json }
       my_consent_history: { Args: never; Returns: Json }
       my_contact_threads: { Args: never; Returns: Json }

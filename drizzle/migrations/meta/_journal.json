@@ -960,6 +960,13 @@
       "when": 1793048337633,
       "tag": "0136_public_event_ticket_availability_restore",
       "breakpoints": true
+    },
+    {
+      "idx": 137,
+      "version": "7",
+      "when": 1793053308808,
+      "tag": "0137_attendance_checkin_binding",
+      "breakpoints": true
     }
   ]
 }
