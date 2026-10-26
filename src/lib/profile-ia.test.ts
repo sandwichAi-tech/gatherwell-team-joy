@@ -54,3 +54,10 @@ describe('Tools public profile shortcut', () => {
     expect(hp?.search).toEqual({ panel: 'hostProfile' });
   });
 });
+
+describe('Cover upload error copy', () => {
+  it('has matched EN/ES messages for a non-image file', () => {
+    expect((en as any).profile.photoNotImage).toMatch(/image/i);
+    expect((es as any).profile.photoNotImage).toMatch(/imagen/i);
+  });
+});
