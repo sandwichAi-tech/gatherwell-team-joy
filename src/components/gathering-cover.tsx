@@ -5,6 +5,13 @@ import { eventCoverRendition } from '@/lib/media.functions';
 import { coverStyleAt, clampOverlay, clampFocal } from '@/lib/cover';
 import { BrandImage } from '@/components/brand-image';
 
+/** Display-size hint per cover placement so the browser fetches a rendition that matches the real slot. */
+export function coverSizes(className: string): string {
+  if (/\b(challenge-thumb|retreat-thumb-img|as-cover)\b/.test(className)) return '128px';
+  if (/\b(card-strip|blueprint-cover|follow-event-cover|qs-preview-cover)\b/.test(className)) return '(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw';
+  return '(min-width: 1280px) 1200px, 100vw';
+}
+
 /** Uploaded photo when present, otherwise a curated brand gradient with the first letter. */
 export function GatheringCover({ path, style = 0, title, className = '', overlay = 0, focal, alt, rendition, sizes, onNaturalWidth, eventId }: {
   path?: string | null; style?: number | null; title: string; className?: string;
@@ -21,7 +28,7 @@ export function GatheringCover({ path, style = 0, title, className = '', overlay
   const parts = clampFocal(focal).split(' ').map(v => Number(v.replace('%', '')) / 100);
   const fx = parts[0] ?? 0.5; const fy = parts[1] ?? 0.5;
   if (url) return <span className={`gathering-cover has-photo ${className}`}>
-    <BrandImage src={url} alt={alt?.trim() || title} className="gathering-cover-img" focal={{ x: fx, y: fy }} sizes={sizes ?? (className.includes('guest-cover') ? '(min-width: 720px) 720px, 100vw' : '(min-width: 1024px) 480px, 100vw')} priority={className.includes('guest-cover')} onNaturalWidth={onNaturalWidth} />
+    <BrandImage src={url} alt={alt?.trim() || title} className="gathering-cover-img" focal={{ x: fx, y: fy }} sizes={sizes ?? coverSizes(className)} priority={className.includes('guest-cover')} onNaturalWidth={onNaturalWidth} />
     {scrimEl}
   </span>;
   return <div className={`gathering-cover ${className}`} style={{ backgroundImage: coverStyleAt(style) }} role="img" aria-label={alt?.trim() || title}>

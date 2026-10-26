@@ -94,3 +94,13 @@ describe('low-resolution honesty and crop size', () => {
     for (const s of [en.crop.lowRes, es.crop.lowRes, en.gathering.coverLowRes, es.gathering.coverLowRes]) expect(s).toContain('{{width}}');
   });
 });
+
+import { coverSizes } from '@/components/gathering-cover';
+describe('cover placement sizes', () => {
+  it('full-width covers ask for up to 1200 CSS px, cards for ~400, thumbnails for 128', () => {
+    expect(coverSizes('guest-cover')).toBe('(min-width: 1280px) 1200px, 100vw');
+    expect(coverSizes('manage-cover')).toBe('(min-width: 1280px) 1200px, 100vw');
+    expect(coverSizes('card-strip')).toContain('400px');
+    expect(coverSizes('challenge-thumb')).toBe('128px');
+  });
+});
