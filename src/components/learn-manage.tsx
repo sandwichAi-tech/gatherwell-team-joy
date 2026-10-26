@@ -35,13 +35,14 @@ export function Field({ id, label, children }: { id: string; label: string; chil
   return <div className="form-field"><label className="field-label" htmlFor={id}>{label}</label>{children}</div>;
 }
 
-export function CoverPicker({ teamId, path, styleIdx, title, onPath, onStyle }: { teamId: string; path: string | null; styleIdx: number; title: string; onPath: (p: string | null) => void; onStyle: (n: number) => void }) {
+/** `upload`/`renderCover` let offer-backed items store the cover in the host's own media folder (required for offers) instead of team learn media. */
+export function CoverPicker({ teamId, path, styleIdx, title, onPath, onStyle, upload, renderCover }: { teamId: string; path: string | null; styleIdx: number; title: string; onPath: (p: string | null) => void; onStyle: (n: number) => void; upload?: (file: File) => Promise<string>; renderCover?: (onNaturalWidth: (w: number) => void) => React.ReactNode }) {
   const { t } = useTranslation(); const [busy, setBusy] = useState(false); const [width, setWidth] = useState<number | null>(null);
   return <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
-    <LearnCover key={path ?? 'none'} path={path} style={styleIdx} title={title || 'L'} className="is-wide" onNaturalWidth={setWidth} />
+    {renderCover ? renderCover(setWidth) : <LearnCover key={path ?? 'none'} path={path} style={styleIdx} title={title || 'L'} className="is-wide" onNaturalWidth={setWidth} />}
     {path && width != null && isLowResolution(width) && <p className="field-hint crop-lowres" role="status">{t('gathering.coverLowRes', { width })}</p>}
     <div className="cover-styles" role="group" aria-label={t('onboarding.cover')}>{COVER_STYLES.map((bg, i) => <button key={i} type="button" className={`cover-swatch ${!path && styleIdx === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} aria-label={`${t('onboarding.cover')} ${i + 1}`} aria-pressed={!path && styleIdx === i} onClick={() => { onPath(null); onStyle(i); }} />)}</div>
-    <label className="file-button"><Upload />{busy ? t('onboarding.saving') : t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={async r => { setBusy(true); try { onPath(await uploadLearnFile(teamId, r.file, () => {})); } catch (err) { toast.error(errMsg(t, err)); } setBusy(false); }} /></label></div>;
+    <label className="file-button"><Upload />{busy ? t('onboarding.saving') : t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={async r => { setBusy(true); try { onPath(await (upload ? upload(r.file) : uploadLearnFile(teamId, r.file, () => {}))); } catch (err) { toast.error(errMsg(t, err)); } setBusy(false); }} /></label></div>;
 }
 
 function TrackEditor({ track, teamId, onClose, preset }: { track: Partial<Track> | null; teamId: string; onClose: (created?: Track) => void; preset?: TrackFlowType | null }) {
