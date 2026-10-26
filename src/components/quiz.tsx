@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowUp, ArrowDown, Check, Pencil, Plus, Trash2, Award, Printer, AlertCircle } from '@/components/icons';
@@ -54,7 +55,7 @@ export function QuizPanel({ offer }: { offer: Offer }) {
       <ul className="offer-list">{q.data.map(z => <li key={z.id} className="panel offer-row">
         <div className="offer-row-main"><strong>{quizTitle(z, lang) || t('quiz.untitled')}</strong>
           <small>{lessonName(z.lesson_id)} · {t(z.is_published ? 'templates.published' : 'templates.draft')}{z.is_required ? ` · ${t('quiz.required')}` : ''}</small></div>
-        <div className="offer-row-actions"><Button variant="secondary" size="icon" aria-label={t('quiz.edit')} onClick={() => setEditing(z)}><Pencil /></Button></div>
+        <div className="offer-row-actions"><Button asChild variant="secondary" size="sm"><Link to="/learn/quiz/$id" params={{ id: z.id }}>{t('quizStudio.eyebrow')}</Link></Button><Button variant="secondary" size="icon" aria-label={t('quiz.edit')} onClick={() => setEditing(z)}><Pencil /></Button></div>
       </li>)}</ul>}
     {editing && <QuizEditor quiz={editing} offer={offer} lessons={lessons} onClose={() => { setEditing(null); void qc.invalidateQueries({ queryKey: ['quizzes', offer.id] }); }} />}
   </section>;
@@ -78,8 +79,7 @@ export function LearnerQuizList({ offerId }: { offerId: string }) {
     <ul className="offer-list">{list.map(z => <li key={z.id} className="offer-row">
       <div className="offer-row-main"><strong>{lang === 'es' ? z.title_es || z.title_en : z.title_en || z.title_es}</strong>
         {z.is_required && <small>{t('quiz.required')}</small>}</div>
-      <div className="offer-row-actions"><Button variant="secondary" size="sm" onClick={() => setOpen(open === z.id ? null : z.id)}>{t(open === z.id ? 'quiz.close' : 'quiz.open')}</Button></div>
-      {open === z.id && <QuizTaker quizId={z.id} />}
+      <div className="offer-row-actions"><Button asChild variant="secondary" size="sm"><Link to="/learn/quiz/$id" params={{ id: z.id }}>{t('quiz.open')}</Link></Button></div>
     </li>)}</ul>
   </section>;
 }
