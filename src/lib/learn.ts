@@ -189,3 +189,38 @@ export const emptyMediaKey = (l: Pick<Lesson, 'type' | 'replay_url'>) => {
   const type = effectiveType(l);
   return type === 'pdf' ? 'learnHub.noPdf' : type === 'audio' ? 'learnHub.noAudio' : type === 'file' ? 'learnHub.noFile' : type === 'link' ? 'learnHub.noLink' : 'learnHub.noMedia';
 };
+
+/** Private lesson-file paths a set of lessons/tracks uses (main file, attachments, covers). */
+export function learnPathsOf(rows: { storage_path?: string | null; attachments?: unknown; cover_url?: string | null }[]): string[] {
+  const out = new Set<string>();
+  for (const r of rows) {
+    if (r.storage_path) out.add(r.storage_path);
+    if (r.cover_url) out.add(r.cover_url);
+    if (Array.isArray(r.attachments)) for (const a of r.attachments as { path?: unknown }[]) if (typeof a?.path === 'string') out.add(a.path);
+  }
+  return [...out];
+}
+
+/** Collect the private files of the given tracks before they are deleted. */
+export async function learnPathsForTracks(trackIds: string[]): Promise<string[]> {
+  if (!trackIds.length) return [];
+  const [{ data: lessons }, { data: tracks }] = await Promise.all([
+    supabase.from('lessons').select('storage_path, attachments').in('track_id', trackIds),
+    supabase.from('tracks').select('cover_url').in('id', trackIds),
+  ]);
+  return learnPathsOf([...(lessons ?? []), ...(tracks ?? [])]);
+}
+
+/** After a delete, remove files no remaining lesson or track still uses (duplicates share files, so they stay). */
+export async function removeUnusedLearnFiles(paths: string[]): Promise<void> {
+  const unused: string[] = [];
+  for (const p of paths) {
+    const [{ count: a }, { count: b }, { count: c }] = await Promise.all([
+      supabase.from('lessons').select('id', { count: 'exact', head: true }).eq('storage_path', p),
+      supabase.from('lessons').select('id', { count: 'exact', head: true }).contains('attachments', [{ path: p }]),
+      supabase.from('tracks').select('id', { count: 'exact', head: true }).eq('cover_url', p),
+    ]);
+    if (!a && !b && !c) unused.push(p);
+  }
+  if (unused.length) await supabase.storage.from('learn-media').remove(unused);
+}
