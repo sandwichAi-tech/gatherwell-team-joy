@@ -7237,7 +7237,7 @@
     "eligibility": "Los cambios de asistencia y preferencias antes del envío se reflejan en la audiencia. Los eventos cancelados no envían mensajes.",
     "invalidSchedule": "Elige una hora futura después del final del evento.",
     "paused": "Guardado como borrador; revisa y activa en Comunicaciones.",
-    "channel": "Canal (definido por la plantilla)",
+    "channel": "Canal",
     "defaultSchedule": "Mañana a las 09:00 en la zona horaria del evento; puedes cambiarlo."
   }
 }

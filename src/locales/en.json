@@ -7237,7 +7237,7 @@
     "eligibility": "Attendance corrections and preferences before sending change the audience. Cancelled events do not send messages.",
     "invalidSchedule": "Choose a future time after the event ends.",
     "paused": "Saved as draft; review and activate in Communications.",
-    "channel": "Channel (set by the template)",
+    "channel": "Channel",
     "defaultSchedule": "Next day at 09:00 in the event time zone; you can change it."
   }
 }
