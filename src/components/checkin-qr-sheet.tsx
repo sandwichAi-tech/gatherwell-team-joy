@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useTranslation } from 'react-i18next';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
@@ -12,8 +13,11 @@ export const groupedCheckinCode = (code: string) => code.toUpperCase().replace(/
 
 export function CheckinQrSheet({ target, onClose }: { target: CheckinQrTarget | null; onClose: () => void }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
+  const view = useRef<HTMLDivElement>(null);
+  // Phone drawers do not move focus on their own; put keyboard and screen-reader focus inside the QR view.
+  useEffect(() => { if (!target) return; const id = window.setTimeout(() => { if (!view.current?.closest('[role=dialog]')?.contains(document.activeElement)) view.current?.focus(); }, 50); return () => window.clearTimeout(id); }, [target]);
   return <ResponsiveSheet open={!!target} onOpenChange={o => { if (!o) onClose(); }} icon="QrCode" title={target?.title ?? t('checkinQr.title')} description={target ? formatWhen(target.startsAt, lang) : undefined}>
-    {target && <div className="checkin-qr-view">
+    {target && <div ref={view} tabIndex={-1} className="checkin-qr-view">
       <span className="chip published-chip" role="status">{target.checkedInAt ? t('checkinQr.checkedIn') : t('checkinQr.registered')}</span>
       <div className="ticket-qr"><QRCodeSVG value={target.code} size={280} level="M" marginSize={4} title={t('checkinQr.qrLabel', { title: target.title })} /></div>
       <p className="muted">{t('checkinQr.help')}</p>
