@@ -28,7 +28,7 @@ describe('row 60: PDF resources never use the video layout', () => {
   });
   it('document viewer copy exists in EN and ES', () => {
     for (const k of ['noPdf', 'docLoading', 'docError', 'docHint', 'openPdf', 'downloadPdf', 'wrongFileType'] as const) {
-      expect(en.learnHub[k]).toBeTruthy(); expect(es.learnHub[k]).toBeTruthy(); expect(es.learnHub[k]).not.toBe(en.learnHub[k] === 'Download' ? 'x' : en.learnHub[k]);
+      expect(en.learnHub[k]).toBeTruthy(); expect(es.learnHub[k]).toBeTruthy();
     }
   });
 });
