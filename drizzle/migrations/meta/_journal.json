@@ -890,6 +890,13 @@
       "when": 1792985610538,
       "tag": "0126_quiz_duplicate_without_temp_table",
       "breakpoints": true
+    },
+    {
+      "idx": 127,
+      "version": "7",
+      "when": 1792986139891,
+      "tag": "0127_quiz_poll_summary_threshold",
+      "breakpoints": true
     }
   ]
 }
