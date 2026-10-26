@@ -26,6 +26,7 @@ import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { useSwitchTeam } from '@/components/team-switcher';
 import { useSwitchMode } from '@/lib/switch-mode';
+import { hostEligibilityQuery } from '@/lib/host-eligibility';
 import { setLanguage } from '@/components/auth-frame';
 import { BadgeWall, FeaturedBadges, RecognitionSummary, useHostOfMonthId } from '@/components/recognition';
 import { supabase } from '@/integrations/supabase/client';
@@ -189,6 +190,7 @@ export function MePage() {
 
   // Customers and hosts share one login; the mode lives on role_intent. Shared with the account menu.
   const switchMode = useSwitchMode(userId);
+  const { data: canHost = false } = useQuery(hostEligibilityQuery(userId));
   const openDelete = async () => {
     setConfirmText(''); setDeleting(true); setSoleTeams(null);
     const { data } = await supabase.rpc('my_sole_leader_teams');
@@ -278,7 +280,7 @@ export function MePage() {
     </SettingsGroup>
     <SettingsGroup title={t('customerHome.modeGroup')}>
       {profile?.role_intent === 'guest'
-        ? row('CalendarHeart', t('customerHome.startHosting'), () => void switchMode('host'))
+        ? row('CalendarHeart', canHost ? t('customerHome.switchHost') : t('customerHome.startHosting'), () => void switchMode('host'))
         : row('Compass', t('customerHome.switchAttending'), () => void switchMode('guest'))}
       <p className="auth-note">{t('identity.viewNote')}</p>
     </SettingsGroup>
