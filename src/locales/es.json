@@ -829,6 +829,7 @@
     "shopInvalid": "Usa un enlace completo que empiece con https://",
     "nameRequired": "Ingresa tu nombre.",
     "photoTooLarge": "Elige una foto de menos de 5 MB.",
+    "photoNotImage": "Elige un archivo de imagen (JPG, PNG, WebP o HEIC).",
     "switchTeam": "Cambiar de equipo",
     "myGatherings": "Mis eventos",
     "gatheringsEmpty": "Aquí verás los eventos que organizas o a los que te sumas.",

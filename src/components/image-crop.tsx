@@ -117,10 +117,10 @@ export function ImageCropSheet({ file, kind, withSquare, onCancel, onDone }: { f
 }
 
 /** Hidden file input + crop step. Drop inside an existing upload label in place of the raw input. */
-export function CropFileInput({ kind, withSquare, capture, onCropped, onRejected, maxBytes = 15 * 1024 * 1024, className = 'sr-only' }: { kind: CropKind; withSquare?: boolean | undefined; capture?: 'user' | 'environment'; onCropped: (r: CropResult) => void; onRejected?: () => void; maxBytes?: number; className?: string }) {
+export function CropFileInput({ kind, withSquare, capture, onCropped, onRejected, maxBytes = 15 * 1024 * 1024, className = 'sr-only' }: { kind: CropKind; withSquare?: boolean | undefined; capture?: 'user' | 'environment'; onCropped: (r: CropResult) => void; onRejected?: (reason: 'type' | 'size') => void; maxBytes?: number; className?: string }) {
   const [file, setFile] = useState<File | null>(null);
   return <>
-    <input type="file" accept="image/*" className={className} {...(capture ? { capture } : {})} onChange={e => { const f = e.target.files?.[0]; e.target.value = ''; if (!f) return; if (!f.type.startsWith('image/') || f.size > maxBytes) { onRejected?.(); return; } setFile(f); }} />
+    <input type="file" accept="image/*" className={className} {...(capture ? { capture } : {})} onChange={e => { const f = e.target.files?.[0]; e.target.value = ''; if (!f) return; if (!f.type.startsWith('image/')) { onRejected?.('type'); return; } if (f.size > maxBytes) { onRejected?.('size'); return; } setFile(f); }} />
     <ImageCropSheet file={file} kind={kind} withSquare={withSquare} onCancel={() => setFile(null)} onDone={r => { setFile(null); onCropped(r); }} />
   </>;
 }
