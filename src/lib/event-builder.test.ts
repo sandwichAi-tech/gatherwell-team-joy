@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { canTransition, cleanAddons, cleanTiers, emptyTier, feeEstimateCents, hostKeepsCents, minorBandAllowed, parseTags, readinessBlockers, regWindowState, type ReadinessInput } from './event-builder';
+import { capacityValue, validHttps, canTransition, cleanAddons, cleanTiers, emptyTier, feeEstimateCents, hostKeepsCents, minorBandAllowed, parseTags, readinessBlockers, regWindowState, type ReadinessInput } from './event-builder';
 import { MAX_PLATFORM_FEE_PERCENT } from './homepage';
 import en from '@/locales/en.json';
 import es from '@/locales/es.json';
@@ -15,6 +15,26 @@ describe('parseTags', () => {
     expect(parseTags('Yoga, yoga , Beginner,,Outdoor')).toEqual(['yoga', 'beginner', 'outdoor']);
     expect(parseTags('a,b,c,d,e,f,g,h,i,j')).toHaveLength(8);
     expect(parseTags('x'.repeat(40))[0]).toHaveLength(24);
+  });
+});
+
+describe('explicit capacity modes', () => {
+  it('stores unlimited distinctly as null even with a previous limit', () => {
+    expect(capacityValue('unlimited', '20')).toBeNull();
+  });
+  it('requires a positive integer only for limited mode', () => {
+    expect(capacityValue('limited', '')).toBeUndefined();
+    expect(capacityValue('limited', '0')).toBeUndefined();
+    expect(capacityValue('limited', '1.5')).toBeUndefined();
+    expect(capacityValue('limited', '20')).toBe(20);
+  });
+});
+
+describe('event link validation', () => {
+  it('requires an HTTPS destination without embedded credentials', () => {
+    expect(validHttps('https://meet.example.com/room')).toBe(true);
+    expect(validHttps('https://')).toBe(false);
+    expect(validHttps('https://user:pass@example.com')).toBe(false);
   });
 });
 
@@ -79,6 +99,15 @@ describe('cleanTiers / cleanAddons', () => {
   it('accepts valid add-ons and rejects bad ones', () => {
     expect(cleanAddons([{ id: 'a', name: 'Mat rental', price_cents: 500 }])).toHaveLength(1);
     expect(cleanAddons([{ id: 'a', name: ' ', price_cents: 500 }])).toBeNull();
+  });
+  it('stores sales dates as absolute instants and preserves optional blank dates', () => {
+    const rows = cleanTiers([{ ...emptyTier(), name: 'Early', sale_starts_at: '2026-11-01T10:00:00-06:00', sale_ends_at: null }]);
+    expect(rows?.[0]?.sale_starts_at).toBe('2026-11-01T16:00:00.000Z');
+    expect(rows?.[0]?.sale_ends_at).toBeNull();
+  });
+  it('rejects malformed dates and fractional tier quantities', () => {
+    expect(cleanTiers([{ ...emptyTier(), name: 'Early', sale_starts_at: 'invalid' }])).toBeNull();
+    expect(cleanTiers([{ ...emptyTier(), name: 'Early', quantity: 1.5 }])).toBeNull();
   });
 });
 

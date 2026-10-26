@@ -1,5 +1,14 @@
 # ZoheeWell Change Log
 
+## 2026-10-26 — Rows 75–81 Event Builder pass (in progress)
+- Photos: explicit JPG/PNG/WebP and 8 MB limit, decode/upload errors, upload status, save blocked during upload, prior photo retained on failed replacement; square preview object URL released.
+- Capacity: explicit unlimited/limited controls; unlimited remains NULL, existing limits prefill. Location contains the existing optional map override; online hides it; attendee directions prefer a valid override.
+- Ticket sales windows have persistent optional labels, blank semantics, time zone, ordering messages; sales instants are normalized to ISO and reopened as local inputs. Add-ons accurately state they have no independent dates.
+- Publish validation now checks location as well as title/date/link and optional configured rules; field summary and focus added. Draft save stores incomplete input separately behind manager-only access (0133–0134), restores the form, and does not run publish validation. New publication stages all event details before status transition.
+- Verification: 45 focused tests and all 687 tests pass. Automatic preview typecheck/build last reported build OK. Browser: EN/ES 320/390/1280 no overflow/runtime errors; photo save/reopen and failed replacement preservation; capacity 2/map override reopen; online/hybrid visibility; reversed ticket dates; minimum free publish and owner/outsider draft/edit checks.
+- Cleanup: four new event IDs, one new team, two new accounts, four media objects removed; exact-ID checks found no events/drafts/team/profiles/members or media remaining. Older fixtures untouched.
+- Open: reliable draft exit/reopen continuation across all stages; attendee limited/unlimited registration matrix; tier availability after save; free/paid minimum publish variants; authorized co-editor; full inline-error coverage and explicit production build not independently verified. Rows remain in progress.
+
 ## 2026-10-26 — Row 62 closed
 - Course release schedule is now enforced (0130–0131): with "a new lesson every N days", lesson 1 opens at the member's access start, lesson 2 after N days, and so on. Access start = earliest live purchase/entitlement (else free-team join), never before the course's activation date. 0 days = everything opens at once. Coaches, leaders and editors always see every lesson.
 - Locked lessons show only their title and localized opening date; their content, files (incl. signed links), summaries, live links, lesson quizzes and completion are refused by the server.

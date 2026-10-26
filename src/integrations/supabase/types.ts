@@ -1554,6 +1554,32 @@ export type Database = {
           },
         ]
       }
+      event_builder_drafts: {
+        Row: {
+          event_id: string
+          snapshot: Json
+          updated_at: string
+        }
+        Insert: {
+          event_id: string
+          snapshot: Json
+          updated_at?: string
+        }
+        Update: {
+          event_id?: string
+          snapshot?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_builder_drafts_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: true
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_checklists: {
         Row: {
           event_id: string
@@ -2026,6 +2052,7 @@ export type Database = {
           addons: Json
           address: string | null
           allows_minors: boolean
+          builder_draft: Json | null
           cancellation_policy: string | null
           capacity: number | null
           category: string | null
@@ -2102,6 +2129,7 @@ export type Database = {
           addons?: Json
           address?: string | null
           allows_minors?: boolean
+          builder_draft?: Json | null
           cancellation_policy?: string | null
           capacity?: number | null
           category?: string | null
@@ -2178,6 +2206,7 @@ export type Database = {
           addons?: Json
           address?: string | null
           allows_minors?: boolean
+          builder_draft?: Json | null
           cancellation_policy?: string | null
           capacity?: number | null
           category?: string | null
@@ -8955,6 +8984,10 @@ export type Database = {
           _token: string
         }
         Returns: undefined
+      }
+      save_event_builder_draft: {
+        Args: { _event: string; _snapshot: Json; _team: string }
+        Returns: string
       }
       save_event_communication_journey: {
         Args: {
