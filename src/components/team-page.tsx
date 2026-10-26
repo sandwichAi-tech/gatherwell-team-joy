@@ -40,6 +40,8 @@ import { confirmAction } from '@/components/confirm-dialog';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { TeamSwitcher, useSwitchTeam } from '@/components/team-switcher';
 import { supabase } from '@/integrations/supabase/client';
+import { BrandImage } from '@/components/brand-image';
+import { isLowResolution } from '@/lib/media-renditions';
 import { initialsOf, joinLink, mediaRendition, mediaUrl, uploadMedia, workspaceQuery, type TeamMembership } from '@/lib/account';
 import {
   TEAM_COLORS, announcementsQuery, calendarQuery, relativeTime, rosterQuery, teamDetailQuery, teamKey, teamTreeQuery, upcomingQuery, winsQuery,
@@ -335,7 +337,7 @@ function EditTeamSheet({ open, onOpenChange, team, userId }: { open: boolean; on
         <Textarea id="team-desc" rows={4} className="field-textarea" value={description} aria-invalid={issues.includes('description')} onChange={e => { const v = e.target.value.slice(0, TEAM_DESCRIPTION_MAX + 50); setDescription(v); if (issues.length) setIssues(teamEditIssues(name, v)); }} placeholder={t('teamSpace.descriptionPlaceholder')} />
         {issues.includes('description') && <p className="field-error" role="alert">{t('teamSpace.descriptionTooLong', { max: TEAM_DESCRIPTION_MAX })}</p>}</div>
       <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
-        <div className="cover-edit" style={shown ? undefined : color ? { background: `linear-gradient(135deg, ${color}, var(--lavender))` } : undefined}>{shown && <BrandImage key={preview ?? 'saved'} src={shown} alt="" className="offer-cover-photo" sizes="(min-width: 768px) 560px, 100vw" onNaturalWidth={w => setCoverWidth(preview ? null : w)} />}{!shown && <span className="team-cover-initial">{(name.trim()[0] ?? 'G').toUpperCase()}</span>}</div>
+        <div className="cover-edit" style={shown ? undefined : color ? { background: `linear-gradient(135deg, ${color}, var(--lavender))` } : undefined}>{shown && <BrandImage key={preview ?? 'saved'} src={shown} alt="" className="offer-cover-photo" sizes="(min-width: 768px) 560px, 100vw" onNaturalWidth={(w: number) => setCoverWidth(preview ? null : w)} />}{!shown && <span className="team-cover-initial">{(name.trim()[0] ?? 'G').toUpperCase()}</span>}</div>
         {!preview && current && coverWidth != null && isLowResolution(coverWidth) && <p className="field-hint crop-lowres" role="status">{t('gathering.coverLowRes', { width: coverWidth })}</p>}
         <div className="photo-row"><label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" maxBytes={5 * 1024 * 1024} onCropped={r => { setFile(r.file); setPreview(r.previewUrl); setRemoveCover(false); }} onRejected={why => toast.error(t(why === 'type' ? 'profile.photoNotImage' : 'profile.photoTooLarge'))} /></label>
           {shown && <button type="button" className="auth-link" onClick={() => { setFile(null); setPreview(null); setRemoveCover(true); }}>{t('onboarding.removePhoto')}</button>}</div></div>

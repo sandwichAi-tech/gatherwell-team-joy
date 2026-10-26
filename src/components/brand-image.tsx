@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { responsiveSrc, siteMediaQuery } from '@/lib/site-media';
@@ -34,10 +34,18 @@ export function BrandImage({ slot, src, alt, resizable, focal, aspect, sizes = '
   const label = alt ?? (row ? (i18n.resolvedLanguage?.startsWith('es') ? row.alt_es : row.alt_en) : '');
   const [failed, setFailed] = useState<string | null>(null);
   const broken = !url || failed === url;
+  // Quality hints must reflect the original upload, not whichever smaller rendition the browser chose.
+  useEffect(() => {
+    if (!onNaturalWidth || !url || broken) return;
+    let live = true; const probe = new Image();
+    probe.onload = () => { if (live) onNaturalWidth(probe.naturalWidth); };
+    probe.src = url;
+    return () => { live = false; };
+  }, [url, broken, onNaturalWidth]);
   const style: CSSProperties = ratio ? { aspectRatio: String(ratio) } : {};
   return (
     <figure className={`brand-image ${broken ? 'is-fallback' : ''} ${className ?? ''}`.trim()} style={style} role={broken && label ? 'img' : undefined} aria-label={broken && label ? label : undefined}>
-      {!broken && <img {...(given?.srcSet ? { src: given.src, srcSet: given.srcSet } : responsiveSrc(url, canResize))} sizes={sizes} alt={label} loading={priority ? 'eager' : 'lazy'} fetchPriority={priority ? 'high' : 'auto'} decoding="async" style={{ objectPosition: `${fx * 100}% ${fy * 100}%` }} onError={() => setFailed(url)} onLoad={e => onNaturalWidth?.(e.currentTarget.naturalWidth)} />}
+      {!broken && <img {...(given?.srcSet ? { src: given.src, srcSet: given.srcSet } : responsiveSrc(url, canResize))} sizes={sizes} alt={label} loading={priority ? 'eager' : 'lazy'} fetchPriority={priority ? 'high' : 'auto'} decoding="async" style={{ objectPosition: `${fx * 100}% ${fy * 100}%` }} onError={() => setFailed(url)} />}
       <span className="brand-image-grade" aria-hidden="true" />
       {broken && <span className="brand-image-grain" aria-hidden="true" />}
     </figure>
