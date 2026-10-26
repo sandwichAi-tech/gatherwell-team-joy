@@ -1554,6 +1554,32 @@ export type Database = {
           },
         ]
       }
+      event_builder_drafts: {
+        Row: {
+          event_id: string
+          snapshot: Json
+          updated_at: string
+        }
+        Insert: {
+          event_id: string
+          snapshot: Json
+          updated_at?: string
+        }
+        Update: {
+          event_id?: string
+          snapshot?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_builder_drafts_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: true
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_checklists: {
         Row: {
           event_id: string
