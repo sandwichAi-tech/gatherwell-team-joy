@@ -252,6 +252,13 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const readiness = useQuery({ queryKey: ['payments-readiness'], queryFn: () => getPaymentsReadiness(), staleTime: 30_000 });
   const sellReady = readiness.data ? canSellPaid(readiness.data) : false;
 
+  // After the first save, put the item id in the address so a refresh or shared link reopens this draft instead of a blank builder.
+  useEffect(() => {
+    if (initialId || !loaded?.id) return;
+    loadedOnce.current = true;
+    void navigate({ to: '/learn/create', search: { type, id: loaded.id }, replace: true });
+  }, [loaded?.id, initialId, type, navigate]);
+
   /* ---- Reopen an existing item ---- */
   useEffect(() => {
     if (!initialId || loadedOnce.current) return;
