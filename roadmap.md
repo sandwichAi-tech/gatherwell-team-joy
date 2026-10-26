@@ -13,4 +13,4 @@
 
 ## Profile/team usability (rows 66–69) — built 2026-10-26
 - [x] Invite landing, multi-category chips, profile editor split, team edit/description
-- [ ] Browser-test unauthorized team member view and public coach page category display (needs a second account / published slug)
+- [x] Unauthorized member view, public coach categories and Discover coach filter verified with removed fixtures

@@ -1,5 +1,13 @@
 # ZoheeWell Change Log
 
+## 2026-10-26 — Rows 66–69 verification pass
+- Tools “Public profile” opens /me?panel=hostProfile directly.
+- Public coach page shows translated category names (was raw keys).
+- Invite-friends Share falls back to copy with feedback when the phone share menu is missing.
+- Team editor clears validation errors as you fix them; non-image covers get a correct message; cover limit matches the 5 MB copy.
+- 320px fixes: team leader tiles, Recognition tiles, challenge tabs, empty-state actions.
+- Verified with temporary ZZ-TEST leader/member accounts (removed): members see no Edit team and cannot change the team; leader saves/reopens name, description and cover.
+
 ## 2026-10-26 — Profile/team usability (Website Notes rows 66–69)
 - /i/CODE is now a real invitation page (find events, or sign up with a safe return to /discover) instead of a silent redirect; friend invites stay separate from paid referral links.
 - Host categories are tap-to-select chips (up to 8) from the allowed list, normalized and de-duplicated in the database; legacy free text is mapped or flagged.
