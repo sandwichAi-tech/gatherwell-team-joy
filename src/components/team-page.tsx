@@ -1,3 +1,4 @@
+import { teamEditIssues, TEAM_DESCRIPTION_MAX } from '@/lib/profile-ia';
 import { Feature } from '@/lib/feature-flags';
 import { SharedProgress } from '@/components/my-progress';
 import { readChatLinks, tgShare } from '@/lib/chat-links';
@@ -99,7 +100,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
   const { data: tree = [] } = useQuery(teamTreeQuery(teamId));
   const [sheet, setSheet] = useState<Sheet>(null);
   const panel = useRouterState({ select: state => state.location.search.panel });
-  useEffect(() => { if (panel === 'members' || panel === 'invite') setSheet(panel); }, [panel]);
+  useEffect(() => { if (panel === 'members' || panel === 'invite' || (panel === 'edit' && isLeader)) setSheet(panel); }, [panel, isLeader]);
   const [waiverOpen, setWaiverOpen] = useState(false); const canHost = isLeader || workspace.role === 'host';
   const [draftBody, setDraftBody] = useState<string | null>(null);
   useEffect(() => { const pending = takePendingAnnouncement(); if (pending) { setDraftBody(pending); if (isLeader) setSheet('announce'); else void navigator.clipboard?.writeText(pending).catch(() => {}); } }, [isLeader]);
@@ -121,8 +122,12 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
       <div className="team-header-body">
         <div><h2 className="team-name">{workspace.name}</h2>
           <div className="team-leader"><span className="initial-avatar">{initialsOf(root?.leader_name)}</span><span>{root?.leader_name ?? t('roles.leader')}</span><span className="dot-sep" aria-hidden="true">·</span><span>{t('teamSpace.memberCount', { count: root?.member_count ?? 0 })}</span></div>
+          {team?.description && <p className="team-description">{team.description}</p>}
         </div>
-        <Button variant="secondary" onClick={() => setSheet('invite')}><Share2 />{t('teamSpace.shareInvite')}</Button>
+        <div className="team-header-actions">
+          {isLeader && <Button variant="secondary" onClick={() => setSheet('edit')} aria-label={t('teamSpace.editTeam')}><Pencil />{t('teamSpace.editTeam')}</Button>}
+          <Button variant="secondary" onClick={() => setSheet('invite')}><Share2 />{t('teamSpace.shareInvite')}</Button>
+        </div>
       </div>
     </section>
 
@@ -295,18 +300,18 @@ function InviteSheet({ open, onOpenChange, workspace, joinCode, isLeader }: { op
   </>;
 }
 
-function EditTeamSheet({ open, onOpenChange, team, userId }: { open: boolean; onOpenChange: (o: boolean) => void; team: { id: string; name: string; cover_url: string | null; brand_color: string | null }; userId: string }) {
+function EditTeamSheet({ open, onOpenChange, team, userId }: { open: boolean; onOpenChange: (o: boolean) => void; team: { id: string; name: string; cover_url: string | null; brand_color: string | null; description?: string | null }; userId: string }) {
   const { t } = useTranslation(); const queryClient = useQueryClient();
-  const [name, setName] = useState(team.name); const [color, setColor] = useState<string | null>(team.brand_color);
+  const [name, setName] = useState(team.name); const [description, setDescription] = useState(team.description ?? ''); const [issues, setIssues] = useState<('name' | 'description')[]>([]); const [color, setColor] = useState<string | null>(team.brand_color);
   const [file, setFile] = useState<File | null>(null); const [preview, setPreview] = useState<string | null>(null); const [removeCover, setRemoveCover] = useState(false); const [busy, setBusy] = useState(false);
   const current = useSignedUrl(removeCover ? null : team.cover_url);
-  useEffect(() => { if (open) { setName(team.name); setColor(team.brand_color); setFile(null); setPreview(null); setRemoveCover(false); } }, [open, team]);
+  useEffect(() => { if (open) { setName(team.name); setDescription(team.description ?? ''); setIssues([]); setColor(team.brand_color); setFile(null); setPreview(null); setRemoveCover(false); } }, [open, team]);
   const save = async () => {
-    if (!name.trim()) return; setBusy(true);
+    const found = teamEditIssues(name, description); setIssues(found); if (found.length) return; setBusy(true);
     try {
       let cover_url = team.cover_url;
-      if (file) cover_url = await uploadMedia(userId, file, 'cover'); else if (removeCover) cover_url = null;
-      const { error } = await supabase.from('teams').update({ name: name.trim(), brand_color: color, cover_url }).eq('id', team.id);
+      if (file) { try { cover_url = await uploadMedia(userId, file, 'cover'); } catch { toast.error(t('teamSpace.coverUploadFailed')); setBusy(false); return; } } else if (removeCover) cover_url = null;
+      const { error } = await supabase.from('teams').update({ name: name.trim(), description: description.trim() || null, brand_color: color, cover_url }).eq('id', team.id);
       if (error) throw error;
       await queryClient.invalidateQueries({ queryKey: teamKey(team.id) });
       await queryClient.invalidateQueries({ queryKey: ['teams'] }); await queryClient.invalidateQueries({ queryKey: ['workspace'] });
@@ -317,10 +322,13 @@ function EditTeamSheet({ open, onOpenChange, team, userId }: { open: boolean; on
   const shown = preview ?? current;
   return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={t('teamSpace.editTeam')} footer={<Button className="sheet-primary" disabled={busy || !name.trim()} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>}>
     <div className="edit-form">
-      <div className="form-field"><label className="field-label" htmlFor="team-name">{t('onboarding.teamName')}</label><Input id="team-name" className="field-input" value={name} maxLength={80} onChange={e => setName(e.target.value)} /></div>
+      <div className="form-field"><label className="field-label" htmlFor="team-name">{t('onboarding.teamName')}</label><Input id="team-name" className="field-input" value={name} maxLength={80} aria-invalid={issues.includes('name')} aria-describedby={issues.includes('name') ? 'team-name-err' : undefined} onChange={e => setName(e.target.value)} />{issues.includes('name') && <p id="team-name-err" className="field-error">{t('teamSpace.nameInvalid')}</p>}</div>
+      <div className="form-field"><div className="label-row"><label className="field-label" htmlFor="team-desc">{t('teamSpace.description')}</label><span className={`char-count ${description.length > TEAM_DESCRIPTION_MAX ? 'is-over' : ''}`}>{description.length}/{TEAM_DESCRIPTION_MAX}</span></div>
+        <Textarea id="team-desc" rows={4} className="field-textarea" value={description} aria-invalid={issues.includes('description')} onChange={e => setDescription(e.target.value.slice(0, TEAM_DESCRIPTION_MAX + 50))} placeholder={t('teamSpace.descriptionPlaceholder')} />
+        {issues.includes('description') && <p className="field-error">{t('teamSpace.descriptionTooLong', { max: TEAM_DESCRIPTION_MAX })}</p>}</div>
       <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
         <div className="cover-edit" style={shown ? { backgroundImage: `url(${shown})` } : color ? { background: `linear-gradient(135deg, ${color}, var(--lavender))` } : undefined}>{!shown && <span className="team-cover-initial">{(name.trim()[0] ?? 'G').toUpperCase()}</span>}</div>
-        <div className="photo-row"><label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={r => { setFile(r.file); setPreview(r.previewUrl); setRemoveCover(false); }} /></label>
+        <div className="photo-row"><label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={r => { setFile(r.file); setPreview(r.previewUrl); setRemoveCover(false); }} onRejected={() => toast.error(t('profile.photoTooLarge'))} /></label>
           {shown && <button type="button" className="auth-link" onClick={() => { setFile(null); setPreview(null); setRemoveCover(true); }}>{t('onboarding.removePhoto')}</button>}</div></div>
       <div className="form-field"><span className="field-label">{t('teamSpace.brandColor')}</span>
         <div className="swatches">{TEAM_COLORS.map(value => <button type="button" key={value} className={`swatch ${color === value ? 'is-selected' : ''}`} style={{ background: value }} aria-label={value} aria-pressed={color === value} onClick={() => setColor(value)}>{color === value && <Check />}</button>)}
