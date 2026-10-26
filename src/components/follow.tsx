@@ -105,7 +105,7 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
         {team?.leader?.name && <p className="follow-meta">{t('follow.ledBy')} {team.leader.slug ? <Link to="/h/$slug" params={{ slug: team.leader.slug }}>{team.leader.name}</Link> : team.leader.name}</p>}
         {host?.bio && <p className="follow-bio">{host.bio}</p>}
         {host && (host.categories.length > 0 || host.languages.length > 0) && <ul className="follow-chips" aria-label={t('hostProfile.categories')}>
-          {host.categories.map(c => <li key={c} className="discover-chip is-static">{c}</li>)}
+          {host.categories.map(c => <li key={c} className="discover-chip is-static">{t(`landing.cat.${c}`, { defaultValue: c })}</li>)}
           {host.languages.map(l => <li key={l} className="discover-chip is-static">{t(l === 'es' ? 'me.spanish' : 'me.english')}</li>)}
         </ul>}
         {host?.accessibility && <p className="follow-accessibility"><GwIcon name="Heart" />{host.accessibility}</p>}
