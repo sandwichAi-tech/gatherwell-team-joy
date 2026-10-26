@@ -618,10 +618,10 @@ ul.order-list li{grid-template-columns:minmax(0,1fr) auto}
 .choice-pair.three{grid-template-columns:repeat(3,1fr)}
 .recognition-heading{margin-top:20px;margin-bottom:8px}
 .recognition-tools{margin-top:0}
-.recognition-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.recognition-summary div{display:grid;gap:2px;padding:16px;border:1px solid var(--border);border-radius:14px;background:var(--card)}
+.recognition-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.recognition-summary div{display:grid;gap:2px;min-width:0;padding:16px 12px;border:1px solid var(--border);border-radius:14px;background:var(--card)}
 .recognition-summary strong{font-size:24px;font-weight:700;color:var(--foreground)}
-.recognition-summary span{font-size:13px;color:var(--muted-foreground)}
+.recognition-summary span{font-size:13px;color:var(--muted-foreground);overflow-wrap:anywhere;hyphens:auto}
 .badge-wall-wrap{display:grid;gap:16px}
 .badge-wall{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 @media (min-width:640px){.badge-wall{grid-template-columns:repeat(3,1fr)}}
