@@ -20,6 +20,7 @@ import { roleAllows } from '@/lib/workspace';
 import type { WorkspaceRole } from '@/components/workspace-settings';
 import { useFeature } from '@/lib/feature-flags';
 import { isAdminQuery } from '@/lib/site-media';
+import { hostEligibilityQuery } from '@/lib/host-eligibility';
 import { AccountMenu } from '@/components/account-menu';
 import { insightsNavigationLabel, navigationPathActive, resourcesOwnsPath, showInsightsNavigation } from '@/lib/insights-navigation';
 import { splitMobileNav } from '@/lib/mobile-nav';
@@ -37,6 +38,7 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
  const { data: profile } = useQuery(profileQuery(userId));
  const { data: workspace } = useQuery(workspaceQuery(userId));
  const { data: isAdmin = false } = useQuery(isAdminQuery(userId));
+ const { data: canHost = false } = useQuery(hostEligibilityQuery(userId));
  const initials = initialsOf(profile?.full_name);
  const pathname = useRouterState({ select: state => state.location.pathname });
  const [sheet, setSheet] = useState<'create' | 'assistant' | Creation | null>(null);
@@ -88,7 +90,7 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
     <header className="app-header">
      <Link to="/home" className="brand mobile-brand"><BrandLogo /><span className="sr-only">{t('brand')}</span></Link>
      <span className="desktop-header-label">{t('common.workspaceLabel')}<span>/</span><strong>{navLabel(current.key)}</strong></span>
-     <div className="header-actions"><Link to="/notifications" className="header-bell" aria-label={t('notifications.title')}><GwIcon name="Bell" size={20}/>{unread > 0 && <span className="header-bell-badge" aria-label={t('notifications.unread')}>{unread > 99 ? '99+' : unread}</span>}</Link><Link to="/discover" className="gw-app-discover" aria-label={t('marketing.discover')}><GwIcon name="Compass" size={20}/><span>{t('marketing.discover')}</span></Link><Button variant="ghost" size="icon" className="assistant-button" aria-label={t('common.assistant')} title={t('common.assistant')} onClick={() => openSheet('assistant')}><Sparkles /></Button><AccountMenu initials={initials} isAdmin={isAdmin} userId={userId} canSwitchToAttending={!!profile && profile.role_intent !== 'guest'} /></div>
+     <div className="header-actions"><Link to="/notifications" className="header-bell" aria-label={t('notifications.title')}><GwIcon name="Bell" size={20}/>{unread > 0 && <span className="header-bell-badge" aria-label={t('notifications.unread')}>{unread > 99 ? '99+' : unread}</span>}</Link><Link to="/discover" className="gw-app-discover" aria-label={t('marketing.discover')}><GwIcon name="Compass" size={20}/><span>{t('marketing.discover')}</span></Link><Button variant="ghost" size="icon" className="assistant-button" aria-label={t('common.assistant')} title={t('common.assistant')} onClick={() => openSheet('assistant')}><Sparkles /></Button><AccountMenu initials={initials} isAdmin={isAdmin} userId={userId} canSwitchToAttending={!!profile && profile.role_intent !== 'guest'} canSwitchToHost={profile?.role_intent === 'guest' && canHost} /></div>
     </header>
     <main id="main-content" className="page-content"><ClientOnly fallback={<ListSkeleton />}><PlatformNotices teamId={workspace?.teamId} /><QueryFeedback /><div key={pathname} className="page-transition">{children}</div></ClientOnly></main>
    </div>

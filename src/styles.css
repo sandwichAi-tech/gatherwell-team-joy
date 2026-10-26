@@ -2708,3 +2708,10 @@ a.gw-cat-chip:hover{background:#fff}
 .quiz-stats dd { margin: 0; font-size: 1.4rem; font-weight: 700; }
 .quiz-studio { display: grid; gap: 16px; min-width: 0; }
 .quiz-studio .order-list li { display: flex; align-items: center; gap: 4px; min-width: 0; } .quiz-studio .order-list .order-title { flex: 1; } .quiz-studio .order-list li > button { flex: none; }
+.customer-qr-button{justify-self:start;min-height:48px;max-width:calc(100% - 72px)}
+.customer-checked{font-weight:600;color:var(--primary)}
+.checkin-qr-view{display:grid;justify-items:center;gap:12px;text-align:center}
+.checkin-qr-view .ticket-qr{background:var(--qr-background);padding:12px;border-radius:16px;width:min(100%,280px)}
+.checkin-qr-view .ticket-qr svg{width:100%;height:auto;display:block}
+.checkin-qr-code{font-family:ui-monospace,monospace;font-size:15px;letter-spacing:.06em;overflow-wrap:anywhere}
+.checkin-qr-view:focus{outline:none}.checkin-qr-view:focus-visible{outline:2px solid var(--ring);outline-offset:4px;border-radius:12px}

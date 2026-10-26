@@ -5,7 +5,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { EmptyState, ListSkeleton, RetryState } from '@/components/launch-states';
 import { CalendarButtons, DirectionsButton } from '@/components/guest-rsvp';
-import { ChevronRight } from '@/components/icons';
+import { ChevronRight, QrCode } from '@/components/icons';
+import { CheckinQrSheet, type CheckinQrTarget } from '@/components/checkin-qr-sheet';
+import { useState } from 'react';
 import { formatWhen } from '@/lib/guest';
 import { isLive, offerTitle, purchasesQuery } from '@/lib/offers';
 
@@ -38,6 +40,7 @@ export function CustomerHome({ userId }: { userId: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
   const purchases = useQuery(purchasesQuery(userId));
   const circles = (purchases.data ?? []).filter(p => p.offer?.kind === 'membership' && isLive(p));
+  const [qr, setQr] = useState<CheckinQrTarget | null>(null);
   const q = useQuery({ ...customerHomeQuery(userId, circles.map(c => c.offer_id)), enabled: purchases.isSuccess || purchases.isError });
   if (q.isPending) return <ListSkeleton />;
   if (q.isError) return <RetryState retry={() => void q.refetch()} />;
@@ -47,11 +50,16 @@ export function CustomerHome({ userId }: { userId: string }) {
       {!next.length ? <EmptyState compact icon="CalendarDays" title={t('customerHome.noRsvps')} text={t('customerHome.noRsvpsText')} action={<Button asChild><Link to="/discover">{t('customerHome.find')}</Link></Button>} />
         : <ul className="customer-list">{next.map(r => <li key={r.event.id} className="customer-item">
           <Link to="/e/$id" params={{ id: r.event.id }} className="customer-item-head"><strong>{r.event.title}</strong><small>{formatWhen(r.event.starts_at, lang)}{r.event.location_name ? ` · ${r.event.location_name}` : ''}</small><ChevronRight /></Link>
-          {r.checkin_code && r.status === 'going' && <p className="customer-code">{t('customerHome.code')} <code>{r.checkin_code}</code></p>}
+          {r.status === 'going' && (r.checked_in_at
+            ? <p className="customer-checked" role="status">{t('checkinQr.checkedIn')}</p>
+            : r.checkin_code
+              ? <Button className="customer-qr-button" onClick={() => setQr({ code: r.checkin_code!, title: r.event.title, startsAt: r.event.starts_at, checkedInAt: r.checked_in_at })} aria-label={t('checkinQr.showFor', { title: r.event.title })}><QrCode />{t('checkinQr.show')}</Button>
+              : <p className="auth-subtitle" role="status">{t('checkinQr.missing')}</p>)}
           {r.status === 'waitlist' && <p className="auth-subtitle">{t('customerHome.waitlist')}</p>}
           <CalendarButtons event={r.event} />
           <DirectionsButton event={r.event} />
         </li>)}</ul>}
+      <CheckinQrSheet target={qr} onClose={() => setQr(null)} />
     </section>
     {circles.length > 0 && <section className="panel" aria-labelledby="ch-circles"><div className="section-heading"><h2 id="ch-circles">{t('customerHome.circles')}</h2><Button asChild variant="link"><Link to="/circles">{t('home.viewAll')}</Link></Button></div>
       <ul className="customer-list">{circles.slice(0, 3).map(c => <li key={c.id}><Link to="/offer/$id" params={{ id: c.offer_id }} className="customer-item-head"><strong>{offerTitle(c.offer!, lang)}</strong><small>{t('customerHome.latest')}</small><ChevronRight /></Link></li>)}

@@ -1,25 +1,35 @@
 {
   "eventReliability": {
-    "errors": {"title": "Ingresa el título del evento.", "date": "Ingresa una fecha y hora de inicio válidas.", "place": "Ingresa un nombre de lugar o dirección.", "online_link": "Ingresa un enlace HTTPS válido.", "reg_window": "El registro debe abrir antes de cerrar.", "retreat_dates": "Ingresa un fin posterior al inicio.", "payouts": "Configura los pagos antes de publicar un evento de pago.", "tier_invalid": "Completa nombre, precio, cantidad y fechas de cada boleto.", "min_age": "Ingresa una edad mínima entre 0 y 17 solo si se permiten menores."},
+    "errors": {
+      "title": "Ingresa el título del evento.",
+      "date": "Ingresa una fecha y hora de inicio válidas.",
+      "place": "Ingresa un nombre de lugar o dirección.",
+      "online_link": "Ingresa un enlace HTTPS válido.",
+      "reg_window": "El registro debe abrir antes de cerrar.",
+      "retreat_dates": "Ingresa un fin posterior al inicio.",
+      "payouts": "Configura los pagos antes de publicar un evento de pago.",
+      "tier_invalid": "Completa nombre, precio, cantidad y fechas de cada boleto.",
+      "min_age": "Ingresa una edad mínima entre 0 y 17 solo si se permiten menores."
+    },
     "priceInvalid": "Ingresa un precio entre $1 y $1,000, o déjalo vacío para gratis.",
-  "fixSummary": "Revisa los campos señalados antes de publicar.",
-  "required": "Obligatorio",
-  "optional": "Opcional",
-  "requiredPlace": "Nombre o dirección obligatorio",
-  "unlimited": "Sin límite de capacidad",
-  "limited": "Establecer capacidad",
-  "mapOverride": "Enlace de mapa personalizado (opcional)",
-  "mapHint": "Las indicaciones usan la dirección guardada. Agrega un enlace HTTPS solo para un punto de encuentro especial.",
-  "timezone": "Zona horaria: {{zone}}",
-  "salesStartHint": "Inicio de venta de boletos, no del evento. Vacío significa sin fecha de apertura independiente.",
-  "salesEndHint": "Fin de venta de boletos, no del evento. Vacío significa sin fecha de cierre independiente.",
-  "salesOrder": "El cierre de ventas debe ser posterior al inicio.",
-  "addonTiming": "Los complementos no tienen fechas de venta independientes; siguen la disponibilidad del registro.",
-  "addonInvalid": "Ingresa un nombre de complemento y un precio válido no negativo.",
-  "photoType": "Elige una imagen JPG, PNG o WebP de menos de 8 MB.",
-  "photoFailed": "No se pudo subir la foto. Tu foto anterior no cambió. Inténtalo de nuevo.",
-  "uploading": "Subiendo foto…"
-},
+    "fixSummary": "Revisa los campos señalados antes de publicar.",
+    "required": "Obligatorio",
+    "optional": "Opcional",
+    "requiredPlace": "Nombre o dirección obligatorio",
+    "unlimited": "Sin límite de capacidad",
+    "limited": "Establecer capacidad",
+    "mapOverride": "Enlace de mapa personalizado (opcional)",
+    "mapHint": "Las indicaciones usan la dirección guardada. Agrega un enlace HTTPS solo para un punto de encuentro especial.",
+    "timezone": "Zona horaria: {{zone}}",
+    "salesStartHint": "Inicio de venta de boletos, no del evento. Vacío significa sin fecha de apertura independiente.",
+    "salesEndHint": "Fin de venta de boletos, no del evento. Vacío significa sin fecha de cierre independiente.",
+    "salesOrder": "El cierre de ventas debe ser posterior al inicio.",
+    "addonTiming": "Los complementos no tienen fechas de venta independientes; siguen la disponibilidad del registro.",
+    "addonInvalid": "Ingresa un nombre de complemento y un precio válido no negativo.",
+    "photoType": "Elige una imagen JPG, PNG o WebP de menos de 8 MB.",
+    "photoFailed": "No se pudo subir la foto. Tu foto anterior no cambió. Inténtalo de nuevo.",
+    "uploading": "Subiendo foto…"
+  },
   "brand": "ZoheeWell",
   "feature_name_singular": "Círculo",
   "feature_name_plural": "Círculos",
@@ -5100,7 +5110,8 @@
     "again": "Volver a ir",
     "modeGroup": "Cómo usas ZoheeWell",
     "startHosting": "Empezar a organizar",
-    "switchAttending": "Cambiar a asistir"
+    "switchAttending": "Cambiar a asistir",
+    "switchHost": "Cambiar a organizar"
   },
   "policy": {
     "none": "Sin política visible",
@@ -7194,5 +7205,17 @@
       "saveFailed": "Esa respuesta no se guardó. Revisa tu conexión y elígela de nuevo.",
       "locked": "Este cuestionario se abre con su lección."
     }
+  },
+  "checkinQr": {
+    "title": "QR de registro",
+    "show": "Mostrar QR de registro",
+    "showFor": "Mostrar QR de registro para {{title}}",
+    "registered": "Inscrito · aún sin registrar entrada",
+    "checkedIn": "Entrada ya registrada",
+    "missing": "El código de registro aún no está disponible. Abre el evento para actualizar.",
+    "qrLabel": "QR de registro para {{title}}",
+    "help": "Muestra este código al anfitrión en la entrada.",
+    "manual": "Código manual si el escaneo no funciona",
+    "copy": "Copiar código"
   }
 }
