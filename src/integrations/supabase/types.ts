@@ -2127,6 +2127,7 @@ export type Database = {
           team_min: number
           team_price_mode: string
           team_registration: boolean
+          team_waiver_version: number | null
           template_id: string | null
           theme: string | null
           ticket_tiers: Json
@@ -2204,6 +2205,7 @@ export type Database = {
           team_min?: number
           team_price_mode?: string
           team_registration?: boolean
+          team_waiver_version?: number | null
           template_id?: string | null
           theme?: string | null
           ticket_tiers?: Json
@@ -2281,6 +2283,7 @@ export type Database = {
           team_min?: number
           team_price_mode?: string
           team_registration?: boolean
+          team_waiver_version?: number | null
           template_id?: string | null
           theme?: string | null
           ticket_tiers?: Json
@@ -8894,6 +8897,10 @@ export type Database = {
           code: string
           status: string
         }[]
+      }
+      remove_library_attachment: {
+        Args: { _event: string; _library: string }
+        Returns: undefined
       }
       remove_member: {
         Args: { _team: string; _user: string }

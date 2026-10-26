@@ -1009,6 +1009,13 @@
       "when": 1793055437583,
       "tag": "0143_reusable_waiver_library",
       "breakpoints": true
+    },
+    {
+      "idx": 144,
+      "version": "7",
+      "when": 1793055532943,
+      "tag": "0144_pinned_team_waivers",
+      "breakpoints": true
     }
   ]
 }
