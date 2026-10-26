@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { CoachSubscriberSegments } from './coach-updates';
+import { AttendanceJourneyEditor } from './attendance-journey';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +29,7 @@ import {
 
 type Template = { id: string; team_id: string | null; name: string; channel: string; language: string; subject: string | null; body: string; variables: string[]; audience: string; archived: boolean };
 type Automation = { id: string; name: string; trigger: string; timing_hours: number; audience: string; channel: string; template_id: string | null; event_id: string | null; status: string };
-type Journey = { id: string; name: string; start_trigger: string; status: string; offer_id?: string | null; event_id?: string | null; steps: { id: string; sort_order: number; kind: string; config: Record<string, unknown> }[] };
+type Journey = { id: string; name: string; start_trigger: string; status: string; offer_id?: string | null; event_id?: string | null; attendance_audience?: string | null; attendance_send_at?: string | null; steps: { id: string; sort_order: number; kind: string; config: Record<string, unknown> }[] };
 type Setup = { email: boolean; sms: boolean; inApp: boolean };
 
 const MANAGER_ROLES = ['owner', 'admin', 'host'];
@@ -423,6 +424,7 @@ function JourneysTab({ teamId, journeys, templates, loading, canManage, setup, o
   const { t } = useTranslation();
   const [editing, setEditing] = useState<Journey | 'new' | null>(null);
   const [showRuns, setShowRuns] = useState(false);
+  const [attendanceEditing, setAttendanceEditing] = useState<Journey | 'new' | null>(null);
   const statusFn = useServerFn(setJourneyStatus);
   const runsFn = useServerFn(getJourneyRuns);
   const { data: runs } = useQuery({
@@ -446,18 +448,19 @@ function JourneysTab({ teamId, journeys, templates, loading, canManage, setup, o
 
   return <div className="comms-section">
     {canManage && <Button className="guest-primary" onClick={() => setEditing('new')}>{t('comms.createJourney')}</Button>}
+    {canManage && <Button className="min-h-12 whitespace-normal mt-3" variant="secondary" onClick={() => setAttendanceEditing('new')}>{t('attendancePilot.followup')}</Button>}
     {journeys.length === 0 && <p className="empty-state">{t('comms.noJourneys')}</p>}
     {journeys.map(j => <article key={j.id} className="guest-card comms-card">
       <div className="comms-card-head">
         <strong>{j.name}</strong>
         <span className={`chip comms-status-${j.status}`}>{t(`comms.status.${j.status}`)}</span>
       </div>
-      <p className="comms-card-body">{t('comms.journeySummary', { trigger: t(`comms.trigger.${j.start_trigger}`), count: j.steps.length })}</p>
+      <p className="comms-card-body">{j.attendance_audience ? t(j.attendance_audience === 'attended' ? 'attendancePilot.attended' : 'attendancePilot.absent') : t('comms.journeySummary', { trigger: t(`comms.trigger.${j.start_trigger}`), count: j.steps.length })}</p>
       <ol className="comms-steps">
         {j.steps.map(s => <li key={s.id}>{stepLabel(s.kind, s.config, templates, t)}</li>)}
       </ol>
       {canManage && <div className="chip-row">
-        <Button variant="ghost" onClick={() => setEditing(j)}>{t('comms.edit')}</Button>
+        <Button variant="ghost" onClick={() => j.attendance_audience ? setAttendanceEditing(j) : setEditing(j)}>{t('comms.edit')}</Button>
         {j.status !== 'active' && <Button variant="ghost" onClick={() => void setStatus(j, 'active')}>{t('comms.activate')}</Button>}
         {j.status === 'active' && <Button variant="ghost" onClick={() => void setStatus(j, 'paused')}>{t('comms.pause')}</Button>}
         {j.status === 'paused' && <Button variant="ghost" onClick={() => void setStatus(j, 'draft')}>{t('comms.toDraft')}</Button>}
@@ -475,6 +478,7 @@ function JourneysTab({ teamId, journeys, templates, loading, canManage, setup, o
     </section>}
 
     {editing && <JourneyEditor teamId={teamId} journey={editing === 'new' ? null : editing} templates={templates} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); onChanged(); }} />}
+    {attendanceEditing && <AttendanceJourneyEditor teamId={teamId} journey={attendanceEditing === 'new' ? undefined : attendanceEditing} templates={templates} onClose={() => setAttendanceEditing(null)} onSaved={() => { setAttendanceEditing(null); onChanged(); }} />}
   </div>;
 }
 
