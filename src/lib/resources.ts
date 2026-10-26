@@ -151,7 +151,8 @@ export function templateParts(t: Pick<ResourceTemplate, 'structure'>) {
 
 /** Where the new draft is edited. */
 export function draftDestination(target: ResourceTemplate['target'], id: string): { to: string; params?: Record<string, string>; search?: Record<string, string> } {
-  if (target === 'recipe') return { to: '/learn/manage', search: { tab: 'recipes' } };
+  // Recipes and tracks open straight in the item builder; courses and bundles use the offer page, which edits sections and bundle items.
+  if (target === 'recipe') return { to: '/learn/create', search: { type: 'recipe', id } };
   // A copied track opens straight in the item builder for review → preview → publish.
   if (target === 'track') return { to: '/learn/create', search: { type: 'video', id } };
   return { to: '/offer/$id', params: { id } };
