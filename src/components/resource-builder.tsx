@@ -520,6 +520,10 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
           is_published: publish, sort_order: Date.now() % 1_000_000,
         }).select('id').single();
         trackId = ct.data?.id;
+      } else if (kind === 'course' && trackId && publish) {
+        // A course drafted first keeps a hidden curriculum; publishing the course must make its curriculum visible too.
+        const up = await db.from('tracks').update({ is_published: true }).eq('id', trackId);
+        if (up.error) return finish(false, undefined, up.error.message);
       }
       setLoaded({ entity: 'offer', id: offerId, status: publish ? 'published' : 'draft', trackId });
       setSnapshot(itemSnapshot(item)); setDraftSnap(JSON.stringify(draft));
