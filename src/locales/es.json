@@ -4006,6 +4006,7 @@
     "offerings": "Cursos y recursos"
   },
   "crop": {
+    "lowRes": "Este recorte mide solo {{width}} px de ancho, así que puede verse poco nítido en pantallas grandes o de alta resolución. Para una portada más nítida, aleja el zoom o elige una foto más grande (al menos 1200 px de ancho).",
     "title": "Recorta tu portada",
     "titleAvatar": "Recorta tu foto",
     "hint": "Arrastra para acomodarla y usa el zoom para encuadrarla.",

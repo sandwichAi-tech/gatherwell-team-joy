@@ -62,3 +62,9 @@ export async function signRendition(bucket: SigningBucket, path: string, expires
   const srcSet = buildSrcSet(widths.map((w, i) => ({ width: w, url: sized[i]?.error ? null : sized[i]?.data?.signedUrl })));
   return srcSet ? { src, srcSet } : { src };
 }
+
+/** Width (px) the crop step will encode for a selection: the selection's real pixels, capped at maxSide on the longer edge. Never enlarged. */
+export function croppedOutputWidth(sw: number, sh: number, maxSide = 2400): number {
+  const scale = Math.min(1, maxSide / Math.max(sw, sh, 1));
+  return Math.max(1, Math.round(sw * scale));
+}

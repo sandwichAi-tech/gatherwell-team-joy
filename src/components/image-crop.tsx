@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type PointerEvent as RPointerEvent } from 
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
+import { croppedOutputWidth, isLowResolution } from '@/lib/media-renditions';
 
 export type CropKind = 'cover' | 'avatar';
 export type CropResult = { file: File; square: File | null; previewUrl: string };
@@ -110,6 +111,7 @@ export function ImageCropSheet({ file, kind, withSquare, onCancel, onDone }: { f
         </div>
         <label className="crop-zoom"><span className="field-label">{t('crop.zoom')}</span>
           <input type="range" min={1} max={3} step={0.01} value={zoom} onChange={e => setZoom(Number(e.target.value))} aria-label={t('crop.zoom')} /></label>
+        {kind === 'cover' && img && isLowResolution(croppedOutputWidth(rect.sw, rect.sh)) && <p className="field-hint crop-lowres" role="status">{t('crop.lowRes', { width: croppedOutputWidth(rect.sw, rect.sh) })}</p>}
         <div className="crop-preview"><span className="field-label">{t('crop.preview')}</span><canvas ref={preview} className={kind === 'avatar' ? 'is-circle' : ''} aria-hidden="true" /></div>
       </div>
     </ResponsiveSheet>
