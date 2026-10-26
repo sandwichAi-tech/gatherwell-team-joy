@@ -44,7 +44,7 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Day-60 scoreboard: raw counts come only from admin_day60(); targets and the go/adjust/rethink verdict are evaluated in src/lib/day60.ts so thresholds live in one tested place.
 - Parked features are gated by feature_* flags via src/lib/feature-flags.tsx; admins always see them and off routes throw notFound, so launch scope changes from /admin?tab=flags.
 - Resources reuses /learn routes and the feature_learn gate; reader lists omit zero-lesson tracks and empty sections while management retains them. Authoring is type-first: /learn/create?type=… (src/lib/create-resource.ts) routes into the existing track/lesson, offer, quiz and recipe editors with presets — no second authoring backend.
-- Home’s brief uses getDailyBrief with caller-scoped reads; no AI, snapshots, contacts or shared user cache. Attendance is RLS-scoped; Insights compares UTC event cohorts, not lifetime ledgers.
+- Home brief: getDailyBrief, caller-scoped, no AI/shared cache. Insights compares UTC event cohorts.
 - Admin password sign-in uses the public /admin-login page and existing Cloud Auth accounts; getAdminAccess validates the authenticated role before navigation, while every admin data handler retains its own role check, so the sign-in screen never grants privileges.
 - Blueprints/challenges reuse existing editors; drafts stay private. Experience sessions use existing events and whole-event admission.
 - Platform fees are calculated only from versioned fee_rules (DB calc_platform_fee_cents, mirrored and tested in src/lib/fees.ts); orders snapshot the rule so history never recalculates.
