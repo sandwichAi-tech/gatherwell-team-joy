@@ -328,7 +328,7 @@ export function QuizStudio({ quizId }: { quizId: string }) {
           {s.mode === 'scored' && <><div><dt>{t('quizStudio.avgScore')}</dt><dd>{summary.data.avg_score ?? '—'}%</dd></div><div><dt>{t('quizStudio.passRate')}</dt><dd>{summary.data.pass_rate ?? '—'}%</dd></div></>}
         </dl>
         {s.mode === 'outcome' && <ul className="settings-list">{summary.data.outcomes.map((o: any) => <li key={o.id} className="settings-row"><span className="settings-label">{pick(lang, o.title_en, o.title_es)}</span><strong>{o.count}</strong></li>)}</ul>}
-        <PollBars poll={summary.data.questions} lang={lang} />
+        {summary.data.poll_hidden ? <p className="muted-small">{t('quizPlay.pollHidden', { count: 3 })}</p> : <PollBars poll={summary.data.questions} lang={lang} />}
         {s.mode === 'poll' ? <p className="muted-small">{t('quizStudio.pollAnonymous')}</p> : summary.data.recent.length > 0 && <><h3>{t('quizStudio.recent')}</h3>
           <ul className="settings-list">{summary.data.recent.map((r: any, i: number) => <li key={i} className="settings-row"><span className="settings-label"><strong>{r.name || t('quizStudio.member')}</strong>
             <small className="muted">{t('quizStudio.attemptN', { n: r.attempt_no })} · {new Date(r.submitted_at).toLocaleDateString(lang, { month: 'short', day: 'numeric' })}</small></span>
