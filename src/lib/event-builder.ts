@@ -14,6 +14,17 @@ export const MAX_TIERS = 6;
 export const MAX_ADDONS = 8;
 export const MAX_PRICE_CENTS = 100000;
 
+export function capacityValue(mode: 'unlimited' | 'limited', value: string): number | null | undefined {
+  if (mode === 'unlimited') return null;
+  const n = Number(value);
+  return Number.isInteger(n) && n > 0 && n <= 99999 ? n : undefined;
+}
+
+export function validHttps(value: string): boolean {
+  try { const u = new URL(value.trim()); return u.protocol === 'https:' && !!u.hostname && !u.username && !u.password; }
+  catch { return false; }
+}
+
 /** Comma-separated input → normalized tag list: trimmed, lowercased, deduped, capped. */
 export function parseTags(input: string): string[] {
   const out: string[] = [];
@@ -56,9 +67,9 @@ export type ReadinessInput = {
 export function readinessBlockers(input: ReadinessInput): Blocker[] {
   const out: Blocker[] = [];
   if (!input.title.trim()) out.push('title');
-  if (!input.startsAt) out.push('date');
+  if (!input.startsAt || !Number.isFinite(new Date(input.startsAt).getTime())) out.push('date');
   if (input.format !== 'online' && !input.locationName.trim() && !input.address.trim()) out.push('place');
-  if (input.format !== 'person' && !/^https:\/\/\S+$/i.test(input.onlineUrl.trim())) out.push('online_link');
+  if (input.format !== 'person' && !validHttps(input.onlineUrl)) out.push('online_link');
   if (input.regOpens && input.regCloses && new Date(input.regOpens) >= new Date(input.regCloses)) out.push('reg_window');
   if (input.retreatOn && (!input.retreatEnd || !input.startsAt || new Date(input.retreatEnd) <= new Date(input.startsAt))) out.push('retreat_dates');
   if (input.priceCents && !input.canSell) out.push('payouts');
@@ -90,9 +101,11 @@ export function cleanTiers(rows: TicketTier[]): TicketTier[] | null {
     const name = r.name.trim();
     if (!name || name.length > 60) return null;
     if (!Number.isInteger(r.price_cents) || r.price_cents < 0 || r.price_cents > MAX_PRICE_CENTS) return null;
-    if (r.quantity != null && r.quantity < 1) return null;
+    if (r.quantity != null && (!Number.isInteger(r.quantity) || r.quantity < 1)) return null;
+    if (r.sale_starts_at && !Number.isFinite(new Date(r.sale_starts_at).getTime())) return null;
+    if (r.sale_ends_at && !Number.isFinite(new Date(r.sale_ends_at).getTime())) return null;
     if (r.sale_starts_at && r.sale_ends_at && new Date(r.sale_starts_at) >= new Date(r.sale_ends_at)) return null;
-    out.push({ id: r.id || newId(), name, price_cents: r.price_cents, quantity: r.quantity, sale_starts_at: r.sale_starts_at || null, sale_ends_at: r.sale_ends_at || null });
+    out.push({ id: r.id || newId(), name, price_cents: r.price_cents, quantity: r.quantity, sale_starts_at: r.sale_starts_at ? new Date(r.sale_starts_at).toISOString() : null, sale_ends_at: r.sale_ends_at ? new Date(r.sale_ends_at).toISOString() : null });
   }
   return out;
 }

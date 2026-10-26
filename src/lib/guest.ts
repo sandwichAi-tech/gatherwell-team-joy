@@ -62,7 +62,10 @@ export function downloadIcs(e: When & { id: string }, details: string) {
 }
 
 /** Apple Maps on iPhone/iPad, Google Maps elsewhere — no key needed. */
-export function directionsUrl(e: Pick<PublicEvent, 'address' | 'location_name' | 'lat' | 'lng'>) {
+export function directionsUrl(e: Pick<PublicEvent, 'address' | 'location_name' | 'lat' | 'lng'> & { map_url?: string | null }) {
+  if (e.map_url) {
+    try { const override = new URL(e.map_url); if (override.protocol === 'https:' && !override.username && !override.password) return override.href; } catch { /* use saved address */ }
+  }
   const q = e.address || e.location_name || (e.lat != null && e.lng != null ? `${e.lat},${e.lng}` : '');
   const apple = typeof navigator !== 'undefined' && /iPhone|iPad|iPod/i.test(navigator.userAgent);
   return apple ? `https://maps.apple.com/?daddr=${encodeURIComponent(q)}` : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(q)}`;
