@@ -5034,6 +5034,7 @@ export type Database = {
           attempt_no: number
           deadline: string | null
           id: string
+          outcome_id: string | null
           passed: boolean | null
           quiz_id: string
           score_pct: number | null
@@ -5047,6 +5048,7 @@ export type Database = {
           attempt_no: number
           deadline?: string | null
           id?: string
+          outcome_id?: string | null
           passed?: boolean | null
           quiz_id: string
           score_pct?: number | null
@@ -5060,6 +5062,7 @@ export type Database = {
           attempt_no?: number
           deadline?: string | null
           id?: string
+          outcome_id?: string | null
           passed?: boolean | null
           quiz_id?: string
           score_pct?: number | null
@@ -5071,7 +5074,55 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "quiz_attempts_outcome_id_fkey"
+            columns: ["outcome_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_outcomes"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "quiz_attempts_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_bands: {
+        Row: {
+          body_en: string | null
+          body_es: string | null
+          created_at: string
+          id: string
+          min_pct: number
+          quiz_id: string
+          title_en: string
+          title_es: string
+        }
+        Insert: {
+          body_en?: string | null
+          body_es?: string | null
+          created_at?: string
+          id?: string
+          min_pct?: number
+          quiz_id: string
+          title_en?: string
+          title_es?: string
+        }
+        Update: {
+          body_en?: string | null
+          body_es?: string | null
+          created_at?: string
+          id?: string
+          min_pct?: number
+          quiz_id?: string
+          title_en?: string
+          title_es?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_bands_quiz_id_fkey"
             columns: ["quiz_id"]
             isOneToOne: false
             referencedRelation: "quizzes"
@@ -5082,34 +5133,97 @@ export type Database = {
       quiz_options: {
         Row: {
           id: string
+          image_alt: string | null
+          image_path: string | null
           is_correct: boolean
           label_en: string
           label_es: string
+          outcome_id: string | null
           question_id: string
           sort_order: number
         }
         Insert: {
           id?: string
+          image_alt?: string | null
+          image_path?: string | null
           is_correct?: boolean
           label_en?: string
           label_es?: string
+          outcome_id?: string | null
           question_id: string
           sort_order?: number
         }
         Update: {
           id?: string
+          image_alt?: string | null
+          image_path?: string | null
           is_correct?: boolean
           label_en?: string
           label_es?: string
+          outcome_id?: string | null
           question_id?: string
           sort_order?: number
         }
         Relationships: [
           {
+            foreignKeyName: "quiz_options_outcome_id_fkey"
+            columns: ["outcome_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_outcomes"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "quiz_options_question_id_fkey"
             columns: ["question_id"]
             isOneToOne: false
             referencedRelation: "quiz_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_outcomes: {
+        Row: {
+          body_en: string | null
+          body_es: string | null
+          created_at: string
+          id: string
+          image_alt: string | null
+          image_path: string | null
+          quiz_id: string
+          sort_order: number
+          title_en: string
+          title_es: string
+        }
+        Insert: {
+          body_en?: string | null
+          body_es?: string | null
+          created_at?: string
+          id?: string
+          image_alt?: string | null
+          image_path?: string | null
+          quiz_id: string
+          sort_order?: number
+          title_en?: string
+          title_es?: string
+        }
+        Update: {
+          body_en?: string | null
+          body_es?: string | null
+          created_at?: string
+          id?: string
+          image_alt?: string | null
+          image_path?: string | null
+          quiz_id?: string
+          sort_order?: number
+          title_en?: string
+          title_es?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_outcomes_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
             referencedColumns: ["id"]
           },
         ]
@@ -5122,6 +5236,8 @@ export type Database = {
           explanation_en: string | null
           explanation_es: string | null
           id: string
+          image_alt: string | null
+          image_path: string | null
           points: number
           prompt_en: string
           prompt_es: string
@@ -5136,6 +5252,8 @@ export type Database = {
           explanation_en?: string | null
           explanation_es?: string | null
           id?: string
+          image_alt?: string | null
+          image_path?: string | null
           points?: number
           prompt_en?: string
           prompt_es?: string
@@ -5150,6 +5268,8 @@ export type Database = {
           explanation_en?: string | null
           explanation_es?: string | null
           id?: string
+          image_alt?: string | null
+          image_path?: string | null
           points?: number
           prompt_en?: string
           prompt_es?: string
@@ -5216,21 +5336,26 @@ export type Database = {
         Row: {
           attempts_allowed: number | null
           cooldown_minutes: number
+          cover_alt: string | null
+          cover_path: string | null
           created_at: string
           created_by: string | null
+          host_id: string | null
           id: string
           instructions_en: string | null
           instructions_es: string | null
           is_published: boolean
           is_required: boolean
           lesson_id: string | null
-          offer_id: string
+          mode: string
+          offer_id: string | null
           pass_pct: number
           randomize_answers: boolean
           randomize_questions: boolean
           reveal_answers: string
           show_score: boolean
           sort_order: number
+          team_id: string | null
           time_limit_minutes: number | null
           title_en: string
           title_es: string
@@ -5239,21 +5364,26 @@ export type Database = {
         Insert: {
           attempts_allowed?: number | null
           cooldown_minutes?: number
+          cover_alt?: string | null
+          cover_path?: string | null
           created_at?: string
           created_by?: string | null
+          host_id?: string | null
           id?: string
           instructions_en?: string | null
           instructions_es?: string | null
           is_published?: boolean
           is_required?: boolean
           lesson_id?: string | null
-          offer_id: string
+          mode?: string
+          offer_id?: string | null
           pass_pct?: number
           randomize_answers?: boolean
           randomize_questions?: boolean
           reveal_answers?: string
           show_score?: boolean
           sort_order?: number
+          team_id?: string | null
           time_limit_minutes?: number | null
           title_en?: string
           title_es?: string
@@ -5262,21 +5392,26 @@ export type Database = {
         Update: {
           attempts_allowed?: number | null
           cooldown_minutes?: number
+          cover_alt?: string | null
+          cover_path?: string | null
           created_at?: string
           created_by?: string | null
+          host_id?: string | null
           id?: string
           instructions_en?: string | null
           instructions_es?: string | null
           is_published?: boolean
           is_required?: boolean
           lesson_id?: string | null
-          offer_id?: string
+          mode?: string
+          offer_id?: string | null
           pass_pct?: number
           randomize_answers?: boolean
           randomize_questions?: boolean
           reveal_answers?: string
           show_score?: boolean
           sort_order?: number
+          team_id?: string | null
           time_limit_minutes?: number | null
           title_en?: string
           title_es?: string
@@ -5295,6 +5430,13 @@ export type Database = {
             columns: ["offer_id"]
             isOneToOne: false
             referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quizzes_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
             referencedColumns: ["id"]
           },
         ]
@@ -7739,6 +7881,7 @@ export type Database = {
       }
       can_build_resources: { Args: { _team: string }; Returns: boolean }
       can_checkin_event: { Args: { _event: string }; Returns: boolean }
+      can_edit_quiz: { Args: { _quiz: string }; Returns: boolean }
       can_edit_track: { Args: { _track: string }; Returns: boolean }
       can_join_conversation: { Args: { _event: string }; Returns: boolean }
       can_manage_event: { Args: { _event_id: string }; Returns: boolean }
@@ -7955,6 +8098,7 @@ export type Database = {
         Returns: string
       }
       duplicate_offer: { Args: { _offer: string }; Returns: string }
+      duplicate_quiz: { Args: { _quiz: string }; Returns: string }
       effective_plan: { Args: { _uid: string }; Returns: Json }
       email_token: { Args: { _email: string; _lang: string }; Returns: string }
       enqueue_automation_message: {
@@ -8459,6 +8603,9 @@ export type Database = {
       queue_rsvp_reminders: { Args: { _rsvp: string }; Returns: undefined }
       quiz_access_error: { Args: { _quiz: string }; Returns: string }
       quiz_blockers: { Args: { _quiz: string }; Returns: string[] }
+      quiz_host_summary: { Args: { _quiz: string }; Returns: Json }
+      quiz_option_counts: { Args: { _quiz: string }; Returns: Json }
+      quiz_result: { Args: { _attempt: string }; Returns: Json }
       record_ai_usage: {
         Args: { _feature: string; _input: number; _output: number }
         Returns: undefined
@@ -9073,6 +9220,7 @@ export type Database = {
         Args: { _action: string; _meta?: Json; _target?: string; _team: string }
         Returns: undefined
       }
+      team_quizzes: { Args: { _team: string }; Returns: Json }
       team_seat_usage: { Args: { _team: string }; Returns: Json }
       team_seat_usage_limit: { Args: { _team: string }; Returns: number }
       team_topics: { Args: { _team: string }; Returns: Json }
