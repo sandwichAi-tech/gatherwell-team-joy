@@ -61,3 +61,19 @@ export function trackState(trackPublished: boolean, lessons: { is_published: boo
   if (live < lessons.length) return { key: 'publishedPartial' as const, live, total: lessons.length };
   return { key: 'published' as const, live, total: lessons.length };
 }
+
+type LessonLike = { id: string; is_published: boolean; title_en: string | null; title_es: string | null; notes_en?: string | null; notes_es?: string | null; description_en?: string | null; description_es?: string | null };
+const lessonHasPlaceholder = (l: LessonLike) => hasPlaceholder(l.title_en, l.title_es, l.notes_en, l.notes_es, l.description_en, l.description_es);
+
+/** Tracks with several lessons, or a blueprint copy still holding example text, are edited lesson by lesson. */
+export const isMultiLessonTrack = (lessons: LessonLike[]) => lessons.length > 1 || lessons.some(lessonHasPlaceholder);
+
+/** Lessons whose example text must be replaced before the track can be published. */
+export const placeholderLessons = <L extends LessonLike>(lessons: L[]) => lessons.filter(lessonHasPlaceholder);
+
+/**
+ * First publish makes every reviewed draft lesson visible with the track; an Update never
+ * changes lesson visibility the coach set afterwards. Lessons still holding placeholders never auto-publish.
+ */
+export const lessonsToPublishWithTrack = (lessons: LessonLike[], trackWasPublished: boolean) =>
+  trackWasPublished ? [] : lessons.filter(l => !l.is_published && !lessonHasPlaceholder(l)).map(l => l.id);
