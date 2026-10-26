@@ -953,6 +953,13 @@
       "when": 1793047080193,
       "tag": "0135_event_registration_window_reliability",
       "breakpoints": true
+    },
+    {
+      "idx": 136,
+      "version": "7",
+      "when": 1793048337633,
+      "tag": "0136_public_event_ticket_availability_restore",
+      "breakpoints": true
     }
   ]
 }
