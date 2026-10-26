@@ -1,5 +1,11 @@
 # Challenge experience pass — DONE
 
+## Waiver library — rows 64, 84–86
+- [ ] 85: private reusable text library, immutable versions, preview/archive and manager isolation.
+- [ ] 64/86: explicit event attachment, registration acceptance/history and check-in binding.
+- [ ] 84: trace team requirement visibility and preserve explicit per-event scope.
+- [ ] Isolated verification, bilingual phone/desktop review, tests, compilation and cleanup; no deployment.
+
 ## Attendance launch pass — rows 93, 98, 99, 100
 - [ ] 98 In Progress: event-bound owner/staff/outsider, two attendees, waiver/cancellation/wrong-event/duplicate and camera-denied manual checks passed; physical camera and full offline/retry UI matrix unverified.
 - [ ] 93 In Progress: Home QR decoded privately with jsQR and accepted through event-bound scanner manual fallback; wrong-event and duplicate verified; physical phones remain unavailable.
