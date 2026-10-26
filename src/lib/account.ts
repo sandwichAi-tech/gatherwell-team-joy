@@ -115,7 +115,7 @@ export function parseJoinCode(input: string) {
   return ((match ? match[1] : value) ?? '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
 }
 
-export async function uploadMedia(userId: string, file: File, kind: 'avatar' | 'cover' | 'announcement', at?: string) {
+export async function uploadMedia(userId: string, file: File, kind: 'avatar' | 'cover' | 'announcement' | 'quiz', at?: string) {
   const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
   const path = at ?? `${userId}/${kind}-${Date.now()}.${ext}`;
   const { data: room } = await supabase.rpc('storage_allows', { _bytes: file.size });

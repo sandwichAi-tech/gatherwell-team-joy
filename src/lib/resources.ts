@@ -6,7 +6,7 @@ import type { LearningEntry } from '@/lib/content';
 /** Resources page model: one card shape mapped from tracks/lessons, course and download offers, and recipes. Memberships are never resources. */
 
 export const RESOURCE_TABS = ['foryou', 'library', 'live', 'saved', 'mine'] as const;
-export const RESOURCE_TYPES = ['all', 'course', 'video', 'audio', 'guide', 'file', 'link', 'recipe'] as const;
+export const RESOURCE_TYPES = ['all', 'course', 'quiz', 'video', 'audio', 'guide', 'file', 'link', 'recipe'] as const;
 export const RESOURCE_SOURCES = ['all', 'team', 'zoheewell'] as const;
 export type ResourceTab = (typeof RESOURCE_TABS)[number];
 export type ResourceTypeFilter = (typeof RESOURCE_TYPES)[number];
@@ -16,7 +16,7 @@ export type ResourceSource = 'team' | 'zoheewell';
 
 export type ResourceCardData = {
   key: string; id: string;
-  entity: 'track' | 'course' | 'download' | 'recipe' | 'lesson';
+  entity: 'track' | 'course' | 'download' | 'recipe' | 'lesson' | 'quiz';
   type: ResourceType; source: ResourceSource;
   title_en: string; title_es: string;
   cover_url: string | null; cover_style: number; cover: 'learn' | 'offer';
@@ -196,4 +196,16 @@ export const savedOfferResourcesQuery = (userId: string) => queryOptions({
         cover_url: o.cover_url, cover_style: o.cover_style, cover: 'offer', status: o.status === 'archived' ? 'archived' : 'published', creator: null, progress: null, minutes: null, hasQuiz: false,
         href: { to: '/offer/$id', params: { id: o.id } } }));
   },
+});
+
+export type TeamQuiz = { id: string; title_en: string; title_es: string; mode: 'scored' | 'outcome' | 'poll'; is_published: boolean; mine: boolean; questions: number; done: boolean; cover_path: string | null };
+export const teamQuizzesQuery = (teamId: string) => queryOptions({
+  queryKey: ['team-quizzes', teamId], enabled: !!teamId,
+  queryFn: async () => ((await (supabase as any).rpc('team_quizzes', { _team: teamId })).data ?? []) as TeamQuiz[],
+});
+/** Standalone team quiz as a Resources card (published for everyone; drafts only in the creator's Mine tab). */
+export const quizCard = (q: TeamQuiz, teamName: string | null): ResourceCardData => ({
+  key: `quiz:${q.id}`, id: q.id, entity: 'quiz', type: 'quiz', source: 'team', title_en: q.title_en, title_es: q.title_es, cover_url: null, cover_style: 0, cover: 'learn',
+  status: q.is_published ? 'published' : 'draft', creator: teamName, progress: { done: q.done ? 1 : 0, total: 1 }, minutes: null, hasQuiz: false,
+  href: { to: '/learn/quiz/$id', params: { id: q.id } },
 });
