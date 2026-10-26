@@ -1,10 +1,10 @@
 # Challenge experience pass — DONE
 
 ## Waiver library — rows 64, 84–86
-- [ ] 85: private reusable text library, immutable versions, preview/archive and manager isolation.
-- [ ] 64/86: explicit event attachment, registration acceptance/history and check-in binding.
-- [ ] 84: trace team requirement visibility and preserve explicit per-event scope.
-- [ ] Isolated verification, bilingual phone/desktop review, tests, compilation and cleanup; no deployment.
+- [ ] 85 In Progress: private text library, immutable versions, preview/archive and manager isolation implemented; library create/edit browser submit matrix still unverified.
+- [ ] 64/86 In Progress: explicit attachment, free registration/history/check-in verified; paid checkout acceptance and complete waiver failure UI matrix remain unverified (no safely configured payment test environment).
+- [x] 84: traced missing requires_waiver selection; exposed explicit team requirement, pinned text version, public visibility verified.
+- [x] Isolated three-account permission/registration/history checks and exact cleanup; EN/ES library 320/390/1280, no overflow/runtime errors; 22 focused + full 84 files/721 tests; automatic compilation OK; no deployment.
 
 ## Attendance launch pass — rows 93, 98, 99, 100
 - [ ] 98 In Progress: event-bound owner/staff/outsider, two attendees, waiver/cancellation/wrong-event/duplicate and camera-denied manual checks passed; physical camera and full offline/retry UI matrix unverified.

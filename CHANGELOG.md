@@ -1,5 +1,12 @@
 # ZoheeWell Change Log
 
+## 2026-10-26 — Waiver library, rows 64/84/85/86
+- Added Me → My waivers, private team-manager text library, bilingual entered text, preview/archive and immutable versions. Existing event-specific PDF upload remains separate; no extraction claimed. Event Builder explicitly selects library snapshots and the legacy team requirement; selection persists in partial drafts and reopened events.
+- Root cause of invisible team waiver: saved team text was gated by events.requires_waiver, but the builder exposed no selection. New event selection pins a team text version; library edits/archive leave existing attachments and acceptance hashes untouched. Existing event-waiver snapshots/history and server check-in guard are reused.
+- Evidence: isolated three-account manager/attendee/outsider checks; attached/team waiver visible to public registration; free registration records selected version; host status and check-in/duplicate verified; library v2/archive leave v1 attachment and acceptance unchanged. Browser: Me library EN/ES at 320/390/1280, no overflow, zero page errors; edit attachment reopened and public registration shows readable unchecked documents. 22 focused tests passed; full suite 84 files/721 tests passed. Automatic typecheck/compile build OK 23:05:53 UTC. Manual production build/typecheck not run under environment restrictions.
+- Cleanup: exact new accounts/profiles/team/events/registration/library and dependent rows removed; principal leftovers zero, no files/media uploaded; temporary sessions/scripts/screenshots removed. Real data and older fixtures untouched; nothing published/deployed.
+- Remaining: library create/edit submit UI matrix, paid acceptance/provider flow and exhaustive failure/focus matrix unverified. Rows 64/85/86 stay In Progress; row 84 completed for traced team visibility and explicit scope.
+
 ## 2026-10-26 — Attendance launch pass, rows 93/98/99/100 (In Progress)
 - Reused existing RSVP QR tokens, jsQR, staff assignments, waiver history, Communication templates/journeys and outbox pipeline. Added event-bound quick check-in on host Home and event management, server waiver/status guards, wrong-event feedback and truthful memory-only pending retries.
 - Added editable attendance/absent post-event journey drafts, event-time-zone scheduling, durable per-journey/RSVP deduplication, preference/attendance checks before dispatch, and safe scoped in-app processing. Preserved existing provider setup gates; no external sending was invoked.
