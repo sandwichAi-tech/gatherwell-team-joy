@@ -56,4 +56,5 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Templates copy as drafts. Resource journeys use scoped entitlements and idempotent in-app delivery; event association saves atomically. Coach consent uses verified accounts or hashed expiring links; without a sender anonymous requests stay pending. Segments expose counts only.
 
 - Referral attribution/rewards/status are server-owned (0119 RPCs + orders_referral_hook), mirrored in src/lib/referrals.ts; landing reuses the analytics device id.
+- Profile IA: account fields edit only in Me's Edit profile, public-page fields only in HostProfilePanel (src/lib/profile-ia.ts PROFILE_FIELDS); host categories are allowed keys normalized by a DB trigger.
 - Event images use share-image.ts for all outputs; admin menu uses role checks.

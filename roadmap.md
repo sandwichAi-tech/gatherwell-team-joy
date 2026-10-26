@@ -10,3 +10,7 @@
 - [x] Commissions visible only to owning host (program area) and each referrer's own earnings; update PROJECT_RULES + CHANGELOG exception
 - [x] Totals stay zero until payments connected; lifecycle tested only with removable fixtures
 - [ ] Browser-test program setup sheet + link copy/share with a real eligible paid item (blocked: no paid items until payouts connect)
+
+## Profile/team usability (rows 66–69) — built 2026-10-26
+- [x] Invite landing, multi-category chips, profile editor split, team edit/description
+- [ ] Browser-test unauthorized team member view and public coach page category display (needs a second account / published slug)

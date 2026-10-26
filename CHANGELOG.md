@@ -1,5 +1,11 @@
 # ZoheeWell Change Log
 
+## 2026-10-26 — Profile/team usability (Website Notes rows 66–69)
+- /i/CODE is now a real invitation page (find events, or sign up with a safe return to /discover) instead of a silent redirect; friend invites stay separate from paid referral links.
+- Host categories are tap-to-select chips (up to 8) from the allowed list, normalized and de-duplicated in the database; legacy free text is mapped or flagged.
+- Edit profile (account fields) and Public host profile (presentation fields) no longer overlap; deep links /me?panel=edit|hostProfile; Edit my page opens the public editor.
+- Teams gain a description (≤500); leaders get Edit team on the team header and Team settings (/team?panel=edit) with validation and upload errors.
+
 ## 2026-10-25 — Referral programs (Website Notes rows 56–58)
 - Opt-in per paid public event or paid resource/course; percent (1–90) or flat (< price) reward, server-computed; fixed 30-day last-valid-click window.
 - Host area /referrals (setup, filters, aggregates, manual payout ledger); referrer view /referrals/mine; share card on /e/$id and /o/$id; links use ?rc=CODE.
