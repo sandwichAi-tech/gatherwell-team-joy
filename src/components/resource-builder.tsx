@@ -1,3 +1,5 @@
+import { uploadMedia } from '@/lib/account';
+import { OfferCover } from '@/components/offers';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
