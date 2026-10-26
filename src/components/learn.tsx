@@ -15,7 +15,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { workspaceQuery } from '@/lib/account';
 import { COVER_STYLES } from '@/lib/gatherings';
 import { BrandImage } from '@/components/brand-image';
-import { learnRendition } from '@/lib/learn';
+import { DocumentViewer } from '@/components/document-viewer';
+import { learnRendition, viewerFor, emptyMediaKey } from '@/lib/learn';
 import {
   ancestorsQuery, effectiveType, embedUrl, icsFor, isUpcomingLive, learnFileUrl, learnQuery, lessonTitle, lessonsOf, listOf, pick, recipesQuery, visibleLessons,
   remindersQuery, RECIPE_TAGS, populatedTracks, trackStats, trackTitle, type LearnData, type Lesson, type Recipe, type Track,
@@ -179,28 +180,29 @@ function CompletionCard({ title }: { title: string }) {
 
 function Player({ lesson }: { lesson: Lesson }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
-  const type = effectiveType(lesson);
+  const kind = viewerFor(lesson);
   const external = lesson.type === 'live' ? lesson.replay_url : lesson.url;
-  const { data: fileUrl } = useQuery({ queryKey: ['learn-url', lesson.storage_path], queryFn: () => learnFileUrl(lesson.storage_path), enabled: !!lesson.storage_path && lesson.type !== 'live', staleTime: 50 * 60_000 });
+  const file = useQuery({ queryKey: ['learn-url', lesson.storage_path], queryFn: () => learnFileUrl(lesson.storage_path), enabled: !!lesson.storage_path && lesson.type !== 'live', staleTime: 50 * 60_000 });
+  const fileUrl = file.data;
   const embed = embedUrl(external);
-  if (type === 'video') {
-    if (fileUrl) return <div className="player"><video src={fileUrl} controls playsInline preload="metadata" /></div>;
+  const empty = <div className="player player-empty" role="status">{t(emptyMediaKey(lesson))}</div>;
+  if (kind === 'none') return lesson.type === 'live' ? null : empty;
+  if (kind === 'document') {
+    if (lesson.storage_path) return <DocumentViewer src={fileUrl} title={lessonTitle(lesson, lang) || t('learnHub.type.pdf')} loading={file.isLoading} error={file.isError || (file.isFetched && !fileUrl)} onRetry={() => void file.refetch()} />;
+    return <DocumentViewer src={external} downloadSrc={null} title={lessonTitle(lesson, lang) || t('learnHub.type.pdf')} />;
+  }
+  if (kind === 'video') {
+    if (lesson.storage_path) {
+      if (file.isLoading) return <div className="player player-empty" aria-busy="true">{t('publicEvent.loading')}</div>;
+      return fileUrl ? <div className="player"><video src={fileUrl} controls playsInline preload="metadata" /></div> : <div className="player player-empty" role="alert">{t('learnHub.docError')}</div>;
+    }
     if (embed) return <div className="player"><iframe src={embed} title={t('learnHub.type.video')} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen /></div>;
-    if (external) return <LinkCard url={external} />;
-    return <div className="player player-empty">{lesson.storage_path ? null : t('learnHub.noMedia')}</div>;
+    return external ? <LinkCard url={external} /> : empty;
   }
-  if (type === 'pdf') {
-    const src = fileUrl ?? external;
-    if (lesson.storage_path && !fileUrl) return <div className="player player-empty" aria-busy="true">{t('publicEvent.loading')}</div>;
-    return src ? <div className="pdf-frame"><iframe src={src} title={lessonTitle(lesson, lang) || t('learnHub.type.pdf')} />
-      <div className="sheet-actions"><Button asChild variant="secondary"><a href={src} target="_blank" rel="noopener noreferrer"><ExternalLink />{t('learnHub.openPdf')}</a></Button>
-        {fileUrl && <Button asChild variant="secondary"><a href={fileUrl} download><Download />{t('learnHub.downloadPdf')}</a></Button>}</div></div>
-      : <div className="player player-empty">{t('learnHub.noMedia')}</div>;
-  }
-  if (type === 'link') return external ? <LinkCard url={external} /> : null;
-  if (type === 'audio') return fileUrl ? <div className="player player-audio"><audio src={fileUrl} controls preload="metadata" /></div> : external ? <LinkCard url={external} /> : <div className="player player-empty">{t('learnHub.noMedia')}</div>;
-  if (type === 'file') return fileUrl ? <Button asChild variant="secondary"><a href={fileUrl} target="_blank" rel="noopener noreferrer"><Download />{t('learnHub.type.file')}</a></Button> : <div className="player player-empty">{t('learnHub.noMedia')}</div>;
-  if (type === 'text') { const body = pick(lang, lesson.description_en, lesson.description_es); return body ? <section className="panel lesson-text"><p>{body}</p></section> : null; }
+  if (kind === 'link') return external ? <LinkCard url={external} /> : empty;
+  if (kind === 'audio') return fileUrl ? <div className="player player-audio"><audio src={fileUrl} controls preload="metadata" /></div> : <div className="player player-empty" aria-busy={file.isLoading}>{t(file.isLoading ? 'publicEvent.loading' : 'learnHub.docError')}</div>;
+  if (kind === 'download') return fileUrl ? <Button asChild variant="secondary"><a href={fileUrl} target="_blank" rel="noopener noreferrer" download><Download />{t('learnHub.downloadPdf')}</a></Button> : <div className="player player-empty" aria-busy={file.isLoading}>{t(file.isLoading ? 'publicEvent.loading' : 'learnHub.docError')}</div>;
+  if (kind === 'text') { const body = pick(lang, lesson.description_en, lesson.description_es); return body ? <section className="panel lesson-text"><p>{body}</p></section> : null; }
   return null;
 }
 
