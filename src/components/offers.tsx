@@ -8,6 +8,7 @@ import { promoDiscount, type Promo } from '@/lib/promo';
 import { EmptyState } from '@/components/launch-states';
 import { CropFileInput } from '@/components/image-crop';
 import { BrandImage } from '@/components/brand-image';
+import { DocumentViewer } from '@/components/document-viewer';
 import { useEffect, useState } from 'react';
 import { confirmAction } from '@/components/confirm-dialog';
 import { Link } from '@tanstack/react-router';
@@ -259,6 +260,7 @@ export function OfferPage({ id, paid, panel }: { id: string; paid?: boolean; pan
       </>}
       <OfferDetailsEditor offer={detailsOpen ? offer : null} onClose={() => setDetailsOpen(false)} />
     </>}
+    {offer.kind === 'download' && owned && offer.file_path && <OwnedFileViewer offerId={offer.id} title={offerTitle(offer, lang)} />}
     {offer.kind === 'download' && owned && <BundleReader offerId={offer.id} userId={userId} />}
     {offer.kind !== 'download' && owned && offer.host_id !== userId && <>
       <CourseProgressPanel offerId={offer.id} isHost={false} />
@@ -362,3 +364,12 @@ export function MembersOnlyPicker({ table, id, teamId }: { table: 'events' | 'tr
 }
 
 function OfferSeal({ id }: { id: string }) { return useIsVerified(id) ? <> <VerifiedMark compact /></> : null; }
+
+/** Owners of a PDF download read it inline with Open/Download; other file types keep the Download button. */
+function OwnedFileViewer({ offerId, title }: { offerId: string; title: string }) {
+  const download = useServerFn(offerDownloadLink);
+  const q = useQuery({ queryKey: ['offer-file-view', offerId], queryFn: () => download({ data: { offerId, inline: true } }), staleTime: 8 * 60_000, retry: 1 });
+  if (q.data?.ok && !q.data.pdf) return null;
+  return <section className="panel"><DocumentViewer src={q.data?.ok ? q.data.viewUrl : null} downloadSrc={q.data?.ok ? q.data.url : undefined} title={title}
+    loading={q.isLoading} error={q.isError || (q.isFetched && !q.data?.ok)} onRetry={() => void q.refetch()} /></section>;
+}
