@@ -21,4 +21,10 @@
 - [x] Row 62 Full Resources pressure test (course release schedule enforced 0130; paid restore and real checkout wait on payouts)
 - [x] Row 70 Team discussion links + conversation replies/mentions (fixtures removed 2026-10-26)
 - [x] Row 71 Quiz studio: scored/outcome/poll, images+alt, player/results/retake, coach summary, Resources (paid-course quiz purchase path blocked until payouts connect)
-- [ ] Rows 75–81 Event Builder reliability: initial fixes and 687 tests pass; new fixtures removed. Still verify draft continuation, registration-capacity matrix, saved tier availability, paid/format variants, co-editor, complete inline errors, production build.
+- [x] Row 75: saved photo public refresh/card; type/size/decode/network/replacement failures; previous image retained.
+- [x] Row 76: unlimited registration, limited exact-full and over-capacity waitlist; disabled waitlist full state checked. Explicit unlimited never inherits a plan capacity.
+- [x] Row 77: address/override directions, unsafe fallback tests, online directions hidden; duplicate unsafe raw map link removed.
+- [ ] Row 78: free tier windows and save/reopen checked; public tiers restored. Paid-tier checkout/inventory remains blocked pending implementation/provider verification.
+- [ ] Row 79: linked summaries, keyboard focus/correction and conditional fixes checked; complete retreat/session/policy/recurrence conditional coverage remains unverified.
+- [ ] Row 80: minimum free person/online/hybrid and co-editor server publish checked; full co-editor browser and provider-connected paid publication remain unverified.
+- [ ] Row 81: quick/full untitled drafts, photo/tier/text restore and publish checked; multi/retreat/recurrence and fresh-login full field matrix remain unverified.

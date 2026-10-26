@@ -1,5 +1,16 @@
 # ZoheeWell Change Log
 
+## 2026-10-26 — Event Builder acceptance continuation
+- Fixed: failed image decode clears previous crop bitmap; online hidden map input no longer blocks payload; custom-duration/coordinates restore; draft query errors offer retry; missing conditional minimum-age feedback, add-on summary entries, linked summary focus; guest double-submit guard.
+- Fixed public ticket picker: a later public-event RPC had omitted ticket_tiers. Migration 0136 restores tiers plus confirmed sold counts without respondent data.
+- Migration 0135 preserves NULL unlimited capacity (previous guest_cap silently imposed plan capacity) and checks event/tier registration windows on RSVP writes. Closing instants are exclusive and aligned with client helpers. Existing positive configured limits retain plan checks.
+- Removed direct unsafe map_url anchor, leaving validated directions with saved-address fallback; online directions hidden.
+- Evidence: 54 focused tests across 4 files; full suite 79 files/696 tests passed. Automatic preview compilation last build OK; manual typecheck/production build not run because environment instructions reserve them for automatic checks.
+- Browser: EN/ES 320/390/1280 builder layouts with no overflow; untitled quick draft reopen; full draft text/summary/photo/capacity/ticket dates reopen then publish; type, >8 MB, decode and network replacement failures; saved public photo after refresh and event-card image; minimum free person/online/hybrid success; EN/ES reversed sales-date linked summary, keyboard focus, correction clearing; online directions hidden. Limited guests: two going plus one waitlist; unlimited: three going and no remaining-seat count. Waitlist-off full button disabled before enabling fixture waitlist.
+- Caller checks: co-editor update/publication succeeds, outsider publication returns zero rows, paid price write rejected by payout guard, private untitled draft unregistrable; server tier before/after rejected, within/blank accepted; event-wide before/after rejected.
+- Cleanup: removed exact new team and three accounts, all its events/RSVPs/drafts, four private media objects and fixture-only notifications/activity. Owner-approved older fixtures untouched. Read checks: new accounts/profiles/team/registrations zero. Temporary browser sessions/scripts/images/screenshots removed at end.
+- Remaining acceptance: paid tier checkout/inventory; full conditional validation coverage (retreat/session/policy/recurrence); co-editor end-to-end browser and provider-connected paid flow; multi/retreat/recurrence/fresh-login draft field matrix. Only rows 75–77 marked done; rows 78–81 remain in progress.
+
 ## 2026-10-26 — Rows 75–81 Event Builder pass (in progress)
 - Photos: explicit JPG/PNG/WebP and 8 MB limit, decode/upload errors, upload status, save blocked during upload, prior photo retained on failed replacement; square preview object URL released.
 - Capacity: explicit unlimited/limited controls; unlimited remains NULL, existing limits prefill. Location contains the existing optional map override; online hides it; attendee directions prefer a valid override.
