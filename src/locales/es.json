@@ -1844,7 +1844,9 @@
       "text": "Se abre el {{date}}. Tu curso libera una lección a la vez según el calendario de tu anfitrión.",
       "opens": "Se abre el {{date}}",
       "back": "Volver al curso"
-    }
+    },
+    "enrollFirst": "Únete o compra este curso para abrir sus lecciones.",
+    "enrollOpen": "Ver opciones del curso"
   },
   "challenges": {
     "title": "Retos",

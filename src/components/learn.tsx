@@ -156,6 +156,10 @@ export function TrackPage({ id }: { id: string }) {
   if (!isLive(opensAt) && !showDrafts) return <section className="panel"><BackLink to="/learn" label={t('learn.title')} />
     <h1>{title}</h1><p className="chip" role="status">{t('resources.item.notYet')}</p>
     <p className="auth-subtitle">{t('resources.item.notYetText', { date: new Date(opensAt!).toLocaleString(lang) })}</p></section>;
+  // Course without access: lessons are withheld server-side; hand off to the course page to join or buy.
+  if (track.offer_id && outline.length === 0 && !showDrafts) return <section className="panel empty-state" role="status"><BackLink to="/learn" label={t('learn.title')} />
+    <Lock /><h1>{title}</h1><p>{t('learnHub.enrollFirst')}</p>
+    <Button asChild><Link to="/offer/$id" params={{ id: track.offer_id }}>{t('learnHub.enrollOpen')}<ArrowRight /></Link></Button></section>;
   return <>
     <BackLink to="/learn" label={t('learn.title')} />
     <section className="track-hero"><LearnCover path={track.cover_url} style={track.cover_style} title={title} className="is-wide" />

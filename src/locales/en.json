@@ -1844,7 +1844,9 @@
       "text": "It opens {{date}}. Your course releases one lesson at a time on the schedule your host set.",
       "opens": "Opens {{date}}",
       "back": "Back to the course"
-    }
+    },
+    "enrollFirst": "Join or buy this course to open its lessons.",
+    "enrollOpen": "See course options"
   },
   "challenges": {
     "title": "Challenges",
