@@ -1,5 +1,9 @@
 # ZoheeWell Change Log
 
+## 2026-10-26 — Rows 60 and 61 closed
+- Row 60 done: Spanish PDF lesson at 320/390/1280 (Abrir PDF / Descargar, reload, signed links, loading and error/retry states); purchased-PDF reader verified with a removable no-charge test purchase; outsider denied lesson, offer viewer and signed file links.
+- Row 61 done: track blueprints now open in the item builder; multi-lesson tracks edit/reorder every lesson in Content; Preview lists each lesson's visibility; Publish is blocked (naming the lessons) until [bracketed] examples are replaced; first Publish makes reviewed draft lessons visible, Update never changes lesson visibility; reorder no longer sticks on equal positions.
+
 ## 2026-10-26 — Resources pressure test (Website Notes rows 60–62, in progress)
 - Row 60: PDF lessons (and any PDF attached to a lesson saved under another type) open in a shared document viewer with Open and Download; empty states name the missing document/audio/file instead of "video"; signed-URL loading/error/retry states.
 - Lesson uploads must match the lesson type (a PDF can no longer be attached to a video lesson).
