@@ -14,7 +14,6 @@ import { confirmAction } from '@/components/confirm-dialog';
 import { CoverPicker, Field } from '@/components/learn-manage';
 import { LangFields, LangPair } from '@/components/lang-fields';
 import { LearnCover, useLearn } from '@/components/learn';
-import { QuizEditor } from '@/components/quiz';
 import { RefundSelect } from '@/components/refund-line';
 import { RichTextEditor, RichTextView } from '@/components/rich-text';
 import { getPaymentsReadiness } from '@/lib/billing.functions';
@@ -228,7 +227,8 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const submitting = useRef(false);
   const tz = typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC';
   const [courseId, setCourseId] = useState('');
-  const [createdQuiz, setCreatedQuiz] = useState<{ quizId: string; offer: Offer } | null>(null);
+  // A quiz can live on its own in the team's Resources (no course needed) or inside a course.
+  const [quizHome, setQuizHome] = useState<'team' | 'course'>('team');
   const [busy, setBusy] = useState(false);
   // Multi-lesson tracks (e.g. from a blueprint) edit every lesson in the curriculum instead of one preset lesson.
   const [trackLessons, setTrackLessons] = useState<Lesson[] | null>(null);
@@ -381,7 +381,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const status = loaded?.status ?? 'draft';
 
   const issues = itemIssues(type, item, {
-    lessonUrl: draft.lesson.url, live: draft.lesson.live, filePath: draft.offer.filePath, courseId, publish: true,
+    lessonUrl: draft.lesson.url, live: draft.lesson.live, filePath: draft.offer.filePath, courseId: type === 'quiz' && quizHome === 'team' ? 'team' : courseId, publish: true,
   });
   const paidBlocked = paid && !sellReady;
   const lessonsWithPlaceholders = trackLessons ? placeholderLessons(trackLessons) : [];
@@ -507,27 +507,23 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
       setSnapshot(itemSnapshot(item)); setDraftSnap(JSON.stringify(draft));
       return finish(true, publish ? { entity: 'offer', id: offerId } : undefined);
     }
-    // quiz: create a draft quiz on the chosen course, then open the question builder inline.
-    const offer = courses.find(o => o.id === courseId);
-    if (!offer) return finish(false);
+    // quiz: create a draft (standalone in the team, or on the chosen course), then open the quiz studio.
+    const offer = quizHome === 'course' ? courses.find(o => o.id === courseId) : null;
+    if (quizHome === 'course' && !offer) return finish(false);
+    if (quizHome === 'team' && !teamId) return finish(false);
     const q = await supabase.from('quizzes').insert({
-      title_en: base.title_en, title_es: base.title_es, offer_id: offer.id, created_by: userId,
+      title_en: base.title_en, title_es: base.title_es, ...(offer ? { offer_id: offer.id } : { team_id: teamId }), mode: 'scored',
       pass_pct: 80, cooldown_minutes: 0, is_required: false, show_score: true, reveal_answers: 'after_pass', is_published: false, sort_order: 1,
-    }).select('id').single();
+    } as never).select('id').single();
     setBusy(false);
-    if (q.error) { toast.error(t('profile.saveError')); return; }
+    if (q.error || !q.data) { toast.error(t('profile.saveError')); return; }
     toast.success(t('resources.builder.quizReady'));
-    setCreatedQuiz({ quizId: q.data.id, offer });
+    setSnapshot(itemSnapshot(item)); setDraftSnap(JSON.stringify(draft));
+    void qc.invalidateQueries({ queryKey: ['team-quizzes'] });
+    void navigate({ to: '/learn/quiz/$id', params: { id: (q.data as { id: string }).id } });
   };
 
   const cta = (lang === 'es' ? item.ctaEs || item.ctaEn : item.ctaEn || item.ctaEs) || t(defaultCtaKey(paid));
-
-  if (createdQuiz) {
-    return <QuizEditor
-      quiz={{ id: createdQuiz.quizId, offer_id: createdQuiz.offer.id, title_en: item.titleEn.trim(), title_es: item.titleEs.trim(), pass_pct: 80, cooldown_minutes: 0, is_required: false, show_score: true, reveal_answers: 'after_pass', is_published: false, sort_order: 1 }}
-      offer={createdQuiz.offer} lessons={[]}
-      onClose={() => void navigate({ to: '/offer/$id', params: { id: createdQuiz.offer.id }, search: { panel: 'quiz' } })} />;
-  }
 
   if (loadingItem) return <section className="panel builder-panel"><p className="muted-small">{t('publicEvent.loading')}</p></section>;
   if (loadError) return <section className="panel builder-panel">
@@ -640,12 +636,18 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
             ? <Curriculum trackId={loaded.trackId} teamId={teamId} lang={lang} />
             : <p className="muted-small">{t('resources.item.curriculum.saveFirst')}</p>)}
 
-          {type === 'quiz' && <div className="form-field"><span className="field-label">{t('resources.builder.pickCourse')}</span>
+          {type === 'quiz' && <div className="form-field"><span className="field-label">{t('quizStudio.createTitle')}</span>
+            <div className="filter-chips" role="radiogroup" aria-label={t('quizStudio.createTitle')}>
+              {(['team', 'course'] as const).map(h => <button key={h} type="button" role="radio" aria-checked={quizHome === h} className={`filter-chip ${quizHome === h ? 'is-active' : ''}`} onClick={() => setQuizHome(h)}>{t(h === 'team' ? 'quizStudio.standalone' : 'quizStudio.inCourse')}</button>)}
+            </div>
+            <p className="field-hint">{t(quizHome === 'team' ? 'quizStudio.standaloneHint' : 'quizStudio.inCourseHint')}</p>
+            {quizHome === 'course' && <>
             {courses.length ? <select className="field-input" value={courseId} onChange={e => setCourseId(e.target.value)} aria-label={t('resources.builder.pickCourse')}>
               <option value="">{t('resources.builder.pickCoursePlaceholder')}</option>
               {courses.map(o => <option key={o.id} value={o.id}>{offerTitle(o, lang) || t('offers.untitled')}</option>)}
             </select> : <p className="muted-small">{t('resources.builder.noCourses')}</p>}
             <Button asChild variant="secondary" size="sm"><Link to="/offers" search={{ new: 'course' }}><GraduationCap />{t('resources.create.quizParent.new')}</Link></Button>
+            </>}
           </div>}
 
           {!sections.includes('access') && type !== 'quiz' && activationField}
