@@ -19,3 +19,5 @@
 - [x] Row 60 PDF resources
 - [x] Row 61 Resource blueprint publishing (track blueprints; live-workshop date/link edited in Manage)
 - [ ] Row 62 Full Resources pressure test — in progress
+- [ ] Row 70 Team discussion links + conversation replies/mentions (fixed; final cleanup pending)
+- [ ] Row 71 Quiz studio: scored/outcome/poll, images+alt, player/results/retake, coach summary, Resources, EN/ES verification, cleanup
