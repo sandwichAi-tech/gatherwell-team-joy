@@ -15,23 +15,25 @@ import { supabase } from '@/integrations/supabase/client';
 import { initialsOf } from '@/lib/account';
 import { rsvpErrorKey } from '@/lib/guest';
 import { gatherwellHead } from '@/lib/gatherwell-head';
+import { normalizeCheckinCode, checkinErrorResult, confirmedAttendance, type CheckinResult } from '@/lib/checkin-result';
 import { createCheckinQueue, isRetryableCheckinError, type PendingCheckin } from '@/lib/checkin-queue';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
 import { handleScannerDialogKeyDown } from '@/lib/scanner-a11y';
 import { vibrateOnUserAction } from '@/lib/haptics';
 import { BelongingPrompt, BelongingTags, useBelonging, useSmallGroups } from '@/components/belonging';
 
-export const Route = createFileRoute('/_authenticated/_app/event_/$id/checkin')({ head: () => gatherwellHead('events'), component: CheckInMode });
+export const Route = createFileRoute('/_authenticated/_app/event_/$id/checkin')({ head: () => gatherwellHead('events', 'attendancePilot.quickCheckin'), component: CheckInMode });
 
-type Scan = { result: 'ok' | 'already' | 'not_found' | 'error' | 'pending' | 'cancelled' | 'waitlist'; name?: string };
+type Scan = CheckinResult;
 
 function CheckInMode() {
   const { id } = Route.useParams(); const { t, i18n } = useTranslation(); const queryClient = useQueryClient();
   const lang = i18n.resolvedLanguage === 'es' ? 'es-419' : 'en-US';
   const { data: event } = useQuery({ queryKey: ['event', id, 'title'], queryFn: async () => (await supabase.from('events').select('id,title,status').eq('id', id).maybeSingle()).data });
+  const { data: authorized = false, isPending: authorizing } = useQuery({ queryKey: ['event', id, 'can-checkin'], queryFn: async () => { const { data, error } = await supabase.rpc('can_checkin_event', { _event: id }); if (error) throw error; return !!data; } });
   const listKey = ['event', id, 'checkin-list'];
   const { data: rows = [], error, isLoading, refetch } = useQuery({
-    queryKey: listKey,
+    queryKey: listKey, enabled: authorized,
     queryFn: async () => {
       // Minimal admission fields via the check-in capability; works for assigned check-in staff too.
       const { data, error } = await supabase.rpc('checkin_guest_list', { _event: id });
@@ -62,9 +64,9 @@ function CheckInMode() {
           : await supabase.rpc('check_in_code', { _event: id, _code: item.code ?? '' });
         if (res.error) {
           if (isRetryableCheckinError(res.error, res.status)) break;
-          toast.error(t('profile.saveError')); queue.current.remove(item.key);
+          setScan(checkinErrorResult(res.error)); queue.current.remove(item.key);
         } else {
-          queue.current.remove(item.key); trackEvent('checkin');
+          queue.current.remove(item.key); if (!item.code || confirmedAttendance(res.data as Scan)) trackEvent('checkin');
           if (item.code) setScan((res.data ?? { result: 'error' }) as Scan);
         }
       }
@@ -89,7 +91,8 @@ function CheckInMode() {
   const checkIn = async (rid: string, undo = false) => {
     if (!navigator.onLine) { enqueue({ key: rid, eventId: id, rsvpId: rid, undo }); return; }
     const { error, status } = await supabase.rpc('check_in_rsvp', { _rsvp: rid, _undo: undo });
-    if (error) { if (isRetryableCheckinError(error, status)) enqueue({ key: rid, eventId: id, rsvpId: rid, undo }); else toast.error(t('profile.saveError')); return; }
+    if (error) { if (isRetryableCheckinError(error, status)) enqueue({ key: rid, eventId: id, rsvpId: rid, undo }); else setScan(checkinErrorResult(error)); return; }
+    setScan({ result: undo ? 'already' : 'ok', name: rows.find(r => r.id === rid)?.guest_name ?? '' });
     trackEvent('checkin');
     vibrateOnUserAction(30);
     const b = belong.get(rid); const name = rows.find(r => r.id === rid)?.guest_name?.split(/\s+/)[0] ?? '';
@@ -97,15 +100,26 @@ function CheckInMode() {
     else if (!undo && b?.first_time) toast.success(t('belong.welcomePrompt', { name }), { duration: 6000 });
     await queryClient.invalidateQueries({ queryKey: listKey }); void queryClient.invalidateQueries({ queryKey: ['event', id, 'belonging'] });
   };
-  const onCode = async (code: string) => {
+  const admissionBusy = useRef(false);
+  const onCode = useCallback(async (raw: string) => {
+    if (admissionBusy.current) return;
+    const code = normalizeCheckinCode(raw);
+    if (!code) { setScan({ result: 'not_found' }); return; }
     if (!navigator.onLine) { enqueue({ key: code, eventId: id, code, undo: false }); setScan({ result: 'pending' }); return; }
-    const { data, error, status } = await supabase.rpc('check_in_code', { _event: id, _code: code }); if (!error) trackEvent('checkin');
-    if (error && isRetryableCheckinError(error, status)) { enqueue({ key: code, eventId: id, code, undo: false }); setScan({ result: 'pending' }); return; }
-    const res = (data ?? null) as Scan | null;
-    setScan(error || !res ? { result: 'error' } : res);
-    if (res?.result === 'ok') vibrateOnUserAction([40, 40, 40]);
-    await queryClient.invalidateQueries({ queryKey: listKey });
-  };
+    admissionBusy.current = true;
+    try {
+      const { data, error, status } = await supabase.rpc('check_in_code', { _event: id, _code: code });
+      if (error && isRetryableCheckinError(error, status)) { enqueue({ key: code, eventId: id, code, undo: false }); setScan({ result: 'pending' }); return; }
+      const res = error ? checkinErrorResult(error) : (data ?? { result: 'error' }) as Scan;
+      setScan(res);
+      if (confirmedAttendance(res)) { trackEvent('checkin'); vibrateOnUserAction([40, 40, 40]); }
+      await queryClient.invalidateQueries({ queryKey: ['event', id, 'checkin-list'] });
+    } catch { enqueue({ key: code, eventId: id, code, undo: false }); setScan({ result: 'pending' }); }
+    finally { admissionBusy.current = false; }
+  }, [id, queryClient]);
+
+  if (authorizing) return <ListSkeleton />;
+  if (!authorized) return <div className="checkin-screen"><p role="alert">{t('attendancePilot.staffOnly')}</p><Button asChild variant="secondary"><Link to="/events">{t('gathering.backToGatherings')}</Link></Button></div>;
 
   return <div className="checkin-screen">
     <header className="checkin-top">
@@ -116,6 +130,7 @@ function CheckInMode() {
       <div className="checkin-tools"><Button onClick={() => { setScan(null); setScanning(true); }}><QrCode />{t('checkin.scan')}</Button>{canManage && <Button variant="secondary" onClick={() => setWalkIn(true)}><UserPlus />{t('checkin.walkIn')}</Button>}</div>
     </header>
     {(!online || pending.length > 0) && <div className="connection-note" role="status"><p>{t(pending.length ? 'launch.pending' : 'launch.offline', { count: pending.length })}</p>{pending.length > 0 && <Button variant="secondary" disabled={!online} onClick={() => void sync()}>{t('error.retry')}</Button>}</div>}
+    {scan && !scanning && <div className="connection-note" role="status"><p>{t(scan.result === 'pending' ? 'launch.scanPending' : `checkin.scanResult.${scan.result}`, { name: scan.name ?? '' })}</p>{scan.result === 'waiver_required' && <p>{t('attendancePilot.waiverResolution')}</p>}</div>}
     {isLoading ? <ListSkeleton /> : error ? <RetryState retry={() => void refetch()} /> : <main className="checkin-body">
       {groups.length > 0 && <div className="belong-group-summary" aria-label={t('belong.groups')}>{groups.map(g => <span key={g} className="chip belong-chip"><strong>{g}</strong><span className="tabular-nums">{rows.filter(r => r.small_group === g && r.checked_in_at).length}/{rows.filter(r => r.small_group === g).length}</span></span>)}</div>}
       <h2 className="checkin-section">{t('checkin.toCheckIn')} <span className="tabular-nums">{waiting.length}</span></h2>
@@ -154,8 +169,8 @@ function Scanner({ onClose, onCode, scan, onNext }: { onClose: () => void; onCod
   }, []);
   const submitManual = async (e: FormEvent) => {
     e.preventDefault();
-    const code = manual.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
-    if (!code) return;
+    const code = normalizeCheckinCode(manual);
+    if (!code) { await onCode(manual); return; }
     setManual('');
     await onCode(code);
   };
@@ -176,15 +191,15 @@ function Scanner({ onClose, onCode, scan, onNext }: { onClose: () => void; onCod
     void (async () => {
       const { default: jsQR } = await import('jsqr');
       try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); } catch { setDenied(true); return; }
-      if (stopped || !video.current) return;
-      video.current.srcObject = stream; await video.current.play().catch(() => undefined);
+      if (stopped || !video.current) { stream?.getTracks().forEach(track => track.stop()); return; }
+      video.current.srcObject = stream; try { await video.current.play(); } catch { stream?.getTracks().forEach(track => track.stop()); setDenied(true); return; }
       const tick = async () => {
         if (stopped) return;
         const v = video.current;
         if (v && v.readyState >= 2 && !busy.current && !paused.current) {
           canvas.width = v.videoWidth; canvas.height = v.videoHeight; ctx.drawImage(v, 0, 0);
           const found = jsQR(ctx.getImageData(0, 0, canvas.width, canvas.height).data, canvas.width, canvas.height, { inversionAttempts: 'dontInvert' });
-          if (found?.data) { busy.current = true; await onCode(found.data.trim()); busy.current = false; }
+          if (found?.data) { busy.current = true; try { await onCode(found.data.trim()); } finally { busy.current = false; } }
         }
         raf = requestAnimationFrame(() => void tick());
       };
@@ -196,7 +211,7 @@ function Scanner({ onClose, onCode, scan, onNext }: { onClose: () => void; onCod
     <video ref={video} playsInline muted className="scanner-video" />
     <div className="scanner-frame" aria-hidden="true" />
     <Button ref={closeButton} variant="secondary" size="icon" className="scanner-close" aria-label={t('checkin.closeScanner')} onClick={requestClose}><X /></Button>
-    {denied && <div className="scanner-result is-error"><AlertCircle /><strong>{t('checkin.cameraDenied')}</strong></div>}
+    {denied && !scan && <div className="scanner-result is-error"><AlertCircle /><strong>{t('checkin.cameraDenied')}</strong><Button onClick={requestClose}>{t('checkin.useList')}</Button></div>}
     {!denied && !scan && <p className="scanner-hint">{t('checkin.pointCamera')}</p>}
     <form className="scanner-manual" onSubmit={e => void submitManual(e)}>
       <label htmlFor="manual-code">{t('checkin.manualCode')}</label>
@@ -208,6 +223,7 @@ function Scanner({ onClose, onCode, scan, onNext }: { onClose: () => void; onCod
     {scan && <div className={`scanner-result ${scan.result === 'ok' ? 'is-ok' : scan.result === 'already' ? 'is-warn' : 'is-error'}`} aria-live="assertive">
       {scan.result === 'ok' ? <CheckCircle2 /> : <AlertCircle />}
       <strong>{t(scan.result === 'pending' ? 'launch.scanPending' : `checkin.scanResult.${scan.result}`, { name: scan.name ?? '' })}</strong>
+      {scan.result === 'waiver_required' && <p className="field-hint">{t('attendancePilot.waiverResolution')}</p>}
       <Button onClick={onNext}>{t('checkin.scanNext')}</Button>
     </div>}
   </div>;
