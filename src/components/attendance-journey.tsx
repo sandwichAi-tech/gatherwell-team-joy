@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +14,7 @@ type Template = { id: string; name: string; channel: string; archived: boolean; 
 export function AttendanceJourneyEditor({ teamId, journey, templates, onClose, onSaved }: { teamId: string; journey?: Journey | undefined; templates: Template[]; onClose: () => void; onSaved: () => void }) {
   const { t, i18n } = useTranslation();
   const save = useServerFn(saveAttendanceJourney);
+  useEffect(() => { const frame = requestAnimationFrame(() => document.getElementById('aj-name')?.focus()); return () => cancelAnimationFrame(frame); }, []);
   const [eventId, setEventId] = useState(journey?.event_id ?? '');
   const [name, setName] = useState(journey?.name ?? t('attendancePilot.followup'));
   const [audience, setAudience] = useState(journey?.attendance_audience ?? 'attended');
