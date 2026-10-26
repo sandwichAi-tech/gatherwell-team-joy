@@ -237,7 +237,7 @@ export function EventDetailsSections({ value, onChange, priceCents, lang, tried 
     </section>
 
     <section className="form-section">
-      <span className="field-label">{t('builder.tiers')}</span>
+      <span id="g-tiers" tabIndex={-1} className="field-label">{t('builder.tiers')}</span>
       <p className="field-hint">{t('builder.tiersHint')}</p><p className="field-hint">{t('eventReliability.timezone', { zone: Intl.DateTimeFormat().resolvedOptions().timeZone })}</p>
       {value.tiers.map(tier => <div key={tier.id} className="builder-tier">
         <div className="two-col">
@@ -257,7 +257,7 @@ export function EventDetailsSections({ value, onChange, priceCents, lang, tried 
       <p className="field-hint">{t('eventReliability.addonTiming')}</p>
       {value.addons.map(a => <div key={a.id} className="builder-tier">
         <div className="two-col">
-          <Input className="field-input" maxLength={60} value={a.name} onChange={e => setAddon(a.id, { name: e.target.value })} placeholder={t('builder.addonName')} aria-label={t('builder.addonName')} aria-invalid={tried && !a.name.trim()} />{tried && !a.name.trim() && <p className="field-error">{t('eventReliability.addonInvalid')}</p>}
+          <Input className="field-input" id={`addon-${a.id}`} maxLength={60} value={a.name} onChange={e => setAddon(a.id, { name: e.target.value })} placeholder={t('builder.addonName')} aria-label={t('builder.addonName')} aria-invalid={tried && !a.name.trim()} />{tried && !a.name.trim() && <p className="field-error">{t('eventReliability.addonInvalid')}</p>}
           <Input className="field-input" inputMode="decimal" value={a.price_cents ? String(a.price_cents / 100) : ''} onChange={e => setAddon(a.id, { price_cents: toCents(money(e.target.value)) })} placeholder="$0" aria-label={t('billing.price')} />
         </div>
         <Button type="button" variant="ghost" className="danger-text" onClick={() => set({ addons: value.addons.filter(x => x.id !== a.id) })} aria-label={t('builder.removeAddon')}><Trash2 />{t('builder.removeAddon')}</Button>
