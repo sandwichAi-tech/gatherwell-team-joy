@@ -14,6 +14,8 @@ import { EmptyState, ListSkeleton, RetryState } from '@/components/launch-states
 import { confirmAction } from '@/components/confirm-dialog';
 import { profileQuery } from '@/lib/account';
 import { CopyButton } from '@/components/copy-button';
+import { CATEGORIES } from '@/lib/landing';
+import { legacyCategories, normalizeCategories, toggleCategory, MAX_HOST_CATEGORIES } from '@/lib/profile-ia';
 import { normalizeProfileSlug, validateProfileSlug, slugErrorKey } from '@/lib/host-slug';
 
 export type HostLink = { label: string; url: string; kind: 'website' | 'social' };
@@ -141,7 +143,7 @@ export function HostProfilePanel({ userId }: { userId: string }) {
     const d = q.data;
     setForm({
       org: d.host_org ?? '',
-      categories: d.host_categories ?? [],
+      categories: normalizeCategories(d.host_categories),
       languages: d.host_languages ?? [],
       accessibility: d.host_accessibility ?? '',
       links: (Array.isArray(d.host_links) ? d.host_links : []) as HostLink[],
@@ -160,7 +162,7 @@ export function HostProfilePanel({ userId }: { userId: string }) {
     setBusy(true);
     const { error } = await supabase.rpc('save_host_profile', {
       _org: form.org.trim() || null,
-      _categories: form.categories.map(c => c.trim()).filter(Boolean),
+      _categories: normalizeCategories(form.categories),
       _languages: form.languages,
       _accessibility: form.accessibility.trim() || null,
       _links: form.links.filter(l => l.url.trim()),
@@ -168,7 +170,7 @@ export function HostProfilePanel({ userId }: { userId: string }) {
       _city_public: form.city_public,
     } as never);
     setBusy(false);
-    if (error) { toast.error(t(/link_not_allowed|invalid_link/.test(error.message) ? 'hostProfile.linkInvalid' : 'error.message')); return; }
+    if (error) { toast.error(t(/link_not_allowed|invalid_link/.test(error.message) ? 'hostProfile.linkInvalid' : /too_many_categories|too_long/.test(error.message) ? 'hostProfile.categoriesMax' : 'error.message', { max: MAX_HOST_CATEGORIES })); return; }
     toast.success(t('profile.saved'));
     void qc.invalidateQueries({ queryKey: ['host-profile', userId] });
     void qc.invalidateQueries({ queryKey: ['profile', userId] });
@@ -179,6 +181,7 @@ export function HostProfilePanel({ userId }: { userId: string }) {
 
   return <div className="edit-form host-profile-form">
     <p className="auth-subtitle">{t('hostProfile.intro')}</p>
+    <p className="field-hint">{t('hostProfile.identityNote')} <Link to="/me" search={{ panel: 'edit' }} className="auth-link">{t('profile.edit')}</Link></p>
 
     <SlugEditor userId={userId} slug={d.slug} onSaved={() => {
       void qc.invalidateQueries({ queryKey: ['host-profile', userId] });
@@ -198,11 +201,12 @@ export function HostProfilePanel({ userId }: { userId: string }) {
       <Label htmlFor="hp-org">{t('hostProfile.org')}</Label>
       <Input id="hp-org" maxLength={120} value={form.org} onChange={e => setForm({ ...form, org: e.target.value })} placeholder={t('hostProfile.orgPlaceholder')} />
     </div>
-    <div className="form-field">
-      <Label htmlFor="hp-cats">{t('hostProfile.categories')}</Label>
-      <Input id="hp-cats" value={form.categories.join(', ')} onChange={e => setForm({ ...form, categories: e.target.value.split(',').map(c => c.trim()).filter(Boolean).slice(0, 8) })} placeholder={t('hostProfile.categoriesPlaceholder')} />
-      <small className="field-hint">{t('hostProfile.categoriesHint')}</small>
-    </div>
+    <fieldset className="edit-section"><legend>{t('hostProfile.categories')}</legend>
+      <div className="chip-row category-chips" role="group" aria-describedby="hp-cats-hint">{CATEGORIES.map(c => { const on = form.categories.includes(c as never); return <button key={c} type="button" className={`chip category-chip${on ? ' is-selected' : ''}`} aria-pressed={on}
+        disabled={!on && form.categories.length >= MAX_HOST_CATEGORIES} onClick={() => setForm({ ...form, categories: toggleCategory(form.categories as never, c) })}>{on && <GwIcon name="Check" />}{t(`landing.cat.${c}`)}</button>; })}</div>
+      <small id="hp-cats-hint" className="field-hint" aria-live="polite">{t('hostProfile.categoriesPick', { count: form.categories.length, max: MAX_HOST_CATEGORIES })}</small>
+      {legacyCategories(d.host_categories).length > 0 && <small className="field-hint">{t('hostProfile.categoriesLegacy', { values: legacyCategories(d.host_categories).join(', ') })}</small>}
+    </fieldset>
     <fieldset className="edit-section"><legend>{t('hostProfile.languages')}</legend>
       <div className="choice-pair">{(['en', 'es'] as const).map(lang => <button key={lang} type="button" className={`choice-card ${form.languages.includes(lang) ? 'is-selected' : ''}`} aria-pressed={form.languages.includes(lang)}
         onClick={() => setForm({ ...form, languages: form.languages.includes(lang) ? form.languages.filter(l => l !== lang) : [...form.languages, lang] })}><strong>{t(lang === 'en' ? 'me.english' : 'me.spanish')}</strong></button>)}</div>

@@ -111,7 +111,7 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
         {host?.accessibility && <p className="follow-accessibility"><GwIcon name="Heart" />{host.accessibility}</p>}
         {host && <FeaturedBadges userId={host.id} />}
         <div className="follow-actions">{isOwner
-          ? <Button asChild variant="secondary"><Link to="/me"><GwIcon name="Pencil" />{t('follow.editMyPage')}</Link></Button>
+          ? <Button asChild variant="secondary"><Link to="/me" search={{ panel: 'hostProfile' }}><GwIcon name="Pencil" />{t('follow.editMyPage')}</Link></Button>
           : <FollowButton kind={kind} target={d.id} following={d.following} slug={slug} />}
           {host && <GetCoachUpdates slug={slug} />}
           {host?.shop_url && <Button asChild variant="secondary"><a href={host.shop_url} target="_blank" rel="noopener noreferrer"><GwIcon name="ExternalLink" />{t('follow.shop')}</a></Button>}</div>
