@@ -981,6 +981,13 @@
       "when": 1793053582009,
       "tag": "0139_attendance_send_time_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 140,
+      "version": "7",
+      "when": 1793054779526,
+      "tag": "0140_attendance_scoped_processor",
+      "breakpoints": true
     }
   ]
 }

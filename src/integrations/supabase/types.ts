@@ -8642,6 +8642,10 @@ export type Database = {
         Returns: undefined
       }
       price_guidance: { Args: { _category: string }; Returns: Json }
+      process_attendance_journey: {
+        Args: { _journey: string }
+        Returns: number
+      }
       process_attendance_journeys: {
         Args: { _limit?: number }
         Returns: number
