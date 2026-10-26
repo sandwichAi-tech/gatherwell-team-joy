@@ -7239,5 +7239,17 @@
     "paused": "Saved as draft; review and activate in Communications.",
     "channel": "Channel",
     "defaultSchedule": "Next day at 09:00 in the event time zone; you can change it."
+  },
+  "waiverLibrary": {
+    "title": "My waivers",
+    "select": "Select from My waivers",
+    "choose": "Choose a waiver",
+    "empty": "No reusable waivers yet. Create one in Me → My waivers.",
+    "scope": "Team waivers apply only when selected for this event. They do not replace ZoheeWell agreements.",
+    "team": "Require the team waiver for this event",
+    "textOnly": "Reusable waivers support entered text in English and Spanish. Document upload remains available for event-specific PDF waivers; no text extraction is provided.",
+    "versionHelp": "Saving changed text creates a new immutable version. Existing event attachments and acceptances stay unchanged.",
+    "pinned": "This event keeps the selected version until its attachment is deliberately changed.",
+    "saveError": "The waiver could not be saved. Your entered text is still here."
   }
 }

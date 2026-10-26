@@ -1002,6 +1002,27 @@
       "when": 1793055066359,
       "tag": "0142_attendance_waiver_binding",
       "breakpoints": true
+    },
+    {
+      "idx": 143,
+      "version": "7",
+      "when": 1793055437583,
+      "tag": "0143_reusable_waiver_library",
+      "breakpoints": true
+    },
+    {
+      "idx": 144,
+      "version": "7",
+      "when": 1793055532943,
+      "tag": "0144_pinned_team_waivers",
+      "breakpoints": true
+    },
+    {
+      "idx": 145,
+      "version": "7",
+      "when": 1793055920115,
+      "tag": "0145_explicit_waiver_version_reselection",
+      "breakpoints": true
     }
   ]
 }

@@ -1,3 +1,4 @@
+import { WaiverLibraryPicker } from '@/components/waiver-library';
 import { blueprintDefaults } from '@/lib/blueprint-defaults';
 import { useFeature } from '@/lib/feature-flags';
 import { policyFromEvent, policyIssues, policyPayload } from '@/lib/event-policy';
@@ -76,6 +77,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const [full, setFull] = useState(editing || !!templateId || !!fromId);
   const [retreatsOn] = useFeature('feature_retreats');
   const [retreatOn, setRetreatOn] = useState(false); const [retreat, setRetreat] = useState<Retreat>(emptyRetreat); const [retreatEnd, setRetreatEnd] = useState(''); const [galleryBusy, setGalleryBusy] = useState(false);
+  const [libraryWaivers,setLibraryWaivers]=useState<{id:string;version:number}[]>([]);
+  const [teamWaiver,setTeamWaiver]=useState(false);
   const [multi, setMulti] = useState(false); const [sessions, setSessions] = useState<EventSession[]>([]);
 
   // Prefill once from template, the gathering being edited, or the one being duplicated.
@@ -91,6 +94,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     }
     if (sourceId) {
       if (!source) return; const e = source.event;
+      setTeamWaiver(!!e.requires_waiver);
+      void supabase.from('event_waivers').select('library_id,library_version').eq('event_id',e.id).is('archived_at',null).then(r=>setLibraryWaivers((r.data??[]).flatMap(w=>w.library_id&&w.library_version?[{id:w.library_id,version:w.library_version}]:[])));
       setCategory(isCategory(e.category) ? e.category : 'more'); setCategoryLabel(e.category_label ?? ''); setTitle(e.title); setCoverPath(e.cover_url); setCoverStyle(e.cover_style ?? 0); setDescEn(e.description_en ?? ''); setDescEs(e.description_es ?? '');
       setCoverOverlay(clampOverlay((e as { cover_overlay?: number }).cover_overlay)); setCoverFocal(clampFocal((e as { cover_focal?: string }).cover_focal)); setCoverAlt((e as { cover_alt?: string | null }).cover_alt ?? '');
       const mins = e.ends_at ? Math.max(5, Math.round((new Date(e.ends_at).getTime() - new Date(e.starts_at).getTime()) / 60000)) : 60;
@@ -112,6 +117,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         const d = draft as Record<string, unknown>;
         if (typeof d['title'] === 'string') setTitle(d['title']);
         if (typeof d['start'] === 'string') setStart(d['start']);
+        if(Array.isArray(d['libraryWaivers']))setLibraryWaivers(d['libraryWaivers'] as {id:string;version:number}[]);
+        if(typeof d['teamWaiver']==='boolean')setTeamWaiver(d['teamWaiver']);
         if (typeof d['url'] === 'string') setUrl(d['url']);
         if (typeof d['address'] === 'string') setAddress(d['address']);
         if (typeof d['locationName'] === 'string') setLocationName(d['locationName']);
@@ -243,6 +250,12 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (error) { toast.error(rpcError(t, error)); return false; }
     return true;
   };
+  const saveWaivers=async(id:string)=>{
+    const r=await supabase.from('events').update({requires_waiver:teamWaiver}).eq('id',id);if(r.error){setSaveError(t('waiverLibrary.saveError'));return false;}
+    if(editing){const old=await supabase.from('event_waivers').select('library_id').eq('event_id',id).is('archived_at',null);for(const w of old.data??[]){if(w.library_id&&!libraryWaivers.some(x=>x.id===w.library_id)){const r=await supabase.rpc('remove_library_attachment',{_event:id,_library:w.library_id});if(r.error)return false;}}}
+    for(const w of libraryWaivers){const r=await supabase.rpc('attach_library_waiver',{_event:id,_waiver:w.id,_version:w.version});if(r.error){setSaveError(t('waiverLibrary.saveError'));return false;}}
+    return true;
+  };
   const savePolicy = async (id: string) => {
     const pp = policyPayload(details.policy, details.cancellation);
     const { error } = await supabase.rpc('set_event_policy', { _event: id, _config: pp.config as never, _text: pp.text });
@@ -255,7 +268,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (!publish && (!editing || source?.event.status === 'draft')) {
       setBusy(true);
       try {
-        const snapshot = { title, start, duration, customDuration, coords, full, place, locationName, address, note, url, capacityMode, capacity, price, visibility, category, categoryLabel, descEn, descEs, coverPath, coverStyle, coverOverlay, coverFocal, coverAlt, details, rule, teamReg, retreatOn, retreat, retreatEnd, multi, sessions, communitySeats, coverFee };
+        const snapshot = { libraryWaivers,teamWaiver,title, start, duration, customDuration, coords, full, place, locationName, address, note, url, capacityMode, capacity, price, visibility, category, categoryLabel, descEn, descEs, coverPath, coverStyle, coverOverlay, coverFocal, coverAlt, details, rule, teamReg, retreatOn, retreat, retreatEnd, multi, sessions, communitySeats, coverFee };
         const r = await supabase.rpc('save_event_builder_draft', { _team: teamId, _event: (eventId ?? null) as never, _snapshot: snapshot as never });
         if (r.error || !r.data) { setSaveError(rpcError(t, r.error)); return; }
         await queryClient.invalidateQueries(); toast.success(t('gathering.draftSaved'));
@@ -283,6 +296,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       if (!(await saveCover((eventId ?? '')))) return;
       if (!(await saveDetails((eventId ?? '')))) return;
       if (!(await savePolicy((eventId ?? '')))) return;
+      if (!(await saveWaivers(eventId??'')))return;
       if (publish && source?.event.status === 'draft') { const r = await supabase.from('events').update({ status: 'published' }).eq('id', eventId??''); if(r.error){toast.error(rpcError(t,r.error));return;} }
       await queryClient.invalidateQueries(); toast.success(t('gathering.saved'));
       void navigate({ to: '/event/$id', params: { id: (eventId ?? '') } }); return;
@@ -299,6 +313,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (!(await saveCover(data))) return;
     if (!(await saveDetails(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
     if (!(await savePolicy(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
+    if (!(await saveWaivers(data)))return;
     if (publish&&staged) {const published=await supabase.from('events').update({status:'published'}).eq('id',data);if(published.error){toast.error(rpcError(t,published.error));void navigate({to:'/gathering/$id/edit',params:{id:data}});return;}}
     await queryClient.invalidateQueries();
     if (publish) setDone({ id: data, visibility }); else { toast.success(t('gathering.draftSaved')); void navigate({ to: '/event/$id', params: { id: data } }); }
@@ -394,6 +409,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         </div>
       </section>}
 
+      <WaiverLibraryPicker teamId={teamId} value={libraryWaivers} onChange={setLibraryWaivers}/>
+      <label className="settings-row"><span>{t('waiverLibrary.team')}<small className="field-hint">{t('waiverLibrary.scope')}</small></span><Switch checked={teamWaiver} onCheckedChange={setTeamWaiver} aria-label={t('waiverLibrary.team')}/></label>
       <section className="form-section">
         <label className="field-label" htmlFor="g-title">{t('gathering.title')} · {t('eventReliability.required')}</label>
         <Input id="g-title" className="field-input" maxLength={120} value={title} onChange={e => setTitle(e.target.value)} placeholder={t('gathering.titlePlaceholder')} aria-invalid={tried && !title.trim()} />

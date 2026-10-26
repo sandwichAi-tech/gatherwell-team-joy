@@ -19,14 +19,14 @@ export const waiverRpc = (fn: string, args: Record<string, unknown>) => db.rpc(f
 
 export function useEventWaiver(eventId: string | undefined) {
   return useQuery({ queryKey: ['event-waiver', eventId], enabled: !!eventId, staleTime: 5 * 60_000,
-    queryFn: async () => { const { data } = await db.rpc('event_waiver_k', { _event: eventId, _token: new URLSearchParams(window.location.search).get('k') }); return (data ?? { required: false }) as EventWaiver; } });
+    queryFn: async () => { const { data,error } = await db.rpc('event_waiver_k', { _event: eventId, _token: new URLSearchParams(window.location.search).get('k') }); if(error)throw error;return (data ?? { required: false }) as EventWaiver; } });
 }
 
 /** Read-and-accept block used in the RSVP step and at walk-in check-in. */
 export function WaiverAccept({ waiver, name, accepted, onName, onAccepted, idPrefix = 'wv' }: { waiver: EventWaiver; name: string; accepted: boolean; onName: (v: string) => void; onAccepted: (v: boolean) => void; idPrefix?: string }) {
   const { t, i18n } = useTranslation(); const es = i18n.resolvedLanguage === 'es';
   if (!waiver.required) return null;
-  const title = (es ? waiver.title_es : waiver.title_en) ?? ''; const body = (es ? waiver.body_es : waiver.body_en) ?? '';
+  const title = (es ? waiver.title_es || waiver.title_en : waiver.title_en || waiver.title_es) ?? ''; const body = (es ? waiver.body_es || waiver.body_en : waiver.body_en || waiver.body_es) ?? '';
   return <fieldset className="waiver-block">
     <legend className="field-label"><FileText />{title}</legend>
     {waiver.draft && <span className="chip quiet-chip">{t('waiver.draft')}</span>}

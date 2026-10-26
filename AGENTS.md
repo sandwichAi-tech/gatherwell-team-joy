@@ -12,11 +12,11 @@
 Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are engineering conventions only. Subdirectories (supabase/) have their own AGENTS.md.
 
 ## ZoheeWell architecture (internal names such as Gatherwell*/gathering are legacy identifiers)
-- Render brand artwork through BrandLogo using original CDN-backed SVGs and theme-aware variants; keep photography in BrandImage so logos retain exact supplied colors without photo grading.
+- BrandLogo uses original CDN SVGs and theme variants; BrandImage handles photos, preserving supplied logo colors without photo grading.
 - Marketing icons use the shared GwIcon marketing variant: duotone silhouettes with scoped contour reinforcement, preserving signed-in icon weights.
 - Keep homepage hosting paths, steps and tool inventory inside the existing landing page and reuse login intent/discovery routes; marketing copy never claims a provider or checkout is live before it is verified.
 - Keep enduring product requirements in PROJECT_RULES.md under SOURCE_OF_TRUTH.md.
-- Use react-i18next with matched English and Latin American Spanish JSON resources for all visible and accessible copy, so language changes stay instant and complete.
+- All visible/accessible copy uses matched English/Latin American Spanish react-i18next JSON for instant, complete language switching.
 - GatherwellShell shares desktop/mobile tabs; insights-navigation gates own-host/team access; mobile tabs scroll.
 - localStorage holds only language, theme and a pending invite code (cleared once the join completes); all user data lives in Lovable Cloud with team-scoped RLS.
 - Home-screen installation is manifest-only; the only service worker is public/push-sw.js (push display + click, no caching), registered only after the person turns push on, (offline not requested).
@@ -60,4 +60,4 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Event images use share-image.ts for all outputs; admin menu uses role checks.
 - Course drip is decided only by lesson_unlock_at()/lesson_is_unlocked() (mirrored in src/lib/course-release.ts) and enforced by restrictive RLS on lessons, summaries and learn-media; browsers get locked titles only via my_locked_lessons().
 - Event Builder partial drafts use manager-only event_builder_drafts snapshots; publish validates and writes canonical event fields, so incomplete input never becomes attendee data.
-- Own QR only; admission checks staff/waivers; attendance journeys dedupe/recheck at send for safe retries.
+- Own QR only; staff/waivers gate admission. Attendance journeys dedupe/recheck. Waiver library versions are manager-only; explicit event attachments snapshot text, never rewrite acceptances.

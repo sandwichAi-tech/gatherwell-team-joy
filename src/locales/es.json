@@ -7239,5 +7239,17 @@
     "paused": "Guardado como borrador; revisa y activa en Comunicaciones.",
     "channel": "Canal",
     "defaultSchedule": "Mañana a las 09:00 en la zona horaria del evento; puedes cambiarlo."
+  },
+  "waiverLibrary": {
+    "title": "Mis documentos de consentimiento",
+    "select": "Seleccionar de mis documentos",
+    "choose": "Elige un documento",
+    "empty": "Aún no hay documentos reutilizables. Crea uno en Yo → Mis documentos de consentimiento.",
+    "scope": "El documento del equipo se aplica solo si se selecciona para este evento. No reemplaza los acuerdos de ZoheeWell.",
+    "team": "Exigir el documento del equipo para este evento",
+    "textOnly": "Los documentos reutilizables admiten texto en inglés y español. Los documentos PDF pueden agregarse a un evento; no se extrae su texto.",
+    "versionHelp": "Guardar cambios crea una nueva versión inmutable. Los eventos y consentimientos existentes no cambian.",
+    "pinned": "Este evento conserva la versión seleccionada hasta que se cambie explícitamente el documento adjunto.",
+    "saveError": "No se pudo guardar el documento. El texto ingresado se conserva."
   }
 }
