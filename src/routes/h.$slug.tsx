@@ -22,8 +22,8 @@ export const Route = createFileRoute('/h/$slug')({
       throw redirect({ to: '/h/$slug', params: { slug: canonical }, replace: true });
     }
     await prefetchPublic(context.queryClient, pageQuery('host', params.slug));
-    const d = context.queryClient.getQueryData(pageQuery('host', params.slug).queryKey) as { name?: string; org?: string | null; bio?: string | null; links?: { url: string }[]; coverSrc?: string | null } | undefined;
-    const image = d?.coverSrc ?? await publicShareImage({ data: { slot: 'og_share_image' } }).catch(() => null);
+    const d = context.queryClient.getQueryData(pageQuery('host', params.slug).queryKey) as { name?: string; org?: string | null; bio?: string | null; links?: { url: string }[]; coverSrc?: import('@/lib/media-renditions').MediaSrc } | undefined;
+    const image = (d?.coverSrc ? (typeof d.coverSrc === 'string' ? d.coverSrc : d.coverSrc.src) : null) ?? await publicShareImage({ data: { slot: 'og_share_image' } }).catch(() => null);
     return { name: d?.name ?? null, org: d?.org ?? null, bio: d?.bio ?? null, links: d?.links ?? [], image };
   },
   head: ({ loaderData, params }) => {
