@@ -27,7 +27,7 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Event detail lives at /event/$id inside the app shell; the public guest page stays at /e/$id.
 - Signed-out visitors may call only guest RPCs (public event/price, RSVP by code, polls, invites, email prefs by token); all else needs sign-in + team role, as the guest page is the only anonymous surface.
 - Event photos live in the private event-photos bucket and are uploaded/listed only through event-day server functions (host via bearer, guests via checked-in checkin_code), with signed URLs.
-- All outbound messages go through notification_outbox and are sent only by src/lib/notify/process.server.ts via /api/public/outbox/process (token from app_config, every 5 min); a missing provider secret marks rows 'simulated', so turning a channel on needs only its secrets.
+- All outbound messages go via notification_outbox, sent only by src/lib/notify/process.server.ts through /api/public/outbox/process (app_config token, 5 min); missing provider secrets mark rows 'simulated', so a channel needs only its secrets.
 - Provider webhooks live under /api/public/{sms/inbound,email/resend,email/mailgun}, verify signatures, and return 503 until their secrets exist.
 - Icons render only through GwIcon (src/components/gw-icon.tsx, Phosphor); src/components/icons.tsx re-exports named wrappers so call sites stay simple and nothing imports an icon library directly.
 - Photos render only through BrandImage and come from site_media slots (private site-media bucket, signed URLs, anonymous read); only user_roles admins (has_role) can edit them at /admin/site-media.
@@ -35,7 +35,7 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - All AI (assistant + src/lib/ai/*, smart.functions.ts) runs server-side via Claude, model in assistant/config.ts; no key → preview text, not counted. Cards act on confirm.
 - Plans/limits live in billing_accounts, team_licenses, license_seats; effective_plan()+plan_limits() decide limits (triggers, new rows only). Stripe: billing.functions.ts + /api/public/stripe/webhook only; no key → sheet.
 - Platform admin: /admin data and actions go only through src/lib/admin.functions.ts and every action writes admin_audit; reports come from report_content() or the claims trigger.
-- Safety: caller-scoped admin_safety RPCs (bounded, throttled, audited); bans are managed-auth, never deletion; restrictions commit via service-only RPC with checked compensation; retries use admin_retry_message(), delivery stays in the outbox processor.
+- Safety: caller-scoped admin_safety RPCs (bounded, throttled, audited); bans via managed auth, never deletion; restrictions via service-only RPC with checked compensation; retries via admin_retry_message().
 - Public follows use get_public_host/get_public_team; iCal token is its only credential.
 
 - ResponsiveSheet owns header/footer/scroll body; pass primary actions via footer.
@@ -50,10 +50,10 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Platform fees are calculated only from versioned fee_rules (DB calc_platform_fee_cents, mirrored and tested in src/lib/fees.ts); orders snapshot the rule so history never recalculates.
 - Database role regressions live in tests/database and run only by explicit invocation against a disposable copy; never connect these fixture-writing tests to production, preview, or the ordinary automated suite.
 - Consent acceptances resolve version/hash in database triggers, and flag changes append server-owned config history; clients never choose snapshots or write audit history.
-- Identity: one auth user = one profile; return paths only via src/lib/return-to.ts (is_safe_return_path); emailed links use single-use auth_intents; 18+ via confirm_adult() + triggers; view_mode display-only; guest rows link only via claim_guest_records().
+- Identity: one auth user = one profile; return paths only via src/lib/return-to.ts; emailed links use single-use auth_intents; 18+ via confirm_adult(); view_mode display-only; guest rows link only via claim_guest_records().
 
 - WhichPlan guides pricing; no capability tables.
-- Templates copy as drafts. Resource journeys use scoped entitlements and idempotent in-app delivery; event association saves atomically. Coach consent uses verified accounts or hashed expiring links; without a sender anonymous requests stay pending. Segments expose counts only.
+- Templates copy as drafts. Resource journeys use scoped entitlements, idempotent in-app delivery. Coach consent needs verified accounts or hashed expiring links; no sender = requests stay pending. Segments expose counts only.
 
 - Referral attribution/rewards/status are server-owned (0119 RPCs + orders_referral_hook), mirrored in src/lib/referrals.ts; landing reuses the analytics device id.
 - Profile IA: account fields edit only in Me's Edit profile, public-page fields only in HostProfilePanel (src/lib/profile-ia.ts PROFILE_FIELDS); host categories are allowed keys normalized by a DB trigger.
