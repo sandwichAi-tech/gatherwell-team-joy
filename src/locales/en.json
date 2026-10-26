@@ -1222,6 +1222,7 @@
     "going_other": "{{count}} registered"
   },
   "gathering": {
+    "coverLowRes": "This cover photo is only {{width}} px wide, so it may look soft on large or high-resolution screens. Upload a larger original (at least 1200 px wide) for a sharper cover.",
     "create": "Create event",
     "createFirst": "Create your first event",
     "newTitle": "New event",
@@ -4006,6 +4007,7 @@
     "offerings": "Courses and resources"
   },
   "crop": {
+    "lowRes": "This crop is only {{width}} px wide, so it may look soft on large or high-resolution screens. For a sharper cover, zoom out or choose a larger photo (at least 1200 px wide).",
     "title": "Crop your cover",
     "titleAvatar": "Crop your photo",
     "hint": "Drag to position, then zoom to frame it.",

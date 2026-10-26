@@ -11,8 +11,8 @@ export const publicHostCover = createServerFn({ method: 'GET' })
     const id = host['id'];
     const path = host['cover_url'];
     if (typeof id !== 'string' || typeof path !== 'string' || !path.startsWith(`${id}/cover-`)) return null;
-    const { data: signed } = await supabaseAdmin.storage.from('media').createSignedUrl(path, 3600);
-    return signed?.signedUrl ?? null;
+    const { signRendition } = await import('@/lib/media-renditions');
+    return signRendition(supabaseAdmin.storage.from('media'), path, 3600);
   });
 
 /** Signs only the cover of a published public/unlisted offer; never accepts a storage path. */
@@ -25,6 +25,6 @@ export const publicOfferCover = createServerFn({ method: 'GET' })
     const hostId = offer['host_id'];
     const path = offer['cover_url'];
     if (typeof hostId !== 'string' || typeof path !== 'string' || !path.startsWith(`${hostId}/`)) return null;
-    const { data: signed } = await supabaseAdmin.storage.from('media').createSignedUrl(path, 3600);
-    return signed?.signedUrl ?? null;
+    const { signRendition } = await import('@/lib/media-renditions');
+    return signRendition(supabaseAdmin.storage.from('media'), path, 3600);
   });

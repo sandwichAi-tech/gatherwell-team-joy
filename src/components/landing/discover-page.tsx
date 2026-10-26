@@ -11,6 +11,7 @@ import { ListSkeleton, RetryState } from '@/components/launch-states';
 import { LocationCard, publicLocationsQuery } from '@/components/locations';
 import { SaveButton } from '@/components/save-button';
 import { GwIcon } from '@/components/gw-icon';
+import type { MediaSrc } from '@/lib/media-renditions';
 import { BrandImage } from '@/components/brand-image';
 import { coverStyleAt, clampFocal } from '@/lib/cover';
 import { publicCovers } from '@/lib/discover-media.functions';
@@ -80,7 +81,7 @@ function focalPoint(focal: string | null): { x: number; y: number } {
 
 /** Uploaded cover when one signed, otherwise a deterministic branded gradient with the first letter — never a broken image. */
 function CardMedia({ title, alt, style, focal, url, className = '' }: {
-  title: string; alt: string | null; style: number; focal: string | null; url: string | undefined; className?: string;
+  title: string; alt: string | null; style: number; focal: string | null; url: MediaSrc; className?: string;
 }) {
   const label = alt?.trim() || title;
   if (url) return <BrandImage src={url} alt={label} aspect={16 / 9} focal={focalPoint(focal)} sizes="(min-width: 1024px) 360px, 90vw" className={`catalog-card-media ${className}`.trim()} />;
@@ -89,7 +90,7 @@ function CardMedia({ title, alt, style, focal, url, className = '' }: {
   </span>;
 }
 
-function CatalogCard({ item, lang, coverUrl }: { item: CatalogItem; lang: string; coverUrl: string | undefined }) {
+function CatalogCard({ item, lang, coverUrl }: { item: CatalogItem; lang: string; coverUrl: MediaSrc }) {
   const { t } = useTranslation();
   const when = item.starts_at ? new Intl.DateTimeFormat(lang === 'es' ? 'es' : 'en', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: item.timezone || undefined }).format(new Date(item.starts_at)) : null;
   return <li className="gw-card catalog-card">
@@ -110,7 +111,7 @@ function CatalogCard({ item, lang, coverUrl }: { item: CatalogItem; lang: string
   </li>;
 }
 
-function CoachCard({ coach, coverUrl, avatarUrl }: { coach: CoachItem; coverUrl: string | undefined; avatarUrl: string | undefined }) {
+function CoachCard({ coach, coverUrl, avatarUrl }: { coach: CoachItem; coverUrl: MediaSrc; avatarUrl: MediaSrc }) {
   const { t } = useTranslation();
   const name = coach.name?.trim() || coach.slug;
   return <li className="gw-card catalog-card coach-card">

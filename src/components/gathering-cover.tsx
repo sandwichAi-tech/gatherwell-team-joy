@@ -1,20 +1,34 @@
 import { useQuery } from '@tanstack/react-query';
-import { mediaUrl } from '@/lib/account';
+import { mediaRendition } from '@/lib/account';
+import type { Rendition } from '@/lib/media-renditions';
+import { eventCoverRendition } from '@/lib/media.functions';
 import { coverStyleAt, clampOverlay, clampFocal } from '@/lib/cover';
 import { BrandImage } from '@/components/brand-image';
 
+/** Display-size hint per cover placement so the browser fetches a rendition that matches the real slot. */
+export function coverSizes(className: string): string {
+  if (/\b(challenge-thumb|retreat-thumb-img|as-cover)\b/.test(className)) return '128px';
+  if (/\b(card-strip|blueprint-cover|follow-event-cover|qs-preview-cover)\b/.test(className)) return '(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw';
+  return '(min-width: 1280px) 1200px, 100vw';
+}
+
 /** Uploaded photo when present, otherwise a curated brand gradient with the first letter. */
-export function GatheringCover({ path, style = 0, title, className = '', overlay = 0, focal, alt }: {
+export function GatheringCover({ path, style = 0, title, className = '', overlay = 0, focal, alt, rendition, sizes, onNaturalWidth, eventId }: {
   path?: string | null; style?: number | null; title: string; className?: string;
   overlay?: number | null | undefined; focal?: string | null | undefined; alt?: string | null | undefined;
+  /** Server-signed renditions (public pages, where the visitor cannot sign private media). */
+  rendition?: Rendition | null | undefined; sizes?: string | undefined; onNaturalWidth?: ((width: number) => void) | undefined;
+  /** Signed-in surfaces showing other hosts' events: lets the server sign after checking the viewer can read the event. */
+  eventId?: string | undefined;
 }) {
-  const { data: url } = useQuery({ queryKey: ['media-url', path], queryFn: () => mediaUrl(path), enabled: !!path, staleTime: 50 * 60 * 1000 });
+  const { data: signed } = useQuery({ queryKey: ['media-rendition', path, eventId ?? null], queryFn: async () => (eventId ? await eventCoverRendition({ data: { id: eventId } }).catch(() => null) : null) ?? (await mediaRendition(path)), enabled: !!path && !rendition, staleTime: 50 * 60 * 1000 });
+  const url = rendition ?? signed ?? null;
   const scrim = clampOverlay(overlay);
   const scrimEl = scrim > 0 ? <span className="gathering-cover-scrim" style={{ background: `rgba(48, 35, 56, ${scrim / 100})` }} aria-hidden="true" /> : null;
   const parts = clampFocal(focal).split(' ').map(v => Number(v.replace('%', '')) / 100);
   const fx = parts[0] ?? 0.5; const fy = parts[1] ?? 0.5;
   if (url) return <span className={`gathering-cover has-photo ${className}`}>
-    <BrandImage src={url} alt={alt?.trim() || title} className="gathering-cover-img" focal={{ x: fx, y: fy }} priority={className.includes('guest-cover')} />
+    <BrandImage src={url} alt={alt?.trim() || title} className="gathering-cover-img" focal={{ x: fx, y: fy }} sizes={sizes ?? coverSizes(className)} priority={className.includes('guest-cover')} onNaturalWidth={onNaturalWidth} />
     {scrimEl}
   </span>;
   return <div className={`gathering-cover ${className}`} style={{ backgroundImage: coverStyleAt(style) }} role="img" aria-label={alt?.trim() || title}>
