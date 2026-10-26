@@ -167,7 +167,7 @@ export function QuizStudio({ quizId }: { quizId: string }) {
   if (load.isPending) return <ListSkeleton />;
   if (load.isError) return <RetryState retry={() => void load.refetch()} />;
   if (!load.data || !s) return <section className="panel empty-state" role="status"><p>{t('quizPlay.errors.not_found')}</p><Button asChild variant="secondary"><Link to="/learn" search={{ tab: 'mine' }}>{t('quizStudio.backToResources')}</Link></Button></section>;
-  const { questions } = load.data;
+  const data = load.data; const { questions } = data;
   const blockers = [...new Set([...quizBlockers({ mode: s.mode, title_en: s.title_en, title_es: s.title_es, instructions_en: s.instructions_en ?? '', instructions_es: s.instructions_es ?? '' }, questions, outs, bands), ...(serverBlockers.data ?? [])])];
   const hasAttempts = (summary.data?.attempts ?? 0) > 0;
 
@@ -184,7 +184,7 @@ export function QuizStudio({ quizId }: { quizId: string }) {
   const saveOutcomes = async () => {
     setBusy(true);
     const ids = outs.map(o => o.id);
-    const gone = load.data.outcomes.filter(o => !ids.includes(o.id)).map(o => o.id);
+    const gone = data.outcomes.filter(o => !ids.includes(o.id)).map(o => o.id);
     if (gone.length) await db.from('quiz_outcomes').delete().in('id', gone);
     for (const [i, o] of outs.entries()) {
       const r = { id: o.id, quiz_id: quizId, title_en: o.title_en.trim(), title_es: o.title_es.trim(), body_en: o.body_en.trim() || null, body_es: o.body_es.trim() || null, image_path: o.image_path, image_alt: o.image_alt.trim() || null, sort_order: i + 1 };
@@ -213,7 +213,7 @@ export function QuizStudio({ quizId }: { quizId: string }) {
     toast.success(t('quizStudio.duplicated')); void navigate({ to: '/learn/quiz/$id', params: { id: data } });
   };
   const remove = async () => {
-    if (!(await confirmAction({ title: t('quiz.confirmDelete'), body: hasAttempts ? t('quizStudio.deleteWithAnswers') : undefined, destructive: true }))) return;
+    if (!(await confirmAction({ title: t('quiz.confirmDelete'), ...(hasAttempts ? { body: t('quizStudio.deleteWithAnswers') } : {}), destructive: true }))) return;
     const { error } = await db.from('quizzes').delete().eq('id', quizId);
     if (error) { toast.error(t('profile.saveError')); return; }
     toast.success(t('quizStudio.deleted')); await qc.invalidateQueries({ queryKey: ['team-quizzes'] });
@@ -335,7 +335,7 @@ export function QuizStudio({ quizId }: { quizId: string }) {
             <strong>{s.mode === 'scored' ? `${Math.round(Number(r.score_pct ?? 0))}%` : pick(lang, r.outcome_en, r.outcome_es)}</strong></li>)}</ul></>}
       </>}</section>}
 
-    {editing && <QuestionSheet quiz={s} question={editing === 'new' ? null : editing} outcomes={outs.filter(o => load.data.outcomes.some(x => x.id === o.id))} nextOrder={(questions.at(-1)?.sort_order ?? 0) + 1}
+    {editing && <QuestionSheet quiz={s} question={editing === 'new' ? null : editing} outcomes={outs.filter(o => data.outcomes.some(x => x.id === o.id))} nextOrder={(questions.at(-1)?.sort_order ?? 0) + 1}
       onClose={saved => { setEditing(null); if (saved) void refresh(); }} />}
   </article>;
 }
