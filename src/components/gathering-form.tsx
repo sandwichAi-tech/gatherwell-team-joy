@@ -256,7 +256,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     const error = blockers.length || capacityBad || !detailsJson || pi.length || (priceCents && visibility === 'team') || (multi && (!start || !validSessions(sessions, new Date(start).toISOString())));
     if (error) {
       setFull(true);
-      setSaveError(t('builder.reliability.fixSummary'));
+      setSaveError(t('eventReliability.fixSummary'));
       requestAnimationFrame(() => { const field = document.querySelector<HTMLElement>('.gathering-form [aria-invalid="true"]'); (field ?? document.getElementById('g-errors'))?.focus(); field?.scrollIntoView({ block: 'center' }); });
       return;
     }
@@ -301,7 +301,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       // Square twin for social sharing lives next to the wide cover: <name>-square.webp
       if (square) await uploadMedia(userId, square, 'cover', path.replace(/\.webp$/, '-square.webp')).catch(() => null);
       setCoverPath(path);
-    } catch (err) { if (err instanceof Error && err.message === 'storage_limit') setLimit('storage'); else setPhotoError(t('builder.reliability.photoFailed')); } finally { setUploading(false); URL.revokeObjectURL(previewUrl); }
+    } catch (err) { if (err instanceof Error && err.message === 'storage_limit') setLimit('storage'); else setPhotoError(t('eventReliability.photoFailed')); } finally { setUploading(false); URL.revokeObjectURL(previewUrl); }
   };
   const close = () => (window.history.length > 1 ? router.history.back() : void navigate({ to: '/events' }));
 
@@ -353,11 +353,11 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         {coverPath && coverWidth != null && isLowResolution(coverWidth) && <p className="field-hint crop-lowres" role="status">{t('gathering.coverLowRes', { width: coverWidth })}</p>}
         <div className="cover-actions">
           <label className="file-button"><Camera /><span>{uploading ? t('onboarding.saving') : t(coverPath ? 'gathering.changePhoto' : 'gathering.addPhoto')}</span>
-            <CropFileInput kind="cover" withSquare maxBytes={8 * 1024 * 1024} disabled={uploading} onCropped={r => void onPhoto(r)} onRejected={reason => setPhotoError(t(reason === 'type' ? 'builder.reliability.photoType' : 'gathering.photoTooBig'))} /></label>
+            <CropFileInput kind="cover" withSquare maxBytes={8 * 1024 * 1024} disabled={uploading} onCropped={r => void onPhoto(r)} onRejected={reason => setPhotoError(t(reason === 'type' ? 'eventReliability.photoType' : 'gathering.photoTooBig'))} /></label>
           {coverPath && <Button variant="ghost" onClick={() => setCoverPath(null)}>{t('gathering.useDefault')}</Button>}
           {(coverOverlay !== 0 || coverFocal !== '50% 50%' || coverAlt) && <Button variant="ghost" onClick={() => { setCoverOverlay(0); setCoverFocal('50% 50%'); setCoverAlt(''); }}>{t('gathering.coverReset')}</Button>}
         </div>
-        {uploading && <p role="status">{t('builder.reliability.uploading')}</p>}
+        {uploading && <p role="status">{t('eventReliability.uploading')}</p>}
         {photoError && <p className="field-error" role="alert">{photoError}</p>}
         <div className="cover-controls">
           {!coverPath && <div className="style-picker" role="group" aria-label={t('gathering.coverStyle')}>{COVER_STYLES.map((bg, i) =>
@@ -383,7 +383,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       </section>}
 
       <section className="form-section">
-        <label className="field-label" htmlFor="g-title">{t('gathering.title')} · {t('builder.reliability.required')}</label>
+        <label className="field-label" htmlFor="g-title">{t('gathering.title')} · {t('eventReliability.required')}</label>
         <Input id="g-title" className="field-input" maxLength={120} value={title} onChange={e => setTitle(e.target.value)} placeholder={t('gathering.titlePlaceholder')} aria-invalid={tried && !title.trim()} />
         {tried && !title.trim() && <p className="field-error">{t('gathering.errors.invalid_title')}</p>}
       </section>
@@ -391,8 +391,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       <section className="form-section">
         <span className="field-label">{t('gathering.when')}</span>
         <div className="chip-row">{usual && (() => { const v = toLocalInput(usual); return <button type="button" className={`preset-chip is-usual ${start === v ? 'is-selected' : ''}`} aria-pressed={start === v} onClick={() => setStart(v)}>{t('gathering.presets.usual', { day: usual.toLocaleDateString(lang, { weekday: 'short' }), time: usual.toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' }) })}</button>; })()}{presets.map(p => { const v = toLocalInput(p.date); return <button key={p.key} type="button" className={`preset-chip ${start === v ? 'is-selected' : ''}`} aria-pressed={start === v} onClick={() => setStart(v)}>{t(`gathering.presets.${p.key}`, { time: p.date.toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' }) })}</button>; })}</div>
-        <label className="field-label" htmlFor="g-start">{t('gathering.when')} · {t('builder.reliability.required')}</label><Input id="g-start" aria-invalid={tried && blockers.includes('date')} type="datetime-local" className="field-input" value={start} onChange={e => setStart(e.target.value)} aria-label={t('gathering.custom')} />
-        {tried && blockers.includes('date') && <p className="field-error">{t('builder.errors.date')}</p>}<small className="field-hint">{t('builder.reliability.timezone', { zone: source?.event.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone })}</small>
+        <label className="field-label" htmlFor="g-start">{t('gathering.when')} · {t('eventReliability.required')}</label><Input id="g-start" aria-invalid={tried && blockers.includes('date')} type="datetime-local" className="field-input" value={start} onChange={e => setStart(e.target.value)} aria-label={t('gathering.custom')} />
+        {tried && blockers.includes('date') && <p className="field-error">{t('builder.errors.date')}</p>}<small className="field-hint">{t('eventReliability.timezone', { zone: source?.event.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone })}</small>
         {full && <>
         <span className="field-label">{t('gathering.duration')}</span>
         <div className="chip-row">{DURATIONS.map(d => <button key={d} type="button" className={`preset-chip ${!customDuration && duration === d ? 'is-selected' : ''}`} aria-pressed={!customDuration && duration === d} onClick={() => { setCustomDuration(false); setDuration(d); }}>{t(`gathering.durations.${d}`)}</button>)}
@@ -406,16 +406,16 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         <span className="field-label">{t('gathering.place')}</span>
         <div className="segmented full" role="group" aria-label={t('gathering.place')}>{(['person', 'online', 'hybrid'] as const).map(p => <Button key={p} variant="ghost" className={place === p ? 'selected' : ''} aria-pressed={place === p} onClick={() => setPlace(p)}>{p === 'person' ? <MapPin /> : <Globe2 />}{t(`builder.format.${p}`)}</Button>)}</div>
         {place !== 'online' && <>
-          <label className="field-label" htmlFor="g-location">{t('gathering.locationName')} · {t('builder.reliability.requiredPlace')}</label><Input id="g-location" aria-invalid={tried && blockers.includes('place')} className="field-input" maxLength={160} value={locationName} onChange={e => setLocationName(e.target.value)} placeholder={t('gathering.locationName')} aria-label={t('gathering.locationName')} />
+          <label className="field-label" htmlFor="g-location">{t('gathering.locationName')} · {t('eventReliability.requiredPlace')}</label><Input id="g-location" aria-invalid={tried && blockers.includes('place')} className="field-input" maxLength={160} value={locationName} onChange={e => setLocationName(e.target.value)} placeholder={t('gathering.locationName')} aria-label={t('gathering.locationName')} />
           <Input ref={addressRef} className="field-input" maxLength={300} value={address} onChange={e => { setAddress(e.target.value); setCoords(null); }} placeholder={t('gathering.address')} aria-label={t('gathering.address')} autoComplete="off" />
           {tried && blockers.includes('place') && <p className="field-error">{t('builder.errors.place')}</p>}
-          <label className="field-label" htmlFor="g-map">{t('builder.reliability.mapOverride')}</label><Input id="g-map" type="url" value={details.mapUrl} maxLength={500} aria-invalid={tried && !!details.mapUrl && !validHttps(details.mapUrl)} onChange={e => setDetails(d => ({ ...d, mapUrl: e.target.value }))} /><small className="field-hint">{t('builder.reliability.mapHint')}</small>
+          <label className="field-label" htmlFor="g-map">{t('eventReliability.mapOverride')}</label><Input id="g-map" type="url" value={details.mapUrl} maxLength={500} aria-invalid={tried && !!details.mapUrl && !validHttps(details.mapUrl)} onChange={e => setDetails(d => ({ ...d, mapUrl: e.target.value }))} /><small className="field-hint">{t('eventReliability.mapHint')}</small>
           {tried && !!details.mapUrl && !validHttps(details.mapUrl) && <p className="field-error">{t('gathering.errors.invalid_url')}</p>}
           {!mapsKey && <p className="not-connected">{t('gathering.addressNote')}</p>}
           <Input className="field-input" maxLength={300} value={note} onChange={e => setNote(e.target.value)} placeholder={t('gathering.note')} aria-label={t('gathering.note')} />
         </>}
         {place !== 'person' && <>
-          <label className="field-label" htmlFor="g-online">{t('gathering.link')} · {t('builder.reliability.required')}</label><Input id="g-online" type="url" inputMode="url" className="field-input" maxLength={500} value={url} onChange={e => setUrl(e.target.value)} placeholder="https://" aria-label={t('gathering.link')} aria-invalid={urlBad || (tried && !url.trim())} />
+          <label className="field-label" htmlFor="g-online">{t('gathering.link')} · {t('eventReliability.required')}</label><Input id="g-online" type="url" inputMode="url" className="field-input" maxLength={500} value={url} onChange={e => setUrl(e.target.value)} placeholder="https://" aria-label={t('gathering.link')} aria-invalid={urlBad || (tried && !url.trim())} />
           {(urlBad || (tried && !url.trim())) && <p className="field-error">{t('gathering.errors.invalid_url')}</p>}
           <p className="field-hint">{t('builder.onlinePrivate')}</p>
         </>}
@@ -432,8 +432,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
 
       <section className="form-section two-col">
         <div><label className="field-label" htmlFor="g-cap">{t('gathering.capacity')}</label>
-          <div className="segmented full" role="group" aria-label={t('gathering.capacity')}>{(['unlimited', 'limited'] as const).map(mode => <Button key={mode} variant="ghost" aria-pressed={capacityMode === mode} className={capacityMode === mode ? 'selected' : ''} onClick={() => setCapacityMode(mode)}>{t(`builder.reliability.${mode}`)}</Button>)}</div>
-          {capacityMode === 'limited' && <Input id="g-cap" aria-invalid={tried && capacityBad} type="number" min={1} inputMode="numeric" className="field-input" value={capacity} onChange={e => setCapacity(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder={t('builder.reliability.limited')} />}
+          <div className="segmented full" role="group" aria-label={t('gathering.capacity')}>{(['unlimited', 'limited'] as const).map(mode => <Button key={mode} variant="ghost" aria-pressed={capacityMode === mode} className={capacityMode === mode ? 'selected' : ''} onClick={() => setCapacityMode(mode)}>{t(`eventReliability.${mode}`)}</Button>)}</div>
+          {capacityMode === 'limited' && <Input id="g-cap" aria-invalid={tried && capacityBad} type="number" min={1} inputMode="numeric" className="field-input" value={capacity} onChange={e => setCapacity(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder={t('eventReliability.limited')} />}
           {tried && capacityBad && <p className="field-error">{t('gathering.errors.invalid_capacity')}</p>}</div>
         <div><label className="field-label" htmlFor="g-price">{t('billing.price')}</label>
           <Input id="g-price" type="text" inputMode="decimal" className="field-input" disabled={!canSell && !price} value={price} onChange={e => setPrice(e.target.value.replace(/[^\d.]/g, '').slice(0, 7))} placeholder="$0" />

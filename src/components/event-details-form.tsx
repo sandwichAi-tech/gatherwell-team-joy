@@ -10,7 +10,7 @@ import { buildPolicyText, emptyPolicy, normalizePolicyText, policyIssues, preset
 import { formatMoney } from '@/lib/billing';
 import { AGE_BANDS } from '@/lib/identity';
 import { PaidBlockedNote } from '@/components/payments-readiness';
-import { cleanAddons, cleanTiers, emptyAddon, emptyTier, feeEstimateCents, hostKeepsCents, MAX_ADDONS, MAX_TIERS, parseTags, type Addon, type TicketTier } from '@/lib/event-builder';
+import { cleanAddons, cleanTiers, emptyAddon, emptyTier, feeEstimateCents, hostKeepsCents, MAX_ADDONS, MAX_TIERS, validHttps, parseTags, type Addon, type TicketTier } from '@/lib/event-builder';
 
 /** Extra host-editable event fields saved through update_event_details(). */
 export type EventDetails = {
@@ -44,7 +44,7 @@ export function detailsFromEvent(e: SourceEvent): EventDetails {
     contactEmail: s('contact_email'), contactPhone: s('contact_phone'),
     accessibility: s('accessibility_notes'), bring: s('what_to_bring'), cancellation: s('cancellation_policy'), policy: emptyPolicy(),
     allowsMinors: !!e.allows_minors, minAge: e['min_age'] != null ? String(e['min_age']) : '',
-    tiers: Array.isArray(e['ticket_tiers']) ? (e['ticket_tiers'] as TicketTier[]) : [],
+    tiers: Array.isArray(e['ticket_tiers']) ? (e['ticket_tiers'] as TicketTier[]).map(tier => ({ ...tier, sale_starts_at: local(tier.sale_starts_at) || null, sale_ends_at: local(tier.sale_ends_at) || null })) : [],
     addons: Array.isArray(e['addons']) ? (e['addons'] as Addon[]) : [],
   };
 }
@@ -55,7 +55,7 @@ const iso = (v: string) => (v ? new Date(v).toISOString() : '');
 export function detailsPayload(d: EventDetails): Record<string, unknown> | null {
   const tiers = cleanTiers(d.tiers); const addons = cleanAddons(d.addons);
   if (!tiers || !addons) return null;
-  if (d.mapUrl.trim() && !/^https:\/\/\S+$/i.test(d.mapUrl.trim())) return null;
+  if (d.mapUrl.trim() && !validHttps(d.mapUrl)) return null;
   if (d.contactEmail.trim() && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.contactEmail.trim())) return null;
   if (d.regOpens && d.regCloses && new Date(d.regOpens) >= new Date(d.regCloses)) return null;
   if (d.minAge && (!d.allowsMinors || Number(d.minAge) < 0 || Number(d.minAge) > 17)) return null;
@@ -171,7 +171,7 @@ export function PolicyPicker({ id, paid, config, text, onChange }: { id: string;
   </div>;
 }
 
-export function EventDetailsSections({ value, onChange, priceCents, lang }: { value: EventDetails; onChange: (d: EventDetails) => void; priceCents: number | null; lang: 'en' | 'es' }) {
+export function EventDetailsSections({ value, onChange, priceCents, lang, tried = false }: { tried?: boolean; value: EventDetails; onChange: (d: EventDetails) => void; priceCents: number | null; lang: 'en' | 'es' }) {
   const { t } = useTranslation();
   const set = (patch: Partial<EventDetails>) => onChange({ ...value, ...patch });
   const setTier = (id: string, patch: Partial<TicketTier>) => set({ tiers: value.tiers.map(x => x.id === id ? { ...x, ...patch } : x) });
@@ -189,12 +189,6 @@ export function EventDetailsSections({ value, onChange, priceCents, lang }: { va
       <select id="g-lang" className="field-input" value={value.language} onChange={e => set({ language: e.target.value === 'es' ? 'es' : 'en' })}>
         <option value="en">{t('me.english')}</option><option value="es">{t('me.spanish')}</option>
       </select>
-    </section>
-
-    <section className="form-section">
-      <label className="field-label" htmlFor="g-map">{t('builder.mapLink')}</label>
-      <Input id="g-map" type="url" inputMode="url" className="field-input" maxLength={500} value={value.mapUrl} onChange={e => set({ mapUrl: e.target.value })} placeholder="https://" aria-describedby="g-map-hint" />
-      <small id="g-map-hint" className="field-hint">{t('builder.mapLinkHint')}</small>
     </section>
 
     <section className="form-section">
@@ -242,10 +236,10 @@ export function EventDetailsSections({ value, onChange, priceCents, lang }: { va
 
     <section className="form-section">
       <span className="field-label">{t('builder.tiers')}</span>
-      <p className="field-hint">{t('builder.tiersHint')}</p>
+      <p className="field-hint">{t('builder.tiersHint')}</p><p className="field-hint">{t('eventReliability.timezone', { zone: Intl.DateTimeFormat().resolvedOptions().timeZone })}</p>
       {value.tiers.map(tier => <div key={tier.id} className="builder-tier">
         <div className="two-col">
-          <Input className="field-input" maxLength={60} value={tier.name} onChange={e => setTier(tier.id, { name: e.target.value })} placeholder={t('builder.tierName')} aria-label={t('builder.tierName')} />
+          <Input className="field-input" maxLength={60} value={tier.name} onChange={e => setTier(tier.id, { name: e.target.value })} placeholder={t('builder.tierName')} aria-label={t('builder.tierName')} aria-invalid={tried && !tier.name.trim()} />{tried && !tier.name.trim() && <p className="field-error">{t('builder.errors.tier_invalid')}</p>}
           <Input className="field-input" inputMode="decimal" value={tier.price_cents ? String(tier.price_cents / 100) : ''} onChange={e => setTier(tier.id, { price_cents: toCents(money(e.target.value)) })} placeholder="$0" aria-label={t('billing.price')} />
         </div>
         <div className="two-col">
@@ -253,14 +247,15 @@ export function EventDetailsSections({ value, onChange, priceCents, lang }: { va
           <Button type="button" variant="ghost" className="danger-text" onClick={() => set({ tiers: value.tiers.filter(x => x.id !== tier.id) })} aria-label={t('builder.removeTier')}><Trash2 /></Button>
         </div>
         <div className="two-col">
-          <Input type="datetime-local" className="field-input" value={tier.sale_starts_at ?? ''} onChange={e => setTier(tier.id, { sale_starts_at: e.target.value || null })} aria-label={t('builder.saleStarts')} />
-          <Input type="datetime-local" className="field-input" value={tier.sale_ends_at ?? ''} onChange={e => setTier(tier.id, { sale_ends_at: e.target.value || null })} aria-label={t('builder.saleEnds')} />
+          <div><label className="field-label" htmlFor={`tier-start-${tier.id}`}>{t('builder.saleStarts')} · {t('eventReliability.optional')}</label><Input id={`tier-start-${tier.id}`} type="datetime-local" className="field-input" value={tier.sale_starts_at ?? ''} onChange={e => setTier(tier.id, { sale_starts_at: e.target.value || null })} aria-label={t('builder.saleStarts')} /><small className="field-hint">{t('eventReliability.salesStartHint')}</small></div>
+          <div><label className="field-label" htmlFor={`tier-end-${tier.id}`}>{t('builder.saleEnds')} · {t('eventReliability.optional')}</label><Input id={`tier-end-${tier.id}`} aria-invalid={!!tier.sale_starts_at && !!tier.sale_ends_at && new Date(tier.sale_starts_at) >= new Date(tier.sale_ends_at)} type="datetime-local" className="field-input" value={tier.sale_ends_at ?? ''} onChange={e => setTier(tier.id, { sale_ends_at: e.target.value || null })} aria-label={t('builder.saleEnds')} /><small className="field-hint">{t('eventReliability.salesEndHint')}</small>{tier.sale_starts_at && tier.sale_ends_at && new Date(tier.sale_starts_at) >= new Date(tier.sale_ends_at) && <p className="field-error">{t('eventReliability.salesOrder')}</p>}</div>
         </div>
       </div>)}
       {value.tiers.length < MAX_TIERS && <Button type="button" variant="secondary" onClick={() => set({ tiers: [...value.tiers, emptyTier()] })}><Plus />{t('builder.addTier')}</Button>}
+      <p className="field-hint">{t('eventReliability.addonTiming')}</p>
       {value.addons.map(a => <div key={a.id} className="builder-tier">
         <div className="two-col">
-          <Input className="field-input" maxLength={60} value={a.name} onChange={e => setAddon(a.id, { name: e.target.value })} placeholder={t('builder.addonName')} aria-label={t('builder.addonName')} />
+          <Input className="field-input" maxLength={60} value={a.name} onChange={e => setAddon(a.id, { name: e.target.value })} placeholder={t('builder.addonName')} aria-label={t('builder.addonName')} aria-invalid={tried && !a.name.trim()} />{tried && !a.name.trim() && <p className="field-error">{t('eventReliability.addonInvalid')}</p>}
           <Input className="field-input" inputMode="decimal" value={a.price_cents ? String(a.price_cents / 100) : ''} onChange={e => setAddon(a.id, { price_cents: toCents(money(e.target.value)) })} placeholder="$0" aria-label={t('billing.price')} />
         </div>
         <Button type="button" variant="ghost" className="danger-text" onClick={() => set({ addons: value.addons.filter(x => x.id !== a.id) })} aria-label={t('builder.removeAddon')}><Trash2 />{t('builder.removeAddon')}</Button>

@@ -1,4 +1,23 @@
 {
+  "eventReliability": {
+  "fixSummary": "Review the highlighted fields before publishing.",
+  "required": "Required",
+  "optional": "Optional",
+  "requiredPlace": "Name or address required",
+  "unlimited": "No capacity limit",
+  "limited": "Set capacity",
+  "mapOverride": "Custom map link (optional)",
+  "mapHint": "Directions use your saved address. Add an HTTPS link only for a special meeting point.",
+  "timezone": "Time zone: {{zone}}",
+  "salesStartHint": "Ticket sales start, not the event start. Blank means no separate opening date.",
+  "salesEndHint": "Ticket sales end, not the event end. Blank means no separate closing date.",
+  "salesOrder": "Sales end must be after sales start.",
+  "addonTiming": "Add-ons have no separate sales dates; they follow event registration availability.",
+  "addonInvalid": "Enter an add-on name and a valid non-negative price.",
+  "photoType": "Choose a JPG, PNG, or WebP image under 8 MB.",
+  "photoFailed": "The photo could not be uploaded. Your previous photo is unchanged. Try again.",
+  "uploading": "Uploading photo…"
+},
   "brand": "ZoheeWell",
   "feature_name_singular": "Circle",
   "feature_name_plural": "Circles",

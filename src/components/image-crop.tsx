@@ -13,6 +13,7 @@ const PRESETS = [
   { key: 'story', ratio: 9 / 16 },
 ] as const;
 const MAX = 2400;
+export const supportedCropType = (type: string) => ['image/jpeg', 'image/png', 'image/webp'].includes(type);
 
 type View = { w: number; h: number };
 
@@ -42,7 +43,7 @@ export function ImageCropSheet({ file, kind, withSquare, onCancel, onDone }: { f
   const [ratio, setRatio] = useState(kind === 'avatar' ? 1 : 16 / 9);
   const [zoom, setZoom] = useState(1);
   const [off, setOff] = useState({ x: 0, y: 0 });
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState(false); const [error, setError] = useState(false);
   const [maxW, setMaxW] = useState(340);
   const box = useRef<HTMLDivElement>(null);
   const drag = useRef<{ x: number; y: number; ox: number; oy: number } | null>(null);
@@ -50,8 +51,8 @@ export function ImageCropSheet({ file, kind, withSquare, onCancel, onDone }: { f
 
   useEffect(() => {
     if (!file) { setSrc(null); setImg(null); return; }
-    const url = URL.createObjectURL(file); setSrc(url); setZoom(1); setOff({ x: 0, y: 0 }); setRatio(kind === 'avatar' ? 1 : 16 / 9);
-    const el = new Image(); el.onload = () => setImg(el); el.src = url;
+    setError(false); const url = URL.createObjectURL(file); setSrc(url); setZoom(1); setOff({ x: 0, y: 0 }); setRatio(kind === 'avatar' ? 1 : 16 / 9);
+    const el = new Image(); el.onload = () => setImg(el); el.onerror = () => setError(true); el.src = url;
     return () => URL.revokeObjectURL(url);
   }, [file, kind]);
   useEffect(() => {
@@ -93,13 +94,13 @@ export function ImageCropSheet({ file, kind, withSquare, onCancel, onDone }: { f
         square = await encode(img, rect.sx + (rect.sw - side) / 2, rect.sy + (rect.sh - side) / 2, side, side, `${kind}-square`);
       }
       onDone({ file: out, square, previewUrl: URL.createObjectURL(out) });
-    } finally { setBusy(false); }
+    } catch { setError(true); } finally { setBusy(false); }
   };
 
   return <span onClick={e => e.stopPropagation()} onKeyDown={e => e.stopPropagation()}>
     <ResponsiveSheet open={!!file} onOpenChange={o => !o && onCancel()} title={t(kind === 'avatar' ? 'crop.titleAvatar' : 'crop.title')} description={t('crop.hint')}
       footer={<div className="crop-footer"><Button variant="secondary" onClick={onCancel}>{t('crop.cancel')}</Button><Button disabled={!img || busy} onClick={() => void apply()}>{busy ? t('onboarding.saving') : t('crop.apply')}</Button></div>}>
-      <div className="crop-body" ref={box}>
+      <div className="crop-body" ref={box}>{error && <p className="field-error" role="alert">{t('eventReliability.photoFailed')}</p>}
         {kind === 'cover' && <div className="segmented crop-presets" role="group" aria-label={t('crop.shape')}>
           {PRESETS.map(p => <button key={p.key} type="button" className={ratio === p.ratio ? 'selected' : ''} aria-pressed={ratio === p.ratio} onClick={() => { setRatio(p.ratio); setOff({ x: 0, y: 0 }); }}>{t(`crop.${p.key}`)}</button>)}
         </div>}
@@ -119,10 +120,10 @@ export function ImageCropSheet({ file, kind, withSquare, onCancel, onDone }: { f
 }
 
 /** Hidden file input + crop step. Drop inside an existing upload label in place of the raw input. */
-export function CropFileInput({ kind, withSquare, capture, onCropped, onRejected, maxBytes = 15 * 1024 * 1024, className = 'sr-only' }: { kind: CropKind; withSquare?: boolean | undefined; capture?: 'user' | 'environment'; onCropped: (r: CropResult) => void; onRejected?: (reason: 'type' | 'size') => void; maxBytes?: number; className?: string }) {
+export function CropFileInput({ kind, withSquare, capture, disabled = false, onCropped, onRejected, maxBytes = 15 * 1024 * 1024, className = 'sr-only' }: { disabled?: boolean; kind: CropKind; withSquare?: boolean | undefined; capture?: 'user' | 'environment'; onCropped: (r: CropResult) => void; onRejected?: (reason: 'type' | 'size') => void; maxBytes?: number; className?: string }) {
   const [file, setFile] = useState<File | null>(null);
   return <>
-    <input type="file" accept="image/*" className={className} {...(capture ? { capture } : {})} onChange={e => { const f = e.target.files?.[0]; e.target.value = ''; if (!f) return; if (!f.type.startsWith('image/')) { onRejected?.('type'); return; } if (f.size > maxBytes) { onRejected?.('size'); return; } setFile(f); }} />
+    <input type="file" accept="image/jpeg,image/png,image/webp" disabled={disabled} className={className} {...(capture ? { capture } : {})} onChange={e => { const f = e.target.files?.[0]; e.target.value = ''; if (!f) return; if (!supportedCropType(f.type)) { onRejected?.('type'); return; } if (f.size > maxBytes) { onRejected?.('size'); return; } setFile(f); }} />
     <ImageCropSheet file={file} kind={kind} withSquare={withSquare} onCancel={() => setFile(null)} onDone={r => { setFile(null); onCropped(r); }} />
   </>;
 }
