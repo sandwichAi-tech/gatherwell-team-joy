@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ListSkeleton, RetryState, EmptyState } from '@/components/launch-states';
 import { supabase } from '@/integrations/supabase/client';
 import { gatherwellHead } from '@/lib/gatherwell-head';
+import { splitAppLink } from '@/lib/app-link';
 
 export const Route = createFileRoute('/_authenticated/_app/notifications')({ head: () => gatherwellHead('me'), component: NotificationsPage });
 
@@ -54,7 +55,7 @@ function NotificationsPage() {
               {n.body && <small className="muted">{n.body}</small>}
               <small className="muted">{t(`notifications.kind.${n.kind}`)} · <time dateTime={n.created_at}>{new Date(n.created_at).toLocaleString(lang, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</time></small>
             </span>
-            {n.link && <Button asChild variant="ghost" size="sm" onClick={() => void open(n)}><Link to={n.link as '/'}>{t('notifications.open')}</Link></Button>}
+            {(() => { const l = splitAppLink(n.link); return l && <Button asChild variant="ghost" size="sm" onClick={() => void open(n)}><Link to={l.to as '/'} search={l.search as never}>{t('notifications.open')}</Link></Button>; })()}
           </div>
         </li>)}
       </ul>}
