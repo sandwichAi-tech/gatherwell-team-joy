@@ -14,7 +14,7 @@ export function GatheringCover({ path, style = 0, title, className = '', overlay
   /** Signed-in surfaces showing other hosts' events: lets the server sign after checking the viewer can read the event. */
   eventId?: string | undefined;
 }) {
-  const { data: signed } = useQuery({ queryKey: ['media-rendition', path, eventId ?? null], queryFn: async () => (await mediaRendition(path)) ?? (eventId ? await eventCoverRendition({ data: { id: eventId } }).catch(() => null) : null), enabled: !!path && !rendition, staleTime: 50 * 60 * 1000 });
+  const { data: signed } = useQuery({ queryKey: ['media-rendition', path, eventId ?? null], queryFn: async () => (eventId ? await eventCoverRendition({ data: { id: eventId } }).catch(() => null) : null) ?? (await mediaRendition(path)), enabled: !!path && !rendition, staleTime: 50 * 60 * 1000 });
   const url = rendition ?? signed ?? null;
   const scrim = clampOverlay(overlay);
   const scrimEl = scrim > 0 ? <span className="gathering-cover-scrim" style={{ background: `rgba(48, 35, 56, ${scrim / 100})` }} aria-hidden="true" /> : null;
