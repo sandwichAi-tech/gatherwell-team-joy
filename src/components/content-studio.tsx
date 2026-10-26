@@ -302,7 +302,8 @@ function CourseLessonEditor({ lesson, offer, siblings, onClose }: { lesson: (Par
   const save = async () => {
     setBusy(true);
     try {
-      const row = { title_en: f.title_en.trim(), title_es: f.title_es.trim(), type: f.type, url: f.url.trim() || null, storage_path: needsFile ? storagePath : null,
+      // An uploaded file replaces any earlier link, so a stale example URL never lingers behind it.
+      const row = { title_en: f.title_en.trim(), title_es: f.title_es.trim(), type: f.type, url: needsFile && storagePath ? null : f.url.trim() || null, storage_path: needsFile ? storagePath : null,
         description_en: f.description_en.trim() || null, description_es: f.description_es.trim() || null,
         duration_minutes: parseInt(f.duration, 10) > 0 ? Math.min(600, parseInt(f.duration, 10)) : null,
         is_preview: f.is_preview, is_published: f.is_published, prerequisite_lesson_id: f.prerequisite || null, event_id: f.type === 'live' && f.event_id ? f.event_id : null };
