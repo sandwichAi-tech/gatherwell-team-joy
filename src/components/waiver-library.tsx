@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { WaiverEditorSheet } from '@/components/waiver';
+import { libraryTextValid } from '@/lib/waiver-library';
 
 export type LibraryWaiver = {id:string;name:string;body_en:string;body_es:string;version:number;archived:boolean};
 export function useWaiverLibrary(teamId: string) {
@@ -20,7 +21,7 @@ export function WaiverLibrary({teamId}:{teamId:string}) {
   const [edit,setEdit]=useState<LibraryWaiver|null>(null);const [preview,setPreview]=useState<LibraryWaiver|null>(null);const [teamEdit,setTeamEdit]=useState(false);
   const [busy,setBusy]=useState(false);const [error,setError]=useState('');
   const save=async(archived=false)=>{
-    if(!edit)return;setBusy(true);setError('');
+    if(!edit)return;if(!libraryTextValid(edit.name,edit.body_en,edit.body_es)){setError(t('waiverLibrary.saveError'));return;}setBusy(true);setError('');
     try {const r=await supabase.rpc('save_library_waiver',{_team:teamId,_id:edit.id||null,_name:edit.name,_en:edit.body_en,_es:edit.body_es,_archive:archived} as never);if(r.error)throw r.error;setEdit(null);await qc.invalidateQueries({queryKey:['waiver-library',teamId]});}
     catch{setError(t('waiverLibrary.saveError'));}finally{setBusy(false);}
   };
