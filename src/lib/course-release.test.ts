@@ -25,3 +25,11 @@ describe('course lesson release schedule', () => {
     expect(accessStart([])).toBeNull();
   });
 });
+
+describe('course file cleanup', () => {
+  it('collects every private file a lesson or track uses', async () => {
+    const { learnPathsOf } = await import('./learn');
+    expect(learnPathsOf([{ storage_path: 't/a.pdf', attachments: [{ name: 'x', path: 't/b.pdf' }] }, { cover_url: 't/c.jpg' }, { storage_path: 't/a.pdf' }]).sort())
+      .toEqual(['t/a.pdf', 't/b.pdf', 't/c.jpg']);
+  });
+});

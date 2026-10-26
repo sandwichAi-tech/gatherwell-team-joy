@@ -25,6 +25,8 @@ import { useGatherwell } from '@/components/gatherwell-shell';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
 import { workspaceQuery, mediaUrl, mediaRendition, uploadMedia } from '@/lib/account';
 import { COVER_STYLES } from '@/lib/gatherings';
+import { supabase } from '@/integrations/supabase/client';
+import { learnPathsForTracks, removeUnusedLearnFiles } from '@/lib/learn';
 import { formatMoney, paymentsStatusQuery } from '@/lib/billing';
 import {
   deleteOffer, getOfferLink, isLive, joinFreeOffer, linkableOffersQuery, myOffersQuery, offerIncludes, offerQuery, offerText, offerTitle,
@@ -124,7 +126,7 @@ function OfferEditor({ offer, teamId, onClose, bundleMode }: { offer: Partial<Of
   };
   const remove = async () => {
     if (!offer?.id || !(await confirmAction({ title: t('offers.confirmDelete'), destructive: true }))) return;
-    const { data: tr } = await db.from('tracks').select('id').eq('offer_id', offer.id);
+    const { data: tr } = await supabase.from('tracks').select('id').eq('offer_id', offer.id);
     const files = await learnPathsForTracks((tr ?? []).map((x: { id: string }) => x.id));
     const res = await deleteOffer(offer.id);
     if (res.error) { toast.error(t('offers.deleteError')); return; }
