@@ -3301,6 +3301,7 @@ export type Database = {
       }
       message_journey_runs: {
         Row: {
+          attendance_delivery: boolean
           created_at: string
           current_step: number
           entitlement_id: string | null
@@ -3316,6 +3317,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          attendance_delivery?: boolean
           created_at?: string
           current_step?: number
           entitlement_id?: string | null
@@ -3331,6 +3333,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          attendance_delivery?: boolean
           created_at?: string
           current_step?: number
           entitlement_id?: string | null
@@ -3417,6 +3420,8 @@ export type Database = {
       }
       message_journeys: {
         Row: {
+          attendance_audience: string | null
+          attendance_send_at: string | null
           created_at: string
           created_by: string | null
           event_id: string | null
@@ -3429,6 +3434,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          attendance_audience?: string | null
+          attendance_send_at?: string | null
           created_at?: string
           created_by?: string | null
           event_id?: string | null
@@ -3441,6 +3448,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          attendance_audience?: string | null
+          attendance_send_at?: string | null
           created_at?: string
           created_by?: string | null
           event_id?: string | null
@@ -7856,6 +7865,10 @@ export type Database = {
         Returns: string
       }
       attendance_export: { Args: { _event: string }; Returns: Json }
+      attendance_message_eligible: {
+        Args: { _audience: string; _channel: string; _rsvp: string }
+        Returns: boolean
+      }
       attendance_totals: { Args: { _event: string }; Returns: Json }
       automation_activity: {
         Args: { _limit: number; _team: string }
@@ -8629,6 +8642,10 @@ export type Database = {
         Returns: undefined
       }
       price_guidance: { Args: { _category: string }; Returns: Json }
+      process_attendance_journeys: {
+        Args: { _limit?: number }
+        Returns: number
+      }
       progress_core: { Args: { _tz: string; _user: string }; Returns: Json }
       promo_usage: {
         Args: never
@@ -8971,6 +8988,17 @@ export type Database = {
           _steps: Json
           _title_en: string
           _title_es: string
+        }
+        Returns: string
+      }
+      save_attendance_journey: {
+        Args: {
+          _audience: string
+          _event: string
+          _id: string
+          _local: string
+          _name: string
+          _template: string
         }
         Returns: string
       }

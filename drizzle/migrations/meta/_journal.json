@@ -967,6 +967,13 @@
       "when": 1793053308808,
       "tag": "0137_attendance_checkin_binding",
       "breakpoints": true
+    },
+    {
+      "idx": 138,
+      "version": "7",
+      "when": 1793053374913,
+      "tag": "0138_attendance_followup_journeys",
+      "breakpoints": true
     }
   ]
 }
