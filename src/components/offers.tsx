@@ -43,7 +43,7 @@ export function OfferCover({ offer, wide, preview }: { offer: Pick<Offer, 'cover
   const { t, i18n } = useTranslation();
   const { data: url } = useQuery({ queryKey: ['media-rendition', offer.cover_url], queryFn: () => mediaRendition(offer.cover_url), enabled: !!offer.cover_url && !preview, staleTime: 50 * 60 * 1000 });
   return <div className={`offer-cover ${wide ? 'is-wide' : ''}`} style={{ backgroundImage: COVER_STYLES[offer.cover_style % COVER_STYLES.length] }}>
-    {(preview || url) && <BrandImage src={preview ?? url} alt={offerTitle(offer, i18n.resolvedLanguage)} className="offer-cover-photo" priority={wide} />}
+    {(preview || url) && <BrandImage src={preview ?? url} alt={offerTitle(offer, i18n.resolvedLanguage)} className="offer-cover-photo" priority={wide} sizes={wide ? '(min-width: 1280px) 1200px, 100vw' : '(min-width: 640px) 400px, 100vw'} />}
     <span className="chip offer-kind">{t(`offers.kind.${offer.kind}`)}</span></div>;
 }
 
