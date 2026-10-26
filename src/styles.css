@@ -1376,6 +1376,8 @@ button { white-space:normal; }
 .gw-group .settings-value{max-width:42%}.gw-group .settings-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* Phase 4 states */
 .gw-empty-state{display:flex;align-items:center;gap:16px;padding:24px;border:1px solid var(--border);border-radius:16px;background:var(--card);box-shadow:var(--e1);color:var(--muted-foreground);font-size:15px;line-height:1.55;animation:gw-state-in var(--dur-open) ease-out}
+.gw-empty-state>div{min-width:0;flex:1 1 180px}
+@media (max-width:480px){.gw-empty-state{flex-wrap:wrap}}
 .gw-empty-state.is-compact{padding:16px;box-shadow:none;background:color-mix(in oklab,var(--secondary) 45%,var(--card))}
 .gw-empty-state h3{font-size:18px;font-weight:600;color:var(--foreground);margin-bottom:4px}
 .retry-state{background:var(--card)!important;border-radius:16px!important;box-shadow:var(--e1);padding:16px 24px!important;animation:gw-state-in var(--dur-open) ease-out}
