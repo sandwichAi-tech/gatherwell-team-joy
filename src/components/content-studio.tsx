@@ -116,18 +116,21 @@ export function OfferDetailsEditor({ offer, onClose }: { offer: Offer | null; on
 
 /* ---------- Duplicate + manual grant actions ---------- */
 export function OfferHostActions({ offer, onChanged }: { offer: Offer; onChanged: () => void }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(); const navigate = useNavigate();
   const [grantOpen, setGrantOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState(false);
   const duplicate = async () => {
-    if (!(await confirmAction({ title: t('content.confirmDuplicate') }))) return;
+    if (busy) return;
     setBusy(true);
-    const { error } = await duplicateOffer(offer.id);
+    if (!(await confirmAction({ title: t('content.confirmDuplicate') }))) { setBusy(false); return; }
+    const { data: copyId, error } = await duplicateOffer(offer.id);
     setBusy(false);
     if (error) { toast.error(t('offers.saveError')); return; }
     toast.success(t('content.duplicated'));
     onChanged();
+    // Open the new draft copy so the coach edits the copy, never the original by mistake.
+    if (typeof copyId === 'string') void navigate({ to: '/offer/$id', params: { id: copyId } });
   };
   const grant = async () => {
     setBusy(true);
