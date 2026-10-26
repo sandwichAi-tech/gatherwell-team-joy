@@ -65,13 +65,20 @@ function CardPreview({ item, type, lang, cta }: { item: ItemState; type: CreateT
     </div>;
   }
   return <div className="card-preview is-preview">
-    <LearnCover path={item.coverPath} style={item.coverStyle} title={title} />
+    <ItemCover item={item} type={type} title={title} />
     <div className="card-preview-body">
       <strong>{title}</strong>
       {subtitle && <p>{subtitle}</p>}
       <span className="card-preview-cta" style={{ background: pair.bg, color: pair.fg }}>{cta}</span>
     </div>
   </div>;
+}
+
+/** Offer-backed covers live in the host's media folder; track/recipe covers in team learn media. */
+function ItemCover({ item, type, title }: { item: ItemState; type: CreateType; title: string }) {
+  const kind = offerKindFor(type);
+  return kind ? <OfferCover offer={{ cover_style: item.coverStyle, cover_url: item.coverPath, kind, title_en: item.titleEn, title_es: item.titleEs }} wide />
+    : <LearnCover path={item.coverPath} style={item.coverStyle} title={title} />;
 }
 
 /** Participant-facing landing/access page preview — promotional copy only, never protected content. */
@@ -83,7 +90,7 @@ function LandingPreview({ item, type, lang, cta, paid }: { item: ItemState; type
   const promo = lang === 'es' ? item.promoEs || item.promoEn : item.promoEn || item.promoEs;
   const price = paid && item.access.price ? `$${item.access.price}` : null;
   return <div className="landing-preview">
-    <LearnCover path={item.coverPath} style={item.coverStyle} title={title} />
+    <ItemCover item={item} type={type} title={title} />
     <div className="landing-preview-body">
       <span className="eyebrow">{t(`resources.create.types.${type}.name`)}</span>
       <h3>{title}</h3>
@@ -491,13 +498,11 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
         file_path: kind === 'download' ? draft.offer.filePath : null,
         status: (publish ? 'published' : 'draft') as 'published' | 'draft', visibility,
       };
-      const r = loaded?.entity === 'offer' ? await saveOffer(row, loaded.id) : await saveOffer({ ...row, includes_en: [], includes_es: [], team_id: teamId, host_id: userId });
+      const r = loaded?.entity === 'offer' ? await saveOffer(row, loaded.id)
+        : await db.from('offers').insert({ ...row, includes_en: [], includes_es: [], team_id: teamId, host_id: userId }).select('id').single();
       if (r.error) { const m = String(r.error.message); if (!m.includes('payouts_required')) return finish(false, undefined, m); setBusy(false); toast.error(t('billing.payoutsRequired')); return; }
-      let offerId = loaded?.id as string;
-      if (!loaded) {
-        const mine = await db.from('offers').select('id').eq('host_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle();
-        offerId = mine.data?.id;
-      }
+      // Use the id of the row just created, never "my latest offer" (wrong item when two are saved close together).
+      const offerId = (loaded?.id ?? (r.data as { id: string } | null)?.id) as string;
       // A course gets its own curriculum track so lessons can be attached right away.
       let trackId = loaded?.trackId;
       if (kind === 'course' && !trackId && offerId) {
