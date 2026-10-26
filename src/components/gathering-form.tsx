@@ -252,6 +252,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   };
   const saveWaivers=async(id:string)=>{
     const r=await supabase.from('events').update({requires_waiver:teamWaiver}).eq('id',id);if(r.error){setSaveError(t('waiverLibrary.saveError'));return false;}
+    if(editing){const old=await supabase.from('event_waivers').select('library_id').eq('event_id',id).is('archived_at',null);for(const w of old.data??[]){if(w.library_id&&!libraryWaivers.some(x=>x.id===w.library_id)){const r=await supabase.rpc('remove_library_attachment',{_event:id,_library:w.library_id});if(r.error)return false;}}}
     for(const w of libraryWaivers){const r=await supabase.rpc('attach_library_waiver',{_event:id,_waiver:w.id,_version:w.version});if(r.error){setSaveError(t('waiverLibrary.saveError'));return false;}}
     return true;
   };

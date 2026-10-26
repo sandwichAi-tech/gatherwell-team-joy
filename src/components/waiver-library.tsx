@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
-import { EventWaiversManager } from '@/components/event-waivers';
 import { WaiverEditorSheet } from '@/components/waiver';
 
 export type LibraryWaiver = {id:string;name:string;body_en:string;body_es:string;version:number;archived:boolean};
