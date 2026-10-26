@@ -14,7 +14,7 @@ import { EmptyState, ListSkeleton } from '@/components/launch-states';
 import { supabase } from '@/integrations/supabase/client';
 import { bundleAccessQuery, bundleItemsQuery, duplicateOffer, grantOfferAccess, isHttpsUrl, lessonFileError, offerReadinessQuery, replaceOfferItem, LESSON_FILE_RULES, type BundleItem } from '@/lib/content';
 import { offerItemDownloadLink } from '@/lib/offers.functions';
-import { lessonTitle, pick, trackTitle, uploadLearnFile, type Lesson, type Track } from '@/lib/learn';
+import { learnPathsForTracks, learnPathsOf, lessonTitle, pick, removeUnusedLearnFiles, trackTitle, uploadLearnFile, type Lesson, type Track } from '@/lib/learn';
 import { formatMoney } from '@/lib/billing';
 import { platformFeeCents } from '@/lib/fees';
 import type { Offer } from '@/lib/offers';
@@ -223,9 +223,11 @@ function SectionEditor({ section, offer, onClose }: { section: Partial<Track> | 
   };
   const remove = async () => {
     if (!section?.id || !(await confirmAction({ title: t('learnHub.confirmDeleteTrack'), destructive: true }))) return;
+    const files = await learnPathsForTracks([section.id]);
     await db.from('lessons').delete().eq('track_id', section.id);
     const res = await db.from('tracks').delete().eq('id', section.id);
     if (res.error) { toast.error(t('profile.saveError')); return; }
+    void removeUnusedLearnFiles(files);
     await qc.invalidateQueries({ queryKey: ['curriculum', offer.id] });
     onClose();
   };
@@ -325,8 +327,10 @@ function CourseLessonEditor({ lesson, offer, siblings, onClose }: { lesson: (Par
   };
   const remove = async () => {
     if (!lesson?.id || !(await confirmAction({ title: t('learnHub.confirmDeleteLesson'), destructive: true }))) return;
+    const files = learnPathsOf([lesson as never]);
     const r = await db.from('lessons').delete().eq('id', lesson.id);
     if (r.error) { toast.error(t('profile.saveError')); return; }
+    void removeUnusedLearnFiles(files);
     await qc.invalidateQueries({ queryKey: ['curriculum', offer.id] });
     onClose();
   };

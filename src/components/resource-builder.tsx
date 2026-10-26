@@ -24,7 +24,7 @@ import {
   CREATE_TYPES, emptyBuilderDraft, fileMatchesLessonType, isTrackFlow, lessonEditorConfig, lessonPresetFor, offerKindFor, typeContentAtRisk,
   type BuilderDraft, type CreateType,
 } from '@/lib/create-resource';
-import { listOf, pick, RECIPE_TAGS, uploadLearnFile, type Lesson } from '@/lib/learn';
+import { learnPathsOf, listOf, pick, RECIPE_TAGS, removeUnusedLearnFiles, uploadLearnFile, type Lesson } from '@/lib/learn';
 import { myOffersQuery, offerTitle, saveOffer, uploadOfferFile, type Offer } from '@/lib/offers';
 import type { RefundPolicy } from '@/lib/refunds';
 import { activationIso, hasPlaceholder, isMultiLessonTrack, lessonsToPublishWithTrack, placeholderLessons, publishedDestination, stepNav } from '@/lib/resource-flow';
@@ -151,7 +151,9 @@ function Curriculum({ trackId, teamId, lang, onLessons }: { trackId: string; tea
   const removeLesson = async (l: Lesson) => {
     const ok = await confirmAction({ title: t('resources.item.curriculum.deleteTitle'), body: t('resources.item.curriculum.deleteText'), confirmLabel: t('resources.item.deleteLesson'), destructive: true });
     if (!ok) return;
+    const files = learnPathsOf([l]);
     const { error } = await db.from('lessons').delete().eq('id', l.id);
+    if (!error) void removeUnusedLearnFiles(files);
     if (error) { toast.error(t('profile.saveError')); return; }
     void load(); void qc.invalidateQueries();
   };

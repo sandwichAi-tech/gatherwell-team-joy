@@ -124,8 +124,11 @@ function OfferEditor({ offer, teamId, onClose, bundleMode }: { offer: Partial<Of
   };
   const remove = async () => {
     if (!offer?.id || !(await confirmAction({ title: t('offers.confirmDelete'), destructive: true }))) return;
+    const { data: tr } = await db.from('tracks').select('id').eq('offer_id', offer.id);
+    const files = await learnPathsForTracks((tr ?? []).map((x: { id: string }) => x.id));
     const res = await deleteOffer(offer.id);
     if (res.error) { toast.error(t('offers.deleteError')); return; }
+    void removeUnusedLearnFiles(files);
     await qc.invalidateQueries({ queryKey: ['offers'] }); onClose();
   };
   const field = (id: string, label: string, el: React.ReactNode) => <div className="form-field"><label className="field-label" htmlFor={id}>{label}</label>{el}</div>;
