@@ -1,5 +1,6 @@
 import { EmptyState } from '@/components/launch-states';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { confirmAction } from '@/components/confirm-dialog';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -131,7 +132,10 @@ export function DiscussionsPanel({ teamId, isLeader, me }: { teamId: string; isL
   const { data: topics = [], isLoading } = useQuery({ queryKey: key, queryFn: async (): Promise<Topic[]> => (await db.rpc('team_topics', { _team: teamId })).data ?? [] });
   const [open, setOpen] = useState<string | null>(null); const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState(''); const [body, setBody] = useState(''); const [busy, setBusy] = useState(false);
-  useEffect(() => { const q = new URLSearchParams(window.location.search).get('topic'); if (q) setOpen(q); }, []);
+  // Deep links (/team?topic=<id>) from notifications and push open the matching discussion.
+  const search = useSearch({ strict: false }) as { topic?: string }; const navigate = useNavigate();
+  useEffect(() => { if (search.topic) setOpen(search.topic); }, [search.topic]);
+  const close = () => { setOpen(null); if (search.topic) void navigate({ to: '.', search: (s: Record<string, unknown>) => ({ ...s, topic: undefined }) as never, replace: true }); };
   useEffect(() => {
     const ch = supabase.channel(`topics-${teamId}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'discussion_topics', filter: `team_id=eq.${teamId}` }, () => void qc.invalidateQueries({ queryKey: key }))
@@ -140,16 +144,17 @@ export function DiscussionsPanel({ teamId, isLeader, me }: { teamId: string; isL
     return () => { void supabase.removeChannel(ch); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [teamId]);
-  useEffect(() => { if (open) void db.rpc('mark_topic_read', { _id: open }).then(() => qc.invalidateQueries({ queryKey: key })); // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  const current = topics.find(x => x.id === open);
+  // Only mark/read a topic this person can actually see in this team; unknown ids show an unavailable state.
+  useEffect(() => { if (open && current) void db.rpc('mark_topic_read', { _id: open }).then(() => qc.invalidateQueries({ queryKey: key })); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, !!current]);
   const create = async (e: FormEvent) => {
     e.preventDefault(); if (!title.trim()) return; setBusy(true);
     const { data, error } = await db.rpc('create_topic', { _team: teamId, _title: title.trim(), _body: body.trim() }); setBusy(false);
     if (error) { toast.error(t(errorKey(error))); return; }
     setTitle(''); setBody(''); setCreating(false); void qc.invalidateQueries({ queryKey: key }); setOpen(data);
   };
-  const current = topics.find(x => x.id === open);
-  const manage = async (args: Record<string, unknown>) => { const { error } = await db.rpc('manage_topic', { _id: open, _pinned: null, _delete: null, ...args }); if (error) { toast.error(t(errorKey(error))); return; } if (args['_delete']) setOpen(null); void qc.invalidateQueries({ queryKey: key }); };
+  const manage = async (args: Record<string, unknown>) => { const { error } = await db.rpc('manage_topic', { _id: open, _pinned: null, _delete: null, ...args }); if (error) { toast.error(t(errorKey(error))); return; } if (args['_delete']) close(); void qc.invalidateQueries({ queryKey: key }); };
   return <section className="panel" aria-labelledby="disc-title">
     <div className="section-heading"><h2 id="disc-title">{t('conversation.discussions')}</h2>{isLeader && <Button variant="secondary" onClick={() => setCreating(true)}><Plus />{t('conversation.newTopic')}</Button>}</div>
     {isLoading ? <div className="skeleton-list" aria-busy="true"><div className="skeleton-row" /></div> : topics.length === 0 ? <p className="auth-subtitle">{isLeader ? t('conversation.noTopicsLeader') : t('conversation.noTopics')}</p> :
@@ -164,10 +169,13 @@ export function DiscussionsPanel({ teamId, isLeader, me }: { teamId: string; isL
         <Button type="submit" disabled={busy || !title.trim()}>{t('conversation.createTopic')}</Button>
       </form>
     </ResponsiveSheet>
-    <ResponsiveSheet open={!!open} onOpenChange={o => !o && setOpen(null)} title={current?.title ?? t('conversation.discussions')}>
+    <ResponsiveSheet open={!!open} onOpenChange={o => !o && close()} title={current?.title ?? t('conversation.discussions')}>
       {isLeader && current && <div className="guest-button-row"><Button variant="secondary" onClick={() => manage({ _pinned: !current.pinned })}><Pin />{current.pinned ? t('conversation.unpin') : t('conversation.pin')}</Button>
         <Button variant="ghost" className="danger-text" onClick={async () => { if (await confirmAction({ title: t('conversation.deleteTopicConfirm'), destructive: true })) void manage({ _delete: true }); }}><Trash2 />{t('conversation.deleteTopic')}</Button></div>}
-      {open && <CommentThread teamId={teamId} topicId={open} me={me} />}
+      {open && current && <CommentThread teamId={teamId} topicId={open} me={me} />}
+      {open && !current && (isLoading ? <div className="skeleton-list" aria-busy="true"><div className="skeleton-row" /></div> :
+        <div className="empty-state" role="status"><MessageCircle /><p><strong>{t('conversation.unavailableTitle')}</strong></p><p className="muted">{t('conversation.unavailableBody')}</p>
+          <Button variant="secondary" onClick={close}>{t('conversation.backToDiscussions')}</Button></div>)}
     </ResponsiveSheet>
   </section>;
 }

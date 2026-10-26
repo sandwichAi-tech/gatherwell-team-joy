@@ -3951,7 +3951,10 @@
     "removeLink": "Quitar enlace",
     "addAnother": "Agregar",
     "detected": "Detectado: {{platform}}",
-    "tooMany": "Puedes agregar hasta 5 chats grupales."
+    "tooMany": "Puedes agregar hasta 5 chats grupales.",
+    "unavailableTitle": "Esta conversación no está disponible",
+    "unavailableBody": "Puede que se haya eliminado o que pertenezca a un equipo que no estás viendo ahora. Si perteneces a más de uno, cambia de equipo desde el menú.",
+    "backToDiscussions": "Volver a las conversaciones"
   },
   "confirm": {
     "cancel": "Cancelar",
