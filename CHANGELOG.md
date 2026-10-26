@@ -1,5 +1,13 @@
 # ZoheeWell Change Log
 
+## 2026-10-26 — Row 62 closed
+- Course release schedule is now enforced (0130–0131): with "a new lesson every N days", lesson 1 opens at the member's access start, lesson 2 after N days, and so on. Access start = earliest live purchase/entitlement (else free-team join), never before the course's activation date. 0 days = everything opens at once. Coaches, leaders and editors always see every lesson.
+- Locked lessons show only their title and localized opening date; their content, files (incl. signed links), summaries, live links, lesson quizzes and completion are refused by the server.
+- Course pages without access hand off to the course page ("See course options") instead of an empty outline.
+- Deleting a course now deletes its curriculum (0132); before, the lessons silently became an open team track. Deleting a lesson, section, track or draft course also removes private files nothing else uses (duplicates keep shared files).
+- Duplicate opens the new draft copy; drafts and closed items can be opened from the offers list; uploading a file to a lesson clears any old example link.
+- Header on course pages reads Workspace / Resources (was Home). Section header buttons (Add item, Add section) keep their inner padding. "Monthly course" label is now "Course".
+
 ## 2026-10-26 — Row 62 Resources pressure test (in progress)
 - Courses, downloads and bundles with a cover photo can now be saved and published from the resource builder (cover is stored in the host's own media folder; previews show it).
 - Saving a new course/download/bundle uses the item just created (two quick saves no longer overwrite each other); the draft's link stays in the address bar so refresh reopens it.
@@ -8,7 +16,6 @@
 - Downloads use the same access rule as the offer page, so team members of a free team download can actually open it; the Download button is hidden until a file is attached; course pages no longer show a "See events" button.
 - Paid offers now require a purchase or entitlement; team membership alone opens only free team offers (0128). One existing paid published offer is affected.
 - Signed-out recipe and quiz links return to the same page after sign-in (0129). Recipe blueprints open straight in the builder. Video players no longer spill past narrow phone screens.
-- Open: course "a new lesson opens every N days" is displayed but not enforced.
 
 ## 2026-10-26 — Rows 70 and 71 closed
 - Row 70: team chat is the team Discussions panel; notification links /team?topic=<id> now open the right conversation, unknown/unauthorized topics show a localized unavailable state; replies/mentions no longer fail (0124).

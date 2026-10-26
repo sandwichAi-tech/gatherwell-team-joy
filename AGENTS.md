@@ -58,3 +58,4 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Referral attribution/rewards/status are server-owned (0119 RPCs + orders_referral_hook), mirrored in src/lib/referrals.ts; landing reuses the analytics device id.
 - Profile IA: account fields edit only in Me's Edit profile, public-page fields only in HostProfilePanel (src/lib/profile-ia.ts PROFILE_FIELDS); host categories are allowed keys normalized by a DB trigger.
 - Event images use share-image.ts for all outputs; admin menu uses role checks.
+- Course lesson release (drip) is decided only by lesson_unlock_at()/lesson_is_unlocked() (mirrored in src/lib/course-release.ts) and enforced by restrictive RLS on lessons, lesson_summaries and learn-media objects; clients get locked titles only via my_locked_lessons(), so content never reaches the browser early.
