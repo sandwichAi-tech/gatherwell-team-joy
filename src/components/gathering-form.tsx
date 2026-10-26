@@ -165,7 +165,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     return () => listener?.remove?.();
   }, [mapsKey, place, ready]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (!workspace) return null;
+  if (!workspace || !ready) return <p role="status">{t('common.loading')}</p>;
   const canSell = planStatus?.connect_status === 'active';
   const priceCents = price ? Math.round(Number(price) * 100) : null;
   const saveTeamReg = async (id: string) => {
@@ -328,7 +328,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         {tpl && <span className="chip">{t('gathering.fromTemplate', { title: tpl.title })}</span>}
       </header>
 
-      {saveError && <div id="g-errors" className="field-error" role="alert" tabIndex={-1}><strong>{saveError}</strong><ul>{blockers.map(b => <li key={b}>{t(`builder.errors.${b}`)}</li>)}</ul></div>}
+      {saveError && <div id="g-errors" className="field-error" role="alert" tabIndex={-1}><strong>{saveError}</strong><ul>{blockers.map(b => <li key={b}>{t(`eventReliability.errors.${b}`)}</li>)}</ul></div>}
       <section className="form-section">
         <span className="field-label" id="g-format-label">{t('builder.experience.label')}</span>
         <div className="format-cards" role="radiogroup" aria-labelledby="g-format-label">
@@ -393,7 +393,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         <span className="field-label">{t('gathering.when')}</span>
         <div className="chip-row">{usual && (() => { const v = toLocalInput(usual); return <button type="button" className={`preset-chip is-usual ${start === v ? 'is-selected' : ''}`} aria-pressed={start === v} onClick={() => setStart(v)}>{t('gathering.presets.usual', { day: usual.toLocaleDateString(lang, { weekday: 'short' }), time: usual.toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' }) })}</button>; })()}{presets.map(p => { const v = toLocalInput(p.date); return <button key={p.key} type="button" className={`preset-chip ${start === v ? 'is-selected' : ''}`} aria-pressed={start === v} onClick={() => setStart(v)}>{t(`gathering.presets.${p.key}`, { time: p.date.toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' }) })}</button>; })}</div>
         <label className="field-label" htmlFor="g-start">{t('gathering.when')} · {t('eventReliability.required')}</label><Input id="g-start" aria-invalid={tried && blockers.includes('date')} type="datetime-local" className="field-input" value={start} onChange={e => setStart(e.target.value)} aria-label={t('gathering.custom')} />
-        {tried && blockers.includes('date') && <p className="field-error">{t('builder.errors.date')}</p>}<small className="field-hint">{t('eventReliability.timezone', { zone: source?.event.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone })}</small>
+        {tried && blockers.includes('date') && <p className="field-error">{t('eventReliability.errors.date')}</p>}<small className="field-hint">{t('eventReliability.timezone', { zone: source?.event.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone })}</small>
         {full && <>
         <span className="field-label">{t('gathering.duration')}</span>
         <div className="chip-row">{DURATIONS.map(d => <button key={d} type="button" className={`preset-chip ${!customDuration && duration === d ? 'is-selected' : ''}`} aria-pressed={!customDuration && duration === d} onClick={() => { setCustomDuration(false); setDuration(d); }}>{t(`gathering.durations.${d}`)}</button>)}
@@ -409,7 +409,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         {place !== 'online' && <>
           <label className="field-label" htmlFor="g-location">{t('gathering.locationName')} · {t('eventReliability.requiredPlace')}</label><Input id="g-location" aria-invalid={tried && blockers.includes('place')} className="field-input" maxLength={160} value={locationName} onChange={e => setLocationName(e.target.value)} placeholder={t('gathering.locationName')} aria-label={t('gathering.locationName')} />
           <Input ref={addressRef} className="field-input" maxLength={300} value={address} onChange={e => { setAddress(e.target.value); setCoords(null); }} placeholder={t('gathering.address')} aria-label={t('gathering.address')} autoComplete="off" />
-          {tried && blockers.includes('place') && <p className="field-error">{t('builder.errors.place')}</p>}
+          {tried && blockers.includes('place') && <p className="field-error">{t('eventReliability.errors.place')}</p>}
           <label className="field-label" htmlFor="g-map">{t('eventReliability.mapOverride')}</label><Input id="g-map" type="url" value={details.mapUrl} maxLength={500} aria-invalid={tried && !!details.mapUrl && !validHttps(details.mapUrl)} onChange={e => setDetails(d => ({ ...d, mapUrl: e.target.value }))} /><small className="field-hint">{t('eventReliability.mapHint')}</small>
           {tried && !!details.mapUrl && !validHttps(details.mapUrl) && <p className="field-error">{t('gathering.errors.invalid_url')}</p>}
           {!mapsKey && <p className="not-connected">{t('gathering.addressNote')}</p>}
