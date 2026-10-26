@@ -911,6 +911,13 @@
       "when": 1792987715600,
       "tag": "0129_return_path_recipe_quiz",
       "breakpoints": true
+    },
+    {
+      "idx": 130,
+      "version": "7",
+      "when": 1792988693552,
+      "tag": "0130_course_drip_release",
+      "breakpoints": true
     }
   ]
 }
