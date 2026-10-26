@@ -55,7 +55,7 @@ export function ToolsPage() {
           icon="SquaresFour"
           title={t('toolsPage.emptyTitle')}
           text={t('toolsPage.emptyText')}
-          action={<Button asChild variant="secondary"><Link to="/home">{t('toolsPage.emptyAction')}</Link></Button>}
+          action={<Button asChild variant="secondary" className="max-w-full whitespace-normal text-center"><Link to="/home">{t('toolsPage.emptyAction')}</Link></Button>}
         />
       </section>
     )}
@@ -66,7 +66,7 @@ export function ToolsPage() {
         <ul className="tools-grid">
           {section.tools.map(tool => (
             <li key={tool.id}>
-              <Link to={tool.to} className="tool-card">
+              <Link to={tool.to} search={tool.search as never} className="tool-card">
                 <GwFeatureTile name={tool.icon} size={24} className="settings-tile" />
                 <span className="tool-card-body">
                   <span className="tool-card-title">

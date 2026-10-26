@@ -20,7 +20,7 @@ export type ToolId =
   | 'admin' | 'adminMedia'
   | 'support';
 
-export type Tool = { id: ToolId; to: string; icon: GwIconName; badge?: 'setup' | undefined };
+export type Tool = { id: ToolId; to: string; search?: Record<string, string>; icon: GwIconName; badge?: 'setup' | undefined };
 export type ToolSection = { id: ToolSectionId; tools: Tool[] };
 
 export type ToolsInput = {
@@ -91,7 +91,7 @@ export function buildToolSections(input: ToolsInput): ToolSection[] {
   ] : []);
 
   add('presence', builder ? [
-    { id: 'hostProfile', to: '/me', icon: 'Globe2' },
+    { id: 'hostProfile', to: '/me', search: { panel: 'hostProfile' }, icon: 'Globe2' },
     { id: 'locations', to: '/locations', icon: 'MapPin' },
     { id: 'verify', to: '/verify', icon: 'BadgeCheck' },
   ] : []);

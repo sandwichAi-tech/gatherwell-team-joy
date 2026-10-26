@@ -44,3 +44,20 @@ describe('EN/ES copy', () => {
   });
   it('invite copy never mentions rewards or commissions', () => { expect(en.welcome.landing.body).not.toMatch(/earn|commission|\$/i); });
 });
+
+import { buildToolSections as __bts } from '@/lib/tools-inventory';
+describe('Tools public profile shortcut', () => {
+  it('opens the public host profile editor directly', () => {
+    const tools = __bts({ isLeader: true, workspaceRole: 'owner', isAdmin: false, learnOn: true, teamMapOn: false, canSellPaid: false }).flatMap(s => s.tools);
+    const hp = tools.find(t => t.id === 'hostProfile');
+    expect(hp?.to).toBe('/me');
+    expect(hp?.search).toEqual({ panel: 'hostProfile' });
+  });
+});
+
+describe('Cover upload error copy', () => {
+  it('has matched EN/ES messages for a non-image file', () => {
+    expect((en as any).profile.photoNotImage).toMatch(/image/i);
+    expect((es as any).profile.photoNotImage).toMatch(/imagen/i);
+  });
+});
