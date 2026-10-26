@@ -2,7 +2,7 @@
  * Strict same-origin return-path allowlist for sign-in and verification.
  * Mirrors public.is_safe_return_path() in the database; keep both in step.
  */
-const SEGMENT_ROUTES = /^\/(e|l|t|h|i|r|join|offer|event|learn\/track|learn\/lesson|learn|challenge)\/[A-Za-z0-9_-]{1,80}(\?[A-Za-z0-9=&_-]{0,200})?$/;
+const SEGMENT_ROUTES = /^\/(e|l|t|h|i|r|join|offer|event|learn\/track|learn\/lesson|learn\/recipe|learn\/quiz|learn|challenge)\/[A-Za-z0-9_-]{1,80}(\?[A-Za-z0-9=&_-]{0,200})?$/;
 const FIXED_ROUTES = /^\/(home|discover|gathering\/new|events|learn|me|start|communications)$|^\/support(\?[A-Za-z0-9=&_-]{0,200})?$/;
 export const DEFAULT_RETURN = '/home';
 

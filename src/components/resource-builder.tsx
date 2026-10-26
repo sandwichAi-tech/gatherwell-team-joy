@@ -1,3 +1,5 @@
+import { uploadMedia } from '@/lib/account';
+import { OfferCover } from '@/components/offers';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -63,13 +65,20 @@ function CardPreview({ item, type, lang, cta }: { item: ItemState; type: CreateT
     </div>;
   }
   return <div className="card-preview is-preview">
-    <LearnCover path={item.coverPath} style={item.coverStyle} title={title} />
+    <ItemCover item={item} type={type} title={title} />
     <div className="card-preview-body">
       <strong>{title}</strong>
       {subtitle && <p>{subtitle}</p>}
       <span className="card-preview-cta" style={{ background: pair.bg, color: pair.fg }}>{cta}</span>
     </div>
   </div>;
+}
+
+/** Offer-backed covers live in the host's media folder; track/recipe covers in team learn media. */
+function ItemCover({ item, type, title }: { item: ItemState; type: CreateType; title: string }) {
+  const kind = offerKindFor(type);
+  return kind ? <OfferCover offer={{ cover_style: item.coverStyle, cover_url: item.coverPath, kind, title_en: item.titleEn, title_es: item.titleEs }} wide />
+    : <LearnCover path={item.coverPath} style={item.coverStyle} title={title} />;
 }
 
 /** Participant-facing landing/access page preview — promotional copy only, never protected content. */
@@ -81,7 +90,7 @@ function LandingPreview({ item, type, lang, cta, paid }: { item: ItemState; type
   const promo = lang === 'es' ? item.promoEs || item.promoEn : item.promoEn || item.promoEs;
   const price = paid && item.access.price ? `$${item.access.price}` : null;
   return <div className="landing-preview">
-    <LearnCover path={item.coverPath} style={item.coverStyle} title={title} />
+    <ItemCover item={item} type={type} title={title} />
     <div className="landing-preview-body">
       <span className="eyebrow">{t(`resources.create.types.${type}.name`)}</span>
       <h3>{title}</h3>
@@ -97,7 +106,7 @@ function LandingPreview({ item, type, lang, cta, paid }: { item: ItemState; type
 
 /** Course curriculum: lessons of the course's track with add/edit/delete and explicit ordering. */
 function Curriculum({ trackId, teamId, lang, onLessons }: { trackId: string; teamId: string; lang: string; onLessons?: (l: Lesson[]) => void }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const qc = useQueryClient();
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [editing, setEditing] = useState<string | null>(null);
@@ -115,6 +124,8 @@ function Curriculum({ trackId, teamId, lang, onLessons }: { trackId: string; tea
     setForm({ titleEn: l.title_en, titleEs: l.title_es, type: l.type, url: l.url ?? '', notesEn: l.notes_en ?? '', notesEs: l.notes_es ?? '', published: l.is_published });
   };
   const saveLesson = async (id: string) => {
+    // Never save a lesson whose link can't open.
+    if (form.type !== 'text' && form.url.trim() && !validUrl(form.url)) { toast.error(t('resources.item.issues', { fields: t('resources.item.issue.url') })); return; }
     setBusy(true);
     const { error } = await db.from('lessons').update({
       title_en: form.titleEn.trim() || 'Lesson', title_es: form.titleEs.trim() || form.titleEn.trim() || 'Lección',
@@ -130,7 +141,7 @@ function Curriculum({ trackId, teamId, lang, onLessons }: { trackId: string; tea
     setBusy(true);
     const next = (lessons.reduce((m, l) => Math.max(m, l.sort_order), 0) || 0) + 1;
     const { error } = await db.from('lessons').insert({
-      track_id: trackId, title_en: t('resources.item.curriculum.newLesson'), title_es: t('resources.item.curriculum.newLesson'),
+      track_id: trackId, title_en: i18n.getFixedT('en')('resources.item.curriculum.newLesson'), title_es: i18n.getFixedT('es')('resources.item.curriculum.newLesson'),
       type: 'text', sort_order: next, is_published: false,
     });
     setBusy(false);
@@ -243,6 +254,13 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const readiness = useQuery({ queryKey: ['payments-readiness'], queryFn: () => getPaymentsReadiness(), staleTime: 30_000 });
   const sellReady = readiness.data ? canSellPaid(readiness.data) : false;
 
+  // After the first save, put the item id in the address so a refresh or shared link reopens this draft instead of a blank builder.
+  useEffect(() => {
+    if (initialId || !loaded?.id) return;
+    loadedOnce.current = true;
+    void navigate({ to: '/learn/create', search: { type, id: loaded.id }, replace: true });
+  }, [loaded?.id, initialId, type, navigate]);
+
   /* ---- Reopen an existing item ---- */
   useEffect(() => {
     if (!initialId || loadedOnce.current) return;
@@ -346,6 +364,8 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
 
   const pickType = async (next: CreateType) => {
     if (next === type) return;
+    // Covers for offer-backed and track/recipe items live in different storage folders; never carry one across.
+    if (!!offerKindFor(type) !== !!offerKindFor(next) && item.coverPath) patchItem({ coverPath: null });
     if (typeContentAtRisk(draft, type, next)) {
       const ok = await confirmAction({ title: t('resources.builder.switchTitle'), body: t('resources.builder.switchText'), confirmLabel: t('resources.builder.switchConfirm') });
       if (!ok) return;
@@ -487,13 +507,11 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
         file_path: kind === 'download' ? draft.offer.filePath : null,
         status: (publish ? 'published' : 'draft') as 'published' | 'draft', visibility,
       };
-      const r = loaded?.entity === 'offer' ? await saveOffer(row, loaded.id) : await saveOffer({ ...row, includes_en: [], includes_es: [], team_id: teamId, host_id: userId });
+      const r = loaded?.entity === 'offer' ? await saveOffer(row, loaded.id)
+        : await db.from('offers').insert({ ...row, includes_en: [], includes_es: [], team_id: teamId, host_id: userId }).select('id').single();
       if (r.error) { const m = String(r.error.message); if (!m.includes('payouts_required')) return finish(false, undefined, m); setBusy(false); toast.error(t('billing.payoutsRequired')); return; }
-      let offerId = loaded?.id as string;
-      if (!loaded) {
-        const mine = await db.from('offers').select('id').eq('host_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle();
-        offerId = mine.data?.id;
-      }
+      // Use the id of the row just created, never "my latest offer" (wrong item when two are saved close together).
+      const offerId = (loaded?.id ?? (r.data as { id: string } | null)?.id) as string;
       // A course gets its own curriculum track so lessons can be attached right away.
       let trackId = loaded?.trackId;
       if (kind === 'course' && !trackId && offerId) {
@@ -502,6 +520,10 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
           is_published: publish, sort_order: Date.now() % 1_000_000,
         }).select('id').single();
         trackId = ct.data?.id;
+      } else if (kind === 'course' && trackId && publish) {
+        // A course drafted first keeps a hidden curriculum; publishing the course must make its curriculum visible too.
+        const up = await db.from('tracks').update({ is_published: true }).eq('id', trackId);
+        if (up.error) return finish(false, undefined, up.error.message);
       }
       setLoaded({ entity: 'offer', id: offerId, status: publish ? 'published' : 'draft', trackId });
       setSnapshot(itemSnapshot(item)); setDraftSnap(JSON.stringify(draft));
@@ -580,7 +602,12 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
           <LangPair id="rb-subtitle" label={t('resources.item.subtitle')} en={item.subtitleEn} es={item.subtitleEs}
             onEn={v => patchItem({ subtitleEn: v })} onEs={v => patchItem({ subtitleEs: v })} maxLength={160} placeholder={t('resources.item.subtitleHint')} />
           {type !== 'quiz' && <CoverPicker teamId={teamId} path={item.coverPath} styleIdx={item.coverStyle} title={item.titleEn || item.titleEs}
-            onPath={p => patchItem({ coverPath: p })} onStyle={n => patchItem({ coverStyle: n })} />}
+            onPath={p => patchItem({ coverPath: p })} onStyle={n => patchItem({ coverStyle: n })}
+            {...(offerKindFor(type) ? {
+              // Offer covers must live in the host's own media folder (database rule), not team learn media.
+              upload: (f: File) => uploadMedia(userId, f, 'cover'),
+              renderCover: () => <OfferCover offer={{ cover_style: item.coverStyle, cover_url: item.coverPath, kind: offerKindFor(type)!, title_en: item.titleEn, title_es: item.titleEs }} wide />,
+            } : {})} />}
           <LangPair id="rb-cta" label={t('resources.item.ctaLabel')} en={item.ctaEn} es={item.ctaEs}
             onEn={v => patchItem({ ctaEn: v })} onEs={v => patchItem({ ctaEs: v })} maxLength={40} placeholder={t(defaultCtaKey(paid))} />
           <div className="form-field"><span className="field-label">{t('resources.item.layoutLabel')}</span>

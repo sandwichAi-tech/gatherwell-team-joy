@@ -77,7 +77,8 @@ export const offerDownloadLink = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ offerId: z.string().uuid(), inline: z.boolean().optional() }).parse(d))
   .handler(async ({ data, context }) => {
-    const { data: access } = await context.supabase.rpc('has_offer_access' as never, { _offer: data.offerId, _uid: context.userId } as never);
+    // Same rule the offer page uses (host, leader, free team offer, live purchase or entitlement), so "owned" always means downloadable.
+    const { data: access } = await context.supabase.rpc('can_access_offer', { _offer: data.offerId });
     if (!access) return { ok: false as const, error: 'forbidden' };
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
     const { data: o } = await supabaseAdmin.from('offers').select('file_path').eq('id', data.offerId).maybeSingle();
