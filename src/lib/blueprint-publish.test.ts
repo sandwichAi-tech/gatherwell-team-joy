@@ -23,7 +23,7 @@ describe('row 61: blueprint track review and publish', () => {
   });
   it('an Update never changes lesson visibility', () => expect(lessonsToPublishWithTrack([L('a', 'Hidden on purpose')], true)).toEqual([]));
   it('status copy exists in EN and ES', () => {
-    for (const k of ['multiLessonHint', 'lessonStatusTitle', 'lessonNeedsReview', 'lessonVisible', 'lessonHidden', 'publishesLessons_other', 'placeholderLessons', 'placeholderBlock'] as const) {
+    for (const k of ['multiLessonHint', 'lessonStatusTitle', 'lessonNeedsReview', 'lessonVisible', 'lessonHidden', 'lessonLive', 'publishesLessons_other', 'placeholderLessons', 'placeholderBlock'] as const) {
       expect((en.resources.item as unknown as Record<string, string>)[k]).toBeTruthy();
       expect((es.resources.item as unknown as Record<string, string>)[k]).toBeTruthy();
     }

@@ -6368,6 +6368,7 @@
       "lessonStatusTitle": "Lecciones y quién puede verlas",
       "lessonNeedsReview": "Requiere revisión: reemplaza el texto de ejemplo [entre corchetes]",
       "lessonVisible": "Visible para miembros al publicar",
+      "lessonLive": "Visible para miembros ahora",
       "lessonHidden": "Borrador oculto",
       "publishesLessons_one": "Al publicar también se mostrará {{count}} lección revisada en borrador.",
       "publishesLessons_other": "Al publicar también se mostrarán {{count}} lecciones revisadas en borrador.",

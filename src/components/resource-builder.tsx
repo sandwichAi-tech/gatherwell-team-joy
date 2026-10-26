@@ -543,7 +543,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const preview = <>
     {trackLessons && <div className="form-field" role="status"><span className="field-label">{t('resources.item.lessonStatusTitle')}</span>
       <ul className="lesson-status-list">{trackLessons.map(l => { const ph = hasPlaceholder(l.title_en, l.title_es, l.notes_en, l.notes_es, l.description_en, l.description_es);
-        return <li key={l.id}><strong>{pick(lang, l.title_en, l.title_es)}</strong> <small>{ph ? t('resources.item.lessonNeedsReview') : l.is_published || draftLessonsToPublish.includes(l.id) ? t('resources.item.lessonVisible') : t('resources.item.lessonHidden')}</small></li>; })}</ul>
+        return <li key={l.id}><strong>{pick(lang, l.title_en, l.title_es)}</strong> <small>{ph ? t('resources.item.lessonNeedsReview') : l.is_published && wasPublished ? t('resources.item.lessonLive') : l.is_published || draftLessonsToPublish.includes(l.id) ? t('resources.item.lessonVisible') : t('resources.item.lessonHidden')}</small></li>; })}</ul>
       {!wasPublished && draftLessonsToPublish.length > 0 && <p className="field-hint">{t('resources.item.publishesLessons', { count: draftLessonsToPublish.length })}</p>}
     </div>}
     <div className="form-field"><span className="field-label">{t('resources.item.cardOnPage')}</span><CardPreview item={item} type={type} lang={lang} cta={cta} /></div>

@@ -6368,6 +6368,7 @@
       "lessonStatusTitle": "Lessons and who can see them",
       "lessonNeedsReview": "Needs review: replace the [bracketed] example text",
       "lessonVisible": "Visible to members when published",
+      "lessonLive": "Visible to members now",
       "lessonHidden": "Hidden draft",
       "publishesLessons_one": "Publishing also makes {{count}} reviewed draft lesson visible.",
       "publishesLessons_other": "Publishing also makes {{count}} reviewed draft lessons visible.",
