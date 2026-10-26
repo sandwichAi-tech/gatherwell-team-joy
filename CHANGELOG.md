@@ -1,5 +1,9 @@
 # ZoheeWell Change Log
 
+## 2026-10-26 — Website Notes rows 93–94
+- Row 94: existing hosts who switched to attending could only "Start hosting", which reset onboarding (re-registration). Eligible hosts (team host/leader/builder role, team owner or hosted events) now get "Switch to host" in the profile menu and Me, returning directly; attendee-only accounts never see it. Admin dashboard stays a separate group.
+- Row 93: Home > Next up cards show a one-tap "Show check-in QR" sheet (large QR, event, date, status, manual code + copy); checked-in, waitlist and missing-code states are explicit. Morning brief no longer prints the long code. Unverified: physical-device scanning (QR decoded with jsQR from rendered screenshots only).
+
 ## 2026-10-26 — Event Builder acceptance continuation
 - Fixed: failed image decode clears previous crop bitmap; online hidden map input no longer blocks payload; custom-duration/coordinates restore; draft query errors offer retry; missing conditional minimum-age feedback, add-on summary entries, linked summary focus; guest double-submit guard.
 - Fixed public ticket picker: a later public-event RPC had omitted ticket_tiers. Migration 0136 restores tiers plus confirmed sold counts without respondent data.
