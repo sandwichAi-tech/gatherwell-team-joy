@@ -106,7 +106,7 @@ function LandingPreview({ item, type, lang, cta, paid }: { item: ItemState; type
 
 /** Course curriculum: lessons of the course's track with add/edit/delete and explicit ordering. */
 function Curriculum({ trackId, teamId, lang, onLessons }: { trackId: string; teamId: string; lang: string; onLessons?: (l: Lesson[]) => void }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const qc = useQueryClient();
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [editing, setEditing] = useState<string | null>(null);
@@ -141,7 +141,7 @@ function Curriculum({ trackId, teamId, lang, onLessons }: { trackId: string; tea
     setBusy(true);
     const next = (lessons.reduce((m, l) => Math.max(m, l.sort_order), 0) || 0) + 1;
     const { error } = await db.from('lessons').insert({
-      track_id: trackId, title_en: t('resources.item.curriculum.newLesson'), title_es: t('resources.item.curriculum.newLesson'),
+      track_id: trackId, title_en: i18n.getFixedT('en')('resources.item.curriculum.newLesson'), title_es: i18n.getFixedT('es')('resources.item.curriculum.newLesson'),
       type: 'text', sort_order: next, is_published: false,
     });
     setBusy(false);
