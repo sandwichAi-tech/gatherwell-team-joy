@@ -60,4 +60,4 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Event images use share-image.ts for all outputs; admin menu uses role checks.
 - Course drip is decided only by lesson_unlock_at()/lesson_is_unlocked() (mirrored in src/lib/course-release.ts) and enforced by restrictive RLS on lessons, summaries and learn-media; browsers get locked titles only via my_locked_lessons().
 - Event Builder partial drafts use manager-only event_builder_drafts snapshots; publish validates and writes canonical event fields, so incomplete input never becomes attendee data.
-- Home check-in QR uses CheckinQrSheet with the caller's own RSVP code; no raw code on Home.
+- Own QR only; admission checks staff/waivers; attendance journeys dedupe/recheck at send for safe retries.
