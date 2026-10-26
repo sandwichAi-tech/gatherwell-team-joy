@@ -91,7 +91,7 @@ export function buildToolSections(input: ToolsInput): ToolSection[] {
   ] : []);
 
   add('presence', builder ? [
-    { id: 'hostProfile', to: '/me', icon: 'Globe2' },
+    { id: 'hostProfile', to: '/me?panel=hostProfile', icon: 'Globe2' },
     { id: 'locations', to: '/locations', icon: 'MapPin' },
     { id: 'verify', to: '/verify', icon: 'BadgeCheck' },
   ] : []);

@@ -25,8 +25,10 @@ function WelcomeBody({ data, onRedeem }: { data: WelcomeSummary; onRedeem: (rewa
   const msg = t('welcome.shareMessage', { link });
   const came = data.friends.filter(f => f.status === 'earned').length;
   const share = async () => {
-    if (navigator.share) { try { await navigator.share({ text: msg }); } catch { /* dismissed */ } }
-    else { await navigator.clipboard.writeText(link); toast.success(t('onboarding.copied')); }
+    if (typeof navigator.share === 'function') {
+      try { await navigator.share({ text: msg, url: link }); return; } catch (e) { if ((e as { name?: string })?.name === 'AbortError') return; }
+    }
+    if (await copyText(link)) toast.success(t('onboarding.copied')); else toast.error(t('error.message'));
   };
   const redeem = async (id: string) => {
     setBusy(id);
