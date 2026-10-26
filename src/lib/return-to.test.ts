@@ -13,3 +13,9 @@ describe('safeReturnPath', () => {
     expect(returnPathOr('//evil.com', '/discover')).toBe('/discover');
   });
 });
+
+describe('Resources return paths (row 62)', () => {
+  it('a signed-out recipe link returns to the recipe after sign-in', () => expect(safeReturnPath('/learn/recipe/6a460379-f28c')).toBe('/learn/recipe/6a460379-f28c'));
+  it('a signed-out quiz link returns to the quiz after sign-in', () => expect(safeReturnPath('/learn/quiz/ab12')).toBe('/learn/quiz/ab12'));
+  it('still refuses unknown nested learn paths', () => expect(safeReturnPath('/learn/admin/x')).toBeNull());
+});
