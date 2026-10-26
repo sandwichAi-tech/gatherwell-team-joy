@@ -1988,6 +1988,8 @@ export type Database = {
           file_path: string | null
           id: string
           kind: string
+          library_id: string | null
+          library_version: number | null
           position: number
           required: boolean
           team_id: string | null
@@ -2008,6 +2010,8 @@ export type Database = {
           file_path?: string | null
           id?: string
           kind?: string
+          library_id?: string | null
+          library_version?: number | null
           position?: number
           required?: boolean
           team_id?: string | null
@@ -2028,6 +2032,8 @@ export type Database = {
           file_path?: string | null
           id?: string
           kind?: string
+          library_id?: string | null
+          library_version?: number | null
           position?: number
           required?: boolean
           team_id?: string | null
@@ -2042,6 +2048,13 @@ export type Database = {
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_waivers_library_id_fkey"
+            columns: ["library_id"]
+            isOneToOne: false
+            referencedRelation: "waiver_library"
             referencedColumns: ["id"]
           },
         ]
@@ -7517,6 +7530,88 @@ export type Database = {
           },
         ]
       }
+      waiver_library: {
+        Row: {
+          archived: boolean
+          body_en: string
+          body_es: string
+          id: string
+          name: string
+          owner_id: string
+          team_id: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          archived?: boolean
+          body_en: string
+          body_es?: string
+          id?: string
+          name: string
+          owner_id: string
+          team_id: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          archived?: boolean
+          body_en?: string
+          body_es?: string
+          id?: string
+          name?: string
+          owner_id?: string
+          team_id?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waiver_library_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      waiver_library_versions: {
+        Row: {
+          body_en: string
+          body_es: string
+          content_sha256: string
+          created_at: string
+          name: string
+          version: number
+          waiver_id: string
+        }
+        Insert: {
+          body_en: string
+          body_es: string
+          content_sha256: string
+          created_at?: string
+          name: string
+          version: number
+          waiver_id: string
+        }
+        Update: {
+          body_en?: string
+          body_es?: string
+          content_sha256?: string
+          created_at?: string
+          name?: string
+          version?: number
+          waiver_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waiver_library_versions_waiver_id_fkey"
+            columns: ["waiver_id"]
+            isOneToOne: false
+            referencedRelation: "waiver_library"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       waivers: {
         Row: {
           body_en: string
@@ -7862,6 +7957,10 @@ export type Database = {
           _team: string
           _user: string
         }
+        Returns: string
+      }
+      attach_library_waiver: {
+        Args: { _event: string; _version: number; _waiver: string }
         Returns: string
       }
       attendance_export: { Args: { _event: string }; Returns: Json }
@@ -9064,6 +9163,17 @@ export type Database = {
           _offering: string
           _scheduled_at?: string
           _title: string
+        }
+        Returns: string
+      }
+      save_library_waiver: {
+        Args: {
+          _archive?: boolean
+          _en: string
+          _es: string
+          _id: string
+          _name: string
+          _team: string
         }
         Returns: string
       }
