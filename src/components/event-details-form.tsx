@@ -195,9 +195,9 @@ export function EventDetailsSections({ value, onChange, priceCents, lang, tried 
       <span className="field-label">{t('builder.regWindow')}</span>
       <div className="two-col">
         <div><label className="field-label" htmlFor="g-reg-open">{t('builder.regOpens')}</label>
-          <Input id="g-reg-open" type="datetime-local" className="field-input" value={value.regOpens} onChange={e => set({ regOpens: e.target.value })} /></div>
+          <Input id="g-reg-open" aria-invalid={tried && !!value.regOpens && !!value.regCloses && new Date(value.regOpens) >= new Date(value.regCloses)} type="datetime-local" className="field-input" value={value.regOpens} onChange={e => set({ regOpens: e.target.value })} /><small className="field-hint">{t('eventReliability.salesStartHint')}</small></div>
         <div><label className="field-label" htmlFor="g-reg-close">{t('builder.regCloses')}</label>
-          <Input id="g-reg-close" type="datetime-local" className="field-input" value={value.regCloses} onChange={e => set({ regCloses: e.target.value })} /></div>
+          <Input id="g-reg-close" aria-invalid={tried && !!value.regOpens && !!value.regCloses && new Date(value.regOpens) >= new Date(value.regCloses)} type="datetime-local" className="field-input" value={value.regCloses} onChange={e => set({ regCloses: e.target.value })} /><small className="field-hint">{t('eventReliability.salesEndHint')}</small></div>
       </div>
       {value.regOpens && value.regCloses && new Date(value.regOpens) >= new Date(value.regCloses) && <p className="field-error">{t('builder.errors.reg_window')}</p>}
       <label className="settings-row is-static"><span className="settings-label">{t('builder.waitlist')}<small className="field-hint">{t('builder.waitlistHint')}</small></span><Switch aria-label={t('builder.waitlist')} checked={value.waitlist} onCheckedChange={v => set({ waitlist: v })} /></label>
@@ -211,7 +211,7 @@ export function EventDetailsSections({ value, onChange, priceCents, lang, tried 
 
     <section className="form-section two-col">
       <div><label className="field-label" htmlFor="g-cemail">{t('builder.contactEmail')}</label>
-        <Input id="g-cemail" type="email" className="field-input" maxLength={200} value={value.contactEmail} onChange={e => set({ contactEmail: e.target.value })} /></div>
+        <Input id="g-cemail" aria-invalid={tried && !!value.contactEmail && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value.contactEmail)} type="email" className="field-input" maxLength={200} value={value.contactEmail} onChange={e => set({ contactEmail: e.target.value })} />{tried && !!value.contactEmail && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value.contactEmail) && <p className="field-error">{t('guest.errors.invalid_email')}</p>}</div>
       <div><label className="field-label" htmlFor="g-cphone">{t('builder.contactPhone')}</label>
         <Input id="g-cphone" type="tel" inputMode="tel" className="field-input" maxLength={30} value={value.contactPhone} onChange={e => set({ contactPhone: e.target.value })} /></div>
     </section>

@@ -1,5 +1,6 @@
 {
   "eventReliability": {
+    "priceInvalid": "Ingresa un precio entre $1 y $1,000, o déjalo vacío para gratis.",
   "fixSummary": "Revisa los campos señalados antes de publicar.",
   "required": "Obligatorio",
   "optional": "Opcional",

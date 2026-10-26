@@ -196,6 +196,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
 
   const urlBad = place !== 'person' && !!url.trim() && !validHttps(url);
   const blockers = readinessBlockers({ title, startsAt: start, format: place, locationName, address, onlineUrl: url, priceCents, canSell, regOpens: details.regOpens, regCloses: details.regCloses, retreatOn, retreatEnd, allowsMinors: details.allowsMinors, minAge: details.minAge, tiers: details.tiers });
+  const priceBad = !!price && (!Number.isFinite(priceCents) || Number(priceCents) < 100 || Number(priceCents) > 100000);
   const capacityBad = capacityValue(capacityMode, capacity) === undefined;
   const presets = datePresets(); const usual = editing ? null : usualSlot(history);
   const startDate = start ? new Date(start) : null;
@@ -253,7 +254,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     }
     setTried(true);
     const pi = policyIssues(details.policy, details.cancellation, !!priceCents, true);
-    const error = blockers.length || capacityBad || !detailsJson || pi.length || (priceCents && visibility === 'team') || (multi && (!start || !validSessions(sessions, new Date(start).toISOString())));
+    const error = blockers.length || priceBad || capacityBad || !detailsJson || pi.length || (priceCents && visibility === 'team') || (multi && (!start || !validSessions(sessions, new Date(start).toISOString())));
     if (error) {
       setFull(true);
       setSaveError(pi.length ? t(`policy.issues.${pi[0]}${pi[0] === 'contradiction' || pi[0] === 'mismatch' ? (priceCents ? 'Paid' : 'Free') : ''}`) : t('eventReliability.fixSummary'));
@@ -436,7 +437,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
           {capacityMode === 'limited' && <Input id="g-cap" aria-invalid={tried && capacityBad} type="number" min={1} inputMode="numeric" className="field-input" value={capacity} onChange={e => setCapacity(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder={t('eventReliability.limited')} />}
           {tried && capacityBad && <p className="field-error">{t('gathering.errors.invalid_capacity')}</p>}</div>
         <div><label className="field-label" htmlFor="g-price">{t('billing.price')}</label>
-          <Input id="g-price" type="text" inputMode="decimal" className="field-input" disabled={!canSell && !price} value={price} onChange={e => setPrice(e.target.value.replace(/[^\d.]/g, '').slice(0, 7))} placeholder="$0" />
+          <Input id="g-price" aria-invalid={tried && priceBad} type="text" inputMode="decimal" className="field-input" disabled={!canSell && !price} value={price} onChange={e => setPrice(e.target.value.replace(/[^\d.]/g, '').slice(0, 7))} placeholder="$0" />
+          {tried && priceBad && <p className="field-error">{t('eventReliability.priceInvalid')}</p>}
           <small className="field-hint">{canSell ? t('billing.priceHint') : t('billing.priceNeedsPayouts')}</small>
           <PriceGuidance category={category} />
           {!!priceCents && <label className="settings-row is-static gathering-cover-fee"><span className="settings-label">{t('billing.coverFee')}<small className="field-hint">{coverFee ? t('billing.coverFeeOn') : t('billing.coverFeeOff')}</small></span><Switch aria-label={t('billing.coverFee')} checked={coverFee} onCheckedChange={setCoverFee} /></label>}

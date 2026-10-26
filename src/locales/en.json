@@ -1,5 +1,6 @@
 {
   "eventReliability": {
+    "priceInvalid": "Enter a price from $1 to $1,000, or leave blank for free.",
   "fixSummary": "Review the highlighted fields before publishing.",
   "required": "Required",
   "optional": "Optional",
