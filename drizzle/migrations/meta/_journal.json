@@ -995,6 +995,13 @@
       "when": 1793054840793,
       "tag": "0141_attendance_in_app_category",
       "breakpoints": true
+    },
+    {
+      "idx": 142,
+      "version": "7",
+      "when": 1793055066359,
+      "tag": "0142_attendance_waiver_binding",
+      "breakpoints": true
     }
   ]
 }
