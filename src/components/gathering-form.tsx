@@ -244,7 +244,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       setBusy(true);
       try {
         const snapshot = { title, start, duration, full, place, locationName, address, note, url, capacityMode, capacity, price, visibility, category, categoryLabel, descEn, descEs, coverPath, coverStyle, coverOverlay, coverFocal, coverAlt, details, rule, teamReg, retreatOn, retreat, retreatEnd, multi, sessions, communitySeats, coverFee };
-        const r = await supabase.rpc('save_event_builder_draft', { _team: teamId, _event: eventId ?? null, _snapshot: snapshot as never });
+        const r = await supabase.rpc('save_event_builder_draft', { _team: teamId, _event: (eventId ?? null) as never, _snapshot: snapshot as never });
         if (r.error || !r.data) { setSaveError(rpcError(t, r.error)); return; }
         await queryClient.invalidateQueries(); toast.success(t('gathering.draftSaved'));
         void navigate({ to: '/gathering/$id/edit', params: { id: r.data }, replace: true });
