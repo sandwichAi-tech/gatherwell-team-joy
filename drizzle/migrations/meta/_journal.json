@@ -862,6 +862,13 @@
       "when": 1792972911619,
       "tag": "0122_host_categories_max_matches_existing",
       "breakpoints": true
+    },
+    {
+      "idx": 123,
+      "version": "7",
+      "when": 1792976665499,
+      "tag": "0123_fix_public_cover_paths",
+      "breakpoints": true
     }
   ]
 }
