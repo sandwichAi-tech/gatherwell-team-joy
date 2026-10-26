@@ -1,5 +1,12 @@
 # ZoheeWell Change Log
 
+## 2026-10-26 — Rows 70 and 71 closed
+- Row 70: team chat is the team Discussions panel; notification links /team?topic=<id> now open the right conversation, unknown/unauthorized topics show a localized unavailable state; replies/mentions no longer fail (0124).
+- Row 71: quizzes no longer require a course. Coaches create a team quiz from Resources → Create → Quiz, which opens the new quiz studio (/learn/quiz/$id). Scored (points, pass score, score bands), outcome/personality (outcomes mapped per answer) and poll modes; private question/answer/outcome images with required alt text; publish blockers for missing text, images without alt, [bracketed] examples, unmapped answers; preview, publish/update, unpublish, duplicate (0126 fix), delete.
+- Participant flow: one question at a time, answers saved as you go, resume after reload, Back/Next keep answers, confirm before submit, single submission on double-click, score/band, matched outcome or poll thanks, retake/cooldown policy.
+- Poll totals use each person's latest answers and stay hidden from everyone, coach included, until 3 people answer (0127).
+- Course quizzes keep their course access gate and now open in the studio/player. Team quizzes appear in Resources (Library → Quizzes; drafts only in the creator's Mine).
+
 ## 2026-10-26 — Rows 60 and 61 closed
 - Row 60 done: Spanish PDF lesson at 320/390/1280 (Abrir PDF / Descargar, reload, signed links, loading and error/retry states); purchased-PDF reader verified with a removable no-charge test purchase; outsider denied lesson, offer viewer and signed file links.
 - Row 61 done: track blueprints now open in the item builder; multi-lesson tracks edit/reorder every lesson in Content; Preview lists each lesson's visibility; Publish is blocked (naming the lessons) until [bracketed] examples are replaced; first Publish makes reviewed draft lessons visible, Update never changes lesson visibility; reorder no longer sticks on equal positions.
