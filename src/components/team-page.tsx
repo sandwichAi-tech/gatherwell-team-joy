@@ -125,7 +125,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
           {team?.description && <p className="team-description">{team.description}</p>}
         </div>
         <div className="team-header-actions">
-          {isLeader && <Button variant="secondary" onClick={() => setSheet('edit')} aria-label={t('teamSpace.editTeam')}><Pencil />{t('teamSpace.editTeam')}</Button>}
+          {isLeader && <Button variant="secondary" onClick={() => setSheet('edit')}><Pencil />{t('teamSpace.editTeam')}</Button>}
           <Button variant="secondary" onClick={() => setSheet('invite')}><Share2 />{t('teamSpace.shareInvite')}</Button>
         </div>
       </div>

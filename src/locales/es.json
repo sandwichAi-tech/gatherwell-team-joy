@@ -900,7 +900,8 @@
     "marketingAllOff": "Todos los correos de marketing desactivados",
     "consentEmpty": "Aún no hay registros de consentimiento.",
     "minorLabel": "Menor",
-    "versionLabel": "Versión"
+    "versionLabel": "Versión",
+    "editHelp": "Los datos de tu cuenta. Tu nombre, foto, portada y biografía también aparecen en tu página pública de anfitrión."
   },
   "teamSpace": {
     "noTeamTitle": "Aún no estás en un equipo",
@@ -1022,7 +1023,12 @@
     "openEvent": "Abrir página del evento",
     "breadcrumb": "Ruta del equipo",
     "telegram": "Telegram",
-    "noUpcoming": "Aún no hay eventos próximos."
+    "noUpcoming": "Aún no hay eventos próximos.",
+    "description": "Descripción",
+    "descriptionPlaceholder": "De qué se trata tu equipo, para quién es y cómo se reúnen.",
+    "descriptionTooLong": "La descripción debe tener máximo {{max}} caracteres.",
+    "nameInvalid": "El nombre del equipo debe tener entre 2 y 80 caracteres.",
+    "coverUploadFailed": "No se pudo subir la portada. Prueba con un JPG o PNG más pequeño."
   },
   "templates": {
     "heading": "Modelos de evento",
@@ -3768,7 +3774,16 @@
     "waiting": "Sin usar",
     "inviteTitle": "Te invitaron",
     "inviteMeta": "Alguien te invitó a una reunión en ZoheeWell.",
-    "inviteLoading": "Buscando reuniones cerca de ti..."
+    "inviteLoading": "Buscando reuniones cerca de ti...",
+    "landing": {
+      "title": "Te invitaron a ZoheeWell",
+      "body": "Alguien te compartió ZoheeWell. Encuentra un evento cerca de ti o crea una cuenta gratis para apartar tu lugar más rápido.",
+      "invalidTitle": "Este enlace de invitación está incompleto",
+      "invalidBody": "Aun así puedes explorar eventos y unirte a ZoheeWell.",
+      "browse": "Buscar eventos",
+      "signup": "Crear una cuenta gratis",
+      "signedIn": "Ya iniciaste sesión. Tu invitación contará cuando confirmes asistencia."
+    }
   },
   "playbook": {
     "title": "Playbook",
@@ -5685,7 +5700,11 @@
         "rateLimited": "Cambiaste tu enlace recientemente. Inténtalo de nuevo mañana.",
         "failed": "No pudimos guardar tu enlace. Inténtalo de nuevo."
       }
-    }
+    },
+    "identityNote": "Tu nombre, foto, portada y biografía vienen de tu perfil de cuenta.",
+    "categoriesPick": "Elige hasta {{max}}. {{count}} seleccionadas.",
+    "categoriesLegacy": "Las entradas anteriores ({{values}}) no están en la lista y se quitarán al guardar.",
+    "categoriesMax": "Elige hasta {{max}} categorías."
   },
   "following": {
     "title": "Siguiendo",

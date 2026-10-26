@@ -900,7 +900,8 @@
     "marketingAllOff": "All marketing emails off",
     "consentEmpty": "No consent records yet.",
     "minorLabel": "Child",
-    "versionLabel": "Version"
+    "versionLabel": "Version",
+    "editHelp": "Your account details. Name, photo, cover and bio also appear on your public host page."
   },
   "teamSpace": {
     "noTeamTitle": "You're not in a team yet",
@@ -1022,7 +1023,12 @@
     "openEvent": "Open event page",
     "breadcrumb": "Team path",
     "telegram": "Telegram",
-    "noUpcoming": "No upcoming events yet."
+    "noUpcoming": "No upcoming events yet.",
+    "description": "Description",
+    "descriptionPlaceholder": "What your team is about, who it's for, and how you meet.",
+    "descriptionTooLong": "Keep the description to {{max}} characters.",
+    "nameInvalid": "Team name must be 2–80 characters.",
+    "coverUploadFailed": "The cover couldn't be uploaded. Try a smaller JPG or PNG."
   },
   "templates": {
     "heading": "Event blueprints",
@@ -3768,7 +3774,16 @@
     "waiting": "Not used yet",
     "inviteTitle": "You're invited",
     "inviteMeta": "A friend invited you to an event on ZoheeWell.",
-    "inviteLoading": "Finding events near you..."
+    "inviteLoading": "Finding events near you...",
+    "landing": {
+      "title": "You're invited to ZoheeWell",
+      "body": "A friend shared ZoheeWell with you. Find an event near you, or create a free account to save your spot faster.",
+      "invalidTitle": "This invitation link isn't complete",
+      "invalidBody": "You can still browse events and join ZoheeWell.",
+      "browse": "Find events",
+      "signup": "Create a free account",
+      "signedIn": "You're signed in. Your invitation will count when you RSVP."
+    }
   },
   "playbook": {
     "title": "Playbook",
@@ -5685,7 +5700,11 @@
         "rateLimited": "You've changed your link recently. Please try again tomorrow.",
         "failed": "We couldn't save your link. Please try again."
       }
-    }
+    },
+    "identityNote": "Your name, photo, cover and bio come from your account profile.",
+    "categoriesPick": "Choose up to {{max}}. {{count}} selected.",
+    "categoriesLegacy": "Older entries ({{values}}) aren't on the list and will be removed when you save.",
+    "categoriesMax": "Choose up to {{max}} categories."
   },
   "following": {
     "title": "Following",
