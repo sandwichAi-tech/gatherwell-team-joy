@@ -49,7 +49,8 @@ export function ClaimGuard({ text, onUse, lang: forced }: { text: string; onUse:
 export function DailyBriefCard() {
   const { t } = useTranslation(); const lang = useLang(); const { userId } = useGatherwell();
   const { data } = useSuspenseQuery(dailyBriefQuery(userId, lang));
-  const text = (line: typeof data.lines[number]) => t(`smart.brief.${line.label}`, {
+  const text = (line: typeof data.lines[number]) => // The long check-in code is never the primary Home display; the Next up QR sheet carries it.
+  t(`smart.brief.${line.label === 'attendingCode' ? 'attending' : line.label}`, {
     ...line.values,
     when: typeof line.values['when'] === 'string' ? new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' }).format(new Date(line.values['when'])) : '',
     place: line.values['place'] ? ` · ${line.values['place']}` : '',
