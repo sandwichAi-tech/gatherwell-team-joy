@@ -87,6 +87,7 @@ function PublicEventBody() {
   const { id } = Route.useParams(); const meta = Route.useLoaderData();
   const queryClient = useQueryClient();
   const { data: event, isLoading, error, refetch } = useQuery(publicEventQuery(id));
+  const coverRendition = meta?.cover ?? null;
   useLiveCounts(id, () => void queryClient.invalidateQueries({ queryKey: ['public-event', id] }));
   const { data: hostPhoto } = useQuery({ queryKey: ['media-url', event?.host?.avatar_url], queryFn: () => mediaUrl(event?.host?.avatar_url), enabled: !!event?.host?.avatar_url });
   useEffect(() => { rememberRef(id, new URLSearchParams(window.location.search).get('ref')); rememberInvite(new URLSearchParams(window.location.search).get('inv')); }, [id]);
