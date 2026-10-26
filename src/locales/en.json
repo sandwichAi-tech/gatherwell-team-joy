@@ -3951,7 +3951,10 @@
     "removeLink": "Remove link",
     "addAnother": "Add",
     "detected": "Detected: {{platform}}",
-    "tooMany": "You can add up to 5 group chats."
+    "tooMany": "You can add up to 5 group chats.",
+    "unavailableTitle": "This discussion isn't available",
+    "unavailableBody": "It may have been removed, or it belongs to a team you're not viewing right now. Switch teams from the menu if you belong to more than one.",
+    "backToDiscussions": "Back to discussions"
   },
   "confirm": {
     "cancel": "Cancel",
