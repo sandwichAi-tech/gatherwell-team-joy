@@ -883,6 +883,13 @@
       "when": 1792984599015,
       "tag": "0125_quiz_modes_standalone_images",
       "breakpoints": true
+    },
+    {
+      "idx": 126,
+      "version": "7",
+      "when": 1792985610538,
+      "tag": "0126_quiz_duplicate_without_temp_table",
+      "breakpoints": true
     }
   ]
 }
