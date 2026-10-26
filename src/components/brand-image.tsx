@@ -7,6 +7,12 @@ import { toRendition, type MediaSrc } from '@/lib/media-renditions';
 /** How long a started rendition may stall before switching to the original. */
 export const RENDITION_STALL_MS = 8000;
 
+/** Lazy images far off-screen have not started loading, so they are not stalled. */
+function isNearViewport(el: Element): boolean {
+  const r = el.getBoundingClientRect();
+  return r.bottom > -200 && r.top < window.innerHeight + 200 && r.width > 0;
+}
+
 type Props = {
   /** A site_media slot key, or pass src directly. */
   slot?: string | undefined;
@@ -51,7 +57,7 @@ export function BrandImage({ slot, src, alt, resizable, focal, aspect, sizes = '
   const imgRef = useRef<HTMLImageElement>(null);
   useEffect(() => {
     if (!given?.srcSet || usePlain || broken) return;
-    const timer = setTimeout(() => { const el = imgRef.current; if (el && el.currentSrc && !(el.complete && el.naturalWidth > 0)) setPlain(url); }, RENDITION_STALL_MS);
+    const timer = setTimeout(() => { const el = imgRef.current; if (el && !(el.complete && el.naturalWidth > 0) && isNearViewport(el)) setPlain(url); }, RENDITION_STALL_MS);
     return () => clearTimeout(timer);
   }, [given?.srcSet, usePlain, broken, url]);
   const style: CSSProperties = ratio ? { aspectRatio: String(ratio) } : {};
