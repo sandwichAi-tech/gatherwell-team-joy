@@ -158,7 +158,7 @@ export function QuizStudio({ quizId }: { quizId: string }) {
   const [bands, setBands] = useState<(StudioBand & { body_en: string; body_es: string })[]>([]);
   useEffect(() => { if (load.data) { setOuts(load.data.outcomes); setBands(load.data.bands.map(b => ({ ...b, body_en: b.body_en ?? '', body_es: b.body_es ?? '' }))); } }, [load.data]);
   const serverBlockers = useQuery({ queryKey: ['quiz-blockers', quizId], queryFn: async () => ((await db.rpc('quiz_blockers', { _quiz: quizId })).data ?? []) as string[] });
-  const summary = useQuery({ queryKey: ['quiz-summary', quizId], enabled: tab === 'results', queryFn: async () => (await db.rpc('quiz_host_summary', { _quiz: quizId })).data });
+  const summary = useQuery({ queryKey: ['quiz-summary', quizId], queryFn: async () => (await db.rpc('quiz_host_summary', { _quiz: quizId })).data });
   const urls = useSigned([...(load.data?.questions ?? []).flatMap(q => [q.image_path, ...q.options.map(o => o.image_path)]), ...outs.map(o => o.image_path)]);
   const [busy, setBusy] = useState(false);
   const refresh = () => Promise.all([qc.invalidateQueries({ queryKey: ['quiz-studio', quizId] }), qc.invalidateQueries({ queryKey: ['quiz-blockers', quizId] }), qc.invalidateQueries({ queryKey: ['team-quizzes'] })]);
