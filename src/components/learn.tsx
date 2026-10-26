@@ -55,7 +55,7 @@ export function ProgressRing({ value, size = 44, label }: { value: number; size?
 /** Display-size hint per resource-cover placement. */
 export function learnCoverSizes(className: string): string {
   if (/\bis-thumb\b/.test(className)) return '64px';
-  if (/\bis-wide\b/.test(className)) return '(min-width: 1280px) 1200px, 100vw';
+  if (/\bis-wide\b/.test(className)) return '(min-width: 768px) 640px, 100vw';
   return '(min-width: 768px) 50vw, 100vw';
 }
 

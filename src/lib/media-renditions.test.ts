@@ -107,9 +107,9 @@ describe('cover placement sizes', () => {
 
 import { learnCoverSizes } from '@/components/learn';
 describe('resource cover sizes', () => {
-  it('thumb 64px, wide 1200px, cards half width', () => {
+  it('thumb 64px, wide up to 640px, cards half width', () => {
     expect(learnCoverSizes('is-thumb')).toBe('64px');
-    expect(learnCoverSizes('is-wide recipe-hero')).toBe('(min-width: 1280px) 1200px, 100vw');
+    expect(learnCoverSizes('is-wide recipe-hero')).toBe('(min-width: 768px) 640px, 100vw');
     expect(learnCoverSizes('')).toBe('(min-width: 768px) 50vw, 100vw');
   });
 });
