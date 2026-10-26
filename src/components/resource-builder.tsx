@@ -124,6 +124,8 @@ function Curriculum({ trackId, teamId, lang, onLessons }: { trackId: string; tea
     setForm({ titleEn: l.title_en, titleEs: l.title_es, type: l.type, url: l.url ?? '', notesEn: l.notes_en ?? '', notesEs: l.notes_es ?? '', published: l.is_published });
   };
   const saveLesson = async (id: string) => {
+    // Never save a lesson whose link can't open.
+    if (form.type !== 'text' && form.url.trim() && !validUrl(form.url)) { toast.error(t('resources.item.issue.url')); return; }
     setBusy(true);
     const { error } = await db.from('lessons').update({
       title_en: form.titleEn.trim() || 'Lesson', title_es: form.titleEs.trim() || form.titleEn.trim() || 'Lección',
