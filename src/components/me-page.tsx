@@ -37,6 +37,7 @@ import { MyChallengesList, MyGatheringsList, ProfileHero, RecentBadges, Settings
 import { PrivacyDataPanel } from '@/components/privacy-panel';
 import { GwFeatureTile, type GwIconName } from '@/components/gw-icon';
 import { HostProfilePanel } from '@/components/host-profile';
+import { WaiverLibrary } from '@/components/waiver-library';
 import { QRCodeSVG } from 'qrcode.react';
 import { Share2, QrCode, Trash2 } from '@/components/icons';
 import { CopyButton, ShareButton } from '@/components/copy-button';
@@ -161,7 +162,7 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
   </ResponsiveSheet>;
 }
 
-type Panel = 'qr' | 'gatherings' | 'challenges' | 'badges' | 'teams' | 'notifications' | 'updates' | 'inbox' | 'support' | 'plan' | 'purchases' | 'invite' | 'calendar' | 'hostProfile' | 'privacy' | null;
+type Panel = 'waivers' | 'qr' | 'gatherings' | 'challenges' | 'badges' | 'teams' | 'notifications' | 'updates' | 'inbox' | 'support' | 'plan' | 'purchases' | 'invite' | 'calendar' | 'hostProfile' | 'privacy' | null;
 
 export function MePage() {
   const { t, i18n } = useTranslation();
@@ -211,8 +212,9 @@ export function MePage() {
   const isHost = !!workspace && workspace.role !== 'member';
   // The Share/QR panel always points at the coach's canonical public page; the invite link is only a fallback for members without one.
   const publicUrl = profile?.slug ? `${window.location.origin}/h/${profile.slug}` : null;
-  const panelIcons: Record<Exclude<Panel, null>, GwIconName> = { qr: 'QrCode', gatherings: 'CalendarDays', challenges: 'Flag', badges: 'Award', teams: 'UsersRound', notifications: 'Bell', updates: 'Megaphone', inbox: 'MessageCircle', support: 'LifeBuoy', plan: 'CreditCard', purchases: 'CreditCard', invite: 'UserPlus', calendar: 'CalendarPlus', hostProfile: 'Globe2', privacy: 'ShieldCheck' };
+  const panelIcons: Record<Exclude<Panel, null>, GwIconName> = { waivers: 'FileText', qr: 'QrCode', gatherings: 'CalendarDays', challenges: 'Flag', badges: 'Award', teams: 'UsersRound', notifications: 'Bell', updates: 'Megaphone', inbox: 'MessageCircle', support: 'LifeBuoy', plan: 'CreditCard', purchases: 'CreditCard', invite: 'UserPlus', calendar: 'CalendarPlus', hostProfile: 'Globe2', privacy: 'ShieldCheck' };
   const panels: Record<Exclude<Panel, null>, { title: string; icon: GwIconName; body: ReactNode }> = {
+    waivers: { title: t('waiverLibrary.title'), icon: 'FileText', body: workspace && canHost ? <WaiverLibrary teamId={workspace.teamId} /> : <EmptyState compact icon="FileText" text={t('workspace.none')} /> },
     gatherings: { title: t('profile.myGatherings'), icon: 'CalendarDays', body: <MyGatheringsList userId={userId} /> },
     challenges: { title: t('profile.myChallenges'), icon: 'Flag', body: <MyChallengesList userId={userId} /> },
     badges: { title: t('profile.myBadges'), icon: 'Award', body: workspace ? <BadgeWall teamId={workspace.teamId} /> : <EmptyState compact icon="UsersRound" text={t('workspace.none')} /> },
@@ -304,6 +306,7 @@ export function MePage() {
       {staticRow('Sun', t('me.appearance'), <div className="segmented" role="group" aria-label={t('me.appearance')}>{([{ value: 'light', Icon: Sun }, { value: 'dark', Icon: Moon }, { value: 'system', Icon: Monitor }] as const).map(({ value, Icon }) => <Button key={value} variant="ghost" size="icon" className={theme === value ? 'selected' : ''} aria-pressed={theme === value} aria-label={t(`me.${value}`)} title={t(`me.${value}`)} onClick={() => setTheme(value)}><Icon /></Button>)}</div>)}
     </SettingsGroup>
     <SettingsGroup title={isHost || isAdmin ? t('profile.groupHost') : t('toolsPage.title')}>
+      {canHost && row('FileText', t('waiverLibrary.title'), () => setPanel('waivers'))}
       {isHost && row('Globe2', t('hostProfile.title'), () => setPanel('hostProfile'))}
       {linkRow('SquaresFour', t('toolsPage.title'), '/tools')}
     </SettingsGroup>
