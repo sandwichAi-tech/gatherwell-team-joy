@@ -15,7 +15,7 @@ import { Switch } from '@/components/ui/switch';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { supabase } from '@/integrations/supabase/client';
 import { COVER_STYLES } from '@/lib/gatherings';
-import { compressImage, lessonTitle, lessonsOf, listOf, RECIPE_TAGS, recipesQuery, trackTitle, uploadLearnFile, type Lesson, type LessonType, type Recipe, type Track } from '@/lib/learn';
+import { compressImage, learnPathsForTracks, learnPathsOf, removeUnusedLearnFiles, lessonTitle, lessonsOf, listOf, RECIPE_TAGS, recipesQuery, trackTitle, uploadLearnFile, type Lesson, type LessonType, type Recipe, type Track } from '@/lib/learn';
 import { fileMatchesLessonType, isTrackFlow, lessonEditorConfig, lessonPresetFor, parseCreateType, type TrackFlowType } from '@/lib/create-resource';
 import { LearnCover, useLearn } from '@/components/learn';
 import { isLowResolution } from '@/lib/media-renditions';
@@ -62,8 +62,10 @@ function TrackEditor({ track, teamId, onClose, preset }: { track: Partial<Track>
   };
   const remove = async () => {
     if (!track?.id || !(await confirmAction({ title: t('learnHub.confirmDeleteTrack'), destructive: true }))) return;
+    const files = await learnPathsForTracks([track.id]);
     const res = await supabase.from('tracks').delete().eq('id', track.id);
     if (res.error) { toast.error(errMsg(t, res.error)); return; }
+    void removeUnusedLearnFiles(files);
     await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose();
   };
   return <ResponsiveSheet open={!!track} onOpenChange={o => !o && onClose()} title={preset && !track?.id ? t(`resources.preset.track.${preset}`) : track?.id ? t('learnHub.editTrack') : t('learnHub.newTrack')} description={preset && !track?.id ? t(`resources.preset.trackText.${preset}`) : undefined}>
@@ -123,8 +125,10 @@ function LessonEditor({ lesson, teamId, onClose, preset }: { lesson: (Partial<Le
   };
   const remove = async () => {
     if (!lesson?.id || !(await confirmAction({ title: t('learnHub.confirmDeleteLesson'), destructive: true }))) return;
+    const files = learnPathsOf([lesson]);
     const r = await supabase.from('lessons').delete().eq('id', lesson.id);
     if (r.error) { toast.error(errMsg(t, r.error)); return; }
+    void removeUnusedLearnFiles(files);
     await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose();
   };
   const cfg = lessonEditorConfig(f.type);
