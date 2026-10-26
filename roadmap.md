@@ -21,3 +21,4 @@
 - [x] Row 62 Full Resources pressure test (course release schedule enforced 0130; paid restore and real checkout wait on payouts)
 - [x] Row 70 Team discussion links + conversation replies/mentions (fixtures removed 2026-10-26)
 - [x] Row 71 Quiz studio: scored/outcome/poll, images+alt, player/results/retake, coach summary, Resources (paid-course quiz purchase path blocked until payouts connect)
+- [ ] Rows 75–81 Event Builder reliability: photos, explicit capacity, consolidated Location, sales labels, inline validation, minimum publish, partial drafts; new-fixture acceptance and cleanup required.
