@@ -18,6 +18,7 @@ import { COVER_STYLES } from '@/lib/gatherings';
 import { compressImage, lessonTitle, lessonsOf, listOf, RECIPE_TAGS, recipesQuery, trackTitle, uploadLearnFile, type Lesson, type LessonType, type Recipe, type Track } from '@/lib/learn';
 import { isTrackFlow, lessonEditorConfig, lessonPresetFor, parseCreateType, type TrackFlowType } from '@/lib/create-resource';
 import { LearnCover, useLearn } from '@/components/learn';
+import { isLowResolution } from '@/lib/media-renditions';
 import { hasPlaceholder, isLive, trackState } from '@/lib/resource-flow';
 
 type Tab = 'tracks' | 'recipes' | 'progress';
@@ -35,9 +36,10 @@ export function Field({ id, label, children }: { id: string; label: string; chil
 }
 
 export function CoverPicker({ teamId, path, styleIdx, title, onPath, onStyle }: { teamId: string; path: string | null; styleIdx: number; title: string; onPath: (p: string | null) => void; onStyle: (n: number) => void }) {
-  const { t } = useTranslation(); const [busy, setBusy] = useState(false);
+  const { t } = useTranslation(); const [busy, setBusy] = useState(false); const [width, setWidth] = useState<number | null>(null);
   return <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
-    <LearnCover path={path} style={styleIdx} title={title || 'L'} className="is-wide" />
+    <LearnCover key={path ?? 'none'} path={path} style={styleIdx} title={title || 'L'} className="is-wide" onNaturalWidth={setWidth} />
+    {path && width != null && isLowResolution(width) && <p className="field-hint crop-lowres" role="status">{t('gathering.coverLowRes', { width })}</p>}
     <div className="cover-styles" role="group" aria-label={t('onboarding.cover')}>{COVER_STYLES.map((bg, i) => <button key={i} type="button" className={`cover-swatch ${!path && styleIdx === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} aria-label={`${t('onboarding.cover')} ${i + 1}`} aria-pressed={!path && styleIdx === i} onClick={() => { onPath(null); onStyle(i); }} />)}</div>
     <label className="file-button"><Upload />{busy ? t('onboarding.saving') : t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={async r => { setBusy(true); try { onPath(await uploadLearnFile(teamId, r.file, () => {})); } catch (err) { toast.error(errMsg(t, err)); } setBusy(false); }} /></label></div>;
 }
