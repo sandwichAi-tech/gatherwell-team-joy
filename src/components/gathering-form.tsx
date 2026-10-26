@@ -129,6 +129,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         if (typeof d['descEn'] === 'string') setDescEn(d['descEn']);
         if (typeof d['descEs'] === 'string') setDescEs(d['descEs']);
         if (typeof d['duration'] === 'number') setDuration(d['duration']);
+        if (typeof d['customDuration'] === 'boolean') setCustomDuration(d['customDuration']);
+        if (d['coords'] && typeof d['coords'] === 'object') setCoords(d['coords'] as { lat: number; lng: number });
         if (typeof d['category'] === 'string' && isCategory(d['category'])) setCategory(d['category']);
         if (typeof d['categoryLabel'] === 'string') setCategoryLabel(d['categoryLabel']);
         if (d['visibility'] === 'public' || d['visibility'] === 'team' || d['visibility'] === 'invite') setVisibility(d['visibility']);
@@ -220,7 +222,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     lat: place !== 'online' && coords ? coords.lat : '', lng: place !== 'online' && coords ? coords.lng : '',
   });
 
-  const detailsJson = detailsPayload(details);
+  const detailsJson = detailsPayload({ ...details, mapUrl: place === 'online' ? '' : details.mapUrl, minAge: details.allowsMinors ? details.minAge : '' });
   const saveCover = async (id: string) => {
     const { error } = await supabase.rpc('save_event_cover', { _event: id, _style: coverStyle, _overlay: coverOverlay, _focal: coverFocal, _alt: coverAlt.trim() || null } as never);
     if (error) toast.error(rpcError(t, error));
@@ -244,7 +246,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (!publish && (!editing || source?.event.status === 'draft')) {
       setBusy(true);
       try {
-        const snapshot = { title, start, duration, full, place, locationName, address, note, url, capacityMode, capacity, price, visibility, category, categoryLabel, descEn, descEs, coverPath, coverStyle, coverOverlay, coverFocal, coverAlt, details, rule, teamReg, retreatOn, retreat, retreatEnd, multi, sessions, communitySeats, coverFee };
+        const snapshot = { title, start, duration, customDuration, coords, full, place, locationName, address, note, url, capacityMode, capacity, price, visibility, category, categoryLabel, descEn, descEs, coverPath, coverStyle, coverOverlay, coverFocal, coverAlt, details, rule, teamReg, retreatOn, retreat, retreatEnd, multi, sessions, communitySeats, coverFee };
         const r = await supabase.rpc('save_event_builder_draft', { _team: teamId, _event: (eventId ?? null) as never, _snapshot: snapshot as never });
         if (r.error || !r.data) { setSaveError(rpcError(t, r.error)); return; }
         await queryClient.invalidateQueries(); toast.success(t('gathering.draftSaved'));

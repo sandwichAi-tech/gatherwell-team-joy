@@ -51,9 +51,9 @@ export function CalendarButtons({ event }: { event: CalEvent }) {
   return <div className="guest-button-row"><AddToCalendar event={icsEvent} filename="gathering.ics" /></div>;
 }
 
-export function DirectionsButton({ event, variant = 'secondary' }: { event: Pick<PublicEvent, 'address' | 'location_name' | 'lat' | 'lng'>; variant?: 'secondary' | 'default' }) {
+export function DirectionsButton({ event, variant = 'secondary' }: { event: Pick<PublicEvent, 'address' | 'location_name' | 'lat' | 'lng'> & { map_url?: string | null; is_online?: boolean }; variant?: 'secondary' | 'default' }) {
   const { t } = useTranslation();
-  if (!hasPlace(event)) return null;
+  if (event.is_online || !hasPlace(event)) return null;
   return <Button asChild variant={variant}><a href={directionsUrl(event)} target="_blank" rel="noopener noreferrer"><Navigation />{t('guest.directions')}</a></Button>;
 }
 
@@ -117,7 +117,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
     })();
   }, [intent]);
   const submit = async (e: FormEvent) => {
-    e.preventDefault(); if (!intent) return;
+    e.preventDefault(); if (!intent || busy || gate.busy) return;
     if (!form.first.trim()) { setError(t('guest.errors.name_required')); return; }
     if (!form.phone.trim() && !form.email.trim()) { setError(t('guest.errors.contact_required')); return; }
     if (!waiverReady(waiver, wName, wOk)) { setError(t('guest.errors.waiver_required')); return; }

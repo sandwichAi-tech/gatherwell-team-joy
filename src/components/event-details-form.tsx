@@ -57,8 +57,9 @@ export function detailsPayload(d: EventDetails): Record<string, unknown> | null 
   if (!tiers || !addons) return null;
   if (d.mapUrl.trim() && !validHttps(d.mapUrl)) return null;
   if (d.contactEmail.trim() && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.contactEmail.trim())) return null;
+  if ([d.regOpens, d.regCloses].some(v => v && !Number.isFinite(new Date(v).getTime()))) return null;
   if (d.regOpens && d.regCloses && new Date(d.regOpens) >= new Date(d.regCloses)) return null;
-  if (d.minAge && (!d.allowsMinors || Number(d.minAge) < 0 || Number(d.minAge) > 17)) return null;
+  if (d.allowsMinors && d.minAge && (!Number.isInteger(Number(d.minAge)) || Number(d.minAge) < 0 || Number(d.minAge) > 17)) return null;
   return {
     summary_en: d.summaryEn.trim(), summary_es: d.summaryEs.trim(), language: d.language,
     map_url: d.mapUrl.trim(), reg_opens_at: iso(d.regOpens), reg_closes_at: iso(d.regCloses),
@@ -228,10 +229,11 @@ export function EventDetailsSections({ value, onChange, priceCents, lang, tried 
     <section className="form-section">
       <label className="guest-consent"><input type="checkbox" checked={value.allowsMinors} onChange={e => set({ allowsMinors: e.target.checked, minAge: e.target.checked ? value.minAge : '' })} /><span><strong>{t('builder.minors')}</strong><br /><small className="field-hint">{t('builder.minorsHint')}</small></span></label>
       {value.allowsMinors && <div className="inline-field">
-        <Input type="number" min={0} max={17} className="field-input" value={value.minAge} onChange={e => set({ minAge: e.target.value.replace(/\D/g, '').slice(0, 2) })} aria-label={t('builder.minAge')} />
+        <Input id="g-min-age" aria-invalid={tried && !!value.minAge && (Number(value.minAge) > 17 || !Number.isInteger(Number(value.minAge)))} type="number" min={0} max={17} className="field-input" value={value.minAge} onChange={e => set({ minAge: e.target.value.replace(/\D/g, '').slice(0, 2) })} aria-label={t('builder.minAge')} />
         <span>{t('builder.minAge')}</span>
       </div>}
       {value.allowsMinors && <small className="field-hint">{t('builder.minAgeHint')}</small>}
+      {tried && value.allowsMinors && !!value.minAge && Number(value.minAge) > 17 && <p className="field-error">{t('eventReliability.errors.min_age')}</p>}
     </section>
 
     <section className="form-section">
