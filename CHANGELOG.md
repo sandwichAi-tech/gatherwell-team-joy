@@ -1,5 +1,12 @@
 # ZoheeWell Change Log
 
+## 2026-10-26 — Site-wide image quality (Website Notes row 63)
+- Root causes: uploaded photos were always served at full original size with no size choices; a faint grain layer sat over every real photo; signed-out guests saw the colour fallback instead of the event photo; Discover cards never showed photos because the cover lookup function (public_cover_paths) errored; signed-in people saw fallbacks for other hosts' event covers.
+- Photos now come in signed 480/960/1600/2400px versions (never enlarged past the original, crop/aspect and focal point kept) and each placement asks for its real display size.
+- Grain only shows on the colour fallback, never on photos. Migration 0123 fixes the Discover cover lookup (service-role only).
+- Hosts see an honest warning when a cover is under 1200px wide (in the cropper and event builder); photos are never replaced.
+- Unverified: real phones, slow networks, resource and team covers (none uploaded yet).
+
 ## 2026-10-26 — Rows 66–69 verification pass
 - Tools “Public profile” opens /me?panel=hostProfile directly.
 - Public coach page shows translated category names (was raw keys).
