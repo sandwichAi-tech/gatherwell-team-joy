@@ -65,7 +65,7 @@ export function MyTickets() {
         const place = [e.location_name, e.address].filter(Boolean).join(' · ');
         const active = ['going', 'maybe', 'waitlist'].includes(r.status);
         return <article key={r.id} className="gathering-card ticket-card">
-          <GatheringCover path={e.cover_url} style={e.cover_style} title={e.title} className="card-strip" />
+          <GatheringCover path={e.cover_url} style={e.cover_style} title={e.title} className="card-strip" eventId={e.id} />
           <div className="gathering-card-body">
             <div className="event-info">
               <h3>{e.title}</h3>

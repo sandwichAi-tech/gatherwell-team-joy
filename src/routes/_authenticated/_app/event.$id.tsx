@@ -121,7 +121,7 @@ function EventDetailPage() {
   return <>
     <Link to="/events" className="auth-link back-link"><ArrowLeft />{t('gathering.backToGatherings')}</Link>
     <section className="panel manage-header">
-      <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="manage-cover" />
+      <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="manage-cover" eventId={event.id} overlay={event.cover_overlay} focal={event.cover_focal} alt={event.cover_alt} />
       <div className="manage-body">
         <div className="profile-chips">{statusChip}<span className="chip">{t(`gathering.vis.${event.visibility === 'public' ? 'public' : event.visibility === 'invite' ? 'invite' : 'team'}`)}</span>{event.series_id && <span className="chip"><Repeat className="inline-icon" />{t('gathering.weekly')}</span>}</div>
         <h1 className="manage-title">{event.title}</h1>
