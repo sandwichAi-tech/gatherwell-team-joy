@@ -27,9 +27,19 @@ export const getMessagingSetup = createServerFn({ method: 'POST' })
 
 export const saveAttendanceJourney = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ eventId: z.string().uuid(), id: z.string().uuid().nullable(), name: z.string().trim().min(1).max(120), templateId: z.string().uuid(), audience: z.enum(['attended', 'absent']), local: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/) }).parse(input))
+  .inputValidator((input: unknown) => z.object({ eventId: z.string().uuid(), id: z.string().uuid().nullable(), name: z.string().trim().min(1).max(120), templateId: z.string().uuid(), audience: z.enum(['attended', 'absent']), local: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/), content: z.object({ body: z.string().trim().min(1).max(10000), subject: z.string().max(200), channel: z.enum(['email','sms','in_app']), language: z.enum(['en','es']) }).optional() }).parse(input))
   .handler(async ({ data, context }) => {
-    const { data: id, error } = await context.supabase.rpc('save_attendance_journey', { _event: data.eventId, _id: data.id, _name: data.name, _template: data.templateId, _audience: data.audience, _local: data.local } as never);
+    let templateId = data.templateId;
+    if (data.content) {
+      const { data: allowed } = await context.supabase.rpc('can_manage_event', { _event_id: data.eventId });
+      if (!allowed) throw new Error('forbidden');
+      const { data: event } = await context.supabase.from('events').select('team_id').eq('id',data.eventId).single();
+      if (!event?.team_id) throw new Error('forbidden');
+      const { data: copy, error } = await context.supabase.rpc('save_message_template', { _team: event.team_id, _id: null, _name: data.name, _channel: data.content.channel, _language: data.content.language, _subject: data.content.subject, _body: data.content.body, _audience: data.audience } as never);
+      if (error || !copy) throw new Error(error?.message ?? 'save_failed');
+      templateId = copy;
+    }
+    const { data: id, error } = await context.supabase.rpc('save_attendance_journey', { _event: data.eventId, _id: data.id, _name: data.name, _template: templateId, _audience: data.audience, _local: data.local } as never);
     if (error) throw new Error(error.message);
     return { id };
   });
