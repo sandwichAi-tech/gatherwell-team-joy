@@ -99,6 +99,7 @@ import { Route as AuthenticatedAppEventIdCheckinRouteImport } from './routes/_au
 import { Route as AuthenticatedAppEventIdGuestsRouteImport } from './routes/_authenticated/_app/event_.$id.guests'
 import { Route as AuthenticatedAppGatheringIdEditRouteImport } from './routes/_authenticated/_app/gathering.$id.edit'
 import { Route as AuthenticatedAppLearnLessonIdRouteImport } from './routes/_authenticated/_app/learn_.lesson.$id'
+import { Route as AuthenticatedAppLearnQuizIdRouteImport } from './routes/_authenticated/_app/learn_.quiz.$id'
 import { Route as AuthenticatedAppLearnRecipeIdRouteImport } from './routes/_authenticated/_app/learn_.recipe.$id'
 import { Route as AuthenticatedAppLearnTrackIdRouteImport } from './routes/_authenticated/_app/learn_.track.$id'
 
@@ -580,6 +581,12 @@ const AuthenticatedAppLearnLessonIdRoute =
     path: '/learn/lesson/$id',
     getParentRoute: () => AuthenticatedAppRouteRoute,
   } as any)
+const AuthenticatedAppLearnQuizIdRoute =
+  AuthenticatedAppLearnQuizIdRouteImport.update({
+    id: '/learn_/quiz/$id',
+    path: '/learn/quiz/$id',
+    getParentRoute: () => AuthenticatedAppRouteRoute,
+  } as any)
 const AuthenticatedAppLearnRecipeIdRoute =
   AuthenticatedAppLearnRecipeIdRouteImport.update({
     id: '/learn_/recipe/$id',
@@ -682,6 +689,7 @@ export interface FileRoutesByFullPath {
   '/event/$id/guests': typeof AuthenticatedAppEventIdGuestsRoute
   '/gathering/$id/edit': typeof AuthenticatedAppGatheringIdEditRoute
   '/learn/lesson/$id': typeof AuthenticatedAppLearnLessonIdRoute
+  '/learn/quiz/$id': typeof AuthenticatedAppLearnQuizIdRoute
   '/learn/recipe/$id': typeof AuthenticatedAppLearnRecipeIdRoute
   '/learn/track/$id': typeof AuthenticatedAppLearnTrackIdRoute
 }
@@ -774,6 +782,7 @@ export interface FileRoutesByTo {
   '/event/$id/guests': typeof AuthenticatedAppEventIdGuestsRoute
   '/gathering/$id/edit': typeof AuthenticatedAppGatheringIdEditRoute
   '/learn/lesson/$id': typeof AuthenticatedAppLearnLessonIdRoute
+  '/learn/quiz/$id': typeof AuthenticatedAppLearnQuizIdRoute
   '/learn/recipe/$id': typeof AuthenticatedAppLearnRecipeIdRoute
   '/learn/track/$id': typeof AuthenticatedAppLearnTrackIdRoute
 }
@@ -869,6 +878,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/event_/$id/guests': typeof AuthenticatedAppEventIdGuestsRoute
   '/_authenticated/_app/gathering/$id/edit': typeof AuthenticatedAppGatheringIdEditRoute
   '/_authenticated/_app/learn_/lesson/$id': typeof AuthenticatedAppLearnLessonIdRoute
+  '/_authenticated/_app/learn_/quiz/$id': typeof AuthenticatedAppLearnQuizIdRoute
   '/_authenticated/_app/learn_/recipe/$id': typeof AuthenticatedAppLearnRecipeIdRoute
   '/_authenticated/_app/learn_/track/$id': typeof AuthenticatedAppLearnTrackIdRoute
 }
@@ -963,6 +973,7 @@ export interface FileRouteTypes {
     | '/event/$id/guests'
     | '/gathering/$id/edit'
     | '/learn/lesson/$id'
+    | '/learn/quiz/$id'
     | '/learn/recipe/$id'
     | '/learn/track/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -1055,6 +1066,7 @@ export interface FileRouteTypes {
     | '/event/$id/guests'
     | '/gathering/$id/edit'
     | '/learn/lesson/$id'
+    | '/learn/quiz/$id'
     | '/learn/recipe/$id'
     | '/learn/track/$id'
   id:
@@ -1149,6 +1161,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/event_/$id/guests'
     | '/_authenticated/_app/gathering/$id/edit'
     | '/_authenticated/_app/learn_/lesson/$id'
+    | '/_authenticated/_app/learn_/quiz/$id'
     | '/_authenticated/_app/learn_/recipe/$id'
     | '/_authenticated/_app/learn_/track/$id'
   fileRoutesById: FileRoutesById
@@ -1826,6 +1839,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppLearnLessonIdRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/learn_/quiz/$id': {
+      id: '/_authenticated/_app/learn_/quiz/$id'
+      path: '/learn/quiz/$id'
+      fullPath: '/learn/quiz/$id'
+      preLoaderRoute: typeof AuthenticatedAppLearnQuizIdRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/_authenticated/_app/learn_/recipe/$id': {
       id: '/_authenticated/_app/learn_/recipe/$id'
       path: '/learn/recipe/$id'
@@ -1894,6 +1914,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppEventIdGuestsRoute: typeof AuthenticatedAppEventIdGuestsRoute
   AuthenticatedAppGatheringIdEditRoute: typeof AuthenticatedAppGatheringIdEditRoute
   AuthenticatedAppLearnLessonIdRoute: typeof AuthenticatedAppLearnLessonIdRoute
+  AuthenticatedAppLearnQuizIdRoute: typeof AuthenticatedAppLearnQuizIdRoute
   AuthenticatedAppLearnRecipeIdRoute: typeof AuthenticatedAppLearnRecipeIdRoute
   AuthenticatedAppLearnTrackIdRoute: typeof AuthenticatedAppLearnTrackIdRoute
 }
@@ -1949,6 +1970,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppEventIdGuestsRoute: AuthenticatedAppEventIdGuestsRoute,
   AuthenticatedAppGatheringIdEditRoute: AuthenticatedAppGatheringIdEditRoute,
   AuthenticatedAppLearnLessonIdRoute: AuthenticatedAppLearnLessonIdRoute,
+  AuthenticatedAppLearnQuizIdRoute: AuthenticatedAppLearnQuizIdRoute,
   AuthenticatedAppLearnRecipeIdRoute: AuthenticatedAppLearnRecipeIdRoute,
   AuthenticatedAppLearnTrackIdRoute: AuthenticatedAppLearnTrackIdRoute,
 }
