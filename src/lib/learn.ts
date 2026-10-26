@@ -19,19 +19,26 @@ export const lessonTitle = (l: Pick<Lesson, 'title_en' | 'title_es'>, lang?: str
 export const effectiveType = (l: Pick<Lesson, 'type' | 'replay_url'>): LessonType => (l.type === 'live' && l.replay_url ? 'video' : (LESSON_TYPES as readonly string[]).includes(l.type) ? l.type as LessonType : 'text');
 export const isUpcomingLive = (l: Lesson) => l.type === 'live' && !l.replay_url && !!l.live_starts_at && new Date(l.live_starts_at).getTime() + 3 * 3600_000 > Date.now();
 
-export type LearnData = { tracks: Track[]; lessons: Lesson[]; done: Set<string> };
+export type LearnData = { tracks: Track[]; lessons: Lesson[]; done: Set<string>; locked: Map<string, string> };
+
+/** Content-free placeholder for a scheduled course lesson the server still withholds. */
+type LockedRow = { id: string; track_id: string; title_en: string; title_es: string; type: string; sort_order: number; duration_minutes: number | null; unlock_at: string };
+const lockedStub = (r: LockedRow): Lesson => ({ id: r.id, track_id: r.track_id, title_en: r.title_en, title_es: r.title_es, type: r.type, sort_order: r.sort_order, duration_minutes: r.duration_minutes, is_published: true } as unknown as Lesson);
 
 /** Tracks the caller can read (own team + parent teams; leaders also see drafts), their lessons and the caller's progress. */
 export const learnQuery = (userId: string) => queryOptions({
   queryKey: ['learn', userId],
   queryFn: async (): Promise<LearnData> => {
-    const [{ data: tracks, error }, { data: lessons, error: e2 }, { data: progress, error: e3 }] = await Promise.all([
+    const [{ data: tracks, error }, { data: lessons, error: e2 }, { data: progress, error: e3 }, { data: lockedRows, error: e4 }] = await Promise.all([
       supabase.from('tracks').select('*').order('sort_order').order('created_at'),
       supabase.from('lessons').select('*').order('sort_order').order('created_at'),
       supabase.from('lesson_progress').select('lesson_id').eq('user_id', userId),
+      supabase.rpc('my_locked_lessons'),
     ]);
-    if (error || e2 || e3) throw error ?? e2 ?? e3;
-    return { tracks: tracks ?? [], lessons: lessons ?? [], done: new Set((progress ?? []).map(p => p.lesson_id)) };
+    if (error || e2 || e3 || e4) throw error ?? e2 ?? e3 ?? e4;
+    const rows = (lockedRows ?? []) as LockedRow[];
+    const all = [...(lessons ?? []), ...rows.map(lockedStub)].sort((a, b) => a.sort_order - b.sort_order || String(a.created_at ?? '').localeCompare(String(b.created_at ?? '')));
+    return { tracks: tracks ?? [], lessons: all, done: new Set((progress ?? []).map(p => p.lesson_id)), locked: new Map(rows.map(r => [r.id, r.unlock_at])) };
   },
 });
 
