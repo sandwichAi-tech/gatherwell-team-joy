@@ -81,7 +81,7 @@ export function PublicOfferPage({ id }: { id: string }) {
   return <GuestShell>
     <article className="offer-page">
       <div className="offer-cover is-wide" style={{ backgroundImage: COVER_STYLES[o.cover_style % COVER_STYLES.length] }}>
-        {cover.data && <BrandImage src={cover.data} alt={title} className="offer-cover-photo" priority />}
+        {cover.data && <BrandImage src={cover.data} alt={title} className="offer-cover-photo" priority sizes="(min-width: 768px) 720px, 100vw" />}
         <span className="chip offer-kind" style={{ background: pair.bg, color: pair.fg }}>{t(`offers.kind.${o.kind}`)}</span>
       </div>
       <section className="panel offer-body">
