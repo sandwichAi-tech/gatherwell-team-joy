@@ -41,7 +41,7 @@ const dateFmt = (iso: string, lang: string) => new Date(iso).toLocaleDateString(
 
 export function OfferCover({ offer, wide, preview }: { offer: Pick<Offer, 'cover_style' | 'cover_url' | 'kind' | 'title_en' | 'title_es'>; wide?: boolean; preview?: string | null }) {
   const { t, i18n } = useTranslation();
-  const { data: url } = useQuery({ queryKey: ['media-url', offer.cover_url], queryFn: () => mediaUrl(offer.cover_url), enabled: !!offer.cover_url && !preview, staleTime: 50 * 60 * 1000 });
+  const { data: url } = useQuery({ queryKey: ['media-rendition', offer.cover_url], queryFn: () => mediaRendition(offer.cover_url), enabled: !!offer.cover_url && !preview, staleTime: 50 * 60 * 1000 });
   return <div className={`offer-cover ${wide ? 'is-wide' : ''}`} style={{ backgroundImage: COVER_STYLES[offer.cover_style % COVER_STYLES.length] }}>
     {(preview || url) && <BrandImage src={preview ?? url} alt={offerTitle(offer, i18n.resolvedLanguage)} className="offer-cover-photo" priority={wide} />}
     <span className="chip offer-kind">{t(`offers.kind.${offer.kind}`)}</span></div>;

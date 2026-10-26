@@ -125,6 +125,13 @@ export async function uploadMedia(userId: string, file: File, kind: 'avatar' | '
   return path;
 }
 
+/** Signed original + resized renditions of a private media path (crop/aspect preserved, never enlarged). */
+export async function mediaRendition(path?: string | null, widths?: readonly number[]) {
+  if (!path) return null;
+  const { signRendition } = await import('@/lib/media-renditions');
+  return signRendition(supabase.storage.from('media'), path, 3600, widths);
+}
+
 export async function mediaUrl(path?: string | null) {
   if (!path) return null;
   if (/^https?:/.test(path)) return path;
