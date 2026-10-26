@@ -9,7 +9,9 @@
 - Low-resolution warnings measure the original upload (not the rendition the browser picked) and now also show in the resource cover editor and Edit team.
 - A rendition that errors or stalls for 8 s switches to the signed original so a photo never stays blank.
 - Verified with removable ZZ-TEST account/team/course/tracks (2400px and 800px covers) on Resources Library/Created by me, track detail, course manage and public course page, Discover Resources and Team at 320/375/390/1280 in EN/ES and 1–3x; all fixtures, files and sessions removed.
-- Unverified: real phones and real slow networks; recipe covers had no fixture.
+- Final checks: a ZZ-TEST recipe created through the recipe editor (1000px upload, cropped) shows signed renditions on Library, Recipes, recipe detail and editor at 320/1280 in EN/ES at 1–3x; the low-res warning appears in the cropper and editor only; forced stalled/failed renditions switch to the signed original.
+- Fixed: BrandImage now emits sizes before srcset, so server-rendered/eager images (public course, event and coach pages) pick by real slot size instead of full screen width; the public course cover now hints its ~720px slot (1280@2x now loads 1600px, was 2400px).
+- Unverified: real phones and real slow networks.
 
 ## 2026-10-26 — Rows 66–69 verification pass
 - Tools “Public profile” opens /me?panel=hostProfile directly.
