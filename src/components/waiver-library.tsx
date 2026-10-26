@@ -24,7 +24,7 @@ export function WaiverLibrary({teamId}:{teamId:string}) {
     try {const r=await supabase.rpc('save_library_waiver',{_team:teamId,_id:edit.id||null,_name:edit.name,_en:edit.body_en,_es:edit.body_es,_archive:archived} as never);if(r.error)throw r.error;setEdit(null);await qc.invalidateQueries({queryKey:['waiver-library',teamId]});}
     catch{setError(t('waiverLibrary.saveError'));}finally{setBusy(false);}
   };
-  useEffect(()=>{if(edit){const id=requestAnimationFrame(()=>document.getElementById('wl-name')?.focus());return()=>cancelAnimationFrame(id);}},[!!edit]);
+  useEffect(()=>{if(!edit)return;const id=requestAnimationFrame(()=>document.getElementById('wl-name')?.focus());return()=>cancelAnimationFrame(id);},[!!edit]);
   return <section className="form-section">
     <p className="field-hint">{t('waiverLibrary.scope')}</p>
     <Button variant="secondary" onClick={()=>setTeamEdit(true)}>{t('waiverLibrary.team')}</Button>
