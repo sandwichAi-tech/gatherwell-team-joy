@@ -2711,6 +2711,6 @@ a.gw-cat-chip:hover{background:#fff}
 .customer-qr-button{width:100%;min-height:48px}
 .customer-checked{font-weight:600;color:var(--primary)}
 .checkin-qr-view{display:grid;justify-items:center;gap:12px;text-align:center}
-.checkin-qr-view .ticket-qr{background:var(--qr-background,#fff);padding:12px;border-radius:16px;width:min(100%,280px)}
+.checkin-qr-view .ticket-qr{background:var(--qr-background);padding:12px;border-radius:16px;width:min(100%,280px)}
 .checkin-qr-view .ticket-qr svg{width:100%;height:auto;display:block}
 .checkin-qr-code{font-family:ui-monospace,monospace;font-size:15px;letter-spacing:.06em;overflow-wrap:anywhere}
