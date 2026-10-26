@@ -1746,6 +1746,7 @@
     "savedProgress": "Progreso guardado",
     "upNext": "Sigue",
     "noMedia": "Tu líder aún no agrega el video.",
+    "wrongFileType": "Ese archivo no coincide con este tipo de lección. Elige un archivo adecuado o cambia el tipo.",
     "noPdf": "Este documento aún no se ha agregado.",
     "noAudio": "Este audio aún no se ha agregado.",
     "noFile": "Este archivo aún no se ha agregado.",

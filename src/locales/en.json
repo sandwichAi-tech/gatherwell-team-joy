@@ -1746,6 +1746,7 @@
     "savedProgress": "Progress saved",
     "upNext": "Up next",
     "noMedia": "Your leader hasn't added the video yet.",
+    "wrongFileType": "That file doesn't match this lesson type. Choose a matching file or change the type.",
     "noPdf": "This document hasn't been added yet.",
     "noAudio": "This audio hasn't been added yet.",
     "noFile": "This file hasn't been added yet.",

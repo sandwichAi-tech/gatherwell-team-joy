@@ -20,7 +20,7 @@ import { RichTextEditor, RichTextView } from '@/components/rich-text';
 import { getPaymentsReadiness } from '@/lib/billing.functions';
 import { canSellPaid } from '@/lib/payments-readiness';
 import {
-  CREATE_TYPES, emptyBuilderDraft, isTrackFlow, lessonEditorConfig, lessonPresetFor, offerKindFor, typeContentAtRisk,
+  CREATE_TYPES, emptyBuilderDraft, fileMatchesLessonType, isTrackFlow, lessonEditorConfig, lessonPresetFor, offerKindFor, typeContentAtRisk,
   type BuilderDraft, type CreateType,
 } from '@/lib/create-resource';
 import { listOf, RECIPE_TAGS, uploadLearnFile, type Lesson } from '@/lib/learn';
@@ -228,6 +228,8 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const [progress, setProgress] = useState<number | null>(null);
   const [fileName, setFileName] = useState('');
   const loadedOnce = useRef(false);
+  // A reopened item starts clean: its loaded values become the saved baseline.
+  const baselinePending = useRef(!!initialId);
 
   const offers = useQuery(myOffersQuery(userId));
   const courses = (offers.data ?? []).filter(o => o.kind === 'course' && o.status !== 'archived');
@@ -317,6 +319,12 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
       setLoadError(true); setLoadingItem(false);
     })();
   }, [initialId]);
+
+  useEffect(() => {
+    if (loadingItem || !baselinePending.current) return;
+    baselinePending.current = false;
+    setSnapshot(itemSnapshot(item)); setDraftSnap(JSON.stringify(draft));
+  }, [loadingItem, item, draft]);
 
   const stepsRef = useRef<HTMLDivElement>(null);
   const goStep = (s: ItemSection) => {

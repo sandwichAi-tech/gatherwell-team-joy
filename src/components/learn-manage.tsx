@@ -16,7 +16,7 @@ import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { supabase } from '@/integrations/supabase/client';
 import { COVER_STYLES } from '@/lib/gatherings';
 import { compressImage, lessonTitle, lessonsOf, listOf, RECIPE_TAGS, recipesQuery, trackTitle, uploadLearnFile, type Lesson, type LessonType, type Recipe, type Track } from '@/lib/learn';
-import { isTrackFlow, lessonEditorConfig, lessonPresetFor, parseCreateType, type TrackFlowType } from '@/lib/create-resource';
+import { fileMatchesLessonType, isTrackFlow, lessonEditorConfig, lessonPresetFor, parseCreateType, type TrackFlowType } from '@/lib/create-resource';
 import { LearnCover, useLearn } from '@/components/learn';
 import { isLowResolution } from '@/lib/media-renditions';
 import { hasPlaceholder, isLive, trackState } from '@/lib/resource-flow';
@@ -95,6 +95,7 @@ function LessonEditor({ lesson, teamId, onClose, preset }: { lesson: (Partial<Le
   }, [lesson]);
   const set = (k: keyof typeof empty) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
   const upload = async (file: File) => {
+    if (!fileMatchesLessonType(f.type, file)) { toast.error(t('learnHub.wrongFileType')); return; }
     setFileName(file.name); setProgress(0);
     try { const p = await uploadLearnFile(teamId, file, setProgress); setF(x => ({ ...x, storage_path: p, url: '' })); setProgress(100); }
     catch (e) { toast.error(errMsg(t, e)); setProgress(null); setFileName(''); }
