@@ -988,6 +988,13 @@
       "when": 1793054779526,
       "tag": "0140_attendance_scoped_processor",
       "breakpoints": true
+    },
+    {
+      "idx": 141,
+      "version": "7",
+      "when": 1793054840793,
+      "tag": "0141_attendance_in_app_category",
+      "breakpoints": true
     }
   ]
 }
