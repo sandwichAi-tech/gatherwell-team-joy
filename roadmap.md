@@ -18,6 +18,6 @@
 
 - [x] Row 60 PDF resources
 - [x] Row 61 Resource blueprint publishing (track blueprints; live-workshop date/link edited in Manage)
-- [ ] Row 62 Full Resources pressure test — in progress
+- [ ] Row 62 Full Resources pressure test — in progress (blocked: course "new lesson every N days" is shown but not enforced; needs decision)
 - [x] Row 70 Team discussion links + conversation replies/mentions (fixtures removed 2026-10-26)
 - [x] Row 71 Quiz studio: scored/outcome/poll, images+alt, player/results/retake, coach summary, Resources (paid-course quiz purchase path blocked until payouts connect)
