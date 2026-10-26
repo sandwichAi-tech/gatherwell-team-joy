@@ -16,10 +16,12 @@ type Props = {
   sizes?: string | undefined;
   className?: string | undefined;
   priority?: boolean | undefined;
+  /** Reports the loaded original's real pixel width (host-facing quality hints). */
+  onNaturalWidth?: ((width: number) => void) | undefined;
 };
 
 /** Every photo renders here: one soft brand grade over real photos, grain texture only on the tonal fallback, and responsive renditions. */
-export function BrandImage({ slot, src, alt, resizable, focal, aspect, sizes = '100vw', className, priority }: Props) {
+export function BrandImage({ slot, src, alt, resizable, focal, aspect, sizes = '100vw', className, priority, onNaturalWidth }: Props) {
   const { i18n } = useTranslation();
   const { data } = useQuery({ ...siteMediaQuery(), enabled: !!slot });
   const row = slot ? data?.find(r => r.slot === slot) : undefined;
@@ -35,7 +37,7 @@ export function BrandImage({ slot, src, alt, resizable, focal, aspect, sizes = '
   const style: CSSProperties = ratio ? { aspectRatio: String(ratio) } : {};
   return (
     <figure className={`brand-image ${broken ? 'is-fallback' : ''} ${className ?? ''}`.trim()} style={style} role={broken && label ? 'img' : undefined} aria-label={broken && label ? label : undefined}>
-      {!broken && <img {...(given?.srcSet ? { src: given.src, srcSet: given.srcSet } : responsiveSrc(url, canResize))} sizes={sizes} alt={label} loading={priority ? 'eager' : 'lazy'} fetchPriority={priority ? 'high' : 'auto'} decoding="async" style={{ objectPosition: `${fx * 100}% ${fy * 100}%` }} onError={() => setFailed(url)} />}
+      {!broken && <img {...(given?.srcSet ? { src: given.src, srcSet: given.srcSet } : responsiveSrc(url, canResize))} sizes={sizes} alt={label} loading={priority ? 'eager' : 'lazy'} fetchPriority={priority ? 'high' : 'auto'} decoding="async" style={{ objectPosition: `${fx * 100}% ${fy * 100}%` }} onError={() => setFailed(url)} onLoad={e => onNaturalWidth?.(e.currentTarget.naturalWidth)} />}
       <span className="brand-image-grade" aria-hidden="true" />
       {broken && <span className="brand-image-grain" aria-hidden="true" />}
     </figure>

@@ -1222,6 +1222,7 @@
     "going_other": "{{count}} registered"
   },
   "gathering": {
+    "coverLowRes": "This cover photo is only {{width}} px wide, so it may look soft on large or high-resolution screens. Upload a larger original (at least 1200 px wide) for a sharper cover.",
     "create": "Create event",
     "createFirst": "Create your first event",
     "newTitle": "New event",

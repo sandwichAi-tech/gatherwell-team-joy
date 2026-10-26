@@ -1222,6 +1222,7 @@
     "going_other": "{{count}} registrados"
   },
   "gathering": {
+    "coverLowRes": "Esta foto de portada mide solo {{width}} px de ancho, así que puede verse poco nítida en pantallas grandes o de alta resolución. Sube un original más grande (al menos 1200 px de ancho) para una portada más nítida.",
     "create": "Crear reunión",
     "createFirst": "Crea tu primera reunión",
     "newTitle": "Nueva reunión",

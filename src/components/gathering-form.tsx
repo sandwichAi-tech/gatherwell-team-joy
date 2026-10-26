@@ -7,6 +7,7 @@ import { EventDetailsSections, detailsFromEvent, detailsPayload, emptyDetails, t
 import { asRetreat, emptyRetreat, type Retreat } from '@/lib/retreat';
 import { CATEGORIES, isCategory, type Category } from '@/lib/landing';
 import { CropFileInput, type CropResult } from '@/components/image-crop';
+import { isLowResolution } from '@/lib/media-renditions';
 import { CopyButton } from '@/components/copy-button';
 import { PlaybookCard } from '@/components/playbook';
 import { trackEvent } from '@/lib/analytics';
@@ -53,7 +54,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     queryFn: async () => (await supabase.from('events').select('starts_at, series_id').eq('host_id', userId).neq('status', 'draft').order('starts_at', { ascending: false }).limit(60)).data ?? [] });
 
   const [category, setCategory] = useState<Category>('more'); const [categoryLabel, setCategoryLabel] = useState('');
-  const [title, setTitle] = useState(''); const [coverPath, setCoverPath] = useState<string | null>(null); const [coverStyle, setCoverStyle] = useState(0);
+  const [title, setTitle] = useState(''); const [coverPath, setCoverPath] = useState<string | null>(null); const [coverWidth, setCoverWidth] = useState<number | null>(null); const [coverStyle, setCoverStyle] = useState(0);
   const [coverOverlay, setCoverOverlay] = useState(0); const [coverFocal, setCoverFocal] = useState<string>('50% 50%'); const [coverAlt, setCoverAlt] = useState('');
   const [start, setStart] = useState(''); const [duration, setDuration] = useState<number>(60); const [customDuration, setCustomDuration] = useState(false);
   const [place, setPlace] = useState<'person' | 'online' | 'hybrid'>('person'); const [locationName, setLocationName] = useState(''); const [address, setAddress] = useState('');
@@ -293,7 +294,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       </section>; })()}
 
       {full && <section className="form-section" aria-label={t('gathering.coverStyle')}>
-        <GatheringCover path={coverPath} style={coverStyle} title={title || 'G'} className="form-cover" overlay={coverOverlay} focal={coverFocal} alt={coverAlt || null} />
+        <GatheringCover path={coverPath} style={coverStyle} title={title || 'G'} className="form-cover" overlay={coverOverlay} focal={coverFocal} alt={coverAlt || null} sizes="(min-width: 720px) 720px, 100vw" onNaturalWidth={setCoverWidth} />
+        {coverPath && coverWidth != null && isLowResolution(coverWidth) && <p className="field-hint crop-lowres" role="status">{t('gathering.coverLowRes', { width: coverWidth })}</p>}
         <div className="cover-actions">
           <label className="file-button"><Camera /><span>{uploading ? t('onboarding.saving') : t(coverPath ? 'gathering.changePhoto' : 'gathering.addPhoto')}</span>
             <CropFileInput kind="cover" withSquare onCropped={r => void onPhoto(r)} onRejected={() => toast.error(t('gathering.photoTooBig'))} /></label>
