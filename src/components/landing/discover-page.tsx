@@ -90,7 +90,7 @@ function CardMedia({ title, alt, style, focal, url, className = '' }: {
   </span>;
 }
 
-function CatalogCard({ item, lang, coverUrl }: { item: CatalogItem; lang: string; coverUrl: string | undefined }) {
+function CatalogCard({ item, lang, coverUrl }: { item: CatalogItem; lang: string; coverUrl: MediaSrc }) {
   const { t } = useTranslation();
   const when = item.starts_at ? new Intl.DateTimeFormat(lang === 'es' ? 'es' : 'en', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: item.timezone || undefined }).format(new Date(item.starts_at)) : null;
   return <li className="gw-card catalog-card">
