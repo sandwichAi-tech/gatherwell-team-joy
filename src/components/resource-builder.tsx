@@ -150,9 +150,13 @@ function Curriculum({ trackId, teamId, lang, onLessons }: { trackId: string; tea
     const other = lessons[idx + dir];
     if (!other) return;
     setBusy(true);
-    await db.from('lessons').update({ sort_order: other.sort_order }).eq('id', l.id);
-    await db.from('lessons').update({ sort_order: l.sort_order }).eq('id', other.id);
-    setBusy(false); void load();
+    try {
+      // Equal sort values (e.g. copied lessons) would make a swap a no-op, so fall back to positions.
+      const [a, b] = l.sort_order === other.sort_order ? [idx + dir, idx] : [other.sort_order, l.sort_order];
+      const r1 = await db.from('lessons').update({ sort_order: a }).eq('id', l.id);
+      const r2 = await db.from('lessons').update({ sort_order: b }).eq('id', other.id);
+      if (r1.error || r2.error) toast.error(t('profile.saveError'));
+    } finally { setBusy(false); await load(); }
   };
 
   return <div className="curriculum">
