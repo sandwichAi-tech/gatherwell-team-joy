@@ -1,6 +1,7 @@
 import { BarChart3 } from '@/components/icons';
 import { TemplateEditor, type TemplateDraft } from '@/components/templates';
 import { CustomerHome } from '@/components/customer-home';
+import { HostCheckinActions } from '@/components/host-checkin-actions';
 import { FoundingCommitmentsCard } from '@/components/founding';
 import { CoachLaunchCard } from '@/components/coach-launch';
 import { Feature } from '@/lib/feature-flags';
@@ -100,6 +101,7 @@ export function HomePage() {
     <MobileTeamSwitcher />
     <div className="greeting page-heading"><div><span className="eyebrow">{t('home.eyebrow', { defaultValue: 'YOUR COMMUNITY, CONNECTED' })}</span><h1>{greeting}</h1><p>{t('home.subtitle', { defaultValue: 'Bring people together, see what’s next, and keep your community moving.' })}</p></div><Button className="page-create" onClick={openCreate}><Plus />{t('common.create')}</Button></div>
     <DailyBriefCard />
+    <HostCheckinActions userId={userId} />
     <HomeRealData />
     {!guest && <FoundingCommitmentsCard />}
     {!guest && <CoachLaunchCard />}

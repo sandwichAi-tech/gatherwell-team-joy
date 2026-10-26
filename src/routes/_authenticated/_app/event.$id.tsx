@@ -139,7 +139,7 @@ function EventDetailPage() {
             {blockers.length > 0 ? <ul className="builder-blockers">{blockers.map(b => <li key={b}>{t(`builder.blockers.${b}`)}</li>)}</ul> : <p>{t('builder.readyToPublish')}</p>}</div>
         </div>}
         {manages ? <div className="manage-actions">
-          {event.status === 'published' && <Button asChild><Link to="/event/$id/checkin" params={{ id }}><ScanLine />{t('live.startCheckin')}</Link></Button>}
+          {event.status === 'published' && <Button asChild><Link to="/event/$id/checkin" params={{ id }}><ScanLine />{t('attendancePilot.quickCheckin')}</Link></Button>}
           {event.status === 'draft' && <Button disabled={saving || blockers.length > 0} onClick={() => setStatus('published')}><Rocket />{t('gathering.publish')}</Button>}
           {(event.status === 'published' || event.status === 'archived') && <Button variant="secondary" disabled={saving} onClick={() => setStatus('draft')}><EyeOff />{t('builder.unpublish')}</Button>}
           {event.status === 'published' && (event.visibility !== 'team') && <Button asChild variant="secondary"><Link to="/e/$id" params={{ id }}><Eye />{t('builder.preview')}</Link></Button>}
