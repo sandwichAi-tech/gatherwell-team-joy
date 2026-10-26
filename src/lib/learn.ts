@@ -156,3 +156,29 @@ export function icsFor(l: Lesson, title: string, description: string) {
   const body = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//ZoheeWell//Learn//EN', 'BEGIN:VEVENT', `UID:${l.id}@gatherwell`, `DTSTAMP:${f(new Date())}`, `DTSTART:${f(start)}`, `DTEND:${f(end)}`, `SUMMARY:${esc(title)}`, `DESCRIPTION:${esc(description)}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([body], { type: 'text/calendar' })); a.download = 'gatherwell-live.ics'; a.click();
 }
+
+/** True when a stored file or link is a PDF (by extension, ignoring query strings). */
+export const isPdfPath = (p?: string | null) => !!p && /\.pdf$/i.test(p.split(/[?#]/)[0] ?? '');
+
+/**
+ * Which viewer a lesson needs. A PDF attached to any lesson — even one saved under
+ * the wrong type — opens in the document viewer, never the empty video player.
+ */
+export type ViewerKind = 'video' | 'document' | 'download' | 'audio' | 'link' | 'text' | 'none';
+export function viewerFor(l: Pick<Lesson, 'type' | 'replay_url' | 'url' | 'storage_path'>): ViewerKind {
+  const type = effectiveType(l);
+  const external = l.type === 'live' ? l.replay_url : l.url;
+  if (isPdfPath(l.storage_path) || type === 'pdf') return l.storage_path || external ? 'document' : 'none';
+  if (type === 'file') return l.storage_path ? (isPdfPath(l.storage_path) ? 'document' : 'download') : external ? 'link' : 'none';
+  if (type === 'video') return l.storage_path || external ? 'video' : 'none';
+  if (type === 'audio') return l.storage_path ? 'audio' : external ? 'link' : 'none';
+  if (type === 'link') return external ? 'link' : 'none';
+  if (type === 'text') return 'text';
+  return 'none';
+}
+
+/** Type-specific "not added yet" message key, so a PDF never says the video is missing. */
+export const emptyMediaKey = (l: Pick<Lesson, 'type' | 'replay_url'>) => {
+  const type = effectiveType(l);
+  return type === 'pdf' ? 'learnHub.noPdf' : type === 'audio' ? 'learnHub.noAudio' : type === 'file' ? 'learnHub.noFile' : type === 'link' ? 'learnHub.noLink' : 'learnHub.noMedia';
+};
