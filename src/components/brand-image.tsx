@@ -63,7 +63,7 @@ export function BrandImage({ slot, src, alt, resizable, focal, aspect, sizes = '
   const style: CSSProperties = ratio ? { aspectRatio: String(ratio) } : {};
   return (
     <figure className={`brand-image ${broken ? 'is-fallback' : ''} ${className ?? ''}`.trim()} style={style} role={broken && label ? 'img' : undefined} aria-label={broken && label ? label : undefined}>
-      {!broken && <img ref={imgRef} key={usePlain ? 'plain' : 'set'} {...(given?.srcSet ? (usePlain ? { src: given.src } : { src: given.src, srcSet: given.srcSet }) : responsiveSrc(url, canResize))} sizes={sizes} alt={label} loading={priority ? 'eager' : 'lazy'} fetchPriority={priority ? 'high' : 'auto'} decoding="async" style={{ objectPosition: `${fx * 100}% ${fy * 100}%` }} onError={() => (given?.srcSet && !usePlain ? setPlain(url) : setFailed(url))} />}
+      {!broken && <img ref={imgRef} key={usePlain ? 'plain' : 'set'} sizes={sizes} {...(given?.srcSet ? (usePlain ? { src: given.src } : { src: given.src, srcSet: given.srcSet }) : responsiveSrc(url, canResize))} alt={label} loading={priority ? 'eager' : 'lazy'} fetchPriority={priority ? 'high' : 'auto'} decoding="async" style={{ objectPosition: `${fx * 100}% ${fy * 100}%` }} onError={() => (given?.srcSet && !usePlain ? setPlain(url) : setFailed(url))} />}
       <span className="brand-image-grade" aria-hidden="true" />
       {broken && <span className="brand-image-grain" aria-hidden="true" />}
     </figure>
