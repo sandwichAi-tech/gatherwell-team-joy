@@ -3,7 +3,7 @@ import { EmptyState } from '@/components/launch-states';
 import { LangFields, LangPair } from '@/components/lang-fields';
 import { confirmAction } from '@/components/confirm-dialog';
 import { MembersOnlyPicker } from '@/components/offers';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -36,7 +36,7 @@ export function Field({ id, label, children }: { id: string; label: string; chil
 }
 
 /** `upload`/`renderCover` let offer-backed items store the cover in the host's own media folder (required for offers) instead of team learn media. */
-export function CoverPicker({ teamId, path, styleIdx, title, onPath, onStyle, upload, renderCover }: { teamId: string; path: string | null; styleIdx: number; title: string; onPath: (p: string | null) => void; onStyle: (n: number) => void; upload?: (file: File) => Promise<string>; renderCover?: (onNaturalWidth: (w: number) => void) => React.ReactNode }) {
+export function CoverPicker({ teamId, path, styleIdx, title, onPath, onStyle, upload, renderCover }: { teamId: string; path: string | null; styleIdx: number; title: string; onPath: (p: string | null) => void; onStyle: (n: number) => void; upload?: (file: File) => Promise<string>; renderCover?: (onNaturalWidth: (w: number) => void) => ReactNode }) {
   const { t } = useTranslation(); const [busy, setBusy] = useState(false); const [width, setWidth] = useState<number | null>(null);
   return <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
     {renderCover ? renderCover(setWidth) : <LearnCover key={path ?? 'none'} path={path} style={styleIdx} title={title || 'L'} className="is-wide" onNaturalWidth={setWidth} />}

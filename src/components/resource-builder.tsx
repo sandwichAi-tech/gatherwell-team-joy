@@ -346,6 +346,8 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
 
   const pickType = async (next: CreateType) => {
     if (next === type) return;
+    // Covers for offer-backed and track/recipe items live in different storage folders; never carry one across.
+    if (!!offerKindFor(type) !== !!offerKindFor(next) && item.coverPath) patchItem({ coverPath: null });
     if (typeContentAtRisk(draft, type, next)) {
       const ok = await confirmAction({ title: t('resources.builder.switchTitle'), body: t('resources.builder.switchText'), confirmLabel: t('resources.builder.switchConfirm') });
       if (!ok) return;
@@ -580,7 +582,12 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
           <LangPair id="rb-subtitle" label={t('resources.item.subtitle')} en={item.subtitleEn} es={item.subtitleEs}
             onEn={v => patchItem({ subtitleEn: v })} onEs={v => patchItem({ subtitleEs: v })} maxLength={160} placeholder={t('resources.item.subtitleHint')} />
           {type !== 'quiz' && <CoverPicker teamId={teamId} path={item.coverPath} styleIdx={item.coverStyle} title={item.titleEn || item.titleEs}
-            onPath={p => patchItem({ coverPath: p })} onStyle={n => patchItem({ coverStyle: n })} />}
+            onPath={p => patchItem({ coverPath: p })} onStyle={n => patchItem({ coverStyle: n })}
+            {...(offerKindFor(type) ? {
+              // Offer covers must live in the host's own media folder (database rule), not team learn media.
+              upload: (f: File) => uploadMedia(userId, f, 'cover'),
+              renderCover: () => <OfferCover offer={{ cover_style: item.coverStyle, cover_url: item.coverPath, kind: offerKindFor(type)!, title_en: item.titleEn, title_es: item.titleEs }} wide />,
+            } : {})} />}
           <LangPair id="rb-cta" label={t('resources.item.ctaLabel')} en={item.ctaEn} es={item.ctaEs}
             onEn={v => patchItem({ ctaEn: v })} onEs={v => patchItem({ ctaEs: v })} maxLength={40} placeholder={t(defaultCtaKey(paid))} />
           <div className="form-field"><span className="field-label">{t('resources.item.layoutLabel')}</span>
