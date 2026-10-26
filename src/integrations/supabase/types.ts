@@ -6785,6 +6785,7 @@ export type Database = {
           chat_links: Json
           cover_url: string | null
           created_at: string
+          description: string | null
           id: string
           join_code: string
           name: string
@@ -6800,6 +6801,7 @@ export type Database = {
           chat_links?: Json
           cover_url?: string | null
           created_at?: string
+          description?: string | null
           id?: string
           join_code?: string
           name: string
@@ -6815,6 +6817,7 @@ export type Database = {
           chat_links?: Json
           cover_url?: string | null
           created_at?: string
+          description?: string | null
           id?: string
           join_code?: string
           name?: string
@@ -8347,6 +8350,7 @@ export type Database = {
         Args: { _event: string; _on: boolean }
         Returns: undefined
       }
+      normalize_host_categories: { Args: { _in: string[] }; Returns: string[] }
       normalize_phone: { Args: { _p: string }; Returns: string }
       normalize_profile_slug: { Args: { _raw: string }; Returns: string }
       note_plan_waitlist: { Args: { _event: string }; Returns: undefined }
