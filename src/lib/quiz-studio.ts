@@ -79,10 +79,12 @@ export const pollPercents = (counts: number[], answered: number) => counts.map(c
 
 export const pollVisible = (respondents: number, isEditor: boolean) => isEditor || respondents >= POLL_MIN_RESPONDENTS;
 
-/** Every question needs an answer before an outcome quiz or poll can be submitted; scored quizzes allow blanks. */
-export function unanswered(mode: QuizMode, questionIds: string[], answers: Record<string, { selected: string[] | null; text_answer: string | null }>): string[] {
-  return questionIds.filter(id => { const a = answers[id]; const has = !!a && ((a.selected?.length ?? 0) > 0 || !!a.text_answer?.trim()); return !has && (mode !== 'scored' || true); });
+/** Questions still without an answer. */
+export function unanswered(questionIds: string[], answers: Record<string, { selected: string[] | null; text_answer: string | null } | undefined>): string[] {
+  return questionIds.filter(id => { const a = answers[id]; return !(a && ((a.selected?.length ?? 0) > 0 || !!a.text_answer?.trim())); });
 }
+/** Outcome quizzes and polls need every question answered (enforced by submit_quiz); scored quizzes allow blanks after a confirm. */
+export const mustAnswerAll = (mode: QuizMode) => mode !== 'scored';
 
 /** Retake policy text key: unlimited, n left, or none left. */
 export function retakeState(allowed: number | null, used: number): { key: 'unlimited' | 'left' | 'none'; left: number } {
