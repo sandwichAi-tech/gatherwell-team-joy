@@ -65,7 +65,6 @@ export function QuizPanel({ offer }: { offer: Offer }) {
 export function LearnerQuizList({ offerId }: { offerId: string }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? 'en';
-  const [open, setOpen] = useState<string | null>(null);
   // Learners cannot read the quizzes table (answer-key secrecy); discover published
   // quizzes through the public-offer payload's quiz list.
   const q = useQuery({

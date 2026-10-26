@@ -19,12 +19,12 @@ import { isUpcomingLive, lessonTitle, pick, recipesQuery } from '@/lib/learn';
 import { myOffersQuery, offerTitle } from '@/lib/offers';
 import {
   RESOURCE_SOURCES, RESOURCE_TABS, RESOURCE_TYPES, applyResourceTemplate, deleteResourceTemplate, draftDestination, filterResources, inProgress, lessonResources,
-  quizMarkersQuery, recipeCard, resourceTemplatesQuery, saveResourceTemplate, savedOfferResourcesQuery, splitTemplates, templateParts, toResources,
+  quizMarkersQuery, quizCard, teamQuizzesQuery, recipeCard, resourceTemplatesQuery, saveResourceTemplate, savedOfferResourcesQuery, splitTemplates, templateParts, toResources,
   type ResourceCardData, type ResourceSourceFilter, type ResourceTab, type ResourceTemplate, type ResourceType, type ResourceTypeFilter,
 } from '@/lib/resources';
 import { CREATE_TYPES, type CreateType } from '@/lib/create-resource';
 
-const TYPE_ICON: Record<ResourceType, typeof Video> = { course: GraduationCap, track: Layers, video: Video, audio: Waveform, guide: FileText, file: Download, link: Link2, recipe: Leaf, live: Radio };
+const TYPE_ICON: Record<ResourceType, typeof Video> = { course: GraduationCap, track: Layers, video: Video, audio: Waveform, guide: FileText, file: Download, link: Link2, recipe: Leaf, live: Radio, quiz: ClipboardCheck };
 
 /** Same eligibility as Events: any non-member workspace role. Server checks stay authoritative. */
 export function useCanCreate() {
@@ -42,7 +42,7 @@ export function ResourceCard({ r, creator, onSaveTemplate }: { r: ResourceCardDa
   const title = pick(lang, r.title_en, r.title_es) || t('resources.untitled');
   const Icon = TYPE_ICON[r.type];
   const started = !!r.progress && r.progress.done > 0 && r.progress.done < r.progress.total;
-  const action = r.entity === 'recipe' || r.entity === 'download' || !r.progress ? t('resources.open') : started ? t('resources.continue') : r.progress.done === r.progress.total ? t('resources.review') : t('resources.start');
+  const action = r.entity === 'quiz' ? (creator ? t('resources.edit') : r.progress?.done ? t('resources.review') : t('resources.start')) : r.entity === 'recipe' || r.entity === 'download' || !r.progress ? t('resources.open') : started ? t('resources.continue') : r.progress.done === r.progress.total ? t('resources.review') : t('resources.start');
   // Reopen any item in the dedicated builder; the builder loads the record and adopts its true type.
   const editType = r.entity === 'recipe' ? 'recipe' : r.entity === 'course' ? 'course' : r.entity === 'download' ? 'file' : 'video';
   const edit = { to: '/learn/create' as const, search: { type: editType, id: r.id } };
@@ -59,10 +59,10 @@ export function ResourceCard({ r, creator, onSaveTemplate }: { r: ResourceCardDa
       <h3>{title}</h3>
       <p className="track-facts">{[r.creator, r.progress && r.progress.total > 1 ? t('learnHub.progressLabel', { done: r.progress.done, total: r.progress.total }) : null,
         r.minutes ? (r.entity === 'recipe' ? t('learnHub.prep', { count: r.minutes }) : minutesLabel(t, r.minutes)) : null].filter(Boolean).join(' · ')}</p>
-      {r.progress && r.progress.total > 1 && <progress className="attendance-progress" value={r.progress.done} max={r.progress.total} aria-hidden="true" />}
+      {r.entity !== 'quiz' && r.progress && r.progress.total > 1 && <progress className="attendance-progress" value={r.progress.done} max={r.progress.total} aria-hidden="true" />}
       <div className="resource-actions">
         <Button asChild variant={started ? 'default' : 'secondary'}><Link to={r.href.to} params={r.href.params ?? {}}>{action}<ArrowRight /></Link></Button>
-        {creator && <Button asChild variant="ghost"><Link to={edit.to} search={edit.search}><Pencil />{t('resources.edit')}</Link></Button>}
+        {creator && r.entity !== 'quiz' && <Button asChild variant="ghost"><Link to={edit.to} search={edit.search}><Pencil />{t('resources.edit')}</Link></Button>}
         {creator && onSaveTemplate && r.source === 'team' && <Button variant="ghost" onClick={() => onSaveTemplate(r)}><CopyPlus />{t('resources.saveTemplate')}</Button>}
       </div>
     </div>
@@ -85,13 +85,14 @@ export function ResourcesPage({ tab, type, source }: { tab: ResourceTab; type: R
   const createLabel = t('resources.create.button', { defaultValue: lang === 'es' ? 'Crear recurso' : 'Create resource' });
   const { data: rec } = useQuery(recipesQuery(userId));
   const { data: quiz } = useQuery(quizMarkersQuery(userId));
+  const { data: teamQuizzes = [] } = useQuery(teamQuizzesQuery(teamId));
   const { data: savedOffers = [] } = useQuery({ ...savedOfferResourcesQuery(userId), enabled: tab === 'saved' });
   const { data: myOffers = [] } = useQuery({ ...myOffersQuery(userId), enabled: tab === 'mine' && canCreate });
   const [creating, setCreating] = useState(false);
   const [saving, setSaving] = useState<ResourceCardData | null>(null);
   const teamName = workspace?.name ?? null;
 
-  const library = useMemo(() => data ? toResources({ data, tracks: tracks.filter(tr => tr.is_published), learning, recipes: (rec?.recipes ?? []).filter(r => r.is_published), quizOffers: quiz?.offers, quizLessons: quiz?.lessons, teamName }) : [], [data, tracks, learning, rec, quiz, teamName]);
+  const library = useMemo(() => data ? toResources({ data, tracks: tracks.filter(tr => tr.is_published), learning, recipes: (rec?.recipes ?? []).filter(r => r.is_published), quizOffers: quiz?.offers, quizLessons: quiz?.lessons, teamName }).concat(teamQuizzes.filter(z => z.is_published).map(z => quizCard(z, teamName))) : [], [data, tracks, learning, rec, quiz, teamName, teamQuizzes]);
   if (isError) return <RetryState retry={() => void refetch()} />;
   const setSearch = (next: Partial<{ tab: ResourceTab; type: ResourceTypeFilter; source: ResourceSourceFilter }>) =>
     void navigate({ to: '/learn', search: prev => ({ ...prev, ...next }), replace: true, resetScroll: false });
@@ -148,6 +149,7 @@ export function ResourcesPage({ tab, type, source }: { tab: ResourceTab; type: R
         key: `offer:${o.id}`, id: o.id, entity: o.kind as 'course' | 'download', type: (o.kind === 'course' ? 'course' : 'file') as ResourceType, source: 'team' as const, title_en: o.title_en, title_es: o.title_es,
         cover_url: o.cover_url, cover_style: o.cover_style, cover: 'offer' as const, status: o.status, creator: null, progress: null, minutes: null, hasQuiz: !!quiz?.offers.has(o.id), href: { to: '/offer/$id', params: { id: o.id } } })),
       ...(rec?.recipes ?? []).filter(r => r.team_id === teamId).map(r => recipeCard(r, teamName)),
+      ...teamQuizzes.filter(z => z.mine).map(z => quizCard(z, teamName)),
     ];
     const list = filterResources(own, type, 'all');
     body = list.length ? <Grid list={list} creator onSaveTemplate={setSaving} /> : <Empty tab="mine" action={<Button onClick={() => setCreating(true)}><Plus />{createLabel}</Button>} />;
