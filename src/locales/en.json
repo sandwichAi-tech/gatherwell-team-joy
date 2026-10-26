@@ -3641,7 +3641,7 @@
     "type": "Type",
     "kind": {
       "membership": "Circle",
-      "course": "Monthly course",
+      "course": "Course",
       "download": "Download"
     },
     "kindText": {
