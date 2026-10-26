@@ -21,7 +21,7 @@ import type { WorkspaceRole } from '@/components/workspace-settings';
 import { useFeature } from '@/lib/feature-flags';
 import { isAdminQuery } from '@/lib/site-media';
 import { AccountMenu } from '@/components/account-menu';
-import { insightsNavigationLabel, navigationPathActive, showInsightsNavigation } from '@/lib/insights-navigation';
+import { insightsNavigationLabel, navigationPathActive, resourcesOwnsPath, showInsightsNavigation } from '@/lib/insights-navigation';
 import { splitMobileNav } from '@/lib/mobile-nav';
 import { ListSkeleton, QueryFeedback } from '@/components/launch-states';
 

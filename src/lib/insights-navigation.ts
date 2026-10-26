@@ -15,3 +15,5 @@ export function insightsNavigationLabel(language: string | undefined, translate:
   const label = translate('nav.insights', { defaultValue: fallback });
   return typeof label === 'string' && label.trim() && label !== 'nav.insights' ? label : fallback;
 }
+/** Course, resource and membership detail pages (/offer/…) sit under Resources in the header and sidebar. */
+export const resourcesOwnsPath = (pathname: string) => /^\/offer\/[^/]+/.test(pathname);
