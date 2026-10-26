@@ -40,13 +40,19 @@ import { confirmAction } from '@/components/confirm-dialog';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { TeamSwitcher, useSwitchTeam } from '@/components/team-switcher';
 import { supabase } from '@/integrations/supabase/client';
-import { initialsOf, joinLink, mediaUrl, uploadMedia, workspaceQuery, type TeamMembership } from '@/lib/account';
+import { initialsOf, joinLink, mediaRendition, mediaUrl, uploadMedia, workspaceQuery, type TeamMembership } from '@/lib/account';
 import {
   TEAM_COLORS, announcementsQuery, calendarQuery, relativeTime, rosterQuery, teamDetailQuery, teamKey, teamTreeQuery, upcomingQuery, winsQuery,
   type Member, type TeamEvent, type Win,
 } from '@/lib/team';
 
 type Sheet = 'invite' | 'edit' | 'members' | 'announce' | 'subteams' | null;
+
+/** Team covers: signed responsive renditions in the shared photo component. */
+function useCoverRendition(path?: string | null) {
+  return useQuery({ queryKey: ['media-rendition', path], queryFn: () => mediaRendition(path), enabled: !!path, staleTime: 50 * 60 * 1000 }).data ?? null;
+}
+export const TEAM_COVER_SIZES = '(min-width: 1280px) 1200px, 100vw';
 
 function useSignedUrl(path?: string | null) {
   return useQuery({ queryKey: ['media-url', path], queryFn: () => mediaUrl(path), enabled: !!path, staleTime: 50 * 60 * 1000 }).data ?? null;
@@ -110,13 +116,14 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
   const setOpenEvent = (event: TeamEvent) => { void navigate({ to: '/event/$id', params: { id: event.id } }); };
   const { data: parent } = useQuery({ queryKey: ['team-parent', team?.parent_team_id], enabled: !!team?.parent_team_id, queryFn: async () => (await supabase.from('teams').select('id, name').eq('id', team!.parent_team_id!).maybeSingle()).data });
   const root = tree.find(node => node.id === teamId);
-  const cover = useSignedUrl(team?.cover_url);
+  const cover = useCoverRendition(team?.cover_url);
   const canCreateSub = isLeader || (workspace.role === 'host' && !!team?.allow_host_subteams);
 
   return <>
     {parent && <nav className="team-breadcrumb" aria-label={t('teamSpace.breadcrumb')}><button type="button" className="auth-link" onClick={() => switchTeam(parent.id)}><ChevronLeft />{parent.name}</button><span aria-hidden="true">/</span><strong>{workspace.name}</strong></nav>}
     <section className="team-header panel">
-      <div className="team-cover" style={cover ? { backgroundImage: `url(${cover})` } : team?.brand_color ? { background: `linear-gradient(135deg, ${team.brand_color}, var(--lavender))` } : undefined}>
+      <div className="team-cover" style={cover ? undefined : team?.brand_color ? { background: `linear-gradient(135deg, ${team.brand_color}, var(--lavender))` } : undefined}>
+        {cover && <BrandImage src={cover} alt="" className="offer-cover-photo" sizes={TEAM_COVER_SIZES} priority />}
         {!cover && <span className="team-cover-initial" aria-hidden="true">{(workspace.name.trim()[0] ?? 'G').toUpperCase()}</span>}
       </div>
       <div className="team-header-body">
@@ -304,7 +311,8 @@ function EditTeamSheet({ open, onOpenChange, team, userId }: { open: boolean; on
   const { t } = useTranslation(); const queryClient = useQueryClient();
   const [name, setName] = useState(team.name); const [description, setDescription] = useState(team.description ?? ''); const [issues, setIssues] = useState<('name' | 'description')[]>([]); const [color, setColor] = useState<string | null>(team.brand_color);
   const [file, setFile] = useState<File | null>(null); const [preview, setPreview] = useState<string | null>(null); const [removeCover, setRemoveCover] = useState(false); const [busy, setBusy] = useState(false);
-  const current = useSignedUrl(removeCover ? null : team.cover_url);
+  const current = useCoverRendition(removeCover ? null : team.cover_url);
+  const [coverWidth, setCoverWidth] = useState<number | null>(null);
   useEffect(() => { if (open) { setName(team.name); setDescription(team.description ?? ''); setIssues([]); setColor(team.brand_color); setFile(null); setPreview(null); setRemoveCover(false); } }, [open, team]);
   const save = async () => {
     const found = teamEditIssues(name, description); setIssues(found); if (found.length) return; setBusy(true);
@@ -327,7 +335,8 @@ function EditTeamSheet({ open, onOpenChange, team, userId }: { open: boolean; on
         <Textarea id="team-desc" rows={4} className="field-textarea" value={description} aria-invalid={issues.includes('description')} onChange={e => { const v = e.target.value.slice(0, TEAM_DESCRIPTION_MAX + 50); setDescription(v); if (issues.length) setIssues(teamEditIssues(name, v)); }} placeholder={t('teamSpace.descriptionPlaceholder')} />
         {issues.includes('description') && <p className="field-error" role="alert">{t('teamSpace.descriptionTooLong', { max: TEAM_DESCRIPTION_MAX })}</p>}</div>
       <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
-        <div className="cover-edit" style={shown ? { backgroundImage: `url(${shown})` } : color ? { background: `linear-gradient(135deg, ${color}, var(--lavender))` } : undefined}>{!shown && <span className="team-cover-initial">{(name.trim()[0] ?? 'G').toUpperCase()}</span>}</div>
+        <div className="cover-edit" style={shown ? undefined : color ? { background: `linear-gradient(135deg, ${color}, var(--lavender))` } : undefined}>{shown && <BrandImage key={preview ?? 'saved'} src={shown} alt="" className="offer-cover-photo" sizes="(min-width: 768px) 560px, 100vw" onNaturalWidth={w => setCoverWidth(preview ? null : w)} />}{!shown && <span className="team-cover-initial">{(name.trim()[0] ?? 'G').toUpperCase()}</span>}</div>
+        {!preview && current && coverWidth != null && isLowResolution(coverWidth) && <p className="field-hint crop-lowres" role="status">{t('gathering.coverLowRes', { width: coverWidth })}</p>}
         <div className="photo-row"><label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" maxBytes={5 * 1024 * 1024} onCropped={r => { setFile(r.file); setPreview(r.previewUrl); setRemoveCover(false); }} onRejected={why => toast.error(t(why === 'type' ? 'profile.photoNotImage' : 'profile.photoTooLarge'))} /></label>
           {shown && <button type="button" className="auth-link" onClick={() => { setFile(null); setPreview(null); setRemoveCover(true); }}>{t('onboarding.removePhoto')}</button>}</div></div>
       <div className="form-field"><span className="field-label">{t('teamSpace.brandColor')}</span>

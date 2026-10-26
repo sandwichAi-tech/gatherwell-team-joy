@@ -174,6 +174,8 @@
 .panel + .panel, .team-header + .panel { margin-top: 16px; }
 .team-header { padding: 0 !important; overflow: hidden; }
 .team-cover { height: 132px; background: linear-gradient(135deg, var(--primary), var(--lavender)); background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 20px 24px; }
+.team-cover, .cover-edit { position: relative; overflow: hidden; }
+.team-cover > .team-cover-initial, .cover-edit > .team-cover-initial { position: relative; }
 .team-cover-initial { font-size: 48px; font-weight: 700; color: var(--primary-foreground); opacity: .9; line-height: 1; }
 .team-header-body { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding: 20px 24px 24px; }
 .team-name { font-size: 24px; font-weight: 700; color: var(--foreground); }

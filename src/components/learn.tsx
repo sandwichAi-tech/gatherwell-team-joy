@@ -14,6 +14,8 @@ import { useGatherwell } from '@/components/gatherwell-shell';
 import { supabase } from '@/integrations/supabase/client';
 import { workspaceQuery } from '@/lib/account';
 import { COVER_STYLES } from '@/lib/gatherings';
+import { BrandImage } from '@/components/brand-image';
+import { learnRendition } from '@/lib/learn';
 import {
   ancestorsQuery, effectiveType, embedUrl, icsFor, isUpcomingLive, learnFileUrl, learnQuery, lessonTitle, lessonsOf, listOf, pick, recipesQuery, visibleLessons,
   remindersQuery, RECIPE_TAGS, populatedTracks, trackStats, trackTitle, type LearnData, type Lesson, type Recipe, type Track,
@@ -50,9 +52,16 @@ export function ProgressRing({ value, size = 44, label }: { value: number; size?
   </span>;
 }
 
-export function LearnCover({ path, style = 0, title, className = '' }: { path?: string | null; style?: number | null; title: string; className?: string }) {
-  const { data: url } = useQuery({ queryKey: ['learn-url', path], queryFn: () => learnFileUrl(path), enabled: !!path, staleTime: 50 * 60_000 });
-  return <div className={`learn-cover ${className}`} style={{ backgroundImage: url ? `url(${url})` : COVER_STYLES[(style ?? 0) % COVER_STYLES.length] }} aria-hidden="true">{!url && <span>{(title.trim()[0] ?? 'L').toUpperCase()}</span>}</div>;
+/** Display-size hint per resource-cover placement. */
+export function learnCoverSizes(className: string): string {
+  if (/\bis-thumb\b/.test(className)) return '64px';
+  if (/\bis-wide\b/.test(className)) return '(min-width: 1280px) 1200px, 100vw';
+  return '(min-width: 768px) 50vw, 100vw';
+}
+
+export function LearnCover({ path, style = 0, title, className = '', onNaturalWidth }: { path?: string | null; style?: number | null; title: string; className?: string; onNaturalWidth?: (width: number) => void }) {
+  const { data: img } = useQuery({ queryKey: ['learn-rendition', path], queryFn: () => learnRendition(path), enabled: !!path, staleTime: 50 * 60_000 });
+  return <div className={`learn-cover ${className}`} style={img ? undefined : { backgroundImage: COVER_STYLES[(style ?? 0) % COVER_STYLES.length] }} aria-hidden="true">{img ? <BrandImage src={img} alt="" className="offer-cover-photo" sizes={learnCoverSizes(className)} onNaturalWidth={onNaturalWidth} /> : <span>{(title.trim()[0] ?? 'L').toUpperCase()}</span>}</div>;
 }
 
 export const TYPE_ICON = { video: Video, pdf: FileText, link: Link2, live: Radio, text: FileText, audio: Waveform, file: Download } as const;

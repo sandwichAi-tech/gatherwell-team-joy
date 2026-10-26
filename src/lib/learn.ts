@@ -1,6 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
+import { signRendition, type SigningBucket } from '@/lib/media-renditions';
 
 export type Track = Database['public']['Tables']['tracks']['Row'];
 export type Lesson = Database['public']['Tables']['lessons']['Row'];
@@ -97,6 +98,12 @@ export async function learnFileUrl(path?: string | null) {
   if (!path) return null;
   const { data } = await supabase.storage.from('learn-media').createSignedUrl(path, 3600);
   return data?.signedUrl ?? null;
+}
+
+/** Signed responsive renditions of a private learn-media cover (never enlarged past the original). */
+export async function learnRendition(path?: string | null) {
+  if (!path) return null;
+  return signRendition(supabase.storage.from('learn-media') as unknown as SigningBucket, path, 3600);
 }
 
 /** Upload with a progress callback (the storage client has no progress events). */
