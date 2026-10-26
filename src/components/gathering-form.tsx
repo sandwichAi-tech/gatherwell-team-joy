@@ -7,6 +7,7 @@ import { EventDetailsSections, detailsFromEvent, detailsPayload, emptyDetails, t
 import { asRetreat, emptyRetreat, type Retreat } from '@/lib/retreat';
 import { CATEGORIES, isCategory, type Category } from '@/lib/landing';
 import { CropFileInput, type CropResult } from '@/components/image-crop';
+import { capacityValue, readinessBlockers, validHttps } from '@/lib/event-builder';
 import { isLowResolution } from '@/lib/media-renditions';
 import { CopyButton } from '@/components/copy-button';
 import { PlaybookCard } from '@/components/playbook';
@@ -50,6 +51,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const sourceId = eventId ?? fromId;
   const { data: source } = useQuery({ ...eventDetailQuery(sourceId ?? ''), enabled: !!sourceId });
   const mapsKey = useMapsKey();
+  const { data: draft, isPending: draftPending } = useQuery({ queryKey: ['event-builder-draft', eventId], enabled: !!eventId, queryFn: async () => { const r = await supabase.from('event_builder_drafts').select('snapshot').eq('event_id', eventId ?? '').maybeSingle(); if (r.error) throw r.error; return r.data?.snapshot ?? null; } });
   const { data: history = [] } = useQuery({ queryKey: ['host-slots', userId], enabled: !editing, staleTime: 300000,
     queryFn: async () => (await supabase.from('events').select('starts_at, series_id').eq('host_id', userId).neq('status', 'draft').order('starts_at', { ascending: false }).limit(60)).data ?? [] });
 
@@ -61,6 +63,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const [details, setDetails] = useState<EventDetails>(emptyDetails);
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null); const [note, setNote] = useState(''); const [url, setUrl] = useState('');
   const [price, setPrice] = useState(''); const [limit, setLimit] = useState<null | 'gatherings' | 'storage'>(null);
+  const [capacityMode, setCapacityMode] = useState<'unlimited' | 'limited'>('unlimited'); const [photoError, setPhotoError] = useState(''); const [saveError, setSaveError] = useState('');
   const [capacity, setCapacity] = useState(''); const [communitySeats, setCommunitySeats] = useState(''); const [coverFee, setCoverFee] = useState(false); const [visibility, setVisibility] = useState<'public' | 'team' | 'invite'>('public');
   const [descEn, setDescEn] = useState(''); const [descEs, setDescEs] = useState(''); const [descTab, setDescTab] = useState<'en' | 'es'>(lang);
   const [wholeSeries, setWholeSeries] = useState(false); const [tpl, setTpl] = useState<{ id: string; title: string } | null>(null);
@@ -77,13 +80,13 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
 
   // Prefill once from template, the gathering being edited, or the one being duplicated.
   useEffect(() => {
-    if (ready) return;
+    if (ready || (eventId && draftPending)) return;
     if (templateId) {
       const tp = templates.find(x => x.id === templateId); if (!tp) return;
       const defaults = blueprintDefaults(tp);
       setCategory(defaults.category); setCategoryLabel(defaults.categoryLabel); setPlace(defaults.mode); setPrice(defaults.priceCents ? String(defaults.priceCents / 100) : ''); setCoverStyle(defaults.coverStyle);
       setTpl({ id: tp.id, title: tp.title }); setTitle(tp.title); setCoverPath(tp.cover_url); setDescEn(tp.description_en ?? ''); setDescEs(tp.description_es ?? '');
-      setDuration(tp.default_duration_minutes); setCustomDuration(!DURATIONS.includes(tp.default_duration_minutes as 60)); setCapacity(tp.default_capacity ? String(tp.default_capacity) : '');
+      setDuration(tp.default_duration_minutes); setCustomDuration(!DURATIONS.includes(tp.default_duration_minutes as 60)); setCapacity(tp.default_capacity ? String(tp.default_capacity) : ''); setCapacityMode(tp.default_capacity != null ? 'limited' : 'unlimited');
       setVisibility(defaults.visibility); setStart(''); setReady(true); return;
     }
     if (sourceId) {
@@ -101,18 +104,53 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       { const rt = asRetreat((e as { retreat?: unknown }).retreat); if (rt) { setRetreatOn(true); setRetreat(rt); if (e.ends_at) setRetreatEnd(toLocalInput(new Date(e.ends_at))); } }
       if (Array.isArray(e.experience_sessions) && e.experience_sessions.length) { setMulti(true); setSessions(e.experience_sessions as unknown as EventSession[]); }
       setCommunitySeats((e as { community_seats?: number | null }).community_seats ? String((e as { community_seats: number }).community_seats) : '');
-      setCapacity(e.capacity ? String(e.capacity) : ''); setVisibility(e.visibility === 'team' ? 'team' : e.visibility === 'invite' ? 'invite' : 'public');
+      setCapacityMode(e.capacity != null ? 'limited' : 'unlimited'); setCapacity(e.capacity ? String(e.capacity) : ''); setVisibility(e.visibility === 'team' ? 'team' : e.visibility === 'invite' ? 'invite' : 'public');
       if (editing) setStart(toLocalInput(new Date(e.starts_at)));
       else { const d = new Date(e.starts_at); const next = new Date(); next.setDate(next.getDate() + 7); next.setHours(d.getHours(), d.getMinutes(), 0, 0); setStart(toLocalInput(next)); }
       if (fromId && e.template_id) setTpl(null);
+      if (editing && e.status === 'draft' && draft && typeof draft === 'object' && !Array.isArray(draft)) {
+        const d = draft as Record<string, unknown>;
+        if (typeof d.title === 'string') setTitle(d.title);
+        if (typeof d.start === 'string') setStart(d.start);
+        if (typeof d.url === 'string') setUrl(d.url);
+        if (typeof d.address === 'string') setAddress(d.address);
+        if (typeof d.locationName === 'string') setLocationName(d.locationName);
+        if (typeof d.note === 'string') setNote(d.note);
+        if (typeof d.price === 'string') setPrice(d.price);
+        if (typeof d.capacity === 'string') setCapacity(d.capacity);
+        if (d.capacityMode === 'limited' || d.capacityMode === 'unlimited') setCapacityMode(d.capacityMode);
+        if (d.place === 'person' || d.place === 'online' || d.place === 'hybrid') setPlace(d.place);
+        if (typeof d.full === 'boolean') setFull(d.full);
+        if (typeof d.coverPath === 'string' || d.coverPath === null) setCoverPath(d.coverPath);
+        if (typeof d.coverStyle === 'number') setCoverStyle(d.coverStyle);
+        if (typeof d.coverOverlay === 'number') setCoverOverlay(d.coverOverlay);
+        if (typeof d.coverFocal === 'string') setCoverFocal(d.coverFocal);
+        if (typeof d.coverAlt === 'string') setCoverAlt(d.coverAlt);
+        if (typeof d.descEn === 'string') setDescEn(d.descEn);
+        if (typeof d.descEs === 'string') setDescEs(d.descEs);
+        if (typeof d.duration === 'number') setDuration(d.duration);
+        if (typeof d.category === 'string' && isCategory(d.category)) setCategory(d.category);
+        if (typeof d.categoryLabel === 'string') setCategoryLabel(d.categoryLabel);
+        if (d.visibility === 'public' || d.visibility === 'team' || d.visibility === 'invite') setVisibility(d.visibility);
+        if (d.details && typeof d.details === 'object') setDetails(d.details as EventDetails);
+        if (d.rule && typeof d.rule === 'object') setRule(d.rule as RepeatRule);
+        if (d.teamReg && typeof d.teamReg === 'object') setTeamReg(d.teamReg as typeof teamReg);
+        if (typeof d.retreatOn === 'boolean') setRetreatOn(d.retreatOn);
+        if (d.retreat && typeof d.retreat === 'object') setRetreat(d.retreat as Retreat);
+        if (typeof d.retreatEnd === 'string') setRetreatEnd(d.retreatEnd);
+        if (typeof d.multi === 'boolean') setMulti(d.multi);
+        if (Array.isArray(d.sessions)) setSessions(d.sessions as EventSession[]);
+        if (typeof d.communitySeats === 'string') setCommunitySeats(d.communitySeats);
+        if (typeof d.coverFee === 'boolean') setCoverFee(d.coverFee);
+      }
       setReady(true); return;
     }
-    setStart(toLocalInput(datePresets()[1]!.date)); setReady(true);
-  }, [ready, templateId, templates, sourceId, source, editing, fromId]);
+    setStart(toLocalInput((datePresets()[1]?.date ?? new Date()))); setReady(true);
+  }, [ready, templateId, templates, sourceId, source, editing, fromId, draft, draftPending, eventId]);
 
   // Address becomes places autocomplete once the maps key exists.
   useEffect(() => {
-    if (!mapsKey || place !== 'person' || !addressRef.current) return;
+    if (!mapsKey || place === 'online' || !addressRef.current) return;
     let listener: any;
     loadMaps(mapsKey).then(() => {
       const g = window.google?.maps; if (!g?.places || !addressRef.current) return;
@@ -156,8 +194,9 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const teamId = editing && source ? source.event.team_id : workspace.teamId;
   if (!editing && workspace.role === 'member') return <section className="panel"><h2>{t('gathering.hostsOnly')}</h2><p>{t('gathering.hostsOnlyText')}</p></section>;
 
-  const urlBad = place !== 'person' && url.trim() !== '' && !/^https:\/\/\S+$/i.test(url.trim());
-  const valid = !(retreatOn && (!retreatEnd || !start || new Date(retreatEnd) <= new Date(start))) && title.trim() && start && !urlBad && (place === 'person' || url.trim()) && (!capacity || Number(capacity) >= 1) && (!priceCents || (priceCents >= 100 && priceCents <= 100000));
+  const urlBad = place !== 'person' && !!url.trim() && !validHttps(url);
+  const blockers = readinessBlockers({ title, startsAt: start, format: place, locationName, address, onlineUrl: url, priceCents, canSell, regOpens: details.regOpens, regCloses: details.regCloses, retreatOn, retreatEnd, allowsMinors: details.allowsMinors, minAge: details.minAge, tiers: details.tiers });
+  const capacityBad = capacityValue(capacityMode, capacity) === undefined;
   const presets = datePresets(); const usual = editing ? null : usualSlot(history);
   const startDate = start ? new Date(start) : null;
   const dates = startDate && !editing ? expandRepeat(startDate, rule) : [];
@@ -173,11 +212,11 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
 
   const payload = () => ({
     category, category_label: category === 'more' ? categoryLabel.trim() : '', title: title.trim(), cover_url: coverPath ?? '', cover_style: coverStyle, starts_at: new Date(start).toISOString(), duration_minutes: duration,
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, location_name: place !== 'online' ? locationName : '', address: place !== 'online' ? address : '',
-    meeting_note: place !== 'online' ? note : '', online_url: place !== 'person' ? url.trim() : '', capacity: capacity ? Number(capacity) : '',
+    timezone: source?.event.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone, location_name: place !== 'online' ? locationName : '', address: place !== 'online' ? address : '',
+    meeting_note: place !== 'online' ? note : '', online_url: place !== 'person' ? url.trim() : '', capacity: capacityValue(capacityMode, capacity) ?? '',
     visibility, description_en: descEn.trim(), description_es: descEs.trim(), template_id: tpl?.id ?? '',
     ...(weekly ? { recurrence: rule.kind, occurrences: dates.map(d => d.toISOString()) } : {}),
-    lat: place === 'person' && coords ? coords.lat : '', lng: place === 'person' && coords ? coords.lng : '',
+    lat: place !== 'online' && coords ? coords.lat : '', lng: place !== 'online' && coords ? coords.lng : '',
   });
 
   const detailsJson = detailsPayload(details);
@@ -199,32 +238,45 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     return true;
   };
   const submit = async (publish: boolean) => {
-    setTried(true); if (!valid) { toast.error(t('gathering.fixFields')); return; }
-    if (multi && !validSessions(sessions, new Date(start).toISOString())) { toast.error(t('sessions.invalid')); return; }
-    if (!detailsJson) { toast.error(t('gathering.fixFields')); return; }
-    { const live = publish || (editing && source?.event.status === 'published');
-      const pi = policyIssues(details.policy, details.cancellation, !!priceCents, live);
-      if (pi.length) { toast.error(t(`policy.issues.${pi[0]}${pi[0] === 'contradiction' ? (priceCents ? 'Paid' : 'Free') : pi[0] === 'mismatch' ? (priceCents ? 'Paid' : 'Free') : ''}`)); document.getElementById('g-cancel-preset')?.scrollIntoView({ block: 'center' }); return; } }
-    if (priceCents && visibility === 'team') { toast.error(t('templates.teamFree')); return; }
-    if (priceCents && publish && !canSell) { toast.error(t('billing.payoutsRequired')); return; }
+    if (busy || uploading) return;
+    setSaveError('');
+    if (!publish && (!editing || source?.event.status === 'draft')) {
+      setBusy(true);
+      try {
+        const snapshot = { title, start, duration, full, place, locationName, address, note, url, capacityMode, capacity, price, visibility, category, categoryLabel, descEn, descEs, coverPath, coverStyle, coverOverlay, coverFocal, coverAlt, details, rule, teamReg, retreatOn, retreat, retreatEnd, multi, sessions, communitySeats, coverFee };
+        const r = await supabase.rpc('save_event_builder_draft', { _team: teamId, _event: eventId ?? null, _snapshot: snapshot as never });
+        if (r.error || !r.data) { setSaveError(rpcError(t, r.error)); return; }
+        await queryClient.invalidateQueries(); toast.success(t('gathering.draftSaved'));
+        void navigate({ to: '/gathering/$id/edit', params: { id: r.data }, replace: true });
+      } finally { setBusy(false); }
+      return;
+    }
+    setTried(true);
+    const pi = policyIssues(details.policy, details.cancellation, !!priceCents, true);
+    const error = blockers.length || capacityBad || !detailsJson || pi.length || (priceCents && visibility === 'team') || (multi && (!start || !validSessions(sessions, new Date(start).toISOString())));
+    if (error) {
+      setFull(true);
+      setSaveError(t('builder.reliability.fixSummary'));
+      requestAnimationFrame(() => { const field = document.querySelector<HTMLElement>('.gathering-form [aria-invalid="true"]'); (field ?? document.getElementById('g-errors'))?.focus(); field?.scrollIntoView({ block: 'center' }); });
+      return;
+    }
     setBusy(true);
+    try {
     if (editing) {
       if (multi || source?.event.experience_sessions && Array.isArray(source.event.experience_sessions) && source.event.experience_sessions.length) { const cleared=await supabase.rpc('set_event_sessions',{_event:eventId??'',_sessions:[]});if(cleared.error){setBusy(false);toast.error(t('sessions.invalid'));return;} }
-      const { error } = await supabase.rpc('update_gathering', { _event: eventId!, _p: payload(), _whole_series: wholeSeries });
-      setBusy(false);
+      const { error } = await supabase.rpc('update_gathering', { _event: (eventId ?? ''), _p: payload(), _whole_series: wholeSeries });
       if (error) { toast.error(rpcError(t, error)); return; }
-      await savePrice(eventId!); await saveTeamReg(eventId!); if (!(await saveRetreat(eventId!))) return;
+      await savePrice((eventId ?? '')); await saveTeamReg((eventId ?? '')); if (!(await saveRetreat((eventId ?? '')))) return;
       { const result = await supabase.rpc('set_event_sessions', { _event: eventId ?? '', _sessions: (multi ? sessions : []) as never }); if (result.error) { toast.error(t('sessions.invalid')); return; } }
-      await saveCover(eventId!);
-      if (!(await saveDetails(eventId!))) return;
-      if (!(await savePolicy(eventId!))) return;
+      await saveCover((eventId ?? ''));
+      if (!(await saveDetails((eventId ?? '')))) return;
+      if (!(await savePolicy((eventId ?? '')))) return;
       if (publish && source?.event.status === 'draft') { const r = await supabase.from('events').update({ status: 'published' }).eq('id', eventId??''); if(r.error){toast.error(rpcError(t,r.error));return;} }
       await queryClient.invalidateQueries(); toast.success(t('gathering.saved'));
-      void navigate({ to: '/event/$id', params: { id: eventId! } }); return;
+      void navigate({ to: '/event/$id', params: { id: (eventId ?? '') } }); return;
     }
-    const staged=multi||retreatOn||details.policy.mode==='custom';
+    const staged=true;
     const { data, error } = await supabase.rpc('create_gathering_at', { _team: teamId, _p: payload(), _publish: publish&&!staged, _weekly: false }); if (!error) { trackEvent('gathering_created', { weekly }); if (publish&&!staged) trackEvent('gathering_published'); if (templateId) trackEvent('template_launched'); }
-    setBusy(false);
     if (error?.message?.includes('plan_limit_gatherings')) { setLimit('gatherings'); return; }
     if (error || !data) { toast.error(rpcError(t, error)); return; }
     if (weekly) { const { data: ev } = await supabase.from('events').select('series_id').eq('id', data).maybeSingle(); if (ev?.series_id) { const { count } = await supabase.from('events').select('id', { count: 'exact', head: true }).eq('series_id', ev.series_id); if ((count ?? dates.length) < dates.length) toast.info(t('billing.freeSeriesLimit'), { duration: 8000 }); } }
@@ -238,29 +290,31 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (publish&&staged) {const published=await supabase.from('events').update({status:'published'}).eq('id',data);if(published.error){toast.error(rpcError(t,published.error));void navigate({to:'/gathering/$id/edit',params:{id:data}});return;}}
     await queryClient.invalidateQueries();
     if (publish) setDone({ id: data, visibility }); else { toast.success(t('gathering.draftSaved')); void navigate({ to: '/event/$id', params: { id: data } }); }
+    } catch { setSaveError(t('profile.saveError')); } finally { setBusy(false); }
   };
 
-  const onPhoto = async ({ file, square }: CropResult) => {
-    setUploading(true);
+  const onPhoto = async ({ file, square, previewUrl }: CropResult) => {
+    if (uploading) { URL.revokeObjectURL(previewUrl); return; }
+    setPhotoError(''); setUploading(true);
     try {
       const path = await uploadMedia(userId, file, 'cover');
       // Square twin for social sharing lives next to the wide cover: <name>-square.webp
       if (square) await uploadMedia(userId, square, 'cover', path.replace(/\.webp$/, '-square.webp')).catch(() => null);
       setCoverPath(path);
-    } catch (err) { if (err instanceof Error && err.message === 'storage_limit') setLimit('storage'); else toast.error(t('profile.saveError')); } finally { setUploading(false); }
+    } catch (err) { if (err instanceof Error && err.message === 'storage_limit') setLimit('storage'); else setPhotoError(t('builder.reliability.photoFailed')); } finally { setUploading(false); URL.revokeObjectURL(previewUrl); }
   };
   const close = () => (window.history.length > 1 ? router.history.back() : void navigate({ to: '/events' }));
 
-  if (done) {
+  if (done && startDate) {
     const link = shareLink(done);
-    const when = startDate!.toLocaleString(lang, { weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const when = startDate.toLocaleString(lang, { weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
     const invite = t('gathering.invite', { title: title.trim(), date: when, link });
     return <div className="gathering-screen"><div className="gathering-success">
       <GatheringCover path={coverPath} style={coverStyle} title={title} className="success-cover" />
       <span className="success-check"><Check /></span>
       <h1>{t('gathering.live')}</h1>
       <p className="success-title">{title}</p><p className="auth-subtitle">{when}{weekly ? ` · ${t(`gathering.repeats.${rule.kind}`)}` : ''}</p>
-      <div className="success-share"><ShareKit title={title.trim()} startsAt={startDate!.toISOString()} place={place === 'person' ? (locationName || address) : t('teamSpace.online')} link={link} coverPath={coverPath} coverStyle={coverStyle} focal={coverFocal} /></div>
+      <div className="success-share"><ShareKit title={title.trim()} startsAt={startDate.toISOString()} place={place === 'person' ? (locationName || address) : t('teamSpace.online')} link={link} coverPath={coverPath} coverStyle={coverStyle} focal={coverFocal} /></div>
       <Button className="onboarding-continue" onClick={() => navigate({ to: '/events', search: { tab: 'hosting' } })}>{t('gathering.done')}</Button>
     </div></div>;
   }
@@ -273,6 +327,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         {tpl && <span className="chip">{t('gathering.fromTemplate', { title: tpl.title })}</span>}
       </header>
 
+      {saveError && <div id="g-errors" className="field-error" role="alert" tabIndex={-1}><strong>{saveError}</strong><ul>{blockers.map(b => <li key={b}>{t(`builder.errors.${b}`)}</li>)}</ul></div>}
       <section className="form-section">
         <span className="field-label" id="g-format-label">{t('builder.experience.label')}</span>
         <div className="format-cards" role="radiogroup" aria-labelledby="g-format-label">
@@ -298,10 +353,12 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         {coverPath && coverWidth != null && isLowResolution(coverWidth) && <p className="field-hint crop-lowres" role="status">{t('gathering.coverLowRes', { width: coverWidth })}</p>}
         <div className="cover-actions">
           <label className="file-button"><Camera /><span>{uploading ? t('onboarding.saving') : t(coverPath ? 'gathering.changePhoto' : 'gathering.addPhoto')}</span>
-            <CropFileInput kind="cover" withSquare onCropped={r => void onPhoto(r)} onRejected={() => toast.error(t('gathering.photoTooBig'))} /></label>
+            <CropFileInput kind="cover" withSquare maxBytes={8 * 1024 * 1024} disabled={uploading} onCropped={r => void onPhoto(r)} onRejected={reason => setPhotoError(t(reason === 'type' ? 'builder.reliability.photoType' : 'gathering.photoTooBig'))} /></label>
           {coverPath && <Button variant="ghost" onClick={() => setCoverPath(null)}>{t('gathering.useDefault')}</Button>}
           {(coverOverlay !== 0 || coverFocal !== '50% 50%' || coverAlt) && <Button variant="ghost" onClick={() => { setCoverOverlay(0); setCoverFocal('50% 50%'); setCoverAlt(''); }}>{t('gathering.coverReset')}</Button>}
         </div>
+        {uploading && <p role="status">{t('builder.reliability.uploading')}</p>}
+        {photoError && <p className="field-error" role="alert">{photoError}</p>}
         <div className="cover-controls">
           {!coverPath && <div className="style-picker" role="group" aria-label={t('gathering.coverStyle')}>{COVER_STYLES.map((bg, i) =>
             <button key={i} type="button" aria-pressed={coverStyle === i} aria-label={t(`gathering.styleName.${i}`)} title={t(`gathering.styleName.${i}`)} className={`style-swatch ${coverStyle === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} onClick={() => setCoverStyle(i)} />)}</div>}
@@ -326,7 +383,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       </section>}
 
       <section className="form-section">
-        <label className="field-label" htmlFor="g-title">{t('gathering.title')}</label>
+        <label className="field-label" htmlFor="g-title">{t('gathering.title')} · {t('builder.reliability.required')}</label>
         <Input id="g-title" className="field-input" maxLength={120} value={title} onChange={e => setTitle(e.target.value)} placeholder={t('gathering.titlePlaceholder')} aria-invalid={tried && !title.trim()} />
         {tried && !title.trim() && <p className="field-error">{t('gathering.errors.invalid_title')}</p>}
       </section>
@@ -334,7 +391,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       <section className="form-section">
         <span className="field-label">{t('gathering.when')}</span>
         <div className="chip-row">{usual && (() => { const v = toLocalInput(usual); return <button type="button" className={`preset-chip is-usual ${start === v ? 'is-selected' : ''}`} aria-pressed={start === v} onClick={() => setStart(v)}>{t('gathering.presets.usual', { day: usual.toLocaleDateString(lang, { weekday: 'short' }), time: usual.toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' }) })}</button>; })()}{presets.map(p => { const v = toLocalInput(p.date); return <button key={p.key} type="button" className={`preset-chip ${start === v ? 'is-selected' : ''}`} aria-pressed={start === v} onClick={() => setStart(v)}>{t(`gathering.presets.${p.key}`, { time: p.date.toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' }) })}</button>; })}</div>
-        <Input type="datetime-local" className="field-input" value={start} onChange={e => setStart(e.target.value)} aria-label={t('gathering.custom')} />
+        <label className="field-label" htmlFor="g-start">{t('gathering.when')} · {t('builder.reliability.required')}</label><Input id="g-start" aria-invalid={tried && blockers.includes('date')} type="datetime-local" className="field-input" value={start} onChange={e => setStart(e.target.value)} aria-label={t('gathering.custom')} />
+        {tried && blockers.includes('date') && <p className="field-error">{t('builder.errors.date')}</p>}<small className="field-hint">{t('builder.reliability.timezone', { zone: source?.event.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone })}</small>
         {full && <>
         <span className="field-label">{t('gathering.duration')}</span>
         <div className="chip-row">{DURATIONS.map(d => <button key={d} type="button" className={`preset-chip ${!customDuration && duration === d ? 'is-selected' : ''}`} aria-pressed={!customDuration && duration === d} onClick={() => { setCustomDuration(false); setDuration(d); }}>{t(`gathering.durations.${d}`)}</button>)}
@@ -348,13 +406,16 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         <span className="field-label">{t('gathering.place')}</span>
         <div className="segmented full" role="group" aria-label={t('gathering.place')}>{(['person', 'online', 'hybrid'] as const).map(p => <Button key={p} variant="ghost" className={place === p ? 'selected' : ''} aria-pressed={place === p} onClick={() => setPlace(p)}>{p === 'person' ? <MapPin /> : <Globe2 />}{t(`builder.format.${p}`)}</Button>)}</div>
         {place !== 'online' && <>
-          <Input className="field-input" maxLength={160} value={locationName} onChange={e => setLocationName(e.target.value)} placeholder={t('gathering.locationName')} aria-label={t('gathering.locationName')} />
+          <label className="field-label" htmlFor="g-location">{t('gathering.locationName')} · {t('builder.reliability.requiredPlace')}</label><Input id="g-location" aria-invalid={tried && blockers.includes('place')} className="field-input" maxLength={160} value={locationName} onChange={e => setLocationName(e.target.value)} placeholder={t('gathering.locationName')} aria-label={t('gathering.locationName')} />
           <Input ref={addressRef} className="field-input" maxLength={300} value={address} onChange={e => { setAddress(e.target.value); setCoords(null); }} placeholder={t('gathering.address')} aria-label={t('gathering.address')} autoComplete="off" />
+          {tried && blockers.includes('place') && <p className="field-error">{t('builder.errors.place')}</p>}
+          <label className="field-label" htmlFor="g-map">{t('builder.reliability.mapOverride')}</label><Input id="g-map" type="url" value={details.mapUrl} maxLength={500} aria-invalid={tried && !!details.mapUrl && !validHttps(details.mapUrl)} onChange={e => setDetails(d => ({ ...d, mapUrl: e.target.value }))} /><small className="field-hint">{t('builder.reliability.mapHint')}</small>
+          {tried && !!details.mapUrl && !validHttps(details.mapUrl) && <p className="field-error">{t('gathering.errors.invalid_url')}</p>}
           {!mapsKey && <p className="not-connected">{t('gathering.addressNote')}</p>}
           <Input className="field-input" maxLength={300} value={note} onChange={e => setNote(e.target.value)} placeholder={t('gathering.note')} aria-label={t('gathering.note')} />
         </>}
         {place !== 'person' && <>
-          <Input type="url" inputMode="url" className="field-input" maxLength={500} value={url} onChange={e => setUrl(e.target.value)} placeholder="https://" aria-label={t('gathering.link')} aria-invalid={urlBad || (tried && !url.trim())} />
+          <label className="field-label" htmlFor="g-online">{t('gathering.link')} · {t('builder.reliability.required')}</label><Input id="g-online" type="url" inputMode="url" className="field-input" maxLength={500} value={url} onChange={e => setUrl(e.target.value)} placeholder="https://" aria-label={t('gathering.link')} aria-invalid={urlBad || (tried && !url.trim())} />
           {(urlBad || (tried && !url.trim())) && <p className="field-error">{t('gathering.errors.invalid_url')}</p>}
           <p className="field-hint">{t('builder.onlinePrivate')}</p>
         </>}
@@ -371,7 +432,9 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
 
       <section className="form-section two-col">
         <div><label className="field-label" htmlFor="g-cap">{t('gathering.capacity')}</label>
-          <Input id="g-cap" type="number" min={1} inputMode="numeric" className="field-input" value={capacity} onChange={e => setCapacity(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder={t('gathering.noLimit')} /></div>
+          <div className="segmented full" role="group" aria-label={t('gathering.capacity')}>{(['unlimited', 'limited'] as const).map(mode => <Button key={mode} variant="ghost" aria-pressed={capacityMode === mode} className={capacityMode === mode ? 'selected' : ''} onClick={() => setCapacityMode(mode)}>{t(`builder.reliability.${mode}`)}</Button>)}</div>
+          {capacityMode === 'limited' && <Input id="g-cap" aria-invalid={tried && capacityBad} type="number" min={1} inputMode="numeric" className="field-input" value={capacity} onChange={e => setCapacity(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder={t('builder.reliability.limited')} />}
+          {tried && capacityBad && <p className="field-error">{t('gathering.errors.invalid_capacity')}</p>}</div>
         <div><label className="field-label" htmlFor="g-price">{t('billing.price')}</label>
           <Input id="g-price" type="text" inputMode="decimal" className="field-input" disabled={!canSell && !price} value={price} onChange={e => setPrice(e.target.value.replace(/[^\d.]/g, '').slice(0, 7))} placeholder="$0" />
           <small className="field-hint">{canSell ? t('billing.priceHint') : t('billing.priceNeedsPayouts')}</small>
@@ -402,7 +465,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         {tr.preview && <p className="not-connected">{t('assistant.previewTranslateNote')}</p>}
       </section>
 
-      <EventDetailsSections value={details} onChange={setDetails} priceCents={priceCents} lang={lang} />
+      <EventDetailsSections value={details} onChange={setDetails} priceCents={priceCents} lang={lang} tried={tried} />
 
       <section className="form-section">
         {retreatOn && <RetreatEditor value={retreat} onChange={setRetreat} end={retreatEnd} setEnd={setRetreatEnd} priceCents={priceCents} onUpload={uploadGallery} uploading={galleryBusy} />}
@@ -421,7 +484,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
           {rule.endMode === 'count'
             ? <div className="inline-field"><Input type="number" min={2} max={52} className="field-input" value={rule.count} onChange={e => setRule(r => ({ ...r, count: Math.max(2, Math.min(52, Number(e.target.value) || 2)) }))} aria-label={t('gathering.end.times')} /><span>{t('gathering.end.times')}</span></div>
             : <Input type="date" className="field-input" value={rule.until} onChange={e => setRule(r => ({ ...r, until: e.target.value }))} aria-label={t('gathering.end.until')} />}
-          <p className="auth-subtitle">{t('gathering.repeatSummary', { count: dates.length, last: dates[dates.length - 1]!.toLocaleDateString(lang, { month: 'short', day: 'numeric' }) })}</p>
+          <p className="auth-subtitle">{t('gathering.repeatSummary', { count: dates.length, last: dates[dates.length - 1]?.toLocaleDateString(lang, { month: 'short', day: 'numeric' }) })}</p>
         </>}
       </section> : source?.event.series_id ? <section className="form-section">
         <span className="field-label">{t('gathering.applyTo')}</span>
@@ -432,8 +495,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       {tpl && <p className="auth-subtitle">{t('gathering.checklistNote', { count: checklistOf(templates.find(x => x.id === tpl.id) ?? { checklist: [] }).length })}</p>}
     </div>
     <div className="sticky-actions">
-      {full && (!editing || source?.event.status === 'draft') && <Button variant="secondary" disabled={busy} onClick={() => submit(false)}>{t('gathering.saveDraft')}</Button>}
-      <Button disabled={busy} onClick={() => submit(!editing || source?.event.status === 'draft')}>{busy ? t('onboarding.saving') : t(editing && source?.event.status !== 'draft' ? 'gathering.saveChanges' : 'gathering.publish')}</Button>
+      {(!editing || source?.event.status === 'draft') && <Button variant="secondary" disabled={busy || uploading} onClick={() => submit(false)}>{t('gathering.saveDraft')}</Button>}
+      <Button disabled={busy || uploading} onClick={() => submit(!editing || source?.event.status === 'draft')}>{busy ? t('onboarding.saving') : t(editing && source?.event.status !== 'draft' ? 'gathering.saveChanges' : 'gathering.publish')}</Button>
     </div>
     {limit && <UpgradeSheet open onOpenChange={o => { if (!o) setLimit(null); }} reason={limit} />}
   </div>;
