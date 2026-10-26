@@ -29,7 +29,7 @@ export const saveAttendanceJourney = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => z.object({ eventId: z.string().uuid(), id: z.string().uuid().nullable(), name: z.string().trim().min(1).max(120), templateId: z.string().uuid(), audience: z.enum(['attended', 'absent']), local: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/) }).parse(input))
   .handler(async ({ data, context }) => {
-    const { data: id, error } = await context.supabase.rpc('save_attendance_journey', { _event: data.eventId, _id: data.id, _name: data.name, _template: data.templateId, _audience: data.audience, _local: data.local });
+    const { data: id, error } = await context.supabase.rpc('save_attendance_journey', { _event: data.eventId, _id: data.id, _name: data.name, _template: data.templateId, _audience: data.audience, _local: data.local } as never);
     if (error) throw new Error(error.message);
     return { id };
   });

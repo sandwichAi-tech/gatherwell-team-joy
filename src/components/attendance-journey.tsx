@@ -11,7 +11,7 @@ import { saveAttendanceJourney } from '@/lib/messaging.functions';
 
 type Journey = { id: string; name: string; event_id?: string | null; attendance_audience?: string | null; attendance_send_at?: string | null; steps: { kind: string; config: Record<string, unknown> }[] };
 type Template = { id: string; name: string; channel: string; archived: boolean; body: string; subject: string | null };
-export function AttendanceJourneyEditor({ teamId, journey, templates, onClose, onSaved }: { teamId: string; journey?: Journey; templates: Template[]; onClose: () => void; onSaved: () => void }) {
+export function AttendanceJourneyEditor({ teamId, journey, templates, onClose, onSaved }: { teamId: string; journey?: Journey | undefined; templates: Template[]; onClose: () => void; onSaved: () => void }) {
   const { t } = useTranslation();
   const save = useServerFn(saveAttendanceJourney);
   const [eventId, setEventId] = useState(journey?.event_id ?? '');

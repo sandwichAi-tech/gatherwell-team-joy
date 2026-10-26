@@ -241,7 +241,12 @@ function WalkInSheet({ open, eventId, onClose, onSaved }: { open: boolean; event
     if (!waiverReady(waiver, wName, wOk)) { setErr(t('guest.errors.waiver_required')); return; }
     setBusy(true);
     const { data: rid, error } = await supabase.rpc('add_walk_in', { _event: eventId, _first: f.first.trim(), _last: f.last.trim(), _phone: f.phone.trim(), _email: f.email.trim(), _sms: f.sms, _mail: f.mail, _language: i18n.resolvedLanguage === 'es' ? 'es' : 'en' });
-    if (!error && rid && waiver?.required) { const { error: we } = await waiverRpc('walk_in_waiver', { _rsvp: rid, _name: wName.trim() }); if (we) toast.error(t('waiver.recordError')); }
+    if (!error && rid && waiver?.required) {
+      const { error: we } = await waiverRpc('walk_in_waiver', { _rsvp: rid, _name: wName.trim() });
+      if (we) { setBusy(false); setErr(t('waiver.recordError')); onSaved(); return; }
+      const { error: admissionError } = await supabase.rpc('check_in_rsvp', { _rsvp: rid, _undo: false });
+      if (admissionError) { setBusy(false); setErr(t('checkin.scanResult.waiver_required')); onSaved(); return; }
+    }
     setBusy(false);
     if (error) { setErr(t(rsvpErrorKey(error))); return; }
     setWName(''); setWOk(false);
