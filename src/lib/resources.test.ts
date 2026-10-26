@@ -77,7 +77,7 @@ describe('resource templates', () => {
   });
   it('opens each new draft in its existing editor', () => {
     expect(draftDestination('recipe', 'r')).toEqual({ to: '/learn/manage', search: { tab: 'recipes' } });
-    expect(draftDestination('track', 't')).toEqual({ to: '/learn/manage', search: { tab: 'tracks' } });
+    expect(draftDestination('track', 't')).toEqual({ to: '/learn/create', search: { type: 'video', id: 't' } });
     expect(draftDestination('course', 'c')).toEqual({ to: '/offer/$id', params: { id: 'c' } });
   });
 });
