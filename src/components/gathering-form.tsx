@@ -106,42 +106,42 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       setCommunitySeats((e as { community_seats?: number | null }).community_seats ? String((e as { community_seats: number }).community_seats) : '');
       setCapacityMode(e.capacity != null ? 'limited' : 'unlimited'); setCapacity(e.capacity ? String(e.capacity) : ''); setVisibility(e.visibility === 'team' ? 'team' : e.visibility === 'invite' ? 'invite' : 'public');
       if (editing) setStart(toLocalInput(new Date(e.starts_at)));
-      else { const d = new Date(e.starts_at); const next = new Date(); next.setDate(next.getDate() + 7); next.setHours(d.getHours(), d.getMinutes(), 0, 0); setStart(toLocalInput(next)); }
+      else { const d = new Date(e.starts_at); const next = new Date(); next.setDate(next.getDate() + 7); next.setHours(d['getHours'](), d['getMinutes'](), 0, 0); setStart(toLocalInput(next)); }
       if (fromId && e.template_id) setTpl(null);
       if (editing && e.status === 'draft' && draft && typeof draft === 'object' && !Array.isArray(draft)) {
         const d = draft as Record<string, unknown>;
-        if (typeof d.title === 'string') setTitle(d.title);
-        if (typeof d.start === 'string') setStart(d.start);
-        if (typeof d.url === 'string') setUrl(d.url);
-        if (typeof d.address === 'string') setAddress(d.address);
-        if (typeof d.locationName === 'string') setLocationName(d.locationName);
-        if (typeof d.note === 'string') setNote(d.note);
-        if (typeof d.price === 'string') setPrice(d.price);
-        if (typeof d.capacity === 'string') setCapacity(d.capacity);
-        if (d.capacityMode === 'limited' || d.capacityMode === 'unlimited') setCapacityMode(d.capacityMode);
-        if (d.place === 'person' || d.place === 'online' || d.place === 'hybrid') setPlace(d.place);
-        if (typeof d.full === 'boolean') setFull(d.full);
-        if (typeof d.coverPath === 'string' || d.coverPath === null) setCoverPath(d.coverPath);
-        if (typeof d.coverStyle === 'number') setCoverStyle(d.coverStyle);
-        if (typeof d.coverOverlay === 'number') setCoverOverlay(d.coverOverlay);
-        if (typeof d.coverFocal === 'string') setCoverFocal(d.coverFocal);
-        if (typeof d.coverAlt === 'string') setCoverAlt(d.coverAlt);
-        if (typeof d.descEn === 'string') setDescEn(d.descEn);
-        if (typeof d.descEs === 'string') setDescEs(d.descEs);
-        if (typeof d.duration === 'number') setDuration(d.duration);
-        if (typeof d.category === 'string' && isCategory(d.category)) setCategory(d.category);
-        if (typeof d.categoryLabel === 'string') setCategoryLabel(d.categoryLabel);
-        if (d.visibility === 'public' || d.visibility === 'team' || d.visibility === 'invite') setVisibility(d.visibility);
-        if (d.details && typeof d.details === 'object') setDetails(d.details as EventDetails);
-        if (d.rule && typeof d.rule === 'object') setRule(d.rule as RepeatRule);
-        if (d.teamReg && typeof d.teamReg === 'object') setTeamReg(d.teamReg as typeof teamReg);
-        if (typeof d.retreatOn === 'boolean') setRetreatOn(d.retreatOn);
-        if (d.retreat && typeof d.retreat === 'object') setRetreat(d.retreat as Retreat);
-        if (typeof d.retreatEnd === 'string') setRetreatEnd(d.retreatEnd);
-        if (typeof d.multi === 'boolean') setMulti(d.multi);
-        if (Array.isArray(d.sessions)) setSessions(d.sessions as EventSession[]);
-        if (typeof d.communitySeats === 'string') setCommunitySeats(d.communitySeats);
-        if (typeof d.coverFee === 'boolean') setCoverFee(d.coverFee);
+        if (typeof d['title'] === 'string') setTitle(d['title']);
+        if (typeof d['start'] === 'string') setStart(d['start']);
+        if (typeof d['url'] === 'string') setUrl(d['url']);
+        if (typeof d['address'] === 'string') setAddress(d['address']);
+        if (typeof d['locationName'] === 'string') setLocationName(d['locationName']);
+        if (typeof d['note'] === 'string') setNote(d['note']);
+        if (typeof d['price'] === 'string') setPrice(d['price']);
+        if (typeof d['capacity'] === 'string') setCapacity(d['capacity']);
+        if (d['capacityMode'] === 'limited' || d['capacityMode'] === 'unlimited') setCapacityMode(d['capacityMode']);
+        if (d['place'] === 'person' || d['place'] === 'online' || d['place'] === 'hybrid') setPlace(d['place']);
+        if (typeof d['full'] === 'boolean') setFull(d['full']);
+        if (typeof d['coverPath'] === 'string' || d['coverPath'] === null) setCoverPath(d['coverPath']);
+        if (typeof d['coverStyle'] === 'number') setCoverStyle(d['coverStyle']);
+        if (typeof d['coverOverlay'] === 'number') setCoverOverlay(d['coverOverlay']);
+        if (typeof d['coverFocal'] === 'string') setCoverFocal(d['coverFocal']);
+        if (typeof d['coverAlt'] === 'string') setCoverAlt(d['coverAlt']);
+        if (typeof d['descEn'] === 'string') setDescEn(d['descEn']);
+        if (typeof d['descEs'] === 'string') setDescEs(d['descEs']);
+        if (typeof d['duration'] === 'number') setDuration(d['duration']);
+        if (typeof d['category'] === 'string' && isCategory(d['category'])) setCategory(d['category']);
+        if (typeof d['categoryLabel'] === 'string') setCategoryLabel(d['categoryLabel']);
+        if (d['visibility'] === 'public' || d['visibility'] === 'team' || d['visibility'] === 'invite') setVisibility(d['visibility']);
+        if (d['details'] && typeof d['details'] === 'object') setDetails(d['details'] as EventDetails);
+        if (d['rule'] && typeof d['rule'] === 'object') setRule(d['rule'] as RepeatRule);
+        if (d['teamReg'] && typeof d['teamReg'] === 'object') setTeamReg(d['teamReg'] as typeof teamReg);
+        if (typeof d['retreatOn'] === 'boolean') setRetreatOn(d['retreatOn']);
+        if (d['retreat'] && typeof d['retreat'] === 'object') setRetreat(d['retreat'] as Retreat);
+        if (typeof d['retreatEnd'] === 'string') setRetreatEnd(d['retreatEnd']);
+        if (typeof d['multi'] === 'boolean') setMulti(d['multi']);
+        if (Array.isArray(d['sessions'])) setSessions(d['sessions'] as EventSession[]);
+        if (typeof d['communitySeats'] === 'string') setCommunitySeats(d['communitySeats']);
+        if (typeof d['coverFee'] === 'boolean') setCoverFee(d['coverFee']);
       }
       setReady(true); return;
     }
@@ -215,7 +215,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     timezone: source?.event.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone, location_name: place !== 'online' ? locationName : '', address: place !== 'online' ? address : '',
     meeting_note: place !== 'online' ? note : '', online_url: place !== 'person' ? url.trim() : '', capacity: capacityValue(capacityMode, capacity) ?? '',
     visibility, description_en: descEn.trim(), description_es: descEs.trim(), template_id: tpl?.id ?? '',
-    ...(weekly ? { recurrence: rule.kind, occurrences: dates.map(d => d.toISOString()) } : {}),
+    ...(weekly ? { recurrence: rule.kind, occurrences: dates.map(d => d['toISOString']()) } : {}),
     lat: place !== 'online' && coords ? coords.lat : '', lng: place !== 'online' && coords ? coords.lng : '',
   });
 
@@ -256,7 +256,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     const error = blockers.length || capacityBad || !detailsJson || pi.length || (priceCents && visibility === 'team') || (multi && (!start || !validSessions(sessions, new Date(start).toISOString())));
     if (error) {
       setFull(true);
-      setSaveError(t('eventReliability.fixSummary'));
+      setSaveError(pi.length ? t(`policy.issues.${pi[0]}${pi[0] === 'contradiction' || pi[0] === 'mismatch' ? (priceCents ? 'Paid' : 'Free') : ''}`) : t('eventReliability.fixSummary'));
       requestAnimationFrame(() => { const field = document.querySelector<HTMLElement>('.gathering-form [aria-invalid="true"]'); (field ?? document.getElementById('g-errors'))?.focus(); field?.scrollIntoView({ block: 'center' }); });
       return;
     }
@@ -266,9 +266,9 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       if (multi || source?.event.experience_sessions && Array.isArray(source.event.experience_sessions) && source.event.experience_sessions.length) { const cleared=await supabase.rpc('set_event_sessions',{_event:eventId??'',_sessions:[]});if(cleared.error){setBusy(false);toast.error(t('sessions.invalid'));return;} }
       const { error } = await supabase.rpc('update_gathering', { _event: (eventId ?? ''), _p: payload(), _whole_series: wholeSeries });
       if (error) { toast.error(rpcError(t, error)); return; }
-      await savePrice((eventId ?? '')); await saveTeamReg((eventId ?? '')); if (!(await saveRetreat((eventId ?? '')))) return;
+      if (await savePrice((eventId ?? ''))) { setSaveError(t('profile.saveError')); return; } await saveTeamReg((eventId ?? '')); if (!(await saveRetreat((eventId ?? '')))) return;
       { const result = await supabase.rpc('set_event_sessions', { _event: eventId ?? '', _sessions: (multi ? sessions : []) as never }); if (result.error) { toast.error(t('sessions.invalid')); return; } }
-      await saveCover((eventId ?? ''));
+      if (!(await saveCover((eventId ?? '')))) return;
       if (!(await saveDetails((eventId ?? '')))) return;
       if (!(await savePolicy((eventId ?? '')))) return;
       if (publish && source?.event.status === 'draft') { const r = await supabase.from('events').update({ status: 'published' }).eq('id', eventId??''); if(r.error){toast.error(rpcError(t,r.error));return;} }
@@ -280,11 +280,11 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (error?.message?.includes('plan_limit_gatherings')) { setLimit('gatherings'); return; }
     if (error || !data) { toast.error(rpcError(t, error)); return; }
     if (weekly) { const { data: ev } = await supabase.from('events').select('series_id').eq('id', data).maybeSingle(); if (ev?.series_id) { const { count } = await supabase.from('events').select('id', { count: 'exact', head: true }).eq('series_id', ev.series_id); if ((count ?? dates.length) < dates.length) toast.info(t('billing.freeSeriesLimit'), { duration: 8000 }); } }
-    if (priceCents) await savePrice(data);
+    if (priceCents && await savePrice(data)) { setSaveError(t('profile.saveError')); return; }
     if (teamReg.on) await saveTeamReg(data);
     if (retreatOn && !(await saveRetreat(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
     if (multi) { const result = await supabase.rpc('set_event_sessions', { _event: data, _sessions: sessions as never }); if (result.error) { toast.error(t('sessions.invalid')); void navigate({to:'/gathering/$id/edit',params:{id:data}}); return; } }
-    await saveCover(data);
+    if (!(await saveCover(data))) return;
     if (!(await saveDetails(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
     if (!(await savePolicy(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
     if (publish&&staged) {const published=await supabase.from('events').update({status:'published'}).eq('id',data);if(published.error){toast.error(rpcError(t,published.error));void navigate({to:'/gathering/$id/edit',params:{id:data}});return;}}

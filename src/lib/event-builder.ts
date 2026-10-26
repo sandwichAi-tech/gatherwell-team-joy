@@ -17,7 +17,7 @@ export const MAX_PRICE_CENTS = 100000;
 export function capacityValue(mode: 'unlimited' | 'limited', value: string): number | null | undefined {
   if (mode === 'unlimited') return null;
   const n = Number(value);
-  return Number.isInteger(n) && n > 0 && n <= 99999 ? n : undefined;
+  return Number.isInteger(n) && n > 0 && n <= 10000 ? n : undefined;
 }
 
 export function validHttps(value: string): boolean {
