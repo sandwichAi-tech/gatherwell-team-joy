@@ -84,6 +84,16 @@ export async function processOutbox(limit = 100) {
     let result: Result;
     try {
       if (row.skip_reason) result = { status: 'skipped', error: row.skip_reason };
+      else if (typeof row.payload['attendance_audience'] === 'string') {
+        const { data: eligible, error } = await supabaseAdmin.rpc('attendance_message_eligible', {
+          _rsvp: String(row.payload['rsvp_id'] ?? ''), _audience: row.payload['attendance_audience'], _channel: row.channel,
+        });
+        if (error) result = { status: 'failed', error: 'eligibility_check_failed' };
+        else if (!eligible) result = { status: 'skipped', error: 'attendance_or_preference_changed' };
+        else if (row.channel === 'email') result = await sendEmail(row);
+        else if (row.channel === 'sms') result = await sendSms(row);
+        else result = { status: 'skipped', error: 'invalid_channel' };
+      }
       else if (row.channel === 'email') result = await sendEmail(row);
       else if (row.channel === 'sms') result = await sendSms(row);
       else result = await sendPush(row, supabaseAdmin);
@@ -99,6 +109,8 @@ export async function processOutbox(limit = 100) {
   let journeys = 0; let resourceJourneys = 0;
   try {
     const adv = await supabaseAdmin.rpc('advance_journey_runs', { _limit: 50 });
+    const attendanceAdv = await supabaseAdmin.rpc('process_attendance_journeys', { _limit: 50 });
+    if (attendanceAdv.error) console.error('[outbox] attendance_journeys', attendanceAdv.error.message);
     const resourceAdv = await supabaseAdmin.rpc('advance_resource_journeys', { _limit: 50 });
     if (resourceAdv.error) console.error('[outbox] resource_journeys', resourceAdv.error.message);
     else resourceJourneys = typeof resourceAdv.data === 'number' ? resourceAdv.data : 0;
