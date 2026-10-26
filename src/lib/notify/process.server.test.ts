@@ -33,4 +33,12 @@ describe('retried messages use normal outbox delivery', () => {
     expect(await processOutbox(1)).toEqual({ processed: 0, journeys: 0, resourceJourneys: 2 });
     expect(mocks.rpc).toHaveBeenCalledWith('advance_resource_journeys', { _limit: 50 });
   });
+  it('rechecks attendance eligibility before contacting any sending provider', async () => {
+    const fetch = vi.fn(); vi.stubGlobal('fetch', fetch);
+    mocks.rpc.mockImplementation((name: string) => Promise.resolve({ data: name === 'claim_outbox' ? [{ ...row, payload: { attendance_audience: 'attended', rsvp_id: 'fixture-rsvp' } }] : name === 'attendance_message_eligible' ? false : 0, error: null }));
+    mocks.update.mockReturnValue({ eq: mocks.eq }); mocks.eq.mockResolvedValue({ error: null });
+    expect(await processOutbox(1)).toEqual({ processed: 1, journeys: 0, resourceJourneys: 0, skipped: 1 });
+    expect(fetch).not.toHaveBeenCalled();
+    expect(mocks.rpc).toHaveBeenCalledWith('attendance_message_eligible', { _rsvp: 'fixture-rsvp', _audience: 'attended', _channel: 'email' });
+  });
 });

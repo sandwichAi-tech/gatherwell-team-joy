@@ -1,5 +1,12 @@
 # Challenge experience pass — DONE
 
+## Attendance launch pass — rows 93, 98, 99, 100
+- [ ] 98 In Progress: event-bound owner/staff/outsider, two attendees, waiver/cancellation/wrong-event/duplicate and camera-denied manual checks passed; physical camera and full offline/retry UI matrix unverified.
+- [ ] 93 In Progress: Home QR decoded privately with jsQR and accepted through event-bound scanner manual fallback; wrong-event and duplicate verified; physical phones remain unavailable.
+- [ ] 99 In Progress: editable draft and next-day schedule saved through UI; attended/absent/opt-out/cancelled/correction eligibility and in-app deduplication verified; full schedule-edit/claim-time preference race matrix unverified.
+- [ ] 100 In Progress: fresh coach onboarding/free publication/public RSVP/QR/check-in/follow-up pilot passed; paid provider test environment, real delivery, complete fresh attendee/role-switch/team-invite approval/free-resource browser pilot unverified.
+- [x] EN/ES Home and follow-up editor at 320/390/1280; keyboard focus repair; 83 files / 718 tests passed; automatic typecheck/compile build OK; exact fixture cleanup verified; nothing published.
+
 - [x] P1: step-based challenge builder (basics/model/activities/messages/review), goal/streak/points models, draft/publish lifecycle, participant Today + goal progress + conditional leaderboard
 - [x] P2: challenge messages (6 kinds) in builder + Communications hub section with pause/edit and honest channel labels
 - [x] P3: activities attach resources/links/files with day availability; participant view renders them

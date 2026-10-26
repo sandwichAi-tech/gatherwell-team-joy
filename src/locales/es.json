@@ -1679,16 +1679,21 @@
     "walkInTag": "Sin confirmar",
     "undo": "Deshacer registro",
     "closeScanner": "Cerrar escáner",
-    "cameraDenied": "La cámara está desactivada. Aún puedes registrar desde la lista.",
+    "cameraDenied": "La cámara no está disponible. Usa el código manual o busca por nombre en la lista.",
     "useList": "Usar la lista",
     "pointCamera": "Apunta la cámara al código QR del invitado",
     "scanResult": {
       "ok": "{{name}} quedó registrado",
       "already": "{{name}} ya estaba registrado",
       "not_found": "No está en la lista de esta reunión",
-      "error": "No se pudo leer el código. Inténtalo de nuevo.",
+      "error": "No se confirmó la entrada. Revisa tu conexión y vuelve a intentar.",
       "cancelled": "Este registro fue cancelado",
-      "waitlist": "Esta persona está en la lista de espera"
+      "waitlist": "Esta persona está en la lista de espera",
+      "wrong_event": "Este código pertenece a otro evento.",
+      "waiver_required": "Falta una autorización requerida. No se registró la entrada.",
+      "event_unavailable": "Este evento no está publicado o fue cancelado.",
+      "registration_required": "Se requiere un registro confirmado para entrar.",
+      "rate_limited": "Demasiados intentos. Espera un minuto y vuelve a intentar."
     },
     "scanNext": "Escanear otro",
     "walkInAdded": "{{name}} agregado y registrado",
@@ -7217,5 +7222,22 @@
     "help": "Muestra este código al anfitrión en la entrada.",
     "manual": "Código manual si el escaneo no funciona",
     "copy": "Copiar código"
+  },
+  "attendancePilot": {
+    "quickCheckin": "Registrar entrada de asistentes",
+    "staffOnly": "Solo el personal autorizado de este evento puede registrar entradas.",
+    "waiverResolution": "La persona debe completar las autorizaciones requeridas en su registro. No se puede aceptarlas al escanear; pide que abra el evento y complete su registro.",
+    "followup": "Agradecimiento después del evento",
+    "audience": "Audiencia",
+    "attended": "Solo personas con entrada confirmada",
+    "absent": "Personas inscritas que no asistieron (opcional)",
+    "schedule": "Fecha y hora de envío",
+    "scheduleHint": "Hora del evento: {{timezone}}. Editable; debe ser después del evento. Se revisan asistencia y preferencias al enviar.",
+    "chooseEvent": "Elige un evento",
+    "eligibility": "Los cambios de asistencia y preferencias antes del envío se reflejan en la audiencia. Los eventos cancelados no envían mensajes.",
+    "invalidSchedule": "Elige una hora futura después del final del evento.",
+    "paused": "Guardado como borrador; revisa y activa en Comunicaciones.",
+    "channel": "Canal",
+    "defaultSchedule": "Mañana a las 09:00 en la zona horaria del evento; puedes cambiarlo."
   }
 }

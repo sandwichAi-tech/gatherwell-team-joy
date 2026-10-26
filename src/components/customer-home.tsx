@@ -11,8 +11,8 @@ import { useState } from 'react';
 import { formatWhen } from '@/lib/guest';
 import { isLive, offerTitle, purchasesQuery } from '@/lib/offers';
 
-type Ev = { id: string; title: string; starts_at: string; ends_at: string | null; location_name: string | null; address: string | null; lat: number | null; lng: number | null; host_id: string; offer_id: string | null; status: string };
-const EV = 'id, title, starts_at, ends_at, location_name, address, lat, lng, host_id, offer_id, status';
+type Ev = { id: string; title: string; starts_at: string; ends_at: string | null; location_name: string | null; address: string | null; lat: number | null; lng: number | null; host_id: string; offer_id: string | null; status: string; map_url: string | null; format: string };
+const EV = 'id, title, starts_at, ends_at, location_name, address, lat, lng, host_id, offer_id, status, map_url, format';
 
 /** Customer Home: only the person's own RSVPs, Circles and attended gatherings — every block is real data. */
 const customerHomeQuery = (userId: string, offerIds: string[]) => ({
@@ -53,11 +53,11 @@ export function CustomerHome({ userId }: { userId: string }) {
           {r.status === 'going' && (r.checked_in_at
             ? <p className="customer-checked" role="status">{t('checkinQr.checkedIn')}</p>
             : r.checkin_code
-              ? <Button className="customer-qr-button" onClick={() => setQr({ code: r.checkin_code!, title: r.event.title, startsAt: r.event.starts_at, checkedInAt: r.checked_in_at })} aria-label={t('checkinQr.showFor', { title: r.event.title })}><QrCode />{t('checkinQr.show')}</Button>
+              ? <Button className="customer-qr-button" onClick={() => { if (r.checkin_code) setQr({ code: r.checkin_code, title: r.event.title, startsAt: r.event.starts_at, checkedInAt: r.checked_in_at }); }} aria-label={t('checkinQr.showFor', { title: r.event.title })}><QrCode />{t('checkinQr.show')}</Button>
               : <p className="auth-subtitle" role="status">{t('checkinQr.missing')}</p>)}
           {r.status === 'waitlist' && <p className="auth-subtitle">{t('customerHome.waitlist')}</p>}
           <CalendarButtons event={r.event} />
-          <DirectionsButton event={r.event} />
+          <DirectionsButton event={{ ...r.event, is_online: r.event.format === 'online' }} />
         </li>)}</ul>}
       <CheckinQrSheet target={qr} onClose={() => setQr(null)} />
     </section>

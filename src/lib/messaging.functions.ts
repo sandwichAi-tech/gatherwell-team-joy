@@ -25,6 +25,25 @@ export const getMessagingSetup = createServerFn({ method: 'POST' })
     return { email: c.email, sms: c.sms, inApp: true };
   });
 
+export const saveAttendanceJourney = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ eventId: z.string().uuid(), id: z.string().uuid().nullable(), name: z.string().trim().min(1).max(120), templateId: z.string().uuid(), audience: z.enum(['attended', 'absent']), local: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/), content: z.object({ body: z.string().trim().min(1).max(10000), subject: z.string().max(200), channel: z.enum(['email','sms','in_app']), language: z.enum(['en','es']) }).optional() }).parse(input))
+  .handler(async ({ data, context }) => {
+    let templateId = data.templateId;
+    if (data.content) {
+      const { data: allowed } = await context.supabase.rpc('can_manage_event', { _event_id: data.eventId });
+      if (!allowed) throw new Error('forbidden');
+      const { data: event } = await context.supabase.from('events').select('team_id').eq('id',data.eventId).single();
+      if (!event?.team_id) throw new Error('forbidden');
+      const { data: copy, error } = await context.supabase.rpc('save_message_template', { _team: event.team_id, _id: null, _name: data.name, _channel: data.content.channel, _language: data.content.language, _subject: data.content.subject, _body: data.content.body, _audience: data.audience } as never);
+      if (error || !copy) throw new Error(error?.message ?? 'save_failed');
+      templateId = copy;
+    }
+    const { data: id, error } = await context.supabase.rpc('save_attendance_journey', { _event: data.eventId, _id: data.id, _name: data.name, _template: templateId, _audience: data.audience, _local: data.local } as never);
+    if (error) throw new Error(error.message);
+    return { id };
+  });
+
 export const listMessageTemplates = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { teamId: string }) => input)
@@ -118,7 +137,7 @@ export const listMessageJourneys = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     const { data: journeys, error } = await context.supabase
       .from('message_journeys')
-      .select('id, name, start_trigger, status, created_at, offer_id, event_id')
+      .select('id, name, start_trigger, status, created_at, offer_id, event_id, attendance_audience, attendance_send_at')
       .eq('team_id', data.teamId)
       .order('created_at', { ascending: true });
     if (error) throw new Error(error.message);
@@ -150,6 +169,16 @@ export const setJourneyStatus = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { id: string; status: string }) => input)
   .handler(async ({ data, context }) => {
+    if (data.status === 'active') {
+      const { data: steps, error } = await context.supabase.from('message_journey_steps').select('config').eq('journey_id', data.id).eq('kind', 'send');
+      if (error) throw new Error(error.message);
+      const ids = (steps ?? []).map(step => String((step.config as Record<string, unknown>)['template_id'] ?? ''));
+      const { data: templates } = await context.supabase.from('message_templates').select('channel').in('id', ids);
+      const { channelStatus } = await import('@/lib/notify/channels.server');
+      const setup = channelStatus();
+      if (templates?.some(template => template.channel === 'email') && !setup.email) throw new Error('setup_required_email');
+      if (templates?.some(template => template.channel === 'sms') && !setup.sms) throw new Error('setup_required_sms');
+    }
     const { error } = await context.supabase.rpc('set_journey_status', { _id: data.id, _status: data.status });
     if (error) throw new Error(error.message);
     return { ok: true as const };

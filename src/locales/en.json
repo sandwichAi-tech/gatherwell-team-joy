@@ -1679,16 +1679,21 @@
     "walkInTag": "Walk-in",
     "undo": "Undo check-in",
     "closeScanner": "Close scanner",
-    "cameraDenied": "Camera access is off. You can still check guests in from the list.",
+    "cameraDenied": "Camera unavailable. Use a manual code or search by name in the list.",
     "useList": "Use the list",
     "pointCamera": "Point the camera at the guest's QR code",
     "scanResult": {
       "ok": "{{name}} is checked in",
       "already": "{{name}} is already checked in",
       "not_found": "Not on the list for this event",
-      "error": "Couldn't read that code. Try again.",
+      "error": "Check-in was not confirmed. Check your connection and retry.",
       "cancelled": "This registration was cancelled",
-      "waitlist": "This person is on the waitlist"
+      "waitlist": "This person is on the waitlist",
+      "wrong_event": "This code belongs to another event.",
+      "waiver_required": "Required waiver acceptance is missing. Not checked in.",
+      "event_unavailable": "This event is not published or was cancelled.",
+      "registration_required": "A confirmed registration is required for admission.",
+      "rate_limited": "Too many attempts. Wait a minute and retry."
     },
     "scanNext": "Scan next",
     "walkInAdded": "{{name}} added and checked in",
@@ -7217,5 +7222,22 @@
     "help": "Show this code to the host at the door.",
     "manual": "Manual code if scanning doesn't work",
     "copy": "Copy code"
+  },
+  "attendancePilot": {
+    "quickCheckin": "Check in attendees",
+    "staffOnly": "Only authorized staff for this event can check in attendees.",
+    "waiverResolution": "The attendee must complete required waivers in their registration. Scanning cannot accept them; ask them to open the event and complete registration.",
+    "followup": "Post-event thank-you / feedback",
+    "audience": "Audience",
+    "attended": "Server-confirmed checked-in attendees only",
+    "absent": "Registered but absent (optional)",
+    "schedule": "Send date and time",
+    "scheduleHint": "Event time zone: {{timezone}}. Editable; must be after the event. Attendance and preferences are checked at send time.",
+    "chooseEvent": "Choose an event",
+    "eligibility": "Attendance corrections and preferences before sending change the audience. Cancelled events do not send messages.",
+    "invalidSchedule": "Choose a future time after the event ends.",
+    "paused": "Saved as draft; review and activate in Communications.",
+    "channel": "Channel",
+    "defaultSchedule": "Next day at 09:00 in the event time zone; you can change it."
   }
 }
