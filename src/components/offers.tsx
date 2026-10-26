@@ -232,7 +232,7 @@ export function OfferPage({ id, paid, panel }: { id: string; paid?: boolean; pan
       {owned ? <div className="offer-owned">
         <span className="chip"><Check className="inline-icon" />{t(offer.host_id === userId ? 'offers.yours' : offer.kind === 'download' ? 'offers.owned' : 'offers.member')}</span>
         {offer.kind === 'download' && <Button disabled={busy} onClick={getFile}><Download />{t('offers.download')}</Button>}
-        {offer.kind !== 'download' && <Button asChild variant="secondary"><Link to="/events"><CalendarDays />{t('offers.seeGatherings')}</Link></Button>}
+        {offer.kind === 'membership' && <Button asChild variant="secondary"><Link to="/events"><CalendarDays />{t('offers.seeGatherings')}</Link></Button>}
       </div> : offer.status === 'published' ? <>
         {!!offer.price_cents && <PromoField kind="offer" target={offer.id} discountCents={promoDiscount(offer.price_cents, promo)} value={promo} onChange={setPromo} />}
         {promo && !!offer.price_cents && <p className="offer-price">{formatMoney(offer.price_cents - promoDiscount(offer.price_cents, promo), lang)}</p>}
