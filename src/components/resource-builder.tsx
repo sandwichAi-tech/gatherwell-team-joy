@@ -23,10 +23,10 @@ import {
   CREATE_TYPES, emptyBuilderDraft, fileMatchesLessonType, isTrackFlow, lessonEditorConfig, lessonPresetFor, offerKindFor, typeContentAtRisk,
   type BuilderDraft, type CreateType,
 } from '@/lib/create-resource';
-import { listOf, RECIPE_TAGS, uploadLearnFile, type Lesson } from '@/lib/learn';
+import { listOf, pick, RECIPE_TAGS, uploadLearnFile, type Lesson } from '@/lib/learn';
 import { myOffersQuery, offerTitle, saveOffer, uploadOfferFile, type Offer } from '@/lib/offers';
 import type { RefundPolicy } from '@/lib/refunds';
-import { activationIso, hasPlaceholder, publishedDestination, stepNav } from '@/lib/resource-flow';
+import { activationIso, hasPlaceholder, isMultiLessonTrack, lessonsToPublishWithTrack, placeholderLessons, publishedDestination, stepNav } from '@/lib/resource-flow';
 import {
   ACCENT_KEYS, accentPair, cardLayoutsFor, defaultCtaKey, emptyItemState, itemIssues, itemSnapshot,
   sanitizeRichText, sectionsFor, type Accent, type CardLayout, type ItemSection, type ItemState,
@@ -97,7 +97,7 @@ function LandingPreview({ item, type, lang, cta, paid }: { item: ItemState; type
 }
 
 /** Course curriculum: lessons of the course's track with add/edit/delete and explicit ordering. */
-function Curriculum({ trackId, teamId, lang }: { trackId: string; teamId: string; lang: string }) {
+function Curriculum({ trackId, teamId, lang, onLessons }: { trackId: string; teamId: string; lang: string; onLessons?: (l: Lesson[]) => void }) {
   const { t } = useTranslation();
   const qc = useQueryClient();
   const [lessons, setLessons] = useState<Lesson[]>([]);
@@ -107,7 +107,7 @@ function Curriculum({ trackId, teamId, lang }: { trackId: string; teamId: string
 
   const load = async () => {
     const { data } = await db.from('lessons').select('*').eq('track_id', trackId).order('sort_order').order('created_at');
-    setLessons((data ?? []) as Lesson[]);
+    setLessons((data ?? []) as Lesson[]); onLessons?.((data ?? []) as Lesson[]);
   };
   useEffect(() => { void load(); }, [trackId]);
 
@@ -123,7 +123,8 @@ function Curriculum({ trackId, teamId, lang }: { trackId: string; teamId: string
       is_published: form.published,
     }).eq('id', id);
     setBusy(false);
-    if (error) { toast.error(t('profile.saveError')); return; }
+    // Keep the open editor and its text on failure so nothing typed is lost.
+    if (error) { toast.error(t(String(error.message).includes('blueprint_placeholder') ? 'resources.item.placeholderBlock' : 'profile.saveError')); return; }
     toast.success(t('templates.saved')); setEditing(null); void load(); void qc.invalidateQueries();
   };
   const addLesson = async () => {
@@ -149,9 +150,13 @@ function Curriculum({ trackId, teamId, lang }: { trackId: string; teamId: string
     const other = lessons[idx + dir];
     if (!other) return;
     setBusy(true);
-    await db.from('lessons').update({ sort_order: other.sort_order }).eq('id', l.id);
-    await db.from('lessons').update({ sort_order: l.sort_order }).eq('id', other.id);
-    setBusy(false); void load();
+    try {
+      // Equal sort values (e.g. copied lessons) would make a swap a no-op, so fall back to positions.
+      const [a, b] = l.sort_order === other.sort_order ? [idx + dir, idx] : [other.sort_order, l.sort_order];
+      const r1 = await db.from('lessons').update({ sort_order: a }).eq('id', l.id);
+      const r2 = await db.from('lessons').update({ sort_order: b }).eq('id', other.id);
+      if (r1.error || r2.error) toast.error(t('profile.saveError'));
+    } finally { setBusy(false); await load(); }
   };
 
   return <div className="curriculum">
@@ -165,7 +170,7 @@ function Curriculum({ trackId, teamId, lang }: { trackId: string; teamId: string
             onEn={v => setForm(f => ({ ...f, titleEn: v }))} onEs={v => setForm(f => ({ ...f, titleEs: v }))} maxLength={120} />
           <Field id={`clt-${l.id}`} label={t('resources.item.curriculum.lessonType')}>
             <select id={`clt-${l.id}`} className="field-input" value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
-              {['video', 'pdf', 'audio', 'link', 'text'].map(x => <option key={x} value={x}>{t(`resources.item.lessonTypes.${x}`)}</option>)}
+              {['video', 'pdf', 'audio', 'link', 'text', ...(form.type === 'live' ? ['live'] : [])].map(x => <option key={x} value={x}>{t(`resources.item.lessonTypes.${x}`)}</option>)}
             </select>
           </Field>
           {form.type !== 'text' && <Field id={`clu-${l.id}`} label={t('learnHub.link')}>
@@ -225,6 +230,8 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const [courseId, setCourseId] = useState('');
   const [createdQuiz, setCreatedQuiz] = useState<{ quizId: string; offer: Offer } | null>(null);
   const [busy, setBusy] = useState(false);
+  // Multi-lesson tracks (e.g. from a blueprint) edit every lesson in the curriculum instead of one preset lesson.
+  const [trackLessons, setTrackLessons] = useState<Lesson[] | null>(null);
   const [progress, setProgress] = useState<number | null>(null);
   const [fileName, setFileName] = useState('');
   const loadedOnce = useRef(false);
@@ -243,8 +250,9 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
     void (async () => {
       const tr = await db.from('tracks').select('*').eq('id', initialId).maybeSingle();
       if (tr.data) {
-        const ls = await db.from('lessons').select('*').eq('track_id', initialId).order('sort_order').limit(1).maybeSingle();
-        const l = ls.data as Lesson | null;
+        const all = ((await db.from('lessons').select('*').eq('track_id', initialId).order('sort_order').order('created_at')).data ?? []) as Lesson[];
+        const l = all[0] ?? null;
+        if (isMultiLessonTrack(all)) setTrackLessons(all);
         setType(typeForLesson(l?.type));
         setItem({
           ...emptyItemState(),
@@ -262,7 +270,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
         } }));
         setActiveFrom(tr.data.available_from ? toLocalInput(new Date(tr.data.available_from)) : '');
         setVisibility(tr.data.visibility === 'public' || tr.data.visibility === 'unlisted' ? tr.data.visibility : 'team');
-        setLoaded({ entity: 'track', id: initialId, status: tr.data.is_published ? 'published' : 'draft' });
+        setLoaded({ entity: 'track', id: initialId, status: tr.data.is_published ? 'published' : 'draft', trackId: initialId });
         setLoadingItem(false);
         return;
       }
@@ -376,7 +384,9 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
     lessonUrl: draft.lesson.url, live: draft.lesson.live, filePath: draft.offer.filePath, courseId, publish: true,
   });
   const paidBlocked = paid && !sellReady;
-  const placeholder = hasPlaceholder(item.titleEn, item.titleEs, item.descEn, item.descEs, item.subtitleEn, item.subtitleEs);
+  const lessonsWithPlaceholders = trackLessons ? placeholderLessons(trackLessons) : [];
+  const placeholder = hasPlaceholder(item.titleEn, item.titleEs, item.descEn, item.descEs, item.subtitleEn, item.subtitleEs) || lessonsWithPlaceholders.length > 0;
+  const draftLessonsToPublish = trackLessons ? lessonsToPublishWithTrack(trackLessons, loaded?.status === 'published') : [];
   const canSave = issues.length === 0 && (progress === null || progress === 100) && !busy;
   const canPublish = canSave && !paidBlocked && !placeholder;
   const nav = stepNav(sections, sections.includes(section) ? section : 'presentation');
@@ -422,12 +432,23 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
         : await db.from('tracks').insert({ ...row, team_id: teamId, sort_order: Date.now() % 1_000_000 }).select('id').single();
       if (tr.error) return finish(false, undefined, tr.error.message);
       const trackId = tr.data.id as string;
+      if (trackLessons) {
+        if (publish && draftLessonsToPublish.length) {
+          const pl = await db.from('lessons').update({ is_published: true }).in('id', draftLessonsToPublish);
+          if (pl.error) return finish(false, undefined, pl.error.message);
+        }
+        setLoaded({ entity: 'track', id: trackId, status: publish ? 'published' : 'draft', trackId });
+        setSnapshot(itemSnapshot(item)); setDraftSnap(JSON.stringify(draft));
+        return finish(true, publish ? { entity: 'track', id: trackId } : undefined);
+      }
       const lessonRow = {
         title_en: base.title_en, title_es: base.title_es, type: lessonType, track_id: trackId,
         url: lessonType === 'live' ? null : draft.lesson.url.trim() || null,
         storage_path: cfg?.keepsFile ? draft.lesson.storagePath : null,
         live_starts_at: lessonType === 'live' && draft.lesson.live ? new Date(draft.lesson.live).toISOString() : null,
         replay_url: lessonType === 'live' ? draft.lesson.replay.trim() || null : null,
+        // The single lesson is the resource itself: it is visible exactly when the resource is published.
+        is_published: publish ? true : undefined,
       };
       const existing = loaded?.entity === 'track'
         ? (await db.from('lessons').select('id').eq('track_id', trackId).order('sort_order').limit(1).maybeSingle()).data
@@ -520,6 +541,11 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
     <p id="rb-active-hint" className="field-hint">{t('resources.item.activeFromHint', { tz })}</p>
   </Field>;
   const preview = <>
+    {trackLessons && <div className="form-field" role="status"><span className="field-label">{t('resources.item.lessonStatusTitle')}</span>
+      <ul className="lesson-status-list">{trackLessons.map(l => { const ph = hasPlaceholder(l.title_en, l.title_es, l.notes_en, l.notes_es, l.description_en, l.description_es);
+        return <li key={l.id}><strong>{pick(lang, l.title_en, l.title_es)}</strong> <small>{ph ? t('resources.item.lessonNeedsReview') : l.is_published && wasPublished ? t('resources.item.lessonLive') : l.is_published || draftLessonsToPublish.includes(l.id) ? t('resources.item.lessonVisible') : t('resources.item.lessonHidden')}</small></li>; })}</ul>
+      {!wasPublished && draftLessonsToPublish.length > 0 && <p className="field-hint">{t('resources.item.publishesLessons', { count: draftLessonsToPublish.length })}</p>}
+    </div>}
     <div className="form-field"><span className="field-label">{t('resources.item.cardOnPage')}</span><CardPreview item={item} type={type} lang={lang} cta={cta} /></div>
     <div className="form-field"><span className="field-label">{t('resources.item.landingTitle')}</span><LandingPreview item={item} type={type} lang={lang} cta={cta} paid={paid} /></div>
   </>;
@@ -576,7 +602,11 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
 
         {/* ---- Content ---- */}
         {section === 'content' && <>
-          {isTrackFlow(type) && cfg && <>
+          {trackLessons && loaded?.trackId && <>
+            <p className="field-hint">{t('resources.item.multiLessonHint')}</p>
+            <Curriculum trackId={loaded.trackId} teamId={teamId} lang={lang} onLessons={setTrackLessons} />
+          </>}
+          {isTrackFlow(type) && cfg && !trackLessons && <>
             {cfg.uploadAccept && <div className="form-field"><span className="field-label">{t(type === 'video' ? 'learnHub.uploadVideo' : type === 'audio' ? 'learnHub.uploadAudio' : 'learnHub.uploadPdf')}</span>
               <label className="file-button"><Upload />{t('learnHub.chooseFile')}<input type="file" accept={cfg.uploadAccept} hidden onChange={e => { const x = e.target.files?.[0]; if (x) void uploadLessonFile(x); }} /></label>
               {progress !== null && <div className="upload-progress"><span>{fileName}</span><progress value={progress} max={100} aria-label={t('learnHub.uploading')} /><small>{progress < 100 ? t('learnHub.uploadingPct', { pct: progress }) : t('learnHub.uploaded')}</small></div>}
@@ -668,7 +698,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
         {/* ---- Preview (all sizes; desktop also shows the aside) ---- */}
         {section === 'preview' && <div className="item-preview-mobile">{preview}</div>}
 
-        {placeholder && <p className="field-hint" role="alert">{t('resources.item.placeholderBlock')}</p>}
+        {placeholder && <p className="field-hint" role="alert">{t('resources.item.placeholderBlock')}{lessonsWithPlaceholders.length > 0 && ` ${t('resources.item.placeholderLessons', { names: lessonsWithPlaceholders.map(l => pick(lang, l.title_en, l.title_es)).join(', ') })}`}</p>}
         {issues.length > 0 && <p className="field-hint" role="alert">{t('resources.item.issues', { fields: issues.map(i => t(`resources.item.issue.${i}`)).join(', ') })}</p>}
 
         <div className="sheet-actions builder-actions">
