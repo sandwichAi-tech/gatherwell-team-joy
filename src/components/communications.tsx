@@ -32,8 +32,6 @@ type Automation = { id: string; name: string; trigger: string; timing_hours: num
 type Journey = { id: string; name: string; start_trigger: string; status: string; offer_id?: string | null; event_id?: string | null; attendance_audience?: string | null; attendance_send_at?: string | null; steps: { id: string; sort_order: number; kind: string; config: Record<string, unknown> }[] };
 type Setup = { email: boolean; sms: boolean; inApp: boolean };
 
-const MANAGER_ROLES = ['owner', 'admin', 'host'];
-
 function samplePreview(body: string, t: (k: string) => string) {
   return body
     .replaceAll('{{name}}', t('comms.sampleName'))
@@ -50,7 +48,12 @@ export function CommunicationsPage() {
   const [tab, setTab] = useState<'templates' | 'automations' | 'journeys'>('templates');
   const { data: ws } = useQuery({ ...workspaceQuery(userId), enabled: !!userId });
   const teamId = ws?.teamId ?? null;
-  const canManage = !!ws && MANAGER_ROLES.includes(ws.workspaceRole);
+  const { data: canManage = false } = useQuery({ queryKey: ['team-capability', teamId, 'messages'], enabled: !!teamId, queryFn: async () => {
+    if (!teamId) return false;
+    const { data, error } = await supabase.rpc('team_capability', { _team: teamId, _cap: 'messages' });
+    if (error) throw error;
+    return !!data;
+  } });
 
   const setupFn = useServerFn(getMessagingSetup);
   const { data: setup } = useQuery({ queryKey: ['messaging-setup'], queryFn: () => setupFn(), enabled: !!userId });
