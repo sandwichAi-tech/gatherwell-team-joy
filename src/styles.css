@@ -2646,3 +2646,12 @@ a.gw-cat-chip:hover{background:#fff}
 .referral-terms h3{font-size:15px;font-weight:600}
 .referral-code strong{letter-spacing:.08em}
 .chip.referral-reversed{text-decoration:line-through}
+
+/* Profile/team usability (rows 66–69) */
+.category-chips{display:flex;flex-wrap:wrap;gap:8px}
+.category-chip{min-height:44px;padding:0 14px;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--card);color:var(--foreground);border-radius:999px;cursor:pointer}
+.category-chip.is-selected{background:var(--primary);color:var(--primary-foreground);border-color:var(--primary)}
+.category-chip:disabled{opacity:.5;cursor:not-allowed}
+.category-chip:focus-visible{outline:2px solid var(--ring);outline-offset:2px}
+.team-description{margin-top:6px;color:var(--body);overflow-wrap:anywhere;white-space:pre-line}
+.team-header-actions{display:flex;flex-wrap:wrap;gap:8px}

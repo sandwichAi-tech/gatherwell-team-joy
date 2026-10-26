@@ -848,6 +848,20 @@
       "when": 1792972322756,
       "tag": "0120_referral_payout_lock_fix",
       "breakpoints": true
+    },
+    {
+      "idx": 121,
+      "version": "7",
+      "when": 1792972885050,
+      "tag": "0121_team_description_and_host_categories",
+      "breakpoints": true
+    },
+    {
+      "idx": 122,
+      "version": "7",
+      "when": 1792972911619,
+      "tag": "0122_host_categories_max_matches_existing",
+      "breakpoints": true
     }
   ]
 }

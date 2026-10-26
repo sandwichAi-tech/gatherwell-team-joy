@@ -10,7 +10,7 @@ import { AssistantUsage } from '@/components/assistant/assistant-usage';
 import { isAdminQuery } from '@/lib/site-media';
 import { NotificationSettings } from '@/components/notifications';
 import { useEffect, useState, type ReactNode } from 'react';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate, useSearch } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -120,7 +120,7 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
     {errors[key] && <p className="field-error">{errors[key]}</p>}
   </div>;
 
-  return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={t('profile.editTitle')} icon="Pencil"
+  return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={t('profile.editTitle')} description={t('profile.editHelp')} icon="Pencil"
     footer={<Button className="sheet-primary" disabled={busy} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>}>
     <div className="edit-form">
       <div className="edit-preview">
@@ -177,6 +177,8 @@ export function MePage() {
   const saveLanguage = useLanguageSaver(userId);
   const [editing, setEditing] = useState(false);
   const [panel, setPanel] = useState<Panel>(null);
+  const wanted = useSearch({ strict: false }) as { panel?: string };
+  useEffect(() => { if (wanted.panel === 'edit') setEditing(true); else if (wanted.panel === 'hostProfile' || wanted.panel === 'invite') setPanel(wanted.panel); }, [wanted.panel]);
   const [deleting, setDeleting] = useState(false);
   const [confirmText, setConfirmText] = useState('');
   const [soleTeams, setSoleTeams] = useState<string[] | null>(null);
