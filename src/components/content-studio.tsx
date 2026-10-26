@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -116,18 +116,21 @@ export function OfferDetailsEditor({ offer, onClose }: { offer: Offer | null; on
 
 /* ---------- Duplicate + manual grant actions ---------- */
 export function OfferHostActions({ offer, onChanged }: { offer: Offer; onChanged: () => void }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(); const navigate = useNavigate();
   const [grantOpen, setGrantOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState(false);
   const duplicate = async () => {
-    if (!(await confirmAction({ title: t('content.confirmDuplicate') }))) return;
+    if (busy) return;
     setBusy(true);
-    const { error } = await duplicateOffer(offer.id);
+    if (!(await confirmAction({ title: t('content.confirmDuplicate') }))) { setBusy(false); return; }
+    const { data: copyId, error } = await duplicateOffer(offer.id);
     setBusy(false);
     if (error) { toast.error(t('offers.saveError')); return; }
     toast.success(t('content.duplicated'));
     onChanged();
+    // Open the new draft copy so the coach edits the copy, never the original by mistake.
+    if (typeof copyId === 'string') void navigate({ to: '/offer/$id', params: { id: copyId } });
   };
   const grant = async () => {
     setBusy(true);
@@ -302,7 +305,8 @@ function CourseLessonEditor({ lesson, offer, siblings, onClose }: { lesson: (Par
   const save = async () => {
     setBusy(true);
     try {
-      const row = { title_en: f.title_en.trim(), title_es: f.title_es.trim(), type: f.type, url: f.url.trim() || null, storage_path: needsFile ? storagePath : null,
+      // An uploaded file replaces any earlier link, so a stale example URL never lingers behind it.
+      const row = { title_en: f.title_en.trim(), title_es: f.title_es.trim(), type: f.type, url: needsFile && storagePath ? null : f.url.trim() || null, storage_path: needsFile ? storagePath : null,
         description_en: f.description_en.trim() || null, description_es: f.description_es.trim() || null,
         duration_minutes: parseInt(f.duration, 10) > 0 ? Math.min(600, parseInt(f.duration, 10)) : null,
         is_preview: f.is_preview, is_published: f.is_published, prerequisite_lesson_id: f.prerequisite || null, event_id: f.type === 'live' && f.event_id ? f.event_id : null };

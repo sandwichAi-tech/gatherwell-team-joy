@@ -21,7 +21,7 @@ import type { WorkspaceRole } from '@/components/workspace-settings';
 import { useFeature } from '@/lib/feature-flags';
 import { isAdminQuery } from '@/lib/site-media';
 import { AccountMenu } from '@/components/account-menu';
-import { insightsNavigationLabel, navigationPathActive, showInsightsNavigation } from '@/lib/insights-navigation';
+import { insightsNavigationLabel, navigationPathActive, resourcesOwnsPath, showInsightsNavigation } from '@/lib/insights-navigation';
 import { splitMobileNav } from '@/lib/mobile-nav';
 import { ListSkeleton, QueryFeedback } from '@/components/launch-states';
 
@@ -58,7 +58,8 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
  const navTabs = (profile?.role_intent === 'guest' ? guestTabs : coachTabs).filter(tab => tab.key !== 'learn' || learnOn);
  const isActive = (path: string) => navigationPathActive(pathname, path);
  const navLabel = (key: string) => key === 'insights' ? insightsNavigationLabel(i18n.resolvedLanguage, t) : t(`nav.${key}`);
- const current = navTabs.find(tab => isActive(tab.path)) ?? tabs[0];
+ // Course, resource and membership pages (/offer/…) belong to Resources, not Home.
+ const current = navTabs.find(tab => isActive(tab.path)) ?? (resourcesOwnsPath(pathname) ? navTabs.find(tab => tab.key === 'learn') : undefined) ?? tabs[0];
  // Mobile bar stays fixed at five slots: four primary destinations plus a More menu for the rest.
  const { primary: primaryTabs, more: moreTabs } = splitMobileNav(navTabs);
  const moreActive = moreTabs.some(tab => isActive(tab.path));

@@ -9,7 +9,7 @@ const lesson = (id: string, track_id: string, type: string, o: Partial<Lesson> =
 const recipe = (id: string, team_id: string | null): Recipe => ({ id, team_id, title_en: id, title_es: id, cover_url: null, cover_style: 0, prep_minutes: 10, tags: [], ingredients: {}, steps: {}, created_by: null, created_at: '', private_owner: null, sort_order: 0, is_published: true, subtitle_en: null, subtitle_es: null, cta_en: null, cta_es: null, card_layout: 'preview', accent: 'plum', promo_en: null, promo_es: null, available_from: null, available_tz: null } as Recipe);
 const entry = (id: string, kind: string): LearningEntry => ({ id, kind, title_en: id, title_es: id, summary_en: null, summary_es: null, cover_style: 0, cover_url: null, status: 'published', host_name: 'Ana', source: 'free', enrolled_at: '', lessons: 4, done: 1 });
 
-const data: LearnData = { tracks: [], lessons: [lesson('v1', 'tv', 'video'), lesson('x1', 'tm', 'text'), lesson('a1', 'tm', 'audio'), lesson('c1', 'course-sec', 'video')], done: new Set(['x1']) };
+const data: LearnData = { tracks: [], lessons: [lesson('v1', 'tv', 'video'), lesson('x1', 'tm', 'text'), lesson('a1', 'tm', 'audio'), lesson('c1', 'course-sec', 'video')], done: new Set(['x1']), locked: new Map() };
 
 describe('resource mapping', () => {
   const list = toResources({ data, tracks: [track('tv'), track('tm'), track('empty'), track('course-sec', { offer_id: 'C' })], learning: [entry('C', 'course'), entry('D', 'download'), entry('M', 'membership')], recipes: [recipe('starter', null), recipe('team', 'T')], quizOffers: new Set(['C']) });

@@ -8009,6 +8009,10 @@ export type Database = {
         Args: { _team: string; _template: string }
         Returns: string
       }
+      course_access_start: {
+        Args: { _offer: string; _user: string }
+        Returns: string
+      }
       course_progress: { Args: { _offer: string }; Returns: Json }
       create_auth_intent: { Args: { _path: string }; Returns: string }
       create_event_badge: {
@@ -8372,8 +8376,11 @@ export type Database = {
         }
         Returns: string
       }
+      learn_object_unlocked: { Args: { _name: string }; Returns: boolean }
       leave_free_offer: { Args: { _offer: string }; Returns: undefined }
       leave_team: { Args: { _team: string }; Returns: undefined }
+      lesson_is_unlocked: { Args: { _lesson: string }; Returns: boolean }
+      lesson_unlock_at: { Args: { _lesson: string }; Returns: string }
       list_public_gatherings: {
         Args: { _days?: number; _include_samples?: boolean; _limit?: number }
         Returns: Json
@@ -8431,6 +8438,19 @@ export type Database = {
       my_following: { Args: never; Returns: Json }
       my_invite_code: { Args: never; Returns: string }
       my_learning: { Args: never; Returns: Json }
+      my_locked_lessons: {
+        Args: never
+        Returns: {
+          duration_minutes: number
+          id: string
+          sort_order: number
+          title_en: string
+          title_es: string
+          track_id: string
+          type: string
+          unlock_at: string
+        }[]
+      }
       my_offer_stats: {
         Args: never
         Returns: {

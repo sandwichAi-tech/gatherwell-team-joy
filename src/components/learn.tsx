@@ -8,7 +8,8 @@ import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { toast } from 'sonner';
 import { isLive } from '@/lib/resource-flow';
-import { ArrowLeft, ArrowRight, Bell, BellRing, Bookmark, BookmarkCheck, CalendarPlus, Check, Clock, ExternalLink, FileText, Link2, Play, Radio, Settings2, Share2, Video, Waveform, Download } from '@/components/icons';
+import { ArrowLeft, ArrowRight, Bell, BellRing, Bookmark, BookmarkCheck, CalendarPlus, Check, Clock, ExternalLink, FileText, Link2, Lock, Play, Radio, Settings2, Share2, Video, Waveform, Download } from '@/components/icons';
+import { formatUnlock } from '@/lib/course-release';
 import { Button } from '@/components/ui/button';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { supabase } from '@/integrations/supabase/client';
@@ -155,6 +156,10 @@ export function TrackPage({ id }: { id: string }) {
   if (!isLive(opensAt) && !showDrafts) return <section className="panel"><BackLink to="/learn" label={t('learn.title')} />
     <h1>{title}</h1><p className="chip" role="status">{t('resources.item.notYet')}</p>
     <p className="auth-subtitle">{t('resources.item.notYetText', { date: new Date(opensAt!).toLocaleString(lang) })}</p></section>;
+  // Course without access: lessons are withheld server-side; hand off to the course page to join or buy.
+  if (track.offer_id && outline.length === 0 && !showDrafts) return <section className="panel empty-state" role="status"><BackLink to="/learn" label={t('learn.title')} />
+    <Lock /><h1>{title}</h1><p>{t('learnHub.enrollFirst')}</p>
+    <Button asChild><Link to="/offer/$id" params={{ id: track.offer_id }}>{t('learnHub.enrollOpen')}<ArrowRight /></Link></Button></section>;
   return <>
     <BackLink to="/learn" label={t('learn.title')} />
     <section className="track-hero"><LearnCover path={track.cover_url} style={track.cover_style} title={title} className="is-wide" />
@@ -163,10 +168,10 @@ export function TrackPage({ id }: { id: string }) {
         <div className="track-foot"><ProgressRing value={s.pct} size={52} label={t('learnHub.progressLabel', { done: s.done, total: s.count })} /><span className="track-facts">{t('learnHub.progressLabel', { done: s.done, total: s.count })} · {minutesLabel(t, s.minutes)}</span></div>
         {s.next && <Button asChild className="continue-button"><Link to="/learn/lesson/$id" params={{ id: s.next.id }}>{s.done ? t('learnHub.continueWhere') : t('learnHub.start')}<ArrowRight /></Link></Button>}</div></section>
     {s.complete && <CompletionCard title={title} />}
-    <ol className="lesson-list">{outline.map((l, i) => { const type = effectiveType(l); const Icon = TYPE_ICON[type]; const done = data.done.has(l.id); return <li key={l.id}>
-      <Link to="/learn/lesson/$id" params={{ id: l.id }} className={`lesson-row ${done ? 'is-done' : ''}`}>
-        <span className="lesson-index">{done ? <Check /> : i + 1}</span>
-        <span className="lesson-info"><strong>{lessonTitle(l, lang)}</strong><small><Icon />{t(`learnHub.type.${l.type === 'live' && l.replay_url ? 'replay' : type}`)}{l.duration_minutes ? ` · ${minutesLabel(t, l.duration_minutes)}` : ''}{l.type === 'live' && l.live_starts_at && !l.replay_url ? ` · ${fmtWhen(l.live_starts_at, lang)}` : ''}{!l.is_published ? ` · ${t('templates.draft')}` : ''}</small></span>
+    <ol className="lesson-list">{outline.map((l, i) => { const type = effectiveType(l); const Icon = TYPE_ICON[type]; const done = data.done.has(l.id); const lockedAt = data.locked.get(l.id); return <li key={l.id}>
+      <Link to="/learn/lesson/$id" params={{ id: l.id }} className={`lesson-row ${done ? 'is-done' : ''} ${lockedAt ? 'is-locked' : ''}`}>
+        <span className="lesson-index">{done ? <Check /> : lockedAt ? <Lock aria-hidden="true" /> : i + 1}</span>
+        <span className="lesson-info"><strong>{lessonTitle(l, lang)}</strong><small>{lockedAt ? <><Lock />{t('learnHub.locked.opens', { date: formatUnlock(lockedAt, lang) })}</> : <><Icon />{t(`learnHub.type.${l.type === 'live' && l.replay_url ? 'replay' : type}`)}{l.duration_minutes ? ` · ${minutesLabel(t, l.duration_minutes)}` : ''}{l.type === 'live' && l.live_starts_at && !l.replay_url ? ` · ${fmtWhen(l.live_starts_at, lang)}` : ''}{!l.is_published ? ` · ${t('templates.draft')}` : ''}</>}</small></span>
         <ArrowRight />
       </Link></li>; })}</ol>
   </>;
@@ -224,8 +229,17 @@ export function LessonPage({ id }: { id: string }) {
   const showDrafts = leader && track.team_id === teamId;
   if (!lesson.is_published && !showDrafts) return <section className="panel"><BackLink to="/learn" label={t('learn.title')} /><p className="auth-subtitle">{t('learnHub.notFound')}</p></section>;
   const list = visibleLessons(data, track.id, showDrafts); const idx = list.findIndex(l => l.id === id);
+  const lockedAt = data.locked.get(id);
+  // Scheduled lesson: the server withholds its content, files and quiz; show only title and opening time.
+  if (lockedAt) return <>
+    <BackLink to="/learn/track/$id" params={{ id: track.id }} label={trackTitle(track, lang)} />
+    <div className="lesson-head"><span className="eyebrow">{t('learnHub.lessonOf', { n: idx + 1, total: list.length })}</span><h1>{lessonTitle(lesson, lang)}</h1></div>
+    <section className="panel empty-state lesson-locked" role="status"><Lock /><h2>{t('learnHub.locked.title')}</h2>
+      <p>{t('learnHub.locked.text', { date: formatUnlock(lockedAt, lang) })}</p>
+      <Button asChild variant="secondary"><Link to="/learn/track/$id" params={{ id: track.id }}>{t('learnHub.locked.back')}</Link></Button></section>
+  </>;
   const done = data.done.has(id); const s = trackStats(data, track.id);
-  const next = list.slice(idx + 1).find(l => !data.done.has(l.id)) ?? list[idx + 1] ?? null;
+  const next = list.slice(idx + 1).find(l => !data.done.has(l.id) && !data.locked.has(l.id)) ?? list[idx + 1] ?? null;
   const notes = pick(lang, lesson.notes_en, lesson.notes_es);
   const toggle = async () => {
     if (busy) return; // ignore double clicks; the server call is idempotent anyway

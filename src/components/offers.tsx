@@ -77,7 +77,7 @@ export function OffersManagePage({ newKind, mode }: { newKind?: 'course' | 'down
           <small>{priceLabel(t, o, lang)} · {t(`offers.status.${o.status}`)}</small>
           <small>{t(o.kind === 'download' ? 'offers.buyers' : 'offers.members', { count: o.active })}</small></div>
         <div className="offer-row-actions">
-          {o.status === 'published' && <Button asChild variant="ghost" size="icon" aria-label={t('offers.view')}><Link to="/offer/$id" params={{ id: o.id }}><ChevronRight /></Link></Button>}
+          <Button asChild variant="ghost" size="icon" aria-label={t('offers.view')}><Link to="/offer/$id" params={{ id: o.id }}><ChevronRight /></Link></Button>
           <Button variant="secondary" size="icon" aria-label={t('offers.edit')} onClick={() => setEditing(o)}><Pencil /></Button>
         </div>
       </li>)}</ul>}
@@ -227,7 +227,7 @@ export function OfferPage({ id, paid, panel }: { id: string; paid?: boolean; pan
       </div>}
       {offerText(offer, lang) && <p className="offer-description">{offerText(offer, lang)}</p>}
       {includes.length > 0 && <><h2>{t('offers.whatsIncluded')}</h2><ul className="offer-includes">{includes.map((x, i) => <li key={i}><Check />{x}</li>)}</ul></>}
-      {offer.kind === 'course' && <p className="muted-small">{t('offers.dripNote', { count: offer.drip_days })}</p>}
+      {offer.kind === 'course' && offer.drip_days > 0 && <p className="muted-small">{t('offers.dripNote', { count: offer.drip_days })}</p>}
       {paid && !owned && <p className="muted-small" role="status">{t('offers.confirming')}</p>}
       {owned ? <div className="offer-owned">
         <span className="chip"><Check className="inline-icon" />{t(offer.host_id === userId ? 'offers.yours' : offer.kind === 'download' ? 'offers.owned' : 'offers.member')}</span>

@@ -1838,7 +1838,15 @@
     "audioLink": "Enlace de audio (HTTPS)",
     "downloadPdf": "Descargar",
     "completeError": "No pudimos guardar tu progreso. Inténtalo de nuevo.",
-    "completeSaved": "Marcada como completada"
+    "completeSaved": "Marcada como completada",
+    "locked": {
+      "title": "Esta lección se abre pronto",
+      "text": "Se abre el {{date}}. Tu curso libera una lección a la vez según el calendario de tu anfitrión.",
+      "opens": "Se abre el {{date}}",
+      "back": "Volver al curso"
+    },
+    "enrollFirst": "Únete o compra este curso para abrir sus lecciones.",
+    "enrollOpen": "Ver opciones del curso"
   },
   "challenges": {
     "title": "Retos",
@@ -3633,7 +3641,7 @@
     "type": "Tipo",
     "kind": {
       "membership": "Círculo",
-      "course": "Curso mensual",
+      "course": "Curso",
       "download": "Descarga"
     },
     "kindText": {
@@ -7162,7 +7170,8 @@
       "cooldown": "Espera un poco antes de intentarlo de nuevo.",
       "attempts_exhausted": "Ya usaste todos tus intentos.",
       "generic": "Algo salió mal. Inténtalo de nuevo.",
-      "saveFailed": "Esa respuesta no se guardó. Revisa tu conexión y elígela de nuevo."
+      "saveFailed": "Esa respuesta no se guardó. Revisa tu conexión y elígela de nuevo.",
+      "locked": "Este cuestionario se abre con su lección."
     }
   }
 }
