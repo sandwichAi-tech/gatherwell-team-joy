@@ -55,7 +55,7 @@ export function ToolsPage() {
           icon="SquaresFour"
           title={t('toolsPage.emptyTitle')}
           text={t('toolsPage.emptyText')}
-          action={<Button asChild variant="secondary"><Link to="/home">{t('toolsPage.emptyAction')}</Link></Button>}
+          action={<Button asChild variant="secondary" className="max-w-full whitespace-normal text-center"><Link to="/home">{t('toolsPage.emptyAction')}</Link></Button>}
         />
       </section>
     )}
