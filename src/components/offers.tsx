@@ -22,7 +22,7 @@ import { Switch } from '@/components/ui/switch';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
-import { workspaceQuery, mediaUrl, uploadMedia } from '@/lib/account';
+import { workspaceQuery, mediaUrl, mediaRendition, uploadMedia } from '@/lib/account';
 import { COVER_STYLES } from '@/lib/gatherings';
 import { formatMoney, paymentsStatusQuery } from '@/lib/billing';
 import {

@@ -19,13 +19,16 @@ export const getPublicEventMeta = createServerFn({ method: 'GET' })
     const { data: pr } = await sb.rpc('event_price', { _id: data.id });
     const priceCents = (pr as { price_cents?: number } | null)?.price_cents ?? null;
     let image: string | null = null;
+    let cover: import('@/lib/media-renditions').Rendition | null = null;
     if (e.cover_url) {
-      if (/^https:/.test(e.cover_url)) image = e.cover_url;
+      if (/^https:/.test(e.cover_url)) { image = e.cover_url; cover = { src: e.cover_url }; }
       else {
         try {
           const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
-          const { data: signed } = await supabaseAdmin.storage.from('media').createSignedUrl(e.cover_url, 60 * 60 * 24 * 7);
-          image = signed?.signedUrl ?? null;
+          const { signRendition } = await import('@/lib/media-renditions');
+          // Path comes from the published event resolved by id, never from the caller.
+          cover = await signRendition(supabaseAdmin.storage.from('media'), e.cover_url, 60 * 60 * 24 * 7);
+          image = cover?.src ?? null;
         } catch { image = null; }
       }
     }
@@ -34,5 +37,5 @@ export const getPublicEventMeta = createServerFn({ method: 'GET' })
     const staticMap = mapsKey && where
       ? `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(where)}&zoom=15&size=640x260&scale=2&markers=color:0x2F2340%7C${encodeURIComponent(where)}&key=${mapsKey}`
       : null;
-    return { title: e.title, startsAt: e.starts_at, timezone: e.timezone, image: image ?? new URL(shareImage, getRequest().url).href, staticMap, cancelled: e.status === 'cancelled', host: e.host?.name ?? null, place: e.location_name || null, online: !!e.is_online, priceCents };
+    return { cover, title: e.title, startsAt: e.starts_at, timezone: e.timezone, image: image ?? new URL(shareImage, getRequest().url).href, staticMap, cancelled: e.status === 'cancelled', host: e.host?.name ?? null, place: e.location_name || null, online: !!e.is_online, priceCents };
   });
