@@ -42,6 +42,15 @@ export function lessonEditorConfig(type: LessonType) {
   };
 }
 
+/** An uploaded file must match the lesson type, so a PDF can never be saved as a video (or vice versa). */
+export function fileMatchesLessonType(type: LessonType, file: { type: string; name: string }): boolean {
+  const mime = (file.type || '').toLowerCase(); const name = file.name.toLowerCase();
+  if (type === 'pdf') return mime === 'application/pdf' || name.endsWith('.pdf');
+  if (type === 'video') return mime.startsWith('video/');
+  if (type === 'audio') return mime.startsWith('audio/');
+  return false;
+}
+
 /* ---------- Single dynamic resource builder (/learn/create?type=…) ---------- */
 
 /** Offer-backed types create a course or a download offer; everything else uses tracks/recipes/quizzes. */

@@ -75,7 +75,7 @@ export const cancelOfferMembership = createServerFn({ method: 'POST' })
 /** Signed download link, only for buyers (or the host). */
 export const offerDownloadLink = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ offerId: z.string().uuid() }).parse(d))
+  .inputValidator((d: unknown) => z.object({ offerId: z.string().uuid(), inline: z.boolean().optional() }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: access } = await context.supabase.rpc('has_offer_access' as never, { _offer: data.offerId, _uid: context.userId } as never);
     if (!access) return { ok: false as const, error: 'forbidden' };
@@ -84,7 +84,10 @@ export const offerDownloadLink = createServerFn({ method: 'POST' })
     if (!o?.file_path) return { ok: false as const, error: 'no_file' };
     const { data: s, error } = await supabaseAdmin.storage.from('offer-files').createSignedUrl(o.file_path, 600, { download: true });
     if (error || !s) return { ok: false as const, error: 'failed' };
-    return { ok: true as const, url: s.signedUrl };
+    // Inline viewing link (PDF only): same access check and expiry; the storage path is never returned.
+    const pdf = /\.pdf$/i.test(o.file_path);
+    const view = data.inline && pdf ? (await supabaseAdmin.storage.from('offer-files').createSignedUrl(o.file_path, 600)).data?.signedUrl ?? null : null;
+    return { ok: true as const, url: s.signedUrl, viewUrl: view, pdf };
   });
 
 /** Pause a membership for 1–3 months (months = 0 resumes). Paid subscriptions also pause billing. */

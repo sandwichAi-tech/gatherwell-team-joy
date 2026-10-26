@@ -20,7 +20,7 @@ import { RichTextEditor, RichTextView } from '@/components/rich-text';
 import { getPaymentsReadiness } from '@/lib/billing.functions';
 import { canSellPaid } from '@/lib/payments-readiness';
 import {
-  CREATE_TYPES, emptyBuilderDraft, isTrackFlow, lessonEditorConfig, lessonPresetFor, offerKindFor, typeContentAtRisk,
+  CREATE_TYPES, emptyBuilderDraft, fileMatchesLessonType, isTrackFlow, lessonEditorConfig, lessonPresetFor, offerKindFor, typeContentAtRisk,
   type BuilderDraft, type CreateType,
 } from '@/lib/create-resource';
 import { listOf, RECIPE_TAGS, uploadLearnFile, type Lesson } from '@/lib/learn';
@@ -41,7 +41,7 @@ type LoadedRef = { entity: 'track' | 'recipe' | 'offer'; id: string; status: 'dr
 
 /** Map a stored track's first lesson back onto a builder type. */
 const typeForLesson = (t?: string | null): CreateType =>
-  t === 'pdf' ? 'guide' : t === 'video' || t === 'audio' || t === 'link' || t === 'live' ? t : 'video';
+  t === 'pdf' || t === 'file' ? 'guide' : t === 'video' || t === 'audio' || t === 'link' || t === 'live' ? t : 'video';
 
 /** Live public-card preview: the three branded layouts with the chosen accent. */
 function CardPreview({ item, type, lang, cta }: { item: ItemState; type: CreateType; lang: string; cta: string }) {
@@ -215,6 +215,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const [loadError, setLoadError] = useState(false);
   const [loadingItem, setLoadingItem] = useState(!!initialId);
   const [snapshot, setSnapshot] = useState(itemSnapshot(emptyItemState()));
+  const [draftSnap, setDraftSnap] = useState(JSON.stringify(emptyBuilderDraft()));
   const [refund, setRefund] = useState<RefundPolicy>('24h');
   const [visibility, setVisibility] = useState<'team' | 'public' | 'unlisted'>('team');
   const [drip, setDrip] = useState(7);
@@ -227,6 +228,8 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const [progress, setProgress] = useState<number | null>(null);
   const [fileName, setFileName] = useState('');
   const loadedOnce = useRef(false);
+  // A reopened item starts clean: its loaded values become the saved baseline.
+  const baselinePending = useRef(!!initialId);
 
   const offers = useQuery(myOffersQuery(userId));
   const courses = (offers.data ?? []).filter(o => o.kind === 'course' && o.status !== 'archived');
@@ -317,6 +320,12 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
     })();
   }, [initialId]);
 
+  useEffect(() => {
+    if (loadingItem || !baselinePending.current) return;
+    baselinePending.current = false;
+    setSnapshot(itemSnapshot(item)); setDraftSnap(JSON.stringify(draft));
+  }, [loadingItem, item, draft]);
+
   const stepsRef = useRef<HTMLDivElement>(null);
   const goStep = (s: ItemSection) => {
     setSection(s);
@@ -342,6 +351,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   };
 
   const uploadLessonFile = async (file: File) => {
+    if (lessonType && !fileMatchesLessonType(lessonType, file)) { toast.error(t('learnHub.wrongFileType')); return; }
     setFileName(file.name); setProgress(0);
     try { const p = await uploadLearnFile(teamId, file, setProgress); patchLesson({ storagePath: p, url: '' }); setProgress(100); }
     catch { toast.error(t('profile.saveError')); setProgress(null); setFileName(''); }
@@ -359,7 +369,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const priceCents = item.access.free ? 0 : item.access.price ? Math.round(Number(item.access.price) * 100) : NaN;
   const paid = !item.access.free && offerKindFor(type) !== null;
   const sections = sectionsFor(type);
-  const dirty = itemSnapshot(item) !== snapshot;
+  const dirty = itemSnapshot(item) + JSON.stringify(draft) !== snapshot + draftSnap;
   const status = loaded?.status ?? 'draft';
 
   const issues = itemIssues(type, item, {
@@ -424,11 +434,11 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
         : null;
       const ls = existing
         ? await db.from('lessons').update(lessonRow).eq('id', existing.id)
-        : await db.from('lessons').insert({ ...lessonRow, sort_order: 1 });
+        : await db.from('lessons').insert({ ...lessonRow, sort_order: 1 }).select('id').single();
       if (ls.error) return finish(false, undefined, ls.error.message);
-      if (lessonType === 'live' && draft.lesson.meeting.trim() && !existing) await supabase.from('lesson_live_links').insert({ lesson_id: ls.data?.id ?? existing?.id, url: draft.lesson.meeting.trim() });
+      if (lessonType === 'live' && draft.lesson.meeting.trim() && !existing) await supabase.from('lesson_live_links').insert({ lesson_id: (ls.data as { id: string } | null)?.id ?? existing?.id, url: draft.lesson.meeting.trim() });
       setLoaded({ entity: 'track', id: trackId, status: publish ? 'published' : 'draft' });
-      setSnapshot(itemSnapshot(item));
+      setSnapshot(itemSnapshot(item)); setDraftSnap(JSON.stringify(draft));
       return finish(true, publish ? { entity: 'track', id: trackId } : undefined);
     }
     if (type === 'recipe') {
@@ -446,7 +456,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
         : await db.from('recipes').insert({ ...row, team_id: teamId, created_by: userId }).select('id').single();
       if (r.error) return finish(false, undefined, r.error.message);
       const rid = r.data.id as string;
-      setLoaded({ entity: 'recipe', id: rid, status: publish ? 'published' : 'draft' }); setSnapshot(itemSnapshot(item));
+      setLoaded({ entity: 'recipe', id: rid, status: publish ? 'published' : 'draft' }); setSnapshot(itemSnapshot(item)); setDraftSnap(JSON.stringify(draft));
       return finish(true, publish ? { entity: 'recipe', id: rid } : undefined);
     }
     const kind = offerKindFor(type);
@@ -473,7 +483,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
         trackId = ct.data?.id;
       }
       setLoaded({ entity: 'offer', id: offerId, status: publish ? 'published' : 'draft', trackId });
-      setSnapshot(itemSnapshot(item));
+      setSnapshot(itemSnapshot(item)); setDraftSnap(JSON.stringify(draft));
       return finish(true, publish ? { entity: 'offer', id: offerId } : undefined);
     }
     // quiz: create a draft quiz on the chosen course, then open the question builder inline.

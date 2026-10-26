@@ -1,5 +1,13 @@
 # ZoheeWell Change Log
 
+## 2026-10-26 — Resources pressure test (Website Notes rows 60–62, in progress)
+- Row 60: PDF lessons (and any PDF attached to a lesson saved under another type) open in a shared document viewer with Open and Download; empty states name the missing document/audio/file instead of "video"; signed-URL loading/error/retry states.
+- Lesson uploads must match the lesson type (a PDF can no longer be attached to a video lesson).
+- Owners of a purchased PDF download can read it inline (same access check, 10-minute signed link, no storage path returned).
+- Builder: reopened items no longer show "unsaved changes" on load; file/link edits now count as unsaved; a live session's meeting link is saved on first save; ?id= alone reopens the item.
+- Verified in browser with ZZ-TEST fixtures (removed): guide PDF upload → draft → reopen → publish → member view at 1280/390/320, reload, signed URLs, no console errors.
+- Unverified: blueprint flow (row 61), other types, paid pre-checkout, purchased-PDF viewer, Spanish UI in browser.
+
 ## 2026-10-26 — Site-wide image quality (Website Notes row 63)
 - Root causes: uploaded photos were always served at full original size with no size choices; a faint grain layer sat over every real photo; signed-out guests saw the colour fallback instead of the event photo; Discover cards never showed photos because the cover lookup function (public_cover_paths) errored; signed-in people saw fallbacks for other hosts' event covers.
 - Photos now come in signed 480/960/1600/2400px versions (never enlarged past the original, crop/aspect and focal point kept) and each placement asks for its real display size.

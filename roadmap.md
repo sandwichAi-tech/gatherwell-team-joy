@@ -15,3 +15,7 @@
 - [x] Invite landing, multi-category chips, profile editor split, team edit/description
 - [x] Unauthorized member view, public coach categories and Discover coach filter verified with removed fixtures
 - [x] Row 63 site-wide image quality (events, Discover, resources, recipes, team; real devices unverified)
+
+- [ ] Row 60 PDF resources — main flow passes; Spanish browser check and purchased-PDF viewer pending
+- [ ] Row 61 Resource blueprint publishing — not yet browser-tested
+- [ ] Row 62 Full Resources pressure test — in progress
