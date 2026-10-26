@@ -1,5 +1,11 @@
 # Challenge experience pass — DONE
 
+## Attendance launch pass — rows 93, 98, 99, 100
+- [ ] 98: secure event-bound quick check-in, waiver/status binding, camera fallbacks and staff isolation.
+- [ ] 93: decode Home QR through server-confirmed check-in, wrong-event and duplicate verification; physical devices unverified.
+- [ ] 99: attendance-only editable post-event journey with send-time eligibility, preferences and deduplication.
+- [ ] 100: safe new-fixture pilot, integration readiness, invites/resource checks, bilingual viewport review, tests and cleanup.
+
 - [x] P1: step-based challenge builder (basics/model/activities/messages/review), goal/streak/points models, draft/publish lifecycle, participant Today + goal progress + conditional leaderboard
 - [x] P2: challenge messages (6 kinds) in builder + Communications hub section with pause/edit and honest channel labels
 - [x] P3: activities attach resources/links/files with day availability; participant view renders them
