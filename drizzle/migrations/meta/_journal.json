@@ -1016,6 +1016,13 @@
       "when": 1793055532943,
       "tag": "0144_pinned_team_waivers",
       "breakpoints": true
+    },
+    {
+      "idx": 145,
+      "version": "7",
+      "when": 1793055920115,
+      "tag": "0145_explicit_waiver_version_reselection",
+      "breakpoints": true
     }
   ]
 }
