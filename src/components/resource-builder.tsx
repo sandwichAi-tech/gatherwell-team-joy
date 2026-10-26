@@ -125,7 +125,7 @@ function Curriculum({ trackId, teamId, lang, onLessons }: { trackId: string; tea
   };
   const saveLesson = async (id: string) => {
     // Never save a lesson whose link can't open.
-    if (form.type !== 'text' && form.url.trim() && !validUrl(form.url)) { toast.error(t('resources.item.issue.url')); return; }
+    if (form.type !== 'text' && form.url.trim() && !validUrl(form.url)) { toast.error(t('resources.item.issues', { fields: t('resources.item.issue.url') })); return; }
     setBusy(true);
     const { error } = await db.from('lessons').update({
       title_en: form.titleEn.trim() || 'Lesson', title_es: form.titleEs.trim() || form.titleEn.trim() || 'Lección',
