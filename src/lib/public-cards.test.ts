@@ -57,7 +57,7 @@ describe('visibleLessons (course outline draft filtering)', () => {
   it('hides draft lessons from participants and shows them to leaders', async () => {
     const { visibleLessons } = await import('./learn');
     const mk = (id: string, pub: boolean) => ({ id, track_id: 'T', is_published: pub }) as never;
-    const data = { tracks: [], lessons: [mk('a', true), mk('b', false), mk('c', true)], done: new Set<string>() };
+    const data = { tracks: [], lessons: [mk('a', true), mk('b', false), mk('c', true)], done: new Set<string>(), locked: new Map<string, string>() };
     expect(visibleLessons(data, 'T', false).map(l => l.id)).toEqual(['a', 'c']);
     expect(visibleLessons(data, 'T', true).map(l => l.id)).toEqual(['a', 'b', 'c']);
   });
