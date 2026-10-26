@@ -15,7 +15,7 @@ import { Switch } from '@/components/ui/switch';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { supabase } from '@/integrations/supabase/client';
 import { COVER_STYLES } from '@/lib/gatherings';
-import { compressImage, lessonTitle, lessonsOf, listOf, RECIPE_TAGS, recipesQuery, trackTitle, uploadLearnFile, type Lesson, type LessonType, type Recipe, type Track } from '@/lib/learn';
+import { compressImage, learnPathsForTracks, learnPathsOf, removeUnusedLearnFiles, lessonTitle, lessonsOf, listOf, RECIPE_TAGS, recipesQuery, trackTitle, uploadLearnFile, type Lesson, type LessonType, type Recipe, type Track } from '@/lib/learn';
 import { fileMatchesLessonType, isTrackFlow, lessonEditorConfig, lessonPresetFor, parseCreateType, type TrackFlowType } from '@/lib/create-resource';
 import { LearnCover, useLearn } from '@/components/learn';
 import { isLowResolution } from '@/lib/media-renditions';
