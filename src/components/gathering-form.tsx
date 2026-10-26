@@ -49,9 +49,9 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const { data: planStatus } = useQuery(planStatusQuery(userId));
   const { data: templates = [] } = useQuery({ ...templatesQuery(), enabled: !editing });
   const sourceId = eventId ?? fromId;
-  const { data: source } = useQuery({ ...eventDetailQuery(sourceId ?? ''), enabled: !!sourceId });
+  const { data: source, error: sourceError, refetch: reloadSource } = useQuery({ ...eventDetailQuery(sourceId ?? ''), enabled: !!sourceId });
   const mapsKey = useMapsKey();
-  const { data: draft, isPending: draftPending } = useQuery({ queryKey: ['event-builder-draft', eventId], enabled: !!eventId, queryFn: async () => { const r = await supabase.from('event_builder_drafts').select('snapshot').eq('event_id', eventId ?? '').maybeSingle(); if (r.error) throw r.error; return r.data?.snapshot ?? null; } });
+  const { data: draft, error: draftError, refetch: reloadDraft, isPending: draftPending } = useQuery({ queryKey: ['event-builder-draft', eventId], enabled: !!eventId, queryFn: async () => { const r = await supabase.from('event_builder_drafts').select('snapshot').eq('event_id', eventId ?? '').maybeSingle(); if (r.error) throw r.error; return r.data?.snapshot ?? null; } });
   const { data: history = [] } = useQuery({ queryKey: ['host-slots', userId], enabled: !editing, staleTime: 300000,
     queryFn: async () => (await supabase.from('events').select('starts_at, series_id').eq('host_id', userId).neq('status', 'draft').order('starts_at', { ascending: false }).limit(60)).data ?? [] });
 
@@ -129,6 +129,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         if (typeof d['descEn'] === 'string') setDescEn(d['descEn']);
         if (typeof d['descEs'] === 'string') setDescEs(d['descEs']);
         if (typeof d['duration'] === 'number') setDuration(d['duration']);
+        if (typeof d['customDuration'] === 'boolean') setCustomDuration(d['customDuration']);
+        if (d['coords'] && typeof d['coords'] === 'object') setCoords(d['coords'] as { lat: number; lng: number });
         if (typeof d['category'] === 'string' && isCategory(d['category'])) setCategory(d['category']);
         if (typeof d['categoryLabel'] === 'string') setCategoryLabel(d['categoryLabel']);
         if (d['visibility'] === 'public' || d['visibility'] === 'team' || d['visibility'] === 'invite') setVisibility(d['visibility']);
@@ -165,6 +167,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     return () => listener?.remove?.();
   }, [mapsKey, place, ready]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  if (sourceError || draftError) return <div role="alert"><p>{t("profile.saveError")}</p><Button onClick={() => { void reloadSource(); void reloadDraft(); }}>{t("common.retry")}</Button></div>;
   if (!workspace || !ready) return <p role="status">{t('common.loading')}</p>;
   const canSell = planStatus?.connect_status === 'active';
   const priceCents = price ? Math.round(Number(price) * 100) : null;
@@ -198,6 +201,14 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const blockers = readinessBlockers({ title, startsAt: start, format: place, locationName, address, onlineUrl: url, priceCents, canSell, regOpens: details.regOpens, regCloses: details.regCloses, retreatOn, retreatEnd, allowsMinors: details.allowsMinors, minAge: details.minAge, tiers: details.tiers });
   const priceBad = !!price && (!Number.isFinite(priceCents) || Number(priceCents) < 100 || Number(priceCents) > 100000);
   const capacityBad = capacityValue(capacityMode, capacity) === undefined;
+  const extraIssues = [
+    ...(capacityBad ? [{ id: 'g-cap', text: t('gathering.errors.invalid_capacity') }] : []),
+    ...(priceBad ? [{ id: 'g-price', text: t('eventReliability.priceInvalid') }] : []),
+    ...(place !== 'online' && details.mapUrl && !validHttps(details.mapUrl) ? [{ id: 'g-map', text: t('gathering.errors.invalid_url') }] : []),
+    ...(details.contactEmail.trim() && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(details.contactEmail.trim()) ? [{ id: 'g-cemail', text: t('guest.errors.invalid_email') }] : []),
+    ...details.addons.flatMap(a => !a.name.trim() || !Number.isInteger(a.price_cents) || a.price_cents < 0 || a.price_cents > 100000 ? [{ id: `addon-${a.id}`, text: t('eventReliability.addonInvalid') }] : []),
+  ];
+
   const presets = datePresets(); const usual = editing ? null : usualSlot(history);
   const startDate = start ? new Date(start) : null;
   const dates = startDate && !editing ? expandRepeat(startDate, rule) : [];
@@ -220,7 +231,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     lat: place !== 'online' && coords ? coords.lat : '', lng: place !== 'online' && coords ? coords.lng : '',
   });
 
-  const detailsJson = detailsPayload(details);
+  const detailsJson = detailsPayload({ ...details, mapUrl: place === 'online' ? '' : details.mapUrl, minAge: details.allowsMinors ? details.minAge : '' });
   const saveCover = async (id: string) => {
     const { error } = await supabase.rpc('save_event_cover', { _event: id, _style: coverStyle, _overlay: coverOverlay, _focal: coverFocal, _alt: coverAlt.trim() || null } as never);
     if (error) toast.error(rpcError(t, error));
@@ -244,7 +255,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (!publish && (!editing || source?.event.status === 'draft')) {
       setBusy(true);
       try {
-        const snapshot = { title, start, duration, full, place, locationName, address, note, url, capacityMode, capacity, price, visibility, category, categoryLabel, descEn, descEs, coverPath, coverStyle, coverOverlay, coverFocal, coverAlt, details, rule, teamReg, retreatOn, retreat, retreatEnd, multi, sessions, communitySeats, coverFee };
+        const snapshot = { title, start, duration, customDuration, coords, full, place, locationName, address, note, url, capacityMode, capacity, price, visibility, category, categoryLabel, descEn, descEs, coverPath, coverStyle, coverOverlay, coverFocal, coverAlt, details, rule, teamReg, retreatOn, retreat, retreatEnd, multi, sessions, communitySeats, coverFee };
         const r = await supabase.rpc('save_event_builder_draft', { _team: teamId, _event: (eventId ?? null) as never, _snapshot: snapshot as never });
         if (r.error || !r.data) { setSaveError(rpcError(t, r.error)); return; }
         await queryClient.invalidateQueries(); toast.success(t('gathering.draftSaved'));
@@ -328,7 +339,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         {tpl && <span className="chip">{t('gathering.fromTemplate', { title: tpl.title })}</span>}
       </header>
 
-      {saveError && <div id="g-errors" className="field-error" role="alert" tabIndex={-1}><strong>{saveError}</strong><ul>{blockers.map(b => <li key={b}>{t(`eventReliability.errors.${b}`)}</li>)}</ul></div>}
+      {saveError && <div id="g-errors" className="field-error" role="alert" tabIndex={-1}><strong>{saveError}</strong><ul>{[...blockers.map(b => ({ id: ({ title: 'g-title', date: 'g-start', place: 'g-location', online_link: 'g-online', reg_window: 'g-reg-open', min_age: 'g-min-age', tier_invalid: 'g-tiers', retreat_dates: 'g-retreat', payouts: 'g-price' })[b], text: t(`eventReliability.errors.${b}`) })), ...extraIssues].map((e, i) => <li key={i}><Button variant="link" onClick={() => { const target = document.getElementById(e.id); target?.focus(); target?.scrollIntoView({ block: 'center' }); }}>{e.text}</Button></li>)}</ul></div>}
       <section className="form-section">
         <span className="field-label" id="g-format-label">{t('builder.experience.label')}</span>
         <div className="format-cards" role="radiogroup" aria-labelledby="g-format-label">
@@ -437,7 +448,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
           {capacityMode === 'limited' && <Input id="g-cap" aria-invalid={tried && capacityBad} type="number" min={1} inputMode="numeric" className="field-input" value={capacity} onChange={e => setCapacity(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder={t('eventReliability.limited')} />}
           {tried && capacityBad && <p className="field-error">{t('gathering.errors.invalid_capacity')}</p>}</div>
         <div><label className="field-label" htmlFor="g-price">{t('billing.price')}</label>
-          <Input id="g-price" aria-invalid={tried && priceBad} type="text" inputMode="decimal" className="field-input" disabled={!canSell && !price} value={price} onChange={e => setPrice(e.target.value.replace(/[^\d.]/g, '').slice(0, 7))} placeholder="$0" />
+          <Input id="g-price" aria-invalid={tried && (priceBad || blockers.includes('payouts'))} type="text" inputMode="decimal" className="field-input" disabled={!canSell && !price} value={price} onChange={e => setPrice(e.target.value.replace(/[^\d.]/g, '').slice(0, 7))} placeholder="$0" />
+          {tried && blockers.includes('payouts') && <p className="field-error">{t('eventReliability.errors.payouts')}</p>}
           {tried && priceBad && <p className="field-error">{t('eventReliability.priceInvalid')}</p>}
           <small className="field-hint">{canSell ? t('billing.priceHint') : t('billing.priceNeedsPayouts')}</small>
           <PriceGuidance category={category} />

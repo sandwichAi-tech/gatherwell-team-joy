@@ -16,7 +16,7 @@ export type TierState = 'open' | 'not_yet' | 'ended' | 'sold_out' | 'setup_requi
 export function tierState(tier: TicketTier, now = new Date()): TierState {
   if (tier.price_cents > 0) return 'setup_required';
   if (tier.sale_starts_at && now < new Date(tier.sale_starts_at)) return 'not_yet';
-  if (tier.sale_ends_at && now > new Date(tier.sale_ends_at)) return 'ended';
+  if (tier.sale_ends_at && now >= new Date(tier.sale_ends_at)) return 'ended';
   if (tier.quantity != null && (tier.sold ?? 0) >= tier.quantity) return 'sold_out';
   return 'open';
 }

@@ -39,7 +39,7 @@ export function parseTags(input: string): string[] {
 export type RegWindow = 'not_open' | 'open' | 'closed';
 export function regWindowState(opens: string | null | undefined, closes: string | null | undefined, now = new Date()): RegWindow {
   if (opens && now < new Date(opens)) return 'not_open';
-  if (closes && now > new Date(closes)) return 'closed';
+  if (closes && now >= new Date(closes)) return 'closed';
   return 'open';
 }
 
@@ -73,7 +73,7 @@ export function readinessBlockers(input: ReadinessInput): Blocker[] {
   if (input.regOpens && input.regCloses && new Date(input.regOpens) >= new Date(input.regCloses)) out.push('reg_window');
   if (input.retreatOn && (!input.retreatEnd || !input.startsAt || new Date(input.retreatEnd) <= new Date(input.startsAt))) out.push('retreat_dates');
   if (input.priceCents && !input.canSell) out.push('payouts');
-  if (input.tiers.some(t => !t.name.trim() || t.price_cents < 0 || t.price_cents > MAX_PRICE_CENTS)) out.push('tier_invalid');
+  if (!cleanTiers(input.tiers)) out.push('tier_invalid');
   if (input.minAge && (!input.allowsMinors || Number(input.minAge) < 0 || Number(input.minAge) > 17)) out.push('min_age');
   return out;
 }

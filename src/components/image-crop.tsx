@@ -51,7 +51,7 @@ export function ImageCropSheet({ file, kind, withSquare, onCancel, onDone }: { f
 
   useEffect(() => {
     if (!file) { setSrc(null); setImg(null); return; }
-    setError(false); const url = URL.createObjectURL(file); setSrc(url); setZoom(1); setOff({ x: 0, y: 0 }); setRatio(kind === 'avatar' ? 1 : 16 / 9);
+    setError(false); setImg(null); const url = URL.createObjectURL(file); setSrc(url); setZoom(1); setOff({ x: 0, y: 0 }); setRatio(kind === 'avatar' ? 1 : 16 / 9);
     const el = new Image(); el.onload = () => setImg(el); el.onerror = () => setError(true); el.src = url;
     return () => URL.revokeObjectURL(url);
   }, [file, kind]);

@@ -151,7 +151,7 @@ function PublicEventBody() {
       {!!event.cohosts?.length && <div className="guest-cohosts"><span className="guest-label">{t('cohosts.withCohosts')}</span><ul>{event.cohosts.map((c, i) => <li key={i}><span className="initial-avatar">{initialsOf(c.name)}</span><span>{c.name ?? t('teamSpace.someone')}</span></li>)}</ul></div>}
 
       {event.has_online && <section className="guest-card"><div className="guest-place"><Video /><div><strong>{t('publicEvent.online')}</strong><p>{t('guest.onlineHidden')}</p></div></div></section>}
-      {(event.location_name || event.address) && <section className="guest-card">
+      {!event.is_online && (event.location_name || event.address) && <section className="guest-card">
           {meta?.staticMap && <img className="guest-map" src={meta.staticMap} alt={t('guest.mapAlt')} loading="lazy" />}
           <div className="guest-place"><MapPin /><div>
             {event.location_name && <strong>{event.location_name}</strong>}
@@ -160,7 +160,6 @@ function PublicEventBody() {
           </div></div>
           <div className="guest-button-row">
             {!cancelled && <DirectionsButton event={event} />}
-            {event.map_url && <Button asChild variant="secondary"><a href={event.map_url} target="_blank" rel="noopener noreferrer"><MapPin />{t('builder.openMap')}</a></Button>}
           </div>
         </section>}
 

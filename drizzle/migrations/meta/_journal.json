@@ -946,6 +946,20 @@
       "when": 1793045754572,
       "tag": "0134_private_event_builder_drafts",
       "breakpoints": true
+    },
+    {
+      "idx": 135,
+      "version": "7",
+      "when": 1793047080193,
+      "tag": "0135_event_registration_window_reliability",
+      "breakpoints": true
+    },
+    {
+      "idx": 136,
+      "version": "7",
+      "when": 1793048337633,
+      "tag": "0136_public_event_ticket_availability_restore",
+      "breakpoints": true
     }
   ]
 }

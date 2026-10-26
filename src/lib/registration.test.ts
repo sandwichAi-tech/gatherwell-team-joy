@@ -6,6 +6,9 @@ const paid: TicketTier = { id: 'b', name: 'VIP', price_cents: 2500 };
 const now = new Date('2026-10-24T12:00:00Z');
 
 describe('tierState', () => {
+  it('closes at the exact sales-end instant', () => {
+    expect(tierState({ ...free, sale_ends_at: now.toISOString() }, now)).toBe('ended');
+  });
   it('blocks paid tiers as setup required until checkout is configured', () => {
     expect(tierState(paid, now)).toBe('setup_required');
   });

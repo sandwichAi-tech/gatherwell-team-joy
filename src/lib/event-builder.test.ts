@@ -46,6 +46,9 @@ describe('regWindowState', () => {
     expect(regWindowState(null, '2026-06-14T00:00:00Z', now)).toBe('closed');
     expect(regWindowState(null, null, now)).toBe('open');
   });
+  it('closes at the exact closing instant', () => {
+    expect(regWindowState(null, '2026-06-15T12:00:00Z', now)).toBe('closed');
+  });
 });
 
 describe('readinessBlockers', () => {
@@ -69,6 +72,9 @@ describe('readinessBlockers', () => {
     expect(readinessBlockers({ ...okInput, priceCents: 2500, canSell: false })).toContain('payouts');
     expect(readinessBlockers({ ...okInput, priceCents: 2500, canSell: true })).toEqual([]);
     expect(readinessBlockers({ ...okInput, tiers: [{ ...emptyTier(), name: '' }] })).toContain('tier_invalid');
+  });
+  it('reports reversed sales dates as a publishing blocker', () => {
+    expect(readinessBlockers({ ...okInput, tiers: [{ ...emptyTier(), name: 'General', sale_starts_at: '2026-11-02T10:00', sale_ends_at: '2026-11-01T10:00' }] })).toContain('tier_invalid');
   });
   it('flags min age without allowing minors', () => {
     expect(readinessBlockers({ ...okInput, minAge: '12' })).toContain('min_age');
