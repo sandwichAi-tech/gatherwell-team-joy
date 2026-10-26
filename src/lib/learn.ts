@@ -53,7 +53,7 @@ export function trackStats(data: LearnData, trackId: string, listOverride?: Less
   const list = listOverride ?? lessonsOf(data, trackId);
   const done = list.filter(l => data.done.has(l.id)).length;
   const minutes = list.reduce((n, l) => n + (l.duration_minutes ?? 0), 0);
-  const next = list.find(l => !data.done.has(l.id)) ?? null;
+  const next = list.find(l => !data.done.has(l.id) && !data.locked?.has(l.id)) ?? null;
   return { count: list.length, done, minutes, pct: list.length ? done / list.length : 0, next, complete: list.length > 0 && done === list.length };
 }
 
