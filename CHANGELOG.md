@@ -1,5 +1,15 @@
 # ZoheeWell Change Log
 
+## 2026-10-26 — Row 62 Resources pressure test (in progress)
+- Courses, downloads and bundles with a cover photo can now be saved and published from the resource builder (cover is stored in the host's own media folder; previews show it).
+- Saving a new course/download/bundle uses the item just created (two quick saves no longer overwrite each other); the draft's link stays in the address bar so refresh reopens it.
+- Publishing a course drafted earlier now also makes its lessons visible to learners.
+- Course lessons with an invalid link can't be saved; new lessons get English and Spanish default names.
+- Downloads use the same access rule as the offer page, so team members of a free team download can actually open it; the Download button is hidden until a file is attached; course pages no longer show a "See events" button.
+- Paid offers now require a purchase or entitlement; team membership alone opens only free team offers (0128). One existing paid published offer is affected.
+- Signed-out recipe and quiz links return to the same page after sign-in (0129). Recipe blueprints open straight in the builder. Video players no longer spill past narrow phone screens.
+- Open: course "a new lesson opens every N days" is displayed but not enforced.
+
 ## 2026-10-26 — Rows 70 and 71 closed
 - Row 70: team chat is the team Discussions panel; notification links /team?topic=<id> now open the right conversation, unknown/unauthorized topics show a localized unavailable state; replies/mentions no longer fail (0124).
 - Row 71: quizzes no longer require a course. Coaches create a team quiz from Resources → Create → Quiz, which opens the new quiz studio (/learn/quiz/$id). Scored (points, pass score, score bands), outcome/personality (outcomes mapped per answer) and poll modes; private question/answer/outcome images with required alt text; publish blockers for missing text, images without alt, [bracketed] examples, unmapped answers; preview, publish/update, unpublish, duplicate (0126 fix), delete.
