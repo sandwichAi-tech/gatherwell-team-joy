@@ -5,7 +5,11 @@
 - Photos now come in signed 480/960/1600/2400px versions (never enlarged past the original, crop/aspect and focal point kept) and each placement asks for its real display size.
 - Grain only shows on the colour fallback, never on photos. Migration 0123 fixes the Discover cover lookup (service-role only).
 - Hosts see an honest warning when a cover is under 1200px wide (in the cropper and event builder); photos are never replaced.
-- Unverified: real phones, slow networks, resource and team covers (none uploaded yet).
+- Follow-up: resource (learn) and team covers now use the same signed renditions with placement sizes (thumb 64px, cards ~half width, wide resource/course covers up to 640–720px, team header 1200px).
+- Low-resolution warnings measure the original upload (not the rendition the browser picked) and now also show in the resource cover editor and Edit team.
+- A rendition that errors or stalls for 8 s switches to the signed original so a photo never stays blank.
+- Verified with removable ZZ-TEST account/team/course/tracks (2400px and 800px covers) on Resources Library/Created by me, track detail, course manage and public course page, Discover Resources and Team at 320/375/390/1280 in EN/ES and 1–3x; all fixtures, files and sessions removed.
+- Unverified: real phones and real slow networks; recipe covers had no fixture.
 
 ## 2026-10-26 — Rows 66–69 verification pass
 - Tools “Public profile” opens /me?panel=hostProfile directly.
