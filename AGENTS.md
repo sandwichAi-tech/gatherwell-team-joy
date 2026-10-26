@@ -22,7 +22,7 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Home-screen installation is manifest-only; the only service worker is public/push-sw.js (push display + click, no caching), registered only after the person turns push on, (offline not requested).
 - Visual rules live in DESIGN_RULES.md's active Blueprint v4 section; its historical sections are not active.
 - App screens live under _authenticated/_app: the _authenticated gate redirects signed-out visitors to /login, and the _app layout sends anyone not onboarded (or holding a pending invite) to /onboarding before rendering GatherwellShell.
-- Public pages (marketing + GuestShell routes /e, /h, /l, /t, /i, /r) server-render in English and call applySavedLanguage() after hydration; route loaders prefetch public data via prefetchPublic() and the router dehydrates the query cache, so crawlers and link previews see content. Render must stay window-free and deterministic (no Math.random/location in render). AuthFrame surfaces (/login, /join, /terms, /privacy) still use ClientOnly.
+- Public pages (marketing + GuestShell /e /h /l /t /i /r) SSR in English, then applySavedLanguage(); loaders prefetchPublic() and the router dehydrates the cache for crawlers. Render stays window-free and deterministic. AuthFrame pages (/login, /join, /terms, /privacy) use ClientOnly.
 - Uploaded photos go to the private media bucket under the uploader's folder and are shown via signed URLs, because public buckets are blocked.
 - Event detail lives at /event/$id inside the app shell; the public guest page stays at /e/$id.
 - Signed-out visitors may call only guest RPCs (public event/price, RSVP by code, polls, invites, email prefs by token); all else needs sign-in + team role, as the guest page is the only anonymous surface.
@@ -43,9 +43,9 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Profile and offer covers use uploader-owned private media paths and the shared crop input; public host covers are signed server-side only after resolving the host slug, never from caller-supplied paths.
 - Day-60 scoreboard: raw counts come only from admin_day60(); targets and the go/adjust/rethink verdict are evaluated in src/lib/day60.ts so thresholds live in one tested place.
 - Parked features are gated by feature_* flags via src/lib/feature-flags.tsx; admins always see them and off routes throw notFound, so launch scope changes from /admin?tab=flags.
-- Resources reuses /learn routes and the feature_learn gate; reader lists omit zero-lesson tracks and empty sections while management retains them. Authoring is type-first: /learn/create?type=… (src/lib/create-resource.ts) routes into the existing track/lesson, offer, quiz and recipe editors with presets — no second authoring backend.
+- Resources reuses /learn and the feature_learn gate; readers skip empty tracks/sections, managers keep them. Authoring is type-first via /learn/create?type=… (src/lib/create-resource.ts) into existing editors — no second authoring backend.
 - Home brief: getDailyBrief, caller-scoped, no AI/shared cache. Insights compares UTC event cohorts.
-- Admin password sign-in uses the public /admin-login page and existing Cloud Auth accounts; getAdminAccess validates the authenticated role before navigation, while every admin data handler retains its own role check, so the sign-in screen never grants privileges.
+- Admin password sign-in: public /admin-login with existing Cloud Auth accounts; getAdminAccess checks the role before navigation and every admin handler re-checks, so sign-in never grants privileges.
 - Blueprints/challenges reuse existing editors; drafts stay private. Experience sessions use existing events and whole-event admission.
 - Platform fees are calculated only from versioned fee_rules (DB calc_platform_fee_cents, mirrored and tested in src/lib/fees.ts); orders snapshot the rule so history never recalculates.
 - Database role regressions live in tests/database and run only by explicit invocation against a disposable copy; never connect these fixture-writing tests to production, preview, or the ordinary automated suite.
@@ -58,4 +58,4 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Referral attribution/rewards/status are server-owned (0119 RPCs + orders_referral_hook), mirrored in src/lib/referrals.ts; landing reuses the analytics device id.
 - Profile IA: account fields edit only in Me's Edit profile, public-page fields only in HostProfilePanel (src/lib/profile-ia.ts PROFILE_FIELDS); host categories are allowed keys normalized by a DB trigger.
 - Event images use share-image.ts for all outputs; admin menu uses role checks.
-- Course lesson release (drip) is decided only by lesson_unlock_at()/lesson_is_unlocked() (mirrored in src/lib/course-release.ts) and enforced by restrictive RLS on lessons, lesson_summaries and learn-media objects; clients get locked titles only via my_locked_lessons(), so content never reaches the browser early.
+- Course drip is decided only by lesson_unlock_at()/lesson_is_unlocked() (mirrored in src/lib/course-release.ts) and enforced by restrictive RLS on lessons, summaries and learn-media; browsers get locked titles only via my_locked_lessons().
