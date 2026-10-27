@@ -8894,6 +8894,10 @@ export type Database = {
         Args: { _body: string; _team: string; _title: string }
         Returns: string
       }
+      credit_course_assessment_receipt: {
+        Args: { _lesson: string }
+        Returns: undefined
+      }
       current_fee_pct: { Args: { _host: string }; Returns: number }
       decide_community_seat: {
         Args: { _approve: boolean; _id: string }
