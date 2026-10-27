@@ -4468,6 +4468,8 @@ export type Database = {
           addon_key: string | null
           created_at: string
           description: string | null
+          description_en: string | null
+          description_es: string | null
           id: string
           item_type: string
           order_id: string
@@ -4479,6 +4481,8 @@ export type Database = {
           addon_key?: string | null
           created_at?: string
           description?: string | null
+          description_en?: string | null
+          description_es?: string | null
           id?: string
           item_type: string
           order_id: string
@@ -4490,6 +4494,8 @@ export type Database = {
           addon_key?: string | null
           created_at?: string
           description?: string | null
+          description_en?: string | null
+          description_es?: string | null
           id?: string
           item_type?: string
           order_id?: string

@@ -1303,6 +1303,13 @@
       "when": 1793129726519,
       "tag": "0185_addon_descriptions",
       "breakpoints": true
+    },
+    {
+      "idx": 186,
+      "version": "7",
+      "when": 1793130211471,
+      "tag": "0186_order_line_addon_description_snapshot",
+      "breakpoints": true
     }
   ]
 }
