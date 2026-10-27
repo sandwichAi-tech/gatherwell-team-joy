@@ -27,6 +27,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { firstName, initialsOf, profileQuery, workspaceQuery } from '@/lib/account';
 import { ancestorsQuery, compressImage } from '@/lib/learn';
 import { ChallengeBuilder } from '@/components/challenge-builder';
+import { ChallengeHostPanel } from '@/components/challenge-host-panel';
 import { learnFileUrl } from '@/lib/learn';
 import {
   activitiesForDay, addDays, challengePhotoUrls, challengesQuery, dayNumber, goalProgress, leaderboardQuery, lengthOf, lifecycleOf, localDate, localHour, modelOf, myCheckinsQuery, phaseOf, pick, rpcErrorKey,
@@ -290,6 +291,7 @@ export function ChallengePage({ id }: { id: string }) {
       {meRow && meRow.rank > 10 && <p className="board-me">{t('challenges.youreRank', { rank: meRow.rank })}</p>}</section>}
 
     {joined && <PhotoGallery paths={mine.map(m => m.photo_path).filter((p): p is string => !!p)} />}
+    {leader && <ChallengeHostPanel id={id} userId={userId} inviteOnly={c.enrollment === 'invite'} />}
 
     {sheetDate && <CheckInSheet open={!!sheetDate} onClose={() => setSheetDate(null)} c={c} date={sheetDate} />}
     {leader && workspace && <ChallengeBuilder draft={editing} teamId={c.team_id || workspace.teamId} onClose={() => { setEditing(null); void qc.invalidateQueries({ queryKey: ['challenge', id] }); }} />}

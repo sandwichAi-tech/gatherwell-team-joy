@@ -2236,7 +2236,12 @@
         "body": "Reflect on what you learned and choose what to carry forward."
       }
     },
-    "noDrafts": "No challenge drafts yet."
+    "noDrafts": "No challenge drafts yet.",
+    "invitedParticipants": "Invited participants",
+    "inviteNoMessages": "Invitations enable eligibility only; no messages are sent. Paid access still requires verified payment.",
+    "enrollmentDetails": "Enrollment details",
+    "participantNumber": "Participant {{number}}",
+    "inactiveEnrollment": "Access inactive"
   },
   "recognition": {
     "title": "Recognition",

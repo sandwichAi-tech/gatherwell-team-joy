@@ -66,6 +66,7 @@ export function ChallengeBuilder({ draft, teamId, onClose }: { draft: Partial<Ch
   const errorFocus = useRef<HTMLDivElement>(null);
   const baseline = useRef('');
   const saveLock = useRef(false);
+  const requestId = useRef(crypto.randomUUID());
   const snapshot = () => JSON.stringify({ f, activities, messages, addons, paid, price });
   useEffect(() => { if (draft && !loading && !baseline.current) baseline.current = snapshot(); }, [f, activities, messages, addons, loading, draft]);
   const { data: planSt } = useQuery(planStatusQuery(userId));
@@ -77,7 +78,7 @@ export function ChallengeBuilder({ draft, teamId, onClose }: { draft: Partial<Ch
 
   // Child reads finish together; failed reads never become an empty editable draft.
   useEffect(() => {
-    baseline.current = ''; setErrors([]); setLoadError(false);
+    baseline.current = ''; requestId.current = crypto.randomUUID(); setErrors([]); setLoadError(false);
     if (!draft) return;
     setStep('basics'); setStarter(null); setPaid(!!draft.is_paid); setPrice(draft.price_cents ? String(draft.price_cents / 100) : '');
     setAddons(Array.isArray(draft.addons) ? draft.addons as unknown as ChallengeAddon[] : []);
@@ -140,7 +141,7 @@ export function ChallengeBuilder({ draft, teamId, onClose }: { draft: Partial<Ch
     try {
       const row = { ...f, description_en: f.description_en || null, description_es: f.description_es || null, goal_target: f.model === 'goal' ? Number(f.goal_target) : null, goal_unit: f.model === 'goal' ? f.goal_unit || null : null, capacity: f.capacity ? Number(f.capacity) : null, status: publish ? 'published' : 'draft', is_paid: paid, price_cents: paid ? challengePrice(price) : null, currency: 'usd', addons };
       // The generated RPC type omits PostgreSQL's nullable UUID input; serialize the nullable draft ID explicitly.
-      const { error } = await supabase.rpc('save_challenge', JSON.parse(JSON.stringify({ _id: draft?.id ?? null, _team: teamId, _p: row, _activities: activities.map(({ id, ...a }) => a), _messages: messages.map(({ id, ...m }) => m) })));
+      const { error } = await supabase.rpc('save_challenge_request', JSON.parse(JSON.stringify({ _id: draft?.id ?? null, _request: requestId.current, _team: teamId, _p: row, _activities: activities.map(({ id, ...a }) => a), _messages: messages.map(({ id, ...m }) => m) })));
       if (error) throw error;
       await Promise.all([qc.invalidateQueries({ queryKey: ['challenges'] }), qc.invalidateQueries({ queryKey: ['challenge'] }), qc.invalidateQueries({ queryKey: ['my-challenges'] }), qc.invalidateQueries({ queryKey: ['challenge-activities'] }), qc.invalidateQueries({ queryKey: ['challenge-messages'] })]);
       baseline.current = snapshot(); toast.success(t('templates.saved')); onClose();

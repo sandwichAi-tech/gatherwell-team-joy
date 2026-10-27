@@ -2236,7 +2236,12 @@
         "body": "Reflexiona sobre lo aprendido y elige qué quieres continuar."
       }
     },
-    "noDrafts": "Aún no hay borradores de retos."
+    "noDrafts": "Aún no hay borradores de retos.",
+    "invitedParticipants": "Participantes invitados",
+    "inviteNoMessages": "Las invitaciones solo habilitan la elegibilidad; no se envían mensajes. El acceso de pago requiere un pago verificado.",
+    "enrollmentDetails": "Detalles de inscripción",
+    "participantNumber": "Participante {{number}}",
+    "inactiveEnrollment": "Acceso inactivo"
   },
   "recognition": {
     "title": "Reconocimiento",
