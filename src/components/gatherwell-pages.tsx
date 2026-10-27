@@ -1,34 +1,24 @@
 import { personalHomeQuery } from '@/lib/personal-home-query';
 import { PersonalHomeResources } from '@/components/personal-home-resources';
-import { BarChart3 } from '@/components/icons';
 import { TemplateEditor, type TemplateDraft } from '@/components/templates';
 import { CustomerHome } from '@/components/customer-home';
 import { HostCheckinActions } from '@/components/host-checkin-actions';
 import { FoundingCommitmentsCard } from '@/components/founding';
 import { CoachLaunchCard } from '@/components/coach-launch';
-import { Feature } from '@/lib/feature-flags';
-import { PlaybookCard } from '@/components/playbook';
-import { DailyBriefCard, FollowupsHomeCard, MemberPlanCard } from '@/components/smart';
-import { ActiveChallengeCard } from '@/components/challenges';
-import { FromYourLeader } from '@/components/templates';
+import { DailyBriefCard, FollowupsHomeCard } from '@/components/smart';
 import { TeamSwitcher } from '@/components/team-switcher';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, Plus, UsersRound, CalendarDays, Repeat2, CircleCheck, Globe2, Sun, Moon, Monitor, BookOpen, ChevronRight } from '@/components/icons';
+import { ArrowRight, Plus, ChevronRight } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { useGatherwell } from './gatherwell-shell';
-import { FeaturedFromNetwork } from '@/components/network-page';
-import { TeamOffersStrip } from '@/components/offers';
-import i18n from '@/lib/i18n';
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { Check, Copy, LogOut } from '@/components/icons';
-import { supabase } from '@/integrations/supabase/client';
-import { firstName, initialsOf, joinLink, profileQuery, workspaceQuery } from '@/lib/account';
-import { useServerFn } from '@tanstack/react-start';
-import { getAttendanceHistory } from '@/lib/insights.functions';
-import { ListSkeleton, RetryState, EmptyState } from './launch-states';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { Check, Copy } from '@/components/icons';
+import { firstName, profileQuery, workspaceQuery } from '@/lib/account';
+import { EmptyState } from './launch-states';
+import { formatWhen } from '@/lib/guest';
 
 function useAccount() {
   const { userId } = useGatherwell();
@@ -54,13 +44,8 @@ function NextCard() {
   </section>;
 }
 
-function SignOutButton() {
-  const { t } = useTranslation(); const queryClient = useQueryClient(); const navigate = useNavigate();
-  return <Button variant="secondary" className="sign-out" onClick={async () => { await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut(); void navigate({ to: '/login', replace: true }); }}><LogOut />{t('me.signOut')}</Button>;
-}
-
 export function HomePage() {
-  const { t } = useTranslation(); const { userId, openCreate } = useGatherwell(); const { profile } = useAccount();
+  const { t, i18n } = useTranslation(); const { userId, openCreate } = useGatherwell(); const { profile } = useAccount();
   const { data } = useSuspenseQuery(personalHomeQuery(userId));
   const hosting = data.mode === 'hosting';
   const name = firstName(profile?.full_name);
@@ -73,7 +58,7 @@ export function HomePage() {
       {data.drafts > 0 && <section className="panel"><Link to="/events" search={{ tab: 'hosting' }}>{t('personalHome.drafts', { count: data.drafts })}<ArrowRight /></Link></section>}
       <section className="panel upcoming-panel"><div className="section-heading"><h2>{t('home.upcoming')}</h2><Button asChild variant="link"><Link to="/events" search={{ tab: 'hosting' }}>{t('home.viewAll')}<ArrowRight /></Link></Button></div>
         {!data.events.length && <EmptyState compact icon="CalendarDays" text={t('events.empty.hosting')} />}
-        <ul className="customer-list">{data.events.map(e => <li key={e.id}><Link to="/event/$id" params={{ id: e.id }} className="customer-item-head"><strong>{e.title}</strong><small>{e.starts_at}</small><ChevronRight /></Link></li>)}</ul>
+        <ul className="customer-list">{data.events.map(e => <li key={e.id}><Link to="/event/$id" params={{ id: e.id }} className="customer-item-head"><strong>{e.title}</strong><small>{formatWhen(e.starts_at, i18n.resolvedLanguage)}</small><ChevronRight /></Link></li>)}</ul>
       </section>
       <FoundingCommitmentsCard /><CoachLaunchCard /><FollowupsHomeCard /><NextCard />
     </> : <CustomerHome userId={userId} />}

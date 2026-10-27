@@ -2,16 +2,13 @@ import { personalHomeQuery } from '@/lib/personal-home-query';
 import { Link } from '@tanstack/react-router';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { EmptyState, ListSkeleton, RetryState } from '@/components/launch-states';
+import { EmptyState } from '@/components/launch-states';
 import { CalendarButtons, DirectionsButton } from '@/components/guest-rsvp';
 import { ChevronRight, QrCode } from '@/components/icons';
 import { CheckinQrSheet, type CheckinQrTarget } from '@/components/checkin-qr-sheet';
 import { useEffect, useState } from 'react';
 import { formatWhen } from '@/lib/guest';
-import { isLive, offerTitle, purchasesQuery } from '@/lib/offers';
-import { MyResourceCoaches } from '@/components/my-resource-coaches';
 
 export function CustomerHome({ userId }: { userId: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
