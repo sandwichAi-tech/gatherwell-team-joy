@@ -12,6 +12,16 @@ import {
   type Destinations,
 } from '@/lib/resource-placement';
 import type { CreateType } from '@/lib/create-resource';
+import type { TFunction } from 'i18next';
+
+/** Human list of every live destination, for archive/delete warnings. */
+export function livePlacementList(dest: Destinations, courses: CourseOption[], t: TFunction, lang: string | undefined) {
+  const out: string[] = [];
+  if (dest.team) out.push(t('resourcePlacement.teamTitle'));
+  if (dest.coach) out.push(t('resourcePlacement.coachTitle'));
+  for (const c of dest.courses) out.push(courses.find(x => x.id === c.course)?.title ?? (pick(lang, c.title_en ?? '', c.title_es ?? '') || t('resourcePlacement.untitledCourse')));
+  return out.join(', ');
+}
 
 type CourseOption = { id: string; title: string };
 type Section = { id: string; offer_id: string; title_en: string; title_es: string };

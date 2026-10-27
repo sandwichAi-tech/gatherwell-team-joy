@@ -179,7 +179,7 @@ export function QuizStudio({ quizId }: { quizId: string }) {
   if (load.isError) return <RetryState retry={() => void load.refetch()} />;
   if (!load.data || !s) return <section className="panel empty-state" role="status"><p>{t('quizPlay.errors.not_found')}</p><Button asChild variant="secondary"><Link to="/learn" search={{ tab: 'mine' }}>{t('quizStudio.backToResources')}</Link></Button></section>;
   const data = load.data; const { questions } = data;
-  const placeable = (offers.data ?? []).filter(o => o.kind === 'course' && o.status !== 'archived' && o.team_id === (s.team_id ?? undefined));
+  const placeable = (offers.data ?? []).filter(o => o.kind === 'course' && o.status !== 'archived' && o.team_id === (s.team_id ?? (offers.data ?? []).find(x => x.id === s.offer_id)?.team_id));
   const courseOptions = placeable.map(o => ({ id: o.id, title: offerTitle(o, lang) }));
   const courseIds = placeable.map(o => o.id);
   const blockers = [...destinationIssues(dest, courseIds).map(i => `dest_${i}`), ...new Set([...quizBlockers({ mode: s.mode, title_en: s.title_en, title_es: s.title_es, instructions_en: s.instructions_en ?? '', instructions_es: s.instructions_es ?? '' }, questions, outs, bands), ...(serverBlockers.data ?? [])])];

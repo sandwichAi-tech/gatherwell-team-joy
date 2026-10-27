@@ -52,7 +52,7 @@ export const setCourseSection = (d: Destinations, course: string, section: strin
 
 /** Courses selected but no longer owned/available to this host. */
 export const unavailableCourses = (d: Destinations, authorized: string[]) =>
-  d.courses.filter(c => c.available === false || !authorized.includes(c.course));
+  d.courses.filter(c => c.available === false || (!c.locked && !authorized.includes(c.course)));
 
 export type DestinationIssue = 'destination' | 'courseUnavailable';
 export function destinationIssues(d: Destinations, authorized: string[]): DestinationIssue[] {
