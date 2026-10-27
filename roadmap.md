@@ -5,7 +5,7 @@
 - [x] Added owner approval, My teams sections, named owner-only requests/roster, persistent status and direct channel integration.
 - [x] Explicit blueprint/resource-template sharing, existing recipe/track/course/download draft copying, event configuration-only draft exports and copy retry receipts.
 - [x] Five isolated accounts/two teams: approval/retries/decline/removal, invite pending, code rotation, private denial, independent copies; EN/ES roster 320/390/1280; 39 focused/767 full tests; automatic compile OK.
-- [ ] Clean exact fixtures and final leftovers.
+- [x] Exact new accounts/teams/memberships/requests, sources/copies/events/resources/notifications removed; zero queried leftovers. Temporary scripts/screenshots/sessions removed.
 - [ ] Rows102–104: complete relogin/mode-switch/notification-click, suspended/expired-link/removed-open browser and full accessibility matrix unverified.
 - [ ] Row105: safe full media rehoming, quizzes/audio completeness, event agenda/waiver configuration, full authored-source copy/customization/publish matrix and paid-entitlement isolation checks incomplete. Do not mark Completed.
 
