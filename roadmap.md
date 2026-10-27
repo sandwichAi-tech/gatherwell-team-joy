@@ -1,11 +1,11 @@
 # Event identity and waiver pass
 
 ## Website Notes rows 114 and 116 — In Progress
-- [ ] Audit/reproduce canonical host identity and legacy/team/event/platform waiver ownership, legal readiness and bypasses.
-- [ ] Correct public Hosted by identity with unavailable fallback and private-data isolation.
-- [ ] Host-owned reusable immutable waiver versions, explicit event pinning and separate approved platform agreement; safe upload/read and registration/check-in guards.
-- [ ] Focused/full tests, two-host permission checks, EN/ES 320/390/1280, automatic compile and exact fixture cleanup.
-- [ ] Report remaining legal/provider/device gaps; no project publication/deployment, real charges or messages.
+- [x] Audit/reproduce missing host link, other-host library edits, suspended public identity, absent legal approval provenance.
+- [x] Correct Hosted by identity with canonical public slug, unavailable fallback and suspension exclusion.
+- [x] Implement owner-only host library, explicit default selection, immutable versions/published-once pinning, PDF validation and separate approved platform-reference guards. Legacy consent untouched.
+- [x] 39 focused / 96 files / 817 full tests; 17 isolated RPC checks; public identity/back/focus journeys and EN/ES 320/390/1280 legal-block forms; automatic compile OK. Exact three principals/two teams/three events/dependent records removed, auth absent, no uploads.
+- [ ] In Progress: approved full EN/ES legal documents + counsel/owner provenance; positive acceptance/receipt/check-in, paid and guardian/team fulfillment, full staff resolution/history/device/screen-reader/relogin matrix and live reusable PDF upload/cleanup not verified. No project publication/deployment, real charges or messages.
 
 ## Website Notes rows 110–113 — In Progress
 - [x] Audit/reproduce raw navigation key, partial templates/saves, disabled leaderboard leakage, uninvited join, paid draft rejection and missing commerce lifecycle.
