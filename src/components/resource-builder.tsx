@@ -1,5 +1,6 @@
 import { ResourceAccessFields } from '@/components/resource-access-fields';
 import { CurriculumPanel } from '@/components/content-studio';
+import { CourseOutlinePreview } from '@/components/course-outline-preview';
 import { resourceAccessPrice, savedPlacement, type ResourcePlacement } from '@/lib/resource-placement';
 import { uploadMedia } from '@/lib/account';
 import { OfferCover } from '@/components/offers';
@@ -584,6 +585,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
     <p id="rb-active-hint" className="field-hint">{t('resources.item.activeFromHint', { tz })}</p>
   </Field>;
   const preview = <>
+    {type === 'course' && loaded?.id && <CourseOutlinePreview id={loaded.id} />}
     {trackLessons && <div className="form-field" role="status"><span className="field-label">{t('resources.item.lessonStatusTitle')}</span>
       <ul className="lesson-status-list">{trackLessons.map(l => { const ph = hasPlaceholder(l.title_en, l.title_es, l.notes_en, l.notes_es, l.description_en, l.description_es);
         return <li key={l.id}><strong>{pick(lang, l.title_en, l.title_es)}</strong> <small>{ph ? t('resources.item.lessonNeedsReview') : l.is_published && wasPublished ? t('resources.item.lessonLive') : l.is_published || draftLessonsToPublish.includes(l.id) ? t('resources.item.lessonVisible') : t('resources.item.lessonHidden')}</small></li>; })}</ul>
