@@ -10,6 +10,7 @@ import { CheckinQrSheet, type CheckinQrTarget } from '@/components/checkin-qr-sh
 import { useState } from 'react';
 import { formatWhen } from '@/lib/guest';
 import { isLive, offerTitle, purchasesQuery } from '@/lib/offers';
+import { MyResourceCoaches } from '@/components/my-resource-coaches';
 
 type Ev = { id: string; title: string; starts_at: string; ends_at: string | null; location_name: string | null; address: string | null; lat: number | null; lng: number | null; host_id: string; offer_id: string | null; status: string; map_url: string | null; format: string };
 const EV = 'id, title, starts_at, ends_at, location_name, address, lat, lng, host_id, offer_id, status, map_url, format';
@@ -65,6 +66,7 @@ export function CustomerHome({ userId }: { userId: string }) {
       <ul className="customer-list">{circles.slice(0, 3).map(c => <li key={c.id}><Link to="/offer/$id" params={{ id: c.offer_id }} className="customer-item-head"><strong>{offerTitle(c.offer!, lang)}</strong><small>{t('customerHome.latest')}</small><ChevronRight /></Link></li>)}
         {members.map(e => <li key={e.id}><Link to="/e/$id" params={{ id: e.id }} className="customer-item-head"><strong>{e.title}</strong><small>{t('customerHome.membersOnly')} · {formatWhen(e.starts_at, lang)}</small><ChevronRight /></Link></li>)}</ul>
     </section>}
+    <MyResourceCoaches userId={userId} />
     {past.length > 0 && <section className="panel" aria-labelledby="ch-past"><div className="section-heading"><h2 id="ch-past">{t('customerHome.past')}</h2></div>
       <ul className="customer-list">{past.map(r => <li key={r.event.id} className="customer-item-head is-static"><span><strong>{r.event.title}</strong><small>{formatWhen(r.event.starts_at, lang)}</small></span>{r.againId && <Button asChild variant="secondary" size="sm"><Link to="/e/$id" params={{ id: r.againId }}>{t('customerHome.again')}</Link></Button>}</li>)}</ul>
     </section>}
