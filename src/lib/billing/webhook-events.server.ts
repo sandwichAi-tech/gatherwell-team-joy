@@ -148,6 +148,7 @@ export async function processPaymentEvent(db: SupabaseClient, evt: PaymentEvent,
  * no-op, and a failed handling releases the row so the provider can retry.
  */
 export async function handlePaymentEvent(db: SupabaseClient, evt: PaymentEvent, environment?: StripeEnv): Promise<'processed' | 'duplicate' | 'failed'> {
+  if (!environment && evt.data.object?.metadata?.kind === 'challenge_order') return 'failed';
   if (environment) {
     // Challenge effects are monotonic/idempotent; a crashed delivery can reclaim its lease.
     const token = crypto.randomUUID();

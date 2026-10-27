@@ -41,7 +41,7 @@ export const beginChallengeOrder = createServerFn({ method: 'POST' }).middleware
       const stripe = createStripeClient(data.environment);
       if (order.stripe_checkout_session_id) {
         const session = await stripe.checkout.sessions.retrieve(order.stripe_checkout_session_id);
-        return session.url ? { url: session.url } : { error: 'checkout_pending' };
+        return session.status === 'open' && session.url ? { url: session.url } : { error: 'checkout_pending' };
       }
       const lineRead = await db.from('order_items').select('*').eq('order_id', order.id);
       if (lineRead.error) throw lineRead.error;
