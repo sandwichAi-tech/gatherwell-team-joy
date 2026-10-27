@@ -199,7 +199,7 @@ export const savedOfferResourcesQuery = (userId: string) => queryOptions({
   },
 });
 
-export type TeamQuiz = { id: string; title_en: string; title_es: string; mode: 'scored' | 'outcome' | 'poll'; assessment?: boolean; is_published: boolean; mine: boolean; questions: number; done: boolean; cover_path: string | null };
+export type TeamQuiz = { id: string; title_en: string; title_es: string; mode: 'scored' | 'outcome' | 'poll'; assessment?: boolean; is_published: boolean; on_team?: boolean | null; mine: boolean; questions: number; done: boolean; cover_path: string | null };
 export const teamQuizzesQuery = (teamId: string) => queryOptions({
   queryKey: ['team-quizzes', teamId], enabled: !!teamId,
   queryFn: async () => ((await (supabase as any).rpc('team_quizzes', { _team: teamId })).data ?? []) as TeamQuiz[],
