@@ -38,6 +38,7 @@ import { CommunityRequestsPanel, CommunitySeatCard } from '@/components/communit
 import { BundlePanel, BundleReader, CurriculumPanel, OfferDetailsEditor, OfferHostActions, PublicOfferLink, ReadinessPanel } from '@/components/content-studio';
 import { QuizPanel, LearnerQuizList, CourseProgressPanel, CertificateSettings, LearnerProgressPanel } from '@/components/quiz';
 import { canAccessOfferQuery } from '@/lib/content';
+import { CourseResourceAttachments } from '@/components/course-resource-attachments';
 
 const KINDS: OfferKind[] = ['membership', 'course', 'download'];
 const dateFmt = (iso: string, lang: string) => new Date(iso).toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -197,7 +198,7 @@ export function OfferPage({ id, paid, panel }: { id: string; paid?: boolean; pan
   if (q.isError) return <RetryState retry={() => void q.refetch()} />;
   const { offer, purchase, hostName } = q.data;
   if (!offer) return <section className="panel empty-state"><Lock /><p>{t('offers.notFound')}</p></section>;
-  const owned = isLive(purchase) || offer.host_id === userId || access.data === true;
+  const owned = offer.host_id === userId || access.data === true;
   const includes = offerIncludes(offer, lang);
   const foundingOpen = offer.kind === 'membership' && !!founding && founding.left > 0;
   const buy = async () => {
@@ -265,6 +266,7 @@ export function OfferPage({ id, paid, panel }: { id: string; paid?: boolean; pan
       </>}
       <OfferDetailsEditor offer={detailsOpen ? offer : null} onClose={() => setDetailsOpen(false)} />
     </>}
+    {offer.kind === 'course' && owned && <CourseResourceAttachments courseId={offer.id} />}
     {offer.kind === 'download' && owned && offer.file_path && <OwnedFileViewer offerId={offer.id} title={offerTitle(offer, lang)} />}
     {offer.kind === 'download' && owned && <BundleReader offerId={offer.id} userId={userId} />}
     {offer.kind !== 'download' && owned && offer.host_id !== userId && <>
