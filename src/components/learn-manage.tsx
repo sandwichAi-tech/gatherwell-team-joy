@@ -1,4 +1,4 @@
-import { removeResource } from '@/components/confirm-resource-removal';
+import { removeResource, restoreResource } from '@/components/confirm-resource-removal';
 import { isHistoryGuard } from '@/lib/resource-removal';
 import { CropFileInput } from '@/components/image-crop';
 import { EmptyState } from '@/components/launch-states';
@@ -81,7 +81,9 @@ function TrackEditor({ track, teamId, onClose, preset }: { track: Partial<Track>
       {trackPlaceholder && <p className="field-hint" role="alert">{t('resources.item.placeholderBlock')}</p>}
       {track?.id && <MembersOnlyPicker table="tracks" id={track.id} teamId={teamId} />}
       <Button className="onboarding-continue" disabled={busy || !ok} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
-      {track?.id && <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('learnHub.deleteTrack')}</Button>}
+      {track?.id && (track.archived_at
+        ? <Button variant="outline" onClick={async () => { if (await restoreResource(t, 'track', track.id)) { await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose(); } }}>{t('resources.removal.restore')}</Button>
+        : <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('resources.removal.remove')}</Button>)}
     </div>
   </ResponsiveSheet>;
 }
@@ -249,7 +251,9 @@ function RecipeEditor({ recipe, teamId, onClose }: { recipe: Partial<Recipe> | n
       <LangPair id="rc-ing" label={t('learnHub.ingredients')} en={f.ing_en} es={f.ing_es} onEn={v => setF({ ...f, ing_en: v })} onEs={v => setF({ ...f, ing_es: v })} multiline rows={5} />
       <LangPair id="rc-steps" label={t('learnHub.steps')} en={f.steps_en} es={f.steps_es} onEn={v => setF({ ...f, steps_en: v })} onEs={v => setF({ ...f, steps_es: v })} multiline rows={5} />
       <Button className="onboarding-continue" disabled={busy || !ok} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
-      {recipe?.id && <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('learnHub.deleteRecipe')}</Button>}
+      {recipe?.id && (recipe.archived_at
+        ? <Button variant="outline" onClick={async () => { if (await restoreResource(t, 'recipe', recipe.id)) { await qc.invalidateQueries({ queryKey: ['recipes', userId] }); onClose(); } }}>{t('resources.removal.restore')}</Button>
+        : <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('resources.removal.remove')}</Button>)}
     </div>
   </ResponsiveSheet>;
 }

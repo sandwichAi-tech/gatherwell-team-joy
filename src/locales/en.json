@@ -6657,7 +6657,8 @@
       "archivedBadge": "Archived",
       "historyBlocked": "This can't be deleted because people have progress or purchases for it. Archive it instead.",
       "copyOmitted_one": "{{count}} course placement was left out because you don't manage that course.",
-      "copyOmitted_other": "{{count}} course placements were left out because you don't manage those courses."
+      "copyOmitted_other": "{{count}} course placements were left out because you don't manage those courses.",
+      "remove": "Remove"
     }
   },
   "templatesR": {
