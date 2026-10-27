@@ -7528,7 +7528,7 @@
   },
   "eventAgreements": {
     "title": "Acuerdo de la plataforma ZoheeWell",
-    "legalRequired": "Se requiere un documento legal aprobado. La publicación y el registro no están disponibles hasta contar con documentos aprobados en inglés y español.",
+    "legalRequired": "El registro para este evento aún no está abierto. Vuelve a consultar pronto.",
     "acceptRequired": "Revisa y acepta explícitamente el acuerdo vigente de ZoheeWell.",
     "open": "Abrir el acuerdo de ZoheeWell",
     "accept": "He leído y acepto el acuerdo de la plataforma ZoheeWell.",
@@ -7619,16 +7619,10 @@
     "tooLong": "La descripción debe tener {{max}} caracteres o menos."
   },
   "builderAgreements": {
-    "title": "Exenciones y acuerdos",
-    "intro": "Elige lo que los asistentes deben revisar y aceptar antes de registrarse.",
-    "alwaysRequired": "Siempre obligatorio",
+    "title": "Exenciones y formularios de autorización del anfitrión",
+    "intro": "Opcional. Se pedirá a los asistentes que acepten los formularios que elijas al registrarse.",
     "optional": "Opcional",
-    "platformLoadError": "No se pudo cargar el estado del acuerdo de ZoheeWell.",
     "effective": "vigente desde {{date}}",
-    "previewPlatform": "Ver acuerdo de ZoheeWell",
-    "platformLocked": "Lo proporciona ZoheeWell. Los anfitriones no pueden quitarlo, reemplazarlo ni editarlo. La versión aprobada vigente se fija al publicar.",
-    "hostTitle": "Exención del anfitrión",
-    "hostNamed": "Exención del anfitrión: {{name}}",
     "choose": "Exención adicional del anfitrión",
     "none": "Sin exención adicional del anfitrión",
     "multiple": "{{count}} exenciones de una versión anterior de este evento",
@@ -7651,20 +7645,9 @@
     "englishNeeded": "Agrega texto en inglés o un PDF antes de guardar.",
     "pinnedOn": "fijada el {{date}}",
     "noneSelected": "Sin exención adicional del anfitrión",
-    "bothAccepted": "Los asistentes aceptarán por separado el acuerdo de ZoheeWell y esta exención.",
-    "platformOnly": "Los asistentes aceptarán el acuerdo de ZoheeWell.",
     "noLegalAdvice": "ZoheeWell no revisa las exenciones de los anfitriones. Seleccionar un documento no lo hace legalmente suficiente ni elimina la responsabilidad.",
-    "summaryTitle": "Acuerdos obligatorios para asistentes",
-    "fix": "Corregir",
-    "fixLabel": "Corregir {{item}}",
     "status": {
-      "ready": "Listo",
-      "missing": "Se requiere un documento legal aprobado: no es posible publicar",
-      "loading": "Verificando…",
-      "error": "No se pudo verificar; inténtalo de nuevo",
-      "none": "Ninguna seleccionada (opcional)",
-      "stale": "Listo · hay una versión más reciente",
-      "unavailable": "Elige una exención de tu propia biblioteca"
+      "loading": "Verificando…"
     }
   },
   "hostForms": {
