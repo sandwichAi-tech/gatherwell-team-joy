@@ -63,8 +63,8 @@ export type MyChallenge = { id: string; title_en: string; title_es: string; star
 export const myChallengesQuery = (userId: string) => queryOptions({
   queryKey: ['my-challenges', userId],
   queryFn: async (): Promise<MyChallenge[]> => {
-    const { data, error } = await supabase.from('challenge_members').select('challenge:challenges(id, title_en, title_es, starts_on, ends_on)').eq('user_id', userId).limit(100);
+    const { data, error } = await supabase.rpc('my_challenges');
     if (error) throw error;
-    return (data ?? []).flatMap(r => r.challenge ? [r.challenge as MyChallenge] : []).sort((a, b) => b.starts_on.localeCompare(a.starts_on));
+    return data ?? [];
   },
 });
