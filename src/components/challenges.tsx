@@ -72,15 +72,15 @@ function ChallengeRow({ c }: { c: ChallengeItem }) {
 export function ChallengesSection({ startCreate = false }: { startCreate?: boolean }) {
   const { t } = useTranslation(); const { openDetail } = useGatherwell();
   const { list, leader, teamId, isLoading } = useChallenges();
-  const [tab, setTab] = useState<Phase>('active'); const [editing, setEditing] = useState<Partial<Challenge> | null>(null);
+  const [tab, setTab] = useState<Phase | 'draft'>('active'); const [editing, setEditing] = useState<Partial<Challenge> | null>(null);
   useEffect(() => { if (startCreate && leader) setEditing({}); }, [startCreate, leader]);
-  const groups = useMemo(() => ({ active: list.filter(c => phaseOf(c) === 'active'), upcoming: list.filter(c => phaseOf(c) === 'upcoming').reverse(), past: list.filter(c => phaseOf(c) === 'past') }), [list]);
+  const groups = useMemo(() => ({ draft: list.filter(c => c.status === 'draft'), active: list.filter(c => c.status === 'published' && phaseOf(c) === 'active'), upcoming: list.filter(c => c.status === 'published' && phaseOf(c) === 'upcoming').reverse(), past: list.filter(c => c.status === 'published' && phaseOf(c) === 'past') }), [list]);
   if (isLoading) return <ListSkeleton />;
   return <section className="panel" id="challenges">
     <div className="section-heading"><h2>{t('challenges.title')}</h2>{leader ? <Button onClick={() => setEditing({})}><Plus />{t('challenges.new')}</Button> : null}</div>
     {list.length ? <>
-      <div className="segmented-tabs" role="tablist">{(['active', 'upcoming', 'past'] as const).map(k => <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? 'is-active' : ''} onClick={() => setTab(k)}>{t(`challenges.phase.${k}`)} <span className="tab-count">{groups[k].length}</span></button>)}</div>
-      {groups[tab].length ? <div className="challenge-list">{groups[tab].map(c => <ChallengeRow key={c.id} c={c} />)}</div> : <p className="auth-subtitle">{t(`challenges.none.${tab}`)}</p>}
+      <div className="segmented-tabs" role="tablist">{(['active', 'upcoming', 'past', ...(leader ? ['draft' as const] : [])] as const).map(k => <Button variant="ghost" key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? 'is-active' : ''} onClick={() => setTab(k)}>{t(k === 'draft' ? 'templates.draft' : `challenges.phase.${k}`)} <span className="tab-count">{groups[k].length}</span></Button>)}</div>
+      {groups[tab].length ? <div className="challenge-list">{groups[tab].map(c => <ChallengeRow key={c.id} c={c} />)}</div> : <p className="auth-subtitle">{t(tab === 'draft' ? 'challenges.noDrafts' : `challenges.none.${tab}`)}</p>}
     </> : <p className="auth-subtitle">{t('challenges.noneYet')}</p>}
     {leader && <ChallengeBuilder draft={editing} teamId={teamId} onClose={() => setEditing(null)} />}
   </section>;

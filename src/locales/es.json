@@ -2235,7 +2235,8 @@
         "title": "Sigue adelante",
         "body": "Reflexiona sobre lo aprendido y elige qué quieres continuar."
       }
-    }
+    },
+    "noDrafts": "Aún no hay borradores de retos."
   },
   "recognition": {
     "title": "Reconocimiento",
