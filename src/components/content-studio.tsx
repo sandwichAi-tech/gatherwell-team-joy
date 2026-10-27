@@ -169,10 +169,10 @@ export function CurriculumPanel({ offer }: { offer: Offer }) {
   const q = useQuery({
     queryKey: ['curriculum', offer.id],
     queryFn: async () => {
-      const { data: tracks, error } = await db.from('tracks').select('*').eq('offer_id', offer.id).order('sort_order');
+      const { data: tracks, error } = await db.from('tracks').select('*').eq('offer_id', offer.id).order('sort_order').order('created_at').order('id');
       if (error) throw error;
       const ids = (tracks ?? []).map((tr: Track) => tr.id);
-      const { data: lessons } = ids.length ? await db.from('lessons').select('*').in('track_id', ids).order('sort_order') : { data: [] };
+      const { data: lessons } = ids.length ? await db.from('lessons').select('*').in('track_id', ids).order('sort_order').order('created_at').order('id') : { data: [] };
       return { tracks: (tracks ?? []) as Track[], lessons: (lessons ?? []) as LessonRow[] };
     },
   });
@@ -181,7 +181,7 @@ export function CurriculumPanel({ offer }: { offer: Offer }) {
     const i = list.findIndex(x => x.id === tr.id); const j = i + dir;
     if (j < 0 || j >= list.length) return;
     if (ordering) return; setOrdering(true);
-    const { error } = await supabase.rpc('reorder_course_curriculum', { _course: offer.id, _track: null, _ids: reorderedIds(list, i, dir) } as never);
+    const { error } = await supabase.rpc('reorder_course_curriculum_checked', { _course: offer.id, _track: null, _ids: reorderedIds(list, i, dir), _expected: list.map(x => x.id) } as never);
     setOrdering(false); if (error) toast.error(t('profile.saveError'));
     await qc.invalidateQueries({ queryKey: ['curriculum', offer.id] });
   };
@@ -228,11 +228,8 @@ function SectionEditor({ section, offer, onClose }: { section: Partial<Track> | 
   };
   const remove = async () => {
     if (!section?.id || !(await confirmAction({ title: t('learnHub.confirmDeleteTrack'), destructive: true }))) return;
-    const files = await learnPathsForTracks([section.id]);
-    await db.from('lessons').delete().eq('track_id', section.id);
-    const res = await db.from('tracks').delete().eq('id', section.id);
+    const res = await supabase.rpc('detach_course_curriculum', { _course: offer.id, _track: section.id, _lesson: null } as never);
     if (res.error) { toast.error(t('profile.saveError')); return; }
-    void removeUnusedLearnFiles(files);
     await qc.invalidateQueries({ queryKey: ['curriculum', offer.id] });
     onClose();
   };
@@ -264,7 +261,7 @@ function LessonList({ track, lessons, offer, onEdit, onChanged }: { track: Track
     const i = lessons.findIndex(x => x.id === l.id); const j = i + dir;
     if (j < 0 || j >= lessons.length) return;
     if (ordering) return; setOrdering(true);
-    const { error } = await supabase.rpc('reorder_course_curriculum', { _course: offer.id, _track: track.id, _ids: reorderedIds(lessons, i, dir) });
+    const { error } = await supabase.rpc('reorder_course_curriculum_checked', { _course: offer.id, _track: track.id, _ids: reorderedIds(lessons, i, dir), _expected: lessons.map(x => x.id) });
     setOrdering(false); if (error) toast.error(t('profile.saveError'));
     await qc.invalidateQueries({ queryKey: ['curriculum', offer.id] });
     onChanged();
@@ -278,7 +275,7 @@ function LessonList({ track, lessons, offer, onEdit, onChanged }: { track: Track
       <Button variant="ghost" size="icon" aria-label={t('templates.edit')} onClick={() => onEdit(l)}><Pencil /></Button></li>)}</ol>}
     <div className="lesson-add"><Button variant="secondary" onClick={() => onEdit({ track_id: track.id, type: 'text', is_published: false })}><Plus />{t('content.addLesson')}</Button><Button variant="secondary" onClick={() => onEdit({ track_id: track.id, type: 'link', is_published: false })}><Plus />{t('resources.create.types.link.name')}</Button><Button variant="secondary" onClick={() => setQuizTitle('')}><Plus />{t('resources.create.types.quiz.name')}</Button><Button variant="secondary" onClick={() => setAssessmentOpen(true)}><Plus />{t('resources.create.types.assessment.name')}</Button></div>
     {quizTitle !== null && <ResponsiveSheet open onOpenChange={o => !o && setQuizTitle(null)} title={t('resources.create.types.quiz.name')} footer={<Button disabled={ordering || !quizTitle.trim()} onClick={() => void addQuiz()}>{t('common.save')}</Button>}><Input aria-label={t('templates.title')} value={quizTitle} maxLength={160} onChange={e => setQuizTitle(e.target.value)} /></ResponsiveSheet>}
-    {assessmentOpen && <ResponsiveSheet open onOpenChange={o => !o && setAssessmentOpen(false)} title={t('resources.create.types.assessment.name')}><WellnessAssessmentBuilder course={offer.id} /></ResponsiveSheet>}
+    {assessmentOpen && <ResponsiveSheet open onOpenChange={o => !o && setAssessmentOpen(false)} title={t('resources.create.types.assessment.name')}><WellnessAssessmentBuilder course={offer.id} track={track.id} onSaved={() => { setAssessmentOpen(false); onChanged(); }} /></ResponsiveSheet>}
   </div>;
 }
 
@@ -339,10 +336,8 @@ function CourseLessonEditor({ lesson, offer, siblings, onClose }: { lesson: (Par
   };
   const remove = async () => {
     if (!lesson?.id || !(await confirmAction({ title: t('learnHub.confirmDeleteLesson'), destructive: true }))) return;
-    const files = learnPathsOf([lesson as never]);
-    const r = await db.from('lessons').delete().eq('id', lesson.id);
+    const r = await supabase.rpc('detach_course_curriculum', { _course: offer.id, _track: lesson.track_id, _lesson: lesson.id });
     if (r.error) { toast.error(t('profile.saveError')); return; }
-    void removeUnusedLearnFiles(files);
     await qc.invalidateQueries({ queryKey: ['curriculum', offer.id] });
     onClose();
   };

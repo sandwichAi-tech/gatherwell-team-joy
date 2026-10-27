@@ -18,7 +18,7 @@ import { resourceAccessPrice, savedPlacement, type ResourcePlacement } from '@/l
 import { assessmentIssues, assessmentResult, assessmentScore, emptyAssessment, reorderedIds, safeExternalUrl, type AssessmentDraft, type AssessmentQuestion } from '@/lib/wellness-assessment';
 
 const STEPS = ['presentation', 'questions', 'results', 'preview'] as const;
-export function WellnessAssessmentBuilder({ id, course }: { id?: string | undefined; course?: string | undefined }) {
+export function WellnessAssessmentBuilder({ id, course, track, onSaved }: { id?: string | undefined; course?: string | undefined; track?: string; onSaved?: () => void }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
   const { teamId, userId } = useLearn(); const navigate = useNavigate(); const qc = useQueryClient();
   const [draft, setDraft] = useState<AssessmentDraft>(() => ({ ...emptyAssessment(), language: lang }));
@@ -49,8 +49,10 @@ export function WellnessAssessmentBuilder({ id, course }: { id?: string | undefi
       const { data, error } = await supabase.rpc('save_wellness_assessment', { _id: savedId ?? null, _team: teamId, _config: draft as never, _placement: placement, _course: courseId || null, _price: cents, _revision: revision } as never);
       if (error) throw error; const result = data as { id: string; revision: number };
       setSavedId(result.id); setRevision(result.revision); baseline.current = JSON.stringify(draft);
+      if (track) { const bound = await supabase.rpc('bind_course_assessment', { _quiz: result.id, _track: track }); if (bound.error) throw bound.error; await qc.invalidateQueries({ queryKey: ['curriculum', course] }); }
       await qc.invalidateQueries({ queryKey: ['team-quizzes'] }); toast.success(t('resources.item.draftToast'));
-      if (!id) void navigate({ to: '/learn/create', search: { type: 'assessment', id: result.id }, replace: true });
+      onSaved?.();
+      if (!id && !track) void navigate({ to: '/learn/create', search: { type: 'assessment', id: result.id }, replace: true });
     } catch { toast.error(t('assessment.saveError')); } finally { lock.current = false; setBusy(false); }
   };
   const addQuestion = () => patch({ questions: [...draft.questions, { id: crypto.randomUUID(), type: 'single', prompt: '', scored: true, weight: 1, options: [0, 100].map(value => ({ id: crypto.randomUUID(), label: '', value })) }] });

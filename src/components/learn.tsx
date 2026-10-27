@@ -9,6 +9,7 @@ import type { TFunction } from 'i18next';
 import { toast } from 'sonner';
 import { isLive } from '@/lib/resource-flow';
 import { QuizPlay } from '@/components/quiz-play';
+import { WellnessAssessmentPlay } from '@/components/wellness-assessment-play';
 import { ArrowLeft, ArrowRight, Bell, BellRing, Bookmark, BookmarkCheck, CalendarPlus, Check, Clock, ExternalLink, FileText, Link2, Lock, Play, Radio, Settings2, Share2, Video, Waveform, Download } from '@/components/icons';
 import { formatUnlock } from '@/lib/course-release';
 import { Button } from '@/components/ui/button';
@@ -221,7 +222,7 @@ export function LessonPage({ id }: { id: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en'; const qc = useQueryClient(); const navigate = useNavigate();
   const { data, isLoading, isError, refetch, userId, leader, teamId } = useLearn();
   const [busy, setBusy] = useState(false); const [justDone, setJustDone] = useState(false);
-  const attachedQuiz = useQuery({ queryKey: ['lesson-quiz', userId, id], queryFn: async () => { const { data, error } = await supabase.from('quizzes').select('id').eq('lesson_id', id).eq('is_published', true).limit(1).maybeSingle(); if (error) throw error; return data?.id ?? null; } });
+  const attachedQuiz = useQuery({ queryKey: ['lesson-quiz', userId, id], queryFn: async () => { const r = await supabase.rpc('course_lesson_quiz', { _lesson: id }); if (r.error) throw r.error; return r.data as unknown as { id: string; assessment: boolean } | null; } });
   if (isError) return <RetryState retry={() => void refetch()} />;
   if (isLoading || !data) return <ListSkeleton />;
   const lesson = data.lessons.find(l => l.id === id);
@@ -259,10 +260,10 @@ export function LessonPage({ id }: { id: string }) {
     <BackLink to="/learn/track/$id" params={{ id: track.id }} label={trackTitle(track, lang)} />
     <div className="lesson-head"><span className="eyebrow">{t('learnHub.lessonOf', { n: idx + 1, total: list.length })}</span><h1>{lessonTitle(lesson, lang)}</h1>
       {lesson.duration_minutes ? <p className="track-facts">{minutesLabel(t, lesson.duration_minutes)}</p> : null}</div>
-    {attachedQuiz.data ? <QuizPlay quizId={attachedQuiz.data} /> : upcomingLive ? <LiveCard lesson={lesson} track={track} /> : <Player lesson={lesson} />}
+    {attachedQuiz.data ? attachedQuiz.data.assessment ? <WellnessAssessmentPlay id={attachedQuiz.data.id} /> : <QuizPlay quizId={attachedQuiz.data.id} /> : upcomingLive ? <LiveCard lesson={lesson} track={track} /> : <Player lesson={lesson} />}
     {notes && <section className="panel lesson-notes"><h2>{t('learnHub.notes')}</h2><p>{notes}</p></section>}
     <LessonSummary lessonId={id} leader={leader} />
-    {!upcomingLive && <div className="lesson-complete">
+    {!upcomingLive && !attachedQuiz.data?.assessment && <div className="lesson-complete">
       <Button className={`complete-button ${justDone ? 'is-celebrating' : ''}`} variant={done ? 'secondary' : 'default'} disabled={busy} onClick={toggle} aria-pressed={done}><Check />{t(done ? 'learnHub.completed' : 'learnHub.markComplete')}</Button>
       {done && <span className="completed-note">{t('learnHub.savedProgress')}</span>}</div>}
     {s.complete && justDone ? <CompletionCard title={trackTitle(track, lang)} /> : next && <button type="button" className="next-lesson" onClick={() => void navigate({ to: '/learn/lesson/$id', params: { id: next.id } })}>
