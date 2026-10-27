@@ -2169,12 +2169,12 @@
         "title": "Add a title",
         "start": "Pick a start date",
         "end": "Choose an end date within 366 days of the start.",
-        "goal": "Set a whole-number goal from 1 to 1,000.",
+        "goal": "Choose a whole-number goal achievable within this challenge’s check-in periods.",
         "capacity": "Capacity must be a whole number from 1 to 10,000.",
         "price": "Enter a price from $0.50 to $1,000 with up to two decimals.",
         "addons": "Check extra names, prices, quantities and inventory.",
         "activities": "Each activity needs a title, a valid day/hour and a secure link if provided.",
-        "messages": "Check message text and schedule. Only welcome can be enabled until delivery is connected."
+        "messages": "Check text and schedule. Only welcome on joining (offset 0) can be enabled until delivery is connected."
       },
       "replaceTitle": "Replace this draft?",
       "replaceText": "Edited details, rules, activities, messages and extras will be replaced.",

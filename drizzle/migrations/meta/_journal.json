@@ -1156,6 +1156,13 @@
       "when": 1793115758082,
       "tag": "0164_challenge_retry_and_activity_privacy",
       "breakpoints": true
+    },
+    {
+      "idx": 165,
+      "version": "7",
+      "when": 1793116128128,
+      "tag": "0165_challenge_schedule_final_validation",
+      "breakpoints": true
     }
   ]
 }

@@ -2169,12 +2169,12 @@
         "title": "Agrega un título",
         "start": "Elige una fecha de inicio",
         "end": "Elige una fecha de fin dentro de los 366 días desde el inicio.",
-        "goal": "Elige una meta entera de 1 a 1,000.",
+        "goal": "Elige una meta entera alcanzable dentro de los períodos de registro de este reto.",
         "capacity": "La capacidad debe ser un número entero de 1 a 10,000.",
         "price": "Escribe un precio de $0.50 a $1,000 con hasta dos decimales.",
         "addons": "Revisa los nombres, precios, cantidades e inventario de los extras.",
         "activities": "Cada actividad necesita título, día y hora válidos y un enlace seguro si lo agregas.",
-        "messages": "Revisa el texto y el horario. Solo la bienvenida puede activarse hasta conectar el envío."
+        "messages": "Revisa el texto y el horario. Solo la bienvenida al inscribirse (desfase 0) puede activarse hasta conectar el envío."
       },
       "replaceTitle": "¿Reemplazar este borrador?",
       "replaceText": "Se reemplazarán los detalles, las reglas, las actividades, los mensajes y los extras editados.",
