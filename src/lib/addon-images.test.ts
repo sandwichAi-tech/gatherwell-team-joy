@@ -39,9 +39,9 @@ describe('optional add-on images', () => {
     for (const p of ['https://example.com/photo.webp', `${owner}/../addon-a.webp`, `${owner}/cover-123.webp`, '/addon-a.webp']) expect(validAddonImagePath(p)).toBe(false);
   });
   it('projects only signed image URLs, never uploader paths', () => {
-    expect(publicAddon({ id: 'mat', name: 'Mat', price_cents: 500, image_path: path }, 'https://example.com/signed')).toEqual({ id: 'mat', name: 'Mat', price_cents: 500, image: 'https://example.com/signed' });
+    expect(publicAddon({ id: 'mat', name: 'Mat', price_cents: 500, image_path: path }, 'https://example.com/signed')).toEqual({ id: 'mat', name: 'Mat', price_cents: 500, image: 'https://example.com/signed', description_en: null, description_es: null });
   });
   it('keeps prices unchanged when images are absent/unavailable', () => {
-    expect(publicAddon({ id: 'mat', name: 'Mat', price_cents: 500, image_path: path }, null)).toEqual({ id: 'mat', name: 'Mat', price_cents: 500, image: null });
+    expect(publicAddon({ id: 'mat', name: 'Mat', price_cents: 500, image_path: path }, null)).toEqual({ id: 'mat', name: 'Mat', price_cents: 500, image: null, description_en: null, description_es: null });
   });
 });
