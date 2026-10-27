@@ -1177,6 +1177,13 @@
       "when": 1793116766933,
       "tag": "0167_host_waiver_ownership_platform_approval",
       "breakpoints": true
+    },
+    {
+      "idx": 168,
+      "version": "7",
+      "when": 1793116863668,
+      "tag": "0168_event_agreement_admission_guards",
+      "breakpoints": true
     }
   ]
 }

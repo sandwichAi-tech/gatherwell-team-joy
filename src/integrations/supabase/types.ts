@@ -9105,6 +9105,7 @@ export type Database = {
         }[]
       }
       my_plan_status: { Args: never; Returns: Json }
+      my_platform_event_acceptance: { Args: { _code: string }; Returns: Json }
       my_poll_votes: {
         Args: { _code: string; _event: string }
         Returns: {
@@ -9398,6 +9399,32 @@ export type Database = {
           _last: string
           _mail: boolean
           _phone: string
+          _plus_ones: number
+          _sms: boolean
+          _status: string
+          _terms_ok: boolean
+          _tier_id: string
+          _token: string
+          _updates_opt_in: boolean
+          _waiver_name: string
+          _waivers: Json
+        }
+        Returns: {
+          code: string
+          status: string
+        }[]
+      }
+      register_event_agreements: {
+        Args: {
+          _answers: Json
+          _email: string
+          _event_id: string
+          _first: string
+          _language: string
+          _last: string
+          _mail: boolean
+          _phone: string
+          _platform_version: string
           _plus_ones: number
           _sms: boolean
           _status: string
