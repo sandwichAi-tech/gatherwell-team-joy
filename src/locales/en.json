@@ -7575,6 +7575,7 @@
       "disputed": "Review required"
     },
     "cancelCheckout": "Cancel checkout",
-    "cancelPending": "Cancellation could not be confirmed. Your order is unchanged; try again."
+    "cancelPending": "Cancellation could not be confirmed. Your order is unchanged; try again.",
+    "creditReceipt": "Use this completion for the course"
   }
 }

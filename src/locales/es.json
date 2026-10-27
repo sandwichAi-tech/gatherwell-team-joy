@@ -7575,6 +7575,7 @@
       "disputed": "Requiere revisión"
     },
     "cancelCheckout": "Cancelar pago",
-    "cancelPending": "No se pudo confirmar la cancelación. Tu pedido no cambió; intenta de nuevo."
+    "cancelPending": "No se pudo confirmar la cancelación. Tu pedido no cambió; intenta de nuevo.",
+    "creditReceipt": "Usar esta finalización para el curso"
   }
 }
