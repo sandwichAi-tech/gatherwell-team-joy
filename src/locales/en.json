@@ -6332,9 +6332,14 @@
       },
       "button": "Create resource",
       "groups": {
-        "programs": "Programs & assessments",
-        "media": "Media & guides",
-        "interactive": "Links & activities"
+        "single": "Single resources",
+        "interactive": "Live & hands-on",
+        "programs": "Courses & packages"
+      },
+      "groupHints": {
+        "single": "Most hosts start here: one thing people open, watch, read or download.",
+        "interactive": "Things people join, cook along with or answer.",
+        "programs": "Several pieces together, or a reflective assessment."
       }
     },
     "untitled": "Untitled",
@@ -6391,7 +6396,15 @@
     "open": "Open",
     "continue": "Continue",
     "start": "Start",
-    "review": "Review",
+    "review": {
+      "ready": "Ready to publish",
+      "notReady": "Finish these before publishing",
+      "type": "Type",
+      "titleRow": "Title",
+      "languages": "Languages",
+      "oneLanguage": "Shown in this language only.",
+      "fix": "Fix"
+    },
     "edit": "Edit",
     "saveTemplate": "Save as blueprint",
     "continueHeading": "Continue where you left off",

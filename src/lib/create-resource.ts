@@ -4,9 +4,10 @@ import type { LessonType } from '@/lib/learn';
 
 export const CREATE_TYPES = ['course', 'assessment', 'video', 'audio', 'guide', 'file', 'bundle', 'link', 'quiz', 'recipe', 'live'] as const;
 export const CREATE_GROUPS = [
-  { key: 'programs', types: ['course', 'assessment'] },
-  { key: 'media', types: ['video', 'audio', 'guide', 'file', 'bundle'] },
-  { key: 'interactive', types: ['link', 'quiz', 'recipe', 'live'] },
+  // Most hosts start with one thing people open; listed first so the common path is obvious.
+  { key: 'single', types: ['video', 'audio', 'guide', 'file', 'link'] },
+  { key: 'interactive', types: ['live', 'recipe', 'quiz'] },
+  { key: 'programs', types: ['course', 'bundle', 'assessment'] },
 ] as const;
 export type CreateType = (typeof CREATE_TYPES)[number];
 

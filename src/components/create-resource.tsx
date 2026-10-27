@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import {
-  ArrowLeft, ArrowRight, BookOpen, ClipboardCheck, CircleHelp, Download, FileText, GraduationCap, Layers, Leaf, Link2, Radio, Sparkles, Video, Waveform,
+  ArrowLeft, ArrowRight, BookOpen, ClipboardCheck, Compass, CircleHelp, Download, FileText, GraduationCap, Layers, Leaf, Link2, Radio, Sparkles, Video, Waveform,
 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { ListSkeleton } from '@/components/launch-states';
@@ -12,7 +12,7 @@ import { WellnessAssessmentBuilder } from '@/components/wellness-assessment-buil
 import { CREATE_GROUPS, parseCreateType, type CreateType } from '@/lib/create-resource';
 
 const TYPE_ICON: Record<CreateType, typeof Video> = {
-  assessment: ClipboardCheck, video: Video, quiz: ClipboardCheck, guide: FileText, audio: Waveform, file: Download,
+  assessment: Compass, video: Video, quiz: ClipboardCheck, guide: FileText, audio: Waveform, file: Download,
   link: Link2, live: Radio, recipe: Leaf, course: GraduationCap, bundle: Layers,
 };
 
@@ -20,10 +20,10 @@ const TYPE_ICON: Record<CreateType, typeof Video> = {
 function TypeChooser() {
   const { t } = useTranslation();
   return <>
-    {CREATE_GROUPS.map(group => <section key={group.key} className="resource-type-group" aria-labelledby={`type-${group.key}`}><h2 id={`type-${group.key}`}>{t(`resources.create.groups.${group.key}`)}</h2><div className="create-type-grid" role="list">
+    {CREATE_GROUPS.map(group => <section key={group.key} className="resource-type-group" aria-labelledby={`type-${group.key}`}><h2 id={`type-${group.key}`}>{t(`resources.create.groups.${group.key}`)}</h2><p className="muted-small">{t(`resources.create.groupHints.${group.key}`)}</p><ul className="create-type-grid">
       {group.types.map(type => {
         const Icon = TYPE_ICON[type];
-        return <Link key={type} to="/learn/create" search={{ type }} className="create-type-card" role="listitem">
+        return <li key={type} className="create-type-item"><Link to="/learn/create" search={{ type }} className="create-type-card">
           <span className="creation-icon"><Icon /></span>
           <span className="create-type-body">
             <strong>{t(`resources.create.types.${type}.name`)}</strong>
@@ -31,9 +31,9 @@ function TypeChooser() {
             <em>{t(`resources.create.types.${type}.best`)}</em>
           </span>
           <ArrowRight aria-hidden="true" />
-        </Link>;
+        </Link></li>;
       })}
-    </div></section>)}
+    </ul></section>)}
     <div className="create-type-grid"><Link to="/learn/templates" className="create-type-card is-template">
         <span className="creation-icon"><Sparkles /></span>
         <span className="create-type-body">

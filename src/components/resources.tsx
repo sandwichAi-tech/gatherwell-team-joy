@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { toast } from 'sonner';
 import {
-  ArrowLeft, ArrowRight, Award, BookOpen, ClipboardCheck, CopyPlus, Download, FileText, GraduationCap, Layers, Leaf, Link2, Pencil, Play, Plus, Radio, Sparkles, Trash2, UsersRound, Video, Waveform,
+  ArrowLeft, ArrowRight, Award, BookOpen, ClipboardCheck, Compass, CopyPlus, Download, FileText, GraduationCap, Layers, Leaf, Link2, Pencil, Play, Plus, Radio, Sparkles, Trash2, UsersRound, Video, Waveform,
 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,7 +26,7 @@ import {
 import { CREATE_GROUPS, type CreateType } from '@/lib/create-resource';
 import { MyResourceCoaches } from '@/components/my-resource-coaches';
 
-const TYPE_ICON: Record<ResourceType, typeof Video> = { assessment: ClipboardCheck, course: GraduationCap, track: Layers, video: Video, audio: Waveform, guide: FileText, file: Download, link: Link2, recipe: Leaf, live: Radio, quiz: ClipboardCheck };
+const TYPE_ICON: Record<ResourceType, typeof Video> = { assessment: Compass, course: GraduationCap, track: Layers, video: Video, audio: Waveform, guide: FileText, file: Download, link: Link2, recipe: Leaf, live: Radio, quiz: ClipboardCheck };
 
 /** Same eligibility as Events: any non-member workspace role. Server checks stay authoritative. */
 export function useCanCreate() {
