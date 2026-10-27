@@ -1,3 +1,5 @@
+import { BuilderStepFooter, focusField } from '@/components/builder-step-footer';
+import { ASSESSMENT_ISSUE_STEP, stepBlockers } from '@/lib/resource-flow';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -17,6 +19,12 @@ import { myOffersQuery, offerTitle } from '@/lib/offers';
 import { destinationIssues, destinationsPrice, fromSavedDestinations, newDestinations, saveDestinations, type Destinations } from '@/lib/resource-placement';
 import { assessmentIssues, assessmentResult, assessmentScore, emptyAssessment, reorderedIds, safeExternalUrl, type AssessmentDraft, type AssessmentQuestion } from '@/lib/wellness-assessment';
 
+const ASSESSMENT_DEST_LABEL: Record<string, string> = { destination: 'resources.item.issue.destination', courseUnavailable: 'resources.item.issue.courseUnavailable', price: 'resources.item.issue.price' };
+/** Id of the first empty text field in a container, so a blocked Next lands on what needs filling. */
+const firstEmptyIn = (id: string) => {
+  const el = Array.from(document.getElementById(id)?.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input:not([type=checkbox]):not([type=radio]),textarea') ?? []).find(x => !x.value.trim() && x.id);
+  return el?.id ?? 'wa-step-heading';
+};
 const STEPS = ['presentation', 'questions', 'results', 'preview'] as const;
 export function WellnessAssessmentBuilder({ id, course, track, onSaved }: { id?: string | undefined; course?: string | undefined; track?: string; onSaved?: () => void }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
@@ -82,14 +90,18 @@ export function WellnessAssessmentBuilder({ id, course, track, onSaved }: { id?:
   const remove = async (qid: string) => { if (await confirmAction({ title: t('quiz.confirmDeleteQuestion'), destructive: true })) patch({ questions: draft.questions.filter(q => q.id !== qid) }); };
   const changeLanguage = async (language: 'en' | 'es') => { if (language === draft.language) return; if (draft.questions.length && !(await confirmAction({ title: t('assessment.languageChange') }))) return; patch({ language }); };
   const issues = assessmentIssues(draft);
-  const destProblems = destinationIssues(dest, courseIds); const score = assessmentScore(draft, answers); const result = assessmentResult(draft, score);
+  const stepIndex = STEPS.indexOf(step);
+  const goStep = (next: (typeof STEPS)[number]) => { setStep(next); requestAnimationFrame(() => document.getElementById('wa-step-heading')?.focus()); };
+  const destProblems = destinationIssues(dest, courseIds);
+  const stepIssues = stepBlockers([...issues, ...destProblems, ...(destinationsPrice(dest, price.free, price.price) === null ? ['price'] : [])], step, ASSESSMENT_ISSUE_STEP); const score = assessmentScore(draft, answers); const result = assessmentResult(draft, score);
   if (id && load.isPending) return <ListSkeleton />;
   if (load.isError) return <RetryState retry={() => void load.refetch()} />;
   return <article className="assessment-builder">
     <Link to="/learn" search={{ tab: 'mine' }} className="back-link"><ArrowLeft />{t('resources.title')}</Link>
     <div className="page-heading"><div><span className="eyebrow">{t('resources.create.types.assessment.name')}</span><h1>{draft[`title_${lang}`] || t('resources.untitled')}</h1></div><span className="chip">{t('templates.draft')}</span></div>
-    <div className="scroll-row"><div className="segmented" role="tablist" aria-label={t('resources.item.sections')}>{STEPS.map(s => <Button key={s} role="tab" variant="ghost" aria-selected={step === s} disabled={busy} onClick={() => setStep(s)}>{s === 'preview' && <Eye />}{t(`assessment.steps.${s}`)}</Button>)}</div></div>
-    <section className="edit-form assessment-body" aria-label={t(`assessment.steps.${step}`)}>
+    <div className="scroll-row"><div className="segmented" role="tablist" aria-label={t('resources.item.sections')}>{STEPS.map(s => <Button key={s} role="tab" variant="ghost" aria-selected={step === s} disabled={busy} onClick={() => goStep(s)}>{s === 'preview' && <Eye />}{t(`assessment.steps.${s}`)}</Button>)}</div></div>
+    <section id="wa-step-body" className="edit-form assessment-body" aria-labelledby="wa-step-heading">
+      <h2 id="wa-step-heading" tabIndex={-1} className="builder-step-heading">{t('resources.item.stepOf', { n: stepIndex + 1, total: STEPS.length })} · {t(`assessment.steps.${step}`)}</h2>
       {step === 'presentation' && <>
         <label className="field-label" htmlFor="wa-title">{t('templates.title')}</label><Input id="wa-title" value={draft[`title_${lang}`]} maxLength={160} onChange={e => patch({ [`title_${lang}`]: e.target.value })} />
         <label className="field-label" htmlFor="wa-description">{t('templates.description')}</label><Textarea id="wa-description" value={draft[`description_${lang}`]} maxLength={2000} onChange={e => patch({ [`description_${lang}`]: e.target.value })} />
@@ -117,7 +129,13 @@ export function WellnessAssessmentBuilder({ id, course, track, onSaved }: { id?:
         <select id="assessment-scope" className="field-input" value={scopeId} onChange={e => setScopeId(e.target.value)}><option value="">{t('assessment.selectScope')}</option>{scopes.data.map(s => <option key={s.id} value={s.id}>{t('assessment.scopeVersion', { version: s.version })}</option>)}</select>
         <p>{scopes.data.find(s => s.id === scopeId)?.document_text}</p>
       </> : <p className="field-hint" role="status">{t('assessment.approvedRequired')}</p>}
-      <div className="sheet-actions"><Button variant="secondary" disabled={busy} aria-busy={busy} onClick={() => void save()}><Save />{busy ? t('onboarding.saving') : t('gathering.saveDraft')}</Button><Button disabled={busy || !savedId || !scopeId || issues.length > 0 || destProblems.length > 0 || JSON.stringify(draft) !== baseline.current} title={t('assessment.approvedRequired')} onClick={() => void publish()}>{t('offers.publish')}</Button></div>
+      <BuilderStepFooter
+        onBack={stepIndex > 0 ? () => goStep(STEPS[stepIndex - 1]!) : undefined}
+        onSave={() => void save()} saving={busy}
+        onNext={stepIndex < STEPS.length - 1 ? () => goStep(STEPS[stepIndex + 1]!) : undefined}
+        blockers={stepIssues.map(i => t(i in ASSESSMENT_DEST_LABEL ? ASSESSMENT_DEST_LABEL[i]! : `assessment.issues.${i}`))}
+        onBlocked={() => focusField(stepIssues[0] === 'title' ? 'wa-title' : stepIssues[0] === 'price' ? 'wa-price' : stepIssues[0] === 'destination' || stepIssues[0] === 'courseUnavailable' ? 'wa-destinations' : firstEmptyIn('wa-step-body'))}
+        final={<Button className="builder-footer-primary" disabled={busy || !savedId || !scopeId || issues.length > 0 || destProblems.length > 0 || JSON.stringify(draft) !== baseline.current} aria-busy={busy} title={t('assessment.approvedRequired')} onClick={() => void publish()}>{busy ? t('onboarding.saving') : t('offers.publish')}</Button>} />
     </section>
   </article>;
 }
