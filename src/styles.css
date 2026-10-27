@@ -2838,3 +2838,4 @@ a.gw-cat-chip:hover{background:#fff}
 .builder-step-heading:focus { outline: none; }
 .builder-step-heading:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 @media (max-width: 480px) { .builder-footer-row > :last-child { width: 100%; margin-left: 0; justify-content: center; } }
+.step-needs-dot { display:inline-block; width:.5rem; height:.5rem; margin-inline-start:.375rem; border-radius:999px; background: hsl(var(--destructive, 0 70% 50%)); vertical-align: middle; }

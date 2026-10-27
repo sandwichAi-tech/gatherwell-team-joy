@@ -628,9 +628,11 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
 
         <p className="muted-small" aria-live="polite">{t('resources.item.stepOf', { n: nav.index + 1, total: nav.total })}</p>
         <div ref={stepsRef} className="segmented-tabs builder-steps" role="tablist" aria-label={t('resources.item.sections')}>
-          {sections.map((s, i) => <button key={s} type="button" role="tab" aria-selected={section === s} className={section === s ? 'is-active' : ''} onClick={() => setSection(s)}>
-            {i + 1}. {t(`resources.item.tabs.${s}`)}
-          </button>)}
+          {sections.map((s, i) => { const needs = stepBlockers(issues, s, RESOURCE_ISSUE_STEP).length > 0;
+            return <button key={s} type="button" role="tab" aria-selected={section === s} className={section === s ? 'is-active' : ''} onClick={() => goStep(s)}
+              aria-label={`${i + 1}. ${t(`resources.item.tabs.${s}`)}${needs ? ` · ${t('resources.item.stepNeedsAttention')}` : ''}`}>
+              {i + 1}. {t(`resources.item.tabs.${s}`)}{needs && <span aria-hidden="true" className="step-needs-dot" />}
+            </button>; })}
         </div>
         <h2 id="rb-step-heading" tabIndex={-1} className="builder-step-heading">{t(`resources.item.tabs.${section}`)}</h2>
 

@@ -6279,8 +6279,8 @@
         },
         "guide": {
           "name": "Guide / PDF / worksheet",
-          "example": "A readable guide, workbook or handout.",
-          "best": "Best for: reading and printing."
+          "example": "A guide people read on screen: a workbook, handout or worksheet.",
+          "best": "Best for: reading step by step."
         },
         "audio": {
           "name": "Audio",
@@ -6289,8 +6289,8 @@
         },
         "file": {
           "name": "Downloadable file",
-          "example": "A PDF, ebook or zip people keep.",
-          "best": "Best for: one file to download."
+          "example": "One file people download and keep, like an ebook, slides or a zip.",
+          "best": "Best for: something to save and use offline."
         },
         "link": {
           "name": "Link",
@@ -6320,7 +6320,7 @@
         "assessment": {
           "name": "Wellness assessment",
           "example": "Reflective questions and supportive results, not right/wrong answers.",
-          "best": "Draft questions, weighted result ranges and author preview; publication requires approved content."
+          "best": "Best for: reflection with supportive results. Publishing needs approved content."
         }
       },
       "quizParent": {
@@ -6611,7 +6611,8 @@
         "published": "Published",
         "publishedEmpty": "Published · no lessons published yet ({{total}} drafts)",
         "publishedPartial": "Published · {{live}} of {{total}} lessons published"
-      }
+      },
+      "stepNeedsAttention": "needs attention"
     }
   },
   "templatesR": {
