@@ -1,11 +1,12 @@
 # Challenge experience pass
 
 ## Website Notes rows 110–113 — In Progress
-- [ ] Audit and reproduce builder/template, navigation, enrollment/progress/privacy and commerce failures using isolated fixtures.
-- [ ] Coherent editable templates, replacement warning, schedule validation, one active language and accessible step navigation.
-- [ ] Authoritative My challenges, personal progress and scoring; participant-only leaderboard and revocation guards.
-- [ ] Free/Paid draft persistence, safe enrollment/payment states and reusable optional add-on configuration; never simulated paid access.
-- [ ] Focused/security and full tests, EN/ES mobile/desktop, exact fixture cleanup, CHANGELOG and explicit verification gaps.
+- [x] Audit/reproduce raw navigation key, partial templates/saves, disabled leaderboard leakage, uninvited join, paid draft rejection and missing commerce lifecycle.
+- [x] Coherent editable templates, replacement warning, schedule validation, one active language and accessible guarded step navigation; atomic retry save and drafts tab.
+- [x] Authoritative My challenges/progress, model/tie/weekly scoring, participant-only leaderboard and revocation/suspension guards; owner extras and silent invites.
+- [x] Free/Paid draft persistence, safe free enrollment/capacity/inventory/retry and optional extra configuration; paid publication/checkout blocked, never simulated access.
+- [ ] Final tests/cleanup: 35 focused, 811 full tests; 36 isolated checks, template/participant/draft browser flows and 24 EN/ES 320/390/1280 captures. Final rerun and exact cleanup pending.
+- [ ] Rows110–113 remain In Progress: paid checkout/order lines/reservations/refund reconciliation and anonymous Challenge page are not implemented; automatic message scheduler is absent. Physical-device/screen-reader and complete offline/history/account-switch/each-template participant/media matrix lack final verification. Details in CHANGELOG.
 
 ## Website Notes rows 107–109 — In Progress
 - [x] Audit/reproduce duplicates, staff denial, unpaid admission, legacy-waiver partial outcome; Home future-event and static first-event paths.
