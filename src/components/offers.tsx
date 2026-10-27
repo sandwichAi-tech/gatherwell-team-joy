@@ -1,3 +1,4 @@
+import { confirmResourceRemoval } from '@/components/confirm-resource-removal';
 import { RefundLine, RefundSelect } from '@/components/refund-line';
 import { asRefundPolicy, type RefundPolicy } from '@/lib/refunds';
 import { FoundingSeal } from '@/components/founding';
@@ -109,6 +110,8 @@ function OfferEditor({ offer, teamId, onClose, bundleMode }: { offer: Partial<Of
   const priceNum = Number(f.price || 0);
   const valid = !!(f.title_en.trim() || f.title_es.trim()) && Number.isFinite(priceNum) && priceNum >= 0 && priceNum <= 1000 && (f.kind !== 'download' || !f.publish || !!f.file_path);
   const save = async () => {
+    // Unpublishing a live offer archives it: name every place it appears first.
+    if (offer?.id && offer.status === 'published' && !f.publish && !(await confirmResourceRemoval(t, 'offer', offer.id, t('resources.removal.archiveTitle'), 'archive'))) return;
     setBusy(true);
     try {
     const cover_url = coverFile ? await uploadMedia(userId, coverFile, 'cover') : f.cover_url;

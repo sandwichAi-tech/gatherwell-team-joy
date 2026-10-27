@@ -1,3 +1,4 @@
+import { confirmResourceRemoval } from '@/components/confirm-resource-removal';
 import { CropFileInput } from '@/components/image-crop';
 import { EmptyState } from '@/components/launch-states';
 import { LangFields, LangPair } from '@/components/lang-fields';
@@ -61,7 +62,7 @@ function TrackEditor({ track, teamId, onClose, preset }: { track: Partial<Track>
     toast.success(t('templates.saved')); await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose(track?.id ? undefined : (res.data as Track));
   };
   const remove = async () => {
-    if (!track?.id || !(await confirmAction({ title: t('learnHub.confirmDeleteTrack'), destructive: true }))) return;
+    if (!track?.id || !(await confirmResourceRemoval(t, 'track', track.id, t('learnHub.confirmDeleteTrack')))) return;
     const files = await learnPathsForTracks([track.id]);
     const res = await supabase.from('tracks').delete().eq('id', track.id);
     if (res.error) { toast.error(errMsg(t, res.error)); return; }
@@ -234,7 +235,7 @@ function RecipeEditor({ recipe, teamId, onClose }: { recipe: Partial<Recipe> | n
     toast.success(t('templates.saved')); await qc.invalidateQueries({ queryKey: ['recipes', userId] }); onClose();
   };
   const remove = async () => {
-    if (!recipe?.id || !(await confirmAction({ title: t('learnHub.confirmDeleteRecipe'), destructive: true }))) return;
+    if (!recipe?.id || !(await confirmResourceRemoval(t, 'recipe', recipe.id, t('learnHub.confirmDeleteRecipe')))) return;
     const res = await supabase.from('recipes').delete().eq('id', recipe.id);
     if (res.error) { toast.error(errMsg(t, res.error)); return; }
     await qc.invalidateQueries({ queryKey: ['recipes', userId] }); onClose();
