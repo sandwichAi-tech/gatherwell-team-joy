@@ -1,4 +1,12 @@
-# Resources, course curriculum and wellness assessment pass
+# Challenge commerce and course/assessment lifecycle closure
+
+## Website Notes rows 113 and 115 — current closure pass
+- [ ] Audit exact missing code versus legal/provider blockers, preserving existing guards.
+- [ ] Challenge public detail, server-owned order/reservation/receipt lifecycle and verified webhook reconciliation.
+- [ ] Unified curriculum, eligible resource reuse and history-preserving removal.
+- [ ] Versioned assessment readiness, private immutable completions, retries/retakes and safe recommendations.
+- [ ] Focused/full tests, isolated security checks, EN/ES desktop/mobile and keyboard review; exact cleanup.
+- [ ] Report remaining credential/legal/device blockers separately from unimplemented code; no publish/deploy.
 
 ## Website Notes row 115 — In Progress
 - [x] Audit/reproduce first-track-only course create, tied/non-atomic order, separate quiz attachments, absent dedicated assessment/approved scope copy.
