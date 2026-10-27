@@ -5,6 +5,7 @@ import { publicEventAddons, eventAddonImages } from '@/lib/addon-images.function
 import { inviteToken } from '@/lib/guest';
 import { ADDON_IMAGE_RATIO } from '@/lib/addon-images';
 import { BrandImage } from '@/components/brand-image';
+import { AddonDescriptionText } from '@/components/addon-description-field';
 import { Button } from '@/components/ui/button';
 import { formatMoney } from '@/lib/billing';
 
@@ -18,7 +19,7 @@ export function EventAddons({ eventId, authenticated = false }: { eventId: strin
   return <section className="event-addons" aria-label={t('addonImages.title')}><h2>{t('addonImages.title')}</h2><ul>
     {data.map(a => <li key={a.id}>
       {a.image && <BrandImage src={a.image} alt={t('addonImages.alt', { name: a.name })} aspect={ADDON_IMAGE_RATIO} className="addon-image" sizes="(max-width: 600px) 100vw, 240px" />}
-      <div><strong>{a.name}</strong><p>{formatMoney(a.price_cents, i18n.resolvedLanguage === 'es' ? 'es' : 'en')}</p></div>
+      <div><strong>{a.name}</strong><AddonDescriptionText addon={a} lang={i18n.resolvedLanguage} /><p>{formatMoney(a.price_cents, i18n.resolvedLanguage === 'es' ? 'es' : 'en')}</p></div>
     </li>)}
   </ul></section>;
 }

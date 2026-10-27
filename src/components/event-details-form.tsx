@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { AddonImageInput } from '@/components/addon-image-input';
+import { AddonDescriptionField } from '@/components/addon-description-field';
 import { Plus, Trash2 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -260,6 +261,9 @@ export function EventDetailsSections({ value, onChange, priceCents, lang, userId
         <AddonImageInput userId={userId} name={a.name} path={a.image_path} onChange={image_path => setAddon(a.id, { image_path })} onBusy={onImageBusy} />
         <div className="two-col">
           <Input className="field-input" id={`addon-${a.id}`} maxLength={60} value={a.name} onChange={e => setAddon(a.id, { name: e.target.value })} placeholder={t('builder.addonName')} aria-label={t('builder.addonName')} aria-invalid={tried && !a.name.trim()} />{tried && !a.name.trim() && <p className="field-error">{t('eventReliability.addonInvalid')}</p>}
+        </div>
+        <AddonDescriptionField id={`addon-desc-${a.id}`} value={a} onChange={patch => setAddon(a.id, patch)} />
+        <div className="two-col">
           <Input className="field-input" inputMode="decimal" value={a.price_cents ? String(a.price_cents / 100) : ''} onChange={e => setAddon(a.id, { price_cents: toCents(money(e.target.value)) })} placeholder="$0" aria-label={t('billing.price')} />
         </div>
         <Button type="button" variant="ghost" className="danger-text" onClick={() => set({ addons: value.addons.filter(x => x.id !== a.id) })} aria-label={t('builder.removeAddon')}><Trash2 />{t('builder.removeAddon')}</Button>

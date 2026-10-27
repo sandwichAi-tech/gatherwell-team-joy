@@ -6,7 +6,15 @@ export const EVENT_FORMATS = ['person', 'online', 'hybrid'] as const;
 export type EventFormat = typeof EVENT_FORMATS[number];
 
 export type TicketTier = { id: string; name: string; price_cents: number; quantity: number | null; sale_starts_at: string | null; sale_ends_at: string | null };
-export type Addon = { id: string; name: string; price_cents: number; image_path?: string | null };
+export type Addon = { id: string; name: string; price_cents: number; image_path?: string | null; description_en?: string | null | undefined; description_es?: string | null | undefined };
+/** Optional host-written add-on description, per language. */
+export const MAX_ADDON_DESCRIPTION = 300;
+export const addonDescriptionValid = (a: Pick<Addon, 'description_en' | 'description_es'>) => (a.description_en ?? '').length <= MAX_ADDON_DESCRIPTION && (a.description_es ?? '').length <= MAX_ADDON_DESCRIPTION;
+/** Saved description for the viewer's language, falling back to the other language, then legacy text. Never invented. */
+export function addonDescription(a: { description_en?: string | null | undefined; description_es?: string | null | undefined; description?: string | null | undefined }, lang?: string | undefined): string {
+  const en = a.description_en?.trim() || ''; const es = a.description_es?.trim() || '';
+  return (lang === 'es' ? es || en : en || es) || a.description?.trim() || '';
+}
 
 export const MAX_TAGS = 8;
 export const MAX_TAG_LEN = 24;
@@ -117,7 +125,9 @@ export function cleanAddons(rows: Addon[]): Addon[] | null {
     const name = r.name.trim();
     if (!name || name.length > 60) return null;
     if (!Number.isInteger(r.price_cents) || r.price_cents < 0 || r.price_cents > MAX_PRICE_CENTS) return null;
-    out.push({ id: r.id || newId(), name, price_cents: r.price_cents, ...(r.image_path !== undefined ? { image_path: r.image_path || null } : {}) });
+    if (!addonDescriptionValid(r)) return null;
+    const description_en = r.description_en?.trim() || null; const description_es = r.description_es?.trim() || null;
+    out.push({ id: r.id || newId(), name, price_cents: r.price_cents, ...(r.image_path !== undefined ? { image_path: r.image_path || null } : {}), ...(description_en ? { description_en } : {}), ...(description_es ? { description_es } : {}) });
   }
   return out;
 }

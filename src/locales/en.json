@@ -7577,5 +7577,10 @@
     "cancelCheckout": "Cancel checkout",
     "cancelPending": "Cancellation could not be confirmed. Your order is unchanged; try again.",
     "creditReceipt": "Use this completion for the course"
+  },
+  "addonDescription": {
+    "label": "Description (optional)",
+    "help": "Briefly explain what the guest receives. Up to {{max}} characters.",
+    "tooLong": "Keep the description to {{max}} characters or fewer."
   }
 }

@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { getRequest } from '@tanstack/react-start/server';
 
-export type PublicChallenge = { id: string; title_en: string; title_es: string; description_en: string | null; description_es: string | null; starts_on: string; ends_on: string; is_paid: boolean; price_cents: number; currency: string; enrollment: string; addons: { id: string; name: string; description: string; price_cents: number; max_quantity: number; inventory: number | null; available: boolean }[] };
+export type PublicChallenge = { id: string; title_en: string; title_es: string; description_en: string | null; description_es: string | null; starts_on: string; ends_on: string; is_paid: boolean; price_cents: number; currency: string; enrollment: string; addons: { id: string; name: string; description: string | null; description_en?: string | null; description_es?: string | null; price_cents: number; max_quantity: number; inventory: number | null; available: boolean }[] };
 export const getPublicChallenge = createServerFn({ method: 'GET' })
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data }): Promise<PublicChallenge | null> => {
