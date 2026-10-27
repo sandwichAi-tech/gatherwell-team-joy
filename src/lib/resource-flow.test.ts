@@ -69,3 +69,22 @@ describe('resource blueprint copy', () => {
     expect(JSON.stringify(es.templatesR)).not.toMatch(/plantilla/i);
   });
 });
+
+import { ASSESSMENT_ISSUE_STEP, RESOURCE_ISSUE_STEP, stepBlockers } from '@/lib/resource-flow';
+describe('builder Next blockers', () => {
+  it('blocks presentation only on a missing title', () => {
+    expect(stepBlockers(['title', 'price', 'file'], 'presentation', RESOURCE_ISSUE_STEP)).toEqual(['title']);
+  });
+  it('blocks access on destination and price, never on a missing file', () => {
+    expect(stepBlockers(['file', 'destination', 'price'], 'access', RESOURCE_ISSUE_STEP)).toEqual(['destination', 'price']);
+    expect(stepBlockers(['file'], 'content', RESOURCE_ISSUE_STEP)).toEqual([]);
+  });
+  it('blocks content on an invalid link', () => {
+    expect(stepBlockers(['url'], 'content', RESOURCE_ISSUE_STEP)).toEqual(['url']);
+  });
+  it('maps assessment issues to their own step without duplicates', () => {
+    expect(stepBlockers(['questions', 'options', 'questions', 'ranges'], 'questions', ASSESSMENT_ISSUE_STEP)).toEqual(['questions', 'options']);
+    expect(stepBlockers(['ranges', 'url'], 'results', ASSESSMENT_ISSUE_STEP)).toEqual(['ranges', 'url']);
+    expect(stepBlockers(['destination'], 'presentation', ASSESSMENT_ISSUE_STEP)).toEqual(['destination']);
+  });
+});
