@@ -20,7 +20,7 @@ export function PublicResource({ kind, id }: { kind: 'track' | 'recipe' | 'quiz'
   if (q.isPending) return <GuestShell><ListSkeleton /></GuestShell>;
   if (q.isError) return <GuestShell><RetryState retry={() => void q.refetch()} /></GuestShell>;
   const r = q.data;
-  if (!r) return <GuestShell><EmptyState icon="BookOpen" title={t('resources.item.notFound')} /></GuestShell>;
+  if (!r) return <GuestShell><EmptyState icon="BookOpen" text={t('resources.item.notFound')} /></GuestShell>;
   const title = pick(lang, r['title_en'], r['title_es']);
   const labelType = r['type'] === 'pdf' ? 'guide' : r['type'] === 'download' ? 'file' : r['type'];
   return <GuestShell><article className="offer-page">
@@ -30,7 +30,7 @@ export function PublicResource({ kind, id }: { kind: 'track' | 'recipe' | 'quiz'
       <p className="offer-price">{r['placement'] === 'course' ? t('resourcePlacement.courseAccess') : r['price_cents'] ? formatMoney(r['price_cents'], lang) : t('offers.free')}</p>
       {!r['access'] ? <>
         <p role="status">{t(r['price_cents'] ? 'content.paidSetupRequired' : 'resourcePlacement.notAvailable')}</p>
-        {r['parent_course_id'] && <Button asChild><Link to="/o/$id" params={{ id: r['parent_course_id'] }}>{t('courseAccess.view')}</Link></Button>}
+        {r['parent_course_id'] && <Button asChild><Link to="/o/$id" params={{ id: r['parent_course_id'] }}>{t('resourcePlacement.pickCourse')}</Link></Button>}
         {r['price_cents'] > 0 && r['offer_id'] && <Button asChild variant="secondary"><Link to="/o/$id" params={{ id: r['offer_id'] }}>{t('resources.item.ctaBuy')}</Link></Button>}
       </> : <>
         {kind === 'quiz' && <Button asChild><Link to={user ? '/learn/quiz/$id' : '/login'} params={user ? { id } : {}}>{t(user ? 'resourcePlacement.open' : 'resourcePlacement.signQuiz')}</Link></Button>}

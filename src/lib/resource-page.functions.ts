@@ -4,7 +4,9 @@ import { z } from 'zod';
 
 const input = (v: unknown) => z.object({ kind: z.enum(['track', 'recipe', 'quiz', 'offer']), id: z.string().uuid() }).parse(v);
 
-async function readResource(client: import('@supabase/supabase-js').SupabaseClient, kind: string, id: string) {
+type ResourcePage = Record<string, any> & { coverUrl: string | null; content: Record<string, any>[]; fileUrl: string | null };
+
+async function readResource(client: import('@supabase/supabase-js').SupabaseClient, kind: string, id: string): Promise<ResourcePage | null> {
   const { data, error } = await client.rpc('get_resource_page', { _kind: kind, _id: id });
   if (error) throw new Error('resource_unavailable');
   if (!data) return null;

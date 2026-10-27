@@ -452,7 +452,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const saveOnce = async (publish: boolean) => {
     if (priceCents === null || (publish && paidBlocked)) return;
     setBusy(true);
-    const configure = async (entity: string, id: string) => { const r = await supabase.rpc('configure_resource_access', { _kind: entity, _id: id, _placement: placement, _course: placement === 'course' ? courseId : null, _price: priceCents }); if (r.error) throw r.error; }; 
+    const configure = async (entity: string, id: string) => { const r = await supabase.rpc('configure_resource_access', { _kind: entity, _id: id, _placement: placement, _course: placement === 'course' ? courseId : undefined, _price: priceCents }); if (r.error) throw r.error; }; 
     const base = {
       title_en: item.titleEn.trim(), title_es: item.titleEs.trim(),
       description_en: item.descEn.trim() || null, description_es: item.descEs.trim() || null,

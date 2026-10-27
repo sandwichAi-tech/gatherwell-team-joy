@@ -72,9 +72,9 @@ describe('publicCardRoute / publicKindKey (cross-model cards)', () => {
   });
   it('picks the type label namespace per model', async () => {
     const { publicKindKey } = await import('./public-cards');
-    expect(publicKindKey({ kind: 'download', entity: 'offer' })).toBe('offers.kind.download');
-    expect(publicKindKey({ kind: 'video', entity: 'track' })).toBe('resources.types.video');
-    expect(publicKindKey({ kind: 'link', entity: 'track' })).toBe('resources.types.link');
+    expect(publicKindKey({ kind: 'download', entity: 'offer' })).toBe('resources.create.types.file.name');
+    expect(publicKindKey({ kind: 'video', entity: 'track' })).toBe('resources.create.types.video.name');
+    expect(publicKindKey({ kind: 'link', entity: 'track' })).toBe('resources.create.types.link.name');
   });
   it('track cards render through the shared card model with fallbacks', async () => {
     const { publicCardModel } = await import('./public-cards');
