@@ -43,8 +43,8 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Covers/add-on images reuse private uploader media and shared cropping. Sign only after resolving authorized host/event, never caller paths; add-on cleanup preserves saved references.
 - Day-60 scoreboard: raw counts come only from admin_day60(); targets and the go/adjust/rethink verdict are evaluated in src/lib/day60.ts so thresholds live in one tested place.
 - Parked features are gated by feature_* flags via src/lib/feature-flags.tsx; admins always see them and off routes throw notFound, so launch scope changes from /admin?tab=flags.
-- Resources: /learn + feature_learn, type-first /learn/create. Placement uses configure_resource_access + existing offers; course containment stays separate. Resolve public visibility before server-only signing. Paid resource checkout stays blocked until orders/refunds verified.
-- Home/brief: caller-only personal_home, auth-cleared cache. Insights: UTC cohorts.
+- Resources: /learn + feature_learn, type-first create; configure_resource_access + offers; courses separate. Resolve visibility before signing. Paid checkout blocked until orders/refunds verified.
+- Home/brief: caller-only personal_home saved progress, auth-cleared cache; shortcuts use event-local occurrence/session days. Insights: UTC.
 - Admin password sign-in: public /admin-login with existing Cloud Auth accounts; getAdminAccess checks the role before navigation and every admin handler re-checks, so sign-in never grants privileges.
 - Blueprints/challenges reuse existing editors; drafts stay private. Experience sessions use existing events and whole-event admission.
 - Platform fees come only from versioned fee_rules (calc_platform_fee_cents, mirrored in src/lib/fees.ts); orders snapshot the rule.
@@ -60,5 +60,5 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Event images use share-image.ts for all outputs; admin menu uses role checks.
 - Course drip is decided only by lesson_unlock_at()/lesson_is_unlocked() (mirrored in src/lib/course-release.ts) and enforced by restrictive RLS on lessons, summaries and learn-media; browsers get locked titles only via my_locked_lessons().
 - Event Builder partial drafts use manager-only event_builder_drafts snapshots; publish validates and writes canonical event fields, so incomplete input never becomes attendee data.
-- Own QR; staff/waivers gate admission; journeys dedupe/recheck. Waiver versions are manager-only; event attachments snapshot text, never rewrite acceptances.
+- Own QR unchanged; walk_in_admit binds event/retry and owner/assigned staff, capacity/payment/waivers; journeys dedupe. Manager-only waivers snapshot text, never rewrite acceptances.
 - Owner approves joins; legacy members remain. Library reuses templates and independent allowlisted drafts, never entitlements. Channels keep direct guards and separate unread/mute.

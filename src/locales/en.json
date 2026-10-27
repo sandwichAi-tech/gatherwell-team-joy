@@ -1732,7 +1732,8 @@
       "waiver_required": "Required waiver acceptance is missing. Not checked in.",
       "event_unavailable": "This event is not published or was cancelled.",
       "registration_required": "A confirmed registration is required for admission.",
-      "rate_limited": "Too many attempts. Wait a minute and retry."
+      "rate_limited": "Too many attempts. Wait a minute and retry.",
+      "payment_required": "Verified payment is required. Open attendee registration to resolve it."
     },
     "scanNext": "Scan next",
     "walkInAdded": "{{name}} added and checked in",
