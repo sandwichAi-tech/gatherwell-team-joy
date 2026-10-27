@@ -6278,7 +6278,7 @@
           "best": "Best for: checking understanding inside a course."
         },
         "guide": {
-          "name": "Guide / PDF / worksheet",
+          "name": "Guide / worksheet",
           "example": "A guide people read on screen: a workbook, handout or worksheet.",
           "best": "Best for: reading step by step."
         },
@@ -6332,9 +6332,14 @@
       },
       "button": "Create resource",
       "groups": {
-        "programs": "Programs & assessments",
-        "media": "Media & guides",
-        "interactive": "Links & activities"
+        "single": "Single resources",
+        "interactive": "Live & hands-on",
+        "programs": "Courses & packages"
+      },
+      "groupHints": {
+        "single": "Most hosts start here: one thing people open, watch, read or download.",
+        "interactive": "Things people join, cook along with or answer.",
+        "programs": "Several pieces together, or a reflective assessment."
       }
     },
     "untitled": "Untitled",
@@ -6391,7 +6396,15 @@
     "open": "Open",
     "continue": "Continue",
     "start": "Start",
-    "review": "Review",
+    "review": {
+      "ready": "Ready to publish",
+      "notReady": "Finish these before publishing",
+      "type": "Type",
+      "titleRow": "Title",
+      "languages": "Languages",
+      "oneLanguage": "Shown in this language only.",
+      "fix": "Fix"
+    },
     "edit": "Edit",
     "saveTemplate": "Save as blueprint",
     "continueHeading": "Continue where you left off",
@@ -6485,7 +6498,7 @@
         "content": "Content",
         "access": "Access",
         "options": "Options",
-        "preview": "Preview"
+        "preview": "Review"
       },
       "subtitle": "Subtitle",
       "subtitleHint": "One short line under the title",

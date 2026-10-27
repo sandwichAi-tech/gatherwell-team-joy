@@ -90,3 +90,5 @@ export const ASSESSMENT_ISSUE_STEP: Record<string, 'presentation' | 'questions' 
 /** Issues that stop Next on the current step: only that step's own required fields. */
 export const stepBlockers = (issues: readonly string[], step: string, owner: Record<string, string>) =>
   [...new Set(issues)].filter(i => owner[i] === step);
+/** Where Review's Fix action sends each issue. A missing file never blocks Next but still needs a Fix destination. */
+export const RESOURCE_FIX_STEP: Record<string, ItemSection> = { ...RESOURCE_ISSUE_STEP, file: 'content', placeholder: 'presentation' };

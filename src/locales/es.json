@@ -6278,7 +6278,7 @@
           "best": "Ideal para: comprobar lo aprendido dentro de un curso."
         },
         "guide": {
-          "name": "Guía / PDF / hoja de trabajo",
+          "name": "Guía / hoja de trabajo",
           "example": "Una guía que se lee en pantalla: cuaderno, folleto u hoja de trabajo.",
           "best": "Ideal para: leer paso a paso."
         },
@@ -6332,9 +6332,14 @@
       },
       "button": "Crear recurso",
       "groups": {
-        "programs": "Programas y evaluaciones",
-        "media": "Medios y guías",
-        "interactive": "Enlaces y actividades"
+        "single": "Recursos individuales",
+        "interactive": "En vivo y prácticos",
+        "programs": "Cursos y paquetes"
+      },
+      "groupHints": {
+        "single": "La mayoría empieza aquí: algo que las personas abren, ven, leen o descargan.",
+        "interactive": "Algo a lo que se unen, cocinan juntos o responden.",
+        "programs": "Varias piezas juntas o una evaluación de reflexión."
       }
     },
     "untitled": "Sin título",
@@ -6391,7 +6396,15 @@
     "open": "Abrir",
     "continue": "Continuar",
     "start": "Empezar",
-    "review": "Repasar",
+    "review": {
+      "ready": "Listo para publicar",
+      "notReady": "Completa esto antes de publicar",
+      "type": "Tipo",
+      "titleRow": "Título",
+      "languages": "Idiomas",
+      "oneLanguage": "Se muestra solo en este idioma.",
+      "fix": "Corregir"
+    },
     "edit": "Editar",
     "saveTemplate": "Guardar como modelo",
     "continueHeading": "Continúa donde te quedaste",
@@ -6485,7 +6498,7 @@
         "content": "Contenido",
         "access": "Acceso",
         "options": "Opciones",
-        "preview": "Vista previa"
+        "preview": "Revisar"
       },
       "subtitle": "Subtítulo",
       "subtitleHint": "Una línea corta bajo el título",

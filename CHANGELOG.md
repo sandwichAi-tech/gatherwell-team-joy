@@ -691,3 +691,9 @@
 
 ## 2026-10-27
 - Approved rule: resources included in a course are unlocked by any valid access to that course (even a free course) without the standalone price; builder hint and Review now say "Included with these courses; the standalone price applies elsewhere." (EN/ES). Revoking course access removes only that path.
+
+## 2026-10-27 — Resource Builder UX pass 1 (type picker, steps, Review)
+- Type picker regrouped: Single resources (start here) / Live & hands-on / Courses & packages, with group hints; guide vs downloadable file no longer overlap; assessment gets its own icon; cards are real links in a list.
+- Removed the empty "Options" step (nothing to configure for any type).
+- Step tabs move focus to the step heading and mark steps that still need attention.
+- Last step renamed Review; adds a readiness checklist (type, title, languages) with a Fix button per missing item that opens the right step and focuses the field. Full issue list shows only on Review.

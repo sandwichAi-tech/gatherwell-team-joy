@@ -15,7 +15,7 @@ export function sectionsFor(type: CreateType): ItemSection[] {
   if (type === 'course') return ['presentation', 'content', 'access', 'preview'];
   const out: ItemSection[] = ['presentation', 'content'];
   out.push('access');
-  if (offerKindFor(type)) out.push('options');
+  // The former 'options' step had nothing to configure for any type (course drip lives in Access): a dead step.
   out.push('preview');
   return out;
 }

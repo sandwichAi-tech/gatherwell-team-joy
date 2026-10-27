@@ -32,7 +32,7 @@ import {
 import { learnPathsOf, listOf, pick, RECIPE_TAGS, removeUnusedLearnFiles, uploadLearnFile, type Lesson } from '@/lib/learn';
 import { myOffersQuery, offerTitle, saveOffer, uploadOfferFile, type Offer } from '@/lib/offers';
 import type { RefundPolicy } from '@/lib/refunds';
-import { activationIso, hasPlaceholder, isMultiLessonTrack, lessonsToPublishWithTrack, placeholderLessons, publishedDestination, stepBlockers, stepNav, RESOURCE_ISSUE_STEP } from '@/lib/resource-flow';
+import { activationIso, hasPlaceholder, isMultiLessonTrack, lessonsToPublishWithTrack, placeholderLessons, publishedDestination, stepBlockers, stepNav, RESOURCE_ISSUE_STEP, RESOURCE_FIX_STEP } from '@/lib/resource-flow';
 import {
   ACCENT_KEYS, accentPair, cardLayoutsFor, defaultCtaKey, emptyItemState, itemIssues, itemSnapshot,
   sanitizeRichText, sectionsFor, type Accent, type CardLayout, type ItemSection, type ItemState,
@@ -724,19 +724,25 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
         </>}
 
         {/* ---- Options ---- */}
-        {section === 'options' && <>
-          {type === 'course' && <>
-            <Field id="rb-drip" label={t('offers.drip')}><Input id="rb-drip" type="number" min={0} max={60} className="field-input" value={drip} onChange={e => setDrip(Math.max(0, Math.min(60, Number(e.target.value) || 0)))} /></Field>
-            <p className="muted-small">{t('resources.builder.courseNote')}</p>
-          </>}
-          {type !== 'course' && <p className="muted-small">{t('resources.item.noOptions')}</p>}
-        </>}
 
         {/* ---- Preview (all sizes; desktop also shows the aside) ---- */}
+        {section === 'preview' && <section className="review-checklist" aria-labelledby="rb-ready-title">
+          <h3 id="rb-ready-title">{t(canPublish ? 'resources.review.ready' : 'resources.review.notReady')}</h3>
+          <dl className="review-rows">
+            <div><dt>{t('resources.review.type')}</dt><dd>{t(`resources.create.types.${type}.name`)}</dd></div>
+            <div><dt>{t('resources.review.titleRow')}</dt><dd>{pick(lang, item.titleEn, item.titleEs) || '—'}</dd></div>
+            <div><dt>{t('resources.review.languages')}</dt><dd>{[item.titleEn.trim() && 'English', item.titleEs.trim() && 'Español'].filter(Boolean).join(' · ') || '—'}{!!(item.titleEn.trim() || item.titleEs.trim()) && !(item.titleEn.trim() && item.titleEs.trim()) && <small className="muted-small"> {t('resources.review.oneLanguage')}</small>}</dd></div>
+          </dl>
+          {[...new Set(issues)].length > 0 && <ul className="review-fix-list">{[...new Set(issues)].map(i => <li key={i}>
+            <span>{t(`resources.item.issue.${i}`)}</span>
+            <Button variant="secondary" size="sm" onClick={() => { const step = RESOURCE_FIX_STEP[i]; if (step && sections.includes(step as ItemSection)) goStep(step as ItemSection); requestAnimationFrame(() => focusField(RESOURCE_FIELD[i] ?? 'rb-step-heading')); }}
+              aria-label={`${t('resources.review.fix')}: ${t(`resources.item.issue.${i}`)}`}>{t('resources.review.fix')}</Button>
+          </li>)}</ul>}
+        </section>}
         {section === 'preview' && <div className="item-preview-mobile">{preview}</div>}
 
         {placeholder && <p className="field-hint" role="alert">{t('resources.item.placeholderBlock')}{lessonsWithPlaceholders.length > 0 && ` ${t('resources.item.placeholderLessons', { names: lessonsWithPlaceholders.map(l => pick(lang, l.title_en, l.title_es)).join(', ') })}`}</p>}
-        {issues.length > 0 && <p className="field-hint" role="alert">{t('resources.item.issues', { fields: issues.map(i => t(`resources.item.issue.${i}`)).join(', ') })}</p>}
+        {section === 'preview' && issues.length > 0 && <p className="field-hint" role="alert">{t('resources.item.issues', { fields: issues.map(i => t(`resources.item.issue.${i}`)).join(', ') })}</p>}
 
         <BuilderStepFooter
           onBack={nav.prev ? () => goStep(nav.prev!) : undefined}

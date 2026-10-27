@@ -2839,3 +2839,17 @@ a.gw-cat-chip:hover{background:#fff}
 .builder-step-heading:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 @media (max-width: 480px) { .builder-footer-row > :last-child { width: 100%; margin-left: 0; justify-content: center; } }
 .step-needs-dot { display:inline-block; width:.5rem; height:.5rem; margin-inline-start:.375rem; border-radius:999px; background: var(--destructive); vertical-align: middle; }
+ul.create-type-grid { list-style: none; padding: 0; }
+.create-type-item { display: contents; }
+.resource-type-group > .muted-small { margin: -4px 0 10px; }
+.review-checklist { display: grid; gap: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); border-radius: 16px; background: var(--card); }
+.review-checklist h3 { font-size: 17px; font-weight: 600; margin: 0; }
+.review-rows { display: grid; gap: 8px; margin: 0; }
+.review-rows > div { display: grid; grid-template-columns: minmax(84px, 30%) 1fr; gap: 8px; }
+.review-rows dt { color: var(--muted-foreground); font-size: 14px; }
+.review-rows dd { margin: 0; overflow-wrap: anywhere; }
+.review-fix-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.review-fix-list li { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.review-fix-list li span { flex: 1 1 10rem; min-width: 0; }
+.review-fix-list button { min-height: 44px; }
+.review-fix-list li span::first-letter { text-transform: uppercase; }
