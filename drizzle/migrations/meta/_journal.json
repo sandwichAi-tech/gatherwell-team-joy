@@ -1198,6 +1198,27 @@
       "when": 1793121863869,
       "tag": "0170_event_agreement_reference_validation",
       "breakpoints": true
+    },
+    {
+      "idx": 171,
+      "version": "7",
+      "when": 1793123469139,
+      "tag": "0171_resource_assessment_drafts_curriculum_order",
+      "breakpoints": true
+    },
+    {
+      "idx": 172,
+      "version": "7",
+      "when": 1793123758591,
+      "tag": "0172_assessment_identity_and_course_quiz_creation",
+      "breakpoints": true
+    },
+    {
+      "idx": 173,
+      "version": "7",
+      "when": 1793123991190,
+      "tag": "0173_assessment_scope_content_claim_filter",
+      "breakpoints": true
     }
   ]
 }

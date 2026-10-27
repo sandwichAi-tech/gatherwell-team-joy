@@ -1,4 +1,5 @@
 import { ResourceAccessFields } from '@/components/resource-access-fields';
+import { CurriculumPanel } from '@/components/content-studio';
 import { resourceAccessPrice, savedPlacement, type ResourcePlacement } from '@/lib/resource-placement';
 import { uploadMedia } from '@/lib/account';
 import { OfferCover } from '@/components/offers';
@@ -418,7 +419,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const lessonsWithPlaceholders = trackLessons ? placeholderLessons(trackLessons) : [];
   const placeholder = hasPlaceholder(item.titleEn, item.titleEs, item.descEn, item.descEs, item.subtitleEn, item.subtitleEs) || lessonsWithPlaceholders.length > 0;
   const draftLessonsToPublish = trackLessons ? lessonsToPublishWithTrack(trackLessons, loaded?.status === 'published') : [];
-  const canSave = issues.filter(i => i !== 'file').length === 0 && (progress === null || progress === 100) && !busy;
+  const canSave = (progress === null || progress === 100) && !busy;
   const canPublish = canSave && issues.length === 0 && !paidBlocked && !placeholder;
   const nav = stepNav(sections, sections.includes(section) ? section : 'presentation');
   const wasPublished = loaded?.status === 'published';
@@ -683,8 +684,8 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
             {draft.offer.filePath && <small className="muted-small"><Check className="inline-icon" />{t('offers.fileAttached')}</small>}
             {type === 'bundle' && <p className="field-hint">{t('resources.preset.bundle.hint')}</p>}</div>}
 
-          {type === 'course' && (loaded?.trackId
-            ? <Curriculum trackId={loaded.trackId} teamId={teamId} lang={lang} />
+          {type === 'course' && (loaded?.entity === 'offer' && courses.find(o => o.id === loaded.id)
+            ? <CurriculumPanel offer={courses.find(o => o.id === loaded.id) as Offer} />
             : <p className="muted-small">{t('resources.item.curriculum.saveFirst')}</p>)}
 
           {!sections.includes('access') && type !== 'quiz' && activationField}
@@ -703,6 +704,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
             courses={courses.map(o => ({ id: o.id, title: offerTitle(o, lang) }))} ready={sellReady} prefix="rb" />
           {activationField}
           {paid && <RefundSelect id="rb-refund" value={refund} onChange={setRefund} />}
+          {type === 'course' && <Field id="rb-drip" label={t('offers.drip')}><Input id="rb-drip" type="number" min={0} max={60} className="field-input" value={drip} onChange={e => setDrip(Math.max(0, Math.min(60, Number(e.target.value) || 0)))} /></Field>}
         </>}
 
         {/* ---- Options ---- */}

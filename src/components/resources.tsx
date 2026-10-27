@@ -22,10 +22,10 @@ import {
   quizMarkersQuery, quizCard, teamQuizzesQuery, recipeCard, resourceTemplatesQuery, saveResourceTemplate, savedOfferResourcesQuery, splitTemplates, templateParts, toResources,
   type ResourceCardData, type ResourceSourceFilter, type ResourceTab, type ResourceTemplate, type ResourceType, type ResourceTypeFilter,
 } from '@/lib/resources';
-import { CREATE_TYPES, type CreateType } from '@/lib/create-resource';
+import { CREATE_GROUPS, type CreateType } from '@/lib/create-resource';
 import { MyResourceCoaches } from '@/components/my-resource-coaches';
 
-const TYPE_ICON: Record<ResourceType, typeof Video> = { course: GraduationCap, track: Layers, video: Video, audio: Waveform, guide: FileText, file: Download, link: Link2, recipe: Leaf, live: Radio, quiz: ClipboardCheck };
+const TYPE_ICON: Record<ResourceType, typeof Video> = { assessment: ClipboardCheck, course: GraduationCap, track: Layers, video: Video, audio: Waveform, guide: FileText, file: Download, link: Link2, recipe: Leaf, live: Radio, quiz: ClipboardCheck };
 
 /** Same eligibility as Events: any non-member workspace role. Server checks stay authoritative. */
 export function useCanCreate() {
@@ -173,15 +173,15 @@ export function ResourcesPage({ tab, type, source }: { tab: ResourceTab; type: R
   </>;
 }
 
-const CREATE_ICON: Record<CreateType, typeof Video> = { video: Video, quiz: ClipboardCheck, guide: FileText, audio: Waveform, file: Download, link: Link2, live: Radio, recipe: Leaf, course: GraduationCap, bundle: Layers };
+const CREATE_ICON: Record<CreateType, typeof Video> = { assessment: ClipboardCheck, video: Video, quiz: ClipboardCheck, guide: FileText, audio: Waveform, file: Download, link: Link2, live: Radio, recipe: Leaf, course: GraduationCap, bundle: Layers };
 
 /** Fast launcher into the type-first chooser on /learn/create. */
 export function CreateResourceSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const { t } = useTranslation(); const navigate = useNavigate();
   const go = (type: CreateType) => { onOpenChange(false); void navigate({ to: '/learn/create', search: { type } }); };
   return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={t('resources.createSheet.title')} description={t('resources.createSheet.text')} icon="BookOpen">
-    <div className="creation-options">{CREATE_TYPES.map(type => { const Icon = CREATE_ICON[type]; return <Button key={type} variant="ghost" className="creation-option" onClick={() => go(type)}>
-      <span className="creation-icon"><Icon /></span><span><strong>{t(`resources.create.types.${type}.name`)}</strong><small>{t(`resources.create.types.${type}.example`)}</small></span><ArrowRight /></Button>; })}
+    <div className="creation-options">{CREATE_GROUPS.map(group => <section key={group.key}><h2>{t(`resources.create.groups.${group.key}`)}</h2>{group.types.map(type => { const Icon = CREATE_ICON[type]; return <Button key={type} variant="ghost" className="creation-option" onClick={() => go(type)}>
+      <span className="creation-icon"><Icon /></span><span><strong>{t(`resources.create.types.${type}.name`)}</strong><small>{t(`resources.create.types.${type}.example`)}</small></span><ArrowRight /></Button>; })}</section>)}
       <Button variant="ghost" className="creation-option" onClick={() => { onOpenChange(false); void navigate({ to: '/learn/templates' }); }}><span className="creation-icon"><Sparkles /></span><span><strong>{t('resources.createSheet.fromTemplate')}</strong><small>{t('resources.createSheet.fromTemplateText')}</small></span><ArrowRight /></Button>
     </div>
   </ResponsiveSheet>;

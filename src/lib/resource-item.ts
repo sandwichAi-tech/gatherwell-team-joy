@@ -12,6 +12,7 @@ export type ItemSection = (typeof ITEM_SECTIONS)[number];
 
 /** Sections relevant per type. Quiz has no pricing/access of its own; link/recipe have no checkout. */
 export function sectionsFor(type: CreateType): ItemSection[] {
+  if (type === 'course') return ['presentation', 'content', 'access', 'preview'];
   const out: ItemSection[] = ['presentation', 'content'];
   out.push('access');
   if (offerKindFor(type)) out.push('options');

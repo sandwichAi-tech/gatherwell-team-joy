@@ -5570,6 +5570,8 @@ export type Database = {
       }
       quizzes: {
         Row: {
+          assessment_config: Json | null
+          assessment_revision: number
           attempts_allowed: number | null
           commerce_offer_id: string | null
           cooldown_minutes: number
@@ -5600,6 +5602,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          assessment_config?: Json | null
+          assessment_revision?: number
           attempts_allowed?: number | null
           commerce_offer_id?: string | null
           cooldown_minutes?: number
@@ -5630,6 +5634,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          assessment_config?: Json | null
+          assessment_revision?: number
           attempts_allowed?: number | null
           commerce_offer_id?: string | null
           cooldown_minutes?: number
@@ -8590,6 +8596,10 @@ export type Database = {
       }
       course_progress: { Args: { _offer: string }; Returns: Json }
       create_auth_intent: { Args: { _path: string }; Returns: string }
+      create_course_quiz_item: {
+        Args: { _language: string; _title: string; _track: string }
+        Returns: Json
+      }
       create_event_badge: {
         Args: {
           _event: string
@@ -9462,6 +9472,10 @@ export type Database = {
         }
         Returns: string
       }
+      reorder_course_curriculum: {
+        Args: { _course: string; _ids: string[]; _track: string }
+        Returns: undefined
+      }
       replace_offer_item: { Args: { _item: string; _p: Json }; Returns: string }
       reply_contact_thread: {
         Args: { _body: string; _thread: string }
@@ -9866,6 +9880,18 @@ export type Database = {
           _title: string
         }
         Returns: string
+      }
+      save_wellness_assessment: {
+        Args: {
+          _config: Json
+          _course: string
+          _id: string
+          _placement: string
+          _price: number
+          _revision: number
+          _team: string
+        }
+        Returns: Json
       }
       search_team_library: {
         Args: { _q: string; _team: string }
