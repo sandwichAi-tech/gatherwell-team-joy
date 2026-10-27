@@ -38,7 +38,7 @@ export function EventAgreementsSection({ teamId, userId, eventId, locked, isNew,
   const previewRow = preview && versions.data?.find(v => v.waiver_id === preview.id && v.version === preview.version);
 
   return <section id="g-agreements" className="form-section agreements-builder" aria-labelledby="g-agreements-title" tabIndex={-1}>
-    <div className="agreement-item-head"><h2 id="g-agreements-title" className="field-label">{t('builderAgreements.title')}</h2><span className="chip">{t('builderAgreements.optional')}</span></div>
+    <h2 id="g-agreements-title" className="field-label">{t('builderAgreements.title')}</h2>
     <p className="field-hint">{t('builderAgreements.intro')}</p>
 
     <div className="agreement-item" role="group" aria-labelledby="g-agreements-title">
