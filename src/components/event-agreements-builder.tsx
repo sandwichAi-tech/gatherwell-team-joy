@@ -1,31 +1,23 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { HostWaiverEditor, HostWaiverPreview, emptyWaiver, useFormUsage, useWaiverLibrary, type LibraryWaiver } from '@/components/waiver-library';
-import { usePlatformAgreement } from '@/components/platform-event-agreement';
 import { Link } from '@tanstack/react-router';
-import { addPick, hostWaiverStatus, initialHostPick, movePick, removePick, platformStatus, type AgreementStatus, type WaiverPick } from '@/lib/builder-agreements';
-import { platformSelection, type PlatformAgreement } from '@/lib/event-agreements';
-import { FileText, Check } from '@/components/icons';
+import { addPick, hostWaiverStatus, initialHostPick, movePick, removePick, type WaiverPick } from '@/lib/builder-agreements';
+import { Check } from '@/components/icons';
 
-type Current = PlatformAgreement & { en_effective?: string | null; es_effective?: string | null };
-export function useBuilderAgreements(userId: string, eventId: string | undefined, locked: boolean) {
-  const current = useQuery({ queryKey: ['current-platform-agreement', userId], enabled: !!userId && !locked, queryFn: async () => {
-    const r = await supabase.rpc('current_platform_agreement'); if (r.error) throw r.error; return r.data as unknown as Current;
-  } });
-  const pinned = usePlatformAgreement(locked ? eventId : undefined);
-  const q = locked ? pinned : current;
-  const library = useWaiverLibrary(userId);
-  return { platform: q.data as Current | null | undefined, platformState: platformStatus(q.data, q.isPending, !!q.error), retryPlatform: () => void q.refetch(), library };
+/** Host forms only: the ZoheeWell event agreement is attached automatically by the platform, never by hosts. */
+export function useBuilderAgreements(userId: string) {
+  return { library: useWaiverLibrary(userId) };
 }
 
 const fmt = (d: string | null | undefined, lang: string) => d ? new Date(d).toLocaleDateString(lang, { year: 'numeric', month: 'short', day: 'numeric' }) : '';
 
-export function EventAgreementsSection({ teamId, userId, eventId, locked, isNew, value, onChange, platform, platformState, retryPlatform, library }: {
+export function EventAgreementsSection({ teamId, userId, eventId, locked, isNew, value, onChange, library }: {
   teamId: string; userId: string; eventId?: string | undefined; locked: boolean; isNew: boolean; value: WaiverPick[]; onChange: (v: WaiverPick[]) => void;
-  platform: Current | null | undefined; platformState: AgreementStatus; retryPlatform: () => void; library: ReturnType<typeof useWaiverLibrary>;
+  library: ReturnType<typeof useWaiverLibrary>;
 }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en'; const qc = useQueryClient();
   const own = library.data; const active = own?.filter(w => !w.archived) ?? [];
@@ -40,7 +32,6 @@ export function EventAgreementsSection({ teamId, userId, eventId, locked, isNew,
     const r = await supabase.from('waiver_library_versions').select('waiver_id,version,name,description,body_en,body_es,file_path,file_name,created_at').in('waiver_id', value.map(v => v.id)); if (r.error) throw r.error; return r.data;
   } });
   const hostState = hostWaiverStatus(value, own, locked);
-  const sel = platformSelection(platform, lang);
   const usage = useFormUsage(userId);
   const addable = active.filter(w => !value.some(v => v.id === w.id));
   const toggleDefault = async (w: LibraryWaiver) => { setBusy(true); setError(''); const r = await supabase.rpc('set_host_waiver_default', { _id: w.id, _on: !w.is_default }); if (r.error) setError(t('waiverLibrary.saveError')); await qc.invalidateQueries({ queryKey: ['waiver-library'] }); setBusy(false); };
@@ -50,18 +41,7 @@ export function EventAgreementsSection({ teamId, userId, eventId, locked, isNew,
     <h2 id="g-agreements-title" className="field-label">{t('builderAgreements.title')}</h2>
     <p className="field-hint">{t('builderAgreements.intro')}</p>
 
-    <div className="agreement-item" role="group" aria-labelledby="g-platform-title">
-      <div className="agreement-item-head"><strong id="g-platform-title">{t('eventAgreements.title')}</strong><span className="chip">{t('builderAgreements.alwaysRequired')}</span></div>
-      {platformState === 'loading' ? <p role="status">{t('publicEvent.loading')}</p>
-        : platformState === 'error' ? <div role="alert"><p>{t('builderAgreements.platformLoadError')}</p><Button type="button" variant="secondary" onClick={retryPlatform}>{t('common.retry')}</Button></div>
-        : platformState === 'missing' || !sel ? <p role="alert" className="field-error">{t('eventAgreements.legalRequired')}</p>
-        : <><p>{t('waiver.version', { n: sel.version })}{(lang === 'es' ? platform?.es_effective : platform?.en_effective) ? ` · ${t('builderAgreements.effective', { date: fmt(lang === 'es' ? platform?.es_effective : platform?.en_effective, lang) })}` : ''}</p>
-          <Button asChild variant="secondary"><a href={sel.url ?? ''} target="_blank" rel="noopener noreferrer"><FileText />{t('builderAgreements.previewPlatform')}</a></Button></>}
-      <p className="field-hint">{t(locked ? 'eventAgreements.pinned' : 'builderAgreements.platformLocked')}</p>
-    </div>
-
-    <div className="agreement-item" role="group" aria-labelledby="g-host-title">
-      <div className="agreement-item-head"><strong id="g-host-title">{t('builderAgreements.hostTitle')}</strong><span className="chip">{t('builderAgreements.optional')}</span></div>
+    <div className="agreement-item" role="group" aria-labelledby="g-agreements-title">
       {locked ? (pinnedRows.isPending ? <p role="status">{t('publicEvent.loading')}</p> : !pinnedRows.data?.length ? <p>{t('builderAgreements.noneSelected')}</p>
         : <ul className="plain-list">{pinnedRows.data.map(w => <li key={w.id}><strong>{lang === 'es' ? w.title_es || w.title_en : w.title_en}</strong><p>{t('waiver.version', { n: w.library_version ?? w.version })} · {t('builderAgreements.pinnedOn', { date: fmt(w.created_at, lang) })}</p></li>)}</ul>)
       : library.isPending ? <p role="status">{t('publicEvent.loading')}</p>
@@ -103,7 +83,6 @@ export function EventAgreementsSection({ teamId, userId, eventId, locked, isNew,
       </>}
       {error && <p role="alert" className="field-error">{error}</p>}
     </div>
-    <p className="field-hint">{t(value.length ? 'builderAgreements.bothAccepted' : 'builderAgreements.platformOnly')}</p>
     <p className="field-hint">{t('builderAgreements.noLegalAdvice')}</p>
 
     {editor && <HostWaiverEditor teamId={teamId} initial={editor} usage={editor.id ? usage.data?.[editor.id] : undefined} onClose={() => setEditor(null)} onSaved={async id => {
@@ -111,22 +90,5 @@ export function EventAgreementsSection({ teamId, userId, eventId, locked, isNew,
       if (r.data && !r.data.archived) onChange(value.some(x => x.id === id) ? value.map(x => x.id === id ? { id, version: r.data!.version } : x) : [...value, { id: r.data.id, version: r.data.version }]); else if (r.data?.archived) onChange(removePick(value, id));
     }} />}
     {preview && previewRow && <HostWaiverPreview waiver={{ description: previewRow.description, id: preview.id, name: previewRow.name, version: previewRow.version, body_en: previewRow.body_en, body_es: previewRow.body_es, file_path: previewRow.file_path, file_name: previewRow.file_name }} onClose={() => setPreview(null)} />}
-  </section>;
-}
-
-export function RequiredAgreementsSummary({ platformState, hostState, hostForms, onFix }: { platformState: AgreementStatus; hostState: AgreementStatus; hostForms: { name: string | null; state: AgreementStatus }[]; onFix: () => void }) {
-  const { t } = useTranslation();
-  const row = (label: string, state: AgreementStatus, ok: boolean) => <li className={`agreement-summary-row ${ok ? 'is-ready' : 'is-blocked'}`}>
-    <span><strong>{label}</strong><small>{t(`builderAgreements.status.${state}`)}</small></span>
-    {!ok && <Button type="button" variant="secondary" size="sm" onClick={onFix} aria-label={t('builderAgreements.fixLabel', { item: label })}>{t('builderAgreements.fix')}</Button>}
-  </li>;
-  return <section className="form-section agreements-summary" aria-labelledby="g-agreements-summary">
-    <h2 id="g-agreements-summary" className="field-label">{t('builderAgreements.summaryTitle')}</h2>
-    <ul className="plain-list">
-      {row(t('eventAgreements.title'), platformState, platformState === 'ready')}
-      {!hostForms.length ? row(t('builderAgreements.hostTitle'), hostState, true)
-        : hostForms.map((f, i) => <Fragment key={i}>{row(f.name ? t('builderAgreements.hostNamed', { name: f.name }) : t('builderAgreements.hostTitle'), f.state, f.state === 'ready' || f.state === 'stale')}</Fragment>)}
-    </ul>
-    <p className="field-hint">{t('builderAgreements.noLegalAdvice')}</p>
   </section>;
 }

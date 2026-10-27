@@ -7421,7 +7421,7 @@
     "select": "Select a host waiver",
     "choose": "Choose a waiver",
     "empty": "No reusable waivers yet. Create one in Me → My waivers.",
-    "scope": "Only your host account can manage these documents. Selection is explicit for each event; ZoheeWell’s agreement remains separate.",
+    "scope": "Only your host account manages these documents. You choose them for each event.",
     "team": "Legacy host document",
     "textOnly": "Enter your existing document text or upload a PDF up to 10 MB. No legal text is generated.",
     "versionHelp": "Saving changed text creates a new immutable version. Existing event attachments and acceptances stay unchanged.",
@@ -7528,7 +7528,7 @@
   },
   "eventAgreements": {
     "title": "ZoheeWell platform agreement",
-    "legalRequired": "Approved legal document required. Event publication and registration are unavailable until approved English and Spanish documents are supplied.",
+    "legalRequired": "Registration for this event is not open yet. Please check back soon.",
     "acceptRequired": "Review and explicitly accept the current ZoheeWell agreement.",
     "open": "Open ZoheeWell agreement",
     "accept": "I have read and agree to the ZoheeWell platform agreement.",
@@ -7619,18 +7619,12 @@
     "tooLong": "Keep the description to {{max}} characters or fewer."
   },
   "builderAgreements": {
-    "title": "Waivers & agreements",
-    "intro": "Choose what attendees must review and accept before registering.",
-    "alwaysRequired": "Always required",
+    "title": "Host waivers & release forms",
+    "intro": "Optional. Attendees will be asked to accept the forms you select when they register.",
     "optional": "Optional",
-    "platformLoadError": "ZoheeWell agreement status could not be loaded.",
     "effective": "effective {{date}}",
-    "previewPlatform": "Preview ZoheeWell agreement",
-    "platformLocked": "Provided by ZoheeWell. Hosts cannot remove, replace or edit it. The current approved version is fixed when you publish.",
-    "hostTitle": "Host waiver",
-    "hostNamed": "Host waiver: {{name}}",
     "choose": "Additional host waiver",
-    "none": "No additional host waiver",
+    "none": "No host forms selected",
     "multiple": "{{count}} waivers from an earlier version of this event",
     "emptyLibrary": "You have no saved host waivers yet. Create one below; your event progress stays here.",
     "unavailable": "This waiver is not in your host library. Choose another or select no additional waiver.",
@@ -7650,21 +7644,10 @@
     "editWaiver": "Edit host waiver",
     "englishNeeded": "Add English text or a PDF before saving.",
     "pinnedOn": "fixed {{date}}",
-    "noneSelected": "No additional host waiver",
-    "bothAccepted": "Attendees will separately accept the ZoheeWell agreement and this host waiver.",
-    "platformOnly": "Attendees will accept the ZoheeWell agreement.",
+    "noneSelected": "No host forms selected",
     "noLegalAdvice": "ZoheeWell does not review host waivers. Selecting a document does not make it legally sufficient or remove liability.",
-    "summaryTitle": "Required attendee agreements",
-    "fix": "Fix",
-    "fixLabel": "Fix {{item}}",
     "status": {
-      "ready": "Ready",
-      "missing": "Approved legal document required — publishing is unavailable",
-      "loading": "Checking…",
-      "error": "Could not check — try again",
-      "none": "None selected (optional)",
-      "stale": "Ready · a newer version exists",
-      "unavailable": "Choose a waiver from your own library"
+      "loading": "Checking…"
     }
   },
   "hostForms": {
