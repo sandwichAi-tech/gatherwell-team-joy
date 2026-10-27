@@ -8905,6 +8905,7 @@ export type Database = {
         Returns: undefined
       }
       current_fee_pct: { Args: { _host: string }; Returns: number }
+      current_platform_agreement: { Args: never; Returns: Json }
       decide_community_seat: {
         Args: { _approve: boolean; _id: string }
         Returns: string

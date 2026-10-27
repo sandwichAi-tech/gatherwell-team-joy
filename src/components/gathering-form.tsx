@@ -1,5 +1,5 @@
-import { WaiverLibraryPicker } from '@/components/waiver-library';
-import { PlatformAgreementNotice, usePlatformAgreement } from '@/components/platform-event-agreement';
+import { EventAgreementsSection, RequiredAgreementsSummary, useBuilderAgreements } from '@/components/event-agreements-builder';
+import { hostWaiverStatus, publishBlocked } from '@/lib/builder-agreements';
 import { blueprintDefaults } from '@/lib/blueprint-defaults';
 import { useFeature } from '@/lib/feature-flags';
 import { policyFromEvent, policyIssues, policyPayload } from '@/lib/event-policy';
@@ -47,12 +47,13 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const { t, i18n } = useTranslation(); const { userId } = useGatherwell(); const navigate = useNavigate(); const router = useRouter(); const queryClient = useQueryClient();
   const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
   const editing = !!eventId;
-  const platformAgreement = usePlatformAgreement(eventId);
   const { data: workspace } = useQuery(workspaceQuery(userId));
   const { data: planStatus } = useQuery(planStatusQuery(userId));
   const { data: templates = [] } = useQuery({ ...templatesQuery(), enabled: !editing });
   const sourceId = eventId ?? fromId;
   const { data: source, error: sourceError, refetch: reloadSource } = useQuery({ ...eventDetailQuery(sourceId ?? ''), enabled: !!sourceId });
+  const agreementsLocked = editing && !!source && (source.event.status !== 'draft' || !!(source.event as { agreements_locked?: boolean }).agreements_locked);
+  const agreements = useBuilderAgreements(userId, eventId, agreementsLocked);
   const mapsKey = useMapsKey();
   const { data: draft, error: draftError, refetch: reloadDraft, isPending: draftPending } = useQuery({ queryKey: ['event-builder-draft', eventId], enabled: !!eventId, queryFn: async () => { const r = await supabase.from('event_builder_drafts').select('snapshot').eq('event_id', eventId ?? '').maybeSingle(); if (r.error) throw r.error; return r.data?.snapshot ?? null; } });
   const { data: history = [] } = useQuery({ queryKey: ['host-slots', userId], enabled: !editing, staleTime: 300000,
@@ -99,7 +100,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (sourceId) {
       if (!source) return; const e = source.event;
       setTeamWaiver(!!e.requires_waiver);
-      void supabase.from('event_waivers').select('library_id,library_version').eq('event_id',e.id).is('archived_at',null).then(r=>setLibraryWaivers((r.data??[]).flatMap(w=>w.library_id&&w.library_version?[{id:w.library_id,version:w.library_version}]:[])));
+      if (!(editing && e.status === 'draft' && draft && typeof draft === 'object' && Array.isArray((draft as Record<string, unknown>)['libraryWaivers']))) void supabase.from('event_waivers').select('library_id,library_version').eq('event_id',e.id).is('archived_at',null).then(r=>setLibraryWaivers((r.data??[]).flatMap(w=>w.library_id&&w.library_version?[{id:w.library_id,version:w.library_version}]:[])));
       setCategory(isCategory(e.category) ? e.category : 'more'); setCategoryLabel(e.category_label ?? ''); setTitle(e.title); setCoverPath(e.cover_url); setCoverStyle(e.cover_style ?? 0); setDescEn(e.description_en ?? ''); setDescEs(e.description_es ?? '');
       setCoverOverlay(clampOverlay((e as { cover_overlay?: number }).cover_overlay)); setCoverFocal(clampFocal((e as { cover_focal?: string }).cover_focal)); setCoverAlt((e as { cover_alt?: string | null }).cover_alt ?? '');
       const mins = e.ends_at ? Math.max(5, Math.round((new Date(e.ends_at).getTime() - new Date(e.starts_at).getTime()) / 60000)) : 60;
@@ -207,6 +208,10 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   };
   const teamId = editing && source ? source.event.team_id : workspace.teamId;
   if (!editing && workspace.role === 'member') return <section className="panel"><h2>{t('gathering.hostsOnly')}</h2><p>{t('gathering.hostsOnlyText')}</p></section>;
+  const hostState = hostWaiverStatus(libraryWaivers, agreements.library.data, agreementsLocked);
+  // Platform problems focus the section (its explanation is the fix); host-waiver problems focus the picker.
+  const focusAgreements = () => requestAnimationFrame(() => { const el = document.getElementById('g-agreements'); el?.scrollIntoView({ block: 'start' }); ((agreements.platformState === 'ready' ? document.getElementById('g-host-waiver') : null) ?? el)?.focus(); });
+  const publishError = (e: { message?: string } | null) => e?.message?.includes('approved_legal_document_required') ? t('eventAgreements.legalRequired') : e?.message?.includes('waiver_pinned') ? t('eventAgreements.pinned') : rpcError(t, e);
 
   const urlBad = place !== 'person' && !!url.trim() && !validHttps(url);
   const blockers = readinessBlockers({ title, startsAt: start, format: place, locationName, address, onlineUrl: url, priceCents, canSell, regOpens: details.regOpens, regCloses: details.regCloses, retreatOn, retreatEnd, allowsMinors: details.allowsMinors, minAge: details.minAge, tiers: details.tiers });
@@ -281,6 +286,9 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       return;
     }
     setTried(true);
+    if (publish && publishBlocked(agreements.platformState, hostState)) {
+      setSaveError(t(agreements.platformState === 'ready' ? 'builderAgreements.status.unavailable' : 'eventAgreements.legalRequired')); focusAgreements(); return;
+    }
     const pi = policyIssues(details.policy, details.cancellation, !!priceCents, true);
     const error = blockers.length || priceBad || capacityBad || !detailsJson || pi.length || (priceCents && visibility === 'team') || (multi && (!start || !validSessions(sessions, new Date(start).toISOString())));
     if (error) {
@@ -301,7 +309,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       if (!(await saveDetails((eventId ?? '')))) return;
       if (!(await savePolicy((eventId ?? '')))) return;
       if (!(await saveWaivers(eventId??'')))return;
-      if (publish && source?.event.status === 'draft') { const r = await supabase.from('events').update({ status: 'published' }).eq('id', eventId??''); if(r.error){toast.error(rpcError(t,r.error));return;} }
+      if (publish && source?.event.status === 'draft') { const r = await supabase.from('events').update({ status: 'published' }).eq('id', eventId??''); if(r.error){toast.error(publishError(r.error));return;} }
       await queryClient.invalidateQueries(); toast.success(t('gathering.saved'));
       void navigate({ to: '/event/$id', params: { id: (eventId ?? '') } }); return;
     }
@@ -318,7 +326,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (!(await saveDetails(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
     if (!(await savePolicy(data))) { void navigate({ to: '/gathering/$id/edit', params: { id: data } }); return; }
     if (!(await saveWaivers(data)))return;
-    if (publish&&staged) {const published=await supabase.from('events').update({status:'published'}).eq('id',data);if(published.error){toast.error(rpcError(t,published.error));void navigate({to:'/gathering/$id/edit',params:{id:data}});return;}}
+    if (publish&&staged) {const published=await supabase.from('events').update({status:'published'}).eq('id',data);if(published.error){toast.error(publishError(published.error));void navigate({to:'/gathering/$id/edit',params:{id:data}});return;}}
     await queryClient.invalidateQueries();
     if (publish) setDone({ id: data, visibility }); else { toast.success(t('gathering.draftSaved')); void navigate({ to: '/event/$id', params: { id: data } }); }
     } catch { setSaveError(t('profile.saveError')); } finally { setBusy(false); }
@@ -413,9 +421,6 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         </div>
       </section>}
 
-      <WaiverLibraryPicker teamId={teamId} value={libraryWaivers} onChange={setLibraryWaivers}/>
-      {teamWaiver && <p className="field-hint">{t('eventAgreements.legacyPinned')}</p>}
-      {eventId && <PlatformAgreementNotice agreement={platformAgreement.data} loading={platformAgreement.isPending} />}
       <section className="form-section">
         <label className="field-label" htmlFor="g-title">{t('gathering.title')} · {t('eventReliability.required')}</label>
         <Input id="g-title" className="field-input" maxLength={120} value={title} onChange={e => setTitle(e.target.value)} placeholder={t('gathering.titlePlaceholder')} aria-invalid={tried && !title.trim()} />
@@ -527,7 +532,10 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         <div className="segmented full" role="group" aria-label={t('gathering.applyTo')}>{([false, true] as const).map(w => <Button key={String(w)} variant="ghost" className={wholeSeries === w ? 'selected' : ''} aria-pressed={wholeSeries === w} onClick={() => setWholeSeries(w)}>{t(w ? 'gathering.thisAndLater' : 'gathering.thisDate')}</Button>)}</div>
       </section> : null}
       </>}
+      <EventAgreementsSection teamId={teamId} userId={userId} eventId={eventId} locked={agreementsLocked} isNew={!editing && !fromId} value={libraryWaivers} onChange={setLibraryWaivers} platform={agreements.platform} platformState={agreements.platformState} retryPlatform={agreements.retryPlatform} library={agreements.library} />
+      {teamWaiver && <p className="field-hint">{t('eventAgreements.legacyPinned')}</p>}
       {!full && <Button variant="ghost" className="quick-more" onClick={() => setFull(true)}>{t('gathering.moreOptions')}<ChevronRight /></Button>}
+      {(!editing || source?.event.status === 'draft') && <RequiredAgreementsSummary platformState={agreements.platformState} hostState={hostState} hostName={agreements.library.data?.find(w => w.id === libraryWaivers[0]?.id)?.name ?? null} onFix={focusAgreements} />}
       {tpl && <p className="auth-subtitle">{t('gathering.checklistNote', { count: checklistOf(templates.find(x => x.id === tpl.id) ?? { checklist: [] }).length })}</p>}
     </div>
     <div className="sticky-actions">
