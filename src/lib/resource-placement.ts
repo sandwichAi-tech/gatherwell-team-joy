@@ -28,7 +28,8 @@ export function fromSavedDestinations(raw: unknown): Destinations | null {
   const r = raw as { team?: unknown; coach?: unknown; locked?: unknown; courses?: unknown };
   const courses = Array.isArray(r.courses) ? r.courses.flatMap((c): CoursePick[] => {
     const x = c as Record<string, unknown>;
-    return typeof x.course_id === 'string' ? [{ course: x.course_id, section: typeof x.section_id === 'string' ? x.section_id : null, locked: x.locked === true, contained: x.contained === true, available: x.available !== false, title_en: String(x.title_en ?? ''), title_es: String(x.title_es ?? '') }] : [];
+    const course = x['course_id']; const section = x['section_id'];
+    return typeof course === 'string' ? [{ course, section: typeof section === 'string' ? section : null, locked: x['locked'] === true, contained: x['contained'] === true, available: x['available'] !== false, title_en: String(x['title_en'] ?? ''), title_es: String(x['title_es'] ?? '') }] : [];
   }) : [];
   return { team: r.team === true, coach: r.coach === true, locked: r.locked === true, courses };
 }
