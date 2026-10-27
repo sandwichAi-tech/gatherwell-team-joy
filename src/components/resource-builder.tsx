@@ -1,7 +1,7 @@
-import { ResourceAccessFields } from '@/components/resource-access-fields';
+import { DestinationSummary, ResourceAccessFields } from '@/components/resource-access-fields';
 import { CurriculumPanel } from '@/components/content-studio';
 import { CourseOutlinePreview } from '@/components/course-outline-preview';
-import { resourceAccessPrice, savedPlacement, type ResourcePlacement } from '@/lib/resource-placement';
+import { destinationIssues, destinationsPrice, fromSavedDestinations, isStandalone, newDestinations, saveDestinations, type Destinations } from '@/lib/resource-placement';
 import { uploadMedia } from '@/lib/account';
 import { OfferCover } from '@/components/offers';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -243,9 +243,13 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const [activeFrom, setActiveFrom] = useState('');
   const submitting = useRef(false);
   const tz = typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC';
-  const [courseId, setCourseId] = useState('');
-  // A quiz can live on its own in the team's Resources (no course needed) or inside a course.
-  const [placement, setPlacement] = useState<ResourcePlacement>('team');
+  // One resource, many destinations: Team Resources, coach page and any number of the host's courses.
+  const [dest, setDest] = useState<Destinations>(newDestinations());
+  const [destSnap, setDestSnap] = useState(JSON.stringify(newDestinations()));
+  const loadDest = async (entity: 'track' | 'recipe' | 'offer', id: string) => {
+    const r = await (supabase as any).rpc('resource_destinations', { _kind: entity, _id: id });
+    const d = fromSavedDestinations(r.data); if (d) { setDest(d); setDestSnap(JSON.stringify(d)); }
+  };
   const [busy, setBusy] = useState(false);
   // Multi-lesson tracks (e.g. from a blueprint) edit every lesson in the curriculum instead of one preset lesson.
   const [trackLessons, setTrackLessons] = useState<Lesson[] | null>(null);
@@ -293,8 +297,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
           live: l.live_starts_at ? toLocalInput(new Date(l.live_starts_at)) : '', meeting: '',
         } }));
         setActiveFrom(tr.data.available_from ? toLocalInput(new Date(tr.data.available_from)) : '');
-        setPlacement(savedPlacement(tr.data));
-        if (tr.data.offer_id) setCourseId(tr.data.offer_id);
+        await loadDest('track', initialId);
         if (tr.data.commerce_offer_id) { const o = (await db.from('offers').select('price_cents').eq('id', tr.data.commerce_offer_id).maybeSingle()).data; if (o) setItem(i => ({ ...i, access: { free: !o.price_cents, price: o.price_cents ? String(o.price_cents / 100) : '' } })); }
         setVisibility(tr.data.visibility === 'public' || tr.data.visibility === 'unlisted' ? tr.data.visibility : 'team');
         setLoaded({ entity: 'track', id: initialId, status: tr.data.is_published ? 'published' : 'draft', trackId: initialId });
@@ -303,7 +306,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
       }
       const rc = await db.from('recipes').select('*').eq('id', initialId).maybeSingle();
       if (rc.data) {
-        setType('recipe'); setPlacement(savedPlacement(rc.data)); setCourseId(rc.data.parent_course_id ?? '');
+        setType('recipe'); await loadDest('recipe', initialId);
         const recipePrice = rc.data.commerce_offer_id ? (await db.from('offers').select('price_cents').eq('id', rc.data.commerce_offer_id).maybeSingle()).data?.price_cents ?? 0 : 0;
         setItem({
           ...emptyItemState(),
@@ -328,7 +331,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
       const of = await db.from('offers').select('*').eq('id', initialId).maybeSingle();
       if (of.data) {
         const o = of.data as Offer;
-        setType(o.kind === 'course' ? 'course' : (o as any).resource_type === 'bundle' ? 'bundle' : 'file'); setPlacement(savedPlacement(o)); setCourseId((o as any).parent_course_id ?? '');
+        setType(o.kind === 'course' ? 'course' : (o as any).resource_type === 'bundle' ? 'bundle' : 'file'); await loadDest('offer', initialId);
         setItem({
           ...emptyItemState(),
           titleEn: o.title_en ?? '', titleEs: o.title_es ?? '',
@@ -405,22 +408,27 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
 
   const lessonType = isTrackFlow(type) ? lessonPresetFor(type) : null;
   const cfg = lessonType ? lessonEditorConfig(lessonType) : null;
-  const priceCents = resourceAccessPrice(placement, item.access.free, item.access.price);
-  const paid = placement !== 'course' && !item.access.free;
+  // Only the host's own active courses in this team can hold the resource (the server re-checks).
+  const placeable = courses.filter(o => o.team_id === teamId && o.id !== loaded?.id);
+  const courseIds = placeable.map(o => o.id);
+  const courseOptions = placeable.map(o => ({ id: o.id, title: offerTitle(o, lang) }));
+  const priceCents = destinationsPrice(dest, item.access.free, item.access.price);
+  const paid = isStandalone(dest) && !item.access.free;
   const sections = sectionsFor(type);
-  const dirty = itemSnapshot(item) + JSON.stringify(draft) !== snapshot + draftSnap;
+  const dirty = itemSnapshot(item) + JSON.stringify(draft) + JSON.stringify(dest) !== snapshot + draftSnap + destSnap;
   const status = loaded?.status ?? 'draft';
 
   const issues = itemIssues(type, item, {
-    lessonUrl: draft.lesson.url, live: draft.lesson.live, filePath: draft.offer.filePath, courseId: placement !== 'course' ? 'standalone' : courseId, publish: true,
+    lessonUrl: draft.lesson.url, live: draft.lesson.live, filePath: draft.offer.filePath, courseId: 'standalone', publish: true,
   });
   const paidBlocked = paid && !sellReady;
-  if (placement === 'course' && !courseId && !issues.includes('course')) issues.push('course');
-  if (placement === 'course') { const i = issues.indexOf('price'); if (i >= 0) issues.splice(i, 1); }
+  const destIssues = destinationIssues(dest, courseIds);
+  for (const i of destIssues) issues.push(i as never);
+  if (!isStandalone(dest)) { const i = issues.indexOf('price'); if (i >= 0) issues.splice(i, 1); }
   const lessonsWithPlaceholders = trackLessons ? placeholderLessons(trackLessons) : [];
   const placeholder = hasPlaceholder(item.titleEn, item.titleEs, item.descEn, item.descEs, item.subtitleEn, item.subtitleEs) || lessonsWithPlaceholders.length > 0;
   const draftLessonsToPublish = trackLessons ? lessonsToPublishWithTrack(trackLessons, loaded?.status === 'published') : [];
-  const canSave = itemIssues(type, item, { publish: false, courseId: placement === 'course' ? courseId : 'standalone', lessonUrl: draft.lesson.url, live: draft.lesson.live }).filter(i => i === 'title' || i === 'price' || (placement === 'course' && i === 'course')).length === 0 && (progress === null || progress === 100) && !busy;
+  const canSave = itemIssues(type, item, { publish: false, courseId: 'standalone', lessonUrl: draft.lesson.url, live: draft.lesson.live }).filter(i => i === 'title' || (i === 'price' && isStandalone(dest))).length === 0 && !destIssues.includes('courseUnavailable') && (progress === null || progress === 100) && !busy;
   const canPublish = canSave && issues.length === 0 && !paidBlocked && !placeholder;
   const nav = stepNav(sections, sections.includes(section) ? section : 'presentation');
   const wasPublished = loaded?.status === 'published';
@@ -454,14 +462,14 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const saveOnce = async (publish: boolean) => {
     if (priceCents === null || (publish && paidBlocked)) return;
     setBusy(true);
-    const configure = async (entity: string, id: string) => { const r = await (supabase as any).rpc('configure_resource_access', { _kind: entity, _id: id, _placement: placement, _course: placement === 'course' ? courseId : null, _price: priceCents }); if (r.error) throw r.error; }; 
+    const configure = async (entity: 'track' | 'recipe' | 'quiz' | 'offer', id: string) => { await saveDestinations((fn, args) => (supabase as any).rpc(fn, args), entity, id, dest, courseIds, priceCents); setDestSnap(JSON.stringify(dest)); };
     const base = {
       title_en: item.titleEn.trim(), title_es: item.titleEs.trim(),
       description_en: item.descEn.trim() || null, description_es: item.descEs.trim() || null,
       cover_url: item.coverPath, cover_style: item.coverStyle, ...presentationCols, ...activation,
     };
     if (isTrackFlow(type) && lessonType) {
-      const row = { ...base, is_published: false, visibility: placement === 'coach' ? 'public' : 'team', host_id: userId, resource_kind: lessonType };
+      const row = { ...base, is_published: false, visibility: dest.coach ? 'public' : 'team', host_id: userId, resource_kind: lessonType };
       const tr = loaded?.entity === 'track'
         ? await db.from('tracks').update(row).eq('id', loaded.id).select('id').single()
         : await db.from('tracks').insert({ ...row, team_id: teamId, sort_order: Date.now() % 1_000_000 }).select('id').single();
@@ -526,7 +534,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
       const row = {
         kind, ...base, price_cents: priceCents, refund_policy: refund, drip_days: drip,
         file_path: kind === 'download' ? draft.offer.filePath : null,
-        status: 'draft' as const, visibility: placement === 'coach' ? 'public' : 'team', resource_type: type,
+        status: 'draft' as const, visibility: dest.coach ? 'public' : 'team', resource_type: type,
       };
       const r = loaded?.entity === 'offer' ? await saveOffer(row, loaded.id)
         : await db.from('offers').insert({ ...row, includes_en: [], includes_es: [], team_id: teamId, host_id: userId }).select('id').single();
@@ -554,11 +562,10 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
       return finish(true, publish ? { entity: 'offer', id: offerId } : undefined);
     }
     // quiz: create a draft (standalone in the team, or on the chosen course), then open the quiz studio.
-    const offer = placement === 'course' ? courses.find(o => o.id === courseId) : null;
-    if (placement === 'course' && !offer) return finish(false);
-    if (placement !== 'course' && !teamId) return finish(false);
+    // Quizzes stay one team-owned record; course placements are references, never copies.
+    if (!teamId) return finish(false);
     const q = await supabase.from('quizzes').insert({
-      title_en: base.title_en, title_es: base.title_es, ...(offer ? { offer_id: offer.id } : { team_id: teamId }), mode: 'scored',
+      title_en: base.title_en, title_es: base.title_es, team_id: teamId, mode: 'scored',
       pass_pct: 80, cooldown_minutes: 0, is_required: false, show_score: true, reveal_answers: 'after_pass', is_published: false, sort_order: 1,
     } as never).select('id').single();
     setBusy(false);
@@ -570,7 +577,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
     void navigate({ to: '/learn/quiz/$id', params: { id: (q.data as { id: string }).id } });
   };
 
-  const priceLabel = placement === 'course' ? t('resourcePlacement.courseAccess') : paid && priceCents !== null ? new Intl.NumberFormat(lang, { style: 'currency', currency: 'USD' }).format(priceCents / 100) : t('offers.free');
+  const priceLabel = !isStandalone(dest) ? t('resourcePlacement.courseAccess') : paid && priceCents !== null ? new Intl.NumberFormat(lang, { style: 'currency', currency: 'USD' }).format(priceCents / 100) : t('offers.free');
   const cta = (lang === 'es' ? item.ctaEs || item.ctaEn : item.ctaEn || item.ctaEs) || t(defaultCtaKey(paid));
 
   if (loadingItem) return <section className="panel builder-panel"><p className="muted-small">{t('publicEvent.loading')}</p></section>;
@@ -585,6 +592,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
     <p id="rb-active-hint" className="field-hint">{t('resources.item.activeFromHint', { tz })}</p>
   </Field>;
   const preview = <>
+    <DestinationSummary dest={dest} courses={courseOptions} onFix={() => { goStep(sections.includes('access') ? 'access' : sections[0]); requestAnimationFrame(() => document.getElementById('rb-destinations')?.focus()); }} />
     {type === 'course' && loaded?.id && <CourseOutlinePreview id={loaded.id} />}
     {trackLessons && <div className="form-field" role="status"><span className="field-label">{t('resources.item.lessonStatusTitle')}</span>
       <ul className="lesson-status-list">{trackLessons.map(l => { const ph = hasPlaceholder(l.title_en, l.title_es, l.notes_en, l.notes_es, l.description_en, l.description_es);
@@ -701,9 +709,8 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
 
         {/* ---- Access / Checkout ---- */}
         {section === 'access' && <>
-          <ResourceAccessFields type={type} placement={placement} onPlacement={setPlacement} free={item.access.free} price={item.access.price}
-            onAccess={(free, price) => patchItem({ access: { free, price } })} courseId={courseId} onCourse={setCourseId}
-            courses={courses.map(o => ({ id: o.id, title: offerTitle(o, lang) }))} ready={sellReady} prefix="rb" />
+          <ResourceAccessFields type={type} dest={dest} onDest={setDest} free={item.access.free} price={item.access.price}
+            onAccess={(free, price) => patchItem({ access: { free, price } })} courses={courseOptions} ready={sellReady} prefix="rb" />
           {activationField}
           {paid && <RefundSelect id="rb-refund" value={refund} onChange={setRefund} />}
           {type === 'course' && <Field id="rb-drip" label={t('offers.drip')}><Input id="rb-drip" type="number" min={0} max={60} className="field-input" value={drip} onChange={e => setDrip(Math.max(0, Math.min(60, Number(e.target.value) || 0)))} /></Field>}

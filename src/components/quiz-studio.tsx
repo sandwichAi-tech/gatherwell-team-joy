@@ -1,8 +1,8 @@
-import { ResourceAccessFields } from '@/components/resource-access-fields';
+import { DestinationSummary, ResourceAccessFields, livePlacementList } from '@/components/resource-access-fields';
 import { myOffersQuery, offerTitle } from '@/lib/offers';
 import { getPaymentsReadiness } from '@/lib/billing.functions';
 import { canSellPaid } from '@/lib/payments-readiness';
-import { resourceAccessPrice, savedPlacement, type ResourcePlacement } from '@/lib/resource-placement';
+import { destinationIssues, destinationsPrice, fromSavedDestinations, hasDestination, newDestinations, saveDestinations, type Destinations } from '@/lib/resource-placement';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -145,8 +145,8 @@ export function QuizStudio({ quizId }: { quizId: string }) {
   const { userId } = useGatherwell();
   const offers = useQuery(myOffersQuery(userId));
   const readiness = useQuery({ queryKey: ['payments-readiness'], queryFn: () => getPaymentsReadiness() });
-  const [placement, setPlacement] = useState<ResourcePlacement>('team');
-  const [courseId, setCourseId] = useState('');
+  const [dest, setDest] = useState<Destinations>(newDestinations());
+  const [destSnap, setDestSnap] = useState('');
   const [pricing, setPricing] = useState({ free: true, price: '' });
   const [tab, setTab] = useState<'build' | 'preview' | 'results'>('build');
   const load = useQuery({ queryKey: ['quiz-studio', quizId], queryFn: async () => {
@@ -163,7 +163,7 @@ export function QuizStudio({ quizId }: { quizId: string }) {
     return { quiz: z.data as QuizRow, questions, outcomes: (oc.data ?? []).map((o: any) => ({ ...o, body_en: o.body_en ?? '', body_es: o.body_es ?? '', image_alt: o.image_alt ?? '' })) as (StudioOutcome & { image_path: string | null; image_alt: string; sort_order: number })[], bands: (bd.data ?? []) as (StudioBand & { id: string; body_en: string | null; body_es: string | null })[] };
   } });
   const [s, setS] = useState<QuizRow | null>(null);
-  useEffect(() => { if (load.data?.quiz) { setS(load.data.quiz); const q = load.data.quiz as any; setPlacement(savedPlacement(q)); setCourseId(q.offer_id ?? ''); if (q.commerce_offer_id) void db.from('offers').select('price_cents').eq('id', q.commerce_offer_id).maybeSingle().then((r: any) => setPricing({ free: !r.data?.price_cents, price: r.data?.price_cents ? String(r.data.price_cents / 100) : '' })); } }, [load.data?.quiz]);
+  useEffect(() => { if (load.data?.quiz) { setS(load.data.quiz); const q = load.data.quiz as any; void (supabase as any).rpc('resource_destinations', { _kind: 'quiz', _id: quizId }).then((r: any) => { const d = fromSavedDestinations(r.data); if (d) { setDest(d); setDestSnap(JSON.stringify(d)); } }); if (q.commerce_offer_id) void db.from('offers').select('price_cents').eq('id', q.commerce_offer_id).maybeSingle().then((r: any) => setPricing({ free: !r.data?.price_cents, price: r.data?.price_cents ? String(r.data.price_cents / 100) : '' })); } }, [load.data?.quiz]);
   const [editing, setEditing] = useState<Q | 'new' | null>(null);
   const [outs, setOuts] = useState<(StudioOutcome & { image_path: string | null; image_alt: string })[]>([]);
   const [bands, setBands] = useState<(StudioBand & { body_en: string; body_es: string })[]>([]);
@@ -173,21 +173,25 @@ export function QuizStudio({ quizId }: { quizId: string }) {
   const urls = useSigned([...(load.data?.questions ?? []).flatMap(q => [q.image_path, ...q.options.map(o => o.image_path)]), ...outs.map(o => o.image_path)]);
   const [busy, setBusy] = useState(false);
   const refresh = () => Promise.all([qc.invalidateQueries({ queryKey: ['quiz-studio', quizId] }), qc.invalidateQueries({ queryKey: ['quiz-blockers', quizId] }), qc.invalidateQueries({ queryKey: ['team-quizzes'] })]);
-  const dirty = useMemo(() => !!s && !!load.data && JSON.stringify(s) !== JSON.stringify(load.data.quiz), [s, load.data]);
+  const dirty = useMemo(() => (!!s && !!load.data && JSON.stringify(s) !== JSON.stringify(load.data.quiz)) || (!!destSnap && JSON.stringify(dest) !== destSnap), [s, load.data, dest, destSnap]);
 
   if (load.isPending) return <ListSkeleton />;
   if (load.isError) return <RetryState retry={() => void load.refetch()} />;
   if (!load.data || !s) return <section className="panel empty-state" role="status"><p>{t('quizPlay.errors.not_found')}</p><Button asChild variant="secondary"><Link to="/learn" search={{ tab: 'mine' }}>{t('quizStudio.backToResources')}</Link></Button></section>;
   const data = load.data; const { questions } = data;
-  const blockers = [...new Set([...quizBlockers({ mode: s.mode, title_en: s.title_en, title_es: s.title_es, instructions_en: s.instructions_en ?? '', instructions_es: s.instructions_es ?? '' }, questions, outs, bands), ...(serverBlockers.data ?? [])])];
+  const placeable = (offers.data ?? []).filter(o => o.kind === 'course' && o.status !== 'archived' && o.team_id === (s.team_id ?? (offers.data ?? []).find(x => x.id === s.offer_id)?.team_id));
+  const courseOptions = placeable.map(o => ({ id: o.id, title: offerTitle(o, lang) }));
+  const courseIds = placeable.map(o => o.id);
+  const blockers = [...destinationIssues(dest, courseIds).map(i => `dest_${i}`), ...new Set([...quizBlockers({ mode: s.mode, title_en: s.title_en, title_es: s.title_es, instructions_en: s.instructions_en ?? '', instructions_es: s.instructions_es ?? '' }, questions, outs, bands), ...(serverBlockers.data ?? [])])];
   const hasAttempts = (summary.data?.attempts ?? 0) > 0;
 
   const saveSettings = async (extra: Partial<QuizRow> = {}) => {
-    const cents = resourceAccessPrice(placement, pricing.free, pricing.price);
+    const cents = destinationsPrice(dest, pricing.free, pricing.price);
+    if ((extra.is_published || s.is_published) && extra.is_published !== false && !hasDestination(dest)) { toast.error(t('resourcePlacement.needOne')); return false; }
     if (cents === null || (extra.is_published && cents > 0 && (!readiness.data || !canSellPaid(readiness.data)))) { toast.error(t('resources.item.paidBlocked')); return false; }
     setBusy(true);
-    const a = await (supabase as any).rpc('configure_resource_access', { _kind: 'quiz', _id: quizId, _placement: placement, _course: courseId || null, _price: cents });
-    if (a.error) { setBusy(false); toast.error(t('resources.item.saveFailed')); return false; }
+    try { await saveDestinations((fn, args) => (supabase as any).rpc(fn, args), 'quiz', quizId, dest, courseIds, cents); setDestSnap(JSON.stringify(dest)); }
+    catch { setBusy(false); toast.error(t('resources.item.saveFailed')); return false; }
     const row = { mode: s.mode, title_en: s.title_en.trim(), title_es: s.title_es.trim(), instructions_en: s.instructions_en?.trim() || null, instructions_es: s.instructions_es?.trim() || null,
       pass_pct: Math.min(100, Math.max(1, Math.round(Number(s.pass_pct) || 80))), attempts_allowed: s.attempts_allowed ? Math.max(1, Math.round(Number(s.attempts_allowed))) : null,
       cooldown_minutes: Math.max(0, Math.round(Number(s.cooldown_minutes) || 0)), show_score: s.show_score, ...extra };
@@ -228,7 +232,9 @@ export function QuizStudio({ quizId }: { quizId: string }) {
     toast.success(t('quizStudio.duplicated')); void navigate({ to: '/learn/quiz/$id', params: { id: data } });
   };
   const remove = async () => {
-    if (!(await confirmAction({ title: t('quiz.confirmDelete'), ...(hasAttempts ? { body: t('quizStudio.deleteWithAnswers') } : {}), destructive: true }))) return;
+    const places = livePlacementList(dest, courseOptions, t, lang);
+    const body = [hasAttempts ? t('quizStudio.deleteWithAnswers') : '', places ? t('resourcePlacement.archiveWarn', { places }) : ''].filter(Boolean).join(' ');
+    if (!(await confirmAction({ title: t('quiz.confirmDelete'), ...(body ? { body } : {}), destructive: true }))) return;
     const { error } = await db.from('quizzes').delete().eq('id', quizId);
     if (error) { toast.error(t('profile.saveError')); return; }
     toast.success(t('quizStudio.deleted')); await qc.invalidateQueries({ queryKey: ['team-quizzes'] });
@@ -277,7 +283,7 @@ export function QuizStudio({ quizId }: { quizId: string }) {
           <div className="form-field"><label className="field-label" htmlFor="qs-att">{t('quiz.attemptsAllowed')}</label><Input id="qs-att" type="number" min={1} className="field-input" placeholder={t('quiz.unlimited')} value={s.attempts_allowed ?? ''} onChange={e => setS({ ...s, attempts_allowed: e.target.value ? Number(e.target.value) : null })} /></div>
           <div className="form-field"><label className="field-label" htmlFor="qs-cool">{t('quiz.cooldown')}</label><Input id="qs-cool" type="number" min={0} className="field-input" value={s.cooldown_minutes} onChange={e => setS({ ...s, cooldown_minutes: Number(e.target.value) })} /></div>
         </div>
-        <ResourceAccessFields type="quiz" placement={placement} onPlacement={setPlacement} free={pricing.free} price={pricing.price} onAccess={(free, price) => setPricing({ free, price })} courseId={courseId} onCourse={setCourseId} courses={(offers.data ?? []).filter(o => o.kind === 'course' && o.status !== 'archived').map(o => ({ id: o.id, title: offerTitle(o, lang) }))} ready={!!readiness.data && canSellPaid(readiness.data)} prefix="qs-access" />
+        <ResourceAccessFields type="quiz" dest={dest} onDest={setDest} free={pricing.free} price={pricing.price} onAccess={(free, price) => setPricing({ free, price })} courses={courseOptions} ready={!!readiness.data && canSellPaid(readiness.data)} prefix="qs-access" />
         <small className="field-hint">{t('quizStudio.retakeHint')}</small>
         {s.mode === 'scored' && <label className="switch-row"><Switch checked={s.show_score} onCheckedChange={v => setS({ ...s, show_score: v })} /><span><strong>{t('quiz.showScore')}</strong><small>{t('quiz.showScoreText')}</small></span></label>}
         <Button variant="secondary" disabled={busy} onClick={() => void saveSettings().then(ok => ok && toast.success(t('quizStudio.draftSaved')))}>{t('quizStudio.saveDraft')}</Button>
@@ -319,7 +325,8 @@ export function QuizStudio({ quizId }: { quizId: string }) {
       </section>
 
       <section className="panel" aria-labelledby="qs-pub"><h2 id="qs-pub">{t(s.is_published ? 'quizStudio.liveTitle' : 'quizStudio.readyTitle')}</h2>
-        {blockers.length ? <ul className="offer-includes" role="status">{blockers.map(b => <li key={b}><AlertCircle />{t(`quiz.blocker.${b}`)}</li>)}</ul> : <p className="muted-small">{t('quizStudio.allGood')}</p>}
+        <DestinationSummary dest={dest} courses={courseOptions} onFix={() => document.getElementById('qs-access-destinations')?.focus()} />
+        {blockers.length ? <ul className="offer-includes" role="status">{blockers.map(b => <li key={b}><AlertCircle />{b.startsWith('dest_') ? t(`resources.item.issue.${b.slice(5)}`) : t(`quiz.blocker.${b}`)}</li>)}</ul> : <p className="muted-small">{t('quizStudio.allGood')}</p>}
         <div className="guest-button-row">
           {!s.is_published ? <Button disabled={busy || blockers.length > 0} onClick={publish}>{t('quiz.publish')}</Button>
             : <><Button disabled={busy || !dirty} onClick={update}>{t('quizStudio.update')}</Button><Button variant="secondary" disabled={busy} onClick={unpublish}>{t('quiz.unpublish')}</Button></>}

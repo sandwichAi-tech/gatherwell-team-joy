@@ -1,3 +1,4 @@
+import { listedInTeam } from '@/lib/resource-placement';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -94,7 +95,7 @@ export function ResourcesPage({ tab, type, source }: { tab: ResourceTab; type: R
   const [saving, setSaving] = useState<ResourceCardData | null>(null);
   const teamName = workspace?.name ?? null;
 
-  const library = useMemo(() => data ? toResources({ data, tracks: tracks.filter(tr => tr.is_published), learning, recipes: (rec?.recipes ?? []).filter(r => r.is_published), quizOffers: quiz?.offers, quizLessons: quiz?.lessons, teamName }).concat(teamQuizzes.filter(z => z.is_published).map(z => quizCard(z, teamName))) : [], [data, tracks, learning, rec, quiz, teamName, teamQuizzes]);
+  const library = useMemo(() => data ? toResources({ data, tracks: tracks.filter(tr => tr.is_published && listedInTeam(tr)), learning, recipes: (rec?.recipes ?? []).filter(r => r.is_published && listedInTeam(r)), quizOffers: quiz?.offers, quizLessons: quiz?.lessons, teamName }).concat(teamQuizzes.filter(z => z.is_published && listedInTeam(z)).map(z => quizCard(z, teamName))) : [], [data, tracks, learning, rec, quiz, teamName, teamQuizzes]);
   if (isError) return <RetryState retry={() => void refetch()} />;
   const setSearch = (next: Partial<{ tab: ResourceTab; type: ResourceTypeFilter; source: ResourceSourceFilter }>) =>
     void navigate({ to: '/learn', search: prev => ({ ...prev, ...next }), replace: true, resetScroll: false });

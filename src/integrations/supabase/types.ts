@@ -3138,6 +3138,7 @@ export type Database = {
           resource_offer_id: string | null
           resource_quiz_id: string | null
           resource_recipe_id: string | null
+          resource_track_id: string | null
           sort_order: number
           storage_path: string | null
           title_en: string
@@ -3165,6 +3166,7 @@ export type Database = {
           resource_offer_id?: string | null
           resource_quiz_id?: string | null
           resource_recipe_id?: string | null
+          resource_track_id?: string | null
           sort_order?: number
           storage_path?: string | null
           title_en?: string
@@ -3192,6 +3194,7 @@ export type Database = {
           resource_offer_id?: string | null
           resource_quiz_id?: string | null
           resource_recipe_id?: string | null
+          resource_track_id?: string | null
           sort_order?: number
           storage_path?: string | null
           title_en?: string
@@ -3227,6 +3230,13 @@ export type Database = {
             columns: ["resource_recipe_id"]
             isOneToOne: false
             referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lessons_resource_track_id_fkey"
+            columns: ["resource_track_id"]
+            isOneToOne: false
+            referencedRelation: "tracks"
             referencedColumns: ["id"]
           },
           {
@@ -4299,6 +4309,8 @@ export type Database = {
           kind: string
           license_en: string | null
           license_es: string | null
+          on_coach: boolean | null
+          on_team: boolean | null
           parent_course_id: string | null
           placement: string | null
           price_cents: number
@@ -4362,6 +4374,8 @@ export type Database = {
           kind: string
           license_en?: string | null
           license_es?: string | null
+          on_coach?: boolean | null
+          on_team?: boolean | null
           parent_course_id?: string | null
           placement?: string | null
           price_cents?: number
@@ -4425,6 +4439,8 @@ export type Database = {
           kind?: string
           license_en?: string | null
           license_es?: string | null
+          on_coach?: boolean | null
+          on_team?: boolean | null
           parent_course_id?: string | null
           placement?: string | null
           price_cents?: number
@@ -5768,6 +5784,8 @@ export type Database = {
           lesson_id: string | null
           mode: string
           offer_id: string | null
+          on_coach: boolean | null
+          on_team: boolean | null
           pass_pct: number
           placement: string | null
           randomize_answers: boolean
@@ -5801,6 +5819,8 @@ export type Database = {
           lesson_id?: string | null
           mode?: string
           offer_id?: string | null
+          on_coach?: boolean | null
+          on_team?: boolean | null
           pass_pct?: number
           placement?: string | null
           randomize_answers?: boolean
@@ -5834,6 +5854,8 @@ export type Database = {
           lesson_id?: string | null
           mode?: string
           offer_id?: string | null
+          on_coach?: boolean | null
+          on_team?: boolean | null
           pass_pct?: number
           placement?: string | null
           randomize_answers?: boolean
@@ -5901,6 +5923,8 @@ export type Database = {
           id: string
           ingredients: Json
           is_published: boolean
+          on_coach: boolean | null
+          on_team: boolean | null
           parent_course_id: string | null
           placement: string | null
           prep_minutes: number | null
@@ -5931,6 +5955,8 @@ export type Database = {
           id?: string
           ingredients?: Json
           is_published?: boolean
+          on_coach?: boolean | null
+          on_team?: boolean | null
           parent_course_id?: string | null
           placement?: string | null
           prep_minutes?: number | null
@@ -5961,6 +5987,8 @@ export type Database = {
           id?: string
           ingredients?: Json
           is_published?: boolean
+          on_coach?: boolean | null
+          on_team?: boolean | null
           parent_course_id?: string | null
           placement?: string | null
           prep_minutes?: number | null
@@ -7814,6 +7842,8 @@ export type Database = {
           is_published: boolean
           is_start_here: boolean
           offer_id: string | null
+          on_coach: boolean | null
+          on_team: boolean | null
           placement: string | null
           promo_en: string | null
           promo_es: string | null
@@ -7844,6 +7874,8 @@ export type Database = {
           is_published?: boolean
           is_start_here?: boolean
           offer_id?: string | null
+          on_coach?: boolean | null
+          on_team?: boolean | null
           placement?: string | null
           promo_en?: string | null
           promo_es?: string | null
@@ -7874,6 +7906,8 @@ export type Database = {
           is_published?: boolean
           is_start_here?: boolean
           offer_id?: string | null
+          on_coach?: boolean | null
+          on_team?: boolean | null
           placement?: string | null
           promo_en?: string | null
           promo_es?: string | null
@@ -9886,6 +9920,14 @@ export type Database = {
       resource_availability: { Args: { _id: string }; Returns: string }
       resource_commerce_access: { Args: { _offer: string }; Returns: boolean }
       resource_course_attachments: { Args: { _course: string }; Returns: Json }
+      resource_course_included: {
+        Args: { _id: string; _kind: string }
+        Returns: boolean
+      }
+      resource_destinations: {
+        Args: { _id: string; _kind: string }
+        Returns: Json
+      }
       resource_is_live: { Args: { _from: string }; Returns: boolean }
       resource_journey_activity: {
         Args: { _journey?: string; _limit?: number; _team: string }
@@ -10340,6 +10382,17 @@ export type Database = {
       set_referral_thanks: {
         Args: { _amount: number; _kind: string }
         Returns: undefined
+      }
+      set_resource_destinations: {
+        Args: {
+          _coach: boolean
+          _courses: Json
+          _id: string
+          _kind: string
+          _price: number
+          _team: boolean
+        }
+        Returns: string
       }
       set_small_groups: {
         Args: { _event: string; _groups: string[] }

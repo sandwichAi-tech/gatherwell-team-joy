@@ -9,12 +9,12 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
-import { ResourceAccessFields } from '@/components/resource-access-fields';
+import { DestinationSummary, ResourceAccessFields } from '@/components/resource-access-fields';
 import { confirmAction } from '@/components/confirm-dialog';
 import { useLearn } from '@/components/learn';
 import { supabase } from '@/integrations/supabase/client';
 import { myOffersQuery, offerTitle } from '@/lib/offers';
-import { resourceAccessPrice, savedPlacement, type ResourcePlacement } from '@/lib/resource-placement';
+import { destinationIssues, destinationsPrice, fromSavedDestinations, newDestinations, saveDestinations, type Destinations } from '@/lib/resource-placement';
 import { assessmentIssues, assessmentResult, assessmentScore, emptyAssessment, reorderedIds, safeExternalUrl, type AssessmentDraft, type AssessmentQuestion } from '@/lib/wellness-assessment';
 
 const STEPS = ['presentation', 'questions', 'results', 'preview'] as const;
@@ -24,10 +24,12 @@ export function WellnessAssessmentBuilder({ id, course, track, onSaved }: { id?:
   const [draft, setDraft] = useState<AssessmentDraft>(() => ({ ...emptyAssessment(), language: lang }));
   const [savedId, setSavedId] = useState(id); const [revision, setRevision] = useState(0);
   const [step, setStep] = useState<(typeof STEPS)[number]>('presentation');
-  const [placement, setPlacement] = useState<ResourcePlacement>(course ? 'course' : 'team'); const [courseId, setCourseId] = useState(course ?? '');
+  const [dest, setDest] = useState<Destinations>(() => track && course ? { team: false, coach: false, courses: [{ course, section: null, locked: true, contained: true }], locked: true } : newDestinations(course));
   const [price, setPrice] = useState({ free: true, price: '' }); const [busy, setBusy] = useState(false); const lock = useRef(false);
   const [answers, setAnswers] = useState<Record<string, string[]>>({}); const baseline = useRef('');
   const offers = useQuery(myOffersQuery(userId));
+  const placeable = (offers.data ?? []).filter(o => o.kind === 'course' && o.status !== 'archived' && o.team_id === teamId);
+  const courseOptions = placeable.map(o => ({ id: o.id, title: offerTitle(o, lang) })); const courseIds = placeable.map(o => o.id);
   const [scopeId, setScopeId] = useState('');
   const scopes = useQuery({ queryKey: ['assessment-scopes', draft.language, userId], queryFn: async () => {
     const r = await supabase.from('assessment_scope_versions').select('id,version,document_text').eq('locale', draft.language).is('retired_at', null).order('version', { ascending: false });
@@ -48,23 +50,27 @@ export function WellnessAssessmentBuilder({ id, course, track, onSaved }: { id?:
     const { data, error } = await supabase.from('quizzes').select('*').eq('id', id ?? '').maybeSingle();
     if (error) throw error; if (!data?.assessment_config || data.host_id !== userId) throw new Error('not_allowed');
     const cents = data.commerce_offer_id ? (await supabase.from('offers').select('price_cents').eq('id', data.commerce_offer_id).maybeSingle()).data?.price_cents ?? 0 : 0;
-    return { data, cents };
+    const saved = fromSavedDestinations((await (supabase as any).rpc('resource_destinations', { _kind: 'quiz', _id: data.id })).data);
+    return { data, cents, saved };
   } });
   useEffect(() => {
     if (!load.data) return;
-    const { data, cents } = load.data; const d = data.assessment_config as unknown as AssessmentDraft;
-    setDraft(d); baseline.current = JSON.stringify(d); setRevision(data.assessment_revision); setSavedId(data.id); setPlacement(savedPlacement(data)); setCourseId(data.offer_id ?? ''); setPrice({ free: !cents, price: cents ? String(cents / 100) : '' });
+    const { data, cents, saved } = load.data; if (saved) setDest(saved); const d = data.assessment_config as unknown as AssessmentDraft;
+    setDraft(d); baseline.current = JSON.stringify(d); setRevision(data.assessment_revision); setSavedId(data.id); setPrice({ free: !cents, price: cents ? String(cents / 100) : '' });
   }, [load.data]);
   const patch = (p: Partial<AssessmentDraft>) => setDraft(d => ({ ...d, ...p }));
   const editQuestion = (qid: string, p: Partial<AssessmentQuestion>) => setDraft(d => ({ ...d, questions: d.questions.map(q => q.id === qid ? { ...q, ...p } : q) }));
   const save = async () => {
-    if (lock.current) return; const cents = resourceAccessPrice(placement, price.free, price.price);
-    if (cents === null || (placement === 'course' && !courseId)) { toast.error(t('resources.item.saveFailed')); return; }
+    if (lock.current) return; const cents = destinationsPrice(dest, price.free, price.price);
+    if (cents === null || destinationIssues(dest, courseIds).includes('courseUnavailable')) { toast.error(t('resources.item.saveFailed')); return; }
+    // Items built inside a course stay contained there; everything else is one team record with destination references.
+    const contained = dest.locked ? dest.courses[0]?.course ?? null : null;
     lock.current = true; setBusy(true);
     try {
-      const { data, error } = await supabase.rpc('save_wellness_assessment', { _id: savedId ?? null, _team: teamId, _config: draft as never, _placement: placement, _course: courseId || null, _price: cents, _revision: revision } as never);
+      const { data, error } = await supabase.rpc('save_wellness_assessment', { _id: savedId ?? null, _team: teamId, _config: draft as never, _placement: contained ? 'course' : 'team', _course: contained, _price: contained ? 0 : cents, _revision: revision } as never);
       if (error) throw error; const result = data as { id: string; revision: number };
       setSavedId(result.id); setRevision(result.revision); baseline.current = JSON.stringify(draft);
+      if (!contained) await saveDestinations((fn, args) => (supabase as any).rpc(fn, args), 'quiz', result.id, dest, courseIds, cents);
       if (track) { const bound = await supabase.rpc('bind_course_assessment', { _quiz: result.id, _track: track }); if (bound.error) throw bound.error; await qc.invalidateQueries({ queryKey: ['curriculum', course] }); }
       await qc.invalidateQueries({ queryKey: ['team-quizzes'] }); toast.success(t('resources.item.draftToast'));
       onSaved?.();
@@ -75,7 +81,8 @@ export function WellnessAssessmentBuilder({ id, course, track, onSaved }: { id?:
   const move = (i: number, direction: -1 | 1) => { const ids = reorderedIds(draft.questions, i, direction); patch({ questions: ids.flatMap(qid => { const q = draft.questions.find(q => q.id === qid); return q ? [q] : []; }) }); };
   const remove = async (qid: string) => { if (await confirmAction({ title: t('quiz.confirmDeleteQuestion'), destructive: true })) patch({ questions: draft.questions.filter(q => q.id !== qid) }); };
   const changeLanguage = async (language: 'en' | 'es') => { if (language === draft.language) return; if (draft.questions.length && !(await confirmAction({ title: t('assessment.languageChange') }))) return; patch({ language }); };
-  const issues = assessmentIssues(draft); const score = assessmentScore(draft, answers); const result = assessmentResult(draft, score);
+  const issues = assessmentIssues(draft);
+  const destProblems = destinationIssues(dest, courseIds); const score = assessmentScore(draft, answers); const result = assessmentResult(draft, score);
   if (id && load.isPending) return <ListSkeleton />;
   if (load.isError) return <RetryState retry={() => void load.refetch()} />;
   return <article className="assessment-builder">
@@ -87,7 +94,7 @@ export function WellnessAssessmentBuilder({ id, course, track, onSaved }: { id?:
         <label className="field-label" htmlFor="wa-title">{t('templates.title')}</label><Input id="wa-title" value={draft[`title_${lang}`]} maxLength={160} onChange={e => patch({ [`title_${lang}`]: e.target.value })} />
         <label className="field-label" htmlFor="wa-description">{t('templates.description')}</label><Textarea id="wa-description" value={draft[`description_${lang}`]} maxLength={2000} onChange={e => patch({ [`description_${lang}`]: e.target.value })} />
         <label className="field-label" htmlFor="wa-language">{t('assessment.language')}</label><select id="wa-language" className="field-input" value={draft.language} onChange={e => void changeLanguage(e.target.value === 'es' ? 'es' : 'en')}><option value="en">{t('me.english')}</option><option value="es">{t('me.spanish')}</option></select>
-        <ResourceAccessFields type="assessment" placement={placement} onPlacement={setPlacement} free={price.free} price={price.price} onAccess={(free, value) => setPrice({ free, price: value })} courseId={courseId} onCourse={setCourseId} courses={(offers.data ?? []).filter(o => o.kind === 'course' && o.status !== 'archived').map(o => ({ id: o.id, title: offerTitle(o, lang) }))} ready={false} prefix="wa" />
+        <ResourceAccessFields type="assessment" dest={dest} onDest={setDest} free={price.free} price={price.price} onAccess={(free, value) => setPrice({ free, price: value })} courses={courseOptions} ready={false} prefix="wa" />
         <label className="switch-row"><Switch checked={draft.allow_retake} onCheckedChange={allow_retake => patch({ allow_retake })} /><span>{t('assessment.allowRetake')}</span></label>
       </>}
       {step === 'questions' && <><Button variant="secondary" onClick={addQuestion}><Plus />{t('quiz.addQuestion')}</Button><ol className="assessment-list">{draft.questions.map((q, i) => <li key={q.id} className="edit-form">
@@ -104,13 +111,13 @@ export function WellnessAssessmentBuilder({ id, course, track, onSaved }: { id?:
         <Input aria-label={t('quizStudio.bandTitle')} maxLength={160} value={r.title} onChange={e => update({ title: e.target.value })} /><Textarea aria-label={t('quizStudio.bandBody')} maxLength={2000} value={r.body} onChange={e => update({ body: e.target.value })} />
         <Input type="url" placeholder="https://" aria-label={t('assessment.nextLink')} aria-invalid={!!r.url && !safeExternalUrl(r.url)} value={r.url} onChange={e => update({ url: e.target.value })} /><Button variant="ghost" onClick={() => patch({ results: draft.results.filter(x => x.id !== r.id) })}><Trash2 />{t('quizStudio.removeBand')}</Button>
       </li>; })}</ol></>}
-      {step === 'preview' && <><p className="field-hint">{t('assessment.previewOnly')}</p>{draft.questions.map(q => <fieldset key={q.id}><legend>{q.prompt}</legend>{q.type === 'text' ? <Textarea aria-label={t('quizPlay.yourAnswer')} /> : q.options.map(o => <label className="guest-consent" key={o.id}><input type={q.type === 'multi' ? 'checkbox' : 'radio'} name={q.id} checked={answers[q.id]?.includes(o.id) ?? false} onChange={() => setAnswers(a => ({ ...a, [q.id]: q.type === 'multi' ? a[q.id]?.includes(o.id) ? (a[q.id] ?? []).filter(x => x !== o.id) : [...(a[q.id] ?? []), o.id] : [o.id] }))} />{o.label}</label>)}</fieldset>)}<p role="status">{score !== null ? `${score} / 100` : t('assessment.unscored')}</p>{result && <div><h2>{result.title}</h2><p>{result.body}</p>{safeExternalUrl(result.url) && <a href={result.url} target="_blank" rel="noopener noreferrer">{t('assessment.nextLink')} ↗</a>}</div>}{issues.length > 0 && <ul role="status">{issues.map(issue => <li key={issue}>{t(`assessment.issues.${issue}`)}</li>)}</ul>}</>}
+      {step === 'preview' && <><DestinationSummary dest={dest} courses={courseOptions} onFix={() => { setStep('presentation'); requestAnimationFrame(() => document.getElementById('wa-destinations')?.focus()); }} /><p className="field-hint">{t('assessment.previewOnly')}</p>{draft.questions.map(q => <fieldset key={q.id}><legend>{q.prompt}</legend>{q.type === 'text' ? <Textarea aria-label={t('quizPlay.yourAnswer')} /> : q.options.map(o => <label className="guest-consent" key={o.id}><input type={q.type === 'multi' ? 'checkbox' : 'radio'} name={q.id} checked={answers[q.id]?.includes(o.id) ?? false} onChange={() => setAnswers(a => ({ ...a, [q.id]: q.type === 'multi' ? a[q.id]?.includes(o.id) ? (a[q.id] ?? []).filter(x => x !== o.id) : [...(a[q.id] ?? []), o.id] : [o.id] }))} />{o.label}</label>)}</fieldset>)}<p role="status">{score !== null ? `${score} / 100` : t('assessment.unscored')}</p>{result && <div><h2>{result.title}</h2><p>{result.body}</p>{safeExternalUrl(result.url) && <a href={result.url} target="_blank" rel="noopener noreferrer">{t('assessment.nextLink')} ↗</a>}</div>}{issues.length > 0 && <ul role="status">{issues.map(issue => <li key={issue}>{t(`assessment.issues.${issue}`)}</li>)}</ul>}</>}
       {scopes.isError ? <RetryState retry={() => void scopes.refetch()} /> : scopes.data?.length ? <>
         <label className="field-label" htmlFor="assessment-scope">{t('assessment.scopeDocument')}</label>
         <select id="assessment-scope" className="field-input" value={scopeId} onChange={e => setScopeId(e.target.value)}><option value="">{t('assessment.selectScope')}</option>{scopes.data.map(s => <option key={s.id} value={s.id}>{t('assessment.scopeVersion', { version: s.version })}</option>)}</select>
         <p>{scopes.data.find(s => s.id === scopeId)?.document_text}</p>
       </> : <p className="field-hint" role="status">{t('assessment.approvedRequired')}</p>}
-      <div className="sheet-actions"><Button variant="secondary" disabled={busy} aria-busy={busy} onClick={() => void save()}><Save />{busy ? t('onboarding.saving') : t('gathering.saveDraft')}</Button><Button disabled={busy || !savedId || !scopeId || issues.length > 0 || JSON.stringify(draft) !== baseline.current} title={t('assessment.approvedRequired')} onClick={() => void publish()}>{t('offers.publish')}</Button></div>
+      <div className="sheet-actions"><Button variant="secondary" disabled={busy} aria-busy={busy} onClick={() => void save()}><Save />{busy ? t('onboarding.saving') : t('gathering.saveDraft')}</Button><Button disabled={busy || !savedId || !scopeId || issues.length > 0 || destProblems.length > 0 || JSON.stringify(draft) !== baseline.current} title={t('assessment.approvedRequired')} onClick={() => void publish()}>{t('offers.publish')}</Button></div>
     </section>
   </article>;
 }
