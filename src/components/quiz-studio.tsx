@@ -1,6 +1,6 @@
 import { removeResource } from '@/components/confirm-resource-removal';
 import { BuilderStepFooter } from '@/components/builder-step-footer';
-import { DestinationSummary, ResourceAccessFields, livePlacementList } from '@/components/resource-access-fields';
+import { DestinationSummary, ResourceAccessFields } from '@/components/resource-access-fields';
 import { myOffersQuery, offerTitle } from '@/lib/offers';
 import { getPaymentsReadiness } from '@/lib/billing.functions';
 import { canSellPaid } from '@/lib/payments-readiness';
