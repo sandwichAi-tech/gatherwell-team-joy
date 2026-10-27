@@ -1352,6 +1352,13 @@
       "when": 1793136989319,
       "tag": "0192_fix_set_resource_destinations_offer_kind",
       "breakpoints": true
+    },
+    {
+      "idx": 193,
+      "version": "7",
+      "when": 1793137231717,
+      "tag": "0193_course_only_resources_follow_course_gate",
+      "breakpoints": true
     }
   ]
 }
