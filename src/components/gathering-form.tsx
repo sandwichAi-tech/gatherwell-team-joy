@@ -100,7 +100,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (sourceId) {
       if (!source) return; const e = source.event;
       setTeamWaiver(!!e.requires_waiver);
-      void supabase.from('event_waivers').select('library_id,library_version').eq('event_id',e.id).is('archived_at',null).then(r=>setLibraryWaivers((r.data??[]).flatMap(w=>w.library_id&&w.library_version?[{id:w.library_id,version:w.library_version}]:[])));
+      if (!(editing && e.status === 'draft' && draft && typeof draft === 'object' && Array.isArray((draft as Record<string, unknown>)['libraryWaivers']))) void supabase.from('event_waivers').select('library_id,library_version').eq('event_id',e.id).is('archived_at',null).then(r=>setLibraryWaivers((r.data??[]).flatMap(w=>w.library_id&&w.library_version?[{id:w.library_id,version:w.library_version}]:[])));
       setCategory(isCategory(e.category) ? e.category : 'more'); setCategoryLabel(e.category_label ?? ''); setTitle(e.title); setCoverPath(e.cover_url); setCoverStyle(e.cover_style ?? 0); setDescEn(e.description_en ?? ''); setDescEs(e.description_es ?? '');
       setCoverOverlay(clampOverlay((e as { cover_overlay?: number }).cover_overlay)); setCoverFocal(clampFocal((e as { cover_focal?: string }).cover_focal)); setCoverAlt((e as { cover_alt?: string | null }).cover_alt ?? '');
       const mins = e.ends_at ? Math.max(5, Math.round((new Date(e.ends_at).getTime() - new Date(e.starts_at).getTime()) / 60000)) : 60;
