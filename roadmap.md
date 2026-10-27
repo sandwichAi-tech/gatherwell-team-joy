@@ -1,12 +1,12 @@
 # Challenge commerce and course/assessment lifecycle closure
 
 ## Website Notes rows 113 and 115 — current closure pass
-- [ ] Audit exact missing code versus legal/provider blockers, preserving existing guards.
-- [ ] Challenge public detail, server-owned order/reservation/receipt lifecycle and verified webhook reconciliation.
-- [ ] Unified curriculum, eligible resource reuse and history-preserving removal.
-- [ ] Versioned assessment readiness, private immutable completions, retries/retakes and safe recommendations.
-- [ ] Focused/full tests, isolated security checks, EN/ES desktop/mobile and keyboard review; exact cleanup.
-- [ ] Report remaining credential/legal/device blockers separately from unimplemented code; no publish/deploy.
+- [x] Audit exact missing code versus legal/provider blockers, preserving existing guards.
+- [x] Add Challenge public detail, order/reservation/receipt RPCs and verified webhook integration; not positive-provider verified.
+- [x] Add ordered assessment slots, owner-only resource references and detach-only removal; source entitlement remains unchanged.
+- [x] Add versioned scope references, private immutable receipt/scoring/retake functions and learner form; approved product copy absent.
+- [x] 837 full tests / 19 focused / 10 isolated authenticated checks; six public unavailable-state EN/ES width checks; automatic build OK; cleanup.
+- [ ] Remaining CODE: durable provider event recovery, cancel/create-failure compensation, paid Challenge publication, invite public reads, refund tooling, paid reused-item inclusion/shared picker, assessment publish/scope UI/recommendations/cover, active-learning normalization and generic quiz race hardening. Full positive lifecycle/device verification not completed; scope copy/provider readiness also required. See CHANGELOG; no publish/deploy.
 
 ## Website Notes row 115 — In Progress
 - [x] Audit/reproduce first-track-only course create, tied/non-atomic order, separate quiz attachments, absent dedicated assessment/approved scope copy.
