@@ -18,7 +18,7 @@ export const Route = createFileRoute('/api/public/payments/webhook')({
           const evt = await verifyWebhook(request, env);
           const { supabaseAdmin: db } = await import('@/integrations/supabase/client.server');
           const { handlePaymentEvent } = await import('@/lib/billing/webhook-events.server');
-          const result = await handlePaymentEvent(db, evt as any);
+          const result = await handlePaymentEvent(db, evt as any, env);
           if (result === 'failed') return new Response('error', { status: 500 });
           return Response.json({ received: true });
         } catch (e) {

@@ -6,6 +6,7 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { rpcErrorKey } from '@/lib/challenges';
+import { ChallengeOrderReceipts } from '@/components/challenge-order-receipts';
 
 type Enrollment = { user_id: string; name: string | null; status: string; extras: { id: string; name: string; quantity: number }[] };
 type Candidate = { id: string; name: string; invited: boolean };
@@ -19,6 +20,7 @@ export function ChallengeHostPanel({ id, inviteOnly, userId }: { id: string; inv
     catch (e) { toast.error(t(rpcErrorKey(e))); } finally { setBusy(false); }
   };
   return <section className="challenge-host-panel">
+    <ChallengeOrderReceipts id={id} userId={userId} />
     {inviteOnly && <><h2>{t('challenges.invitedParticipants')}</h2><p className="field-hint">{t('challenges.inviteNoMessages')}</p>{candidates.isPending ? <p role="status">{t('publicEvent.loading')}</p> : candidates.isError ? <Button variant="secondary" onClick={() => void candidates.refetch()}>{t('common.retry')}</Button> : candidates.data?.map(c => <label key={c.id} className="switch-row"><Switch disabled={busy} checked={c.invited} onCheckedChange={on => void invite(c, on)} /><span>{c.name}</span></label>)}</>}
     <h2>{t('challenges.enrollmentDetails')}</h2>
     {orders.isPending ? <p role="status">{t('publicEvent.loading')}</p> : orders.isError ? <Button variant="secondary" onClick={() => void orders.refetch()}>{t('common.retry')}</Button> : orders.data?.length ? <ul className="team-membership-list">{orders.data.map((o, index) => <li key={o.user_id}><strong>{o.name || t('challenges.participantNumber', { number: index + 1 })}</strong><span>{o.status === 'active' ? t('challenges.joined') : t('challenges.inactiveEnrollment')}</span>{o.extras.map(e => <p key={e.id}>{e.name} × {e.quantity}</p>)}</li>)}</ul> : <p>{t('challenges.boardEmpty')}</p>}

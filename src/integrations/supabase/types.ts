@@ -206,6 +206,99 @@ export type Database = {
         }
         Relationships: []
       }
+      assessment_receipts: {
+        Row: {
+          answers: Json
+          completed_at: string
+          config_snapshot: Json
+          id: string
+          quiz_id: string
+          request_id: string
+          result_snapshot: Json | null
+          revision: number
+          scope_id: string
+          score: number | null
+          user_id: string
+        }
+        Insert: {
+          answers: Json
+          completed_at?: string
+          config_snapshot: Json
+          id?: string
+          quiz_id: string
+          request_id: string
+          result_snapshot?: Json | null
+          revision: number
+          scope_id: string
+          score?: number | null
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          completed_at?: string
+          config_snapshot?: Json
+          id?: string
+          quiz_id?: string
+          request_id?: string
+          result_snapshot?: Json | null
+          revision?: number
+          scope_id?: string
+          score?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_receipts_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assessment_receipts_scope_id_fkey"
+            columns: ["scope_id"]
+            isOneToOne: false
+            referencedRelation: "assessment_scope_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assessment_scope_versions: {
+        Row: {
+          approval_reference: string
+          approved_at: string
+          approved_by: string
+          document_hash: string
+          document_text: string
+          id: string
+          locale: string
+          retired_at: string | null
+          version: number
+        }
+        Insert: {
+          approval_reference: string
+          approved_at: string
+          approved_by: string
+          document_hash: string
+          document_text: string
+          id?: string
+          locale: string
+          retired_at?: string | null
+          version: number
+        }
+        Update: {
+          approval_reference?: string
+          approved_at?: string
+          approved_by?: string
+          document_hash?: string
+          document_text?: string
+          id?: string
+          locale?: string
+          retired_at?: string | null
+          version?: number
+        }
+        Relationships: []
+      }
       auth_intents: {
         Row: {
           consumed_at: string | null
@@ -672,6 +765,7 @@ export type Database = {
           challenge_id: string
           extras: Json
           joined_at: string
+          order_id: string | null
           payment_id: string | null
           source: string
           user_id: string
@@ -681,6 +775,7 @@ export type Database = {
           challenge_id: string
           extras?: Json
           joined_at?: string
+          order_id?: string | null
           payment_id?: string | null
           source?: string
           user_id?: string
@@ -690,6 +785,7 @@ export type Database = {
           challenge_id?: string
           extras?: Json
           joined_at?: string
+          order_id?: string | null
           payment_id?: string | null
           source?: string
           user_id?: string
@@ -700,6 +796,13 @@ export type Database = {
             columns: ["challenge_id"]
             isOneToOne: false
             referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "challenge_members_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
           {
@@ -3021,6 +3124,7 @@ export type Database = {
           created_at: string
           description_en: string | null
           description_es: string | null
+          detached_at: string | null
           duration_minutes: number | null
           event_id: string | null
           id: string
@@ -3031,6 +3135,9 @@ export type Database = {
           notes_es: string | null
           prerequisite_lesson_id: string | null
           replay_url: string | null
+          resource_offer_id: string | null
+          resource_quiz_id: string | null
+          resource_recipe_id: string | null
           sort_order: number
           storage_path: string | null
           title_en: string
@@ -3044,6 +3151,7 @@ export type Database = {
           created_at?: string
           description_en?: string | null
           description_es?: string | null
+          detached_at?: string | null
           duration_minutes?: number | null
           event_id?: string | null
           id?: string
@@ -3054,6 +3162,9 @@ export type Database = {
           notes_es?: string | null
           prerequisite_lesson_id?: string | null
           replay_url?: string | null
+          resource_offer_id?: string | null
+          resource_quiz_id?: string | null
+          resource_recipe_id?: string | null
           sort_order?: number
           storage_path?: string | null
           title_en?: string
@@ -3067,6 +3178,7 @@ export type Database = {
           created_at?: string
           description_en?: string | null
           description_es?: string | null
+          detached_at?: string | null
           duration_minutes?: number | null
           event_id?: string | null
           id?: string
@@ -3077,6 +3189,9 @@ export type Database = {
           notes_es?: string | null
           prerequisite_lesson_id?: string | null
           replay_url?: string | null
+          resource_offer_id?: string | null
+          resource_quiz_id?: string | null
+          resource_recipe_id?: string | null
           sort_order?: number
           storage_path?: string | null
           title_en?: string
@@ -3091,6 +3206,27 @@ export type Database = {
             columns: ["prerequisite_lesson_id"]
             isOneToOne: false
             referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lessons_resource_offer_id_fkey"
+            columns: ["resource_offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lessons_resource_quiz_id_fkey"
+            columns: ["resource_quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lessons_resource_recipe_id_fkey"
+            columns: ["resource_recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
             referencedColumns: ["id"]
           },
           {
@@ -4146,6 +4282,7 @@ export type Database = {
           cta_en: string | null
           cta_es: string | null
           currency: string
+          curriculum_revision: number
           description_en: string | null
           description_es: string | null
           discussion_enabled: boolean
@@ -4208,6 +4345,7 @@ export type Database = {
           cta_en?: string | null
           cta_es?: string | null
           currency?: string
+          curriculum_revision?: number
           description_en?: string | null
           description_es?: string | null
           discussion_enabled?: boolean
@@ -4270,6 +4408,7 @@ export type Database = {
           cta_en?: string | null
           cta_es?: string | null
           currency?: string
+          curriculum_revision?: number
           description_en?: string | null
           description_es?: string | null
           discussion_enabled?: boolean
@@ -4326,30 +4465,36 @@ export type Database = {
       }
       order_items: {
         Row: {
+          addon_key: string | null
           created_at: string
           description: string | null
           id: string
           item_type: string
           order_id: string
           quantity: number
+          refunded_cents: number
           unit_cents: number
         }
         Insert: {
+          addon_key?: string | null
           created_at?: string
           description?: string | null
           id?: string
           item_type: string
           order_id: string
           quantity?: number
+          refunded_cents?: number
           unit_cents: number
         }
         Update: {
+          addon_key?: string | null
           created_at?: string
           description?: string | null
           id?: string
           item_type?: string
           order_id?: string
           quantity?: number
+          refunded_cents?: number
           unit_cents?: number
         }
         Relationships: [
@@ -4365,6 +4510,8 @@ export type Database = {
       orders: {
         Row: {
           buyer_user_id: string | null
+          challenge_cart: Json | null
+          challenge_id: string | null
           connected_account_id: string | null
           created_at: string
           currency: string
@@ -4385,6 +4532,7 @@ export type Database = {
           promo_id: string | null
           refund_policy_text: string | null
           refund_policy_version_id: string | null
+          reservation_expires_at: string | null
           rsvp_id: string | null
           status: string
           stripe_checkout_session_id: string | null
@@ -4395,6 +4543,8 @@ export type Database = {
         }
         Insert: {
           buyer_user_id?: string | null
+          challenge_cart?: Json | null
+          challenge_id?: string | null
           connected_account_id?: string | null
           created_at?: string
           currency?: string
@@ -4415,6 +4565,7 @@ export type Database = {
           promo_id?: string | null
           refund_policy_text?: string | null
           refund_policy_version_id?: string | null
+          reservation_expires_at?: string | null
           rsvp_id?: string | null
           status?: string
           stripe_checkout_session_id?: string | null
@@ -4425,6 +4576,8 @@ export type Database = {
         }
         Update: {
           buyer_user_id?: string | null
+          challenge_cart?: Json | null
+          challenge_id?: string | null
           connected_account_id?: string | null
           created_at?: string
           currency?: string
@@ -4445,6 +4598,7 @@ export type Database = {
           promo_id?: string | null
           refund_policy_text?: string | null
           refund_policy_version_id?: string | null
+          reservation_expires_at?: string | null
           rsvp_id?: string | null
           status?: string
           stripe_checkout_session_id?: string | null
@@ -4459,6 +4613,13 @@ export type Database = {
             columns: ["buyer_user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
             referencedColumns: ["id"]
           },
           {
@@ -5572,6 +5733,7 @@ export type Database = {
         Row: {
           assessment_config: Json | null
           assessment_revision: number
+          assessment_scope_id: string | null
           attempts_allowed: number | null
           commerce_offer_id: string | null
           cooldown_minutes: number
@@ -5604,6 +5766,7 @@ export type Database = {
         Insert: {
           assessment_config?: Json | null
           assessment_revision?: number
+          assessment_scope_id?: string | null
           attempts_allowed?: number | null
           commerce_offer_id?: string | null
           cooldown_minutes?: number
@@ -5636,6 +5799,7 @@ export type Database = {
         Update: {
           assessment_config?: Json | null
           assessment_revision?: number
+          assessment_scope_id?: string | null
           attempts_allowed?: number | null
           commerce_offer_id?: string | null
           cooldown_minutes?: number
@@ -5666,6 +5830,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "quizzes_assessment_scope_id_fkey"
+            columns: ["assessment_scope_id"]
+            isOneToOne: false
+            referencedRelation: "assessment_scope_versions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "quizzes_commerce_offer_id_fkey"
             columns: ["commerce_offer_id"]
@@ -8341,6 +8512,7 @@ export type Database = {
         Args: { _archived: boolean; _id: string }
         Returns: undefined
       }
+      assessment_for_learner: { Args: { _quiz: string }; Returns: Json }
       assign_license_seat: {
         Args: { _on: boolean; _team: string; _user: string }
         Returns: undefined
@@ -8356,6 +8528,10 @@ export type Database = {
           _team: string
           _user: string
         }
+        Returns: string
+      }
+      attach_course_resource: {
+        Args: { _kind: string; _resource: string; _track: string }
         Returns: string
       }
       attach_library_waiver: {
@@ -8382,6 +8558,10 @@ export type Database = {
           badge_id: string
           holders: number
         }[]
+      }
+      bind_course_assessment: {
+        Args: { _quiz: string; _track: string }
+        Returns: string
       }
       block_user: { Args: { _user: string }; Returns: undefined }
       build_member_plan: {
@@ -8475,6 +8655,7 @@ export type Database = {
         Args: { _c: string; _user: string }
         Returns: boolean
       }
+      challenge_order_receipts: { Args: { _c: string }; Returns: Json }
       challenge_stats: { Args: { _c: string; _tz?: string }; Returns: Json }
       challenge_streaks: {
         Args: { _c: string; _today?: string; _u: string }
@@ -8562,6 +8743,17 @@ export type Database = {
         Args: { _kind: string; _target: string }
         Returns: Json
       }
+      complete_wellness_assessment: {
+        Args: {
+          _accepted: boolean
+          _answers: Json
+          _quiz: string
+          _request: string
+          _revision: number
+          _scope: string
+        }
+        Returns: Json
+      }
       compute_playbook: { Args: never; Returns: number }
       configure_resource_access: {
         Args: {
@@ -8594,8 +8786,20 @@ export type Database = {
         Args: { _offer: string; _user: string }
         Returns: string
       }
+      course_lesson_quiz: { Args: { _lesson: string }; Returns: Json }
       course_progress: { Args: { _offer: string }; Returns: Json }
+      course_resource_destination: { Args: { _lesson: string }; Returns: Json }
+      course_reusable_resources: { Args: { _course: string }; Returns: Json }
       create_auth_intent: { Args: { _path: string }; Returns: string }
+      create_challenge_order: {
+        Args: {
+          _c: string
+          _environment: string
+          _extras: Json
+          _request: string
+        }
+        Returns: Json
+      }
       create_course_quiz_item: {
         Args: { _language: string; _title: string; _track: string }
         Returns: Json
@@ -8670,6 +8874,10 @@ export type Database = {
       delete_comment: { Args: { _id: string }; Returns: undefined }
       delete_my_account: { Args: never; Returns: undefined }
       delete_my_coach_review: { Args: { _host: string }; Returns: undefined }
+      detach_course_curriculum: {
+        Args: { _course: string; _lesson?: string; _track: string }
+        Returns: undefined
+      }
       discover_catalog: {
         Args: {
           _accessible?: boolean
@@ -8815,6 +9023,7 @@ export type Database = {
       gatherings_this_month: { Args: { _uid: string }; Returns: number }
       get_email_prefs: { Args: { _token: string }; Returns: Json }
       get_member_plan: { Args: { _team: string }; Returns: Json }
+      get_public_challenge: { Args: { _id: string }; Returns: Json }
       get_public_event: { Args: { _id: string }; Returns: Json }
       get_public_event_k: {
         Args: { _id: string; _token: string }
@@ -9308,8 +9517,31 @@ export type Database = {
       quiz_access_error: { Args: { _quiz: string }; Returns: string }
       quiz_blockers: { Args: { _quiz: string }; Returns: string[] }
       quiz_host_summary: { Args: { _quiz: string }; Returns: Json }
+      quiz_is_assessment: { Args: { _quiz: string }; Returns: boolean }
       quiz_option_counts: { Args: { _quiz: string }; Returns: Json }
       quiz_result: { Args: { _attempt: string }; Returns: Json }
+      reconcile_challenge_order: {
+        Args: {
+          _amount: number
+          _currency: string
+          _environment: string
+          _intent: string
+          _order: string
+          _session: string
+          _state: string
+        }
+        Returns: undefined
+      }
+      reconcile_challenge_refund: {
+        Args: {
+          _amount: number
+          _lines: Json
+          _order: string
+          _provider_refund: string
+          _status: string
+        }
+        Returns: undefined
+      }
       record_ai_usage: {
         Args: { _feature: string; _input: number; _output: number }
         Returns: undefined
@@ -9474,6 +9706,15 @@ export type Database = {
       }
       reorder_course_curriculum: {
         Args: { _course: string; _ids: string[]; _track: string }
+        Returns: undefined
+      }
+      reorder_course_curriculum_checked: {
+        Args: {
+          _course: string
+          _expected: string[]
+          _ids: string[]
+          _track: string
+        }
         Returns: undefined
       }
       replace_offer_item: { Args: { _item: string; _p: Json }; Returns: string }
@@ -10154,6 +10395,7 @@ export type Database = {
         Returns: Json
       }
       user_email: { Args: { _user: string }; Returns: string }
+      validate_assessment_config: { Args: { _c: Json }; Returns: undefined }
       verified_hosts: { Args: { _ids: string[] }; Returns: string[] }
       verify_certificate: { Args: { _number: string }; Returns: Json }
       vote_poll: {
