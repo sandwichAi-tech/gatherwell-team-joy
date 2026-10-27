@@ -4512,6 +4512,8 @@ export type Database = {
           buyer_user_id: string | null
           challenge_cart: Json | null
           challenge_id: string | null
+          checkout_create_started_at: string | null
+          checkout_request: Json | null
           connected_account_id: string | null
           created_at: string
           currency: string
@@ -4545,6 +4547,8 @@ export type Database = {
           buyer_user_id?: string | null
           challenge_cart?: Json | null
           challenge_id?: string | null
+          checkout_create_started_at?: string | null
+          checkout_request?: Json | null
           connected_account_id?: string | null
           created_at?: string
           currency?: string
@@ -4578,6 +4582,8 @@ export type Database = {
           buyer_user_id?: string | null
           challenge_cart?: Json | null
           challenge_id?: string | null
+          checkout_create_started_at?: string | null
+          checkout_request?: Json | null
           connected_account_id?: string | null
           created_at?: string
           currency?: string
@@ -8568,6 +8574,10 @@ export type Database = {
           holders: number
         }[]
       }
+      bind_challenge_checkout: {
+        Args: { _buyer: string; _order: string; _session: string }
+        Returns: boolean
+      }
       bind_course_assessment: {
         Args: { _quiz: string; _track: string }
         Returns: string
@@ -8628,6 +8638,10 @@ export type Database = {
       can_use_team_templates: { Args: { _team: string }; Returns: boolean }
       can_view_contact_thread: { Args: { _thread: string }; Returns: boolean }
       can_view_event: { Args: { _event_id: string }; Returns: boolean }
+      cancel_challenge_checkout_verified: {
+        Args: { _buyer: string; _order: string; _session: string }
+        Returns: undefined
+      }
       cancel_rsvp_by_code: { Args: { _code: string }; Returns: boolean }
       challenge_can_enroll: { Args: { _c: string }; Returns: boolean }
       challenge_check_in: {
@@ -8706,6 +8720,10 @@ export type Database = {
       }
       checkin_blocker: { Args: { _rsvp: string }; Returns: string }
       checkin_guest_list: { Args: { _event: string }; Returns: Json }
+      claim_challenge_checkout: {
+        Args: { _buyer: string; _lang: string; _order: string; _origin: string }
+        Returns: Json
+      }
       claim_challenge_provider_event: {
         Args: {
           _environment: string
