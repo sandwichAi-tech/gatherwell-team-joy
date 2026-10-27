@@ -7248,6 +7248,7 @@ export type Database = {
           default_price_cents: number
           description_en: string | null
           description_es: string | null
+          event_setup: Json | null
           followup_script_en: string | null
           followup_script_es: string | null
           id: string
@@ -7278,6 +7279,7 @@ export type Database = {
           default_price_cents?: number
           description_en?: string | null
           description_es?: string | null
+          event_setup?: Json | null
           followup_script_en?: string | null
           followup_script_es?: string | null
           id?: string
@@ -7308,6 +7310,7 @@ export type Database = {
           default_price_cents?: number
           description_en?: string | null
           description_es?: string | null
+          event_setup?: Json | null
           followup_script_en?: string | null
           followup_script_es?: string | null
           id?: string
@@ -8579,6 +8582,10 @@ export type Database = {
         Returns: string
       }
       event_waiver_status: { Args: { _event: string }; Returns: Json }
+      export_library_source: {
+        Args: { _id: string; _kind: string }
+        Returns: string
+      }
       export_my_data: { Args: never; Returns: Json }
       feature_badge: {
         Args: { _id: string; _slot: number }
@@ -8831,6 +8838,7 @@ export type Database = {
       moderation_queue: { Args: { _team: string }; Returns: Json }
       moderation_reports: { Args: { _team: string }; Returns: Json }
       my_alert_matches: { Args: never; Returns: Json }
+      my_authored_library_items: { Args: never; Returns: Json }
       my_broadcasts: {
         Args: never
         Returns: {
