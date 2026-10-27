@@ -15,6 +15,7 @@ export function AddonImageInput({ userId, name, path, onChange, onBusy }: { user
   const input = useRef<HTMLSpanElement>(null); const cleanup = useServerFn(cleanupAddonImages);
   const candidates = useRef(new Set<string>()); const alive = useRef(true);
   const change = useRef(onChange); change.current = onChange;
+  useEffect(() => { if (path) candidates.current.add(path); }, [path]);
   const { data: src } = useQuery({ queryKey: ['media-url', path], queryFn: () => mediaUrl(path), enabled: !!path });
   useEffect(() => { alive.current = true; return () => { alive.current = false; void cleanup({ data: { paths: [...candidates.current] } }).catch(() => undefined); }; }, [cleanup]);
   const cropped = async ({ file, previewUrl }: CropResult) => {

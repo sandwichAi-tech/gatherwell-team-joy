@@ -1,9 +1,10 @@
 # Challenge experience pass — DONE
 
 ## Optional event add-on images
-- [ ] Reuse private media and crop controls; carry optional images through drafts and canonical add-ons.
-- [ ] Authorized signing, safe replacement/removal cleanup, attendee display, bilingual accessibility.
-- [ ] Focused/full tests, supported compilation, mobile review and isolated verification; no deployment.
+- [x] Reuse private media/crop controls; optional images verified through draft/refresh and publish/reopen.
+- [x] Event-bound signing, uploader/reference-aware cleanup, non-destructive replacement/remove, attendee preview and EN/ES 320/390/1280 checked.
+- [x] 52 focused tests; full 86 files/736 tests; automatic compilation OK; isolated host/outsider and media cleanup; no deployment.
+- [ ] Remaining verification: real devices/screen reader, credential outage and co-editor/cross-team transport matrix; physical devices unavailable. Existing commerce has no add-on purchasing/order associations.
 
 ## Waiver library — rows 64, 84–86
 - [ ] 85 In Progress: private text library, immutable versions, preview/archive and manager isolation implemented; library create/edit browser submit matrix still unverified.

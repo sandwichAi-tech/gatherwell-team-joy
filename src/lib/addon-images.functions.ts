@@ -53,7 +53,7 @@ export const cleanupAddonImages = createServerFn({ method: 'POST' })
     for (const p of paths) {
       const [events, drafts] = await Promise.all([
         supabaseAdmin.from('events').select('id').contains('addons', [{ image_path: p }]).limit(1),
-        supabaseAdmin.from('event_builder_drafts').select('event_id').contains('snapshot', { details: { addons: [{ image_path: p }] } }).limit(1),
+        supabaseAdmin.from('event_builder_drafts').select('event_id,events!inner(status)').eq('events.status', 'draft').contains('snapshot', { details: { addons: [{ image_path: p }] } }).limit(1),
       ]);
       if (!events.error && !drafts.error && !events.data?.length && !drafts.data?.length) await context.supabase.storage.from('media').remove([p]);
     }
