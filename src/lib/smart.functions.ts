@@ -118,42 +118,12 @@ export const getDailyBrief = createServerFn({ method: 'POST' })
       if (result.error) throw new Error('Could not load your morning brief');
       return result.data;
     };
-    const memberships = checked(await sb.from('team_members').select('team_id, role').eq('user_id', uid)) ?? [];
-    const profile = checked(await sb.from('profiles').select('active_team_id').eq('id', uid).maybeSingle());
-    const leadMembership = memberships.find(m => m.role === 'leader' && m.team_id === profile?.active_team_id) ?? memberships.find(m => m.role === 'leader');
-    const teamName = leadMembership ? checked(await sb.from('teams').select('name').eq('id', leadMembership.team_id).maybeSingle())?.name ?? '' : '';
-    const leaderTeams = new Set(memberships.filter(m => m.role === 'leader').map(m => m.team_id));
-    for (const root of [...leaderTeams]) {
-      const tree = checked(await sb.rpc('team_tree', { _root: root }));
-      for (const node of tree ?? []) leaderTeams.add(node.id);
-    }
-    const fields = 'id,host_id,team_id,title,starts_at,location_name,status';
-    const [eventResult, attendingResult, trackResult, lessonResult, recipeResult, flagResult] = await Promise.all([
-      sb.from('events').select(fields).eq('status', 'published').gte('starts_at', from).order('starts_at'),
-      sb.from('rsvps').select(`checkin_code,event:events(${fields})`).eq('user_id', uid).eq('status', 'going'),
-      sb.from('tracks').select('id,title_en,title_es,is_published,created_at').eq('is_published', true),
-      sb.from('lessons').select('id,track_id,title_en,title_es,created_at').gte('created_at', from),
-      sb.from('recipes').select('id,title_en,title_es,created_at,created_by,private_owner').eq('is_published', true).gte('created_at', from),
-      sb.from('feature_flags').select('enabled').eq('key', 'feature_learn').maybeSingle(),
-    ]);
-    const events: BriefEvent[] = (checked(eventResult) ?? []).map(e => ({ ...e, going: 0 }));
-    const own = events.filter(e => e.host_id === uid);
-    for (const event of own.filter(e => e.starts_at >= now)) event.going = Number(checked(await sb.rpc('event_going_count', { _event_id: event.id })) ?? 0);
-    const signups = own.length ? checked(await sb.from('rsvps').select('event_id,created_at').in('event_id', own.map(e => e.id)).eq('status', 'going').gte('created_at', from)) ?? [] : [];
-    const hosts = leaderTeams.size ? checked(await sb.from('team_members').select('user_id,team_id').in('team_id', [...leaderTeams]).in('role', ['host', 'leader'])) ?? [] : [];
-    const attending = (checked(attendingResult) ?? []).flatMap(row => row.event ? [{ event: { ...row.event, going: 0 }, code: row.checkin_code }] : []);
-    const tracks = checked(trackResult) ?? [], lessons = checked(lessonResult) ?? [], recipes = checked(recipeResult) ?? [];
-    const enabled = checked(flagResult)?.enabled;
-    const title = (row: { title_en: string; title_es: string | null }) => data.lang === 'es' ? row.title_es || row.title_en : row.title_en;
-    const trackIds = new Set(tracks.map(t => t.id));
-    // A new track appears only if it has a readable lesson, matching the Resources reader library.
-    const lessonTracks = new Set(lessons.map(l => l.track_id));
-    const resources = enabled ? [
-      ...tracks.filter(t => lessonTracks.has(t.id) && t.created_at >= from).map(t => ({ id: t.id, title: title(t), created_at: t.created_at, kind: 'track' as const })),
-      ...lessons.filter(l => trackIds.has(l.track_id)).map(l => ({ id: l.id, title: title(l), created_at: l.created_at, kind: 'lesson' as const })),
-      ...recipes.filter(r => r.created_by !== uid && r.private_owner !== uid).map(r => ({ id: r.id, title: title(r), created_at: r.created_at, kind: 'recipe' as const })),
-    ] : [];
-    return { lines: buildMorningBrief({ userId: uid, now, timezone: data.tz, events, attending, signups, leaderTeams: [...leaderTeams], teamName, hosts, resources }) };
+    const home = checked(await sb.rpc('personal_home')) as unknown as import('@/lib/personal-home').PersonalHome;
+    const events: BriefEvent[] = home.mode === 'hosting' ? home.events.map(e => ({ id: e.id, host_id: uid, team_id: null, title: e.title, starts_at: e.starts_at, location_name: e.location_name, status: e.status, going: 0 })) : [];
+    for (const event of events) event.going = Number(checked(await sb.rpc('event_going_count', { _event_id: event.id })) ?? 0);
+    const attending = home.mode === 'attending' ? home.events.filter(e => e.registration_status === 'going').map(e => ({ event: { id: e.id, host_id: '', team_id: null, title: e.title, starts_at: e.starts_at, location_name: e.location_name, status: e.status, going: 0 }, code: null })) : [];
+    const signups = events.length ? checked(await sb.from('rsvps').select('event_id,created_at').in('event_id', events.map(e => e.id)).eq('status', 'going').gte('created_at', from)) ?? [] : [];
+    return { lines: buildMorningBrief({ userId: uid, now, timezone: data.tz, events, attending, signups, leaderTeams: [], teamName: '', hosts: [], resources: [] }) };
   });
 
 /** Bilingual share caption (English then Spanish). Claude when the key exists, otherwise a warm preview caption. */

@@ -145,8 +145,10 @@ function RootComponent() {
       // A saved invite or return path never carries over to a different account on this device.
       if (event === "SIGNED_OUT") { clearPendingInvite(); try { sessionStorage.removeItem("zw-next"); } catch { /* storage unavailable */ } }
       if (event === "SIGNED_IN") claimReferralVisits();
-      void router.invalidate();
-      if (event !== "SIGNED_OUT") void queryClient.invalidateQueries();
+      if (event === "SIGNED_OUT" || event === "SIGNED_IN") {
+        // Discard retained personal payloads even when sign-out did not use the app button.
+        void queryClient.cancelQueries().then(() => { queryClient.clear(); void router.invalidate(); });
+      } else { void router.invalidate(); void queryClient.invalidateQueries(); }
     });
     return () => { i18n.off("languageChanged", applyLanguage); data.subscription.unsubscribe(); };
   }, [router, queryClient]);

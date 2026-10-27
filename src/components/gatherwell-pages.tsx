@@ -1,3 +1,5 @@
+import { personalHomeQuery } from '@/lib/personal-home-query';
+import { PersonalHomeResources } from '@/components/personal-home-resources';
 import { BarChart3 } from '@/components/icons';
 import { TemplateEditor, type TemplateDraft } from '@/components/templates';
 import { CustomerHome } from '@/components/customer-home';
@@ -20,7 +22,7 @@ import { TeamOffersStrip } from '@/components/offers';
 import i18n from '@/lib/i18n';
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Check, Copy, LogOut } from '@/components/icons';
 import { supabase } from '@/integrations/supabase/client';
 import { firstName, initialsOf, joinLink, profileQuery, workspaceQuery } from '@/lib/account';
@@ -57,69 +59,25 @@ function SignOutButton() {
   return <Button variant="secondary" className="sign-out" onClick={async () => { await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut(); void navigate({ to: '/login', replace: true }); }}><LogOut />{t('me.signOut')}</Button>;
 }
 
-function HomeTemplates() { const { workspace } = useAccount(); return workspace ? <FromYourLeader teamId={workspace.teamId} role={workspace.role} /> : null; }
-function MobileTeamSwitcher() { const { userId } = useGatherwell(); return <TeamSwitcher userId={userId} className="mobile-switcher" />; }
-function HomeFeatured() { const { workspace } = useAccount(); return workspace ? <><Feature flag="feature_network"><FeaturedFromNetwork teamId={workspace.teamId} /></Feature><TeamOffersStrip teamId={workspace.teamId} /></> : null; }
-
-/** Real team numbers only; each block hides when it has nothing to show. */
-function HomeRealData() {
-  const { t, i18n } = useTranslation(); const { workspace } = useAccount();
-  const teamId = workspace?.teamId; const manage = !!workspace && workspace.role !== 'member';
-  const attendance = useServerFn(getAttendanceHistory);
-  const q = useQuery({ queryKey: ['home-real', teamId, manage], enabled: !!teamId, queryFn: async () => {
-    const now = new Date();
-    const [members, upcoming, checkins] = await Promise.all([
-      supabase.from('team_members').select('user_id', { count: 'exact', head: true }).eq('team_id', teamId ?? ''),
-      supabase.from('events').select('id, title, starts_at, location_name', { count: 'exact' }).eq('team_id', teamId ?? '').eq('status', 'published').gte('starts_at', now.toISOString()).order('starts_at').limit(3),
-      manage && teamId ? attendance({ data: { month: now.toISOString().slice(0, 7), teamId } }).then(rows => ({ count: rows.reduce((count, event) => count + event.count, 0) })) : Promise.resolve({ count: null }),
-    ]);
-    if (members.error || upcoming.error) throw new Error('home_data_unavailable');
-    return { members: members.count ?? 0, upcomingCount: upcoming.count ?? 0, upcoming: upcoming.data ?? [], checkins: checkins.count };
-  } });
-  if (q.isError) return <RetryState retry={() => void q.refetch()} />;
-  if (q.isLoading) return <ListSkeleton />;
-  if (!q.data) return null;
-  const d = q.data; const lang = i18n.resolvedLanguage ?? 'en';
-  const tiles = [{ key: 'members', Icon: UsersRound, value: d.members }, { key: 'events', Icon: CalendarDays, value: d.upcomingCount }, ...(d.checkins != null ? [{ key: 'checkins', Icon: CircleCheck, value: d.checkins }] : [])];
-  return <>
-    <section className="stats-grid" aria-label={t('home.statsLabel')}>{tiles.map(({ key, Icon, value }) => <Link to={key === 'members' ? '/team' : key === 'events' ? '/events' : '/attendance'} search={key === 'members' ? { panel: 'members' } : key === 'events' ? { tab: 'upcoming' } : { month: new Date().toISOString().slice(0, 7) }} className="stat-card dashboard-stat-link" key={key}><div className="stat-heading"><span>{t(`stats.${key}.label`)}</span><Icon /></div><strong className="stat-value">{value.toLocaleString(lang)}</strong></Link>)}</section>
-    <section className="panel upcoming-panel"><div className="section-heading"><h2>{t('home.upcoming', { defaultValue: 'Upcoming events' })}</h2><Button asChild variant="link"><Link to="/events" search={{ tab: 'upcoming' }}>{t('home.viewAll', { defaultValue: 'View all' })}<ArrowRight /></Link></Button></div>
-      {!d.upcoming.length && <EmptyState compact icon="CalendarDays" text={t('events.empty.upcoming')} />}
-      <div className="event-list">{d.upcoming.map(e => <Link key={e.id} to="/event/$id" params={{ id: e.id }} className="event-row"><div className="date-tile"><span>{new Date(e.starts_at).toLocaleDateString(lang, { month: 'short' })}</span><strong>{new Date(e.starts_at).getDate()}</strong></div><div className="event-info"><h3>{e.title}</h3><p>{new Date(e.starts_at).toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' })}{e.location_name ? ` · ${e.location_name}` : ''}</p></div></Link>)}</div></section>
-  </>;
-}
-
 export function HomePage() {
-  const { t } = useTranslation(); const { openCreate, openDetail, openPlaceholder } = useGatherwell(); const { profile } = useAccount();
-  const guest = profile?.role_intent === 'guest';
-  const { userId } = useGatherwell();
+  const { t } = useTranslation(); const { userId, openCreate } = useGatherwell(); const { profile } = useAccount();
+  const { data } = useSuspenseQuery(personalHomeQuery(userId));
+  const hosting = data.mode === 'hosting';
   const name = firstName(profile?.full_name);
-  const greeting = name ? t('home.greeting', { name, defaultValue: `Welcome back, ${name}` }) : t('home.greetingFallback', { defaultValue: 'Welcome back' });
-  if (guest) return <><div className="greeting page-heading"><div><h1>{greeting}</h1></div></div><DailyBriefCard /><CustomerHome userId={userId} /></>;
-  const stats = [{ key: 'members', Icon: UsersRound }, { key: 'events', Icon: CalendarDays }, { key: 'attendance', Icon: Repeat2 }, { key: 'checkins', Icon: CircleCheck }] as const;
   return <>
-    <MobileTeamSwitcher />
-    <div className="greeting page-heading"><div><span className="eyebrow">{t('home.eyebrow', { defaultValue: 'YOUR COMMUNITY, CONNECTED' })}</span><h1>{greeting}</h1><p>{t('home.subtitle', { defaultValue: 'Bring people together, see what’s next, and keep your community moving.' })}</p></div><Button className="page-create" onClick={openCreate}><Plus />{t('common.create')}</Button></div>
+    {hosting && <MobileTeamSwitcher />}
+    <div className="greeting page-heading"><div><span className="eyebrow">{t(hosting ? 'personalHome.hosting' : 'personalHome.attending')}</span><h1>{name ? t('home.greeting', { name }) : t('home.greetingFallback')}</h1><p>{t('personalHome.subtitle')}</p></div>{hosting && <Button className="page-create" onClick={openCreate}><Plus />{t('common.create')}</Button>}</div>
     <DailyBriefCard />
-    <HostCheckinActions userId={userId} />
-    <HomeRealData />
-    {!guest && <FoundingCommitmentsCard />}
-    {!guest && <CoachLaunchCard />}
-    {!guest && <PlaybookCard context="brief" compact />}
-    <FollowupsHomeCard />
-    <MemberPlanCard />
-    {!guest && <NextCard />}
-    <ActiveChallengeCard />
-    <HomeFeatured />
-    {!guest && <HomeTemplates />}
-    {!guest && <LeaderInsightsLink />}
-    <Feature flag="feature_network"><section className="network-panel"><div className="circle-lines" aria-hidden="true" /><span className="eyebrow">{t('home.networkLabel', { defaultValue: i18n.resolvedLanguage === 'es' ? 'TU RED DE ANFITRIONES' : 'YOUR HOST NETWORK' })}</span><h2>{t('home.networkTitle', { defaultValue: i18n.resolvedLanguage === 'es' ? 'Haz crecer tu comunidad en compañía' : 'Grow your community, together' })}</h2><p>{t('home.networkText', { defaultValue: i18n.resolvedLanguage === 'es' ? 'Conecta con otros anfitriones, comparte eventos y reúne a sus comunidades.' : 'Connect with other hosts, share events, and bring your communities together.' })}</p><Button asChild className="peach-button"><Link to="/network">{t('home.networkAction', { defaultValue: i18n.resolvedLanguage === 'es' ? 'Explorar tu red' : 'Explore your network' })}<ArrowRight /></Link></Button></section></Feature>
+    {hosting ? <>
+      <HostCheckinActions userId={userId} />
+      {data.drafts > 0 && <section className="panel"><Link to="/events" search={{ tab: 'hosting' }}>{t('personalHome.drafts', { count: data.drafts })}<ArrowRight /></Link></section>}
+      <section className="panel upcoming-panel"><div className="section-heading"><h2>{t('home.upcoming')}</h2><Button asChild variant="link"><Link to="/events" search={{ tab: 'hosting' }}>{t('home.viewAll')}<ArrowRight /></Link></Button></div>
+        {!data.events.length && <EmptyState compact icon="CalendarDays" text={t('events.empty.hosting')} />}
+        <ul className="customer-list">{data.events.map(e => <li key={e.id}><Link to="/event/$id" params={{ id: e.id }} className="customer-item-head"><strong>{e.title}</strong><small>{e.starts_at}</small><ChevronRight /></Link></li>)}</ul>
+      </section>
+      <FoundingCommitmentsCard /><CoachLaunchCard /><FollowupsHomeCard /><NextCard />
+    </> : <CustomerHome userId={userId} />}
+    <PersonalHomeResources resources={data.resources} />
   </>;
 }
-function LeaderInsightsLink() {
-  const { t } = useTranslation(); const { userId } = useGatherwell();
-  const { data: workspace } = useQuery(workspaceQuery(userId));
-  if (workspace?.role !== 'leader') return null;
-  return <section className="panel leader-insights-link"><Link to="/team/insights" className="insights-compact"><span className="insights-compact-icon"><BarChart3 /></span><span className="insights-compact-text"><span className="eyebrow">{t('insights.eyebrow')}</span><strong>{t('insights.title')}</strong><small>{t('insights.homeShort')}</small></span><ArrowRight className="settings-chevron" /></Link>
-    <Feature flag="feature_team_map"><Link to="/team/map" className="insights-compact-map">{t('insights.mapLink')}</Link></Feature></section>;
-}
+function MobileTeamSwitcher() { const { userId } = useGatherwell(); return <TeamSwitcher userId={userId} className="mobile-switcher" />; }
