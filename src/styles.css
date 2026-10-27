@@ -2827,3 +2827,6 @@ a.gw-cat-chip:hover{background:#fff}
 .destination-summary { display: grid; gap: 0.375rem; list-style: none; padding: 0; margin: 0; }
 .destination-summary li { display: flex; justify-content: space-between; gap: 0.5rem; overflow-wrap: anywhere; }
 .destination-summary li[data-ok="false"] small { color: var(--destructive); }
+.destination-grid.is-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.destination-mark.is-radio { border-radius: 999px; }
+[data-checked="true"] > .destination-mark.is-radio::after { width: 0.5rem; height: 0.5rem; border: 0; border-radius: 999px; background: var(--primary-foreground); transform: none; }

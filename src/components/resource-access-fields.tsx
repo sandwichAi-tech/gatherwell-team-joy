@@ -2,7 +2,6 @@ import { Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
@@ -111,9 +110,12 @@ export function ResourceAccessFields({ type, dest, onDest, free, price, onAccess
 
     {isStandalone(dest) && <>
       <fieldset className="form-field"><legend className="field-label">{t('resources.item.accessLabel')}</legend>
-        <RadioGroup className="grid grid-cols-2 gap-3" value={free ? 'free' : 'paid'} onValueChange={v => onAccess(v === 'free', price)} aria-label={t('resources.item.accessLabel')}>
-          {['free', 'paid'].map(v => <label key={v} htmlFor={`${prefix}-${v}`} className="flex min-h-12 items-center gap-3 rounded-md border border-border p-3"><RadioGroupItem id={`${prefix}-${v}`} value={v} />{t(`resources.item.${v}`)}</label>)}
-        </RadioGroup>
+        <div className="destination-grid is-pair" role="radiogroup" aria-label={t('resources.item.accessLabel')}>
+          {(['free', 'paid'] as const).map(v => { const on = (v === 'free') === free; return <label key={v} htmlFor={`${prefix}-${v}`} className="destination-card" data-checked={on}>
+            <input id={`${prefix}-${v}`} type="radio" name={`${prefix}-access`} className="destination-check" checked={on} onChange={() => onAccess(v === 'free', price)} />
+            <span className="destination-mark is-radio" aria-hidden="true" /><span className="destination-text"><strong>{t(`resources.item.${v}`)}</strong></span>
+          </label>; })}
+        </div>
         {dest.courses.length > 0 && !free && <p className="field-hint">{t('resourcePlacement.courseIncluded')}</p>}
       </fieldset>
       {!free && <div className="form-field"><label className="field-label" htmlFor={`${prefix}-price`}>{t(type === 'course' ? 'offers.priceMonthly' : 'resourcePlacement.oneTimePrice')}</label>
