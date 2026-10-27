@@ -2563,6 +2563,20 @@ a.gw-cat-chip:hover{background:#fff}
 
 /* Challenge builder + participant upgrades */
 .builder-steps{flex-wrap:wrap}
+.challenge-builder .builder-steps button{min-height:44px;white-space:normal}
+.challenge-builder .starter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.challenge-builder .choice-card{height:auto;white-space:normal;min-width:0;text-align:left;display:flex;flex-direction:column;align-items:flex-start;min-height:96px}
+.challenge-builder .choice-card small{color:var(--muted-foreground);font-weight:400}
+.challenge-builder .format-card{height:auto;white-space:normal;display:flex;flex-direction:column;align-items:flex-start}
+.challenge-builder .builder-activity{min-width:0;border-radius:8px}
+.challenge-builder .form-field,.challenge-builder input,.challenge-builder select{min-width:0;max-width:100%}
+.challenge-totals{display:grid;gap:8px;margin-block:16px}
+.challenge-totals>div{display:flex;justify-content:space-between;gap:12px}
+.challenge-totals dd{margin:0}
+.challenge-extras{display:grid;gap:12px;margin-block:16px}
+.challenge-extras .addon-image{max-width:240px}
+.challenge-host-panel{display:grid;gap:12px;padding-block:24px;border-top:1px solid var(--border)}
+@media(max-width:380px){.challenge-builder .starter-grid{grid-template-columns:minmax(0,1fr)}}
 .builder-activity{border:1px solid var(--border);border-radius:16px;padding:16px;display:grid;gap:12px}
 .builder-activity legend{font-weight:600;padding:0 6px}
 .builder-activity-actions{display:flex;gap:8px;justify-content:flex-end}

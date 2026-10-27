@@ -1135,6 +1135,27 @@
       "when": 1793113660902,
       "tag": "0161_door_existing_payment_admission_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 162,
+      "version": "7",
+      "when": 1793114516867,
+      "tag": "0162_challenge_authoring_participant_guards",
+      "breakpoints": true
+    },
+    {
+      "idx": 163,
+      "version": "7",
+      "when": 1793114894942,
+      "tag": "0163_challenge_scoring_private_rpc_hardening",
+      "breakpoints": true
+    },
+    {
+      "idx": 164,
+      "version": "7",
+      "when": 1793115758082,
+      "tag": "0164_challenge_retry_and_activity_privacy",
+      "breakpoints": true
     }
   ]
 }

@@ -1975,22 +1975,42 @@
       "consistency": {
         "title": "Constancia de 21 días",
         "description": "Elige una pequeña acción diaria y cúmplela 21 días seguidos, en equipo.",
-        "prompt": "¿Hiciste tu acción de hoy? Registra tu día y cuéntale al equipo cómo te fue."
+        "prompt": "¿Hiciste tu acción de hoy? Registra tu día y cuéntale al equipo cómo te fue.",
+        "preview": "21 días · racha · acción diaria y reflexión final · mensajes desactivados",
+        "activityTitle": "Tu acción diaria",
+        "instructions": "Elige una acción pequeña. Hazla una vez y registra tu día. Agrega una nota si quieres.",
+        "reflectionTitle": "Reflexión final",
+        "reflection": "Piensa en lo que te ayudó a mantener el hábito y en lo que quieres continuar."
       },
       "walk": {
         "title": "Caminata diaria",
         "description": "Una caminata cada día durante 14 días: la distancia y el ritmo que quieras, sola o acompañada.",
-        "prompt": "Sal a caminar hoy y luego registra tu día. ¿A dónde fuiste?"
+        "prompt": "Sal a caminar hoy y luego registra tu día. ¿A dónde fuiste?",
+        "preview": "14 días · meta de 14 caminatas · caminata diaria y reflexión final · mensajes desactivados",
+        "activityTitle": "Haz tu caminata",
+        "instructions": "Elige una ruta y un ritmo adecuados para ti. Después de caminar, registra tu día.",
+        "reflectionTitle": "Reflexión final",
+        "reflection": "Piensa en lo que te ayudó a mantener el hábito y en lo que quieres continuar."
       },
       "hydration": {
         "title": "Hábito de hidratación",
         "description": "Siete días con tu botella de agua cerca y rellenándola durante el día.",
-        "prompt": "Ten tu botella a la mano hoy. Registra tu día cuando la rellenes."
+        "prompt": "Ten tu botella a la mano hoy. Registra tu día cuando la rellenes.",
+        "preview": "7 días · un punto por registro · hábito de la botella y reflexión final · mensajes desactivados",
+        "activityTitle": "Ten tu botella cerca",
+        "instructions": "Ten una botella de agua cerca y rellénala cuando lo necesites. Registra tu hábito una vez al día.",
+        "reflectionTitle": "Reflexión final",
+        "reflection": "Piensa en lo que te ayudó a mantener el hábito y en lo que quieres continuar."
       },
       "morning": {
         "title": "Rutina matutina",
         "description": "Empieza cada mañana con una rutina corta que tú elijas: estirarte, escribir o un café tranquilo.",
-        "prompt": "¿Cómo te fue con tu rutina de la mañana? Registra tu día antes del mediodía."
+        "prompt": "¿Cómo te fue con tu rutina de la mañana? Registra tu día antes del mediodía.",
+        "preview": "21 días · racha · rutina matutina y reflexión final · mensajes desactivados",
+        "activityTitle": "Tu rutina matutina",
+        "instructions": "Elige una rutina matutina breve, como escribir o tener un momento tranquilo. Registra tu día al terminar.",
+        "reflectionTitle": "Reflexión final",
+        "reflection": "Piensa en lo que te ayudó a mantener el hábito y en lo que quieres continuar."
       }
     },
     "todaysPrompt": "Mensaje de hoy",
@@ -2008,7 +2028,7 @@
     "addPhoto": "Agregar foto",
     "photoPrivate": "Solo tú puedes ver tus fotos.",
     "leaderboard": "Tabla de posiciones",
-    "leaderboardNote": "Según registros y luego racha.",
+    "leaderboardNote": "Racha: racha actual. Meta: registros hasta la meta. Puntos: uno por registro válido. Las puntuaciones iguales comparten posición.",
     "yourRank": "Vas en el #{{rank}}",
     "youreRank": "Vas en el #{{rank}}. ¡Sigue así!",
     "boardEmpty": "Nadie se ha unido todavía.",
@@ -2041,7 +2061,17 @@
       "date_closed": "Ese día ya no acepta registros.",
       "out_of_range": "Ese día no es parte del reto.",
       "invalid_message": "Escribe hasta 280 caracteres.",
-      "not_allowed": "No tienes acceso a este reto."
+      "not_allowed": "No tienes acceso a este reto.",
+      "checkout_setup_required": "La inscripción de pago no está disponible hasta verificar el cobro, los pedidos y los reembolsos. Puedes guardar un borrador de pago.",
+      "access_revoked": "Esta inscripción ya no está activa.",
+      "challenge_full": "Este reto está lleno.",
+      "addon_sold_out": "Ese extra ya no tiene disponibilidad.",
+      "note_required": "Agrega la nota requerida para la actividad de hoy.",
+      "invalid_price": "Escribe un precio de $0.50 a $1,000 con hasta dos decimales.",
+      "invalid_rules": "Revisa las reglas del reto.",
+      "invalid_activities": "Cada actividad necesita título, día y hora válidos y un enlace seguro si lo agregas.",
+      "invalid_messages": "Revisa el texto y el horario. Solo la bienvenida puede activarse hasta conectar el envío.",
+      "invalid_addons": "Revisa los nombres, precios, cantidades e inventario de los extras."
     },
     "noneYet": "Aún no hay retos.",
     "start": "Iniciar un reto",
@@ -2125,7 +2155,7 @@
       "file": "Archivo",
       "removeActivityTitle": "¿Quitar esta actividad?",
       "removeActivityText": "Su título, enlaces y adjuntos se quitarán del reto.",
-      "messagesHint": "Los mensajes programados llegan a todos los participantes en la app. El envío por correo o texto requiere un proveedor configurado; la programación se conserva de todos modos.",
+      "messagesHint": "El mensaje de bienvenida puede mostrarse al inscribirse. Los demás horarios se guardan, pero el envío automático no está conectado.",
       "msgEnabled": "Activado",
       "msgOffset": "Día relativo",
       "msgHour": "Hora (0–23)",
@@ -2138,11 +2168,80 @@
       "issue": {
         "title": "Agrega un título",
         "start": "Elige una fecha de inicio",
-        "end": "La fecha de fin debe ser igual o posterior al inicio",
-        "goal": "Define una meta de al menos 1",
-        "capacity": "La capacidad debe ser al menos 1"
+        "end": "Elige una fecha de fin dentro de los 366 días desde el inicio.",
+        "goal": "Elige una meta entera de 1 a 1,000.",
+        "capacity": "La capacidad debe ser un número entero de 1 a 10,000.",
+        "price": "Escribe un precio de $0.50 a $1,000 con hasta dos decimales.",
+        "addons": "Revisa los nombres, precios, cantidades e inventario de los extras.",
+        "activities": "Cada actividad necesita título, día y hora válidos y un enlace seguro si lo agregas.",
+        "messages": "Revisa el texto y el horario. Solo la bienvenida puede activarse hasta conectar el envío."
+      },
+      "replaceTitle": "¿Reemplazar este borrador?",
+      "replaceText": "Se reemplazarán los detalles, las reglas, las actividades, los mensajes y los extras editados.",
+      "leaveTitle": "¿Cerrar sin guardar?",
+      "leaveText": "Los cambios sin guardar se perderán.",
+      "loadError": "No pudimos cargar el borrador completo. Cierra y vuelve a abrir para reintentar."
+    },
+    "scratch": "Empezar desde cero",
+    "scratchPreview": "Borrador vacío de 21 días · registro diario · mensajes desactivados",
+    "walksUnit": "caminatas",
+    "pricing": "Precio",
+    "free": "Gratis",
+    "paidChoice": "De pago",
+    "currency": "Moneda",
+    "checkoutBlocked": "La inscripción de pago no está disponible hasta verificar el cobro, los pedidos y los reembolsos. Puedes guardar un borrador de pago.",
+    "scheduleBlocked": "Solo se guarda el horario. El envío automático de retos no está conectado.",
+    "maxQuantity": "Máximo por participante",
+    "inventory": "Cantidad disponible (opcional)",
+    "available": "Disponible",
+    "instructions": "Instrucciones",
+    "extras": "Extras opcionales",
+    "quantity": "Cantidad",
+    "basePrice": "Precio del reto",
+    "extrasPrice": "Extras elegidos",
+    "total": "Total",
+    "points": "Puntos",
+    "score": "Puntuación",
+    "tieNote": "Las puntuaciones iguales comparten posición.",
+    "notStarted": "El registro se abre cuando empieza el reto.",
+    "ended": "Este reto terminó. Tu progreso está guardado.",
+    "inviteRequired": "Necesitas una invitación para inscribirte.",
+    "enrollmentSaved": "Te inscribiste en el reto.",
+    "periodDone": "Esta semana ya está registrada.",
+    "extrasConfirmed": "Tus extras",
+    "scheduleDescription": "Diario: un registro por día. Semanal: un registro por período de siete días desde la fecha de inicio.",
+    "templateMessage": {
+      "welcome": {
+        "title": "Bienvenida al reto",
+        "body": "Tu reto está listo. Elige tu acción pequeña y empieza en la fecha de inicio."
+      },
+      "start_reminder": {
+        "title": "Empezamos pronto",
+        "body": "Tu reto empieza mañana. Reserva tiempo para tu acción diaria."
+      },
+      "daily_prompt": {
+        "title": "Tu acción diaria",
+        "body": "Dedica un momento a tu hábito de hoy."
+      },
+      "checkin_reminder": {
+        "title": "Un momento para registrar",
+        "body": "Cuando termines tu acción, registra tu progreso."
+      },
+      "announcement": {
+        "title": "Novedades del reto",
+        "body": "Agrega aquí una actualización aprobada antes de activar el envío."
+      },
+      "completion": {
+        "title": "Sigue adelante",
+        "body": "Reflexiona sobre lo aprendido y elige qué quieres continuar."
       }
-    }
+    },
+    "noDrafts": "Aún no hay borradores de retos.",
+    "invitedParticipants": "Participantes invitados",
+    "inviteNoMessages": "Las invitaciones solo habilitan la elegibilidad; no se envían mensajes. El acceso de pago requiere un pago verificado.",
+    "enrollmentDetails": "Detalles de inscripción",
+    "participantNumber": "Participante {{number}}",
+    "inactiveEnrollment": "Acceso inactivo"
   },
   "recognition": {
     "title": "Reconocimiento",

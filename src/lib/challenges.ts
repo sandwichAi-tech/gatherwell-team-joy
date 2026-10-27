@@ -10,13 +10,13 @@ export const STARTER_DAYS: Record<Starter, number> = { consistency: 21, walk: 14
 
 export const userTz = () => Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 /** YYYY-MM-DD in the member's time zone. */
-export const localDate = (d = new Date()) => new Intl.DateTimeFormat('en-CA', { timeZone: userTz(), year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
-export const localHour = () => Number(new Intl.DateTimeFormat('en-US', { timeZone: userTz(), hour: 'numeric', hourCycle: 'h23' }).format(new Date()));
+export const localDate = (d = new Date(), timezone = userTz()) => new Intl.DateTimeFormat('en-CA', { timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+export const localHour = (timezone = userTz()) => Number(new Intl.DateTimeFormat('en-US', { timeZone: timezone, hour: 'numeric', hourCycle: 'h23' }).format(new Date()));
 export const addDays = (iso: string, n: number) => { const d = new Date(`${iso}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
 export const daysBetween = (a: string, b: string) => Math.round((new Date(`${b}T12:00:00Z`).getTime() - new Date(`${a}T12:00:00Z`).getTime()) / 86_400_000);
 export const lengthOf = (c: Pick<Challenge, 'starts_on' | 'ends_on'>) => daysBetween(c.starts_on, c.ends_on) + 1;
-export const phaseOf = (c: Challenge, today = localDate()): Phase => (today < c.starts_on ? 'upcoming' : today > c.ends_on ? 'past' : 'active');
-export const dayNumber = (c: Challenge, today = localDate()) => Math.min(lengthOf(c), Math.max(1, daysBetween(c.starts_on, today) + 1));
+export const phaseOf = (c: Challenge, today = localDate(new Date(), c.timezone ?? 'UTC')): Phase => (today < c.starts_on ? 'upcoming' : today > c.ends_on ? 'past' : 'active');
+export const dayNumber = (c: Challenge, today = localDate(new Date(), c.timezone ?? 'UTC')) => Math.min(lengthOf(c), Math.max(1, daysBetween(c.starts_on, today) + 1));
 export const pick = (lang: string | undefined, en?: string | null, es?: string | null) => (lang === 'es' ? es || en : en || es) || '';
 export const titleOf = (c: Pick<Challenge, 'title_en' | 'title_es'>, lang?: string) => pick(lang, c.title_en, c.title_es);
 
@@ -49,8 +49,8 @@ export const myCheckinsQuery = (userId: string, challengeId: string) => queryOpt
   },
 });
 
-export const leaderboardQuery = (challengeId: string) => queryOptions({
-  queryKey: ['challenge-board', challengeId],
+export const leaderboardQuery = (challengeId: string, userId: string) => queryOptions({
+  queryKey: ['challenge-board', challengeId, userId],
   refetchInterval: 20_000,
   queryFn: async () => {
     const { data, error } = await supabase.rpc('challenge_leaderboard', { _c: challengeId, _tz: userTz() });
@@ -77,7 +77,7 @@ export async function challengePhotoUrls(paths: string[]) {
 export function rpcErrorKey(error: unknown) {
   const m = typeof error === 'object' && error && 'message' in error ? String((error as { message: unknown }).message) : '';
   if (m.includes('payouts_required')) return 'billing.payoutsRequired';
-  for (const k of ['not_joined', 'date_closed', 'out_of_range', 'invalid_message', 'not_allowed']) if (m.includes(k)) return `challenges.err.${k}`;
+  for (const k of ['checkout_setup_required', 'access_revoked', 'challenge_full', 'addon_sold_out', 'note_required', 'invalid_price', 'invalid_rules', 'invalid_activities', 'invalid_messages', 'invalid_addons', 'not_joined', 'date_closed', 'out_of_range', 'invalid_message', 'not_allowed']) if (m.includes(k)) return `challenges.err.${k}`;
   return 'profile.saveError';
 }
 

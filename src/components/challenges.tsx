@@ -1,3 +1,6 @@
+import { challengeAddonImages } from '@/lib/challenge-media.functions';
+import { BrandImage } from '@/components/brand-image';
+import { challengeScore, challengePeriods, checkedInPeriod, challengeExtrasTotal, type ChallengeAddon } from '@/lib/challenge-templates';
 import { PromoField } from '@/components/promo-field';
 import { promoDiscount, type Promo } from '@/lib/promo';
 import { EmptyState } from '@/components/launch-states';
@@ -24,6 +27,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { firstName, initialsOf, profileQuery, workspaceQuery } from '@/lib/account';
 import { ancestorsQuery, compressImage } from '@/lib/learn';
 import { ChallengeBuilder } from '@/components/challenge-builder';
+import { ChallengeHostPanel } from '@/components/challenge-host-panel';
 import { learnFileUrl } from '@/lib/learn';
 import {
   activitiesForDay, addDays, challengePhotoUrls, challengesQuery, dayNumber, goalProgress, leaderboardQuery, lengthOf, lifecycleOf, localDate, localHour, modelOf, myCheckinsQuery, phaseOf, pick, rpcErrorKey,
@@ -69,15 +73,15 @@ function ChallengeRow({ c }: { c: ChallengeItem }) {
 export function ChallengesSection({ startCreate = false }: { startCreate?: boolean }) {
   const { t } = useTranslation(); const { openDetail } = useGatherwell();
   const { list, leader, teamId, isLoading } = useChallenges();
-  const [tab, setTab] = useState<Phase>('active'); const [editing, setEditing] = useState<Partial<Challenge> | null>(null);
+  const [tab, setTab] = useState<Phase | 'draft'>('active'); const [editing, setEditing] = useState<Partial<Challenge> | null>(null);
   useEffect(() => { if (startCreate && leader) setEditing({}); }, [startCreate, leader]);
-  const groups = useMemo(() => ({ active: list.filter(c => phaseOf(c) === 'active'), upcoming: list.filter(c => phaseOf(c) === 'upcoming').reverse(), past: list.filter(c => phaseOf(c) === 'past') }), [list]);
+  const groups = useMemo(() => ({ draft: list.filter(c => c.status === 'draft'), active: list.filter(c => c.status === 'published' && phaseOf(c) === 'active'), upcoming: list.filter(c => c.status === 'published' && phaseOf(c) === 'upcoming').reverse(), past: list.filter(c => c.status === 'published' && phaseOf(c) === 'past') }), [list]);
   if (isLoading) return <ListSkeleton />;
   return <section className="panel" id="challenges">
     <div className="section-heading"><h2>{t('challenges.title')}</h2>{leader ? <Button onClick={() => setEditing({})}><Plus />{t('challenges.new')}</Button> : null}</div>
     {list.length ? <>
-      <div className="segmented-tabs" role="tablist">{(['active', 'upcoming', 'past'] as const).map(k => <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? 'is-active' : ''} onClick={() => setTab(k)}>{t(`challenges.phase.${k}`)} <span className="tab-count">{groups[k].length}</span></button>)}</div>
-      {groups[tab].length ? <div className="challenge-list">{groups[tab].map(c => <ChallengeRow key={c.id} c={c} />)}</div> : <p className="auth-subtitle">{t(`challenges.none.${tab}`)}</p>}
+      <div className="segmented-tabs" role="tablist">{(['active', 'upcoming', 'past', ...(leader ? ['draft' as const] : [])] as const).map(k => <Button variant="ghost" key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? 'is-active' : ''} onClick={() => setTab(k)}>{t(k === 'draft' ? 'templates.draft' : `challenges.phase.${k}`)} <span className="tab-count">{groups[k].length}</span></Button>)}</div>
+      {groups[tab].length ? <div className="challenge-list">{groups[tab].map(c => <ChallengeRow key={c.id} c={c} />)}</div> : <p className="auth-subtitle">{t(tab === 'draft' ? 'challenges.noDrafts' : `challenges.none.${tab}`)}</p>}
     </> : <p className="auth-subtitle">{t('challenges.noneYet')}</p>}
     {leader && <ChallengeBuilder draft={editing} teamId={teamId} onClose={() => setEditing(null)} />}
   </section>;
@@ -85,7 +89,7 @@ export function ChallengesSection({ startCreate = false }: { startCreate?: boole
 
 async function storyCard(name: string, title: string, days: number, line: string, daysLabel: string) {
   await document.fonts?.ready;
-  const c = document.createElement('canvas'); c.width = 1080; c.height = 1920; const x = c.getContext('2d')!;
+  const c = document.createElement('canvas'); c.width = 1080; c.height = 1920; const x = c.getContext('2d'); if (!x) return;
   const g = x.createLinearGradient(0, 0, 1080, 1920); g.addColorStop(0, '#2F2340'); g.addColorStop(1, '#7A5FA8'); x.fillStyle = g; x.fillRect(0, 0, 1080, 1920);
   x.strokeStyle = 'rgba(255,255,255,0.08)'; x.lineWidth = 2; for (let r = 220; r < 1400; r += 140) { x.beginPath(); x.arc(980, 260, r, 0, Math.PI * 2); x.stroke(); }
   x.fillStyle = '#F3C6A5'; x.fillRect(96, 140, 96, 96); x.fillStyle = '#2F2340'; x.font = '600 72px Inter, sans-serif'; x.textAlign = 'center'; x.fillText('g', 144, 212);
@@ -113,15 +117,16 @@ function CheckInSheet({ open, onClose, c, date }: { open: boolean; onClose: () =
   const [note, setNote] = useState(''); const [file, setFile] = useState<File | null>(null); const [busy, setBusy] = useState(false);
   useEffect(() => { if (open) { setNote(''); setFile(null); } }, [open]);
   const submit = async () => {
+    if (busy) return;
     setBusy(true);
     try {
       let photo: string | null = null;
       if (file) { const small = await compressImage(file, 1400); const { data: room } = await supabase.rpc('storage_allows', { _bytes: small.size }); if (room === false) throw new Error('storage_limit'); photo = `${userId}/${c.id}/${crypto.randomUUID()}.jpg`; const up = await supabase.storage.from('challenge-photos').upload(photo, small, { contentType: small.type }); if (up.error) throw up.error; }
-      const { data, error } = await supabase.rpc('challenge_check_in', { _c: c.id, _date: date, _tz: userTz(), _note: note, ...(photo ? { _photo: photo } : {}) }); if (!error) trackEvent('challenge_checkin');
+      const { data, error } = await supabase.rpc('challenge_check_in', { _c: c.id, _date: date, _tz: c.timezone ?? 'UTC', _note: note, ...(photo ? { _photo: photo } : {}) }); if (!error) trackEvent('challenge_checkin');
       if (error) throw error;
       const r = data as { current?: number } | null;
       toast.success(t('challenges.checkedIn'), { description: t('challenges.streakShort', { count: r?.current ?? 1 }) });
-      await Promise.all([qc.invalidateQueries({ queryKey: ['challenge-checkins', userId, c.id] }), qc.invalidateQueries({ queryKey: ['challenge-board', c.id] }), qc.invalidateQueries({ queryKey: ['challenge-stats', c.id] })]);
+      await Promise.all([qc.invalidateQueries({ queryKey: ['challenge-checkins', userId, c.id] }), qc.invalidateQueries({ queryKey: ['challenge-board', c.id] }), qc.invalidateQueries({ queryKey: ['challenge-progress', c.id] }), qc.invalidateQueries({ queryKey: ['challenge-stats', c.id] })]);
       onClose();
     } catch (e) { toast.error(t(rpcErrorKey(e))); }
     setBusy(false);
@@ -184,39 +189,56 @@ function ActivityRow({ a, lang }: { a: ChallengeActivity; lang: string }) {
 export function ChallengePage({ id }: { id: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en'; const qc = useQueryClient();
   const { userId } = useGatherwell(); const { data: workspace } = useQuery(workspaceQuery(userId));
-  const { data: c, isLoading, isError, refetch } = useQuery({ queryKey: ['challenge', id], queryFn: async () => {
+  const { data: c, isLoading, isError, refetch } = useQuery({ queryKey: ['challenge', id, userId], staleTime: 0, refetchInterval: 15000, queryFn: async () => {
     const { data, error } = await supabase.from('challenges').select('*').eq('id', id).maybeSingle();
     if (error) throw error;
     return data;
   } });
-  const { data: joinedRow, refetch: refetchJoin } = useQuery({ queryKey: ['challenge-joined', id, userId], queryFn: async () => !!(await supabase.from('challenge_members').select('challenge_id').eq('challenge_id', id).eq('user_id', userId).maybeSingle()).data });
+  const { data: joinedRow, refetch: refetchJoin } = useQuery({ queryKey: ['challenge-joined', id, userId], refetchInterval: 15000, queryFn: async () => { const r = await supabase.from('challenge_members').select('challenge_id,extras').eq('challenge_id', id).eq('user_id', userId).maybeSingle(); if (r.error) throw r.error; return r.data; } });
+  const { data: eligible = false } = useQuery({ queryKey: ['challenge-eligible', id, userId], queryFn: async () => { const r = await supabase.rpc('challenge_can_enroll', { _c: id }); if (r.error) throw r.error; return r.data; } });
   const { data: mine = [] } = useQuery(myCheckinsQuery(userId, id));
-  const { data: board = [] } = useQuery(leaderboardQuery(id));
-  const { data: activities = [] } = useQuery({ queryKey: ['challenge-activities', id], queryFn: async () => ((await supabase.from('challenge_activities').select('*').eq('challenge_id', id).order('sort_order')).data ?? []) as ChallengeActivity[] });
-  const { data: messages = [] } = useQuery({ queryKey: ['challenge-messages', id], queryFn: async () => ((await supabase.from('challenge_messages').select('*').eq('challenge_id', id).order('sort_order')).data ?? []) as ChallengeMessage[] });
+  const { data: savedProgress } = useQuery({ queryKey: ['challenge-progress', id, userId], enabled: !!joinedRow, refetchInterval: 15000, queryFn: async () => { const r = await supabase.rpc('my_challenge_progress', { _c: id }); if (r.error) throw r.error; return r.data as { total: number; current: number; best: number }; } });
+  const { data: board = [] } = useQuery({ ...leaderboardQuery(id, userId), enabled: !!c?.leaderboard_on && (!!joinedRow || c.created_by === userId) });
+  const { data: activities = [] } = useQuery({ queryKey: ['challenge-activities', id, userId], enabled: !!joinedRow || c?.created_by === userId, queryFn: async () => ((await supabase.from('challenge_activities').select('*').eq('challenge_id', id).order('sort_order')).data ?? []) as ChallengeActivity[] });
+  const { data: messages = [] } = useQuery({ queryKey: ['challenge-messages', id, userId], enabled: !!joinedRow || c?.created_by === userId, queryFn: async () => ((await supabase.from('challenge_messages').select('*').eq('challenge_id', id).order('sort_order')).data ?? []) as ChallengeMessage[] });
   const [sheetDate, setSheetDate] = useState<string | null>(null); const [editing, setEditing] = useState<Partial<Challenge> | null>(null); const [busy, setBusy] = useState(false);
   const [welcomeGone, setWelcomeGone] = useState(false);
-  const payGate = usePaymentGate(); const payChallenge = useServerFn(startChallengeCheckout); const [promo, setPromo] = useState<Promo | null>(null);
+  const [selections, setSelections] = useState<Record<string, number>>({});
+  const imagesFn = useServerFn(challengeAddonImages);
+  const { data: extras = [] } = useQuery({ queryKey: ['challenge-extras', id, userId], enabled: !!c, queryFn: () => imagesFn({ data: { id } }) });
+  const { data: counts = [] } = useQuery({ queryKey: ['challenge-counts', id, userId], refetchInterval: 15000, queryFn: async () => { const r = await supabase.rpc('challenge_counts', { _ids: [id] }); if (r.error) throw r.error; return r.data; } });
   if (isError) return <RetryState retry={() => void refetch()} />;
   if (isLoading) return <ListSkeleton />;
   if (!c) return <section className="panel"><Link to="/team" className="back-link"><ArrowLeft />{t('nav.team')}</Link><p className="auth-subtitle">{t('learnHub.notFound')}</p></section>;
-  const today = localDate(); const yesterday = addDays(today, -1); const phase = phaseOf(c, today); const len = lengthOf(c);
-  const dates = new Set(mine.map(m => m.checkin_date)); const s = streaksOf([...dates], today);
+  const today = localDate(new Date(), c.timezone ?? 'UTC'); const yesterday = addDays(today, -1); const phase = phaseOf(c, today); const len = lengthOf(c);
+  const dates = new Set(mine.map(m => m.checkin_date)); const s = savedProgress ?? streaksOf([...dates], today);
   const todayRow = mine.find(m => m.checkin_date === today);
-  const canYesterday = localHour() < 12 && yesterday >= c.starts_on && yesterday <= c.ends_on && !dates.has(yesterday);
-  const leader = workspace?.role === 'leader';
+  const donePeriod = checkedInPeriod([...dates], today, c.starts_on, c.frequency);
+  const canYesterday = localHour(c.timezone ?? 'UTC') < 12 && yesterday >= c.starts_on && yesterday <= c.ends_on && !dates.has(yesterday);
+  const leader = c.created_by === userId;
   const meRow = board.find(r => r.user_id === userId); const top = board.slice(0, 10);
   const joined = !!joinedRow;
   const join = async () => {
-    if (c.is_paid && c.price_cents) { void payGate.run(() => payChallenge({ data: { challengeId: id, origin: window.location.origin, lang: lang === 'es' ? 'es' : 'en', promo: promo?.code ?? '' } })); return; }
-    setBusy(true); const { error } = await supabase.from('challenge_members').insert({ challenge_id: id, user_id: userId }); setBusy(false);
-    if (error) { toast.error(t(rpcErrorKey(error))); return; }
-    await Promise.all([refetchJoin(), qc.invalidateQueries({ queryKey: ['challenge-board', id] }), qc.invalidateQueries({ queryKey: ['challenges'] })]);
+    if (busy || !eligible) return;
+    setBusy(true);
+    try {
+      const { error } = await supabase.rpc('enroll_challenge', { _c: id, _extras: Object.entries(selections).filter(([, quantity]) => quantity > 0).map(([id, quantity]) => ({ id, quantity })) });
+      if (error) throw error;
+      await Promise.all([refetchJoin(), qc.invalidateQueries({ queryKey: ['challenge-board', id] }), qc.invalidateQueries({ queryKey: ['challenge-counts', id] }), qc.invalidateQueries({ queryKey: ['challenges'] }), qc.invalidateQueries({ queryKey: ['my-challenges'] })]);
+      toast.success(t('challenges.enrollmentSaved'));
+    } catch (e) { toast.error(t(rpcErrorKey(e))); }
+    finally { setBusy(false); }
   };
   const title = titleOf(c, lang); const prompt = pick(lang, c.daily_prompt_en, c.daily_prompt_es); const desc = pick(lang, c.description_en, c.description_es);
   const timeOf = (iso: string) => new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', { hour: 'numeric', minute: '2-digit' }).format(new Date(iso));
   const lifecycle = lifecycleOf(c, phase);
-  const full = c.capacity != null && board.length >= c.capacity;
+  const members = counts[0]?.members ?? 0;
+  const full = c.capacity != null && members >= c.capacity;
+  const basePrice = c.is_paid ? c.price_cents ?? 0 : 0;
+  const extrasPrice = challengeExtrasTotal(extras, selections);
+  const total = basePrice + extrasPrice;
+  const periods = challengePeriods(len, c.frequency);
+  const myScore = challengeScore(modelOf(c), s.total, s.current, c.goal_target);
   const model = modelOf(c);
   const goal = model === 'goal' ? goalProgress(c.goal_target, s.total) : null;
   const todayActs = activitiesForDay(activities, dayNumber(c, today));
@@ -225,23 +247,28 @@ export function ChallengePage({ id }: { id: string }) {
   const welcomeBody = welcome ? pick(lang, welcome.body_en, welcome.body_es) : '';
   return <>
     <Link to="/team" hash="challenges" className="back-link"><ArrowLeft />{t('challenges.title')}</Link>
-    {payGate.sheet}
     <GatheringCover path={c.cover_url} style={c.cover_style} title={title} className="challenge-hero" />
     <div className="lesson-head"><span className="eyebrow">{phase === 'active' ? t('challenges.dayOf', { day: dayNumber(c, today), total: len }) : t(`challenges.phase.${phase}`)}</span>
       {lifecycle === 'draft' && <span className="chip">{t('templates.draft')}</span>}
-      <h1>{title}</h1><p className="track-facts">{fmtDate(c.starts_on, lang)} – {fmtDate(c.ends_on, lang)} · {t('challenges.joinedCount', { count: board.length })}{c.capacity ? ` / ${c.capacity}` : ''}{c.is_paid && c.price_cents ? ` · ${formatMoney(c.price_cents, lang)}` : ''} · {t(`challenges.model.${model}`)}</p>
+      <h1>{title}</h1><p className="track-facts">{fmtDate(c.starts_on, lang)} – {fmtDate(c.ends_on, lang)} · {t('challenges.joinedCount', { count: members })}{c.capacity ? ` / ${c.capacity}` : ''}{` · ${basePrice ? formatMoney(basePrice, lang) : t('challenges.free')}`} · {t(`challenges.model.${model}`)}</p>
       {desc && <p className="challenge-desc">{desc}</p>}
-      {!joined && phase !== 'past' && c.is_paid && !!c.price_cents && <PromoField kind="challenge" target={id} discountCents={promoDiscount(c.price_cents, promo)} value={promo} onChange={setPromo} />}
-      <div className="recipe-actions">{!joined && phase !== 'past' && <Button disabled={busy || full} onClick={join}>{full ? t('challenges.full') : t('challenges.joinChallenge')}</Button>}{leader && <Button variant="secondary" onClick={() => setEditing(c)}><Pencil />{t('challenges.edit')}</Button>}</div></div>
-
+      {!joined && phase !== 'past' && <>
+        {extras.length > 0 && <section className="challenge-extras" aria-label={t('challenges.extras')}><h2>{t('challenges.extras')}</h2>{extras.map(a => <fieldset key={a.id} className="builder-activity"><legend>{a.name}</legend>{a.image && <BrandImage src={a.image} alt={t('addonImages.alt', { name: a.name })} aspect={4 / 3} className="addon-image" />}<p>{a.description}</p><p>{formatMoney(a.price_cents, lang)}</p><label className="field-label" htmlFor={`choose-${a.id}`}>{t('challenges.quantity')}</label><select id={`choose-${a.id}`} className="field-input" disabled={!a.available || a.inventory === 0 || busy} value={selections[a.id] ?? 0} onChange={e => setSelections(x => ({ ...x, [a.id]: Number(e.target.value) }))}>{Array.from({ length: Math.min(a.max_quantity, a.inventory ?? a.max_quantity) + 1 }, (_, q) => <option key={q} value={q}>{q}</option>)}</select></fieldset>)}</section>}
+        <dl className="challenge-totals"><div><dt>{t('challenges.basePrice')}</dt><dd>{basePrice ? formatMoney(basePrice, lang) : t('challenges.free')}</dd></div><div><dt>{t('challenges.extrasPrice')}</dt><dd>{formatMoney(extrasPrice, lang)}</dd></div><div><dt>{t('challenges.total')}</dt><dd>{formatMoney(total, lang)}</dd></div></dl>
+        {total > 0 && <p className="not-connected-note" role="note">{t('challenges.checkoutBlocked')}</p>}
+        {!eligible && c.enrollment === 'invite' && <p role="status">{t('challenges.inviteRequired')}</p>}
+      </>}
+      <div className="recipe-actions">{!joined && phase !== 'past' && c.status === 'published' && <Button disabled={busy || full || !eligible || total > 0} onClick={() => void join()}>{busy ? t('onboarding.saving') : full ? t('challenges.full') : t('challenges.joinChallenge')}</Button>}{leader && <Button variant="secondary" onClick={() => setEditing(c)}><Pencil />{t('challenges.edit')}</Button>}</div></div>
+      {joinedRow && Array.isArray(joinedRow.extras) && joinedRow.extras.length > 0 && <section aria-label={t('challenges.extrasConfirmed')}><h2>{t('challenges.extrasConfirmed')}</h2>{(joinedRow.extras as { id: string; name: string; quantity: number }[]).map(a => <p key={a.id}>{a.name} × {a.quantity}</p>)}</section>}
+      {joined && phase !== 'active' && <p role="status">{t(phase === 'upcoming' ? 'challenges.notStarted' : 'challenges.ended')}</p>}
     {joined && welcome && (welcomeTitle || welcomeBody) && !welcomeGone && <section className="panel challenge-welcome" role="status">
       <div className="section-heading"><h2>{welcomeTitle || t('challenges.msg.welcome')}</h2><Button variant="ghost" size="icon" aria-label={t('common.close')} onClick={() => setWelcomeGone(true)}><X /></Button></div>
       {welcomeBody && <p>{welcomeBody}</p>}</section>}
 
-    {joined && s.total >= len && <Finisher c={c} days={len} />}
+    {joined && s.total >= periods && <Finisher c={c} days={s.total} />}
 
     {joined && phase === 'active' && <section className="panel prompt-card"><span className="eyebrow">{t('challenges.todaysPrompt')}</span><p className="prompt-text">{prompt || t('challenges.defaultPrompt')}</p>
-      {todayRow ? <div className="done-today" role="status"><Check /><span><strong>{t('challenges.doneToday')}</strong><small>{t('challenges.doneAt', { time: timeOf(todayRow.created_at) })}</small></span></div>
+      {donePeriod ? <div className="done-today" role="status"><Check /><span><strong>{t(c.frequency === 'weekly' ? 'challenges.periodDone' : 'challenges.doneToday')}</strong><small>{t('challenges.doneAt', { time: todayRow ? timeOf(todayRow.created_at) : '—' })}</small></span></div>
         : <Button className="checkin-big" onClick={() => setSheetDate(today)}><Check />{t('challenges.checkInToday')}</Button>}
       {canYesterday && <button type="button" className="text-link yesterday-link" onClick={() => setSheetDate(yesterday)}>{t('challenges.checkInYesterday')}</button>}</section>}
 
@@ -249,22 +276,23 @@ export function ChallengePage({ id }: { id: string }) {
       <div className="section-heading"><h2>{t('challenges.todayActivities')}</h2></div>
       <ul className="offer-list compact">{todayActs.map((a, i) => <ActivityRow key={a.id ?? i} a={a} lang={lang} />)}</ul></section>}
 
-    {joined && <section className="panel"><div className="streak-row">
+    {joined && <section className="panel"><p>{t('challenges.score')}: {myScore}</p><div className="streak-row">
       <div className={`streak ${s.current > 0 ? 'is-lit' : ''}`}><Flame className="streak-flame" aria-hidden="true" /><strong>{s.current}</strong><span>{t('challenges.currentStreak')}</span></div>
       <div className="streak"><strong>{s.best}</strong><span>{t('challenges.bestStreak')}</span></div>
-      <div className="streak"><strong>{s.total}/{len}</strong><span>{t('challenges.checkIns')}</span></div></div>
+      <div className="streak"><strong>{s.total}/{periods}</strong><span>{t('challenges.checkIns')}</span></div></div>
       {goal && goal.target > 0 && <div className="goal-progress">
         <div className="goal-progress-head"><strong>{t('challenges.goalProgress', { done: goal.done, target: goal.target })}</strong>{c.goal_unit ? <span>{c.goal_unit}</span> : null}</div>
         <progress value={goal.pct} max={1} aria-label={t('challenges.goalProgress', { done: goal.done, target: goal.target })} />
         {goal.complete && <p className="field-hint" role="status">{t('challenges.goalComplete')}</p>}</div>}
       <div className="day-grid" role="list" aria-label={t('challenges.calendar')}>{Array.from({ length: len }, (_, i) => { const d = addDays(c.starts_on, i); const on = dates.has(d); return <span role="listitem" key={d} className={`day-cell ${on ? 'is-on' : ''} ${d === today ? 'is-today' : ''} ${d > today ? 'is-future' : ''}`} aria-label={`${fmtDate(d, lang)}${on ? ` · ${t('challenges.checkedIn')}` : ''}`}>{on ? <Check /> : i + 1}</span>; })}</div></section>}
 
-    {c.leaderboard_on && <section className="panel"><div className="section-heading"><div><h2>{t('challenges.leaderboard')}</h2><p>{t('challenges.leaderboardNote')}</p></div>{meRow && <span className="chip">{t('challenges.yourRank', { rank: meRow.rank })}</span>}</div>
-      {top.length ? <ol className="board">{top.map(r => <li key={r.user_id} className={r.user_id === userId ? 'is-me' : ''}><span className="board-rank">{r.rank}</span><span className="initial-avatar">{initialsOf(r.full_name)}</span><span className="lesson-info"><strong>{r.full_name || t('teamSpace.someone')}</strong><small>{t('challenges.streakShort', { count: r.current_streak })} · {t('challenges.bestShort', { count: r.best_streak })}</small></span><strong className="board-count">{r.checkins}</strong></li>)}</ol> : <EmptyState compact icon="Camera" text={t('challenges.boardEmpty')} />}
+    {c.leaderboard_on && (joined || leader) && <section className="panel"><div className="section-heading"><div><h2>{t('challenges.leaderboard')}</h2><p>{t('challenges.leaderboardNote')}</p></div>{meRow && <span className="chip">{t('challenges.yourRank', { rank: meRow.rank })}</span>}</div>
+      {top.length ? <ol className="board">{top.map(r => <li key={r.user_id} className={r.user_id === userId ? 'is-me' : ''}><span className="board-rank">{r.rank}</span><span className="initial-avatar">{initialsOf(r.full_name)}</span><span className="lesson-info"><strong>{r.full_name || t('teamSpace.someone')}</strong><small>{t('challenges.streakShort', { count: r.current_streak })} · {t('challenges.bestShort', { count: r.best_streak })}</small></span><strong className="board-count">{challengeScore(model, r.checkins, r.current_streak, c.goal_target)}</strong></li>)}</ol> : <EmptyState compact icon="Camera" text={t('challenges.boardEmpty')} />}
       {meRow && meRow.rank > 10 && <p className="board-me">{t('challenges.youreRank', { rank: meRow.rank })}</p>}</section>}
 
     {joined && <PhotoGallery paths={mine.map(m => m.photo_path).filter((p): p is string => !!p)} />}
-    {leader && <LeaderPanel c={c} />}
+    {leader && <ChallengeHostPanel id={id} userId={userId} inviteOnly={c.enrollment === 'invite'} />}
+
     {sheetDate && <CheckInSheet open={!!sheetDate} onClose={() => setSheetDate(null)} c={c} date={sheetDate} />}
     {leader && workspace && <ChallengeBuilder draft={editing} teamId={c.team_id || workspace.teamId} onClose={() => { setEditing(null); void qc.invalidateQueries({ queryKey: ['challenge', id] }); }} />}
   </>;
