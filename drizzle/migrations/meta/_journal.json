@@ -1345,6 +1345,13 @@
       "when": 1793136517056,
       "tag": "0191_team_quizzes_on_team",
       "breakpoints": true
+    },
+    {
+      "idx": 192,
+      "version": "7",
+      "when": 1793136989319,
+      "tag": "0192_fix_set_resource_destinations_offer_kind",
+      "breakpoints": true
     }
   ]
 }
