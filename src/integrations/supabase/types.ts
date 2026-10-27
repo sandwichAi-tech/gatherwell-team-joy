@@ -630,20 +630,68 @@ export type Database = {
           },
         ]
       }
-      challenge_members: {
+      challenge_invites: {
         Row: {
           challenge_id: string
-          joined_at: string
+          created_at: string
+          revoked_at: string | null
           user_id: string
         }
         Insert: {
           challenge_id: string
-          joined_at?: string
-          user_id?: string
+          created_at?: string
+          revoked_at?: string | null
+          user_id: string
         }
         Update: {
           challenge_id?: string
+          created_at?: string
+          revoked_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_invites_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "challenge_invites_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      challenge_members: {
+        Row: {
+          access_status: string
+          challenge_id: string
+          extras: Json
+          joined_at: string
+          payment_id: string | null
+          source: string
+          user_id: string
+        }
+        Insert: {
+          access_status?: string
+          challenge_id: string
+          extras?: Json
           joined_at?: string
+          payment_id?: string | null
+          source?: string
+          user_id?: string
+        }
+        Update: {
+          access_status?: string
+          challenge_id?: string
+          extras?: Json
+          joined_at?: string
+          payment_id?: string | null
+          source?: string
           user_id?: string
         }
         Relationships: [
@@ -652,6 +700,13 @@ export type Database = {
             columns: ["challenge_id"]
             isOneToOne: false
             referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "challenge_members_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
             referencedColumns: ["id"]
           },
         ]
@@ -762,11 +817,13 @@ export type Database = {
       }
       challenges: {
         Row: {
+          addons: Json
           capacity: number | null
           cover_style: number
           cover_url: string | null
           created_at: string
           created_by: string
+          currency: string
           daily_prompt_en: string | null
           daily_prompt_es: string | null
           description_en: string | null
@@ -789,11 +846,13 @@ export type Database = {
           title_es: string
         }
         Insert: {
+          addons?: Json
           capacity?: number | null
           cover_style?: number
           cover_url?: string | null
           created_at?: string
           created_by?: string
+          currency?: string
           daily_prompt_en?: string | null
           daily_prompt_es?: string | null
           description_en?: string | null
@@ -816,11 +875,13 @@ export type Database = {
           title_es?: string
         }
         Update: {
+          addons?: Json
           capacity?: number | null
           cover_style?: number
           cover_url?: string | null
           created_at?: string
           created_by?: string
+          currency?: string
           daily_prompt_en?: string | null
           daily_prompt_es?: string | null
           description_en?: string | null
@@ -8254,6 +8315,7 @@ export type Database = {
       can_edit_quiz: { Args: { _quiz: string }; Returns: boolean }
       can_edit_track: { Args: { _track: string }; Returns: boolean }
       can_join_conversation: { Args: { _event: string }; Returns: boolean }
+      can_manage_challenge: { Args: { _c: string }; Returns: boolean }
       can_manage_event: { Args: { _event_id: string }; Returns: boolean }
       can_manage_offering: {
         Args: { _id: string; _kind: string }
@@ -8269,6 +8331,7 @@ export type Database = {
       can_view_contact_thread: { Args: { _thread: string }; Returns: boolean }
       can_view_event: { Args: { _event_id: string }; Returns: boolean }
       cancel_rsvp_by_code: { Args: { _code: string }; Returns: boolean }
+      challenge_can_enroll: { Args: { _c: string }; Returns: boolean }
       challenge_check_in: {
         Args: {
           _c: string
@@ -8296,6 +8359,10 @@ export type Database = {
           rank: number
           user_id: string
         }[]
+      }
+      challenge_member_active: {
+        Args: { _c: string; _user: string }
+        Returns: boolean
       }
       challenge_stats: { Args: { _c: string; _tz?: string }; Returns: Json }
       challenge_streaks: {
@@ -8547,6 +8614,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      enroll_challenge: { Args: { _c: string; _extras?: Json }; Returns: Json }
       enroll_free: { Args: { _offer: string }; Returns: undefined }
       evaluate_badges: {
         Args: { _team: string; _user: string }
@@ -8859,6 +8927,44 @@ export type Database = {
         }[]
       }
       my_calendar_feeds: { Args: never; Returns: Json }
+      my_challenges: {
+        Args: never
+        Returns: {
+          addons: Json
+          capacity: number | null
+          cover_style: number
+          cover_url: string | null
+          created_at: string
+          created_by: string
+          currency: string
+          daily_prompt_en: string | null
+          daily_prompt_es: string | null
+          description_en: string | null
+          description_es: string | null
+          ends_on: string
+          enrollment: string
+          frequency: string
+          goal_target: number | null
+          goal_unit: string | null
+          id: string
+          is_paid: boolean
+          leaderboard_on: boolean
+          model: string
+          price_cents: number | null
+          starts_on: string
+          status: string
+          team_id: string
+          timezone: string | null
+          title_en: string
+          title_es: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "challenges"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       my_checkin_events: { Args: never; Returns: Json }
       my_coach_updates: { Args: { _slug: string }; Returns: Json }
       my_consent_history: { Args: never; Returns: Json }
@@ -9415,6 +9521,16 @@ export type Database = {
           _local: string
           _name: string
           _template: string
+        }
+        Returns: string
+      }
+      save_challenge: {
+        Args: {
+          _activities: Json
+          _id: string
+          _messages: Json
+          _p: Json
+          _team: string
         }
         Returns: string
       }
