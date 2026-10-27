@@ -1170,6 +1170,13 @@
       "when": 1793116709956,
       "tag": "0166_public_event_host_identity",
       "breakpoints": true
+    },
+    {
+      "idx": 167,
+      "version": "7",
+      "when": 1793116766933,
+      "tag": "0167_host_waiver_ownership_platform_approval",
+      "breakpoints": true
     }
   ]
 }

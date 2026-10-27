@@ -1290,9 +1290,12 @@ export type Database = {
       }
       consent_text_versions: {
         Row: {
+          approval_reference: string | null
+          approved_at: string | null
           body: string
           body_sha256: string
           created_at: string
+          document_url: string | null
           effective_from: string
           id: string
           kind: string
@@ -1301,9 +1304,12 @@ export type Database = {
           version: number
         }
         Insert: {
+          approval_reference?: string | null
+          approved_at?: string | null
           body: string
           body_sha256: string
           created_at?: string
+          document_url?: string | null
           effective_from?: string
           id?: string
           kind: string
@@ -1312,9 +1318,12 @@ export type Database = {
           version: number
         }
         Update: {
+          approval_reference?: string | null
+          approved_at?: string | null
           body?: string
           body_sha256?: string
           created_at?: string
+          document_url?: string | null
           effective_from?: string
           id?: string
           kind?: string
@@ -2183,6 +2192,8 @@ export type Database = {
           offer_id: string | null
           online_url: string | null
           pass_fee: boolean
+          platform_agreement_en: string | null
+          platform_agreement_es: string | null
           policy_config: Json | null
           price_cents: number | null
           public_rsvp_at: string | null
@@ -2261,6 +2272,8 @@ export type Database = {
           offer_id?: string | null
           online_url?: string | null
           pass_fee?: boolean
+          platform_agreement_en?: string | null
+          platform_agreement_es?: string | null
           policy_config?: Json | null
           price_cents?: number | null
           public_rsvp_at?: string | null
@@ -2339,6 +2352,8 @@ export type Database = {
           offer_id?: string | null
           online_url?: string | null
           pass_fee?: boolean
+          platform_agreement_en?: string | null
+          platform_agreement_es?: string | null
           policy_config?: Json | null
           price_cents?: number | null
           public_rsvp_at?: string | null
@@ -2393,6 +2408,20 @@ export type Database = {
             columns: ["offer_id"]
             isOneToOne: false
             referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_platform_agreement_en_fkey"
+            columns: ["platform_agreement_en"]
+            isOneToOne: false
+            referencedRelation: "consent_text_versions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_platform_agreement_es_fkey"
+            columns: ["platform_agreement_es"]
+            isOneToOne: false
+            referencedRelation: "consent_text_versions"
             referencedColumns: ["id"]
           },
           {
@@ -4784,6 +4813,58 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      platform_event_acceptances: {
+        Row: {
+          accepted_at: string
+          content_sha256: string
+          document_id: string
+          event_id: string
+          id: string
+          rsvp_id: string
+          user_id: string | null
+        }
+        Insert: {
+          accepted_at?: string
+          content_sha256: string
+          document_id: string
+          event_id: string
+          id?: string
+          rsvp_id: string
+          user_id?: string | null
+        }
+        Update: {
+          accepted_at?: string
+          content_sha256?: string
+          document_id?: string
+          event_id?: string
+          id?: string
+          rsvp_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "platform_event_acceptances_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "consent_text_versions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "platform_event_acceptances_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "platform_event_acceptances_rsvp_id_fkey"
+            columns: ["rsvp_id"]
+            isOneToOne: false
+            referencedRelation: "rsvps"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       playbook_patterns: {
         Row: {
@@ -7828,7 +7909,10 @@ export type Database = {
           archived: boolean
           body_en: string
           body_es: string
+          file_name: string | null
+          file_path: string | null
           id: string
+          is_default: boolean
           name: string
           owner_id: string
           team_id: string
@@ -7839,7 +7923,10 @@ export type Database = {
           archived?: boolean
           body_en: string
           body_es?: string
+          file_name?: string | null
+          file_path?: string | null
           id?: string
+          is_default?: boolean
           name: string
           owner_id: string
           team_id: string
@@ -7850,7 +7937,10 @@ export type Database = {
           archived?: boolean
           body_en?: string
           body_es?: string
+          file_name?: string | null
+          file_path?: string | null
           id?: string
+          is_default?: boolean
           name?: string
           owner_id?: string
           team_id?: string
@@ -7873,6 +7963,8 @@ export type Database = {
           body_es: string
           content_sha256: string
           created_at: string
+          file_name: string | null
+          file_path: string | null
           name: string
           version: number
           waiver_id: string
@@ -7882,6 +7974,8 @@ export type Database = {
           body_es: string
           content_sha256: string
           created_at?: string
+          file_name?: string | null
+          file_path?: string | null
           name: string
           version: number
           waiver_id: string
@@ -7891,6 +7985,8 @@ export type Database = {
           body_es?: string
           content_sha256?: string
           created_at?: string
+          file_name?: string | null
+          file_path?: string | null
           name?: string
           version?: number
           waiver_id?: string
@@ -8230,6 +8326,7 @@ export type Database = {
       advance_journey_runs: { Args: { _limit?: number }; Returns: number }
       advance_resource_journeys: { Args: { _limit?: number }; Returns: number }
       ai_usage_status: { Args: never; Returns: Json }
+      approved_event_agreement: { Args: { _locale: string }; Returns: string }
       archive_host_update: { Args: { _id: string }; Returns: undefined }
       archive_message_template: {
         Args: { _archived: boolean; _id: string }
@@ -8632,6 +8729,10 @@ export type Database = {
       event_early_access: { Args: { _event: string }; Returns: Json }
       event_going_count: { Args: { _event_id: string }; Returns: number }
       event_payload: { Args: { _event: string; _rsvp: string }; Returns: Json }
+      event_platform_agreement: {
+        Args: { _event: string; _token?: string }
+        Returns: Json
+      }
       event_price: { Args: { _id: string }; Returns: Json }
       event_seats_used: { Args: { _event: string }; Returns: number }
       event_summary: { Args: { _event: string }; Returns: Json }
@@ -9614,6 +9715,19 @@ export type Database = {
         }
         Returns: string
       }
+      save_host_waiver: {
+        Args: {
+          _archive?: boolean
+          _en: string
+          _es: string
+          _file?: string
+          _filename?: string
+          _id: string
+          _name: string
+          _team: string
+        }
+        Returns: string
+      }
       save_library_waiver: {
         Args: {
           _archive?: boolean
@@ -9783,6 +9897,10 @@ export type Database = {
       }
       set_event_sessions: {
         Args: { _event: string; _sessions: Json }
+        Returns: undefined
+      }
+      set_host_waiver_default: {
+        Args: { _id: string; _on: boolean }
         Returns: undefined
       }
       set_journey_status: {
