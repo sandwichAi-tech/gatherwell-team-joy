@@ -1,7 +1,7 @@
 import { addDays, MESSAGE_KINDS, STARTER_DAYS, type ChallengeActivity, type ChallengeMessage, type ChallengeModel, type Starter } from './challenges';
 import { validHttps, addonDescriptionValid, type Addon } from './event-builder';
 
-export type ChallengeAddon = Addon & { description: string; max_quantity: number; inventory: number | null; available: boolean };
+export type ChallengeAddon = Addon & { description?: string; max_quantity: number; inventory: number | null; available: boolean };
 export type ChallengeBasics = {
   title_en: string; title_es: string; description_en: string; description_es: string;
   daily_prompt_en: string; daily_prompt_es: string; starts_on: string; ends_on: string;

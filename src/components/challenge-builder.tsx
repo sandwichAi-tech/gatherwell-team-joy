@@ -11,6 +11,7 @@ import { CropFileInput } from '@/components/image-crop';
 import { GatheringCover } from '@/components/gathering-cover';
 import { ChallengeLanguageField as LangPair } from '@/components/challenge-language-field';
 import { AddonImageInput } from '@/components/addon-image-input';
+import { AddonDescriptionField } from '@/components/addon-description-field';
 import { challengeTemplate, challengeStepIssues, blankActivity, blankMessages, challengePrice, resizeChallengeSchedule, type ChallengeBasics, type ChallengeAddon } from '@/lib/challenge-templates';
 import { emptyAddon } from '@/lib/event-builder';
 import { formatMoney } from '@/lib/billing';
@@ -81,7 +82,7 @@ export function ChallengeBuilder({ draft, teamId, onClose }: { draft: Partial<Ch
     baseline.current = ''; requestId.current = crypto.randomUUID(); setErrors([]); setLoadError(false);
     if (!draft) return;
     setStep('basics'); setStarter(null); setPaid(!!draft.is_paid); setPrice(draft.price_cents ? String(draft.price_cents / 100) : '');
-    setAddons(Array.isArray(draft.addons) ? draft.addons as unknown as ChallengeAddon[] : []);
+    setAddons(Array.isArray(draft.addons) ? (draft.addons as unknown as ChallengeAddon[]).map(a => a.description && !a.description_en && !a.description_es ? { ...a, description: '', [i18n.resolvedLanguage === 'es' ? 'description_es' : 'description_en']: a.description } : a) : []);
     if (!draft.id) { setF(empty); setActivities([]); setMessages(defaultMessages()); return; }
     setF({ ...empty, title_en: draft.title_en ?? '', title_es: draft.title_es ?? '', description_en: draft.description_en ?? '', description_es: draft.description_es ?? '', daily_prompt_en: draft.daily_prompt_en ?? '', daily_prompt_es: draft.daily_prompt_es ?? '', starts_on: draft.starts_on ?? empty.starts_on, ends_on: draft.ends_on ?? empty.ends_on, cover_url: draft.cover_url ?? null, cover_style: draft.cover_style ?? 0, timezone: draft.timezone ?? userTz(), model: modelOf(draft), goal_target: draft.goal_target ? String(draft.goal_target) : '', goal_unit: draft.goal_unit ?? '', frequency: draft.frequency === 'weekly' ? 'weekly' : 'daily', enrollment: draft.enrollment === 'invite' ? 'invite' : 'open', capacity: draft.capacity ? String(draft.capacity) : '', leaderboard_on: draft.leaderboard_on ?? false });
     let active = true; setLoading(true);
@@ -189,13 +190,13 @@ export function ChallengeBuilder({ draft, teamId, onClose }: { draft: Partial<Ch
         {addons.map(a => <fieldset key={a.id} className="builder-activity"><legend>{a.name || t('builder.addonName')}</legend>
           <AddonImageInput userId={userId} name={a.name} path={a.image_path} onChange={image_path => setAddons(rows => rows.map(x => x.id === a.id ? { ...x, image_path } : x))} onBusy={b => setUploading(n => Math.max(0, n + (b ? 1 : -1)))} />
           <div className="form-field"><label className="field-label" htmlFor={`addon-${a.id}`}>{t('builder.addonName')}</label><Input id={`addon-${a.id}`} value={a.name} maxLength={60} onChange={e => setAddons(rows => rows.map(x => x.id === a.id ? { ...x, name: e.target.value } : x))} /></div>
-          <div className="form-field"><label className="field-label" htmlFor={`addesc-${a.id}`}>{t('templates.description')}</label><Input id={`addesc-${a.id}`} value={a.description} maxLength={500} onChange={e => setAddons(rows => rows.map(x => x.id === a.id ? { ...x, description: e.target.value } : x))} /></div>
+          <AddonDescriptionField id={`addesc-${a.id}`} value={a} onChange={patch => setAddons(rows => rows.map(x => x.id === a.id ? { ...x, ...patch } : x))} />
           <div className="choice-pair"><div className="form-field"><label className="field-label" htmlFor={`adprice-${a.id}`}>{t('billing.price')}</label><Input id={`adprice-${a.id}`} inputMode="decimal" value={a.price_cents / 100} onChange={e => setAddons(rows => rows.map(x => x.id === a.id ? { ...x, price_cents: Math.round(Number(e.target.value) * 100) } : x))} /></div><div className="form-field"><label className="field-label" htmlFor={`adqty-${a.id}`}>{t('challenges.maxQuantity')}</label><Input id={`adqty-${a.id}`} type="number" min={1} max={20} value={a.max_quantity} onChange={e => setAddons(rows => rows.map(x => x.id === a.id ? { ...x, max_quantity: Number(e.target.value) } : x))} /></div></div>
           <div className="form-field"><label className="field-label" htmlFor={`adinventory-${a.id}`}>{t('challenges.inventory')}</label><Input id={`adinventory-${a.id}`} type="number" min={0} value={a.inventory ?? ''} placeholder={t('gathering.noLimit')} onChange={e => setAddons(rows => rows.map(x => x.id === a.id ? { ...x, inventory: e.target.value === '' ? null : Number(e.target.value) } : x))} /></div>
           <label className="switch-row"><Switch checked={a.available} onCheckedChange={available => setAddons(rows => rows.map(x => x.id === a.id ? { ...x, available } : x))} /><span>{t('challenges.available')}</span></label>
           <Button variant="ghost" disabled={uploading > 0} onClick={() => setAddons(rows => rows.filter(x => x.id !== a.id))}><Trash2 />{t('builder.removeAddon')}</Button>
         </fieldset>)}
-        <Button variant="secondary" disabled={addons.length >= 8 || uploading > 0} onClick={() => setAddons(rows => [...rows, { ...emptyAddon(), description: '', max_quantity: 1, inventory: null, available: true }])}><Plus />{t('builder.addAddon')}</Button>
+        <Button variant="secondary" disabled={addons.length >= 8 || uploading > 0} onClick={() => setAddons(rows => [...rows, { ...emptyAddon(), max_quantity: 1, inventory: null, available: true }])}><Plus />{t('builder.addAddon')}</Button>
       </>}
 
       {step === 'model' && <>
