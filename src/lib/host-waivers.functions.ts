@@ -5,8 +5,11 @@ import { safeWaiverPdf } from '@/lib/event-agreements';
 export const uploadHostWaiver = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth]).inputValidator((d: FormData) => d).handler(async ({ data, context }) => {
   const f = data.get('file');
   if (!(f instanceof File) || !safeWaiverPdf(f.size, f.type, await f.slice(0, 5).text())) throw new Error('invalid_file');
-  const { data: workspace, error: accessError } = await context.supabase.rpc('my_workspace');
-  if (accessError || !workspace) throw new Error('forbidden');
+  const { data: memberships, error: accessError } = await context.supabase.from('team_members').select('team_id').eq('user_id', context.userId).is('suspended_at', null);
+  if (accessError || !memberships?.length) throw new Error('forbidden');
+  let allowed = false;
+  for (const m of memberships) { const { data: capability } = await context.supabase.rpc('team_capability', { _team: m.team_id, _cap: 'events' }); if (capability) { allowed = true; break; } }
+  if (!allowed) throw new Error('forbidden');
   const path = `${context.userId}/host-waivers/${crypto.randomUUID()}.pdf`;
   const { error } = await context.supabase.storage.from('media').upload(path, f, { contentType: 'application/pdf', upsert: false });
   if (error) throw new Error('upload_failed'); return { path };
