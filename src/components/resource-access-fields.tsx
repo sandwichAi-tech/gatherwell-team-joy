@@ -17,7 +17,7 @@ export function ResourceAccessFields({ type, placement, onPlacement, free, price
     <fieldset className="form-field"><legend className="field-label">{t('resourcePlacement.title')}</legend>
       <RadioGroup value={placement} onValueChange={v => onPlacement(v as ResourcePlacement)} aria-label={t('resourcePlacement.title')}>
         {placementsFor(type).map(p => <label key={p} htmlFor={`${prefix}-${p}`} className="flex min-h-12 items-center gap-3 rounded-md border border-border p-3">
-          <RadioGroupItem id={`${prefix}-${p}`} value={p} /><span>{t(`resourcePlacement.${p}`)}</span>
+          <RadioGroupItem id={`${prefix}-${p}`} value={p} className="shrink-0" /><span>{t(`resourcePlacement.${p}`)}</span>
         </label>)}
       </RadioGroup><p className="field-hint">{t(`resourcePlacement.${placement}Hint`)}</p>
     </fieldset>
