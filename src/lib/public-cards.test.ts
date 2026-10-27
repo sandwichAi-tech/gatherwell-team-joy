@@ -67,7 +67,7 @@ describe('publicCardRoute / publicKindKey (cross-model cards)', () => {
   it('routes offers to the offer landing and tracks to the track access route', async () => {
     const { publicCardRoute } = await import('./public-cards');
     expect(publicCardRoute({ id: 'a', entity: 'offer' })).toEqual({ to: '/o/$id', id: 'a' });
-    expect(publicCardRoute({ id: 'b', entity: 'track' })).toEqual({ to: '/learn/track/$id', id: 'b' });
+    expect(publicCardRoute({ id: 'b', entity: 'track' })).toEqual({ to: '/resource/$kind/$id', id: 'b', kind: 'track' });
     expect(publicCardRoute({ id: 'c' })).toEqual({ to: '/o/$id', id: 'c' }); // legacy rows without entity stay offers
   });
   it('picks the type label namespace per model', async () => {

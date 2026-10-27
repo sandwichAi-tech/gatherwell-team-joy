@@ -186,7 +186,7 @@ export function QuizStudio({ quizId }: { quizId: string }) {
     const cents = resourceAccessPrice(placement, pricing.free, pricing.price);
     if (cents === null || (extra.is_published && cents > 0 && (!readiness.data || !canSellPaid(readiness.data)))) { toast.error(t('resources.item.paidBlocked')); return false; }
     setBusy(true);
-    const a = await supabase.rpc('configure_resource_access', { _kind: 'quiz', _id: quizId, _placement: placement, _course: courseId || undefined, _price: cents });
+    const a = await (supabase as any).rpc('configure_resource_access', { _kind: 'quiz', _id: quizId, _placement: placement, _course: courseId || null, _price: cents });
     if (a.error) { setBusy(false); toast.error(t('resources.item.saveFailed')); return false; }
     const row = { mode: s.mode, title_en: s.title_en.trim(), title_es: s.title_es.trim(), instructions_en: s.instructions_en?.trim() || null, instructions_es: s.instructions_es?.trim() || null,
       pass_pct: Math.min(100, Math.max(1, Math.round(Number(s.pass_pct) || 80))), attempts_allowed: s.attempts_allowed ? Math.max(1, Math.round(Number(s.attempts_allowed))) : null,
