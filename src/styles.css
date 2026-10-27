@@ -2790,3 +2790,6 @@ a.gw-cat-chip:hover{background:#fff}
 .team-archived{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;padding-block:16px}
 .team-discussions{margin-top:16px}.convo-body a{display:inline;min-height:0;white-space:normal;overflow-wrap:anywhere}.convo-body{overflow-wrap:anywhere;white-space:pre-wrap}
 @media(max-width:767px){.team-communication{padding-bottom:80px}.team-channel-entry{grid-template-columns:1fr 1fr}.convo-composer-actions{flex-wrap:wrap}.convo-composer textarea{scroll-margin-bottom:180px}}
+
+.addon-description { margin: 0.25rem 0; color: var(--muted-foreground); overflow-wrap: anywhere; white-space: pre-line; }
+.addon-description-field { min-width: 0; }

@@ -156,3 +156,22 @@ describe('builder locale parity', () => {
     expect(en.builder.platformFee).toContain('5%');
   });
 });
+
+import { addonDescription as _ad, MAX_ADDON_DESCRIPTION as _max } from './event-builder';
+describe('add-on descriptions', () => {
+  it('keeps optional descriptions and stays valid when blank', () => {
+    expect(cleanAddons([{ id: 'a', name: 'Bottle', price_cents: 2000 }])).toEqual([{ id: 'a', name: 'Bottle', price_cents: 2000 }]);
+    expect(cleanAddons([{ id: 'a', name: 'Bottle', price_cents: 2000, description_en: '  Steel bottle ', description_es: '' }])?.[0]).toEqual({ id: 'a', name: 'Bottle', price_cents: 2000, description_en: 'Steel bottle' });
+  });
+  it('rejects descriptions over 300 characters', () => {
+    expect(_max).toBe(300);
+    expect(cleanAddons([{ id: 'a', name: 'Bottle', price_cents: 0, description_es: 'x'.repeat(301) }])).toBeNull();
+    expect(cleanAddons([{ id: 'a', name: 'Bottle', price_cents: 0, description_en: 'x'.repeat(300) }])).not.toBeNull();
+  });
+  it('shows the viewer language, then the other saved language, never invented text', () => {
+    expect(_ad({ description_en: 'Steel', description_es: 'Acero' }, 'es')).toBe('Acero');
+    expect(_ad({ description_en: 'Steel' }, 'es')).toBe('Steel');
+    expect(_ad({ description: 'Legacy' }, 'en')).toBe('Legacy');
+    expect(_ad({}, 'en')).toBe('');
+  });
+});
