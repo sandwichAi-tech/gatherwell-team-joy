@@ -1030,6 +1030,13 @@
       "when": 1793065136820,
       "tag": "0146_optional_addon_images",
       "breakpoints": true
+    },
+    {
+      "idx": 147,
+      "version": "7",
+      "when": 1793066409293,
+      "tag": "0147_resource_placement_commerce",
+      "breakpoints": true
     }
   ]
 }
