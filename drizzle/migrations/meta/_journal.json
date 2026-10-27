@@ -1296,6 +1296,13 @@
       "when": 1793128195964,
       "tag": "0184_challenge_order_access_and_refund_monotonicity",
       "breakpoints": true
+    },
+    {
+      "idx": 185,
+      "version": "7",
+      "when": 1793129726519,
+      "tag": "0185_addon_descriptions",
+      "breakpoints": true
     }
   ]
 }
