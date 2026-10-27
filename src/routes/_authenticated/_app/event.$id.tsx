@@ -36,7 +36,7 @@ import { usePaymentGate } from '@/components/plan-page';
 import { ShareKit } from '@/components/share-kit';
 import { NetworkShareToggle } from '@/components/network-share';
 import { MembersOnlyPicker } from '@/components/offers';
-import { WaiverEventToggle } from '@/components/waiver';
+import { PlatformAgreementNotice, usePlatformAgreement } from '@/components/platform-event-agreement';
 import { EventWaiversManager } from '@/components/event-waivers';
 import { RsvpSettingsPanel } from '@/components/rsvp-questions';
 import { EventComments, GroupChatLink } from '@/components/conversation';
@@ -51,6 +51,7 @@ function EventDetailPage() {
   const { id } = Route.useParams();
   const { t, i18n } = useTranslation(); const { userId } = useGatherwell(); const queryClient = useQueryClient(); const navigate = useNavigate();
   const lang = i18n.resolvedLanguage ?? 'en';
+  const platformAgreement = usePlatformAgreement(id);
   const { data, isLoading } = useQuery(eventDetailQuery(id));
   const { data: teams = [] } = useQuery(teamsQuery(userId));
   const event = data?.event;
@@ -186,14 +187,15 @@ function EventDetailPage() {
     {manages && event.status !== 'draft' && <label className="switch-row guest-hide-row"><MessageCircle className="inline-icon" /><span><strong>{t('discussion.toggle')}</strong><small>{t('discussion.toggleHelp')}</small></span><Switch checked={!!(event as { discussion_enabled?: boolean }).discussion_enabled} onCheckedChange={async v => { const { error } = await supabase.from('events').update({ discussion_enabled: v }).eq('id', id); if (error) toast.error(t('profile.saveError')); else await refresh(); }} /></label>}
     {event.status !== 'draft' && ((event as { discussion_enabled?: boolean }).discussion_enabled ? <EventComments eventId={event.id} teamId={event.team_id} me={userId} /> : !manages && <p className="muted">{t('discussion.disabled')}</p>)}
     {!manages && event.status === 'published' && <div className="guest-button-row"><ContactHostButton eventId={event.id} /></div>}
-    {manages && <EventWaiversManager eventId={event.id} userId={userId} />}
+    {isHost && event.status === 'draft' && !event.agreements_locked && <EventWaiversManager eventId={event.id} userId={userId} />}
+    {isHost && <PlatformAgreementNotice agreement={platformAgreement.data} loading={platformAgreement.isPending} />}
     {(manages || cohostIds.length > 0) && <CohostsPanel eventId={event.id} teamId={event.team_id} hostId={event.host_id} canEdit={event.host_id === userId || leadsTeam} />}
 
     <ResponsiveSheet open={sheet === 'share'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.share')} description={event.title}>
       <ShareKit title={event.title} startsAt={event.starts_at} timezone={event.timezone} place={placeOf(event) ?? (event.online_url ? t('teamSpace.online') : '')} link={link} coverPath={event.cover_url} coverStyle={event.cover_style} />
       {isHost && event.visibility === 'public' && event.status === 'published' && <Feature flag="feature_network"><NetworkShareToggle eventId={event.id} /></Feature>}
       {manages && <RsvpSettingsPanel eventId={event.id} initial={{ questions: ((event as any).rsvp_questions ?? []), require_approval: !!(event as any).require_approval, visibility: event.visibility, invite_token: (event as any).invite_token ?? '', price_cents: (event as any).price_cents ?? null }} />}
-      {isHost && <WaiverEventToggle eventId={event.id} teamId={event.team_id} value={!!(event as { requires_waiver?: boolean }).requires_waiver} />}
+      {isHost && event.agreements_locked && <p>{t('eventAgreements.pinned')}</p>}
       {isHost && <MembersOnlyPicker table="events" id={event.id} teamId={event.team_id} />}
       {isHost && event.status === 'published' && <EarlyAccessPanel eventId={event.id} hostId={event.host_id} />}
     </ResponsiveSheet>

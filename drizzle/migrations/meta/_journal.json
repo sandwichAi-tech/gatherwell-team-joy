@@ -1163,6 +1163,34 @@
       "when": 1793116128128,
       "tag": "0165_challenge_schedule_final_validation",
       "breakpoints": true
+    },
+    {
+      "idx": 166,
+      "version": "7",
+      "when": 1793116709956,
+      "tag": "0166_public_event_host_identity",
+      "breakpoints": true
+    },
+    {
+      "idx": 167,
+      "version": "7",
+      "when": 1793116766933,
+      "tag": "0167_host_waiver_ownership_platform_approval",
+      "breakpoints": true
+    },
+    {
+      "idx": 168,
+      "version": "7",
+      "when": 1793116863668,
+      "tag": "0168_event_agreement_admission_guards",
+      "breakpoints": true
+    },
+    {
+      "idx": 169,
+      "version": "7",
+      "when": 1793117128293,
+      "tag": "0169_waiver_pins_owner_read_hardening",
+      "breakpoints": true
     }
   ]
 }

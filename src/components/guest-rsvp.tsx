@@ -34,6 +34,8 @@ import type { IcsEvent } from '@/lib/ics';
 import { AGE_BANDS, checkMinorRegistration } from '@/lib/identity';
 import { minorBandAllowed } from '@/lib/event-builder';
 import { defaultTier, needsTier, registrationReady, tierSpotsLeft, tierState } from '@/lib/registration';
+import { PlatformAgreementNotice, usePlatformAgreement } from '@/components/platform-event-agreement';
+import { platformSelection } from '@/lib/event-agreements';
 
 type CalEvent = Pick<PublicEvent, 'id' | 'title' | 'starts_at' | 'ends_at' | 'location_name' | 'address'>;
 
@@ -92,6 +94,8 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
   const [minor, setMinor] = useState({ first: '', band: '' as string, gName: '', gRel: 'parent', gEmail: '', gPhone: '', consent: false });
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [termsOk, setTermsOk] = useState(false);
+  const platform = usePlatformAgreement(intent ? event.id : undefined);
+  const platformDoc = platformSelection(platform.data, i18n.resolvedLanguage ?? 'en');
   const [updates, setUpdates] = useState(false);
   const [tierId, setTierId] = useState<string | null>(null);
   const tiers = event.ticket_tiers ?? [];
@@ -119,6 +123,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
   }, [intent]);
   const submit = async (e: FormEvent) => {
     e.preventDefault(); if (!intent || busy || gate.busy) return;
+    if (!platformDoc?.id) { setError(t('eventAgreements.legalRequired')); return; }
     if (!form.first.trim()) { setError(t('guest.errors.name_required')); return; }
     if (!form.phone.trim() && !form.email.trim()) { setError(t('guest.errors.contact_required')); return; }
     if (!waiverReady(waiver, wName, wOk)) { setError(t('guest.errors.waiver_required')); return; }
@@ -156,7 +161,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
     }
     setBusy(true); setError(null);
     try {
-      const { data, error: err } = await waiverRpc('register_attendance_waivers', { _waivers: ewAccepted, _answers: answers, _token: inviteToken(), _waiver_name: waiverName, _event_id: event.id, _first: form.first.trim(), _last: form.last.trim(), _phone: form.phone.trim(), _email: form.email.trim(),
+      const { data, error: err } = await waiverRpc('register_event_agreements', { _platform_version: platformDoc.id, _waivers: ewAccepted, _answers: answers, _token: inviteToken() ?? '', _waiver_name: waiverName, _event_id: event.id, _first: form.first.trim(), _last: form.last.trim(), _phone: form.phone.trim(), _email: form.email.trim(),
         _language: i18n.resolvedLanguage === 'es' ? 'es' : 'en', _plus_ones: form.plus, _status: intent, _sms: consent.sms, _mail: consent.mail,
         _terms_ok: termsOk, _updates_opt_in: updates, _tier_id: tierId ?? '' });
       const row = (Array.isArray(data) ? data[0] : null) as { code: string; status: string } | null;
@@ -172,7 +177,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
   };
   const full = event.capacity != null && event.going >= event.capacity;
   const title = intent === 'maybe' ? t('guest.sheetMaybe') : full ? t('guest.sheetWaitlist') : t('guest.sheetGoing');
-  return <ResponsiveSheet open={!!intent} onOpenChange={o => !o && onClose()} title={title} description={event.title} footer={<Button type="submit" form="guest-rsvp-form" className="guest-primary" disabled={busy || gate.busy}>{busy || gate.busy ? t('guest.saving') : paid ? t('billing.payAndRsvp', { amount: formatMoney(total, lang) }) : intent === 'maybe' ? t('guest.confirmMaybe') : full ? t('guest.joinWaitlist') : t('guest.confirmGoing')}</Button>}>
+  return <ResponsiveSheet open={!!intent} onOpenChange={o => !o && onClose()} title={title} description={event.title} footer={<Button type="submit" form="guest-rsvp-form" className="guest-primary" disabled={busy || gate.busy || platform.isPending || !platformDoc?.id}>{busy || gate.busy ? t('guest.saving') : paid ? t('billing.payAndRsvp', { amount: formatMoney(total, lang) }) : intent === 'maybe' ? t('guest.confirmMaybe') : full ? t('guest.joinWaitlist') : t('guest.confirmGoing')}</Button>}>
     <form id="guest-rsvp-form" className="guest-form" onSubmit={submit} noValidate>
       <div><label className="field-label" htmlFor="g-first">{t('guest.firstName')}</label><Input id="g-first" autoComplete="given-name" required maxLength={60} className="field-input" value={form.first} onChange={e => setForm({ ...form, first: e.target.value })} /></div>
       {!paid && <div className="segmented full" role="group" aria-label={t('guest.contactMethod')}>
@@ -230,7 +235,8 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
       </fieldset>}
       <EventAddons eventId={event.id} />
       {event.cancellation_policy && <p className="field-hint refund-line"><ShieldCheck /><span>{event.cancellation_policy}</span></p>}
-      <label className="guest-consent"><Checkbox checked={termsOk} onCheckedChange={v => setTermsOk(!!v)} /><span>{t('guest.termsAgree')} <a href="/terms" target="_blank" rel="noopener">{t('guest.termsLink')}</a> · <a href="/privacy" target="_blank" rel="noopener">{t('guest.privacyLink')}</a></span></label>
+      <PlatformAgreementNotice agreement={platform.data} loading={platform.isPending} />
+      <label className="guest-consent"><Checkbox checked={termsOk} disabled={!platformDoc?.id} onCheckedChange={v => setTermsOk(!!v)} /><span>{t('eventAgreements.accept')}</span></label>
       <label className="guest-consent"><Checkbox checked={updates} onCheckedChange={v => setUpdates(!!v)} /><span>{t('guest.updatesOptIn')}</span></label>
       {paid && price && <p className="guest-price"><strong>{formatMoney(price.price_cents, lang)}</strong><span>{t('billing.perPerson')}{fee ? ` · ${t('billing.bookingFee', { fee: formatMoney(fee, lang) })}` : ''}</span></p>}
       {paid && price && <RefundLine policy={price.refund_policy} />}

@@ -243,6 +243,13 @@ export const startTicketCheckout = createServerFn({ method: 'POST' })
   .handler(async ({ data }): Promise<Result> => {
     // Purchasers must be adults; the unchecked attestation is required server-side.
     if (data.adult !== true) return { ok: false, error: 'adult_required' };
+    // Paid fulfillment does not yet persist the separate pinned platform acceptance.
+    // Fail before provider calls rather than charging for an ineligible registration.
+    const { supabaseAdmin: legalDb } = await import('@/integrations/supabase/client.server');
+    const { data: legal } = await legalDb.rpc('event_platform_agreement', { _event: data.eventId, _token: '' });
+    if (!(legal as { ready?: boolean } | null)?.ready) return { ok: false, error: 'approved_legal_document_required' };
+    const fulfillmentReady = false;
+    if (!fulfillmentReady) return { ok: false, error: 'platform_agreement_required' };
     {
       // Event waivers are validated against the active versions before any checkout is attempted.
       const { supabaseAdmin: sa } = await import('@/integrations/supabase/client.server');
