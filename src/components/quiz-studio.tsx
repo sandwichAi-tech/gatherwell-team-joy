@@ -1,3 +1,4 @@
+import { removeResource } from '@/components/confirm-resource-removal';
 import { BuilderStepFooter } from '@/components/builder-step-footer';
 import { DestinationSummary, ResourceAccessFields, livePlacementList } from '@/components/resource-access-fields';
 import { myOffersQuery, offerTitle } from '@/lib/offers';
@@ -234,12 +235,8 @@ export function QuizStudio({ quizId }: { quizId: string }) {
     toast.success(t('quizStudio.duplicated')); void navigate({ to: '/learn/quiz/$id', params: { id: data } });
   };
   const remove = async () => {
-    const places = livePlacementList(dest, courseOptions, t, lang);
-    const body = [hasAttempts ? t('quizStudio.deleteWithAnswers') : '', places ? t('resourcePlacement.archiveWarn', { places }) : ''].filter(Boolean).join(' ');
-    if (!(await confirmAction({ title: t('quiz.confirmDelete'), ...(body ? { body } : {}), destructive: true }))) return;
-    const { error } = await db.from('quizzes').delete().eq('id', quizId);
-    if (error) { toast.error(t('profile.saveError')); return; }
-    toast.success(t('quizStudio.deleted')); await qc.invalidateQueries({ queryKey: ['team-quizzes'] });
+    if (!(await removeResource(t, 'quiz', quizId))) return;
+    await qc.invalidateQueries({ queryKey: ['team-quizzes'] });
     void navigate({ to: '/learn', search: { tab: 'mine' } });
   };
   const exit = async () => {

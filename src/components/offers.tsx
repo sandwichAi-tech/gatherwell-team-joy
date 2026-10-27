@@ -1,4 +1,4 @@
-import { confirmResourceRemoval } from '@/components/confirm-resource-removal';
+import { confirmResourceRemoval, removeResource } from '@/components/confirm-resource-removal';
 import { RefundLine, RefundSelect } from '@/components/refund-line';
 import { asRefundPolicy, type RefundPolicy } from '@/lib/refunds';
 import { FoundingSeal } from '@/components/founding';
@@ -30,7 +30,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { learnPathsForTracks, removeUnusedLearnFiles } from '@/lib/learn';
 import { formatMoney, paymentsStatusQuery } from '@/lib/billing';
 import {
-  deleteOffer, getOfferLink, isLive, joinFreeOffer, linkableOffersQuery, myOffersQuery, offerIncludes, offerQuery, offerText, offerTitle,
+  getOfferLink, isLive, joinFreeOffer, linkableOffersQuery, myOffersQuery, offerIncludes, offerQuery, offerText, offerTitle,
   purchasesQuery, saveOffer, setOfferLink, teamOffersQuery, uploadOfferFile, type Offer, type OfferKind,
   foundingStatusQuery,
 } from '@/lib/offers';
@@ -129,12 +129,12 @@ function OfferEditor({ offer, teamId, onClose, bundleMode }: { offer: Partial<Of
     } catch { toast.error(t('offers.uploadError')); } finally { setBusy(false); }
   };
   const remove = async () => {
-    if (!offer?.id || !(await confirmAction({ title: t('offers.confirmDelete'), destructive: true }))) return;
+    if (!offer?.id) return;
     const { data: tr } = await supabase.from('tracks').select('id').eq('offer_id', offer.id);
     const files = await learnPathsForTracks((tr ?? []).map((x: { id: string }) => x.id));
-    const res = await deleteOffer(offer.id);
-    if (res.error) { toast.error(t('offers.deleteError')); return; }
-    void removeUnusedLearnFiles(files);
+    const done = await removeResource(t, 'offer', offer.id);
+    if (!done) return;
+    if (done === 'delete') void removeUnusedLearnFiles(files);
     await qc.invalidateQueries({ queryKey: ['offers'] }); onClose();
   };
   const field = (id: string, label: string, el: React.ReactNode) => <div className="form-field"><label className="field-label" htmlFor={id}>{label}</label>{el}</div>;
