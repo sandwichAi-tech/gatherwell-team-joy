@@ -1219,6 +1219,13 @@
       "when": 1793123991190,
       "tag": "0173_assessment_scope_content_claim_filter",
       "breakpoints": true
+    },
+    {
+      "idx": 174,
+      "version": "7",
+      "when": 1793125600526,
+      "tag": "0174_assessment_receipts_scope_and_course_slots",
+      "breakpoints": true
     }
   ]
 }

@@ -206,6 +206,99 @@ export type Database = {
         }
         Relationships: []
       }
+      assessment_receipts: {
+        Row: {
+          answers: Json
+          completed_at: string
+          config_snapshot: Json
+          id: string
+          quiz_id: string
+          request_id: string
+          result_snapshot: Json | null
+          revision: number
+          scope_id: string
+          score: number | null
+          user_id: string
+        }
+        Insert: {
+          answers: Json
+          completed_at?: string
+          config_snapshot: Json
+          id?: string
+          quiz_id: string
+          request_id: string
+          result_snapshot?: Json | null
+          revision: number
+          scope_id: string
+          score?: number | null
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          completed_at?: string
+          config_snapshot?: Json
+          id?: string
+          quiz_id?: string
+          request_id?: string
+          result_snapshot?: Json | null
+          revision?: number
+          scope_id?: string
+          score?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_receipts_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assessment_receipts_scope_id_fkey"
+            columns: ["scope_id"]
+            isOneToOne: false
+            referencedRelation: "assessment_scope_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assessment_scope_versions: {
+        Row: {
+          approval_reference: string
+          approved_at: string
+          approved_by: string
+          document_hash: string
+          document_text: string
+          id: string
+          locale: string
+          retired_at: string | null
+          version: number
+        }
+        Insert: {
+          approval_reference: string
+          approved_at: string
+          approved_by: string
+          document_hash: string
+          document_text: string
+          id?: string
+          locale: string
+          retired_at?: string | null
+          version: number
+        }
+        Update: {
+          approval_reference?: string
+          approved_at?: string
+          approved_by?: string
+          document_hash?: string
+          document_text?: string
+          id?: string
+          locale?: string
+          retired_at?: string | null
+          version?: number
+        }
+        Relationships: []
+      }
       auth_intents: {
         Row: {
           consumed_at: string | null
@@ -3021,6 +3114,7 @@ export type Database = {
           created_at: string
           description_en: string | null
           description_es: string | null
+          detached_at: string | null
           duration_minutes: number | null
           event_id: string | null
           id: string
@@ -3031,6 +3125,7 @@ export type Database = {
           notes_es: string | null
           prerequisite_lesson_id: string | null
           replay_url: string | null
+          resource_quiz_id: string | null
           sort_order: number
           storage_path: string | null
           title_en: string
@@ -3044,6 +3139,7 @@ export type Database = {
           created_at?: string
           description_en?: string | null
           description_es?: string | null
+          detached_at?: string | null
           duration_minutes?: number | null
           event_id?: string | null
           id?: string
@@ -3054,6 +3150,7 @@ export type Database = {
           notes_es?: string | null
           prerequisite_lesson_id?: string | null
           replay_url?: string | null
+          resource_quiz_id?: string | null
           sort_order?: number
           storage_path?: string | null
           title_en?: string
@@ -3067,6 +3164,7 @@ export type Database = {
           created_at?: string
           description_en?: string | null
           description_es?: string | null
+          detached_at?: string | null
           duration_minutes?: number | null
           event_id?: string | null
           id?: string
@@ -3077,6 +3175,7 @@ export type Database = {
           notes_es?: string | null
           prerequisite_lesson_id?: string | null
           replay_url?: string | null
+          resource_quiz_id?: string | null
           sort_order?: number
           storage_path?: string | null
           title_en?: string
@@ -3091,6 +3190,13 @@ export type Database = {
             columns: ["prerequisite_lesson_id"]
             isOneToOne: false
             referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lessons_resource_quiz_id_fkey"
+            columns: ["resource_quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
             referencedColumns: ["id"]
           },
           {
@@ -4146,6 +4252,7 @@ export type Database = {
           cta_en: string | null
           cta_es: string | null
           currency: string
+          curriculum_revision: number
           description_en: string | null
           description_es: string | null
           discussion_enabled: boolean
@@ -4208,6 +4315,7 @@ export type Database = {
           cta_en?: string | null
           cta_es?: string | null
           currency?: string
+          curriculum_revision?: number
           description_en?: string | null
           description_es?: string | null
           discussion_enabled?: boolean
@@ -4270,6 +4378,7 @@ export type Database = {
           cta_en?: string | null
           cta_es?: string | null
           currency?: string
+          curriculum_revision?: number
           description_en?: string | null
           description_es?: string | null
           discussion_enabled?: boolean
@@ -5572,6 +5681,7 @@ export type Database = {
         Row: {
           assessment_config: Json | null
           assessment_revision: number
+          assessment_scope_id: string | null
           attempts_allowed: number | null
           commerce_offer_id: string | null
           cooldown_minutes: number
@@ -5604,6 +5714,7 @@ export type Database = {
         Insert: {
           assessment_config?: Json | null
           assessment_revision?: number
+          assessment_scope_id?: string | null
           attempts_allowed?: number | null
           commerce_offer_id?: string | null
           cooldown_minutes?: number
@@ -5636,6 +5747,7 @@ export type Database = {
         Update: {
           assessment_config?: Json | null
           assessment_revision?: number
+          assessment_scope_id?: string | null
           attempts_allowed?: number | null
           commerce_offer_id?: string | null
           cooldown_minutes?: number
@@ -5666,6 +5778,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "quizzes_assessment_scope_id_fkey"
+            columns: ["assessment_scope_id"]
+            isOneToOne: false
+            referencedRelation: "assessment_scope_versions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "quizzes_commerce_offer_id_fkey"
             columns: ["commerce_offer_id"]
@@ -8341,6 +8460,7 @@ export type Database = {
         Args: { _archived: boolean; _id: string }
         Returns: undefined
       }
+      assessment_for_learner: { Args: { _quiz: string }; Returns: Json }
       assign_license_seat: {
         Args: { _on: boolean; _team: string; _user: string }
         Returns: undefined
@@ -8382,6 +8502,10 @@ export type Database = {
           badge_id: string
           holders: number
         }[]
+      }
+      bind_course_assessment: {
+        Args: { _quiz: string; _track: string }
+        Returns: string
       }
       block_user: { Args: { _user: string }; Returns: undefined }
       build_member_plan: {
@@ -8562,6 +8686,17 @@ export type Database = {
         Args: { _kind: string; _target: string }
         Returns: Json
       }
+      complete_wellness_assessment: {
+        Args: {
+          _accepted: boolean
+          _answers: Json
+          _quiz: string
+          _request: string
+          _revision: number
+          _scope: string
+        }
+        Returns: Json
+      }
       compute_playbook: { Args: never; Returns: number }
       configure_resource_access: {
         Args: {
@@ -8670,6 +8805,10 @@ export type Database = {
       delete_comment: { Args: { _id: string }; Returns: undefined }
       delete_my_account: { Args: never; Returns: undefined }
       delete_my_coach_review: { Args: { _host: string }; Returns: undefined }
+      detach_course_curriculum: {
+        Args: { _course: string; _lesson?: string; _track: string }
+        Returns: undefined
+      }
       discover_catalog: {
         Args: {
           _accessible?: boolean
@@ -9476,6 +9615,15 @@ export type Database = {
         Args: { _course: string; _ids: string[]; _track: string }
         Returns: undefined
       }
+      reorder_course_curriculum_checked: {
+        Args: {
+          _course: string
+          _expected: string[]
+          _ids: string[]
+          _track: string
+        }
+        Returns: undefined
+      }
       replace_offer_item: { Args: { _item: string; _p: Json }; Returns: string }
       reply_contact_thread: {
         Args: { _body: string; _thread: string }
@@ -10154,6 +10302,7 @@ export type Database = {
         Returns: Json
       }
       user_email: { Args: { _user: string }; Returns: string }
+      validate_assessment_config: { Args: { _c: Json }; Returns: undefined }
       verified_hosts: { Args: { _ids: string[] }; Returns: string[] }
       verify_certificate: { Args: { _number: string }; Returns: Json }
       vote_poll: {
