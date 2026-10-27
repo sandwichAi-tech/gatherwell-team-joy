@@ -6314,6 +6314,11 @@
           "name": "Mixed resource bundle",
           "example": "Text, files, links and embeds in one package.",
           "best": "Best for: a toolkit or starter pack."
+        },
+        "assessment": {
+          "name": "Wellness assessment",
+          "example": "Reflective questions and supportive results, not right/wrong answers.",
+          "best": "Draft questions, weighted result ranges and author preview; publication requires approved content."
         }
       },
       "quizParent": {
@@ -6323,7 +6328,12 @@
         "new": "New course",
         "empty": "You don't have a course yet. Create one first — it starts as a draft."
       },
-      "button": "Create resource"
+      "button": "Create resource",
+      "groups": {
+        "programs": "Programs & assessments",
+        "media": "Media & guides",
+        "interactive": "Links & activities"
+      }
     },
     "untitled": "Untitled",
     "tabs": {
@@ -6345,7 +6355,8 @@
       "link": "Links",
       "recipe": "Recipes",
       "live": "Live sessions",
-      "quiz": "Quizzes"
+      "quiz": "Quizzes",
+      "assessment": "Wellness assessment"
     },
     "typeChip": {
       "course": "Course",
@@ -6357,7 +6368,8 @@
       "link": "Link",
       "recipe": "Recipe",
       "live": "Live session",
-      "quiz": "Quiz"
+      "quiz": "Quiz",
+      "assessment": "Wellness assessment"
     },
     "sources": {
       "all": "All",
@@ -7489,5 +7501,45 @@
     "hostUnavailable": "Host public page unavailable",
     "pinned": "Published event agreements are fixed. Create a new draft to use a different document.",
     "legacyPinned": "This event retains its historical document and acceptance records."
+  },
+  "assessment": {
+    "steps": {
+      "presentation": "Presentation & access",
+      "questions": "Questions",
+      "results": "Results",
+      "preview": "Preview / review"
+    },
+    "language": "Question and result language",
+    "languageChange": "Change the language label? Existing question and result text will not be translated.",
+    "saveError": "Could not save. Your work is still here. Reload if another edit changed this draft.",
+    "allowRetake": "Allow retakes; keep past completed submissions",
+    "types": {
+      "single": "Single choice",
+      "multi": "Multiple choice",
+      "scale": "Scale / rating choices",
+      "text": "Optional free text"
+    },
+    "unscoredText": "Optional text · never automatically scored",
+    "scored": "Include in score",
+    "weight": "Question weight",
+    "option": "Choice {{n}}",
+    "value": "Value for choice {{n}} (0–100)",
+    "rangesHint": "What someone sees based on their score. Cover every whole-number score from 0 to 100 with no gaps or overlaps. Multiple choices use their average value; question weights set their contribution.",
+    "from": "From score",
+    "to": "Through score",
+    "nextLink": "Optional next-step HTTPS link",
+    "previewOnly": "Author preview only. No participant answers or completion are saved.",
+    "unscored": "No computed score",
+    "approvedRequired": "Approved assessment content required. Drafts and author preview are available; publication and participant completion are not yet available.",
+    "issues": {
+      "title": "Add a title.",
+      "questions": "Add questions with a prompt.",
+      "textScore": "Free text cannot be scored.",
+      "options": "Add at least two labeled choices.",
+      "weights": "Use positive weights and distinct choice values from 0 to 100.",
+      "ranges": "Result ranges must cover 0–100 without gaps or overlaps.",
+      "results": "Add a result title and explanation.",
+      "url": "Use a valid HTTPS link without credentials."
+    }
   }
 }

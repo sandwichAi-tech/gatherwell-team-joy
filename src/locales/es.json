@@ -6314,6 +6314,11 @@
           "name": "Paquete de recursos mixto",
           "example": "Texto, archivos, enlaces y contenido integrado en un solo paquete.",
           "best": "Ideal para: un kit de herramientas o paquete de inicio."
+        },
+        "assessment": {
+          "name": "Evaluación de bienestar",
+          "example": "Preguntas de reflexión y resultados de apoyo, sin respuestas correctas o incorrectas.",
+          "best": "Borradores, rangos ponderados y vista previa; publicar requiere contenido aprobado."
         }
       },
       "quizParent": {
@@ -6323,7 +6328,12 @@
         "new": "Curso nuevo",
         "empty": "Aún no tienes un curso. Crea uno primero — empieza como borrador."
       },
-      "button": "Crear recurso"
+      "button": "Crear recurso",
+      "groups": {
+        "programs": "Programas y evaluaciones",
+        "media": "Medios y guías",
+        "interactive": "Enlaces y actividades"
+      }
     },
     "untitled": "Sin título",
     "tabs": {
@@ -6345,7 +6355,8 @@
       "link": "Enlaces",
       "recipe": "Recetas",
       "live": "Sesiones en vivo",
-      "quiz": "Quizzes"
+      "quiz": "Quizzes",
+      "assessment": "Evaluación de bienestar"
     },
     "typeChip": {
       "course": "Curso",
@@ -6357,7 +6368,8 @@
       "link": "Enlace",
       "recipe": "Receta",
       "live": "Sesión en vivo",
-      "quiz": "Quiz"
+      "quiz": "Quiz",
+      "assessment": "Evaluación de bienestar"
     },
     "sources": {
       "all": "Todo",
@@ -7489,5 +7501,45 @@
     "hostUnavailable": "La página pública del anfitrión no está disponible",
     "pinned": "Los acuerdos de eventos publicados están fijados. Crea un nuevo borrador para usar otro documento.",
     "legacyPinned": "Este evento conserva su documento histórico y los registros de aceptación."
+  },
+  "assessment": {
+    "steps": {
+      "presentation": "Presentación y acceso",
+      "questions": "Preguntas",
+      "results": "Resultados",
+      "preview": "Vista previa / revisión"
+    },
+    "language": "Idioma de preguntas y resultados",
+    "languageChange": "¿Cambiar la etiqueta de idioma? Las preguntas y los resultados existentes no se traducirán.",
+    "saveError": "No se pudo guardar. Tu trabajo sigue aquí. Recarga si otra edición cambió este borrador.",
+    "allowRetake": "Permitir nuevos intentos; conservar los envíos completados",
+    "types": {
+      "single": "Una opción",
+      "multi": "Varias opciones",
+      "scale": "Escala / opciones de valoración",
+      "text": "Texto libre opcional"
+    },
+    "unscoredText": "Texto opcional · nunca se puntúa automáticamente",
+    "scored": "Incluir en la puntuación",
+    "weight": "Peso de la pregunta",
+    "option": "Opción {{n}}",
+    "value": "Valor de la opción {{n}} (0–100)",
+    "rangesHint": "Lo que alguien ve según su puntuación. Cubre cada puntuación entera de 0 a 100 sin huecos ni superposiciones. Varias opciones usan su valor promedio; los pesos determinan su contribución.",
+    "from": "Desde la puntuación",
+    "to": "Hasta la puntuación",
+    "nextLink": "Enlace HTTPS opcional para el siguiente paso",
+    "previewOnly": "Solo vista previa del autor. No se guardan respuestas ni finalizaciones de participantes.",
+    "unscored": "Sin puntuación calculada",
+    "approvedRequired": "Se requiere contenido aprobado para la evaluación. Puedes guardar borradores y ver la vista previa; la publicación y la finalización aún no están disponibles.",
+    "issues": {
+      "title": "Agrega un título.",
+      "questions": "Agrega preguntas con un enunciado.",
+      "textScore": "El texto libre no puede puntuarse.",
+      "options": "Agrega al menos dos opciones con etiqueta.",
+      "weights": "Usa pesos positivos y valores distintos de 0 a 100.",
+      "ranges": "Los rangos deben cubrir 0–100 sin huecos ni superposiciones.",
+      "results": "Agrega un título y una explicación al resultado.",
+      "url": "Usa un enlace HTTPS válido sin credenciales."
+    }
   }
 }
