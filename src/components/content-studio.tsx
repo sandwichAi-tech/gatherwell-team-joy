@@ -19,6 +19,7 @@ import { formatMoney } from '@/lib/billing';
 import { platformFeeCents } from '@/lib/fees';
 import type { Offer } from '@/lib/offers';
 import { reorderedIds, safeExternalUrl } from '@/lib/wellness-assessment';
+import { WellnessAssessmentBuilder } from '@/components/wellness-assessment-builder';
 
 const db = supabase as unknown as { from: (t: string) => any };
 
@@ -250,6 +251,15 @@ function LessonList({ track, lessons, offer, onEdit, onChanged }: { track: Track
   const { t, i18n } = useTranslation();
   const qc = useQueryClient();
   const [ordering, setOrdering] = useState(false);
+  const [assessmentOpen, setAssessmentOpen] = useState(false);
+  const [quizTitle, setQuizTitle] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const addQuiz = async () => {
+    if (!quizTitle?.trim() || ordering) return; setOrdering(true);
+    const { data, error } = await supabase.rpc('create_course_quiz_item', { _track: track.id, _title: quizTitle.trim(), _language: i18n.resolvedLanguage === 'es' ? 'es' : 'en' });
+    setOrdering(false); if (error) { toast.error(t('profile.saveError')); return; }
+    const q = data as { id: string }; void navigate({ to: '/learn/quiz/$id', params: { id: q.id } });
+  };
   const move = async (l: LessonRow, dir: -1 | 1) => {
     const i = lessons.findIndex(x => x.id === l.id); const j = i + dir;
     if (j < 0 || j >= lessons.length) return;
@@ -266,7 +276,9 @@ function LessonList({ track, lessons, offer, onEdit, onChanged }: { track: Track
       <Button variant="ghost" size="icon" disabled={ordering || i === 0} aria-label={t('templates.moveUp')} onClick={() => move(l, -1)}><ArrowUp /></Button>
       <Button variant="ghost" size="icon" disabled={ordering || i === lessons.length - 1} aria-label={t('templates.moveDown')} onClick={() => move(l, 1)}><ArrowDown /></Button>
       <Button variant="ghost" size="icon" aria-label={t('templates.edit')} onClick={() => onEdit(l)}><Pencil /></Button></li>)}</ol>}
-    <div className="lesson-add"><Button variant="secondary" onClick={() => onEdit({ track_id: track.id, type: 'text', is_published: false })}><Plus />{t('content.addLesson')}</Button><Button variant="secondary" onClick={() => onEdit({ track_id: track.id, type: 'link', is_published: false })}><Plus />{t('resources.create.types.link.name')}</Button></div>
+    <div className="lesson-add"><Button variant="secondary" onClick={() => onEdit({ track_id: track.id, type: 'text', is_published: false })}><Plus />{t('content.addLesson')}</Button><Button variant="secondary" onClick={() => onEdit({ track_id: track.id, type: 'link', is_published: false })}><Plus />{t('resources.create.types.link.name')}</Button><Button variant="secondary" onClick={() => setQuizTitle('')}><Plus />{t('resources.create.types.quiz.name')}</Button><Button variant="secondary" onClick={() => setAssessmentOpen(true)}><Plus />{t('resources.create.types.assessment.name')}</Button></div>
+    {quizTitle !== null && <ResponsiveSheet open onOpenChange={o => !o && setQuizTitle(null)} title={t('resources.create.types.quiz.name')} footer={<Button disabled={ordering || !quizTitle.trim()} onClick={() => void addQuiz()}>{t('common.save')}</Button>}><Input aria-label={t('templates.title')} value={quizTitle} maxLength={160} onChange={e => setQuizTitle(e.target.value)} /></ResponsiveSheet>}
+    {assessmentOpen && <ResponsiveSheet open onOpenChange={o => !o && setAssessmentOpen(false)} title={t('resources.create.types.assessment.name')}><WellnessAssessmentBuilder course={offer.id} /></ResponsiveSheet>}
   </div>;
 }
 
