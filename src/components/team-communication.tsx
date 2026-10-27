@@ -56,13 +56,14 @@ export function TeamCommunication({ teamId, me, initialBody }: { teamId: string;
   const edit = (item: Announcement | 'new') => { setEditor(item); setTitle(item === 'new' ? '' : item.title); setBody(item === 'new' ? '' : item.body); setLink(item === 'new' ? '' : item.link_url ?? ''); setPinned(item === 'new' ? false : item.pinned); };
   const save = async (item?: Announcement, archive?: boolean) => {
     setBusy(true);
-    const { error } = await supabase.rpc('save_team_announcement', { _team: teamId, _id: item?.id ?? (editor && editor !== 'new' ? editor.id : undefined), _title: item?.title ?? title, _body: item?.body ?? body, _link: item?.link_url ?? link, _pinned: item?.pinned ?? pinned, _archived: archive ?? false });
+    const { error } = await supabase.rpc('save_team_announcement', { _team: teamId, _id: item?.id ?? (editor && editor !== 'new' ? editor.id : null), _title: item?.title ?? title, _body: item?.body ?? body, _link: item?.link_url ?? link, _pinned: item?.pinned ?? pinned, _archived: archive ?? false } as Parameters<typeof supabase.rpc<'save_team_announcement'>>[1]);
     setBusy(false); if (error) { toast.error(t('teamCommunication.saveError')); return; }
     setEditor(null); refresh();
   };
   if (state.isPending) return <ListSkeleton />;
   if (state.isError) return <RetryState retry={() => void state.refetch()} />;
-  if (!state.data || state.isFetching) return <section className="team-communication" role="status"><p>{t(state.isFetching ? 'teamCommunication.checking' : 'teamCommunication.noAccess')}</p></section>;
+  if (!state.data) return <section className="team-communication" role="status"><p>{t(state.isFetching ? 'teamCommunication.checking' : 'teamCommunication.noAccess')}</p></section>;
+  const owner = state.data.owner;
   const active = list.data?.filter(a => !a.archived_at) ?? [];
   return <section className="team-communication" aria-label={t('teamCommunication.title')}>
     <div className="team-channel-entry">
@@ -78,7 +79,7 @@ export function TeamCommunication({ teamId, me, initialBody }: { teamId: string;
         {a.title && <h3>{a.title}</h3>}<p className="convo-body"><SafeChatText body={a.body} /></p>
         {a.link_url && safeChatUrl(a.link_url) && <a className="auth-link" href={a.link_url} target="_blank" rel="noopener noreferrer">{t('teamCommunication.openLink')}</a>}
         <time dateTime={a.created_at}>{new Date(a.created_at).toLocaleString(i18n.resolvedLanguage === 'es' ? 'es-419' : 'en-US')}</time>{a.updated_at && <small>{t('teamCommunication.edited')}</small>}
-        {state.data.owner && <div className="team-announcement-actions"><Button variant="ghost" size="icon" title={t('profile.edit')} aria-label={t('profile.edit')} onClick={() => edit(a)}><Pencil /></Button><Button variant="ghost" size="icon" title={t(a.pinned ? 'conversation.unpin' : 'conversation.pin')} aria-label={t(a.pinned ? 'conversation.unpin' : 'conversation.pin')} onClick={() => void save({ ...a, pinned: !a.pinned })}><Pin /></Button><Button variant="ghost" size="icon" title={t('teamCommunication.archive')} aria-label={t('teamCommunication.archive')} onClick={async () => { if (await confirmAction({ title: t('teamCommunication.archiveConfirm'), destructive: true })) void save(a, true); }}><EyeOff /></Button></div>}
+        {owner && <div className="team-announcement-actions"><Button variant="ghost" size="icon" title={t('profile.edit')} aria-label={t('profile.edit')} onClick={() => edit(a)}><Pencil /></Button><Button variant="ghost" size="icon" title={t(a.pinned ? 'conversation.unpin' : 'conversation.pin')} aria-label={t(a.pinned ? 'conversation.unpin' : 'conversation.pin')} onClick={() => void save({ ...a, pinned: !a.pinned })}><Pin /></Button><Button variant="ghost" size="icon" title={t('teamCommunication.archive')} aria-label={t('teamCommunication.archive')} onClick={async () => { if (await confirmAction({ title: t('teamCommunication.archiveConfirm'), destructive: true })) void save(a, true); }}><EyeOff /></Button></div>}
       </li>)}</ul>}
       {state.data.owner && list.data?.some(a => a.archived_at) && <details><summary>{t('teamCommunication.archived')}</summary>{list.data.filter(a => a.archived_at).map(a => <div key={a.id} className="team-archived"><p>{a.title || a.body}</p><Button variant="secondary" onClick={() => void save(a, false)}>{t('teamCommunication.restore')}</Button></div>)}</details>}
     </div>}

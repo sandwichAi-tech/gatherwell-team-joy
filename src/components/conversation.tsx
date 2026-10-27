@@ -170,7 +170,7 @@ export function DiscussionsPanel({ teamId, isLeader, me }: { teamId: string; isL
     <ResponsiveSheet open={creating} onOpenChange={setCreating} title={t('conversation.newTopic')}>
       <form className="edit-form" onSubmit={create}>
         <div><label className="field-label" htmlFor="topic-title">{t('conversation.topicTitle')}</label><Input id="topic-title" maxLength={120} required className="field-input" value={title} onChange={e => setTitle(e.target.value)} /></div>
-        <div><label className="field-label" htmlFor="topic-body">{t('conversation.firstPost')}</label><Textarea id="topic-body" rows={4} maxLength={2000} value={body} onChange={e => { request.current = crypto.randomUUID(); setBody(e.target.value); }} /></div>
+        <div><label className="field-label" htmlFor="topic-body">{t('conversation.firstPost')}</label><Textarea id="topic-body" rows={4} maxLength={2000} value={body} onChange={e => setBody(e.target.value)} /></div>
         <Button type="submit" disabled={busy || !title.trim()}>{t('conversation.createTopic')}</Button>
       </form>
     </ResponsiveSheet>
