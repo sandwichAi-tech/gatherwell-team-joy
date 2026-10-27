@@ -10,7 +10,7 @@ export type ToolSectionId =
   | 'team' | 'insights' | 'presence' | 'admin' | 'help';
 
 export type ToolId =
-  | 'events' | 'eventNew' | 'blueprints'
+  | 'events' | 'eventNew' | 'blueprints' | 'waivers'
   | 'learn' | 'learnCreate' | 'learnManage' | 'learnTemplates'
   | 'offers' | 'promos' | 'referrals' | 'earnings'
   | 'communications' | 'followups'
@@ -54,6 +54,7 @@ export function buildToolSections(input: ToolsInput): ToolSection[] {
     { id: 'events', to: '/events', icon: 'CalendarDays' },
     { id: 'eventNew', to: '/gathering/new', icon: 'CalendarPlus' },
     { id: 'blueprints', to: '/blueprints', icon: 'Layers' },
+    { id: 'waivers', to: '/waivers', icon: 'FileText' },
   ] : []);
 
   add('resources', cap('content') && learnOn ? [

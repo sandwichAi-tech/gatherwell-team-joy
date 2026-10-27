@@ -28,6 +28,7 @@ describe('buildToolSections', () => {
     const got = ids({ ...base, workspaceRole: 'host' });
     expect(got).toContain('events');
     expect(got).toContain('blueprints');
+    expect(got).toContain('waivers');
     expect(got).toContain('learnManage');
     expect(got).toContain('offers');
     expect(got).toContain('communications');
