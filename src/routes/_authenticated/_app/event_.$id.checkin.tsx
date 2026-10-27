@@ -1,4 +1,4 @@
-import { WaiverAccept, useEventWaiver, waiverReady, waiverRpc } from '@/components/waiver';
+import { WalkInSheet } from '@/components/walk-in-sheet';
 import { trackEvent } from '@/lib/analytics';
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
@@ -8,12 +8,10 @@ import { toast } from 'sonner';
 import { CheckCircle2, QrCode, Search, UserPlus, X, AlertCircle, Undo2 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { useLiveCounts, useRsvpChanges } from '@/components/event-live';
 import { supabase } from '@/integrations/supabase/client';
 import { initialsOf } from '@/lib/account';
-import { rsvpErrorKey } from '@/lib/guest';
 import { gatherwellHead } from '@/lib/gatherwell-head';
 import { normalizeCheckinCode, checkinErrorResult, confirmedAttendance, type CheckinResult } from '@/lib/checkin-result';
 import { createCheckinQueue, isRetryableCheckinError, type PendingCheckin } from '@/lib/checkin-queue';
@@ -43,8 +41,6 @@ function CheckInMode() {
     },
   });
   const counts = useLiveCounts(id);
-  // Walk-ins are an event-manager action; check-in-only staff never see the control.
-  const { data: canManage = false } = useQuery({ queryKey: ['event', id, 'can-manage'], queryFn: async () => !!(await supabase.rpc('can_manage_event', { _event_id: id })).data });
   useRsvpChanges(id, () => void queryClient.invalidateQueries({ queryKey: listKey }));
   const [q, setQ] = useState(''); const [scanning, setScanning] = useState(false); const [walkIn, setWalkIn] = useState(false); const [scan, setScan] = useState<Scan | null>(null);
   const [undoTarget, setUndoTarget] = useState<{ id: string; name: string } | null>(null);
@@ -127,7 +123,7 @@ function CheckInMode() {
       <div className="checkin-counters">{([['going', counts?.going], ['checked_in', counts?.checked_in], ['walk_ins', counts?.walk_ins], ['waitlist', counts?.waitlist]] as const).map(([k, v]) =>
         <div key={k}><strong className="tabular-nums">{v ?? 0}</strong><span>{t(`checkin.counts.${k}`)}</span></div>)}</div>
       <div className="checkin-search"><Search /><Input aria-label={t('checkin.search')} placeholder={t('checkin.search')} value={q} onChange={e => setQ(e.target.value)} /></div>
-      <div className="checkin-tools"><Button onClick={() => { setScan(null); setScanning(true); }}><QrCode />{t('checkin.scan')}</Button>{canManage && <Button variant="secondary" onClick={() => setWalkIn(true)}><UserPlus />{t('checkin.walkIn')}</Button>}</div>
+      <div className="checkin-tools"><Button onClick={() => { setScan(null); setScanning(true); }}><QrCode />{t('checkin.scan')}</Button>{authorized && <Button variant="secondary" onClick={() => setWalkIn(true)}><UserPlus />{t('checkin.walkIn')}</Button>}</div>
     </header>
     {(!online || pending.length > 0) && <div className="connection-note" role="status"><p>{t(pending.length ? 'launch.pending' : 'launch.offline', { count: pending.length })}</p>{pending.length > 0 && <Button variant="secondary" disabled={!online} onClick={() => void sync()}>{t('error.retry')}</Button>}</div>}
     {scan && !scanning && <div className="connection-note" role="status"><p>{t(scan.result === 'pending' ? 'launch.scanPending' : `checkin.scanResult.${scan.result}`, { name: scan.name ?? '' })}</p>{scan.result === 'waiver_required' && <p>{t('attendancePilot.waiverResolution')}</p>}</div>}
@@ -136,7 +132,7 @@ function CheckInMode() {
       <h2 className="checkin-section">{t('checkin.toCheckIn')} <span className="tabular-nums">{waiting.length}</span></h2>
       {waiting.length === 0 && <p className="muted">{t('checkin.allIn')}</p>}
       <ul className="checkin-list">{waiting.map(r => <li key={r.id}><span className="initial-avatar">{initialsOf(r.guest_name)}</span>
-        <span className="checkin-name">{r.guest_name}{r.plus_ones > 0 && <small>+{r.plus_ones}</small>}<span className="belong-tags"><BelongingTags info={belong.get(r.id)} row={r} rows={rows} /></span><BelongingPrompt info={belong.get(r.id)} name={r.guest_name} /></span>
+        <span className="checkin-name">{r.guest_name}{r.is_walk_in && <small>{t('checkin.walkInTag')}</small>}{r.plus_ones > 0 && <small>+{r.plus_ones}</small>}<span className="belong-tags"><BelongingTags info={belong.get(r.id)} row={r} rows={rows} /></span><BelongingPrompt info={belong.get(r.id)} name={r.guest_name} /></span>
         <Button className="checkin-button" disabled={pending.some(p => p.rsvpId === r.id)} onClick={() => checkIn(r.id)}>{t(pending.some(p => p.rsvpId === r.id) ? 'launch.waiting' : 'checkin.checkIn')}</Button></li>)}</ul>
       <h2 className="checkin-section">{t('checkin.checkedIn')} <span className="tabular-nums">{done.length}</span></h2>
       <ul className="checkin-list is-done">{done.map(r => <li key={r.id}><CheckCircle2 className="checkin-ok" />
@@ -144,7 +140,7 @@ function CheckInMode() {
         <Button variant="ghost" size="icon" aria-label={t('checkin.undo')} onClick={() => setUndoTarget({ id: r.id, name: r.guest_name ?? '' })}><Undo2 /></Button></li>)}</ul>
     </main>}
     {scanning && <Scanner onClose={() => setScanning(false)} onCode={onCode} scan={scan} onNext={() => setScan(null)} />}
-    <WalkInSheet open={walkIn} eventId={id} onClose={() => setWalkIn(false)} onSaved={() => queryClient.invalidateQueries({ queryKey: listKey })} />
+    <WalkInSheet open={walkIn} eventId={id} onClose={() => setWalkIn(false)} onSaved={() => { void queryClient.invalidateQueries({ queryKey: ['event', id] }); void queryClient.invalidateQueries({ queryKey: ['live-counts', id] }); }} />
     <ResponsiveSheet open={!!undoTarget} onOpenChange={o => !o && setUndoTarget(null)} title={t('checkin.undoTitle')} description={t('checkin.undoText', { name: undoTarget?.name ?? '' })}>
       <div className="confirm-actions">
         <Button variant="secondary" onClick={() => setUndoTarget(null)}>{t('checkin.undoKeep')}</Button>
@@ -229,42 +225,3 @@ function Scanner({ onClose, onCode, scan, onNext }: { onClose: () => void; onCod
   </div>;
 }
 
-function WalkInSheet({ open, eventId, onClose, onSaved }: { open: boolean; eventId: string; onClose: () => void; onSaved: () => void }) {
-  const { t, i18n } = useTranslation();
-  const blank = { first: '', last: '', phone: '', email: '', sms: false, mail: false };
-  const { data: waiver } = useEventWaiver(open ? eventId : undefined); const [wName, setWName] = useState(''); const [wOk, setWOk] = useState(false);
-  const [f, setF] = useState(blank); const [busy, setBusy] = useState(false); const [err, setErr] = useState<string | null>(null);
-  const submit = async (e: FormEvent) => {
-    e.preventDefault(); setErr(null);
-    if (!f.first.trim()) { setErr(t('guest.errors.name_required')); return; }
-    if (!f.phone.trim() && !f.email.trim()) { setErr(t('guest.errors.contact_required')); return; }
-    if (!waiverReady(waiver, wName, wOk)) { setErr(t('guest.errors.waiver_required')); return; }
-    setBusy(true);
-    const { data: rid, error } = await supabase.rpc('add_walk_in', { _event: eventId, _first: f.first.trim(), _last: f.last.trim(), _phone: f.phone.trim(), _email: f.email.trim(), _sms: f.sms, _mail: f.mail, _language: i18n.resolvedLanguage === 'es' ? 'es' : 'en' });
-    if (!error && rid && waiver?.required) {
-      const { error: we } = await waiverRpc('walk_in_waiver', { _rsvp: rid, _name: wName.trim() });
-      if (we) { setBusy(false); setErr(t('waiver.recordError')); onSaved(); return; }
-      const { error: admissionError } = await supabase.rpc('check_in_rsvp', { _rsvp: rid, _undo: false });
-      if (admissionError) { setBusy(false); setErr(t('checkin.scanResult.waiver_required')); onSaved(); return; }
-    }
-    setBusy(false);
-    if (error) { setErr(t(rsvpErrorKey(error))); return; }
-    setWName(''); setWOk(false);
-    toast.success(t('checkin.walkInAdded', { name: f.first.trim() })); setF(blank); onSaved(); onClose();
-  };
-  return <ResponsiveSheet open={open} onOpenChange={o => !o && onClose()} title={t('checkin.walkIn')}>
-    <form className="guest-form" onSubmit={submit} noValidate>
-      <div className="guest-name-row">
-        <div><label className="field-label" htmlFor="w-first">{t('guest.firstName')}</label><Input id="w-first" autoFocus maxLength={60} className="field-input" value={f.first} onChange={e => setF({ ...f, first: e.target.value })} /></div>
-        <div><label className="field-label" htmlFor="w-last">{t('guest.lastName')}</label><Input id="w-last" maxLength={60} className="field-input" value={f.last} onChange={e => setF({ ...f, last: e.target.value })} /></div>
-      </div>
-      <div><label className="field-label" htmlFor="w-phone">{t('guest.phone')}</label><Input id="w-phone" type="tel" inputMode="tel" maxLength={30} className="field-input" value={f.phone} onChange={e => setF({ ...f, phone: e.target.value })} /></div>
-      <div><label className="field-label" htmlFor="w-email">{t('guest.email')}</label><Input id="w-email" type="email" maxLength={200} className="field-input" value={f.email} onChange={e => setF({ ...f, email: e.target.value })} /></div>
-      <label className="guest-consent"><Checkbox checked={f.sms} onCheckedChange={v => setF({ ...f, sms: !!v })} /><span>{t('guest.smsConsent')}</span></label>
-      <label className="guest-consent"><Checkbox checked={f.mail} onCheckedChange={v => setF({ ...f, mail: !!v })} /><span>{t('guest.emailConsent')}</span></label>
-      {waiver && <WaiverAccept waiver={waiver} name={wName} accepted={wOk} onName={setWName} onAccepted={setWOk} idPrefix="wwv" />}
-      {err && <p className="field-error" role="alert">{err}</p>}
-      <Button type="submit" className="guest-primary" disabled={busy}>{t('checkin.addAndCheckIn')}</Button>
-    </form>
-  </ResponsiveSheet>;
-}

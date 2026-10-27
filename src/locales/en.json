@@ -729,7 +729,8 @@
     "memberTitle": "RSVP to your team's next event",
     "memberText": "See what's coming up and save your spot.",
     "memberAction": "See events",
-    "done": "Done"
+    "done": "Done",
+    "finishDraft": "Finish your draft"
   },
   "plans": {
     "free": "Free plan",
@@ -1742,7 +1743,12 @@
     "undoConfirm": "Undo check-in",
     "manualCode": "Enter code by hand",
     "manualCodeHint": "e.g. EAA8-3320-…",
-    "manualSubmit": "Check in"
+    "manualSubmit": "Check in",
+    "walkInRetry": "Attendance was not confirmed. Your details are kept; retry when connected.",
+    "walkInExisting": "Already registered for this event. Use the existing registration.",
+    "walkInAlready": "Already checked in for this event. No duplicate was created.",
+    "checkExisting": "Check in existing attendee",
+    "attendeeResolution": "Open attendee registration"
   },
   "learnHub": {
     "startHere": "Start here",
@@ -5150,7 +5156,7 @@
     "discoverResources": "Discover resources",
     "discoverCoaches": "Find a coach",
     "free": "Free"
-},
+  },
   "customerHome": {
     "next": "Next up",
     "noRsvps": "No RSVPs yet",
