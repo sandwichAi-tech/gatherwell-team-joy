@@ -1191,6 +1191,13 @@
       "when": 1793117128293,
       "tag": "0169_waiver_pins_owner_read_hardening",
       "breakpoints": true
+    },
+    {
+      "idx": 170,
+      "version": "7",
+      "when": 1793121863869,
+      "tag": "0170_event_agreement_reference_validation",
+      "breakpoints": true
     }
   ]
 }
