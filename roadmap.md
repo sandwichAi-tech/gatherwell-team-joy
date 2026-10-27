@@ -1,5 +1,11 @@
 # Challenge experience pass — DONE
 
+## Website Notes row 101 — In Progress
+- [x] Audit Home modes, team/catalog leakage, RSVP/purchase/entitlement/follow access and cache lifecycle.
+- [ ] Replace broad Home reads with authoritative caller-scoped payload; preserve Discover and rows102–106.
+- [ ] Focused/full tests, isolated account/relationship checks and EN/ES mobile/desktop review.
+- [ ] Record exact unverified cases, verify compilation signals and remove all temporary fixtures/files.
+
 ## Website Notes rows 102–105 — In Progress
 - [x] Audited ownership, legacy active memberships, immediate invitations, named roster, template/network copy models and row106 guards.
 - [x] Added owner approval, My teams sections, named owner-only requests/roster, persistent status and direct channel integration.
