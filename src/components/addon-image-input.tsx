@@ -10,10 +10,11 @@ import { mediaUrl, uploadMedia } from '@/lib/account';
 import { ADDON_IMAGE_BYTES, ADDON_IMAGE_RATIO } from '@/lib/addon-images';
 import { cleanupAddonImages } from '@/lib/addon-images.functions';
 
-export function AddonImageInput({ userId, name, path, onChange, onBusy }: { userId: string; name: string; path?: string | null; onChange: (p: string | null) => void; onBusy: (busy: boolean) => void }) {
+export function AddonImageInput({ userId, name, path, onChange, onBusy }: { userId: string; name: string; path?: string | null | undefined; onChange: (p: string | null) => void; onBusy: (busy: boolean) => void }) {
   const { t } = useTranslation(); const [busy, setBusy] = useState(false); const [error, setError] = useState('');
   const input = useRef<HTMLSpanElement>(null); const cleanup = useServerFn(cleanupAddonImages);
   const candidates = useRef(new Set<string>()); const alive = useRef(true);
+  const change = useRef(onChange); change.current = onChange;
   const { data: src } = useQuery({ queryKey: ['media-url', path], queryFn: () => mediaUrl(path), enabled: !!path });
   useEffect(() => { alive.current = true; return () => { alive.current = false; void cleanup({ data: { paths: [...candidates.current] } }).catch(() => undefined); }; }, [cleanup]);
   const cropped = async ({ file, previewUrl }: CropResult) => {
@@ -25,7 +26,7 @@ export function AddonImageInput({ userId, name, path, onChange, onBusy }: { user
       const signed = await mediaUrl(p);
       if (!signed) throw new Error('media_unavailable');
       if (path) candidates.current.add(path);
-      if (alive.current) onChange(p);
+      if (alive.current) change.current(p);
       else await cleanup({ data: { paths: [p] } });
     } catch { await cleanup({ data: { paths: [p] } }).catch(() => undefined); if (alive.current) setError('addonImages.failed'); }
     finally { URL.revokeObjectURL(previewUrl); if (alive.current) setBusy(false); onBusy(false); }
