@@ -22,12 +22,20 @@
     "noAccess": "This private conversation is unavailable. Your membership may be pending, removed, or suspended.",
     "checking": "Checking team access…",
     "saveError": "Unable to load or save. Reconnect and try again; your unsent text is unchanged."
-},
+  },
   "addonImages": {
-    "label": "Add-on image", "upload": "Upload image", "replace": "Replace image", "remove": "Remove image",
-    "uploading": "Uploading image…", "failed": "The image could not be saved. Your previous image is unchanged. Try again.",
-    "type": "Choose a JPEG, PNG, or WebP image.", "size": "Choose an image no larger than 15 MB.",
-    "alt": "{{name}} — add-on image", "title": "Add-ons", "loading": "Loading add-ons…", "loadError": "Add-ons could not be loaded."
+    "label": "Add-on image",
+    "upload": "Upload image",
+    "replace": "Replace image",
+    "remove": "Remove image",
+    "uploading": "Uploading image…",
+    "failed": "The image could not be saved. Your previous image is unchanged. Try again.",
+    "type": "Choose a JPEG, PNG, or WebP image.",
+    "size": "Choose an image no larger than 15 MB.",
+    "alt": "{{name}} — add-on image",
+    "title": "Add-ons",
+    "loading": "Loading add-ons…",
+    "loadError": "Add-ons could not be loaded."
   },
   "eventReliability": {
     "errors": {
@@ -7300,5 +7308,51 @@
     "open": "Open resource",
     "signQuiz": "Sign in to take this quiz",
     "notAvailable": "This resource is not available yet."
-}
+  },
+  "teamMembership": {
+    "lead": "Teams I lead",
+    "belong": "Teams I belong to",
+    "emptylead": "You are not leading a team yet.",
+    "emptybelong": "No memberships or requests yet.",
+    "open": "Open team",
+    "pendingHint": "The team owner reviews each request. Private content is available only after approval.",
+    "ownerOnly": "Only the team owner can view and manage members and requests.",
+    "manage": "Members and requests",
+    "requests": "Join requests",
+    "members": "Approved members",
+    "emptyList": "No entries yet.",
+    "requested": "Requested {{date}}",
+    "joined": "Joined {{date}}",
+    "approve": "Approve",
+    "declined": "Decline",
+    "removed": "Remove member",
+    "error": "Unable to update this team. Check your access and try again.",
+    "request": "Request to join",
+    "signIn": "Sign in to request to join",
+    "status": {
+      "pending": "Pending approval",
+      "approved": "Approved",
+      "declined": "Declined",
+      "removed": "Removed",
+      "suspended": "Suspended",
+      "unavailable": "Unavailable"
+    }
+  },
+  "teamLibrary": {
+    "title": "Team library",
+    "share": "Share a reusable item",
+    "hint": "Only items explicitly shared with this team appear here. Purchases and customer records are never included.",
+    "empty": "No reusable items have been shared with this team.",
+    "blueprint": "Event blueprint",
+    "resource_template": "Resource template",
+    "view": "View and copy",
+    "source": "Your reusable item",
+    "choose": "Choose an item",
+    "assets": "Copies are independent private drafts. Uploaded files and photos must be added by the copying coach. Paid access is not included.",
+    "copy": "Copy to my workspace",
+    "destination": "My workspace",
+    "noWorkspace": "Create your own workspace first",
+    "copied": "Independent draft created.",
+    "openDraft": "Open draft"
+  }
 }
