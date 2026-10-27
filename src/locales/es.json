@@ -7421,7 +7421,7 @@
     "select": "Seleccionar un documento del anfitrión",
     "choose": "Elige un documento",
     "empty": "Aún no hay documentos reutilizables. Crea uno en Yo → Mis documentos de consentimiento.",
-    "scope": "Solo tu cuenta de anfitrión administra estos documentos. Se seleccionan explícitamente para cada evento; el acuerdo de ZoheeWell es independiente.",
+    "scope": "Solo tu cuenta de anfitrión administra estos documentos. Los eliges para cada evento.",
     "team": "Documento histórico del anfitrión",
     "textOnly": "Ingresa el texto de tu documento existente o carga un PDF de hasta 10 MB. No se genera texto legal.",
     "versionHelp": "Guardar cambios crea una nueva versión inmutable. Los eventos y consentimientos existentes no cambian.",
@@ -7624,7 +7624,7 @@
     "optional": "Opcional",
     "effective": "vigente desde {{date}}",
     "choose": "Exención adicional del anfitrión",
-    "none": "Sin exención adicional del anfitrión",
+    "none": "Ningún formulario seleccionado",
     "multiple": "{{count}} exenciones de una versión anterior de este evento",
     "emptyLibrary": "Aún no tienes exenciones guardadas. Crea una abajo; tu avance en el evento se conserva.",
     "unavailable": "Esta exención no está en tu biblioteca. Elige otra o selecciona sin exención adicional.",
@@ -7644,7 +7644,7 @@
     "editWaiver": "Editar exención del anfitrión",
     "englishNeeded": "Agrega texto en inglés o un PDF antes de guardar.",
     "pinnedOn": "fijada el {{date}}",
-    "noneSelected": "Sin exención adicional del anfitrión",
+    "noneSelected": "Ningún formulario seleccionado",
     "noLegalAdvice": "ZoheeWell no revisa las exenciones de los anfitriones. Seleccionar un documento no lo hace legalmente suficiente ni elimina la responsabilidad.",
     "status": {
       "loading": "Verificando…"

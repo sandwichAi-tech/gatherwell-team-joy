@@ -7421,7 +7421,7 @@
     "select": "Select a host waiver",
     "choose": "Choose a waiver",
     "empty": "No reusable waivers yet. Create one in Me → My waivers.",
-    "scope": "Only your host account can manage these documents. Selection is explicit for each event; ZoheeWell’s agreement remains separate.",
+    "scope": "Only your host account manages these documents. You choose them for each event.",
     "team": "Legacy host document",
     "textOnly": "Enter your existing document text or upload a PDF up to 10 MB. No legal text is generated.",
     "versionHelp": "Saving changed text creates a new immutable version. Existing event attachments and acceptances stay unchanged.",
@@ -7624,7 +7624,7 @@
     "optional": "Optional",
     "effective": "effective {{date}}",
     "choose": "Additional host waiver",
-    "none": "No additional host waiver",
+    "none": "No host forms selected",
     "multiple": "{{count}} waivers from an earlier version of this event",
     "emptyLibrary": "You have no saved host waivers yet. Create one below; your event progress stays here.",
     "unavailable": "This waiver is not in your host library. Choose another or select no additional waiver.",
@@ -7644,7 +7644,7 @@
     "editWaiver": "Edit host waiver",
     "englishNeeded": "Add English text or a PDF before saving.",
     "pinnedOn": "fixed {{date}}",
-    "noneSelected": "No additional host waiver",
+    "noneSelected": "No host forms selected",
     "noLegalAdvice": "ZoheeWell does not review host waivers. Selecting a document does not make it legally sufficient or remove liability.",
     "status": {
       "loading": "Checking…"
