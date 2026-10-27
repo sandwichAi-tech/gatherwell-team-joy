@@ -143,31 +143,43 @@ export type Database = {
       }
       announcements: {
         Row: {
+          archived_at: string | null
           author_id: string
           body: string
           created_at: string
           id: string
+          link_url: string | null
           photo_url: string | null
           pinned: boolean
           team_id: string
+          title: string
+          updated_at: string | null
         }
         Insert: {
+          archived_at?: string | null
           author_id?: string
           body: string
           created_at?: string
           id?: string
+          link_url?: string | null
           photo_url?: string | null
           pinned?: boolean
           team_id: string
+          title?: string
+          updated_at?: string | null
         }
         Update: {
+          archived_at?: string | null
           author_id?: string
           body?: string
           created_at?: string
           id?: string
+          link_url?: string | null
           photo_url?: string | null
           pinned?: boolean
           team_id?: string
+          title?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -1032,6 +1044,7 @@ export type Database = {
         Row: {
           author_id: string
           body: string
+          client_request_id: string | null
           created_at: string
           event_id: string | null
           hidden: boolean
@@ -1047,6 +1060,7 @@ export type Database = {
         Insert: {
           author_id: string
           body: string
+          client_request_id?: string | null
           created_at?: string
           event_id?: string | null
           hidden?: boolean
@@ -1062,6 +1076,7 @@ export type Database = {
         Update: {
           author_id?: string
           body?: string
+          client_request_id?: string | null
           created_at?: string
           event_id?: string | null
           hidden?: boolean
@@ -3753,6 +3768,7 @@ export type Database = {
       notifications: {
         Row: {
           body: string | null
+          communication_team_id: string | null
           created_at: string
           dedupe_key: string | null
           id: string
@@ -3766,6 +3782,7 @@ export type Database = {
         }
         Insert: {
           body?: string | null
+          communication_team_id?: string | null
           created_at?: string
           dedupe_key?: string | null
           id?: string
@@ -3779,6 +3796,7 @@ export type Database = {
         }
         Update: {
           body?: string | null
+          communication_team_id?: string | null
           created_at?: string
           dedupe_key?: string | null
           id?: string
@@ -6853,6 +6871,35 @@ export type Database = {
           },
         ]
       }
+      team_channel_preferences: {
+        Row: {
+          announcements_read_at: string | null
+          muted: boolean
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          announcements_read_at?: string | null
+          muted?: boolean
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          announcements_read_at?: string | null
+          muted?: boolean
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_channel_preferences_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       team_invites: {
         Row: {
           accepted_at: string | null
@@ -8150,6 +8197,17 @@ export type Database = {
         Args: { _role: string; _team: string; _user: string }
         Returns: undefined
       }
+      channel_in_app: {
+        Args: {
+          _body: string
+          _id: string
+          _kind: string
+          _link: string
+          _team: string
+          _title: string
+        }
+        Returns: undefined
+      }
       chat_platform: { Args: { _url: string }; Returns: string }
       check_event_waivers: {
         Args: { _accepted: Json; _event: string }
@@ -8821,6 +8879,15 @@ export type Database = {
         Args: { _message: string; _team: string; _to: string }
         Returns: undefined
       }
+      post_team_comment: {
+        Args: {
+          _body: string
+          _parent: string
+          _request: string
+          _topic: string
+        }
+        Returns: string
+      }
       price_guidance: { Args: { _category: string }; Returns: Json }
       process_attendance_journey: {
         Args: { _journey: string }
@@ -9353,6 +9420,18 @@ export type Database = {
         }
         Returns: string
       }
+      save_team_announcement: {
+        Args: {
+          _archived?: boolean
+          _body: string
+          _id: string
+          _link: string
+          _pinned: boolean
+          _team: string
+          _title: string
+        }
+        Returns: string
+      }
       search_team_library: {
         Args: { _q: string; _team: string }
         Returns: {
@@ -9434,6 +9513,10 @@ export type Database = {
         Args: { _event: string; _groups: string[] }
         Returns: undefined
       }
+      set_team_channel_preference: {
+        Args: { _muted?: boolean; _read_announcements?: boolean; _team: string }
+        Returns: undefined
+      }
       set_workspace_assignment_active: {
         Args: { _active: boolean; _id: string }
         Returns: undefined
@@ -9498,6 +9581,12 @@ export type Database = {
         Args: { _cap: string; _team: string }
         Returns: boolean
       }
+      team_channel_access: {
+        Args: { _team: string; _user?: string }
+        Returns: boolean
+      }
+      team_channel_owner: { Args: { _team: string }; Returns: boolean }
+      team_channel_state: { Args: { _team: string }; Returns: Json }
       team_featured_gatherings: { Args: { _team: string }; Returns: Json }
       team_insights: {
         Args: { _from: string; _root: string; _scope: string; _to: string }
