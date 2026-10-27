@@ -125,7 +125,7 @@ function CheckInSheet({ open, onClose, c, date }: { open: boolean; onClose: () =
       if (error) throw error;
       const r = data as { current?: number } | null;
       toast.success(t('challenges.checkedIn'), { description: t('challenges.streakShort', { count: r?.current ?? 1 }) });
-      await Promise.all([qc.invalidateQueries({ queryKey: ['challenge-checkins', userId, c.id] }), qc.invalidateQueries({ queryKey: ['challenge-board', c.id] }), qc.invalidateQueries({ queryKey: ['challenge-stats', c.id] })]);
+      await Promise.all([qc.invalidateQueries({ queryKey: ['challenge-checkins', userId, c.id] }), qc.invalidateQueries({ queryKey: ['challenge-board', c.id] }), qc.invalidateQueries({ queryKey: ['challenge-progress', c.id] }), qc.invalidateQueries({ queryKey: ['challenge-stats', c.id] })]);
       onClose();
     } catch (e) { toast.error(t(rpcErrorKey(e))); }
     setBusy(false);
@@ -196,6 +196,7 @@ export function ChallengePage({ id }: { id: string }) {
   const { data: joinedRow, refetch: refetchJoin } = useQuery({ queryKey: ['challenge-joined', id, userId], refetchInterval: 15000, queryFn: async () => { const r = await supabase.from('challenge_members').select('challenge_id,extras').eq('challenge_id', id).eq('user_id', userId).maybeSingle(); if (r.error) throw r.error; return r.data; } });
   const { data: eligible = false } = useQuery({ queryKey: ['challenge-eligible', id, userId], queryFn: async () => { const r = await supabase.rpc('challenge_can_enroll', { _c: id }); if (r.error) throw r.error; return r.data; } });
   const { data: mine = [] } = useQuery(myCheckinsQuery(userId, id));
+  const { data: savedProgress } = useQuery({ queryKey: ['challenge-progress', id, userId], enabled: !!joinedRow, refetchInterval: 15000, queryFn: async () => { const r = await supabase.rpc('my_challenge_progress', { _c: id }); if (r.error) throw r.error; return r.data as { total: number; current: number; best: number }; } });
   const { data: board = [] } = useQuery({ ...leaderboardQuery(id, userId), enabled: !!c?.leaderboard_on && (!!joinedRow || c.created_by === userId) });
   const { data: activities = [] } = useQuery({ queryKey: ['challenge-activities', id, userId], enabled: !!joinedRow || c?.created_by === userId, queryFn: async () => ((await supabase.from('challenge_activities').select('*').eq('challenge_id', id).order('sort_order')).data ?? []) as ChallengeActivity[] });
   const { data: messages = [] } = useQuery({ queryKey: ['challenge-messages', id, userId], enabled: !!joinedRow || c?.created_by === userId, queryFn: async () => ((await supabase.from('challenge_messages').select('*').eq('challenge_id', id).order('sort_order')).data ?? []) as ChallengeMessage[] });
@@ -209,7 +210,7 @@ export function ChallengePage({ id }: { id: string }) {
   if (isLoading) return <ListSkeleton />;
   if (!c) return <section className="panel"><Link to="/team" className="back-link"><ArrowLeft />{t('nav.team')}</Link><p className="auth-subtitle">{t('learnHub.notFound')}</p></section>;
   const today = localDate(new Date(), c.timezone ?? 'UTC'); const yesterday = addDays(today, -1); const phase = phaseOf(c, today); const len = lengthOf(c);
-  const dates = new Set(mine.map(m => m.checkin_date)); const s = streaksOf([...dates], today);
+  const dates = new Set(mine.map(m => m.checkin_date)); const s = savedProgress ?? streaksOf([...dates], today);
   const todayRow = mine.find(m => m.checkin_date === today);
   const donePeriod = checkedInPeriod([...dates], today, c.starts_on, c.frequency);
   const canYesterday = localHour(c.timezone ?? 'UTC') < 12 && yesterday >= c.starts_on && yesterday <= c.ends_on && !dates.has(yesterday);

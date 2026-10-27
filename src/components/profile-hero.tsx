@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { GwIcon, GwFeatureTile, type GwIconName } from '@/components/gw-icon';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
 import { myChallengesQuery, myGatheringsQuery, profileStatsQuery, recentBadgesQuery, type MyGathering } from '@/lib/profile-stats';
+import { localDate, pick } from '@/lib/challenges';
 
 /** Identity-led hero shared by Me and member detail. */
 export function ProfileHero({ founding, verified, avatar, name, city, team, role, badge, bio, actions, compact, cover }: {
@@ -89,12 +90,11 @@ export function MyChallengesList({ userId }: { userId: string }) {
   if (q.isPending) return <ListSkeleton />;
   if (q.isError) return <RetryState retry={() => void q.refetch()} />;
   if (!q.data.length) return <EmptyComposed icon="Flag" title={t('profile.challengesEmptyTitle')} body={t('profile.challengesEmpty')} />;
-  const today = new Date().toISOString().slice(0, 10);
   const fmt = (s: string) => new Date(`${s}T12:00:00`).toLocaleDateString(i18n.resolvedLanguage, { month: 'short', day: 'numeric' });
   const row = (c: (typeof q.data)[number]) => <Link key={c.id} to="/challenge/$id" params={{ id: c.id }} className="gw-list-row">
-    <GwFeatureTile name="Flag" size={24} /><span className="gw-list-main"><strong>{i18n.resolvedLanguage === 'es' ? c.title_es : c.title_en}</strong><small>{fmt(c.starts_on)} – {fmt(c.ends_on)}</small></span><GwIcon name="ChevronRight" className="settings-chevron" />
+    <GwFeatureTile name="Flag" size={24} /><span className="gw-list-main"><strong>{pick(i18n.resolvedLanguage, c.title_en, c.title_es)}</strong><small>{fmt(c.starts_on)} – {fmt(c.ends_on)}</small></span><GwIcon name="ChevronRight" className="settings-chevron" />
   </Link>;
-  const active = q.data.filter(c => c.ends_on >= today), done = q.data.filter(c => c.ends_on < today);
+  const active = q.data.filter(c => c.ends_on >= localDate(new Date(), c.timezone ?? 'UTC')), done = q.data.filter(c => c.ends_on < localDate(new Date(), c.timezone ?? 'UTC'));
   return <div className="gw-list-sections">
     <h3 className="gw-group-title">{t('profile.activeNow')}</h3>
     {active.length ? <div className="gw-group-list">{active.map(row)}</div> : <p className="gw-muted-line">{t('profile.noActive')}</p>}

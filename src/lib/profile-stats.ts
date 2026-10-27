@@ -59,12 +59,12 @@ export const myGatheringsQuery = (userId: string) => queryOptions({
   },
 });
 
-export type MyChallenge = { id: string; title_en: string; title_es: string; starts_on: string; ends_on: string };
+export type MyChallenge = { id: string; title_en: string; title_es: string; starts_on: string; ends_on: string; timezone: string | null };
 export const myChallengesQuery = (userId: string) => queryOptions({
   queryKey: ['my-challenges', userId],
   queryFn: async (): Promise<MyChallenge[]> => {
-    const { data, error } = await supabase.rpc('my_challenges');
+    const { data, error } = await supabase.rpc('my_challenge_list');
     if (error) throw error;
-    return data ?? [];
+    return (data ?? []) as MyChallenge[];
   },
 });
