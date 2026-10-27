@@ -215,7 +215,7 @@ export function MePage() {
   const publicUrl = profile?.slug ? `${window.location.origin}/h/${profile.slug}` : null;
   const panelIcons: Record<Exclude<Panel, null>, GwIconName> = { waivers: 'FileText', qr: 'QrCode', gatherings: 'CalendarDays', challenges: 'Flag', badges: 'Award', teams: 'UsersRound', notifications: 'Bell', updates: 'Megaphone', inbox: 'MessageCircle', support: 'LifeBuoy', plan: 'CreditCard', purchases: 'CreditCard', invite: 'UserPlus', calendar: 'CalendarPlus', hostProfile: 'Globe2', privacy: 'ShieldCheck' };
   const panels: Record<Exclude<Panel, null>, { title: string; icon: GwIconName; body: ReactNode }> = {
-    waivers: { title: t('waiverLibrary.title'), icon: 'FileText', body: workspace && canHost ? <WaiverLibrary teamId={workspace.teamId} /> : <EmptyState compact icon="FileText" text={t('workspace.none')} /> },
+    waivers: { title: t('waiverLibrary.title'), icon: 'FileText', body: workspace && canHost ? <WaiverLibrary teamId={workspace.teamId} userId={userId} /> : <EmptyState compact icon="FileText" text={t('workspace.none')} /> },
     gatherings: { title: t('profile.myGatherings'), icon: 'CalendarDays', body: <MyGatheringsList userId={userId} /> },
     challenges: { title: t('profile.myChallenges'), icon: 'Flag', body: <MyChallengesList userId={userId} /> },
     badges: { title: t('profile.myBadges'), icon: 'Award', body: workspace ? <BadgeWall teamId={workspace.teamId} /> : <EmptyState compact icon="UsersRound" text={t('workspace.none')} /> },
