@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
@@ -125,7 +125,7 @@ export function RequiredAgreementsSummary({ platformState, hostState, hostForms,
     <ul className="plain-list">
       {row(t('eventAgreements.title'), platformState, platformState === 'ready')}
       {!hostForms.length ? row(t('builderAgreements.hostTitle'), hostState, true)
-        : hostForms.map((f, i) => <li key={i} className="contents">{row(f.name ? t('builderAgreements.hostNamed', { name: f.name }) : t('builderAgreements.hostTitle'), f.state, f.state === 'ready' || f.state === 'stale')}</li>)}
+        : hostForms.map((f, i) => <Fragment key={i}>{row(f.name ? t('builderAgreements.hostNamed', { name: f.name }) : t('builderAgreements.hostTitle'), f.state, f.state === 'ready' || f.state === 'stale')}</Fragment>)}
     </ul>
     <p className="field-hint">{t('builderAgreements.noLegalAdvice')}</p>
   </section>;

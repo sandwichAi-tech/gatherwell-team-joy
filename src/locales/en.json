@@ -6977,6 +6977,10 @@
       "referrals": {
         "title": "Referral programs",
         "desc": "Optional rewards for sharing paid items."
+      },
+      "waivers": {
+        "title": "Waivers & release forms",
+        "desc": "Reusable private forms attendees accept for your events."
       }
     }
   },
@@ -7631,5 +7635,47 @@
       "stale": "Ready · a newer version exists",
       "unavailable": "Choose a waiver from your own library"
     }
+  },
+  "hostForms": {
+    "title": "Waivers & release forms",
+    "subtitle": "Your reusable waivers, liability releases and photo/media releases for events.",
+    "add": "Add a form",
+    "newTitle": "New form",
+    "editTitle": "Edit form (saves a new version)",
+    "name": "Form name",
+    "description": "Description",
+    "optional": "optional",
+    "descCount": "{{n}} of {{max}} characters",
+    "descTooLong": "Description is too long. Use 500 characters or fewer.",
+    "kind": "Form type",
+    "kinds": {
+      "waiver": "Waiver",
+      "release": "Liability release",
+      "media": "Photo/media release",
+      "other": "Other"
+    },
+    "fileRules": "Allowed file: PDF only, up to 10 MB. Files are private to your host account.",
+    "fileRejected": "This file can't be used. Choose a PDF of 10 MB or less.",
+    "replaceFile": "Replace PDF",
+    "empty": "No forms yet. Add your first waiver or release form; it stays private to your host account.",
+    "updated": "updated {{date}}",
+    "usage": "Used by",
+    "usageCounts": "{{drafts}} draft · {{published}} published events",
+    "usageError": "Usage could not be loaded",
+    "archiveConfirm": "This form is selected on {{drafts}} draft and {{published}} published events. Published events and past acceptances keep their exact version. Drafts will need another form. Archive it?",
+    "archiveYes": "Archive form",
+    "showArchived": "Show archived ({{count}})",
+    "hideArchived": "Hide archived ({{count}})",
+    "addToEvent": "Add a host form to this event",
+    "pick": "Choose a saved form…",
+    "noMore": "No other saved forms",
+    "selectedLabel": "Host forms attendees will accept, in order",
+    "up": "Move up",
+    "down": "Move down",
+    "moveUp": "Move {{name}} up",
+    "moveDown": "Move {{name}} down",
+    "removeLabel": "Remove {{name}} from this event",
+    "manageLink": "Open Waivers & release forms library (new tab)",
+    "loginNeeded": "Only hosts can manage forms."
   }
 }

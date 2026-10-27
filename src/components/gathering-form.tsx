@@ -263,6 +263,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     const r=await supabase.from('events').update({requires_waiver:teamWaiver}).eq('id',id);if(r.error){setSaveError(t('waiverLibrary.saveError'));return false;}
     if(editing){const old=await supabase.from('event_waivers').select('library_id').eq('event_id',id).is('archived_at',null);for(const w of old.data??[]){if(w.library_id&&!libraryWaivers.some(x=>x.id===w.library_id)){const r=await supabase.rpc('remove_library_attachment',{_event:id,_library:w.library_id});if(r.error)return false;}}}
     for(const w of libraryWaivers){const r=await supabase.rpc('attach_library_waiver',{_event:id,_waiver:w.id,_version:w.version});if(r.error){setSaveError(t('waiverLibrary.saveError'));return false;}}
+    if(libraryWaivers.length>1&&!agreementsLocked){const r=await supabase.rpc('reorder_event_host_forms',{_event:id,_library:libraryWaivers.map(w=>w.id)});if(r.error){setSaveError(t('waiverLibrary.saveError'));return false;}}
     return true;
   };
   const savePolicy = async (id: string) => {
@@ -535,7 +536,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       <EventAgreementsSection teamId={teamId} userId={userId} eventId={eventId} locked={agreementsLocked} isNew={!editing && !fromId} value={libraryWaivers} onChange={setLibraryWaivers} platform={agreements.platform} platformState={agreements.platformState} retryPlatform={agreements.retryPlatform} library={agreements.library} />
       {teamWaiver && <p className="field-hint">{t('eventAgreements.legacyPinned')}</p>}
       {!full && <Button variant="ghost" className="quick-more" onClick={() => setFull(true)}>{t('gathering.moreOptions')}<ChevronRight /></Button>}
-      {(!editing || source?.event.status === 'draft') && <RequiredAgreementsSummary platformState={agreements.platformState} hostState={hostState} hostName={agreements.library.data?.find(w => w.id === libraryWaivers[0]?.id)?.name ?? null} onFix={focusAgreements} />}
+      {(!editing || source?.event.status === 'draft') && <RequiredAgreementsSummary platformState={agreements.platformState} hostState={hostState} hostForms={libraryWaivers.map(p => { const w = agreements.library.data?.find(x => x.id === p.id); return { name: w?.name ?? null, state: hostWaiverStatus([p], agreements.library.data, agreementsLocked) }; })} onFix={focusAgreements} />}
       {tpl && <p className="auth-subtitle">{t('gathering.checklistNote', { count: checklistOf(templates.find(x => x.id === tpl.id) ?? { checklist: [] }).length })}</p>}
     </div>
     <div className="sticky-actions">
