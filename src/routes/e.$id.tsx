@@ -31,6 +31,7 @@ import { ReportButton } from '@/components/report-button';
 import { ReferralShareCard, useReferralCapture } from '@/components/referrals';
 import { RetryState } from '@/components/launch-states';
 import { SITE_URL, publicIndexing } from '@/lib/seo';
+import { publicHostSlug } from '@/lib/event-agreements';
 
 export const Route = createFileRoute('/e/$id')({
   loader: async ({ params, context }) => {
@@ -145,10 +146,10 @@ function PublicEventBody() {
       </ul>
       {!event.is_online && !cancelled && <WeatherNote lat={event.lat} lng={event.lng} startsAt={event.starts_at} />}
 
-      <div className="guest-host">
+      {publicHostSlug(event.host) ? <Link to="/h/$slug" params={{ slug: publicHostSlug(event.host) ?? '' }} className="guest-host" aria-label={t('eventAgreements.hostLink', { name: event.host?.name })}>
         {hostPhoto ? <img src={hostPhoto} alt="" className="guest-host-photo" /> : <span className="initial-avatar">{initialsOf(event.host?.name ?? null)}</span>}
-        <div><span className="guest-label">{t('guest.hostedBy')}</span><strong>{event.host?.name ?? t('teamSpace.someone')}{event.host?.verified && <> <VerifiedMark compact /></>}</strong>{event.team_name && <span className="muted">{event.team_name}</span>}</div>
-      </div>
+        <div><span className="guest-label">{t('guest.hostedBy')}</span><strong>{event.host?.name}{event.host?.verified && <> <VerifiedMark compact /></>}</strong></div>
+      </Link> : <div className="guest-host"><span className="guest-label">{t('eventAgreements.hostUnavailable')}</span></div>}
       {!!event.cohosts?.length && <div className="guest-cohosts"><span className="guest-label">{t('cohosts.withCohosts')}</span><ul>{event.cohosts.map((c, i) => <li key={i}><span className="initial-avatar">{initialsOf(c.name)}</span><span>{c.name ?? t('teamSpace.someone')}</span></li>)}</ul></div>}
 
       {event.has_online && <section className="guest-card"><div className="guest-place"><Video /><div><strong>{t('publicEvent.online')}</strong><p>{t('guest.onlineHidden')}</p></div></div></section>}

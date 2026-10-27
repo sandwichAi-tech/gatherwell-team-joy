@@ -9,7 +9,7 @@ export type PublicEvent = {
   location_name: string | null; address: string | null; meeting_note: string | null; lat: number | null; lng: number | null;
   is_online: boolean; has_online: boolean; capacity: number | null; status: 'published' | 'cancelled';
   hide_guest_list: boolean; going: number; initials: string[] | null;
-  host: { name: string | null; avatar_url: string | null; verified?: boolean } | null; retreat?: unknown; cohosts?: { name: string | null; avatar_url: string | null }[]; team_name: string | null; my_code: string | null;
+  host: { name: string | null; avatar_url: string | null; slug?: string | null; verified?: boolean } | null; retreat?: unknown; cohosts?: { name: string | null; avatar_url: string | null }[]; team_name: string | null; my_code: string | null;
   questions?: RsvpQuestion[]; require_approval?: boolean; team_registration?: boolean; team_min?: number; team_max?: number; team_price_mode?: 'person' | 'team'; visibility?: 'public' | 'team' | 'invite';
   summary_en?: string | null; summary_es?: string | null; language?: string; format?: 'person' | 'online' | 'hybrid'; map_url?: string | null;
   reg_opens_at?: string | null; reg_closes_at?: string | null; waitlist_enabled?: boolean; tags?: string[];
@@ -91,6 +91,8 @@ export async function storyImage(opts: { title: string; date: string; link: stri
 
 export function rsvpErrorKey(error: unknown) {
   const m = typeof error === 'object' && error && 'message' in error ? String((error as { message: unknown }).message) : '';
+  if (m.includes('approved_legal_document_required')) return 'eventAgreements.legalRequired';
+  if (m.includes('platform_agreement_required') || m.includes('agreement_stale')) return 'eventAgreements.acceptRequired';
   for (const k of ['name_required', 'contact_required', 'invalid_email', 'not_open', 'too_long', 'rate_limited', 'members_only', 'waiver_required', 'answers_required', 'early_access', 'minors_not_allowed', 'minor_details_incomplete', 'guardian_details_incomplete', 'guardian_consent_required', 'min_age_not_met', 'registration_not_open', 'registration_closed', 'event_full', 'terms_required', 'tier_required', 'payment_required']) if (m.includes(k)) return `guest.errors.${k}`;
   return 'guest.errors.generic';
 }
