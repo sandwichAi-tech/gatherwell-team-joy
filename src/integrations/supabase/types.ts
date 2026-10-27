@@ -3135,7 +3135,9 @@ export type Database = {
           notes_es: string | null
           prerequisite_lesson_id: string | null
           replay_url: string | null
+          resource_offer_id: string | null
           resource_quiz_id: string | null
+          resource_recipe_id: string | null
           sort_order: number
           storage_path: string | null
           title_en: string
@@ -3160,7 +3162,9 @@ export type Database = {
           notes_es?: string | null
           prerequisite_lesson_id?: string | null
           replay_url?: string | null
+          resource_offer_id?: string | null
           resource_quiz_id?: string | null
+          resource_recipe_id?: string | null
           sort_order?: number
           storage_path?: string | null
           title_en?: string
@@ -3185,7 +3189,9 @@ export type Database = {
           notes_es?: string | null
           prerequisite_lesson_id?: string | null
           replay_url?: string | null
+          resource_offer_id?: string | null
           resource_quiz_id?: string | null
+          resource_recipe_id?: string | null
           sort_order?: number
           storage_path?: string | null
           title_en?: string
@@ -3203,10 +3209,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "lessons_resource_offer_id_fkey"
+            columns: ["resource_offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "lessons_resource_quiz_id_fkey"
             columns: ["resource_quiz_id"]
             isOneToOne: false
             referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lessons_resource_recipe_id_fkey"
+            columns: ["resource_recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
             referencedColumns: ["id"]
           },
           {
@@ -8510,6 +8530,10 @@ export type Database = {
         }
         Returns: string
       }
+      attach_course_resource: {
+        Args: { _kind: string; _resource: string; _track: string }
+        Returns: string
+      }
       attach_library_waiver: {
         Args: { _event: string; _version: number; _waiver: string }
         Returns: string
@@ -8762,7 +8786,10 @@ export type Database = {
         Args: { _offer: string; _user: string }
         Returns: string
       }
+      course_lesson_quiz: { Args: { _lesson: string }; Returns: Json }
       course_progress: { Args: { _offer: string }; Returns: Json }
+      course_resource_destination: { Args: { _lesson: string }; Returns: Json }
+      course_reusable_resources: { Args: { _course: string }; Returns: Json }
       create_auth_intent: { Args: { _path: string }; Returns: string }
       create_challenge_order: {
         Args: {
@@ -9490,6 +9517,7 @@ export type Database = {
       quiz_access_error: { Args: { _quiz: string }; Returns: string }
       quiz_blockers: { Args: { _quiz: string }; Returns: string[] }
       quiz_host_summary: { Args: { _quiz: string }; Returns: Json }
+      quiz_is_assessment: { Args: { _quiz: string }; Returns: boolean }
       quiz_option_counts: { Args: { _quiz: string }; Returns: Json }
       quiz_result: { Args: { _attempt: string }; Returns: Json }
       reconcile_challenge_order: {

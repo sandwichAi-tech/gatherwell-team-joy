@@ -1233,6 +1233,13 @@
       "when": 1793125677821,
       "tag": "0175_challenge_canonical_orders_reservations",
       "breakpoints": true
+    },
+    {
+      "idx": 176,
+      "version": "7",
+      "when": 1793125912381,
+      "tag": "0176_course_resource_references_and_assessment_reads",
+      "breakpoints": true
     }
   ]
 }
