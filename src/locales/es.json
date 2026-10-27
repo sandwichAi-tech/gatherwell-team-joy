@@ -7353,6 +7353,8 @@
     "destination": "Mi espacio",
     "noWorkspace": "Primero crea tu propio espacio",
     "copied": "Se creó un borrador independiente.",
-    "openDraft": "Abrir borrador"
+    "openDraft": "Abrir borrador",
+    "exportSource": "Preparar desde un evento o recurso",
+    "prepare": "Crear plantilla reutilizable"
   }
 }

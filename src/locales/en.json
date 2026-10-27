@@ -7353,6 +7353,8 @@
     "destination": "My workspace",
     "noWorkspace": "Create your own workspace first",
     "copied": "Independent draft created.",
-    "openDraft": "Open draft"
+    "openDraft": "Open draft",
+    "exportSource": "Prepare from an event or resource",
+    "prepare": "Create reusable template"
   }
 }

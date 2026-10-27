@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +22,7 @@ export function TeamLibrary({ teamId, userId }: { teamId: string; userId: string
   const sources = useQuery({ queryKey: ['library-sources', userId], enabled: shareOpen, queryFn: async () => { const { data, error } = await supabase.rpc('my_library_sources'); if (error) throw error; return data as unknown as Item[]; } });
   const authored = useQuery({ queryKey: ['authored-library', userId], enabled: shareOpen, queryFn: async () => { const { data, error } = await supabase.rpc('my_authored_library_items'); if (error) throw error; return data as unknown as { id: string; kind: string; title: string }[]; } });
   const [exportSource, setExportSource] = useState('');
+  useEffect(() => { if (list.isError) { setPreview(null); setShareOpen(false); } }, [list.isError]);
   const destinations = teams.data?.filter(x => x.owner && x.access) ?? [];
   const [destination, setDestination] = useState('');
   const share = async () => {

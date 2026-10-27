@@ -96,7 +96,7 @@ export function TeamPage() {
   const { t } = useTranslation(); const { userId } = useGatherwell();
   const { data: workspace, isLoading } = useQuery(workspaceQuery(userId));
   const requestedTeam = useRouterState({ select: state => state.location.search.team });
-  const target = useQuery({ queryKey: ['team-link', requestedTeam, userId], enabled: !!requestedTeam, staleTime: 0, gcTime: 0, queryFn: async () => {
+  const target = useQuery({ queryKey: ['team-link', requestedTeam, userId], enabled: !!requestedTeam, staleTime: 0, gcTime: 0, refetchInterval: 10_000, queryFn: async () => {
     if (!requestedTeam) return null;
     const { data: access, error } = await supabase.rpc('team_channel_state', { _team: requestedTeam });
     if (error) throw error; if (!access) return null;
@@ -108,14 +108,24 @@ export function TeamPage() {
     if (target.isPending) return <ListSkeleton />;
     if (target.isError) return <p role="alert">{t('teamCommunication.saveError')}</p>;
     if (!target.data) return <p role="status">{t('teamCommunication.noAccess')}</p>;
-    return <TeamSpace key={requestedTeam} workspace={target.data} />;
+    return <PrivateTeamSpace key={requestedTeam} workspace={target.data} />;
   }
   if (isLoading) return <ListSkeleton />;
   return <>
     <TeamSwitcher userId={userId} className="mobile-switcher" />
     <div className="page-heading"><div><span className="eyebrow">{t('team.eyebrow')}</span><h1>{t('team.title')}</h1></div></div>
-    {workspace ? <TeamSpace key={workspace.teamId} workspace={workspace} /> : <NoTeam />}
+    {workspace ? <PrivateTeamSpace key={workspace.teamId} workspace={workspace} /> : <NoTeam />}
   </>;
+}
+
+function PrivateTeamSpace({ workspace }: { workspace: TeamMembership }) {
+  const { userId } = useGatherwell(); const { t } = useTranslation();
+  const access = useQuery({ queryKey: ['private-team-access', workspace.teamId, userId], staleTime: 0, gcTime: 0, retry: false, refetchInterval: 10_000, queryFn: async () => {
+    const { data, error } = await supabase.rpc('team_channel_state', { _team: workspace.teamId }); if (error) throw error; return data;
+  } });
+  if (access.isPending) return <ListSkeleton />;
+  if (access.isError || !access.data) return <p role="status">{t('teamCommunication.noAccess')}</p>;
+  return <TeamSpace workspace={workspace} />;
 }
 
 function TeamSpace({ workspace }: { workspace: TeamMembership }) {
