@@ -71,7 +71,7 @@ export const cancelChallengeOrder = createServerFn({ method: 'POST' }).middlewar
         if (session.status !== 'expired') await stripe.checkout.sessions.expire(session.id);
       }
       const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
-      const r = await supabaseAdmin.rpc('cancel_challenge_checkout_verified', { _order: order.id, _buyer: context.userId, _session: order.stripe_checkout_session_id });
+      const r = await supabaseAdmin.rpc('cancel_challenge_checkout_verified', { _order: order.id, _buyer: context.userId, _session: order.stripe_checkout_session_id ?? '' });
       if (r.error) return { error: r.error.message }; return { cancelled: true };
     } catch (e) { return { error: getStripeErrorMessage(e) }; }
   });
