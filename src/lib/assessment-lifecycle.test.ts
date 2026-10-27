@@ -5,6 +5,6 @@ describe('assessment lifecycle score vectors', () => {
   it('averages supported multiple choices to 50 of 100', () => expect(assessmentScore(d, { q: ['a', 'b'] })).toBe(50));
   it('retakes default off without erasing prior result configuration', () => expect(emptyAssessment().allow_retake).toBe(false));
   it('accepts complete 0–100 result coverage', () => expect(assessmentIssues(d)).toEqual([]));
-  it('rejects result gaps', () => expect(assessmentIssues({ ...d, results: [{ ...d.results[0], min: 1 }] })).toContain('ranges'));
-  it('rejects unsafe result destinations', () => expect(assessmentIssues({ ...d, results: [{ ...d.results[0], url: 'javascript:alert(1)' }] })).toContain('url'));
+  it('rejects result gaps', () => expect(assessmentIssues({ ...d, results: d.results.map(r => ({ ...r, min: 1 })) })).toContain('ranges'));
+  it('rejects unsafe result destinations', () => expect(assessmentIssues({ ...d, results: d.results.map(r => ({ ...r, url: 'javascript:alert(1)' })) })).toContain('url'));
 });
