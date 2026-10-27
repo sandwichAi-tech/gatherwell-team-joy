@@ -9014,6 +9014,7 @@ export type Database = {
       }
       duplicate_offer: { Args: { _offer: string }; Returns: string }
       duplicate_quiz: { Args: { _quiz: string }; Returns: string }
+      duplicate_quiz_base: { Args: { _quiz: string }; Returns: string }
       effective_plan: { Args: { _uid: string }; Returns: Json }
       email_token: { Args: { _email: string; _lang: string }; Returns: string }
       enqueue_automation_message: {
