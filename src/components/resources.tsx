@@ -174,7 +174,7 @@ export function ResourcesPage({ tab, type, source }: { tab: ResourceTab; type: R
   </>;
 }
 
-const CREATE_ICON: Record<CreateType, typeof Video> = { assessment: ClipboardCheck, video: Video, quiz: ClipboardCheck, guide: FileText, audio: Waveform, file: Download, link: Link2, live: Radio, recipe: Leaf, course: GraduationCap, bundle: Layers };
+const CREATE_ICON: Record<CreateType, typeof Video> = { assessment: Compass, video: Video, quiz: ClipboardCheck, guide: FileText, audio: Waveform, file: Download, link: Link2, live: Radio, recipe: Leaf, course: GraduationCap, bundle: Layers };
 
 /** Fast launcher into the type-first chooser on /learn/create. */
 export function CreateResourceSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
