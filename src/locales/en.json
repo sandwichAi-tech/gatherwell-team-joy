@@ -7441,7 +7441,7 @@
     "courseHint": "Access follows the selected course.",
     "coachHint": "Published resources appear on your public coach page. Drafts stay private.",
     "pickCourse": "Choose the course",
-    "courseAccess": "Included with course access. No separate payment.",
+    "courseAccess": "Included with this course",
     "oneTimePrice": "One-time price (USD)",
     "priceError": "Enter $0.50 to $1,000 with no more than two decimal places.",
     "setup": "Payment setup",
@@ -7472,11 +7472,13 @@
     "removeCourse": "Remove",
     "lockedNote": "This item was built inside a course and stays there. Create a new resource to share it in other places.",
     "needOne": "Choose at least one place before publishing.",
-    "courseIncluded": "Course members get it with their course access. Everyone else pays this price.",
+    "courseIncluded": "Included with these courses; the standalone price applies elsewhere. Anyone with access to a selected course, even a free course, gets it at no extra cost.",
     "summaryTitle": "Where it will appear",
     "fix": "Fix",
     "edit": "Edit",
-    "archiveWarn": "It is live in: {{places}}. It will be removed from all of them. Customer history is kept."
+    "archiveWarn": "It is live in: {{places}}. It will be removed from all of them. Customer history is kept.",
+    "includedPaid": "Included with these courses; the standalone price applies elsewhere.",
+    "includedCourse": "Included with these courses for anyone with course access, even if the course is free."
   },
   "teamMembership": {
     "lead": "Teams I lead",
