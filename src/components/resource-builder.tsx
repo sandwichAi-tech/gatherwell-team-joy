@@ -1,3 +1,5 @@
+import { ResourceAccessFields } from '@/components/resource-access-fields';
+import { resourceAccessPrice, savedPlacement, type ResourcePlacement } from '@/lib/resource-placement';
 import { uploadMedia } from '@/lib/account';
 import { OfferCover } from '@/components/offers';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -241,7 +243,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const tz = typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC';
   const [courseId, setCourseId] = useState('');
   // A quiz can live on its own in the team's Resources (no course needed) or inside a course.
-  const [quizHome, setQuizHome] = useState<'team' | 'course'>('team');
+  const [placement, setPlacement] = useState<ResourcePlacement>('team');
   const [busy, setBusy] = useState(false);
   // Multi-lesson tracks (e.g. from a blueprint) edit every lesson in the curriculum instead of one preset lesson.
   const [trackLessons, setTrackLessons] = useState<Lesson[] | null>(null);
@@ -289,6 +291,9 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
           live: l.live_starts_at ? toLocalInput(new Date(l.live_starts_at)) : '', meeting: '',
         } }));
         setActiveFrom(tr.data.available_from ? toLocalInput(new Date(tr.data.available_from)) : '');
+        setPlacement(savedPlacement(tr.data));
+        if (tr.data.offer_id) setCourseId(tr.data.offer_id);
+        if (tr.data.commerce_offer_id) { const o = (await db.from('offers').select('price_cents').eq('id', tr.data.commerce_offer_id).maybeSingle()).data; if (o) setItem(i => ({ ...i, access: { free: !o.price_cents, price: o.price_cents ? String(o.price_cents / 100) : '' } })); }
         setVisibility(tr.data.visibility === 'public' || tr.data.visibility === 'unlisted' ? tr.data.visibility : 'team');
         setLoaded({ entity: 'track', id: initialId, status: tr.data.is_published ? 'published' : 'draft', trackId: initialId });
         setLoadingItem(false);
@@ -296,13 +301,15 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
       }
       const rc = await db.from('recipes').select('*').eq('id', initialId).maybeSingle();
       if (rc.data) {
-        setType('recipe');
+        setType('recipe'); setPlacement(savedPlacement(rc.data)); setCourseId(rc.data.parent_course_id ?? '');
+        const recipePrice = rc.data.commerce_offer_id ? (await db.from('offers').select('price_cents').eq('id', rc.data.commerce_offer_id).maybeSingle()).data?.price_cents ?? 0 : 0;
         setItem({
           ...emptyItemState(),
           titleEn: rc.data.title_en ?? '', titleEs: rc.data.title_es ?? '',
           subtitleEn: rc.data.subtitle_en ?? '', subtitleEs: rc.data.subtitle_es ?? '',
           promoEn: rc.data.promo_en ?? '', promoEs: rc.data.promo_es ?? '',
           ctaEn: rc.data.cta_en ?? '', ctaEs: rc.data.cta_es ?? '',
+          access: { free: !recipePrice, price: recipePrice ? String(recipePrice / 100) : '' },
           coverPath: rc.data.cover_url, coverStyle: rc.data.cover_style ?? 0,
           cardLayout: (rc.data.card_layout ?? 'preview') as CardLayout, accent: (rc.data.accent ?? 'plum') as Accent,
         });
@@ -319,7 +326,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
       const of = await db.from('offers').select('*').eq('id', initialId).maybeSingle();
       if (of.data) {
         const o = of.data as Offer;
-        setType(o.kind === 'course' ? 'course' : 'file');
+        setType(o.kind === 'course' ? 'course' : (o as any).resource_type === 'bundle' ? 'bundle' : 'file'); setPlacement(savedPlacement(o)); setCourseId((o as any).parent_course_id ?? '');
         setItem({
           ...emptyItemState(),
           titleEn: o.title_en ?? '', titleEs: o.title_es ?? '',
@@ -396,21 +403,23 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
 
   const lessonType = isTrackFlow(type) ? lessonPresetFor(type) : null;
   const cfg = lessonType ? lessonEditorConfig(lessonType) : null;
-  const priceCents = item.access.free ? 0 : item.access.price ? Math.round(Number(item.access.price) * 100) : NaN;
-  const paid = !item.access.free && offerKindFor(type) !== null;
+  const priceCents = resourceAccessPrice(placement, item.access.free, item.access.price);
+  const paid = placement !== 'course' && !item.access.free;
   const sections = sectionsFor(type);
   const dirty = itemSnapshot(item) + JSON.stringify(draft) !== snapshot + draftSnap;
   const status = loaded?.status ?? 'draft';
 
   const issues = itemIssues(type, item, {
-    lessonUrl: draft.lesson.url, live: draft.lesson.live, filePath: draft.offer.filePath, courseId: type === 'quiz' && quizHome === 'team' ? 'team' : courseId, publish: true,
+    lessonUrl: draft.lesson.url, live: draft.lesson.live, filePath: draft.offer.filePath, courseId: placement !== 'course' ? 'standalone' : courseId, publish: true,
   });
   const paidBlocked = paid && !sellReady;
+  if (placement === 'course' && !courseId && !issues.includes('course')) issues.push('course');
+  if (placement === 'course') { const i = issues.indexOf('price'); if (i >= 0) issues.splice(i, 1); }
   const lessonsWithPlaceholders = trackLessons ? placeholderLessons(trackLessons) : [];
   const placeholder = hasPlaceholder(item.titleEn, item.titleEs, item.descEn, item.descEs, item.subtitleEn, item.subtitleEs) || lessonsWithPlaceholders.length > 0;
   const draftLessonsToPublish = trackLessons ? lessonsToPublishWithTrack(trackLessons, loaded?.status === 'published') : [];
-  const canSave = issues.length === 0 && (progress === null || progress === 100) && !busy;
-  const canPublish = canSave && !paidBlocked && !placeholder;
+  const canSave = issues.filter(i => i !== 'file').length === 0 && (progress === null || progress === 100) && !busy;
+  const canPublish = canSave && issues.length === 0 && !paidBlocked && !placeholder;
   const nav = stepNav(sections, sections.includes(section) ? section : 'presentation');
   const wasPublished = loaded?.status === 'published';
 
@@ -438,27 +447,32 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const save = async (publish: boolean) => {
     if (submitting.current) return; // one submission at a time: no duplicate records
     submitting.current = true;
-    try { await saveOnce(publish); } finally { submitting.current = false; }
+    try { await saveOnce(publish); } catch { setBusy(false); toast.error(t('resources.item.saveFailed')); } finally { submitting.current = false; }
   };
   const saveOnce = async (publish: boolean) => {
+    if (priceCents === null || (publish && paidBlocked)) return;
     setBusy(true);
+    const configure = async (entity: string, id: string) => { const r = await supabase.rpc('configure_resource_access', { _kind: entity, _id: id, _placement: placement, _course: placement === 'course' ? courseId : null, _price: priceCents }); if (r.error) throw r.error; }; 
     const base = {
       title_en: item.titleEn.trim(), title_es: item.titleEs.trim(),
       description_en: item.descEn.trim() || null, description_es: item.descEs.trim() || null,
       cover_url: item.coverPath, cover_style: item.coverStyle, ...presentationCols, ...activation,
     };
     if (isTrackFlow(type) && lessonType) {
-      const row = { ...base, is_published: publish, visibility, host_id: userId, resource_kind: lessonType };
+      const row = { ...base, is_published: false, visibility: placement === 'coach' ? 'public' : 'team', host_id: userId, resource_kind: lessonType };
       const tr = loaded?.entity === 'track'
         ? await db.from('tracks').update(row).eq('id', loaded.id).select('id').single()
         : await db.from('tracks').insert({ ...row, team_id: teamId, sort_order: Date.now() % 1_000_000 }).select('id').single();
       if (tr.error) return finish(false, undefined, tr.error.message);
       const trackId = tr.data.id as string;
+      setLoaded({ entity: 'track', id: trackId, status: 'draft', trackId });
+      try { await configure('track', trackId); } catch { return finish(false); }
       if (trackLessons) {
         if (publish && draftLessonsToPublish.length) {
           const pl = await db.from('lessons').update({ is_published: true }).in('id', draftLessonsToPublish);
           if (pl.error) return finish(false, undefined, pl.error.message);
         }
+        if (publish) { const p = await db.from('tracks').update({ is_published: true }).eq('id', trackId); if (p.error) return finish(false); }
         setLoaded({ entity: 'track', id: trackId, status: publish ? 'published' : 'draft', trackId });
         setSnapshot(itemSnapshot(item)); setDraftSnap(JSON.stringify(draft));
         return finish(true, publish ? { entity: 'track', id: trackId } : undefined);
@@ -480,6 +494,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
         : await db.from('lessons').insert({ ...lessonRow, sort_order: 1 }).select('id').single();
       if (ls.error) return finish(false, undefined, ls.error.message);
       if (lessonType === 'live' && draft.lesson.meeting.trim() && !existing) await supabase.from('lesson_live_links').insert({ lesson_id: (ls.data as { id: string } | null)?.id ?? existing?.id, url: draft.lesson.meeting.trim() });
+      if (publish) { const p = await db.from('tracks').update({ is_published: true }).eq('id', trackId); if (p.error) return finish(false); }
       setLoaded({ entity: 'track', id: trackId, status: publish ? 'published' : 'draft' });
       setSnapshot(itemSnapshot(item)); setDraftSnap(JSON.stringify(draft));
       return finish(true, publish ? { entity: 'track', id: trackId } : undefined);
@@ -488,7 +503,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
       const lines = (s: string) => s.split('\n').map(x => x.trim()).filter(Boolean).slice(0, 40).map(x => x.slice(0, 300));
       const row = {
         title_en: base.title_en, title_es: base.title_es, cover_url: base.cover_url, cover_style: base.cover_style, ...presentationCols, ...activation,
-        is_published: publish,
+        is_published: false,
         prep_minutes: parseInt(draft.recipe.prep, 10) > 0 ? Math.min(600, parseInt(draft.recipe.prep, 10)) : null,
         tags: draft.recipe.tags,
         ingredients: { en: lines(draft.recipe.ingEn), es: lines(draft.recipe.ingEs) },
@@ -498,7 +513,9 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
         ? await db.from('recipes').update(row).eq('id', loaded.id).select('id').single()
         : await db.from('recipes').insert({ ...row, team_id: teamId, created_by: userId }).select('id').single();
       if (r.error) return finish(false, undefined, r.error.message);
-      const rid = r.data.id as string;
+      const rid = r.data.id as string; setLoaded({ entity: 'recipe', id: rid, status: 'draft' });
+      try { await configure('recipe', rid); } catch { return finish(false); }
+      if (publish) { const p = await db.from('recipes').update({ is_published: true }).eq('id', rid); if (p.error) return finish(false); }
       setLoaded({ entity: 'recipe', id: rid, status: publish ? 'published' : 'draft' }); setSnapshot(itemSnapshot(item)); setDraftSnap(JSON.stringify(draft));
       return finish(true, publish ? { entity: 'recipe', id: rid } : undefined);
     }
@@ -507,13 +524,16 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
       const row = {
         kind, ...base, price_cents: priceCents, refund_policy: refund, drip_days: drip,
         file_path: kind === 'download' ? draft.offer.filePath : null,
-        status: (publish ? 'published' : 'draft') as 'published' | 'draft', visibility,
+        status: 'draft' as const, visibility: placement === 'coach' ? 'public' : 'team', resource_type: type,
       };
       const r = loaded?.entity === 'offer' ? await saveOffer(row, loaded.id)
         : await db.from('offers').insert({ ...row, includes_en: [], includes_es: [], team_id: teamId, host_id: userId }).select('id').single();
       if (r.error) { const m = String(r.error.message); if (!m.includes('payouts_required')) return finish(false, undefined, m); setBusy(false); toast.error(t('billing.payoutsRequired')); return; }
       // Use the id of the row just created, never "my latest offer" (wrong item when two are saved close together).
       const offerId = (loaded?.id ?? (r.data as { id: string } | null)?.id) as string;
+      setLoaded({ entity: 'offer', id: offerId, status: 'draft', trackId: loaded?.trackId });
+      try { await configure('offer', offerId); } catch { return finish(false); }
+      if (publish) { const p = await db.from('offers').update({ status: 'published' }).eq('id', offerId); if (p.error) return finish(false); }
       // A course gets its own curriculum track so lessons can be attached right away.
       let trackId = loaded?.trackId;
       if (kind === 'course' && !trackId && offerId) {
@@ -532,15 +552,16 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
       return finish(true, publish ? { entity: 'offer', id: offerId } : undefined);
     }
     // quiz: create a draft (standalone in the team, or on the chosen course), then open the quiz studio.
-    const offer = quizHome === 'course' ? courses.find(o => o.id === courseId) : null;
-    if (quizHome === 'course' && !offer) return finish(false);
-    if (quizHome === 'team' && !teamId) return finish(false);
+    const offer = placement === 'course' ? courses.find(o => o.id === courseId) : null;
+    if (placement === 'course' && !offer) return finish(false);
+    if (placement !== 'course' && !teamId) return finish(false);
     const q = await supabase.from('quizzes').insert({
       title_en: base.title_en, title_es: base.title_es, ...(offer ? { offer_id: offer.id } : { team_id: teamId }), mode: 'scored',
       pass_pct: 80, cooldown_minutes: 0, is_required: false, show_score: true, reveal_answers: 'after_pass', is_published: false, sort_order: 1,
     } as never).select('id').single();
     setBusy(false);
     if (q.error || !q.data) { toast.error(t('profile.saveError')); return; }
+    try { await configure('quiz', (q.data as { id: string }).id); } catch { return finish(false); }
     toast.success(t('resources.builder.quizReady'));
     setSnapshot(itemSnapshot(item)); setDraftSnap(JSON.stringify(draft));
     void qc.invalidateQueries({ queryKey: ['team-quizzes'] });
@@ -665,20 +686,6 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
             ? <Curriculum trackId={loaded.trackId} teamId={teamId} lang={lang} />
             : <p className="muted-small">{t('resources.item.curriculum.saveFirst')}</p>)}
 
-          {type === 'quiz' && <div className="form-field"><span className="field-label">{t('quizStudio.createTitle')}</span>
-            <div className="filter-chips" role="radiogroup" aria-label={t('quizStudio.createTitle')}>
-              {(['team', 'course'] as const).map(h => <button key={h} type="button" role="radio" aria-checked={quizHome === h} className={`filter-chip ${quizHome === h ? 'is-active' : ''}`} onClick={() => setQuizHome(h)}>{t(h === 'team' ? 'quizStudio.standalone' : 'quizStudio.inCourse')}</button>)}
-            </div>
-            <p className="field-hint">{t(quizHome === 'team' ? 'quizStudio.standaloneHint' : 'quizStudio.inCourseHint')}</p>
-            {quizHome === 'course' && <>
-            {courses.length ? <select className="field-input" value={courseId} onChange={e => setCourseId(e.target.value)} aria-label={t('resources.builder.pickCourse')}>
-              <option value="">{t('resources.builder.pickCoursePlaceholder')}</option>
-              {courses.map(o => <option key={o.id} value={o.id}>{offerTitle(o, lang) || t('offers.untitled')}</option>)}
-            </select> : <p className="muted-small">{t('resources.builder.noCourses')}</p>}
-            <Button asChild variant="secondary" size="sm"><Link to="/offers" search={{ new: 'course' }}><GraduationCap />{t('resources.create.quizParent.new')}</Link></Button>
-            </>}
-          </div>}
-
           {!sections.includes('access') && type !== 'quiz' && activationField}
           {/* Promotional landing copy — public, separate from protected content. */}
           {type !== 'quiz' && <div className="form-field">
@@ -690,31 +697,11 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
 
         {/* ---- Access / Checkout ---- */}
         {section === 'access' && <>
-          {(offerKindFor(type) || isTrackFlow(type)) && <div className="form-field"><span className="field-label">{t('resources.item.visibilityLabel')}</span>
-            <div className="filter-chips" role="radiogroup" aria-label={t('resources.item.visibilityLabel')}>
-              {(['team', 'public', 'unlisted'] as const).map(v => <button key={v} type="button" role="radio" aria-checked={visibility === v}
-                className={`filter-chip ${visibility === v ? 'is-active' : ''}`} onClick={() => setVisibility(v)}>{t(`resources.item.visibility.${v}`)}</button>)}
-            </div>
-            <p className="field-hint">{t(`resources.item.visibilityHint.${visibility}`)}</p></div>}
+          <ResourceAccessFields type={type} placement={placement} onPlacement={setPlacement} free={item.access.free} price={item.access.price}
+            onAccess={(free, price) => patchItem({ access: { free, price } })} courseId={courseId} onCourse={setCourseId}
+            courses={courses.map(o => ({ id: o.id, title: offerTitle(o, lang) }))} ready={sellReady} prefix="rb" />
           {activationField}
-          {isTrackFlow(type) && <p className="muted-small">{t('resources.item.trackAccessNote')}</p>}
-          {offerKindFor(type) ? <>
-            <div className="form-field"><span className="field-label">{t('resources.item.accessLabel')}</span>
-              <div className="filter-chips" role="radiogroup" aria-label={t('resources.item.accessLabel')}>
-                <button type="button" role="radio" aria-checked={item.access.free} className={`filter-chip ${item.access.free ? 'is-active' : ''}`} onClick={() => patchItem({ access: { ...item.access, free: true } })}>{t('resources.item.free')}</button>
-                <button type="button" role="radio" aria-checked={!item.access.free} className={`filter-chip ${!item.access.free ? 'is-active' : ''}`} onClick={() => patchItem({ access: { ...item.access, free: false } })}>{t('resources.item.paid')}</button>
-              </div></div>
-            {!item.access.free && <>
-              <Field id="rb-price" label={type === 'course' ? t('offers.priceMonthly') : t('offers.price')}>
-                <Input id="rb-price" className="field-input" inputMode="decimal" value={item.access.price} placeholder="0"
-                  onChange={e => { const v = e.target.value.replace(/[^0-9.]/g, ''); patchItem({ access: { ...item.access, price: v } }); patchOffer({ price: v }); }} aria-invalid={!Number.isFinite(priceCents) || priceCents < 50} />
-              </Field>
-              {Number.isFinite(priceCents) && priceCents >= 50 && <RefundSelect id="rb-refund" value={refund} onChange={setRefund} />}
-              <p className="muted-small">{t('offers.feeNote')}</p>
-              {paidBlocked && <p className="not-connected" role="status">{t('resources.item.paidBlocked')}</p>}
-            </>}
-            {item.access.free && <p className="muted-small">{t('resources.item.freeAccessNote')}</p>}
-          </> : <p className="muted-small">{t('resources.item.teamAccessNote')}</p>}
+          {paid && <RefundSelect id="rb-refund" value={refund} onChange={setRefund} />}
         </>}
 
         {/* ---- Options ---- */}

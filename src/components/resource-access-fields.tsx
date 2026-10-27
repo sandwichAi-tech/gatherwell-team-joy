@@ -33,7 +33,7 @@ export function ResourceAccessFields({ type, placement, onPlacement, free, price
       {!free && <div className="form-field"><label className="field-label" htmlFor={`${prefix}-price`}>{t(type === 'course' ? 'offers.priceMonthly' : 'resourcePlacement.oneTimePrice')}</label>
         <Input id={`${prefix}-price`} className="field-input" inputMode="decimal" value={price} onChange={e => onAccess(false, e.target.value)} aria-invalid={invalid} aria-describedby={`${prefix}-price-hint`} />
         <p id={`${prefix}-price-hint`} className="field-hint" role={invalid ? 'alert' : undefined}>{t(invalid ? 'resourcePlacement.priceError' : 'offers.feeNote')}</p>
-        {!ready && <div role="status"><p className="field-hint">{t('resources.item.paidBlocked')}</p><Button asChild variant="secondary"><Link to="/billing">{t('resourcePlacement.setup')}</Link></Button></div>}
+        {!ready && <div role="status"><p className="field-hint">{t('resources.item.paidBlocked')}</p><Button asChild variant="secondary"><Link to="/plan">{t('resourcePlacement.setup')}</Link></Button></div>}
       </div>}
     </>}
   </div>;
