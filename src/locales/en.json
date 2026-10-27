@@ -5139,6 +5139,17 @@
     "browse": "Go to Discover",
     "meta": "The Circles you belong to."
   },
+  "personalHome": {
+    "hosting": "Your hosting",
+    "attending": "Your attending",
+    "subtitle": "Your events, learning and connections.",
+    "drafts": "Drafts to finish: {{count}}",
+    "resources": "Your resources",
+    "noResources": "Your saved or enrolled resources appear here.",
+    "discoverResources": "Discover resources",
+    "discoverCoaches": "Find a coach",
+    "free": "Free"
+},
   "customerHome": {
     "next": "Next up",
     "noRsvps": "No RSVPs yet",

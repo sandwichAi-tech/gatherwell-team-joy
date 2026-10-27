@@ -5139,6 +5139,17 @@
     "browse": "Ir a Descubrir",
     "meta": "Los Círculos a los que perteneces."
   },
+  "personalHome": {
+    "hosting": "Tus eventos como anfitrión",
+    "attending": "Tus actividades como participante",
+    "subtitle": "Tus eventos, aprendizaje y conexiones.",
+    "drafts": "Borradores por terminar: {{count}}",
+    "resources": "Tus recursos",
+    "noResources": "Aquí aparecerán tus recursos guardados o inscritos.",
+    "discoverResources": "Descubrir recursos",
+    "discoverCoaches": "Encontrar un coach",
+    "free": "Gratis"
+},
   "customerHome": {
     "next": "Lo que sigue",
     "noRsvps": "Aún no tienes confirmaciones",
