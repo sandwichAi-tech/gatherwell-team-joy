@@ -21,3 +21,8 @@ export const signHostWaiver = createServerFn({ method: 'POST' }).middleware([req
   if (!v?.file_path) return { url: null };
   const { data: signed } = await context.supabase.storage.from('media').createSignedUrl(v.file_path, 300); return { url: signed?.signedUrl ?? null };
 });
+export const cleanupHostWaiverUpload = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth]).inputValidator((d: unknown) => z.object({ path: z.string().max(300) }).parse(d)).handler(async ({ data, context }) => {
+  const { data: path } = await context.supabase.rpc('host_waiver_cleanup_path', { _path: data.path });
+  if (typeof path !== 'string' || !path) return { removed: false };
+  const { error } = await context.supabase.storage.from('media').remove([path]); return { removed: !error };
+});
