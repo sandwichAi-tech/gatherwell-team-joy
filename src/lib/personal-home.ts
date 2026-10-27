@@ -1,4 +1,4 @@
 export type HomeEvent = { id: string; title: string; starts_at: string; ends_at: string | null; location_name: string | null; address: string | null; lat: number | null; lng: number | null; map_url: string | null; format: string; status: string; registration_status: string | null; checkin_code: string | null; checked_in_at: string | null };
 export type HomeResource = { id: string; entity: 'offer' | 'track' | 'recipe' | 'quiz'; kind: string; title_en: string; title_es: string | null; price_cents: number; status: string };
-export type PersonalHome = { mode: 'hosting' | 'attending'; events: HomeEvent[]; drafts: number; resources: HomeResource[]; coaches: { id: string; slug: string; name: string }[] };
+export type PersonalHome = { mode: 'hosting' | 'attending'; events: HomeEvent[]; drafts: number; resources: HomeResource[]; coaches: { id: string; slug: string; name: string }[]; event_progress?: { exists: boolean; draft: { id: string; title: string } | null } };
 export const personalHomeKey = (userId: string) => ['personal-home', userId] as const;
