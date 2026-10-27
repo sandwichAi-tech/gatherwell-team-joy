@@ -8333,6 +8333,16 @@ export type Database = {
           slug: string
         }[]
       }
+      create_team_announcement: {
+        Args: {
+          _body: string
+          _link: string
+          _pinned: boolean
+          _team: string
+          _title: string
+        }
+        Returns: string
+      }
       create_topic: {
         Args: { _body: string; _team: string; _title: string }
         Returns: string
