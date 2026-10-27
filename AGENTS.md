@@ -43,7 +43,7 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Covers/add-on images reuse private uploader media and shared cropping. Sign only after resolving authorized host/event, never caller paths; add-on cleanup preserves saved references.
 - Day-60 scoreboard: raw counts come only from admin_day60(); targets and the go/adjust/rethink verdict are evaluated in src/lib/day60.ts so thresholds live in one tested place.
 - Parked features are gated by feature_* flags via src/lib/feature-flags.tsx; admins always see them and off routes throw notFound, so launch scope changes from /admin?tab=flags.
-- Resources reuses /learn and the feature_learn gate; readers skip empty tracks/sections, managers keep them. Authoring is type-first via /learn/create?type=… (src/lib/create-resource.ts) into existing editors — no second authoring backend.
+- Resources: /learn + feature_learn, type-first /learn/create. Placement uses configure_resource_access + existing offers; course containment stays separate. Resolve public visibility before server-only signing. Paid resource checkout stays blocked until orders/refunds verified.
 - Home brief: getDailyBrief, caller-scoped, no AI/shared cache. Insights compares UTC event cohorts.
 - Admin password sign-in: public /admin-login with existing Cloud Auth accounts; getAdminAccess checks the role before navigation and every admin handler re-checks, so sign-in never grants privileges.
 - Blueprints/challenges reuse existing editors; drafts stay private. Experience sessions use existing events and whole-event admission.
