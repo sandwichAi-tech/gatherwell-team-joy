@@ -62,6 +62,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const [start, setStart] = useState(''); const [duration, setDuration] = useState<number>(60); const [customDuration, setCustomDuration] = useState(false);
   const [place, setPlace] = useState<'person' | 'online' | 'hybrid'>('person'); const [locationName, setLocationName] = useState(''); const [address, setAddress] = useState('');
   const [details, setDetails] = useState<EventDetails>(emptyDetails);
+  const [addonUploads, setAddonUploads] = useState(0);
+  const imageBusy = (busy: boolean) => setAddonUploads(n => Math.max(0, n + (busy ? 1 : -1)));
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null); const [note, setNote] = useState(''); const [url, setUrl] = useState('');
   const [price, setPrice] = useState(''); const [limit, setLimit] = useState<null | 'gatherings' | 'storage'>(null);
   const [capacityMode, setCapacityMode] = useState<'unlimited' | 'limited'>('unlimited'); const [photoError, setPhotoError] = useState(''); const [saveError, setSaveError] = useState('');
@@ -263,7 +265,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     return true;
   };
   const submit = async (publish: boolean) => {
-    if (busy || uploading) return;
+    if (busy || uploading || addonUploads > 0) return;
     setSaveError('');
     if (!publish && (!editing || source?.event.status === 'draft')) {
       setBusy(true);
@@ -496,7 +498,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         {tr.preview && <p className="not-connected">{t('assistant.previewTranslateNote')}</p>}
       </section>
 
-      <EventDetailsSections value={details} onChange={setDetails} priceCents={priceCents} lang={lang} tried={tried} />
+      <EventDetailsSections value={details} onChange={setDetails} priceCents={priceCents} lang={lang} userId={userId} onImageBusy={imageBusy} tried={tried} />
 
       <section className="form-section">
         {retreatOn && <RetreatEditor value={retreat} onChange={setRetreat} end={retreatEnd} setEnd={setRetreatEnd} priceCents={priceCents} onUpload={uploadGallery} uploading={galleryBusy} />}
@@ -526,8 +528,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       {tpl && <p className="auth-subtitle">{t('gathering.checklistNote', { count: checklistOf(templates.find(x => x.id === tpl.id) ?? { checklist: [] }).length })}</p>}
     </div>
     <div className="sticky-actions">
-      {(!editing || source?.event.status === 'draft') && <Button variant="secondary" disabled={busy || uploading} onClick={() => submit(false)}>{t('gathering.saveDraft')}</Button>}
-      <Button disabled={busy || uploading} onClick={() => submit(!editing || source?.event.status === 'draft')}>{busy ? t('onboarding.saving') : t(editing && source?.event.status !== 'draft' ? 'gathering.saveChanges' : 'gathering.publish')}</Button>
+      {(!editing || source?.event.status === 'draft') && <Button variant="secondary" disabled={busy || uploading || addonUploads > 0} onClick={() => submit(false)}>{t('gathering.saveDraft')}</Button>}
+      <Button disabled={busy || uploading || addonUploads > 0} onClick={() => submit(!editing || source?.event.status === 'draft')}>{busy ? t('onboarding.saving') : t(editing && source?.event.status !== 'draft' ? 'gathering.saveChanges' : 'gathering.publish')}</Button>
     </div>
     {limit && <UpgradeSheet open onOpenChange={o => { if (!o) setLimit(null); }} reason={limit} />}
   </div>;

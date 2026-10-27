@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { croppedOutputWidth, isLowResolution } from '@/lib/media-renditions';
 
-export type CropKind = 'cover' | 'avatar';
+export type CropKind = 'cover' | 'avatar' | 'addon';
 export type CropResult = { file: File; square: File | null; previewUrl: string };
 
 const PRESETS = [
@@ -40,7 +40,7 @@ export function ImageCropSheet({ file, kind, withSquare, onCancel, onDone }: { f
   const { t } = useTranslation();
   const [src, setSrc] = useState<string | null>(null);
   const [img, setImg] = useState<HTMLImageElement | null>(null);
-  const [ratio, setRatio] = useState(kind === 'avatar' ? 1 : 16 / 9);
+  const [ratio, setRatio] = useState(kind === 'avatar' ? 1 : kind === 'addon' ? 4 / 3 : 16 / 9);
   const [zoom, setZoom] = useState(1);
   const [off, setOff] = useState({ x: 0, y: 0 });
   const [busy, setBusy] = useState(false); const [error, setError] = useState(false);
@@ -51,7 +51,7 @@ export function ImageCropSheet({ file, kind, withSquare, onCancel, onDone }: { f
 
   useEffect(() => {
     if (!file) { setSrc(null); setImg(null); return; }
-    setError(false); setImg(null); const url = URL.createObjectURL(file); setSrc(url); setZoom(1); setOff({ x: 0, y: 0 }); setRatio(kind === 'avatar' ? 1 : 16 / 9);
+    setError(false); setImg(null); const url = URL.createObjectURL(file); setSrc(url); setZoom(1); setOff({ x: 0, y: 0 }); setRatio(kind === 'avatar' ? 1 : kind === 'addon' ? 4 / 3 : 16 / 9);
     const el = new Image(); el.onload = () => setImg(el); el.onerror = () => setError(true); el.src = url;
     return () => URL.revokeObjectURL(url);
   }, [file, kind]);

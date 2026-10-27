@@ -40,7 +40,7 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 
 - ResponsiveSheet owns header/footer/scroll body; pass primary actions via footer.
 - Guest RSVP uses a single selected contact field and optional name/guest details; normalize reminder consent against supplied destinations to preserve explicit opt-ins when fields are cleared.
-- Profile and offer covers use uploader-owned private media paths and the shared crop input; public host covers are signed server-side only after resolving the host slug, never from caller-supplied paths.
+- Covers/add-on images reuse private uploader media and shared cropping. Sign only after resolving authorized host/event, never caller paths; add-on cleanup preserves saved references.
 - Day-60 scoreboard: raw counts come only from admin_day60(); targets and the go/adjust/rethink verdict are evaluated in src/lib/day60.ts so thresholds live in one tested place.
 - Parked features are gated by feature_* flags via src/lib/feature-flags.tsx; admins always see them and off routes throw notFound, so launch scope changes from /admin?tab=flags.
 - Resources reuses /learn and the feature_learn gate; readers skip empty tracks/sections, managers keep them. Authoring is type-first via /learn/create?type=… (src/lib/create-resource.ts) into existing editors — no second authoring backend.

@@ -6,7 +6,7 @@ export const EVENT_FORMATS = ['person', 'online', 'hybrid'] as const;
 export type EventFormat = typeof EVENT_FORMATS[number];
 
 export type TicketTier = { id: string; name: string; price_cents: number; quantity: number | null; sale_starts_at: string | null; sale_ends_at: string | null };
-export type Addon = { id: string; name: string; price_cents: number };
+export type Addon = { id: string; name: string; price_cents: number; image_path?: string | null };
 
 export const MAX_TAGS = 8;
 export const MAX_TAG_LEN = 24;
@@ -117,7 +117,7 @@ export function cleanAddons(rows: Addon[]): Addon[] | null {
     const name = r.name.trim();
     if (!name || name.length > 60) return null;
     if (!Number.isInteger(r.price_cents) || r.price_cents < 0 || r.price_cents > MAX_PRICE_CENTS) return null;
-    out.push({ id: r.id || newId(), name, price_cents: r.price_cents });
+    out.push({ id: r.id || newId(), name, price_cents: r.price_cents, ...(r.image_path !== undefined ? { image_path: r.image_path || null } : {}) });
   }
   return out;
 }

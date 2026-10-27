@@ -1,4 +1,10 @@
 {
+  "addonImages": {
+    "label": "Imagen del complemento", "upload": "Subir imagen", "replace": "Reemplazar imagen", "remove": "Quitar imagen",
+    "uploading": "Subiendo imagen…", "failed": "No se pudo guardar la imagen. Tu imagen anterior no cambió. Inténtalo de nuevo.",
+    "type": "Elige una imagen JPEG, PNG o WebP.", "size": "Elige una imagen de hasta 15 MB.",
+    "alt": "{{name}} — imagen del complemento", "title": "Complementos", "loading": "Cargando complementos…", "loadError": "No se pudieron cargar los complementos."
+  },
   "eventReliability": {
     "errors": {
       "title": "Ingresa el título del evento.",

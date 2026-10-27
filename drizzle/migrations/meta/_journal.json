@@ -1023,6 +1023,13 @@
       "when": 1793055920115,
       "tag": "0145_explicit_waiver_version_reselection",
       "breakpoints": true
+    },
+    {
+      "idx": 146,
+      "version": "7",
+      "when": 1793065136820,
+      "tag": "0146_optional_addon_images",
+      "breakpoints": true
     }
   ]
 }
