@@ -1,5 +1,14 @@
 # Challenge experience pass — DONE
 
+## Website Notes rows 102–105 — In Progress
+- [x] Audited ownership, legacy active memberships, immediate invitations, named roster, template/network copy models and row106 guards.
+- [x] Added owner approval, My teams sections, named owner-only requests/roster, persistent status and direct channel integration.
+- [x] Explicit blueprint/resource-template sharing, existing recipe/track/course/download draft copying, event configuration-only draft exports and copy retry receipts.
+- [x] Five isolated accounts/two teams: approval/retries/decline/removal, invite pending, code rotation, private denial, independent copies; EN/ES roster 320/390/1280; 39 focused/767 full tests; automatic compile OK.
+- [x] Exact new accounts/teams/memberships/requests, sources/copies/events/resources/notifications removed; zero queried leftovers. Temporary scripts/screenshots/sessions removed.
+- [ ] Rows102–104: complete relogin/mode-switch/notification-click, suspended/expired-link/removed-open browser and full accessibility matrix unverified.
+- [ ] Row105: safe full media rehoming, quizzes/audio completeness, event agenda/waiver configuration, full authored-source copy/customization/publish matrix and paid-entitlement isolation checks incomplete. Do not mark Completed.
+
 ## Website Notes row 106 — In Progress
 - [x] Audited existing communication, direct memberships/invitations, owner/leader, notification, search and moderation paths.
 - [x] Reused announcements/chat with strict direct-team access, owner-only management, separate unread/mute, safe links/deep links and retry dedupe.

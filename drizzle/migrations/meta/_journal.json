@@ -1072,6 +1072,34 @@
       "when": 1793070035698,
       "tag": "0152_team_channel_delivery_privacy",
       "breakpoints": true
+    },
+    {
+      "idx": 153,
+      "version": "7",
+      "when": 1793070644537,
+      "tag": "0153_owner_approved_team_membership",
+      "breakpoints": true
+    },
+    {
+      "idx": 154,
+      "version": "7",
+      "when": 1793070720301,
+      "tag": "0154_private_reusable_team_library",
+      "breakpoints": true
+    },
+    {
+      "idx": 155,
+      "version": "7",
+      "when": 1793070937082,
+      "tag": "0155_team_library_event_draft_exports",
+      "breakpoints": true
+    },
+    {
+      "idx": 156,
+      "version": "7",
+      "when": 1793071648685,
+      "tag": "0156_library_draft_field_compatibility",
+      "breakpoints": true
     }
   ]
 }

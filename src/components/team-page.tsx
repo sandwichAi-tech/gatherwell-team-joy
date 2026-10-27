@@ -1,3 +1,5 @@
+import { TeamMembershipSheet } from '@/components/team-membership';
+import { TeamLibrary } from '@/components/team-library';
 import { teamEditIssues, TEAM_DESCRIPTION_MAX } from '@/lib/profile-ia';
 import { Feature } from '@/lib/feature-flags';
 import { SharedProgress } from '@/components/my-progress';
@@ -81,7 +83,7 @@ function NoTeam() {
       <Input className="field-input" placeholder={t('onboarding.teamNamePlaceholder')} value={name} onChange={e => setName(e.target.value)} aria-label={t('onboarding.teamName')} maxLength={80} />
       <Button disabled={busy || !name.trim()}>{t('teamSpace.createTeam')}</Button>
     </form>
-    <form className="inline-form" onSubmit={async e => { e.preventDefault(); if (!code.trim()) return; setBusy(true); const { error } = await supabase.rpc('join_team_by_code', { _code: code.trim() }); if (!error) trackEvent('team_joined'); setBusy(false); if (error) toast.error(t('onboarding.invalidCode')); else await done(); }}>
+    <form className="inline-form" onSubmit={async e => { e.preventDefault(); if (!code.trim()) return; setBusy(true); const { error } = await supabase.rpc('join_team_by_code', { _code: code.trim() }); if (!error) toast.success(t('teamMembership.status.pending')); setBusy(false); if (error) toast.error(t('onboarding.invalidCode')); else await done(); }}>
       <Input className="field-input" placeholder={t('onboarding.codePlaceholder')} value={code} onChange={e => setCode(e.target.value)} aria-label={t('onboarding.code')} />
       <Button variant="secondary" disabled={busy || !code.trim()}>{t('teamSpace.joinTeam')}</Button>
     </form>
@@ -94,7 +96,7 @@ export function TeamPage() {
   const { t } = useTranslation(); const { userId } = useGatherwell();
   const { data: workspace, isLoading } = useQuery(workspaceQuery(userId));
   const requestedTeam = useRouterState({ select: state => state.location.search.team });
-  const target = useQuery({ queryKey: ['team-link', requestedTeam, userId], enabled: !!requestedTeam, staleTime: 0, gcTime: 0, queryFn: async () => {
+  const target = useQuery({ queryKey: ['team-link', requestedTeam, userId], enabled: !!requestedTeam, staleTime: 0, gcTime: 0, refetchInterval: 10_000, queryFn: async () => {
     if (!requestedTeam) return null;
     const { data: access, error } = await supabase.rpc('team_channel_state', { _team: requestedTeam });
     if (error) throw error; if (!access) return null;
@@ -106,19 +108,29 @@ export function TeamPage() {
     if (target.isPending) return <ListSkeleton />;
     if (target.isError) return <p role="alert">{t('teamCommunication.saveError')}</p>;
     if (!target.data) return <p role="status">{t('teamCommunication.noAccess')}</p>;
-    return <TeamSpace key={requestedTeam} workspace={target.data} />;
+    return <PrivateTeamSpace key={requestedTeam} workspace={target.data} />;
   }
   if (isLoading) return <ListSkeleton />;
   return <>
     <TeamSwitcher userId={userId} className="mobile-switcher" />
     <div className="page-heading"><div><span className="eyebrow">{t('team.eyebrow')}</span><h1>{t('team.title')}</h1></div></div>
-    {workspace ? <TeamSpace key={workspace.teamId} workspace={workspace} /> : <NoTeam />}
+    {workspace ? <PrivateTeamSpace key={workspace.teamId} workspace={workspace} /> : <NoTeam />}
   </>;
+}
+
+function PrivateTeamSpace({ workspace }: { workspace: TeamMembership }) {
+  const { userId } = useGatherwell(); const { t } = useTranslation();
+  const access = useQuery({ queryKey: ['private-team-access', workspace.teamId, userId], staleTime: 0, gcTime: 0, retry: false, refetchInterval: 10_000, queryFn: async () => {
+    const { data, error } = await supabase.rpc('team_channel_state', { _team: workspace.teamId }); if (error) throw error; return data;
+  } });
+  if (access.isPending) return <ListSkeleton />;
+  if (access.isError || !access.data) return <p role="status">{t('teamCommunication.noAccess')}</p>;
+  return <TeamSpace workspace={workspace} />;
 }
 
 function TeamSpace({ workspace }: { workspace: TeamMembership }) {
   const { t, i18n } = useTranslation(); const { userId } = useGatherwell();
-  const teamId = workspace.teamId; const isLeader = workspace.role === 'leader';
+  const teamId = workspace.teamId; const isLeader = workspace.ownerId === userId;
   const lang = i18n.resolvedLanguage ?? 'en';
   const { data: team } = useQuery(teamDetailQuery(teamId));
   const { data: tree = [] } = useQuery(teamTreeQuery(teamId));
@@ -168,7 +180,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
     {canHost && <section className="panel"><div className="section-heading"><h2>{t('waiver.hostTools')}</h2></div><button type="button" className="settings-row" onClick={() => setWaiverOpen(true)}><FileText className="settings-icon" /><span className="settings-label">{t('waiver.manage')}</span><ChevronRight className="settings-chevron" /></button></section>}
     <WaiverEditorSheet teamId={teamId} open={waiverOpen} onClose={() => setWaiverOpen(false)} />
     <Button asChild variant="secondary" className="mb-4"><Link to="/blueprints">{t('templates.heading')}<ArrowRight /></Link></Button>
-    <FromYourLeader teamId={teamId} role={workspace.role} />
+    <TeamLibrary teamId={teamId} userId={userId} />
     <ChallengesSection />
 
     {isLeader && <section className="panel leader-tools"><div className="section-heading"><h2>{t('teamSpace.leaderTools')}</h2><span className="chip">{t('roles.leader')}</span></div>
@@ -184,7 +196,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
       <h3 className="field-label recognition-heading">{t('recognition.title')}</h3>
       <RecognitionTools teamId={teamId} />
     </section>}
-    {!isLeader && <section className="panel"><button type="button" className="settings-row" onClick={() => setSheet('members')}><UsersRound className="settings-icon" /><span className="settings-label">{t('teamSpace.members')}</span><ChevronRight className="settings-chevron" /></button></section>}
+
 
     {(tree.length > 1 || canCreateSub) && <SubTeams teamId={teamId} canCreate={canCreateSub} isLeader={isLeader} allowHosts={!!team?.allow_host_subteams} />}
     {canHost && <TemplatesSection teamId={teamId} userId={userId} isLeader={isLeader} />}
@@ -193,7 +205,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
 
     <InviteSheet open={sheet === 'invite'} onOpenChange={o => !o && setSheet(null)} workspace={workspace} joinCode={team?.join_code ?? workspace.joinCode} isLeader={isLeader} />
     {isLeader && team && <EditTeamSheet open={sheet === 'edit'} onOpenChange={o => !o && setSheet(null)} team={team} userId={userId} />}
-    <MembersSheet open={sheet === 'members'} onOpenChange={o => !o && setSheet(null)} teamId={teamId} userId={userId} isLeader={isLeader} directLeader={isLeader && !workspace.inherited} />
+    {isLeader && <TeamMembershipSheet open={sheet === 'members'} onOpenChange={o => !o && setSheet(null)} teamId={teamId} userId={userId} />}
 
     {isLeader && <ResponsiveSheet open={sheet === 'subteams'} onOpenChange={o => !o && setSheet(null)} title={t('teamSpace.subteams')}><SubTeamSettings teamId={teamId} allowHosts={!!team?.allow_host_subteams} /></ResponsiveSheet>}
   </>;
@@ -294,7 +306,7 @@ function InviteSheet({ open, onOpenChange, workspace, joinCode, isLeader }: { op
   };
   return <>
     <ResponsiveSheet open={open && !qr} onOpenChange={onOpenChange} title={t('teamSpace.invite')} description={t('teamSpace.inviteText', { team: workspace.name })}>
-      <div className="copy-field"><span>{link}</span></div>
+      <p className="auth-subtitle">{t('teamMembership.pendingHint')}</p>
       <div className="share-grid">
         <CopyButton variant="default" text={link} label={t('onboarding.copy')} />
         <ShareButton url={link} />
@@ -302,7 +314,7 @@ function InviteSheet({ open, onOpenChange, workspace, joinCode, isLeader }: { op
         <Button asChild variant="secondary"><a href={`sms:?&body=${encodeURIComponent(message)}`}><Smartphone />{t('teamSpace.sms')}</a></Button>
         <Button variant="secondary" onClick={() => setQr(true)}><QrCode />{t('teamSpace.qr')}</Button>
       </div>
-      <p className="field-label">{t('onboarding.code')}: <strong className="join-code">{joinCode}</strong></p>
+      
       {isLeader && <Button variant="ghost" className="quiet-action" onClick={async () => { if (await confirmAction({ title: t('teamSpace.resetCode'), body: t('teamSpace.resetConfirm'), destructive: true, confirmLabel: t('teamSpace.resetCode') })) await reset(); }}><RefreshCw />{t('teamSpace.resetCode')}</Button>}
     </ResponsiveSheet>
     <Dialog open={qr} onOpenChange={setQr}>
@@ -352,53 +364,6 @@ function EditTeamSheet({ open, onOpenChange, team, userId }: { open: boolean; on
         <div className="swatches">{TEAM_COLORS.map(value => <button type="button" key={value} className={`swatch ${color === value ? 'is-selected' : ''}`} style={{ background: value }} aria-label={value} aria-pressed={color === value} onClick={() => setColor(value)}>{color === value && <Check />}</button>)}
           <label className={`swatch swatch-custom ${color && !TEAM_COLORS.includes(color as typeof TEAM_COLORS[number]) ? 'is-selected' : ''}`} style={color && !TEAM_COLORS.includes(color as typeof TEAM_COLORS[number]) ? { background: color } : undefined} aria-label={t('teamSpace.customColor')}><Plus /><input type="color" className="sr-only" value={color ?? '#2F2340'} onChange={e => setColor(e.target.value.toUpperCase())} /></label></div></div>
     </div>
-  </ResponsiveSheet>;
-}
-
-function MembersSheet({ open, onOpenChange, teamId, userId, isLeader, directLeader }: { open: boolean; onOpenChange: (o: boolean) => void; teamId: string; userId: string; isLeader: boolean; directLeader: boolean }) {
-  const { t } = useTranslation(); const queryClient = useQueryClient();
-  const { data: roster = [] } = useQuery({ ...rosterQuery(teamId), enabled: open });
-  const homId = useHostOfMonthId(teamId);
-  const [search, setSearch] = useState(''); const [selected, setSelected] = useState<Member | null>(null);
-  const [badge, setBadge] = useState(''); const [confirm, setConfirm] = useState<'remove' | 'transfer' | null>(null);
-  const filtered = roster.filter(m => (m.name ?? '').toLowerCase().includes(search.trim().toLowerCase()));
-  useEffect(() => { setBadge(selected?.customBadge ?? ''); setConfirm(null); }, [selected]);
-  useEffect(() => { if (!open) setSelected(null); }, [open]);
-  const refresh = async () => { await queryClient.invalidateQueries({ queryKey: teamKey(teamId) }); await queryClient.invalidateQueries({ queryKey: ['teams'] }); await queryClient.invalidateQueries({ queryKey: ['workspace'] }); };
-  const run = async (action: () => PromiseLike<{ error: unknown }>, success: string, close = true) => {
-    const { error } = await action();
-    if (error) { toast.error(errorText(t, error)); return; }
-    toast.success(success); await refresh(); if (close) setSelected(null);
-  };
-  const update = (patch: { role?: string; custom_badge?: string | null }) => run(() => supabase.from('team_members').update(patch).match({ team_id: teamId, user_id: selected!.userId }), t('teamSpace.memberSaved'), false).then(() => setSelected(s => s ? { ...s, role: patch.role ?? s.role, customBadge: patch.custom_badge !== undefined ? patch.custom_badge : s.customBadge } : s));
-
-  return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={selected ? (selected.name ?? t('teamSpace.someone')) : t('teamSpace.members')} icon="UsersRound">
-    {!selected ? <>
-      <div className="search-field"><Search /><Input className="field-input" placeholder={t('teamSpace.searchMembers')} value={search} onChange={e => setSearch(e.target.value)} aria-label={t('teamSpace.searchMembers')} /></div>
-      <div className="member-list">{filtered.map(m => <button type="button" key={m.userId} className="member-row" onClick={() => setSelected(m)}>
-        <span className={`initial-avatar ${m.userId === homId ? 'hom-ring' : ''}`}>{initialsOf(m.name)}</span><span className="member-name">{m.name ?? t('teamSpace.someone')}{m.userId === userId && <small> · {t('common.you')}</small>}</span>
-        {m.customBadge && <span className="chip warm-chip">{m.customBadge}</span>}<span className="chip">{t(`roles.${m.role}`)}</span><ChevronRight className="settings-chevron" /></button>)}
-        {!filtered.length && <EmptyState compact icon="UsersRound" text={t('teamSpace.noMatches')} />}</div>
-    </> : <div className="edit-form">
-      <button type="button" className="auth-link back-link" onClick={() => setSelected(null)}><ChevronLeft />{t('common.back')}</button>
-      <ProfileHero compact avatar={<span className={`initial-avatar profile-avatar ${selected.userId === homId ? 'hom-ring' : ''}`} style={{ width: 88, height: 88, fontSize: 28 }}>{initialsOf(selected.name)}</span>}
-        name={selected.name ?? t('teamSpace.someone')} role={t(`roles.${selected.role}`)} badge={selected.customBadge}
-        team={t('profile.memberSince', { date: new Date(selected.joinedAt).toLocaleDateString(i18n.resolvedLanguage, { month: 'short', year: 'numeric' }) })} />
-      <FeaturedBadges userId={selected.userId} />
-      <StatsStrip userId={selected.userId} teamId={teamId} />
-      <RecentBadges userId={selected.userId} teamId={teamId} />
-      {isLeader && <SharedProgress teamId={teamId} userId={selected.userId} />}
-      {isLeader && <section className="gw-manage"><h3 className="gw-group-title">{t('profile.manage')}</h3>
-      {selected.role !== 'leader' && <div className="form-field"><span className="field-label">{t('teamSpace.role')}</span>
-        <div className="choice-pair">{(['host', 'member'] as const).map(role => <button type="button" key={role} className={`choice-card ${selected.role === role ? 'is-selected' : ''}`} aria-pressed={selected.role === role} onClick={() => update({ role })}><strong>{t(`roles.${role}`)}</strong></button>)}</div></div>}
-      <div className="form-field"><label className="field-label" htmlFor="member-badge">{t('teamSpace.badge')}</label>
-        <div className="inline-form"><Input id="member-badge" className="field-input" maxLength={24} placeholder={t('teamSpace.badgePlaceholder')} value={badge} onChange={e => setBadge(e.target.value)} /><Button variant="secondary" onClick={() => update({ custom_badge: badge.trim() || null })}>{t('profile.save')}</Button></div></div>
-      {selected.role !== 'leader' && <Button variant="secondary" onClick={() => update({ role: 'leader' })}><Crown />{t('teamSpace.makeLeader')}</Button>}
-      {selected.role === 'leader' && selected.userId !== userId && <Button variant="secondary" onClick={() => update({ role: 'host' })}>{t('teamSpace.makeHost')}</Button>}
-      {directLeader && selected.userId !== userId && <Button variant="secondary" onClick={async () => { if (await confirmAction({ title: t('teamSpace.transfer'), body: t('teamSpace.transferConfirm', { name: selected.name ?? t('teamSpace.someone') }), confirmLabel: t('teamSpace.transfer') })) void run(() => supabase.rpc('transfer_leadership', { _team: teamId, _to: selected.userId }), t('teamSpace.transferred')); }}>{t('teamSpace.transfer')}</Button>}
-      {selected.userId !== userId && <button type="button" className="delete-account" onClick={async () => { if (await confirmAction({ title: t('teamSpace.remove'), body: t('teamSpace.removeConfirm', { name: selected.name ?? t('teamSpace.someone') }), destructive: true, confirmLabel: t('teamSpace.remove') })) void run(() => supabase.from('team_members').delete().match({ team_id: teamId, user_id: selected.userId }), t('teamSpace.removed')); }}><Trash2 className="inline-icon" />{t('teamSpace.remove')}</button>}
-      </section>}
-    </div>}
   </ResponsiveSheet>;
 }
 

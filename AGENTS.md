@@ -15,7 +15,7 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - BrandLogo: original CDN SVGs/theme variants; BrandImage: photos; preserve logo colors, no photo grading.
 - Marketing GwIcon: duotone silhouettes/scoped contour reinforcement; preserve signed-in icon weights.
 - Keep homepage hosting paths, steps and tool inventory inside the existing landing page and reuse login intent/discovery routes; marketing copy never claims a provider or checkout is live before it is verified.
-- Product rules: PROJECT_RULES.md under SOURCE_OF_TRUTH.md.
+- Rules: PROJECT_RULES.md under SOURCE_OF_TRUTH.md.
 - All visible/accessible copy uses matched English/Latin American Spanish react-i18next JSON for instant, complete language switching.
 - GatherwellShell shares desktop/mobile tabs; insights-navigation gates own-host/team access; mobile tabs scroll.
 - localStorage holds only language, theme and a pending invite code (cleared once the join completes); all user data lives in Lovable Cloud with team-scoped RLS.
@@ -44,7 +44,7 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Day-60 scoreboard: raw counts come only from admin_day60(); targets and the go/adjust/rethink verdict are evaluated in src/lib/day60.ts so thresholds live in one tested place.
 - Parked features are gated by feature_* flags via src/lib/feature-flags.tsx; admins always see them and off routes throw notFound, so launch scope changes from /admin?tab=flags.
 - Resources: /learn + feature_learn, type-first /learn/create. Placement uses configure_resource_access + existing offers; course containment stays separate. Resolve public visibility before server-only signing. Paid resource checkout stays blocked until orders/refunds verified.
-- Home brief: getDailyBrief, caller-scoped, no AI/shared cache. Insights compares UTC event cohorts.
+- Home brief: caller-scoped getDailyBrief, no AI/cache. Insights: UTC cohorts.
 - Admin password sign-in: public /admin-login with existing Cloud Auth accounts; getAdminAccess checks the role before navigation and every admin handler re-checks, so sign-in never grants privileges.
 - Blueprints/challenges reuse existing editors; drafts stay private. Experience sessions use existing events and whole-event admission.
 - Platform fees come only from versioned fee_rules (calc_platform_fee_cents, mirrored in src/lib/fees.ts); orders snapshot the rule.
@@ -61,4 +61,4 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Course drip is decided only by lesson_unlock_at()/lesson_is_unlocked() (mirrored in src/lib/course-release.ts) and enforced by restrictive RLS on lessons, summaries and learn-media; browsers get locked titles only via my_locked_lessons().
 - Event Builder partial drafts use manager-only event_builder_drafts snapshots; publish validates and writes canonical event fields, so incomplete input never becomes attendee data.
 - Own QR; staff/waivers gate admission; journeys dedupe/recheck. Waiver versions are manager-only; event attachments snapshot text, never rewrite acceptances.
-- Team channels reuse announcements/comments/topics; team_channel_access checks direct access; owner-only announcements, separate unread/mute prevent leaks.
+- Owner approves joins; legacy members remain. Library reuses templates and independent allowlisted drafts, never entitlements. Channels keep direct guards and separate unread/mute.

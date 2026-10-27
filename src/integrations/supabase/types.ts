@@ -6190,12 +6190,15 @@ export type Database = {
       }
       resource_templates: {
         Row: {
+          copied_from_author: string | null
+          copied_from_id: string | null
           created_at: string
           created_by: string | null
           description_en: string | null
           description_es: string | null
           id: string
           kind: string
+          shared_team_ids: string[]
           sort_order: number
           source_id: string | null
           source_kind: string | null
@@ -6206,12 +6209,15 @@ export type Database = {
           title_es: string
         }
         Insert: {
+          copied_from_author?: string | null
+          copied_from_id?: string | null
           created_at?: string
           created_by?: string | null
           description_en?: string | null
           description_es?: string | null
           id?: string
           kind: string
+          shared_team_ids?: string[]
           sort_order?: number
           source_id?: string | null
           source_kind?: string | null
@@ -6222,12 +6228,15 @@ export type Database = {
           title_es?: string
         }
         Update: {
+          copied_from_author?: string | null
+          copied_from_id?: string | null
           created_at?: string
           created_by?: string | null
           description_en?: string | null
           description_es?: string | null
           id?: string
           kind?: string
+          shared_team_ids?: string[]
           sort_order?: number
           source_id?: string | null
           source_kind?: string | null
@@ -6950,6 +6959,96 @@ export type Database = {
           },
         ]
       }
+      team_join_requests: {
+        Row: {
+          decided_at: string | null
+          decided_by: string | null
+          invite_id: string | null
+          requested_at: string
+          status: string
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          decided_at?: string | null
+          decided_by?: string | null
+          invite_id?: string | null
+          requested_at?: string
+          status?: string
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          decided_at?: string | null
+          decided_by?: string | null
+          invite_id?: string | null
+          requested_at?: string
+          status?: string
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_join_requests_invite_id_fkey"
+            columns: ["invite_id"]
+            isOneToOne: false
+            referencedRelation: "team_invites"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_join_requests_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_join_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_library_copies: {
+        Row: {
+          created_at: string
+          request_key: string
+          source_id: string
+          source_kind: string
+          target_id: string
+          target_kind: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          request_key: string
+          source_id: string
+          source_kind: string
+          target_id: string
+          target_kind: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          request_key?: string
+          source_id?: string
+          source_kind?: string
+          target_id?: string
+          target_kind?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_library_copies_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       team_licenses: {
         Row: {
           cancel_at_period_end: boolean
@@ -7137,6 +7236,8 @@ export type Database = {
           category: string
           category_label: string | null
           checklist: Json
+          copied_from_author: string | null
+          copied_from_id: string | null
           cover_style: number
           cover_url: string | null
           created_at: string
@@ -7147,6 +7248,7 @@ export type Database = {
           default_price_cents: number
           description_en: string | null
           description_es: string | null
+          event_setup: Json | null
           followup_script_en: string | null
           followup_script_es: string | null
           id: string
@@ -7154,6 +7256,7 @@ export type Database = {
           invite_script_es: string | null
           is_published: boolean
           launches_count: number
+          shared_team_ids: string[]
           sort_order: number
           team_id: string | null
           theme: string | null
@@ -7164,6 +7267,8 @@ export type Database = {
           category?: string
           category_label?: string | null
           checklist?: Json
+          copied_from_author?: string | null
+          copied_from_id?: string | null
           cover_style?: number
           cover_url?: string | null
           created_at?: string
@@ -7174,6 +7279,7 @@ export type Database = {
           default_price_cents?: number
           description_en?: string | null
           description_es?: string | null
+          event_setup?: Json | null
           followup_script_en?: string | null
           followup_script_es?: string | null
           id?: string
@@ -7181,6 +7287,7 @@ export type Database = {
           invite_script_es?: string | null
           is_published?: boolean
           launches_count?: number
+          shared_team_ids?: string[]
           sort_order?: number
           team_id?: string | null
           theme?: string | null
@@ -7191,6 +7298,8 @@ export type Database = {
           category?: string
           category_label?: string | null
           checklist?: Json
+          copied_from_author?: string | null
+          copied_from_id?: string | null
           cover_style?: number
           cover_url?: string | null
           created_at?: string
@@ -7201,6 +7310,7 @@ export type Database = {
           default_price_cents?: number
           description_en?: string | null
           description_es?: string | null
+          event_setup?: Json | null
           followup_script_en?: string | null
           followup_script_es?: string | null
           id?: string
@@ -7208,6 +7318,7 @@ export type Database = {
           invite_script_es?: string | null
           is_published?: boolean
           launches_count?: number
+          shared_team_ids?: string[]
           sort_order?: number
           team_id?: string | null
           theme?: string | null
@@ -8288,6 +8399,16 @@ export type Database = {
         Args: { _team: string; _template: string }
         Returns: string
       }
+      copy_team_library_item: {
+        Args: {
+          _destination: string
+          _id: string
+          _kind: string
+          _request: string
+          _team: string
+        }
+        Returns: Json
+      }
       course_access_start: {
         Args: { _offer: string; _user: string }
         Returns: string
@@ -8354,6 +8475,10 @@ export type Database = {
       }
       decide_rsvp: {
         Args: { _approve: boolean; _rsvp: string }
+        Returns: string
+      }
+      decide_team_request: {
+        Args: { _decision: string; _team: string; _user: string }
         Returns: string
       }
       default_waiver: { Args: { _team: string }; Returns: undefined }
@@ -8457,6 +8582,10 @@ export type Database = {
         Returns: string
       }
       event_waiver_status: { Args: { _event: string }; Returns: Json }
+      export_library_source: {
+        Args: { _id: string; _kind: string }
+        Returns: string
+      }
       export_my_data: { Args: never; Returns: Json }
       feature_badge: {
         Args: { _id: string; _slot: number }
@@ -8709,6 +8838,7 @@ export type Database = {
       moderation_queue: { Args: { _team: string }; Returns: Json }
       moderation_reports: { Args: { _team: string }; Returns: Json }
       my_alert_matches: { Args: never; Returns: Json }
+      my_authored_library_items: { Args: never; Returns: Json }
       my_broadcasts: {
         Args: never
         Returns: {
@@ -8729,6 +8859,7 @@ export type Database = {
       my_following: { Args: never; Returns: Json }
       my_invite_code: { Args: never; Returns: string }
       my_learning: { Args: never; Returns: Json }
+      my_library_sources: { Args: never; Returns: Json }
       my_locked_lessons: {
         Args: never
         Returns: {
@@ -8778,6 +8909,7 @@ export type Database = {
           team_name: string
         }[]
       }
+      my_team_states: { Args: never; Returns: Json }
       my_tickets: { Args: never; Returns: Json }
       my_updates: { Args: { _limit?: number; _offset?: number }; Returns: Json }
       my_value_meter: { Args: never; Returns: Json }
@@ -9126,6 +9258,10 @@ export type Database = {
         Returns: undefined
       }
       request_ip: { Args: never; Returns: string }
+      request_team_membership: {
+        Args: { _invite?: string; _team: string }
+        Returns: string
+      }
       reserved_profile_slugs: { Args: never; Returns: string[] }
       reset_calendar_feeds: { Args: never; Returns: Json }
       reset_invite_link: { Args: { _event: string }; Returns: string }
@@ -9531,6 +9667,10 @@ export type Database = {
         Args: { _active: boolean; _id: string }
         Returns: undefined
       }
+      share_team_library_item: {
+        Args: { _id: string; _kind: string; _teams: string[] }
+        Returns: undefined
+      }
       shared_progress: {
         Args: { _team: string; _tz: string; _user: string }
         Returns: Json
@@ -9607,10 +9747,12 @@ export type Database = {
         Returns: Json
       }
       team_invites_list: { Args: { _team: string }; Returns: Json }
+      team_library_items: { Args: { _team: string }; Returns: Json }
       team_log: {
         Args: { _action: string; _meta?: Json; _target?: string; _team: string }
         Returns: undefined
       }
+      team_member_management: { Args: { _team: string }; Returns: Json }
       team_notification_access: {
         Args: { _kind: string; _link: string; _team: string }
         Returns: boolean

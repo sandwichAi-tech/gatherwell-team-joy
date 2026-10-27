@@ -22,12 +22,20 @@
     "noAccess": "Esta conversación privada no está disponible. Tu membresía puede estar pendiente, eliminada o suspendida.",
     "checking": "Verificando el acceso al equipo…",
     "saveError": "No se pudo cargar o guardar. Reconéctate e inténtalo de nuevo; tu texto sin enviar no cambió."
-},
+  },
   "addonImages": {
-    "label": "Imagen del complemento", "upload": "Subir imagen", "replace": "Reemplazar imagen", "remove": "Quitar imagen",
-    "uploading": "Subiendo imagen…", "failed": "No se pudo guardar la imagen. Tu imagen anterior no cambió. Inténtalo de nuevo.",
-    "type": "Elige una imagen JPEG, PNG o WebP.", "size": "Elige una imagen de hasta 15 MB.",
-    "alt": "{{name}} — imagen del complemento", "title": "Complementos", "loading": "Cargando complementos…", "loadError": "No se pudieron cargar los complementos."
+    "label": "Imagen del complemento",
+    "upload": "Subir imagen",
+    "replace": "Reemplazar imagen",
+    "remove": "Quitar imagen",
+    "uploading": "Subiendo imagen…",
+    "failed": "No se pudo guardar la imagen. Tu imagen anterior no cambió. Inténtalo de nuevo.",
+    "type": "Elige una imagen JPEG, PNG o WebP.",
+    "size": "Elige una imagen de hasta 15 MB.",
+    "alt": "{{name}} — imagen del complemento",
+    "title": "Complementos",
+    "loading": "Cargando complementos…",
+    "loadError": "No se pudieron cargar los complementos."
   },
   "eventReliability": {
     "errors": {
@@ -7300,5 +7308,53 @@
     "open": "Abrir recurso",
     "signQuiz": "Inicia sesión para responder este quiz",
     "notAvailable": "Este recurso aún no está disponible."
-}
+  },
+  "teamMembership": {
+    "lead": "Equipos que lidero",
+    "belong": "Equipos a los que pertenezco",
+    "emptylead": "Todavía no lideras ningún equipo.",
+    "emptybelong": "Todavía no tienes membresías ni solicitudes.",
+    "open": "Abrir equipo",
+    "pendingHint": "La persona propietaria del equipo revisa cada solicitud. El contenido privado está disponible solo después de la aprobación.",
+    "ownerOnly": "Solo la persona propietaria puede ver y administrar miembros y solicitudes.",
+    "manage": "Miembros y solicitudes",
+    "requests": "Solicitudes para unirse",
+    "members": "Miembros aprobados",
+    "emptyList": "Todavía no hay registros.",
+    "requested": "Solicitud del {{date}}",
+    "joined": "Se unió el {{date}}",
+    "approve": "Aprobar",
+    "declined": "Rechazar",
+    "removed": "Quitar miembro",
+    "error": "No se pudo actualizar este equipo. Revisa tu acceso e inténtalo de nuevo.",
+    "request": "Solicitar unirme",
+    "signIn": "Inicia sesión para solicitar unirte",
+    "status": {
+      "pending": "Pendiente de aprobación",
+      "approved": "Aprobado",
+      "declined": "Rechazado",
+      "removed": "Eliminado",
+      "suspended": "Suspendido",
+      "unavailable": "No disponible"
+    }
+  },
+  "teamLibrary": {
+    "title": "Biblioteca del equipo",
+    "share": "Compartir un elemento reutilizable",
+    "hint": "Aquí solo aparecen los elementos compartidos explícitamente con este equipo. Nunca se incluyen compras ni datos de clientes.",
+    "empty": "No se han compartido elementos reutilizables con este equipo.",
+    "blueprint": "Plantilla de evento",
+    "resource_template": "Plantilla de recurso",
+    "view": "Ver y copiar",
+    "source": "Tu elemento reutilizable",
+    "choose": "Elige un elemento",
+    "assets": "Las copias son borradores privados e independientes. Quien copia debe agregar sus archivos y fotos. No se incluye acceso a contenido pagado.",
+    "copy": "Copiar a mi espacio",
+    "destination": "Mi espacio",
+    "noWorkspace": "Primero crea tu propio espacio",
+    "copied": "Se creó un borrador independiente.",
+    "openDraft": "Abrir borrador",
+    "exportSource": "Preparar desde un evento o recurso",
+    "prepare": "Crear plantilla reutilizable"
+  }
 }

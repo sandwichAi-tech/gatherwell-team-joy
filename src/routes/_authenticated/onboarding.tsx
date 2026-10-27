@@ -195,7 +195,7 @@ function Onboarding() {
 
   if (atEnd && joined) return shell(<>
     <span className="eyebrow">{joined.team}</span>
-    <h1 className="onboarding-title">{t('onboarding.welcomeTitle', { team: joined.team })}</h1>
+    <h1 className="onboarding-title">{t('teamMembership.status.pending')}</h1>
     {joined.leader && <div className="leader-line"><span className="initial-avatar">{initialsOf(joined.leader)}</span><span>{t('onboarding.welcomeLed', { name: joined.leader })}</span></div>}
     {error && <p className="field-error" role="alert">{error}</p>}
     <Button className="onboarding-continue" disabled={finishing} onClick={() => void finish()}>{finishing ? t('onboarding.saving') : t('onboarding.goHome')}</Button>
