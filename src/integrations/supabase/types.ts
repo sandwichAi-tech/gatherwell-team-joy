@@ -9595,6 +9595,10 @@ export type Database = {
         Args: { _team: string; _user?: string }
         Returns: boolean
       }
+      team_channel_delivery_eligible: {
+        Args: { _kind: string; _team: string; _user: string }
+        Returns: boolean
+      }
       team_channel_owner: { Args: { _team: string }; Returns: boolean }
       team_channel_state: { Args: { _team: string }; Returns: Json }
       team_featured_gatherings: { Args: { _team: string }; Returns: Json }
@@ -9606,6 +9610,10 @@ export type Database = {
       team_log: {
         Args: { _action: string; _meta?: Json; _target?: string; _team: string }
         Returns: undefined
+      }
+      team_notification_access: {
+        Args: { _kind: string; _link: string; _team: string }
+        Returns: boolean
       }
       team_quizzes: { Args: { _team: string }; Returns: Json }
       team_seat_usage: { Args: { _team: string }; Returns: Json }
