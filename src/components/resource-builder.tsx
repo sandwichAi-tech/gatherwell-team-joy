@@ -1,3 +1,4 @@
+import { BuilderStepFooter, focusField } from '@/components/builder-step-footer';
 import { DestinationSummary, ResourceAccessFields } from '@/components/resource-access-fields';
 import { CurriculumPanel } from '@/components/content-studio';
 import { CourseOutlinePreview } from '@/components/course-outline-preview';
@@ -220,6 +221,8 @@ function Curriculum({ trackId, teamId, lang, onLessons }: { trackId: string; tea
  * publish actions, and reopening of existing items via ?id=. Switching type keeps shared
  * input and asks before discarding incompatible type-specific content.
  */
+const RESOURCE_FIELD: Record<string, string> = { title: 'rb-title', url: 'rb-url', live_time: 'rb-live', price: 'rb-price', destination: 'rb-destinations', courseUnavailable: 'rb-destinations' };
+
 export function ResourceBuilder({ initialType, initialId }: { initialType: CreateType; initialId?: string | undefined }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? 'en';
@@ -369,7 +372,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const stepsRef = useRef<HTMLDivElement>(null);
   const goStep = (s: ItemSection) => {
     setSection(s);
-    requestAnimationFrame(() => stepsRef.current?.querySelector<HTMLButtonElement>('[aria-selected="true"]')?.focus());
+    requestAnimationFrame(() => document.getElementById('rb-step-heading')?.focus());
   };
   const patchItem = (p: Partial<ItemState>) => setItem(s => ({ ...s, ...p }));
   const patchLesson = (p: Partial<BuilderDraft['lesson']>) => setDraft(d => ({ ...d, lesson: { ...d.lesson, ...p } }));
@@ -430,6 +433,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const draftLessonsToPublish = trackLessons ? lessonsToPublishWithTrack(trackLessons, loaded?.status === 'published') : [];
   const canSave = itemIssues(type, item, { publish: false, courseId: 'standalone', lessonUrl: draft.lesson.url, live: draft.lesson.live }).filter(i => i === 'title' || (i === 'price' && isStandalone(dest))).length === 0 && !destIssues.includes('courseUnavailable') && (progress === null || progress === 100) && !busy;
   const canPublish = canSave && issues.length === 0 && !paidBlocked && !placeholder;
+  const stepIssues = stepBlockers(issues, section, RESOURCE_ISSUE_STEP);
   const nav = stepNav(sections, sections.includes(section) ? section : 'presentation');
   const wasPublished = loaded?.status === 'published';
 
@@ -628,6 +632,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
             {i + 1}. {t(`resources.item.tabs.${s}`)}
           </button>)}
         </div>
+        <h2 id="rb-step-heading" tabIndex={-1} className="builder-step-heading">{t(`resources.item.tabs.${section}`)}</h2>
 
         {/* ---- Presentation ---- */}
         {section === 'presentation' && <>
@@ -731,18 +736,16 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
         {placeholder && <p className="field-hint" role="alert">{t('resources.item.placeholderBlock')}{lessonsWithPlaceholders.length > 0 && ` ${t('resources.item.placeholderLessons', { names: lessonsWithPlaceholders.map(l => pick(lang, l.title_en, l.title_es)).join(', ') })}`}</p>}
         {issues.length > 0 && <p className="field-hint" role="alert">{t('resources.item.issues', { fields: issues.map(i => t(`resources.item.issue.${i}`)).join(', ') })}</p>}
 
-        <div className="sheet-actions builder-actions">
-          {nav.prev && <Button variant="ghost" onClick={() => goStep(nav.prev!)}><ArrowLeft />{t('resources.item.back')}</Button>}
-          <Button variant="secondary" disabled={!canSave} aria-busy={busy} onClick={() => void save(false)}>
-            <Save />{busy ? t('onboarding.saving') : t('gathering.saveDraft')}
-          </Button>
-          {nav.next
-            ? <Button className="onboarding-continue" onClick={() => goStep(nav.next!)}>{t('resources.item.next')}<ArrowRight /></Button>
-            : <Button className="onboarding-continue" disabled={!canPublish} aria-busy={busy} onClick={() => void save(true)}
-                title={paidBlocked ? t('resources.item.paidBlocked') : undefined}>
-                {busy ? t('onboarding.saving') : t(wasPublished ? 'resources.item.update' : 'offers.publish')}
-              </Button>}
-        </div>
+        <BuilderStepFooter
+          onBack={nav.prev ? () => goStep(nav.prev!) : undefined}
+          onSave={() => void save(false)} saveDisabled={!canSave} saving={busy}
+          onNext={nav.next ? () => goStep(nav.next!) : undefined}
+          blockers={stepIssues.map(i => t(`resources.item.issue.${i}`))}
+          onBlocked={() => focusField(RESOURCE_FIELD[stepIssues[0]!] ?? 'rb-step-heading')}
+          final={<Button className="onboarding-continue builder-footer-primary" disabled={!canPublish} aria-busy={busy} onClick={() => void save(true)}
+            title={paidBlocked ? t('resources.item.paidBlocked') : undefined}>
+            {busy ? t('onboarding.saving') : t(wasPublished ? 'resources.item.update' : 'offers.publish')}
+          </Button>} />
       </section>
 
       <aside className="item-preview-aside" aria-label={t('resources.item.previewTitle')}>
