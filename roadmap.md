@@ -1,4 +1,11 @@
-# Challenge experience pass — DONE
+# Challenge experience pass
+
+## Website Notes rows 110–113 — In Progress
+- [ ] Audit and reproduce builder/template, navigation, enrollment/progress/privacy and commerce failures using isolated fixtures.
+- [ ] Coherent editable templates, replacement warning, schedule validation, one active language and accessible step navigation.
+- [ ] Authoritative My challenges, personal progress and scoring; participant-only leaderboard and revocation guards.
+- [ ] Free/Paid draft persistence, safe enrollment/payment states and reusable optional add-on configuration; never simulated paid access.
+- [ ] Focused/security and full tests, EN/ES mobile/desktop, exact fixture cleanup, CHANGELOG and explicit verification gaps.
 
 ## Website Notes rows 107–109 — In Progress
 - [x] Audit/reproduce duplicates, staff denial, unpaid admission, legacy-waiver partial outcome; Home future-event and static first-event paths.
