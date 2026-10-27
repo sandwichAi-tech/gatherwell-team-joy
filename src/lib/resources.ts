@@ -6,7 +6,7 @@ import type { LearningEntry } from '@/lib/content';
 /** Resources page model: one card shape mapped from tracks/lessons, course and download offers, and recipes. Memberships are never resources. */
 
 export const RESOURCE_TABS = ['foryou', 'library', 'live', 'saved', 'mine'] as const;
-export const RESOURCE_TYPES = ['all', 'course', 'quiz', 'video', 'audio', 'guide', 'file', 'link', 'recipe'] as const;
+export const RESOURCE_TYPES = ['all', 'course', 'assessment', 'quiz', 'video', 'audio', 'guide', 'file', 'link', 'recipe'] as const;
 export const RESOURCE_SOURCES = ['all', 'team', 'zoheewell'] as const;
 export type ResourceTab = (typeof RESOURCE_TABS)[number];
 export type ResourceTypeFilter = (typeof RESOURCE_TYPES)[number];

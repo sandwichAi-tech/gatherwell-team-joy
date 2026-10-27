@@ -1,6 +1,16 @@
 @import "tailwindcss" source(none);
 @import "tw-animate-css";
 @source "../src";
+.resource-type-group { margin-block:24px; }
+.resource-type-group h2 { margin-bottom:12px; }
+.assessment-body { padding-block:24px; max-width:800px; }
+.assessment-list { list-style:none; margin:0; padding:0; display:grid; gap:24px; }
+.assessment-list > li { border-block-start:1px solid var(--border); padding-block:20px; min-width:0; }
+.assessment-option { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.assessment-option input { min-width:0; flex:1 1 100px; }
+.assessment-builder fieldset { min-width:0; border:0; padding:12px 0; }
+.assessment-builder .guest-consent { min-height:48px; }
+.assessment-builder .sheet-actions { flex-wrap:wrap; }
 .guest-host[href] { color:var(--foreground); text-decoration:none; min-height:48px; border-radius:4px; overflow-wrap:anywhere; }
 .guest-host[href]:focus-visible { outline:2px solid var(--ring); outline-offset:4px; }
 .team-membership-list { list-style:none; margin:16px 0; padding:0; display:grid; gap:12px; }

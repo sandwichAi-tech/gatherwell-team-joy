@@ -2,7 +2,12 @@ import type { LessonType } from '@/lib/learn';
 
 /** Type-first resource authoring: what the creator picks on /learn/create and where each choice goes. */
 
-export const CREATE_TYPES = ['video', 'quiz', 'guide', 'audio', 'file', 'link', 'live', 'recipe', 'course', 'bundle'] as const;
+export const CREATE_TYPES = ['course', 'assessment', 'video', 'audio', 'guide', 'file', 'bundle', 'link', 'quiz', 'recipe', 'live'] as const;
+export const CREATE_GROUPS = [
+  { key: 'programs', types: ['course', 'assessment'] },
+  { key: 'media', types: ['video', 'audio', 'guide', 'file', 'bundle'] },
+  { key: 'interactive', types: ['link', 'quiz', 'recipe', 'live'] },
+] as const;
 export type CreateType = (typeof CREATE_TYPES)[number];
 
 export const parseCreateType = (v: unknown): CreateType | null =>

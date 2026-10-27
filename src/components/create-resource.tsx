@@ -8,10 +8,11 @@ import { ListSkeleton } from '@/components/launch-states';
 import { useLearn } from '@/components/learn';
 import { useCanCreate } from '@/components/resources';
 import { ResourceBuilder } from '@/components/resource-builder';
-import { CREATE_TYPES, parseCreateType, type CreateType } from '@/lib/create-resource';
+import { WellnessAssessmentBuilder } from '@/components/wellness-assessment-builder';
+import { CREATE_GROUPS, parseCreateType, type CreateType } from '@/lib/create-resource';
 
 const TYPE_ICON: Record<CreateType, typeof Video> = {
-  video: Video, quiz: ClipboardCheck, guide: FileText, audio: Waveform, file: Download,
+  assessment: ClipboardCheck, video: Video, quiz: ClipboardCheck, guide: FileText, audio: Waveform, file: Download,
   link: Link2, live: Radio, recipe: Leaf, course: GraduationCap, bundle: Layers,
 };
 
@@ -19,8 +20,8 @@ const TYPE_ICON: Record<CreateType, typeof Video> = {
 function TypeChooser() {
   const { t } = useTranslation();
   return <>
-    <div className="create-type-grid" role="list">
-      {CREATE_TYPES.map(type => {
+    {CREATE_GROUPS.map(group => <section key={group.key} className="resource-type-group" aria-labelledby={`type-${group.key}`}><h2 id={`type-${group.key}`}>{t(`resources.create.groups.${group.key}`)}</h2><div className="create-type-grid" role="list">
+      {group.types.map(type => {
         const Icon = TYPE_ICON[type];
         return <Link key={type} to="/learn/create" search={{ type }} className="create-type-card" role="listitem">
           <span className="creation-icon"><Icon /></span>
@@ -32,7 +33,8 @@ function TypeChooser() {
           <ArrowRight aria-hidden="true" />
         </Link>;
       })}
-      <Link to="/learn/templates" className="create-type-card is-template" role="listitem">
+    </div></section>)}
+    <div className="create-type-grid"><Link to="/learn/templates" className="create-type-card is-template">
         <span className="creation-icon"><Sparkles /></span>
         <span className="create-type-body">
           <strong>{t('resources.create.template')}</strong>
@@ -59,6 +61,7 @@ export function CreateResourcePage({ type, id }: { type?: string | undefined; id
 
   if (!workspace) return <ListSkeleton />;
   if (!canCreate) return <section className="panel"><Link to="/learn" className="back-link"><ArrowLeft />{t('resources.title')}</Link><p className="auth-subtitle">{t('resources.create.creatorsOnly')}</p></section>;
+  if (parsed === 'assessment') return <WellnessAssessmentBuilder id={id} />;
   // A picked type (or an existing item via ?id=) opens the single dynamic builder.
   // No key: the builder must stay mounted across type switches so shared input survives.
   if (parsed || id) return <ResourceBuilder initialType={parsed ?? 'video'} initialId={id} />; // the saved item's real type is loaded from ?id=
