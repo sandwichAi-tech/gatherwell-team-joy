@@ -8596,6 +8596,10 @@ export type Database = {
       }
       course_progress: { Args: { _offer: string }; Returns: Json }
       create_auth_intent: { Args: { _path: string }; Returns: string }
+      create_course_quiz_item: {
+        Args: { _language: string; _title: string; _track: string }
+        Returns: Json
+      }
       create_event_badge: {
         Args: {
           _event: string
