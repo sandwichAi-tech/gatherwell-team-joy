@@ -2737,3 +2737,18 @@ a.gw-cat-chip:hover{background:#fff}
   .builder-panel .builder-actions > button { min-height: 48px; white-space: normal; height: auto; }
   .builder-panel .builder-actions > button:last-child { width: 100%; }
 }
+
+/* Private team communication reuses the existing unframed team layout. */
+.team-communication{padding-block:24px;border-block:1px solid var(--border);margin-block:24px;min-width:0}
+.team-channel-entry{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:16px}
+.team-channel-entry button{min-height:48px;height:auto;white-space:normal;overflow-wrap:anywhere;line-height:1.4;padding:10px 8px}
+.team-communication .switch-row{gap:12px;margin-bottom:16px}.team-communication .switch-row small{display:block;color:var(--muted-foreground)}
+.team-communication .section-heading{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-top:20px}
+.team-communication .section-heading button{white-space:normal;min-height:48px}
+.team-announcements{list-style:none;padding:0;margin:16px 0}.team-announcements>li{position:relative;padding:20px 0;border-top:1px solid var(--border);overflow-wrap:anywhere}
+.team-announcements>li.is-pinned{border-inline-start:3px solid var(--primary);padding-inline-start:16px}
+.team-announcements h3{font-size:18px;margin-block:10px}.team-announcements time,.team-announcements small{display:block;font-size:13px;color:var(--muted-foreground)}
+.team-announcement-actions{display:flex;gap:8px;margin-top:8px}.team-announcement-actions button{width:48px;height:48px}
+.team-archived{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;padding-block:16px}
+.team-discussions{margin-top:16px}.convo-body a{display:inline;min-height:0;white-space:normal;overflow-wrap:anywhere}.convo-body{overflow-wrap:anywhere;white-space:pre-wrap}
+@media(max-width:767px){.team-communication{padding-bottom:80px}.team-channel-entry{grid-template-columns:1fr 1fr}.convo-composer-actions{flex-wrap:wrap}.convo-composer textarea{scroll-margin-bottom:180px}}
