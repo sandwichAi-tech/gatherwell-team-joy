@@ -32,7 +32,7 @@ import {
 import { learnPathsOf, listOf, pick, RECIPE_TAGS, removeUnusedLearnFiles, uploadLearnFile, type Lesson } from '@/lib/learn';
 import { myOffersQuery, offerTitle, saveOffer, uploadOfferFile, type Offer } from '@/lib/offers';
 import type { RefundPolicy } from '@/lib/refunds';
-import { activationIso, hasPlaceholder, isMultiLessonTrack, lessonsToPublishWithTrack, placeholderLessons, publishedDestination, stepBlockers, stepNav, RESOURCE_ISSUE_STEP } from '@/lib/resource-flow';
+import { activationIso, hasPlaceholder, isMultiLessonTrack, lessonsToPublishWithTrack, placeholderLessons, publishedDestination, stepBlockers, stepNav, RESOURCE_ISSUE_STEP, RESOURCE_FIX_STEP } from '@/lib/resource-flow';
 import {
   ACCENT_KEYS, accentPair, cardLayoutsFor, defaultCtaKey, emptyItemState, itemIssues, itemSnapshot,
   sanitizeRichText, sectionsFor, type Accent, type CardLayout, type ItemSection, type ItemState,
@@ -735,7 +735,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
           </dl>
           {[...new Set(issues)].length > 0 && <ul className="review-fix-list">{[...new Set(issues)].map(i => <li key={i}>
             <span>{t(`resources.item.issue.${i}`)}</span>
-            <Button variant="secondary" size="sm" onClick={() => { const step = RESOURCE_ISSUE_STEP[i]; if (step && sections.includes(step as ItemSection)) goStep(step as ItemSection); requestAnimationFrame(() => focusField(RESOURCE_FIELD[i] ?? 'rb-step-heading')); }}
+            <Button variant="secondary" size="sm" onClick={() => { const step = RESOURCE_FIX_STEP[i]; if (step && sections.includes(step as ItemSection)) goStep(step as ItemSection); requestAnimationFrame(() => focusField(RESOURCE_FIELD[i] ?? 'rb-step-heading')); }}
               aria-label={`${t('resources.review.fix')}: ${t(`resources.item.issue.${i}`)}`}>{t('resources.review.fix')}</Button>
           </li>)}</ul>}
         </section>}

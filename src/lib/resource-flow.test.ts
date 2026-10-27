@@ -88,3 +88,11 @@ describe('builder Next blockers', () => {
     expect(stepBlockers(['destination'], 'presentation', ASSESSMENT_ISSUE_STEP)).toEqual(['destination']);
   });
 });
+
+describe('review fix destinations', () => {
+  it('sends a missing file to Content and price to Access', async () => {
+    const { RESOURCE_FIX_STEP } = await import('@/lib/resource-flow');
+    expect(RESOURCE_FIX_STEP.file).toBe('content');
+    expect(RESOURCE_FIX_STEP.price).toBe('access');
+  });
+});
