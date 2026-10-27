@@ -5364,8 +5364,10 @@ export type Database = {
           error: string | null
           event_type: string
           id: string
+          lease_until: string | null
           payload_sha256: string | null
           processed_at: string | null
+          processing_token: string | null
           provider: string
           provider_event_id: string
           received_at: string
@@ -5377,8 +5379,10 @@ export type Database = {
           error?: string | null
           event_type: string
           id?: string
+          lease_until?: string | null
           payload_sha256?: string | null
           processed_at?: string | null
+          processing_token?: string | null
           provider: string
           provider_event_id: string
           received_at?: string
@@ -5390,8 +5394,10 @@ export type Database = {
           error?: string | null
           event_type?: string
           id?: string
+          lease_until?: string | null
           payload_sha256?: string | null
           processed_at?: string | null
+          processing_token?: string | null
           provider?: string
           provider_event_id?: string
           received_at?: string
@@ -8700,6 +8706,16 @@ export type Database = {
       }
       checkin_blocker: { Args: { _rsvp: string }; Returns: string }
       checkin_guest_list: { Args: { _event: string }; Returns: Json }
+      claim_challenge_provider_event: {
+        Args: {
+          _environment: string
+          _event: string
+          _hash: string
+          _token: string
+          _type: string
+        }
+        Returns: string
+      }
       claim_guest_records: { Args: never; Returns: Json }
       claim_outbox: {
         Args: { _limit?: number }
@@ -9003,6 +9019,15 @@ export type Database = {
           name_es: string
           tier: string
         }[]
+      }
+      finish_challenge_provider_event: {
+        Args: {
+          _environment: string
+          _event: string
+          _succeeded: boolean
+          _token: string
+        }
+        Returns: boolean
       }
       follow_target: {
         Args: {
@@ -9515,6 +9540,10 @@ export type Database = {
         Args: { _quiz: string; _revision: number; _scope: string }
         Returns: undefined
       }
+      publish_wellness_assessment_checked: {
+        Args: { _quiz: string; _revision: number; _scope: string }
+        Returns: undefined
+      }
       queue_broadcast: { Args: { _id: string }; Returns: number }
       queue_rsvp_notices: {
         Args: { _rsvp: string; _template: string }
@@ -9701,6 +9730,10 @@ export type Database = {
           code: string
           status: string
         }[]
+      }
+      release_challenge_checkout: {
+        Args: { _order: string; _state: string }
+        Returns: undefined
       }
       remove_library_attachment: {
         Args: { _event: string; _library: string }
