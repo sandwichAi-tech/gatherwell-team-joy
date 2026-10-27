@@ -222,10 +222,10 @@ function Curriculum({ trackId, teamId, lang, onLessons }: { trackId: string; tea
  * input and asks before discarding incompatible type-specific content.
  */
 /** Plain-language link feedback: what customers will open, or what is wrong. */
-function urlHint(raw: string, t: (k: string, o?: Record<string, unknown>) => string): string {
-  const v = raw.trim(); if (!v) return t('resources.content.urlEmpty');
-  try { const u = new URL(v); if (u.protocol !== 'https:') return t('resources.content.urlHttps'); return t('resources.content.urlOpens', { host: u.hostname.replace(/^www\./, '') }); }
-  catch { return t('resources.content.urlInvalid'); }
+export function urlHint(raw: string): { key: 'urlEmpty' | 'urlHttps' | 'urlOpens' | 'urlInvalid'; host?: string } {
+  const v = raw.trim(); if (!v) return { key: 'urlEmpty' };
+  try { const u = new URL(v); if (u.protocol === 'http:') return { key: 'urlHttps' }; if (u.protocol !== 'https:') return { key: 'urlInvalid' }; return { key: 'urlOpens', host: u.hostname.replace(/^www\./, '') }; }
+  catch { return { key: 'urlInvalid' }; }
 }
 const RESOURCE_FIELD: Record<string, string> = { title: 'rb-title', url: 'rb-url', live_time: 'rb-live', price: 'rb-price', destination: 'rb-destinations', courseUnavailable: 'rb-destinations' };
 
@@ -685,7 +685,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
               <p className="field-hint">{t(type === 'video' ? 'learnHub.videoHint' : type === 'audio' ? 'learnHub.audioHint' : 'learnHub.pdfHint')}</p></div>}
             {cfg.showsUrl && !draft.lesson.storagePath && <Field id="rb-url" label={t(type === 'video' ? 'learnHub.videoLink' : type === 'guide' ? 'learnHub.pdfLink' : type === 'audio' ? 'learnHub.audioLink' : 'learnHub.link')}>
               <Input id="rb-url" type="url" inputMode="url" className="field-input" placeholder="https://" value={draft.lesson.url} onChange={e => patchLesson({ url: e.target.value })} aria-invalid={!validUrl(draft.lesson.url)} aria-describedby="rb-url-hint" />
-              <p id="rb-url-hint" className="field-hint" aria-live="polite">{urlHint(draft.lesson.url, t)}</p>
+              <p id="rb-url-hint" className="field-hint" aria-live="polite">{(() => { const h = urlHint(draft.lesson.url); return t(`resources.content.${h.key}`, { host: h.host }); })()}</p>
             </Field>}
             {type === 'live' && <>
               <Field id="rb-live" label={t('learnHub.liveStarts')}><Input id="rb-live" type="datetime-local" className="field-input" value={draft.lesson.live} onChange={e => patchLesson({ live: e.target.value })} /></Field>
