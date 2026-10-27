@@ -107,7 +107,9 @@
     "leaderView": "Cambiar a vista de líder",
     "sampleDetails": "Detalles de ejemplo",
     "previewNote": "Vista de ejemplo. Esta acción aún no está conectada.",
-    "save": "Guardar"
+    "save": "Guardar",
+    "retry": "Intentar de nuevo",
+    "cancel": "Cancelar"
   },
   "home": {
     "meta": {

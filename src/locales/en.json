@@ -107,7 +107,9 @@
     "leaderView": "Switch to leader view",
     "sampleDetails": "Sample details",
     "previewNote": "Sample preview. This action is not connected yet.",
-    "save": "Save"
+    "save": "Save",
+    "retry": "Try again",
+    "cancel": "Cancel"
   },
   "home": {
     "meta": {
