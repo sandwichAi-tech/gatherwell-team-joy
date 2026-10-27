@@ -2852,3 +2852,4 @@ ul.create-type-grid { list-style: none; padding: 0; }
 .review-fix-list li { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .review-fix-list li span { flex: 1 1 10rem; min-width: 0; }
 .review-fix-list button { min-height: 44px; }
+.review-fix-list li span::first-letter { text-transform: uppercase; }

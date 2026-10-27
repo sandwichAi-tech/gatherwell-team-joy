@@ -731,7 +731,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
           <dl className="review-rows">
             <div><dt>{t('resources.review.type')}</dt><dd>{t(`resources.create.types.${type}.name`)}</dd></div>
             <div><dt>{t('resources.review.titleRow')}</dt><dd>{pick(lang, item.titleEn, item.titleEs) || '—'}</dd></div>
-            <div><dt>{t('resources.review.languages')}</dt><dd>{[item.titleEn.trim() && 'English', item.titleEs.trim() && 'Español'].filter(Boolean).join(' · ') || '—'}{!(item.titleEn.trim() && item.titleEs.trim()) && <small className="muted-small"> {t('resources.review.oneLanguage')}</small>}</dd></div>
+            <div><dt>{t('resources.review.languages')}</dt><dd>{[item.titleEn.trim() && 'English', item.titleEs.trim() && 'Español'].filter(Boolean).join(' · ') || '—'}{!!(item.titleEn.trim() || item.titleEs.trim()) && !(item.titleEn.trim() && item.titleEs.trim()) && <small className="muted-small"> {t('resources.review.oneLanguage')}</small>}</dd></div>
           </dl>
           {[...new Set(issues)].length > 0 && <ul className="review-fix-list">{[...new Set(issues)].map(i => <li key={i}>
             <span>{t(`resources.item.issue.${i}`)}</span>
