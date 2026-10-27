@@ -2152,6 +2152,7 @@ export type Database = {
           accessibility_notes: string | null
           addons: Json
           address: string | null
+          agreements_locked: boolean
           allows_minors: boolean
           builder_draft: Json | null
           cancellation_policy: string | null
@@ -2232,6 +2233,7 @@ export type Database = {
           accessibility_notes?: string | null
           addons?: Json
           address?: string | null
+          agreements_locked?: boolean
           allows_minors?: boolean
           builder_draft?: Json | null
           cancellation_policy?: string | null
@@ -2312,6 +2314,7 @@ export type Database = {
           accessibility_notes?: string | null
           addons?: Json
           address?: string | null
+          agreements_locked?: boolean
           allows_minors?: boolean
           builder_draft?: Json | null
           cancellation_policy?: string | null
@@ -8916,6 +8919,7 @@ export type Database = {
         Args: { _host: string; _start: string }
         Returns: Json
       }
+      host_waiver_cleanup_path: { Args: { _path: string }; Returns: string }
       in_offering_audience: {
         Args: { _id: string; _kind: string }
         Returns: boolean
