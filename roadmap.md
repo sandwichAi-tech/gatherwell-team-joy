@@ -1,5 +1,10 @@
 # Challenge experience pass — DONE
 
+## Optional event add-on images
+- [ ] Reuse private media and crop controls; carry optional images through drafts and canonical add-ons.
+- [ ] Authorized signing, safe replacement/removal cleanup, attendee display, bilingual accessibility.
+- [ ] Focused/full tests, supported compilation, mobile review and isolated verification; no deployment.
+
 ## Waiver library — rows 64, 84–86
 - [ ] 85 In Progress: private text library, immutable versions, preview/archive and manager isolation implemented; library create/edit browser submit matrix still unverified.
 - [ ] 64/86 In Progress: explicit attachment, free registration/history/check-in verified; paid checkout acceptance and complete waiver failure UI matrix remain unverified (no safely configured payment test environment).
