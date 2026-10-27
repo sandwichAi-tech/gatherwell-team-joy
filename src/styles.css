@@ -2715,3 +2715,14 @@ a.gw-cat-chip:hover{background:#fff}
 .checkin-qr-view .ticket-qr svg{width:100%;height:auto;display:block}
 .checkin-qr-code{font-family:ui-monospace,monospace;font-size:15px;letter-spacing:.06em;overflow-wrap:anywhere}
 .checkin-qr-view:focus{outline:none}.checkin-qr-view:focus-visible{outline:2px solid var(--ring);outline-offset:4px;border-radius:12px}
+.addon-image-input{display:grid;gap:12px;min-width:0}
+.addon-image-actions{display:flex;flex-wrap:wrap;gap:8px}
+.addon-image-actions button{min-height:48px;white-space:normal;height:auto}
+.addon-image.brand-image{width:100%;max-width:240px;aspect-ratio:4/3;margin:0;background:var(--muted);border-radius:8px;overflow:hidden}
+.addon-image.brand-image img{width:100%;height:100%;object-fit:contain}
+.addon-image .brand-image-grade{display:none}
+.event-addons{display:grid;gap:12px;margin-block:16px;min-width:0}
+.event-addons ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:16px}
+.event-addons li{display:grid;align-content:start;gap:8px;min-width:0}
+.event-addons li strong{overflow-wrap:anywhere}
+.event-addons li p{color:var(--muted-foreground)}

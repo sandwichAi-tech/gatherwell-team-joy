@@ -1,4 +1,5 @@
 import { Feature } from '@/lib/feature-flags';
+import { EventAddons } from '@/components/event-addons';
 import { EventSessions } from '@/components/event-sessions';
 import { CommunityRequestsPanel } from '@/components/community-seats';
 import { readChatLinks } from '@/lib/chat-links';
@@ -176,6 +177,7 @@ function EventDetailPage() {
     </section>}
 
     <EventSessions eventId={id} />
+    <EventAddons eventId={id} authenticated />
     <GroupChatLink table="events" id={event.id} links={readChatLinks(event as any)} canEdit={manages} />
     {manages && <CommunityRequestsPanel kind="event" target={event.id} seats={(event as { community_seats?: number | null }).community_seats} />}
     {manages && event.status === 'published' && <TextInvitePanel eventId={event.id} title={event.title} startsAt={event.starts_at} timezone={event.timezone} />}

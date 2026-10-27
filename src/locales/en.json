@@ -1,4 +1,10 @@
 {
+  "addonImages": {
+    "label": "Add-on image", "upload": "Upload image", "replace": "Replace image", "remove": "Remove image",
+    "uploading": "Uploading image…", "failed": "The image could not be saved. Your previous image is unchanged. Try again.",
+    "type": "Choose a JPEG, PNG, or WebP image.", "size": "Choose an image no larger than 15 MB.",
+    "alt": "{{name}} — add-on image", "title": "Add-ons", "loading": "Loading add-ons…", "loadError": "Add-ons could not be loaded."
+  },
   "eventReliability": {
     "errors": {
       "title": "Enter an event title.",

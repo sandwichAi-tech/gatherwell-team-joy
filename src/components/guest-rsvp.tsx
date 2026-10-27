@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { EventAddons } from '@/components/event-addons';
 import { RefundLine } from '@/components/refund-line';
 import { tgShare } from '@/lib/chat-links';
 import { serviceFee } from '@/lib/plan-fees';
@@ -227,6 +228,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
           </label>;
         })}
       </fieldset>}
+      <EventAddons eventId={event.id} />
       {event.cancellation_policy && <p className="field-hint refund-line"><ShieldCheck /><span>{event.cancellation_policy}</span></p>}
       <label className="guest-consent"><Checkbox checked={termsOk} onCheckedChange={v => setTermsOk(!!v)} /><span>{t('guest.termsAgree')} <a href="/terms" target="_blank" rel="noopener">{t('guest.termsLink')}</a> · <a href="/privacy" target="_blank" rel="noopener">{t('guest.privacyLink')}</a></span></label>
       <label className="guest-consent"><Checkbox checked={updates} onCheckedChange={v => setUpdates(!!v)} /><span>{t('guest.updatesOptIn')}</span></label>

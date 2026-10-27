@@ -12,7 +12,7 @@ import { cleanupAddonImages } from '@/lib/addon-images.functions';
 
 export function AddonImageInput({ userId, name, path, onChange, onBusy }: { userId: string; name: string; path?: string | null; onChange: (p: string | null) => void; onBusy: (busy: boolean) => void }) {
   const { t } = useTranslation(); const [busy, setBusy] = useState(false); const [error, setError] = useState('');
-  const input = useRef<HTMLInputElement>(null); const cleanup = useServerFn(cleanupAddonImages);
+  const input = useRef<HTMLSpanElement>(null); const cleanup = useServerFn(cleanupAddonImages);
   const candidates = useRef(new Set<string>()); const alive = useRef(true);
   const { data: src } = useQuery({ queryKey: ['media-url', path], queryFn: () => mediaUrl(path), enabled: !!path });
   useEffect(() => { alive.current = true; return () => { alive.current = false; void cleanup({ data: { paths: [...candidates.current] } }).catch(() => undefined); }; }, [cleanup]);

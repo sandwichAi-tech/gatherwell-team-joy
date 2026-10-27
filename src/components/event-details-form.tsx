@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { AddonImageInput } from '@/components/addon-image-input';
 import { Plus, Trash2 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -172,7 +173,7 @@ export function PolicyPicker({ id, paid, config, text, onChange }: { id: string;
   </div>;
 }
 
-export function EventDetailsSections({ value, onChange, priceCents, lang, tried = false }: { tried?: boolean; value: EventDetails; onChange: (d: EventDetails) => void; priceCents: number | null; lang: 'en' | 'es' }) {
+export function EventDetailsSections({ value, onChange, priceCents, lang, userId, onImageBusy, tried = false }: { userId: string; onImageBusy: (busy: boolean) => void; tried?: boolean; value: EventDetails; onChange: (d: EventDetails) => void; priceCents: number | null; lang: 'en' | 'es' }) {
   const { t } = useTranslation();
   const set = (patch: Partial<EventDetails>) => onChange({ ...value, ...patch });
   const setTier = (id: string, patch: Partial<TicketTier>) => set({ tiers: value.tiers.map(x => x.id === id ? { ...x, ...patch } : x) });
@@ -256,6 +257,7 @@ export function EventDetailsSections({ value, onChange, priceCents, lang, tried 
       {value.tiers.length < MAX_TIERS && <Button type="button" variant="secondary" onClick={() => set({ tiers: [...value.tiers, emptyTier()] })}><Plus />{t('builder.addTier')}</Button>}
       <p className="field-hint">{t('eventReliability.addonTiming')}</p>
       {value.addons.map(a => <div key={a.id} className="builder-tier">
+        <AddonImageInput userId={userId} name={a.name} path={a.image_path} onChange={image_path => setAddon(a.id, { image_path })} onBusy={onImageBusy} />
         <div className="two-col">
           <Input className="field-input" id={`addon-${a.id}`} maxLength={60} value={a.name} onChange={e => setAddon(a.id, { name: e.target.value })} placeholder={t('builder.addonName')} aria-label={t('builder.addonName')} aria-invalid={tried && !a.name.trim()} />{tried && !a.name.trim() && <p className="field-error">{t('eventReliability.addonInvalid')}</p>}
           <Input className="field-input" inputMode="decimal" value={a.price_cents ? String(a.price_cents / 100) : ''} onChange={e => setAddon(a.id, { price_cents: toCents(money(e.target.value)) })} placeholder="$0" aria-label={t('billing.price')} />
