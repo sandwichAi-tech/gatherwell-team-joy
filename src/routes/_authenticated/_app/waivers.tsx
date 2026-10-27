@@ -13,7 +13,7 @@ import type { WorkspaceRole } from '@/components/workspace-settings';
 export const Route = createFileRoute('/_authenticated/_app/waivers')({
   head: () => {
     const title = `${i18n.t('hostForms.title')} · ${i18n.t('brand')}`; const description = i18n.t('hostForms.subtitle');
-    return { meta: [{ title }, { name: 'description', content: description }, { property: 'og:title', content: title }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }, ...NOINDEX_META] };
+    return { meta: [{ title }, { name: 'description', content: description }, { property: 'og:title', content: title }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }, { ...NOINDEX_META }] };
   },
   component: WaiversPage,
   errorComponent: ({ reset }) => <RetryState retry={reset} />,

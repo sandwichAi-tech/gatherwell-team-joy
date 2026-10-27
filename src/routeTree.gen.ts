@@ -70,6 +70,7 @@ import { Route as AuthenticatedAppTeamRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedAppToolsRouteImport } from './routes/_authenticated/_app/tools'
 import { Route as AuthenticatedAppUpdatesRouteImport } from './routes/_authenticated/_app/updates'
 import { Route as AuthenticatedAppVerifyRouteImport } from './routes/_authenticated/_app/verify'
+import { Route as AuthenticatedAppWaiversRouteImport } from './routes/_authenticated/_app/waivers'
 import { Route as IHostTokenRouteImport } from './routes/i.host.$token'
 import { Route as InviteTeamTokenRouteImport } from './routes/invite.team.$token'
 import { Route as ResourceKindIdRouteImport } from './routes/resource.$kind.$id'
@@ -420,6 +421,11 @@ const AuthenticatedAppVerifyRoute = AuthenticatedAppVerifyRouteImport.update({
   path: '/verify',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const AuthenticatedAppWaiversRoute = AuthenticatedAppWaiversRouteImport.update({
+  id: '/waivers',
+  path: '/waivers',
+  getParentRoute: () => AuthenticatedAppRouteRoute,
+} as any)
 const IHostTokenRoute = IHostTokenRouteImport.update({
   id: '/i/host/$token',
   path: '/i/host/$token',
@@ -672,6 +678,7 @@ export interface FileRoutesByFullPath {
   '/tools': typeof AuthenticatedAppToolsRoute
   '/updates': typeof AuthenticatedAppUpdatesRoute
   '/verify': typeof AuthenticatedAppVerifyRoute
+  '/waivers': typeof AuthenticatedAppWaiversRoute
   '/i/host/$token': typeof IHostTokenRoute
   '/invite/team/$token': typeof InviteTeamTokenRoute
   '/resource/$kind/$id': typeof ResourceKindIdRoute
@@ -767,6 +774,7 @@ export interface FileRoutesByTo {
   '/tools': typeof AuthenticatedAppToolsRoute
   '/updates': typeof AuthenticatedAppUpdatesRoute
   '/verify': typeof AuthenticatedAppVerifyRoute
+  '/waivers': typeof AuthenticatedAppWaiversRoute
   '/i/host/$token': typeof IHostTokenRoute
   '/invite/team/$token': typeof InviteTeamTokenRoute
   '/resource/$kind/$id': typeof ResourceKindIdRoute
@@ -865,6 +873,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/tools': typeof AuthenticatedAppToolsRoute
   '/_authenticated/_app/updates': typeof AuthenticatedAppUpdatesRoute
   '/_authenticated/_app/verify': typeof AuthenticatedAppVerifyRoute
+  '/_authenticated/_app/waivers': typeof AuthenticatedAppWaiversRoute
   '/i/host/$token': typeof IHostTokenRoute
   '/invite/team/$token': typeof InviteTeamTokenRoute
   '/resource/$kind/$id': typeof ResourceKindIdRoute
@@ -962,6 +971,7 @@ export interface FileRouteTypes {
     | '/tools'
     | '/updates'
     | '/verify'
+    | '/waivers'
     | '/i/host/$token'
     | '/invite/team/$token'
     | '/resource/$kind/$id'
@@ -1057,6 +1067,7 @@ export interface FileRouteTypes {
     | '/tools'
     | '/updates'
     | '/verify'
+    | '/waivers'
     | '/i/host/$token'
     | '/invite/team/$token'
     | '/resource/$kind/$id'
@@ -1154,6 +1165,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/tools'
     | '/_authenticated/_app/updates'
     | '/_authenticated/_app/verify'
+    | '/_authenticated/_app/waivers'
     | '/i/host/$token'
     | '/invite/team/$token'
     | '/resource/$kind/$id'
@@ -1662,6 +1674,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppVerifyRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/_authenticated/_app/waivers': {
+      id: '/_authenticated/_app/waivers'
+      path: '/waivers'
+      fullPath: '/waivers'
+      preLoaderRoute: typeof AuthenticatedAppWaiversRouteImport
+      parentRoute: typeof AuthenticatedAppRouteRoute
+    }
     '/i/host/$token': {
       id: '/i/host/$token'
       path: '/i/host/$token'
@@ -1934,6 +1953,7 @@ interface AuthenticatedAppRouteRouteChildren {
   AuthenticatedAppToolsRoute: typeof AuthenticatedAppToolsRoute
   AuthenticatedAppUpdatesRoute: typeof AuthenticatedAppUpdatesRoute
   AuthenticatedAppVerifyRoute: typeof AuthenticatedAppVerifyRoute
+  AuthenticatedAppWaiversRoute: typeof AuthenticatedAppWaiversRoute
   AuthenticatedAppAdminSiteMediaRoute: typeof AuthenticatedAppAdminSiteMediaRoute
   AuthenticatedAppChallengeIdRoute: typeof AuthenticatedAppChallengeIdRoute
   AuthenticatedAppEventIdRoute: typeof AuthenticatedAppEventIdRoute
@@ -1990,6 +2010,7 @@ const AuthenticatedAppRouteRouteChildren: AuthenticatedAppRouteRouteChildren = {
   AuthenticatedAppToolsRoute: AuthenticatedAppToolsRoute,
   AuthenticatedAppUpdatesRoute: AuthenticatedAppUpdatesRoute,
   AuthenticatedAppVerifyRoute: AuthenticatedAppVerifyRoute,
+  AuthenticatedAppWaiversRoute: AuthenticatedAppWaiversRoute,
   AuthenticatedAppAdminSiteMediaRoute: AuthenticatedAppAdminSiteMediaRoute,
   AuthenticatedAppChallengeIdRoute: AuthenticatedAppChallengeIdRoute,
   AuthenticatedAppEventIdRoute: AuthenticatedAppEventIdRoute,
