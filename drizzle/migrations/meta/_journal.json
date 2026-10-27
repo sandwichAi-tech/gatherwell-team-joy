@@ -1226,6 +1226,13 @@
       "when": 1793125600526,
       "tag": "0174_assessment_receipts_scope_and_course_slots",
       "breakpoints": true
+    },
+    {
+      "idx": 175,
+      "version": "7",
+      "when": 1793125677821,
+      "tag": "0175_challenge_canonical_orders_reservations",
+      "breakpoints": true
     }
   ]
 }

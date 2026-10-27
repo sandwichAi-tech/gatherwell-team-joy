@@ -765,6 +765,7 @@ export type Database = {
           challenge_id: string
           extras: Json
           joined_at: string
+          order_id: string | null
           payment_id: string | null
           source: string
           user_id: string
@@ -774,6 +775,7 @@ export type Database = {
           challenge_id: string
           extras?: Json
           joined_at?: string
+          order_id?: string | null
           payment_id?: string | null
           source?: string
           user_id?: string
@@ -783,6 +785,7 @@ export type Database = {
           challenge_id?: string
           extras?: Json
           joined_at?: string
+          order_id?: string | null
           payment_id?: string | null
           source?: string
           user_id?: string
@@ -793,6 +796,13 @@ export type Database = {
             columns: ["challenge_id"]
             isOneToOne: false
             referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "challenge_members_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
           {
@@ -4435,30 +4445,36 @@ export type Database = {
       }
       order_items: {
         Row: {
+          addon_key: string | null
           created_at: string
           description: string | null
           id: string
           item_type: string
           order_id: string
           quantity: number
+          refunded_cents: number
           unit_cents: number
         }
         Insert: {
+          addon_key?: string | null
           created_at?: string
           description?: string | null
           id?: string
           item_type: string
           order_id: string
           quantity?: number
+          refunded_cents?: number
           unit_cents: number
         }
         Update: {
+          addon_key?: string | null
           created_at?: string
           description?: string | null
           id?: string
           item_type?: string
           order_id?: string
           quantity?: number
+          refunded_cents?: number
           unit_cents?: number
         }
         Relationships: [
@@ -4474,6 +4490,8 @@ export type Database = {
       orders: {
         Row: {
           buyer_user_id: string | null
+          challenge_cart: Json | null
+          challenge_id: string | null
           connected_account_id: string | null
           created_at: string
           currency: string
@@ -4494,6 +4512,7 @@ export type Database = {
           promo_id: string | null
           refund_policy_text: string | null
           refund_policy_version_id: string | null
+          reservation_expires_at: string | null
           rsvp_id: string | null
           status: string
           stripe_checkout_session_id: string | null
@@ -4504,6 +4523,8 @@ export type Database = {
         }
         Insert: {
           buyer_user_id?: string | null
+          challenge_cart?: Json | null
+          challenge_id?: string | null
           connected_account_id?: string | null
           created_at?: string
           currency?: string
@@ -4524,6 +4545,7 @@ export type Database = {
           promo_id?: string | null
           refund_policy_text?: string | null
           refund_policy_version_id?: string | null
+          reservation_expires_at?: string | null
           rsvp_id?: string | null
           status?: string
           stripe_checkout_session_id?: string | null
@@ -4534,6 +4556,8 @@ export type Database = {
         }
         Update: {
           buyer_user_id?: string | null
+          challenge_cart?: Json | null
+          challenge_id?: string | null
           connected_account_id?: string | null
           created_at?: string
           currency?: string
@@ -4554,6 +4578,7 @@ export type Database = {
           promo_id?: string | null
           refund_policy_text?: string | null
           refund_policy_version_id?: string | null
+          reservation_expires_at?: string | null
           rsvp_id?: string | null
           status?: string
           stripe_checkout_session_id?: string | null
@@ -4568,6 +4593,13 @@ export type Database = {
             columns: ["buyer_user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
             referencedColumns: ["id"]
           },
           {
@@ -8599,6 +8631,7 @@ export type Database = {
         Args: { _c: string; _user: string }
         Returns: boolean
       }
+      challenge_order_receipts: { Args: { _c: string }; Returns: Json }
       challenge_stats: { Args: { _c: string; _tz?: string }; Returns: Json }
       challenge_streaks: {
         Args: { _c: string; _today?: string; _u: string }
@@ -8731,6 +8764,15 @@ export type Database = {
       }
       course_progress: { Args: { _offer: string }; Returns: Json }
       create_auth_intent: { Args: { _path: string }; Returns: string }
+      create_challenge_order: {
+        Args: {
+          _c: string
+          _environment: string
+          _extras: Json
+          _request: string
+        }
+        Returns: Json
+      }
       create_course_quiz_item: {
         Args: { _language: string; _title: string; _track: string }
         Returns: Json
@@ -8954,6 +8996,7 @@ export type Database = {
       gatherings_this_month: { Args: { _uid: string }; Returns: number }
       get_email_prefs: { Args: { _token: string }; Returns: Json }
       get_member_plan: { Args: { _team: string }; Returns: Json }
+      get_public_challenge: { Args: { _id: string }; Returns: Json }
       get_public_event: { Args: { _id: string }; Returns: Json }
       get_public_event_k: {
         Args: { _id: string; _token: string }
@@ -9449,6 +9492,28 @@ export type Database = {
       quiz_host_summary: { Args: { _quiz: string }; Returns: Json }
       quiz_option_counts: { Args: { _quiz: string }; Returns: Json }
       quiz_result: { Args: { _attempt: string }; Returns: Json }
+      reconcile_challenge_order: {
+        Args: {
+          _amount: number
+          _currency: string
+          _environment: string
+          _intent: string
+          _order: string
+          _session: string
+          _state: string
+        }
+        Returns: undefined
+      }
+      reconcile_challenge_refund: {
+        Args: {
+          _amount: number
+          _lines: Json
+          _order: string
+          _provider_refund: string
+          _status: string
+        }
+        Returns: undefined
+      }
       record_ai_usage: {
         Args: { _feature: string; _input: number; _output: number }
         Returns: undefined
