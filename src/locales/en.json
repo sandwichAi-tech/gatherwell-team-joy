@@ -6655,7 +6655,9 @@
       "restored": "Restored as a draft. Choose where it should appear before publishing.",
       "restore": "Restore",
       "archivedBadge": "Archived",
-      "historyBlocked": "This can't be deleted because people have progress or purchases for it. Archive it instead."
+      "historyBlocked": "This can't be deleted because people have progress or purchases for it. Archive it instead.",
+      "copyOmitted_one": "{{count}} course placement was left out because you don't manage that course.",
+      "copyOmitted_other": "{{count}} course placements were left out because you don't manage those courses."
     }
   },
   "templatesR": {

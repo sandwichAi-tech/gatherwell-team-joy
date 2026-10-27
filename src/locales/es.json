@@ -6655,7 +6655,10 @@
       "restored": "Restaurado como borrador. Elige dónde debe aparecer antes de publicar.",
       "restore": "Restaurar",
       "archivedBadge": "Archivado",
-      "historyBlocked": "No se puede eliminar porque hay personas con avance o compras. Archívalo en su lugar."
+      "historyBlocked": "No se puede eliminar porque hay personas con avance o compras. Archívalo en su lugar.",
+      "copyOmitted_one": "Se omitió {{count}} ubicación en un curso porque no administras ese curso.",
+      "copyOmitted_other": "Se omitieron {{count}} ubicaciones en cursos porque no administras esos cursos.",
+      "copyOmitted_many": "Se omitieron {{count}} ubicaciones en cursos porque no administras esos cursos."
     }
   },
   "templatesR": {

@@ -232,7 +232,11 @@ export function QuizStudio({ quizId }: { quizId: string }) {
   const duplicate = async () => {
     const { data, error } = await db.rpc('duplicate_quiz', { _quiz: quizId });
     if (error) { toast.error(t('profile.saveError')); return; }
-    toast.success(t('quizStudio.duplicated')); void navigate({ to: '/learn/quiz/$id', params: { id: data } });
+    const src = await db.rpc('resource_destinations', { _kind: 'quiz', _id: quizId });
+    const omitted = ((src.data?.courses ?? []) as { available?: boolean }[]).filter(c => c.available === false).length;
+    toast.success(t('quizStudio.duplicated'));
+    if (omitted) toast.info(t('resources.removal.copyOmitted', { count: omitted }));
+    void navigate({ to: '/learn/quiz/$id', params: { id: data } });
   };
   const remove = async () => {
     if (!(await removeResource(t, 'quiz', quizId))) return;
