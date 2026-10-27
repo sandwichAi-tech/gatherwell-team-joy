@@ -697,3 +697,10 @@
 - Removed the empty "Options" step (nothing to configure for any type).
 - Step tabs move focus to the step heading and mark steps that still need attention.
 - Last step renamed Review; adds a readiness checklist (type, title, languages) with a Fix button per missing item that opens the right step and focuses the field. Full issue list shows only on Review.
+
+## 2026-10-27 — Resource Builder UX pass 2 (type-specific fields, drafts)
+- Link fields say which site customers will open, warn on insecure http and flag non-web addresses (src/lib/url-hint.ts, tested).
+- Downloadable file/bundle show allowed types, the 100 MB limit, private download behavior, and an uploading status.
+- Live session explains time zone and that meeting/replay links are shown only to people with access.
+- Recipe ingredients/steps labels show which language is being edited.
+- Wellness assessment results: visible labels on every field, a plain example, and an exact message for gaps/overlaps (rangeProblem, tested).
