@@ -8845,6 +8845,10 @@ export type Database = {
         Args: { _event: string; _token?: string }
         Returns: Json
       }
+      public_resource_metadata: {
+        Args: { _id: string; _kind: string }
+        Returns: Json
+      }
       public_upcoming: { Args: { _host: string; _team: string }; Returns: Json }
       publish_host_update: { Args: { _id: string }; Returns: number }
       queue_broadcast: { Args: { _id: string }; Returns: number }
