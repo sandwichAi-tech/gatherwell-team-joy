@@ -1,5 +1,11 @@
 # Challenge experience pass — DONE
 
+## Website Notes row 106 — In Progress
+- [ ] Audit existing communication, membership, owner, notification and moderation paths.
+- [ ] Extend existing announcements/chat with strict direct-team access, separate unread/mute and safe deep links.
+- [ ] Verify isolated multi-account/team permissions, EN/ES mobile/desktop, focused/full tests and compilation; clean exact fixtures.
+- [ ] Physical-device, live reconnect and external delivery remain unverified unless actually exercised.
+
 ## Resource placement and monetization pass — In Progress
 - [x] Audited ten creator types, placement, public coach/My coaches, access and existing commerce.
 - [x] Added shared exclusive placement/Free-Paid controls, existing-offer bindings, course access guards and bilingual Quiz results wording.
