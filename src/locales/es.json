@@ -7573,6 +7573,8 @@
       "cancelled": "Cancelado",
       "failed": "Pago fallido",
       "disputed": "Requiere revisión"
-    }
+    },
+    "cancelCheckout": "Cancelar pago",
+    "cancelPending": "No se pudo confirmar la cancelación. Tu pedido no cambió; intenta de nuevo."
   }
 }
