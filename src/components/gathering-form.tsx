@@ -1,5 +1,5 @@
-import { EventAgreementsSection, RequiredAgreementsSummary, useBuilderAgreements } from '@/components/event-agreements-builder';
-import { hostWaiverStatus, publishBlocked } from '@/lib/builder-agreements';
+import { EventAgreementsSection, useBuilderAgreements } from '@/components/event-agreements-builder';
+import { hostFormsBlockPublish, hostWaiverStatus } from '@/lib/builder-agreements';
 import { blueprintDefaults } from '@/lib/blueprint-defaults';
 import { useFeature } from '@/lib/feature-flags';
 import { policyFromEvent, policyIssues, policyPayload } from '@/lib/event-policy';
@@ -53,7 +53,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const sourceId = eventId ?? fromId;
   const { data: source, error: sourceError, refetch: reloadSource } = useQuery({ ...eventDetailQuery(sourceId ?? ''), enabled: !!sourceId });
   const agreementsLocked = editing && !!source && (source.event.status !== 'draft' || !!(source.event as { agreements_locked?: boolean }).agreements_locked);
-  const agreements = useBuilderAgreements(userId, eventId, agreementsLocked);
+  const agreements = useBuilderAgreements(userId);
   const mapsKey = useMapsKey();
   const { data: draft, error: draftError, refetch: reloadDraft, isPending: draftPending } = useQuery({ queryKey: ['event-builder-draft', eventId], enabled: !!eventId, queryFn: async () => { const r = await supabase.from('event_builder_drafts').select('snapshot').eq('event_id', eventId ?? '').maybeSingle(); if (r.error) throw r.error; return r.data?.snapshot ?? null; } });
   const { data: history = [] } = useQuery({ queryKey: ['host-slots', userId], enabled: !editing, staleTime: 300000,
@@ -209,9 +209,9 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const teamId = editing && source ? source.event.team_id : workspace.teamId;
   if (!editing && workspace.role === 'member') return <section className="panel"><h2>{t('gathering.hostsOnly')}</h2><p>{t('gathering.hostsOnlyText')}</p></section>;
   const hostState = hostWaiverStatus(libraryWaivers, agreements.library.data, agreementsLocked);
-  // Platform problems focus the section (its explanation is the fix); host-waiver problems focus the picker.
-  const focusAgreements = () => requestAnimationFrame(() => { const el = document.getElementById('g-agreements'); el?.scrollIntoView({ block: 'start' }); ((agreements.platformState === 'ready' ? document.getElementById('g-host-waiver') : null) ?? el)?.focus(); });
-  const publishError = (e: { message?: string } | null) => e?.message?.includes('approved_legal_document_required') ? t('eventAgreements.legalRequired') : e?.message?.includes('waiver_pinned') ? t('eventAgreements.pinned') : rpcError(t, e);
+  // Only the host's own selected forms can need fixing; the ZoheeWell agreement is attached automatically.
+  const focusAgreements = () => requestAnimationFrame(() => { const el = document.getElementById('g-agreements'); el?.scrollIntoView({ block: 'start' }); (document.getElementById('g-host-waiver') ?? el)?.focus(); });
+  const publishError = (e: { message?: string } | null) => e?.message?.includes('waiver_pinned') ? t('eventAgreements.pinned') : rpcError(t, e);
 
   const urlBad = place !== 'person' && !!url.trim() && !validHttps(url);
   const blockers = readinessBlockers({ title, startsAt: start, format: place, locationName, address, onlineUrl: url, priceCents, canSell, regOpens: details.regOpens, regCloses: details.regCloses, retreatOn, retreatEnd, allowsMinors: details.allowsMinors, minAge: details.minAge, tiers: details.tiers });
@@ -287,8 +287,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       return;
     }
     setTried(true);
-    if (publish && publishBlocked(agreements.platformState, hostState)) {
-      setSaveError(t(agreements.platformState === 'ready' ? 'builderAgreements.status.unavailable' : 'eventAgreements.legalRequired')); focusAgreements(); return;
+    if (publish && hostFormsBlockPublish(hostState)) {
+      setSaveError(t('builderAgreements.unavailable')); focusAgreements(); return;
     }
     const pi = policyIssues(details.policy, details.cancellation, !!priceCents, true);
     const error = blockers.length || priceBad || capacityBad || !detailsJson || pi.length || (priceCents && visibility === 'team') || (multi && (!start || !validSessions(sessions, new Date(start).toISOString())));
@@ -533,10 +533,9 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         <div className="segmented full" role="group" aria-label={t('gathering.applyTo')}>{([false, true] as const).map(w => <Button key={String(w)} variant="ghost" className={wholeSeries === w ? 'selected' : ''} aria-pressed={wholeSeries === w} onClick={() => setWholeSeries(w)}>{t(w ? 'gathering.thisAndLater' : 'gathering.thisDate')}</Button>)}</div>
       </section> : null}
       </>}
-      <EventAgreementsSection teamId={teamId} userId={userId} eventId={eventId} locked={agreementsLocked} isNew={!editing && !fromId} value={libraryWaivers} onChange={setLibraryWaivers} platform={agreements.platform} platformState={agreements.platformState} retryPlatform={agreements.retryPlatform} library={agreements.library} />
+      <EventAgreementsSection teamId={teamId} userId={userId} eventId={eventId} locked={agreementsLocked} isNew={!editing && !fromId} value={libraryWaivers} onChange={setLibraryWaivers} library={agreements.library} />
       {teamWaiver && <p className="field-hint">{t('eventAgreements.legacyPinned')}</p>}
       {!full && <Button variant="ghost" className="quick-more" onClick={() => setFull(true)}>{t('gathering.moreOptions')}<ChevronRight /></Button>}
-      {(!editing || source?.event.status === 'draft') && <RequiredAgreementsSummary platformState={agreements.platformState} hostState={hostState} hostForms={libraryWaivers.map(p => { const w = agreements.library.data?.find(x => x.id === p.id); return { name: w?.name ?? null, state: hostWaiverStatus([p], agreements.library.data, agreementsLocked) }; })} onFix={focusAgreements} />}
       {tpl && <p className="auth-subtitle">{t('gathering.checklistNote', { count: checklistOf(templates.find(x => x.id === tpl.id) ?? { checklist: [] }).length })}</p>}
     </div>
     <div className="sticky-actions">

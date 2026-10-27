@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { HostWaiverEditor, HostWaiverPreview, emptyWaiver, useFormUsage, useWaiverLibrary, type LibraryWaiver } from '@/components/waiver-library';
 import { Link } from '@tanstack/react-router';
 import { addPick, hostWaiverStatus, initialHostPick, movePick, removePick, type WaiverPick } from '@/lib/builder-agreements';
-import { FileText, Check } from '@/components/icons';
+import { Check } from '@/components/icons';
 
 /** Host forms only: the ZoheeWell event agreement is attached automatically by the platform, never by hosts. */
 export function useBuilderAgreements(userId: string) {
@@ -38,11 +38,10 @@ export function EventAgreementsSection({ teamId, userId, eventId, locked, isNew,
   const previewRow = preview && versions.data?.find(v => v.waiver_id === preview.id && v.version === preview.version);
 
   return <section id="g-agreements" className="form-section agreements-builder" aria-labelledby="g-agreements-title" tabIndex={-1}>
-    <h2 id="g-agreements-title" className="field-label">{t('builderAgreements.title')}</h2>
+    <div className="agreement-item-head"><h2 id="g-agreements-title" className="field-label">{t('builderAgreements.title')}</h2><span className="chip">{t('builderAgreements.optional')}</span></div>
     <p className="field-hint">{t('builderAgreements.intro')}</p>
 
-    <div className="agreement-item" role="group" aria-labelledby="g-host-title">
-      <div className="agreement-item-head"><strong id="g-host-title">{t('builderAgreements.hostTitle')}</strong><span className="chip">{t('builderAgreements.optional')}</span></div>
+    <div className="agreement-item" role="group" aria-labelledby="g-agreements-title">
       {locked ? (pinnedRows.isPending ? <p role="status">{t('publicEvent.loading')}</p> : !pinnedRows.data?.length ? <p>{t('builderAgreements.noneSelected')}</p>
         : <ul className="plain-list">{pinnedRows.data.map(w => <li key={w.id}><strong>{lang === 'es' ? w.title_es || w.title_en : w.title_en}</strong><p>{t('waiver.version', { n: w.library_version ?? w.version })} · {t('builderAgreements.pinnedOn', { date: fmt(w.created_at, lang) })}</p></li>)}</ul>)
       : library.isPending ? <p role="status">{t('publicEvent.loading')}</p>
