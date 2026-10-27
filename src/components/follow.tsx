@@ -1,3 +1,4 @@
+import { RequestTeamJoin } from '@/components/team-membership';
 import { FoundingSeal } from '@/components/founding';
 import { GetCoachUpdates } from '@/components/coach-updates';
 import { CoachTrustSection, VerifiedMark, useIsVerified } from '@/components/coach-trust';
@@ -116,7 +117,7 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
         <div className="follow-actions">{isOwner
           ? <Button asChild variant="secondary"><Link to="/me" search={{ panel: 'hostProfile' }}><GwIcon name="Pencil" />{t('follow.editMyPage')}</Link></Button>
           : <FollowButton kind={kind} target={d.id} following={d.following} slug={slug} />}
-          {host && <GetCoachUpdates slug={slug} />}
+          {host && <GetCoachUpdates slug={slug} />}{team && <RequestTeamJoin teamId={team.id} />}
           {host?.shop_url && <Button asChild variant="secondary"><a href={host.shop_url} target="_blank" rel="noopener noreferrer"><GwIcon name="ExternalLink" />{t('follow.shop')}</a></Button>}</div>
         {host && host.links.length > 0 && <ul className="follow-links">{host.links.map((l, i) => <li key={i}><a href={l.url} target="_blank" rel="noopener noreferrer" className="auth-link"><GwIcon name={l.kind === 'social' ? 'AtSign' : 'Link2'} />{l.label || l.url.replace(/^https:\/\//, '')}</a></li>)}</ul>}
       </div>

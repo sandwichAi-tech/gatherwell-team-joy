@@ -1,3 +1,4 @@
+import { MyTeams } from '@/components/team-membership';
 import { SPANISH_ENABLED } from '@/lib/i18n';
 import { useIsFounding } from '@/components/founding';
 import { useIsVerified } from '@/components/coach-trust';
@@ -180,7 +181,7 @@ export function MePage() {
   const [editing, setEditing] = useState(false);
   const [panel, setPanel] = useState<Panel>(null);
   const wanted = useSearch({ strict: false }) as { panel?: string };
-  useEffect(() => { if (wanted.panel === 'edit') setEditing(true); else if (wanted.panel === 'hostProfile' || wanted.panel === 'invite') setPanel(wanted.panel); }, [wanted.panel]);
+  useEffect(() => { if (wanted.panel === 'edit') setEditing(true); else if (wanted.panel === 'hostProfile' || wanted.panel === 'invite' || wanted.panel === 'teams') setPanel(wanted.panel); }, [wanted.panel]);
   const [deleting, setDeleting] = useState(false);
   const [confirmText, setConfirmText] = useState('');
   const [soleTeams, setSoleTeams] = useState<string[] | null>(null);
@@ -218,7 +219,7 @@ export function MePage() {
     gatherings: { title: t('profile.myGatherings'), icon: 'CalendarDays', body: <MyGatheringsList userId={userId} /> },
     challenges: { title: t('profile.myChallenges'), icon: 'Flag', body: <MyChallengesList userId={userId} /> },
     badges: { title: t('profile.myBadges'), icon: 'Award', body: workspace ? <BadgeWall teamId={workspace.teamId} /> : <EmptyState compact icon="UsersRound" text={t('workspace.none')} /> },
-    teams: { title: t('profile.myTeams'), icon: 'UsersRound', body: teams.length ? <div className="team-list">{teams.map(team => <button type="button" key={team.teamId} className={`choice-card ${workspace?.teamId === team.teamId ? 'is-selected' : ''}`} aria-pressed={workspace?.teamId === team.teamId} onClick={() => switchTeam(team.teamId)}><span className="initial-avatar">{initialsOf(team.name)}</span><span><strong>{team.name}</strong><small>{t(`roles.${team.role}`)}{team.customBadge ? ` · ${team.customBadge}` : ''}</small></span>{workspace?.teamId === team.teamId && <Check className="choice-check" />}</button>)}</div> : <EmptyState compact icon="UsersRound" text={t('workspace.none')} /> },
+    teams: { title: t('profile.myTeams'), icon: 'UsersRound', body: <MyTeams userId={userId} /> },
     notifications: { title: t('profile.notifications'), icon: 'Bell', body: <NotificationSettings userId={userId} /> },
     updates: { title: t('nav.updates'), icon: 'Megaphone', body: <p className="auth-subtitle"><Link to="/updates" search={{ u: undefined }} className="auth-link">{t('nav.updates')} →</Link></p> },
     inbox: { title: t('nav.inbox'), icon: 'MessageCircle', body: <p className="auth-subtitle"><Link to="/inbox" search={{ thread: undefined }} className="auth-link">{t('nav.inbox')} →</Link></p> },

@@ -10,6 +10,8 @@ import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
 import { myTeamStatesQuery } from '@/lib/team-membership';
 
+const contentText = (value: unknown): string[] => typeof value === 'string' ? [value] : Array.isArray(value) ? value.flatMap(contentText) : value && typeof value === 'object' ? Object.values(value).flatMap(contentText) : [];
+
 type Item = { id: string; kind: 'blueprint' | 'resource_template'; title: string; description?: string; description_es?: string; author?: string; shared_teams: string[]; content?: unknown };
 export function TeamLibrary({ teamId, userId }: { teamId: string; userId: string }) {
   const { t, i18n } = useTranslation(); const qc = useQueryClient(); const [shareOpen, setShareOpen] = useState(false); const [source, setSource] = useState(''); const [selected, setSelected] = useState<string[]>([]); const [busy, setBusy] = useState(false);
@@ -37,7 +39,7 @@ export function TeamLibrary({ teamId, userId }: { teamId: string; userId: string
         {teams.data?.filter(tm => tm.access).map(tm => <label className="switch-row" key={tm.team_id}><span>{tm.name}</span><Checkbox aria-label={tm.name} checked={selected.includes(tm.team_id)} onCheckedChange={on => setSelected(on ? [...selected, tm.team_id] : selected.filter(id => id !== tm.team_id))} /></label>)}<p className="field-hint">{t('teamLibrary.assets')}</p></div>}
     </ResponsiveSheet>
     <ResponsiveSheet open={!!preview} onOpenChange={open => !open && setPreview(null)} title={preview?.title ?? t('teamLibrary.view')} footer={!copied && <Button disabled={busy || !destination} onClick={() => void copy()}>{t('teamLibrary.copy')}</Button>}>
-      {preview && <div className="edit-form"><p>{i18n.resolvedLanguage === 'es' ? preview.description_es || preview.description : preview.description}</p><pre className="library-content">{JSON.stringify(preview.content, null, 2)}</pre><p className="field-hint">{t('teamLibrary.assets')}</p>
+      {preview && <div className="edit-form"><p>{i18n.resolvedLanguage === 'es' ? preview.description_es || preview.description : preview.description}</p><div className="library-content">{contentText(preview.content).map((text, i) => <p key={i}>{text}</p>)}</div><p className="field-hint">{t('teamLibrary.assets')}</p>
         {copied ? <><p role="status">{t('teamLibrary.copied')}</p><Button asChild variant="secondary">{copied.target === 'blueprint' ? <Link to="/blueprints">{t('teamLibrary.openDraft')}</Link> : copied.target === 'track' || copied.target === 'recipe' ? <Link to="/learn/create" search={{ type: copied.target === 'recipe' ? 'recipe' : 'video', id: copied.id }}>{t('teamLibrary.openDraft')}</Link> : <Link to="/offer/$id" params={{ id: copied.id }}>{t('teamLibrary.openDraft')}</Link>}</Button></> : <><label className="field-label" htmlFor="copy-destination">{t('teamLibrary.destination')}</label><select id="copy-destination" className="field-input" value={destination} onChange={e => setDestination(e.target.value)}>{!destinations.length && <option value="">{t('teamLibrary.noWorkspace')}</option>}{destinations.map(tm => <option key={tm.team_id} value={tm.team_id}>{tm.name}</option>)}</select></>}
       </div>}
     </ResponsiveSheet>

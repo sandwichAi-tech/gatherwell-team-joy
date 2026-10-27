@@ -295,15 +295,15 @@ export function TeamInvitePage({ token }: { token: string }) {
     const { data: res, error: ae } = await supabase.rpc('accept_team_invite', { _token: token });
     if (ae) { setState('error'); setErr(t(`workspace.err.${ae.message}`, { defaultValue: t('error.message') })); return; }
     setState('done');
-    setTimeout(() => void navigate({ to: '/team' }), 1200);
+    setTimeout(() => void navigate({ to: '/me', search: { panel: 'teams' } }), 1200);
     return res;
   };
   return <div className="auth-card ws-accept">
-    <h1 className="page-title">{t('workspace.acceptTitle')}</h1>
-    <p className="auth-subtitle">{t('workspace.acceptText')}</p>
+    <h1 className="page-title">{t('teamMembership.request')}</h1>
+    <p className="auth-subtitle">{t('teamMembership.pendingHint')}</p>
     {state === 'error' && <p className="field-error" role="alert">{err}</p>}
-    {state === 'done' ? <p className="auth-subtitle" role="status">{t('workspace.accepted')}</p>
-      : <Button className="sheet-primary" disabled={state === 'busy'} onClick={() => void accept()}>{state === 'busy' ? t('onboarding.saving') : t('workspace.accept')}</Button>}
+    {state === 'done' ? <p className="auth-subtitle" role="status">{t('teamMembership.status.pending')}</p>
+      : <Button className="sheet-primary" disabled={state === 'busy'} onClick={() => void accept()}>{state === 'busy' ? t('onboarding.saving') : t('teamMembership.request')}</Button>}
     <p className="follow-fine"><Link to="/login">{t('follow.signIn')}</Link></p>
   </div>;
 }

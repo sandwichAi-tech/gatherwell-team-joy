@@ -38,9 +38,9 @@ export const PROFILE_FIELDS = {
   account: ['full_name', 'bio', 'city', 'phone', 'shop_url', 'language', 'avatar_url', 'cover_url'],
   publicPage: ['slug', 'host_public', 'host_org', 'host_categories', 'host_languages', 'host_accessibility', 'host_links', 'city_public'],
 } as const;
-export type MePanelParam = 'edit' | 'hostProfile' | 'invite';
+export type MePanelParam = 'edit' | 'hostProfile' | 'invite' | 'teams';
 export function mePanelFromSearch(v: unknown): MePanelParam | undefined {
-  return v === 'edit' || v === 'hostProfile' || v === 'invite' ? v : undefined;
+  return v === 'edit' || v === 'hostProfile' || v === 'invite' || v === 'teams' ? v : undefined;
 }
 
 export const TEAM_DESCRIPTION_MAX = 500;
