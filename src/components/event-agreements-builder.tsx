@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { HostWaiverEditor, HostWaiverPreview, emptyWaiver, useWaiverLibrary, type LibraryWaiver } from '@/components/waiver-library';
+import { HostWaiverEditor, HostWaiverPreview, emptyWaiver, useFormUsage, useWaiverLibrary, type LibraryWaiver } from '@/components/waiver-library';
 import { usePlatformAgreement } from '@/components/platform-event-agreement';
-import { hostWaiverStatus, initialHostPick, pickOne, platformStatus, type AgreementStatus, type WaiverPick } from '@/lib/builder-agreements';
+import { Link } from '@tanstack/react-router';
+import { addPick, hostWaiverStatus, initialHostPick, movePick, removePick, platformStatus, type AgreementStatus, type WaiverPick } from '@/lib/builder-agreements';
 import { platformSelection, type PlatformAgreement } from '@/lib/event-agreements';
 import { FileText, Check } from '@/components/icons';
 
@@ -36,11 +37,12 @@ export function EventAgreementsSection({ teamId, userId, eventId, locked, isNew,
     const r = await supabase.from('event_waivers').select('id,title_en,title_es,library_version,version,file_name,body_en,body_es,created_at').eq('event_id', eventId ?? '').is('archived_at', null).not('library_id', 'is', null); if (r.error) throw r.error; return r.data;
   } });
   const versions = useQuery({ queryKey: ['waiver-versions', userId, value.map(v => `${v.id}:${v.version}`).join(',')], enabled: !locked && value.length > 0, queryFn: async () => {
-    const r = await supabase.from('waiver_library_versions').select('waiver_id,version,name,body_en,body_es,file_path,file_name,created_at').in('waiver_id', value.map(v => v.id)); if (r.error) throw r.error; return r.data;
+    const r = await supabase.from('waiver_library_versions').select('waiver_id,version,name,description,body_en,body_es,file_path,file_name,created_at').in('waiver_id', value.map(v => v.id)); if (r.error) throw r.error; return r.data;
   } });
   const hostState = hostWaiverStatus(value, own, locked);
   const sel = platformSelection(platform, lang);
-  const selectedId = value.length === 1 ? value[0]?.id ?? '' : value.length ? 'multiple' : '';
+  const usage = useFormUsage(userId);
+  const addable = active.filter(w => !value.some(v => v.id === w.id));
   const toggleDefault = async (w: LibraryWaiver) => { setBusy(true); setError(''); const r = await supabase.rpc('set_host_waiver_default', { _id: w.id, _on: !w.is_default }); if (r.error) setError(t('waiverLibrary.saveError')); await qc.invalidateQueries({ queryKey: ['waiver-library'] }); setBusy(false); };
   const previewRow = preview && versions.data?.find(v => v.waiver_id === preview.id && v.version === preview.version);
 
@@ -65,21 +67,24 @@ export function EventAgreementsSection({ teamId, userId, eventId, locked, isNew,
       : library.isPending ? <p role="status">{t('publicEvent.loading')}</p>
       : library.error ? <div role="alert"><p>{t('eventWaivers.errors.load')}</p><Button type="button" variant="secondary" onClick={() => void library.refetch()}>{t('common.retry')}</Button></div>
       : <>
-        <label className="field-label" htmlFor="g-host-waiver">{t('builderAgreements.choose')}</label>
-        <select id="g-host-waiver" className="field-input w-full" value={selectedId} aria-invalid={hostState === 'unavailable'} onChange={e => { setError(''); onChange(pickOne(own, e.target.value || null)); }}>
-          <option value="">{t('builderAgreements.none')}</option>
-          {selectedId === 'multiple' && <option value="multiple" disabled>{t('builderAgreements.multiple', { count: value.length })}</option>}
-          {active.map(w => <option key={w.id} value={w.id}>{w.name} · {t('waiver.version', { n: w.version })}{w.is_default ? ` · ${t('waiverLibrary.default')}` : ''}</option>)}
+        {!value.length && <p>{t('builderAgreements.none')}</p>}
+        <label className="field-label" htmlFor="g-host-waiver">{t('hostForms.addToEvent')}</label>
+        <select id="g-host-waiver" className="field-input w-full" value="" aria-invalid={hostState === 'unavailable'} disabled={!addable.length} onChange={e => { setError(''); if (e.target.value) onChange(addPick(value, own, e.target.value)); }}>
+          <option value="">{t(addable.length ? 'hostForms.pick' : 'hostForms.noMore')}</option>
+          {addable.map(w => <option key={w.id} value={w.id}>{w.name} · {t(`hostForms.kinds.${w.form_kind}`)} · {t('waiver.version', { n: w.version })}{w.is_default ? ` · ${t('waiverLibrary.default')}` : ''}</option>)}
         </select>
         {!active.length && <p className="field-hint">{t('builderAgreements.emptyLibrary')}</p>}
-        {value.map(v => { const w = own?.find(x => x.id === v.id); const ver = versions.data?.find(x => x.waiver_id === v.id && x.version === v.version);
-          if (!w || w.archived) return <p key={v.id} role="alert" className="field-error">{t('builderAgreements.unavailable')}</p>;
-          return <div key={v.id} className="agreement-selected">
-            <strong>{ver?.name ?? w.name}</strong>
+        {value.length > 0 && <ol className="plain-list host-form-picks" aria-label={t('hostForms.selectedLabel')}>{value.map((v, idx) => { const w = own?.find(x => x.id === v.id); const ver = versions.data?.find(x => x.waiver_id === v.id && x.version === v.version);
+          if (!w || w.archived) return <li key={v.id}><p role="alert" className="field-error">{t('builderAgreements.unavailable')}</p><Button type="button" variant="secondary" onClick={() => onChange(removePick(value, v.id))}>{t('builderAgreements.remove')}</Button></li>;
+          const u = usage.data?.[w.id];
+          return <li key={v.id} className="agreement-selected">
+            <strong>{value.length > 1 ? `${idx + 1}. ` : ''}{ver?.name ?? w.name}</strong> <span className="chip">{t(`hostForms.kinds.${w.form_kind}`)}</span>
+            {w.description && <p className="field-hint">{w.description}</p>}
             <dl className="agreement-facts">
               <div><dt>{t('builderAgreements.versionLabel')}</dt><dd>{t('waiver.version', { n: v.version })}{ver ? ` · ${t('builderAgreements.effective', { date: fmt(ver.created_at, lang) })}` : ''}</dd></div>
               <div><dt>{t('builderAgreements.source')}</dt><dd>{ver?.file_name ? t('builderAgreements.sourcePdf', { name: ver.file_name }) : t('builderAgreements.sourceText')}</dd></div>
-              <div><dt>{t('builderAgreements.languages')}</dt><dd>{[ver?.body_en?.trim() ? t('me.english') : '', ver?.body_es?.trim() ? t('me.spanish') : ''].filter(Boolean).join(' · ') || t('builderAgreements.pdfOnly')}</dd></div>
+              {u && <div><dt>{t('hostForms.usage')}</dt><dd>{t('hostForms.usageCounts', { drafts: u.drafts, published: u.published })}</dd></div>}
+              <div><dt>{t('builderAgreements.languages')}</dt><dd>{[ver?.body_en?.trim() ? t('hostForms.langEn') : '', ver?.body_es?.trim() ? t('hostForms.langEs') : ''].filter(Boolean).join(' · ') || t('builderAgreements.pdfOnly')}</dd></div>
             </dl>
             {ver && !ver.body_es?.trim() && <p className="field-hint">{t('builderAgreements.noSpanish')}</p>}
             {w.version > v.version && <div role="status" className="field-hint"><p>{t('builderAgreements.newer', { n: w.version })}</p><Button type="button" variant="secondary" onClick={() => onChange(value.map(x => x.id === v.id ? { id: w.id, version: w.version } : x))}>{t('builderAgreements.useLatest', { n: w.version })}</Button></div>}
@@ -87,26 +92,29 @@ export function EventAgreementsSection({ teamId, userId, eventId, locked, isNew,
               <Button type="button" variant="secondary" disabled={!ver} onClick={() => setPreview(v)}>{t('eventWaivers.preview')}</Button>
               <Button type="button" variant="secondary" onClick={() => setEditor(w)}>{t('builderAgreements.replace')}</Button>
               <Button type="button" variant="ghost" disabled={busy} aria-pressed={w.is_default} onClick={() => void toggleDefault(w)}>{w.is_default ? <><Check />{t('waiverLibrary.clearDefault')}</> : t('waiverLibrary.makeDefault')}</Button>
-              {value.length > 1 && <Button type="button" variant="ghost" onClick={() => onChange(value.filter(x => x.id !== v.id))}>{t('builderAgreements.remove')}</Button>}
+              {value.length > 1 && <Button type="button" variant="ghost" disabled={idx === 0} aria-label={t('hostForms.moveUp', { name: w.name })} onClick={() => onChange(movePick(value, v.id, -1))}>{t('hostForms.up')}</Button>}
+              {value.length > 1 && <Button type="button" variant="ghost" disabled={idx === value.length - 1} aria-label={t('hostForms.moveDown', { name: w.name })} onClick={() => onChange(movePick(value, v.id, 1))}>{t('hostForms.down')}</Button>}
+              <Button type="button" variant="ghost" aria-label={t('hostForms.removeLabel', { name: w.name })} onClick={() => onChange(removePick(value, v.id))}>{t('builderAgreements.remove')}</Button>
             </div>
-          </div>; })}
+          </li>; })}</ol>}
         <Button type="button" variant="secondary" onClick={() => { setError(''); setEditor(emptyWaiver()); }}>{t('builderAgreements.create')}</Button>
         <p className="field-hint">{t('waiverLibrary.scope')}</p>
+        <Link to="/waivers" target="_blank" rel="noopener" className="text-link">{t('hostForms.manageLink')}</Link>
       </>}
       {error && <p role="alert" className="field-error">{error}</p>}
     </div>
     <p className="field-hint">{t(value.length ? 'builderAgreements.bothAccepted' : 'builderAgreements.platformOnly')}</p>
     <p className="field-hint">{t('builderAgreements.noLegalAdvice')}</p>
 
-    {editor && <HostWaiverEditor teamId={teamId} initial={editor} onClose={() => setEditor(null)} onSaved={async id => {
+    {editor && <HostWaiverEditor teamId={teamId} initial={editor} usage={editor.id ? usage.data?.[editor.id] : undefined} onClose={() => setEditor(null)} onSaved={async id => {
       const r = await supabase.from('waiver_library').select('id,version,archived').eq('id', id).maybeSingle();
-      if (r.data && !r.data.archived) onChange([{ id: r.data.id, version: r.data.version }]); else if (r.data?.archived) onChange(value.filter(x => x.id !== id));
+      if (r.data && !r.data.archived) onChange(value.some(x => x.id === id) ? value.map(x => x.id === id ? { id, version: r.data!.version } : x) : [...value, { id: r.data.id, version: r.data.version }]); else if (r.data?.archived) onChange(removePick(value, id));
     }} />}
-    {preview && previewRow && <HostWaiverPreview waiver={{ id: preview.id, name: previewRow.name, version: previewRow.version, body_en: previewRow.body_en, body_es: previewRow.body_es, file_path: previewRow.file_path, file_name: previewRow.file_name }} onClose={() => setPreview(null)} />}
+    {preview && previewRow && <HostWaiverPreview waiver={{ description: previewRow.description, id: preview.id, name: previewRow.name, version: previewRow.version, body_en: previewRow.body_en, body_es: previewRow.body_es, file_path: previewRow.file_path, file_name: previewRow.file_name }} onClose={() => setPreview(null)} />}
   </section>;
 }
 
-export function RequiredAgreementsSummary({ platformState, hostState, hostName, onFix }: { platformState: AgreementStatus; hostState: AgreementStatus; hostName: string | null; onFix: () => void }) {
+export function RequiredAgreementsSummary({ platformState, hostState, hostForms, onFix }: { platformState: AgreementStatus; hostState: AgreementStatus; hostForms: { name: string | null; state: AgreementStatus }[]; onFix: () => void }) {
   const { t } = useTranslation();
   const row = (label: string, state: AgreementStatus, ok: boolean) => <li className={`agreement-summary-row ${ok ? 'is-ready' : 'is-blocked'}`}>
     <span><strong>{label}</strong><small>{t(`builderAgreements.status.${state}`)}</small></span>
@@ -116,7 +124,8 @@ export function RequiredAgreementsSummary({ platformState, hostState, hostName, 
     <h2 id="g-agreements-summary" className="field-label">{t('builderAgreements.summaryTitle')}</h2>
     <ul className="plain-list">
       {row(t('eventAgreements.title'), platformState, platformState === 'ready')}
-      {row(hostName ? t('builderAgreements.hostNamed', { name: hostName }) : t('builderAgreements.hostTitle'), hostState, hostState === 'ready' || hostState === 'none' || hostState === 'stale')}
+      {!hostForms.length ? row(t('builderAgreements.hostTitle'), hostState, true)
+        : hostForms.map((f, i) => <Fragment key={i}>{row(f.name ? t('builderAgreements.hostNamed', { name: f.name }) : t('builderAgreements.hostTitle'), f.state, f.state === 'ready' || f.state === 'stale')}</Fragment>)}
     </ul>
     <p className="field-hint">{t('builderAgreements.noLegalAdvice')}</p>
   </section>;

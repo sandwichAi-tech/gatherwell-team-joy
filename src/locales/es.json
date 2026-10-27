@@ -107,7 +107,9 @@
     "leaderView": "Cambiar a vista de líder",
     "sampleDetails": "Detalles de ejemplo",
     "previewNote": "Vista de ejemplo. Esta acción aún no está conectada.",
-    "save": "Guardar"
+    "save": "Guardar",
+    "retry": "Intentar de nuevo",
+    "cancel": "Cancelar"
   },
   "home": {
     "meta": {
@@ -6977,6 +6979,10 @@
       "referrals": {
         "title": "Programas de referidos",
         "desc": "Recompensas opcionales por compartir artículos pagados."
+      },
+      "waivers": {
+        "title": "Exenciones y formularios",
+        "desc": "Formularios privados reutilizables que aceptan tus asistentes."
       }
     }
   },
@@ -7631,5 +7637,49 @@
       "stale": "Listo · hay una versión más reciente",
       "unavailable": "Elige una exención de tu propia biblioteca"
     }
+  },
+  "hostForms": {
+    "title": "Exenciones y formularios de liberación",
+    "subtitle": "Tus exenciones, liberaciones de responsabilidad y autorizaciones de foto/video reutilizables para eventos.",
+    "add": "Agregar un formulario",
+    "newTitle": "Nuevo formulario",
+    "editTitle": "Editar formulario (guarda una nueva versión)",
+    "name": "Nombre del formulario",
+    "description": "Descripción",
+    "optional": "opcional",
+    "descCount": "{{n}} de {{max}} caracteres",
+    "descTooLong": "La descripción es demasiado larga. Usa 500 caracteres o menos.",
+    "kind": "Tipo de formulario",
+    "kinds": {
+      "waiver": "Exención",
+      "release": "Liberación de responsabilidad",
+      "media": "Autorización de foto/video",
+      "other": "Otro"
+    },
+    "fileRules": "Archivo permitido: solo PDF, hasta 10 MB. Los archivos son privados de tu cuenta de anfitrión.",
+    "fileRejected": "No se puede usar este archivo. Elige un PDF de 10 MB o menos.",
+    "replaceFile": "Reemplazar PDF",
+    "empty": "Aún no tienes formularios. Agrega tu primera exención o formulario de liberación; es privado de tu cuenta de anfitrión.",
+    "updated": "actualizado el {{date}}",
+    "usage": "Se usa en",
+    "usageCounts": "{{drafts}} borradores · {{published}} eventos publicados",
+    "usageError": "No se pudo cargar el uso",
+    "archiveConfirm": "Este formulario está seleccionado en {{drafts}} borradores y {{published}} eventos publicados. Los eventos publicados y las aceptaciones anteriores conservan su versión exacta. Los borradores necesitarán otro formulario. ¿Archivarlo?",
+    "archiveYes": "Archivar formulario",
+    "showArchived": "Mostrar archivados ({{count}})",
+    "hideArchived": "Ocultar archivados ({{count}})",
+    "addToEvent": "Agregar un formulario del anfitrión a este evento",
+    "pick": "Elige un formulario guardado…",
+    "noMore": "No hay más formularios guardados",
+    "selectedLabel": "Formularios del anfitrión que aceptarán los asistentes, en orden",
+    "up": "Subir",
+    "down": "Bajar",
+    "moveUp": "Subir {{name}}",
+    "moveDown": "Bajar {{name}}",
+    "removeLabel": "Quitar {{name}} de este evento",
+    "manageLink": "Abrir la biblioteca de exenciones y formularios (pestaña nueva)",
+    "loginNeeded": "Solo los anfitriones pueden administrar formularios.",
+    "langEn": "Inglés",
+    "langEs": "Español"
   }
 }

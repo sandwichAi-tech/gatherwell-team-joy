@@ -8110,8 +8110,10 @@ export type Database = {
           archived: boolean
           body_en: string
           body_es: string
+          description: string
           file_name: string | null
           file_path: string | null
+          form_kind: string
           id: string
           is_default: boolean
           name: string
@@ -8124,8 +8126,10 @@ export type Database = {
           archived?: boolean
           body_en: string
           body_es?: string
+          description?: string
           file_name?: string | null
           file_path?: string | null
+          form_kind?: string
           id?: string
           is_default?: boolean
           name: string
@@ -8138,8 +8142,10 @@ export type Database = {
           archived?: boolean
           body_en?: string
           body_es?: string
+          description?: string
           file_name?: string | null
           file_path?: string | null
+          form_kind?: string
           id?: string
           is_default?: boolean
           name?: string
@@ -8164,8 +8170,10 @@ export type Database = {
           body_es: string
           content_sha256: string
           created_at: string
+          description: string
           file_name: string | null
           file_path: string | null
+          form_kind: string
           name: string
           version: number
           waiver_id: string
@@ -8175,8 +8183,10 @@ export type Database = {
           body_es: string
           content_sha256: string
           created_at?: string
+          description?: string
           file_name?: string | null
           file_path?: string | null
+          form_kind?: string
           name: string
           version: number
           waiver_id: string
@@ -8186,8 +8196,10 @@ export type Database = {
           body_es?: string
           content_sha256?: string
           created_at?: string
+          description?: string
           file_name?: string | null
           file_path?: string | null
+          form_kind?: string
           name?: string
           version?: number
           waiver_id?: string
@@ -9185,6 +9197,14 @@ export type Database = {
         Returns: undefined
       }
       host_fees_this_month: { Args: { _host: string }; Returns: number }
+      host_form_usage: {
+        Args: never
+        Returns: {
+          drafts: number
+          library_id: string
+          published: number
+        }[]
+      }
       host_month_recap: {
         Args: { _host: string; _start: string }
         Returns: Json
@@ -9795,6 +9815,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      reorder_event_host_forms: {
+        Args: { _event: string; _library: string[] }
+        Returns: undefined
+      }
       replace_offer_item: { Args: { _item: string; _p: Json }; Returns: string }
       reply_contact_thread: {
         Args: { _body: string; _thread: string }
@@ -9980,6 +10004,7 @@ export type Database = {
         }
         Returns: Json
       }
+      safe_form_file_name: { Args: { _n: string }; Returns: string }
       save_assistant_recipe: {
         Args: {
           _ingredients: Json
@@ -10059,6 +10084,21 @@ export type Database = {
           _style: number
         }
         Returns: undefined
+      }
+      save_host_form: {
+        Args: {
+          _archive?: boolean
+          _description: string
+          _en: string
+          _es: string
+          _file?: string
+          _filename?: string
+          _id: string
+          _kind: string
+          _name: string
+          _team: string
+        }
+        Returns: string
       }
       save_host_profile: {
         Args: {

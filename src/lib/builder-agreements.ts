@@ -42,3 +42,17 @@ export function pickOne(own: OwnWaiver[] | undefined, id: string | null): Waiver
   const w = own?.find(x => x.id === id && !x.archived);
   return w ? [{ id: w.id, version: w.version }] : [];
 }
+
+/** Adds a form at the end (no duplicates); ignores archived or unknown forms. */
+export function addPick(value: WaiverPick[], own: OwnWaiver[] | undefined, id: string): WaiverPick[] {
+  if (value.some(v => v.id === id)) return value;
+  const w = own?.find(x => x.id === id && !x.archived);
+  return w ? [...value, { id: w.id, version: w.version }] : value;
+}
+export const removePick = (value: WaiverPick[], id: string) => value.filter(v => v.id !== id);
+/** Moves one selection up (-1) or down (+1); out-of-range moves are no-ops. */
+export function movePick(value: WaiverPick[], id: string, dir: -1 | 1): WaiverPick[] {
+  const i = value.findIndex(v => v.id === id); const j = i + dir;
+  if (i < 0 || j < 0 || j >= value.length) return value;
+  const next = [...value]; [next[i], next[j]] = [next[j]!, next[i]!]; return next;
+}
