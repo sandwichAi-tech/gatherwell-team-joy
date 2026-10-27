@@ -6626,6 +6626,15 @@
         "publishedPartial": "Publicado · {{live}} de {{total}} lecciones publicadas"
       },
       "stepNeedsAttention": "necesita atención"
+    },
+    "content": {
+      "optional": "opcional",
+      "urlEmpty": "Pega la dirección completa, empezando con https://",
+      "urlHttps": "Este enlace no es seguro (http). Usa un enlace https:// si el sitio lo ofrece.",
+      "urlOpens": "Las personas abrirán {{host}} en una pestaña nueva.",
+      "urlInvalid": "Esto todavía no parece una dirección web. Empieza con https://",
+      "liveHint": "Las horas usan tu zona horaria ({{tz}}). Los enlaces de la reunión y de la repetición solo se muestran a quienes tienen acceso.",
+      "fileHint": "PDF, EPUB o ZIP, hasta 100 MB. El archivo es privado: solo quienes tienen acceso reciben un enlace de descarga temporal."
     }
   },
   "templatesR": {
@@ -7594,7 +7603,16 @@
     },
     "scopeDocument": "Documento de alcance aprobado",
     "selectScope": "Selecciona un documento",
-    "scopeVersion": "Versión {{version}}"
+    "scopeVersion": "Versión {{version}}",
+    "rangesExample": "Ejemplo: 0–49 muestra «Punto de partida» y 50–100 muestra «Ganando impulso». Cada puntaje de 0 a 100 necesita exactamente un resultado.",
+    "rangeProblem": {
+      "empty": "Agrega al menos un rango de resultados.",
+      "invalid": "Un rango termina antes de empezar ({{from}}–{{to}}) o usa números fuera de 0–100.",
+      "start": "Los puntajes {{from}}–{{to}} aún no tienen resultado. El primer rango debe empezar en 0.",
+      "end": "Los puntajes {{from}}–{{to}} aún no tienen resultado. El último rango debe terminar en 100.",
+      "gap": "Los puntajes {{from}}–{{to}} aún no tienen resultado.",
+      "overlap": "Los puntajes {{from}}–{{to}} están en dos rangos. Cada puntaje necesita exactamente un resultado."
+    }
   },
   "lifecycle": {
     "receipts": "Pedidos y recibos",

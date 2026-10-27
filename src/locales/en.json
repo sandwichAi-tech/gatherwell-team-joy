@@ -6626,6 +6626,15 @@
         "publishedPartial": "Published · {{live}} of {{total}} lessons published"
       },
       "stepNeedsAttention": "needs attention"
+    },
+    "content": {
+      "optional": "optional",
+      "urlEmpty": "Paste the full address, starting with https://",
+      "urlHttps": "This link is not secure (http). Use an https:// link if the site offers one.",
+      "urlOpens": "People will open {{host}} in a new tab.",
+      "urlInvalid": "This does not look like a web address yet. Start with https://",
+      "liveHint": "Times use your time zone ({{tz}}). The meeting and replay links are shown only to people with access.",
+      "fileHint": "PDF, EPUB or ZIP, up to 100 MB. The file stays private: only people with access get a short-lived download link."
     }
   },
   "templatesR": {
@@ -7594,7 +7603,16 @@
     },
     "scopeDocument": "Approved scope document",
     "selectScope": "Select a document",
-    "scopeVersion": "Version {{version}}"
+    "scopeVersion": "Version {{version}}",
+    "rangesExample": "Example: 0–49 shows \"Starting point\", 50–100 shows \"Building momentum\". Each score from 0 to 100 needs exactly one result.",
+    "rangeProblem": {
+      "empty": "Add at least one result range.",
+      "invalid": "A range has its end below its start ({{from}}–{{to}}), or uses numbers outside 0–100.",
+      "start": "Scores {{from}}–{{to}} have no result yet. The first range must start at 0.",
+      "end": "Scores {{from}}–{{to}} have no result yet. The last range must end at 100.",
+      "gap": "Scores {{from}}–{{to}} have no result yet.",
+      "overlap": "Scores {{from}}–{{to}} fall in two ranges. Each score needs exactly one result."
+    }
   },
   "lifecycle": {
     "receipts": "Orders and receipts",
