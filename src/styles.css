@@ -11,6 +11,11 @@
 .assessment-builder fieldset { min-width:0; border:0; padding:12px 0; }
 .assessment-builder .guest-consent { min-height:48px; }
 .assessment-builder .sheet-actions { flex-wrap:wrap; }
+.builder-panel > .curriculum { background:transparent; border:0; border-radius:0; box-shadow:none; padding:16px 0; }
+.builder-panel .curriculum > .section-heading { display:flex; flex-wrap:wrap; align-items:flex-start; }
+.builder-panel .curriculum > .section-heading > div { flex:1 1 180px; }
+.builder-panel .curriculum .lesson-add { display:flex; gap:8px; flex-wrap:wrap; }
+.assessment-builder input, .assessment-builder select { min-height:48px; }
 .guest-host[href] { color:var(--foreground); text-decoration:none; min-height:48px; border-radius:4px; overflow-wrap:anywhere; }
 .guest-host[href]:focus-visible { outline:2px solid var(--ring); outline-offset:4px; }
 .team-membership-list { list-style:none; margin:16px 0; padding:0; display:grid; gap:12px; }
