@@ -139,7 +139,8 @@ export function ChallengeBuilder({ draft, teamId, onClose }: { draft: Partial<Ch
     saveLock.current = true; setBusy(true);
     try {
       const row = { ...f, description_en: f.description_en || null, description_es: f.description_es || null, goal_target: f.model === 'goal' ? Number(f.goal_target) : null, goal_unit: f.model === 'goal' ? f.goal_unit || null : null, capacity: f.capacity ? Number(f.capacity) : null, status: publish ? 'published' : 'draft', is_paid: paid, price_cents: paid ? challengePrice(price) : null, currency: 'usd', addons };
-      const { error } = await supabase.rpc('save_challenge', { _id: draft?.id ?? '', _team: teamId, _p: row, _activities: JSON.parse(JSON.stringify(activities.map(({ id, ...a }) => a))), _messages: JSON.parse(JSON.stringify(messages.map(({ id, ...m }) => m))) });
+      // The generated RPC type omits PostgreSQL's nullable UUID input; serialize the nullable draft ID explicitly.
+      const { error } = await supabase.rpc('save_challenge', JSON.parse(JSON.stringify({ _id: draft?.id ?? null, _team: teamId, _p: row, _activities: activities.map(({ id, ...a }) => a), _messages: messages.map(({ id, ...m }) => m) })));
       if (error) throw error;
       await Promise.all([qc.invalidateQueries({ queryKey: ['challenges'] }), qc.invalidateQueries({ queryKey: ['challenge'] }), qc.invalidateQueries({ queryKey: ['my-challenges'] }), qc.invalidateQueries({ queryKey: ['challenge-activities'] }), qc.invalidateQueries({ queryKey: ['challenge-messages'] })]);
       baseline.current = snapshot(); toast.success(t('templates.saved')); onClose();
