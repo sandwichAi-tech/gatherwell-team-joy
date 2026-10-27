@@ -6326,6 +6326,7 @@ export type Database = {
       }
       refunds: {
         Row: {
+          allocation_required: boolean
           amount_cents: number
           created_at: string
           id: string
@@ -6339,6 +6340,7 @@ export type Database = {
           stripe_refund_id: string | null
         }
         Insert: {
+          allocation_required?: boolean
           amount_cents: number
           created_at?: string
           id?: string
@@ -6352,6 +6354,7 @@ export type Database = {
           stripe_refund_id?: string | null
         }
         Update: {
+          allocation_required?: boolean
           amount_cents?: number
           created_at?: string
           id?: string
@@ -9508,6 +9511,10 @@ export type Database = {
       }
       public_upcoming: { Args: { _host: string; _team: string }; Returns: Json }
       publish_host_update: { Args: { _id: string }; Returns: number }
+      publish_wellness_assessment: {
+        Args: { _quiz: string; _revision: number; _scope: string }
+        Returns: undefined
+      }
       queue_broadcast: { Args: { _id: string }; Returns: number }
       queue_rsvp_notices: {
         Args: { _rsvp: string; _template: string }
@@ -9574,6 +9581,15 @@ export type Database = {
           _rewards: string[]
         }
         Returns: string
+      }
+      record_unallocated_challenge_refund: {
+        Args: {
+          _amount: number
+          _order: string
+          _refund: string
+          _status: string
+        }
+        Returns: undefined
       }
       record_waiver: {
         Args: { _ip: string; _name: string; _rsvp: string; _source: string }
@@ -9793,6 +9809,10 @@ export type Database = {
       retreat_checklist: { Args: { _code: string }; Returns: Json }
       revoke_certificate: {
         Args: { _cert: string; _reason: string }
+        Returns: undefined
+      }
+      revoke_challenge_order: {
+        Args: { _environment: string; _intent: string }
         Returns: undefined
       }
       revoke_community_suspension: { Args: { _id: string }; Returns: undefined }
