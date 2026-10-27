@@ -1,5 +1,11 @@
 # Challenge experience pass — DONE
 
+## Resource placement and monetization pass
+- [ ] Audit types, placement, public coach/My coaches, access and existing commerce.
+- [ ] Implement exclusive placement and standalone pricing across existing creators; clarify quiz results EN/ES.
+- [ ] Verify public/private access, persistence, mobile EN/ES and deterministic payment gates; run tests and automatic compile.
+- [ ] Clean isolated fixtures and report provider-dependent gaps without deploying.
+
 ## Optional event add-on images
 - [x] Reuse private media/crop controls; optional images verified through draft/refresh and publish/reopen.
 - [x] Event-bound signing, uploader/reference-aware cleanup, non-destructive replacement/remove, attendee preview and EN/ES 320/390/1280 checked.
