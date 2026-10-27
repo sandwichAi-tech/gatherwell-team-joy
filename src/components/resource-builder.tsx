@@ -408,8 +408,10 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
 
   const lessonType = isTrackFlow(type) ? lessonPresetFor(type) : null;
   const cfg = lessonType ? lessonEditorConfig(lessonType) : null;
-  const courseIds = courses.map(o => o.id);
-  const courseOptions = courses.map(o => ({ id: o.id, title: offerTitle(o, lang) }));
+  // Only the host's own active courses in this team can hold the resource (the server re-checks).
+  const placeable = courses.filter(o => o.team_id === teamId && o.id !== loaded?.id);
+  const courseIds = placeable.map(o => o.id);
+  const courseOptions = placeable.map(o => ({ id: o.id, title: offerTitle(o, lang) }));
   const priceCents = destinationsPrice(dest, item.access.free, item.access.price);
   const paid = isStandalone(dest) && !item.access.free;
   const sections = sectionsFor(type);
