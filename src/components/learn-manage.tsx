@@ -202,14 +202,14 @@ function TracksTab({ teamId, newType }: { teamId: string; newType?: string | und
   };
   const closeLesson = () => { setLesson(null); if (flowTrack) { setFlowTrack(null); setFlowDone(true); } };
   return <section className="panel">
-    <div className="section-heading"><h2>{t('learnHub.teamTracks')}</h2><Button onClick={() => setEditing({ cover_style: own.length % COVER_STYLES.length })}><Plus />{t('learnHub.newTrack')}</Button></div>
+    <div className="section-heading"><h2>{t('learnHub.teamTracks')}</h2><Button onClick={() => void navigate({ to: '/learn/create', search: { type: 'video' } })}><Plus />{t('learnHub.newTrack')}</Button></div>
     {own.length ? <div className="manage-tracks">{own.map(tr => <article key={tr.id} className="manage-track">
       <div className="manage-track-head"><LearnCover path={tr.cover_url} style={tr.cover_style} title={trackTitle(tr, i18n.resolvedLanguage)} className="is-thumb" />
         <div className="order-title"><strong>{trackTitle(tr, i18n.resolvedLanguage)}</strong><small>{(() => { const st = data ? trackState(tr.is_published, lessonsOf(data, tr.id)) : null; const opens = tr.available_from && !isLive(tr.available_from) ? t('resources.item.scheduled', { date: new Date(tr.available_from).toLocaleString(i18n.resolvedLanguage) }) : null;
           return [tr.is_start_here ? t('learnHub.startHere') : null, st ? t(`resources.item.trackStateLabel.${st.key}`, { live: st.live, total: st.total }) : t(tr.is_published ? 'templates.published' : 'templates.draft'), opens].filter(Boolean).join(' · '); })()}</small></div>
         <div className="sheet-actions">
           <Button asChild variant="ghost" size="sm"><Link to="/learn/track/$id" params={{ id: tr.id }}><Eye />{t('resources.item.previewTitle')}</Link></Button>
-          <Button variant="secondary" size="sm" onClick={() => setEditing(tr)}><Pencil />{t('templates.edit')}</Button></div></div>
+          <Button variant="secondary" size="sm" onClick={() => void navigate({ to: '/learn/create', search: { type: 'video', id: tr.id } })}><Pencil />{t('templates.edit')}</Button></div></div>
       {data && <LessonOrder track={tr} lessons={lessonsOf(data, tr.id)} onEdit={setLesson} />}
     </article>)}</div> : <EmptyState compact icon="BookOpen" text={t('learnHub.noTracksYet')} />}
     <TrackEditor track={editing ?? (flowEditing ? { cover_style: own.length % COVER_STYLES.length } : null)} teamId={teamId} onClose={closeTrack} preset={editing ? null : flow} />
@@ -261,12 +261,12 @@ function RecipesTab({ teamId, openNew }: { teamId: string; openNew?: boolean | u
   const [consumed, setConsumed] = useState(false);
   const own = (data?.recipes ?? []).filter(r => r.team_id === teamId);
   useEffect(() => {
-    if (openNew && !consumed) { setConsumed(true); setEditing({ tags: [], cover_style: own.length % COVER_STYLES.length }); void navigate({ to: '/learn/manage', search: { tab: 'recipes' }, replace: true, resetScroll: false }); }
+    if (openNew && !consumed) { setConsumed(true); void navigate({ to: '/learn/create', search: { type: 'recipe' }, replace: true }); }
   }, [openNew, consumed, own.length, navigate]);
   return <section className="panel">
-    <div className="section-heading"><h2>{t('learnHub.teamRecipes')}</h2><Button onClick={() => setEditing({ tags: [], cover_style: own.length % COVER_STYLES.length })}><Plus />{t('learnHub.addRecipe')}</Button></div>
+    <div className="section-heading"><h2>{t('learnHub.teamRecipes')}</h2><Button onClick={() => void navigate({ to: '/learn/create', search: { type: 'recipe' } })}><Plus />{t('learnHub.addRecipe')}</Button></div>
     {own.length ? <ul className="order-list">{own.map(r => <li key={r.id}><span className="order-title"><strong>{i18n.resolvedLanguage === 'es' ? r.title_es || r.title_en : r.title_en || r.title_es}</strong><small>{r.prep_minutes ? t('learnHub.prep', { count: r.prep_minutes }) : ''}</small></span>
-      <Button variant="ghost" size="icon" aria-label={t('templates.edit')} onClick={() => setEditing(r)}><Pencil /></Button></li>)}</ul> : <EmptyState compact icon="BookOpen" text={t('learnHub.noTeamRecipes')} />}
+      <Button variant="ghost" size="icon" aria-label={t('templates.edit')} onClick={() => void navigate({ to: '/learn/create', search: { type: 'recipe', id: r.id } })}><Pencil /></Button></li>)}</ul> : <EmptyState compact icon="BookOpen" text={t('learnHub.noTeamRecipes')} />}
     <RecipeEditor recipe={editing} teamId={teamId} onClose={() => setEditing(null)} />
   </section>;
 }

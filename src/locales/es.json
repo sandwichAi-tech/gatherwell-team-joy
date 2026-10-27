@@ -3705,7 +3705,7 @@
     "includesPlaceholder": "Reuniones solo para miembros\nBiblioteca de recursos\nComunidad",
     "price": "Precio (USD)",
     "priceMonthly": "Precio mensual (USD)",
-    "feeNote": "Déjalo en 0 si es gratis. Una comisión fija del 5% de ZoheeWell se aplica a las ventas de pago en cualquier plan. El procesamiento de Stripe es aparte.",
+    "feeNote": "La comisión de ZoheeWell depende de tu plan. El procesamiento de Stripe es aparte. Los recursos gratuitos no tienen comisión de plataforma.",
     "drip": "Días entre lecciones",
     "courseHelp": "Después de guardar, vincula una ruta de Recursos a este curso. Las lecciones se abren una por una.",
     "membershipHelp": "Después de guardar, marca reuniones o rutas de Recursos como exclusivas de este Círculo.",
