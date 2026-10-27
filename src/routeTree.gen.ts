@@ -71,6 +71,7 @@ import { Route as AuthenticatedAppUpdatesRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAppVerifyRouteImport } from './routes/_authenticated/_app/verify'
 import { Route as IHostTokenRouteImport } from './routes/i.host.$token'
 import { Route as InviteTeamTokenRouteImport } from './routes/invite.team.$token'
+import { Route as ResourceKindIdRouteImport } from './routes/resource.$kind.$id'
 import { Route as AuthenticatedAppAdminIndexRouteImport } from './routes/_authenticated/_app/admin.index'
 import { Route as AuthenticatedAppAdminSiteMediaRouteImport } from './routes/_authenticated/_app/admin.site-media'
 import { Route as AuthenticatedAppChallengeIdRouteImport } from './routes/_authenticated/_app/challenge.$id'
@@ -423,6 +424,11 @@ const InviteTeamTokenRoute = InviteTeamTokenRouteImport.update({
   path: '/invite/team/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResourceKindIdRoute = ResourceKindIdRouteImport.update({
+  id: '/resource/$kind/$id',
+  path: '/resource/$kind/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAppAdminIndexRoute =
   AuthenticatedAppAdminIndexRouteImport.update({
     id: '/admin/',
@@ -661,6 +667,7 @@ export interface FileRoutesByFullPath {
   '/verify': typeof AuthenticatedAppVerifyRoute
   '/i/host/$token': typeof IHostTokenRoute
   '/invite/team/$token': typeof InviteTeamTokenRoute
+  '/resource/$kind/$id': typeof ResourceKindIdRoute
   '/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/event/$id': typeof AuthenticatedAppEventIdRoute
@@ -754,6 +761,7 @@ export interface FileRoutesByTo {
   '/verify': typeof AuthenticatedAppVerifyRoute
   '/i/host/$token': typeof IHostTokenRoute
   '/invite/team/$token': typeof InviteTeamTokenRoute
+  '/resource/$kind/$id': typeof ResourceKindIdRoute
   '/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/event/$id': typeof AuthenticatedAppEventIdRoute
@@ -850,6 +858,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/verify': typeof AuthenticatedAppVerifyRoute
   '/i/host/$token': typeof IHostTokenRoute
   '/invite/team/$token': typeof InviteTeamTokenRoute
+  '/resource/$kind/$id': typeof ResourceKindIdRoute
   '/_authenticated/_app/admin/site-media': typeof AuthenticatedAppAdminSiteMediaRoute
   '/_authenticated/_app/challenge/$id': typeof AuthenticatedAppChallengeIdRoute
   '/_authenticated/_app/event/$id': typeof AuthenticatedAppEventIdRoute
@@ -945,6 +954,7 @@ export interface FileRouteTypes {
     | '/verify'
     | '/i/host/$token'
     | '/invite/team/$token'
+    | '/resource/$kind/$id'
     | '/admin/site-media'
     | '/challenge/$id'
     | '/event/$id'
@@ -1038,6 +1048,7 @@ export interface FileRouteTypes {
     | '/verify'
     | '/i/host/$token'
     | '/invite/team/$token'
+    | '/resource/$kind/$id'
     | '/admin/site-media'
     | '/challenge/$id'
     | '/event/$id'
@@ -1133,6 +1144,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/verify'
     | '/i/host/$token'
     | '/invite/team/$token'
+    | '/resource/$kind/$id'
     | '/_authenticated/_app/admin/site-media'
     | '/_authenticated/_app/challenge/$id'
     | '/_authenticated/_app/event/$id'
@@ -1197,6 +1209,7 @@ export interface RootRouteChildren {
   VerifyNumberRoute: typeof VerifyNumberRoute
   IHostTokenRoute: typeof IHostTokenRoute
   InviteTeamTokenRoute: typeof InviteTeamTokenRoute
+  ResourceKindIdRoute: typeof ResourceKindIdRoute
   ApiPublicAiFollowupsRoute: typeof ApiPublicAiFollowupsRoute
   ApiPublicCalendarTokenRoute: typeof ApiPublicCalendarTokenRoute
   ApiPublicEmailMailgunRoute: typeof ApiPublicEmailMailgunRoute
@@ -1643,6 +1656,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InviteTeamTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/resource/$kind/$id': {
+      id: '/resource/$kind/$id'
+      path: '/resource/$kind/$id'
+      fullPath: '/resource/$kind/$id'
+      preLoaderRoute: typeof ResourceKindIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/_app/admin/': {
       id: '/_authenticated/_app/admin/'
       path: '/admin'
@@ -2024,6 +2044,7 @@ const rootRouteChildren: RootRouteChildren = {
   VerifyNumberRoute: VerifyNumberRoute,
   IHostTokenRoute: IHostTokenRoute,
   InviteTeamTokenRoute: InviteTeamTokenRoute,
+  ResourceKindIdRoute: ResourceKindIdRoute,
   ApiPublicAiFollowupsRoute: ApiPublicAiFollowupsRoute,
   ApiPublicCalendarTokenRoute: ApiPublicCalendarTokenRoute,
   ApiPublicEmailMailgunRoute: ApiPublicEmailMailgunRoute,
