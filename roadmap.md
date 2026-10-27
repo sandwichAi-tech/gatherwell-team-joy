@@ -1,10 +1,11 @@
 # Challenge experience pass — DONE
 
 ## Website Notes row 106 — In Progress
-- [ ] Audit existing communication, membership, owner, notification and moderation paths.
-- [ ] Extend existing announcements/chat with strict direct-team access, separate unread/mute and safe deep links.
-- [ ] Verify isolated multi-account/team permissions, EN/ES mobile/desktop, focused/full tests and compilation; clean exact fixtures.
-- [ ] Physical-device, live reconnect and external delivery remain unverified unless actually exercised.
+- [x] Audited existing communication, direct memberships/invitations, owner/leader, notification, search and moderation paths.
+- [x] Reused announcements/chat with strict direct-team access, owner-only management, separate unread/mute, safe links/deep links and retry dedupe.
+- [x] Five-account/two-team permission, unread/mute/opt-out/reply/suspension checks; browser create/post/removal; EN/ES announcements 320/390/1280; 13 focused and full 758 tests; automatic compilation OK.
+- [ ] Exact fixture cleanup and final leftover confirmation.
+- [ ] Complete multi-surface/multi-team browser, notification-click/relogin, reconnect/delivery races, offline retries, physical keyboard/screen-reader/device checks; external delivery intentionally untested.
 
 ## Resource placement and monetization pass — In Progress
 - [x] Audited ten creator types, placement, public coach/My coaches, access and existing commerce.
