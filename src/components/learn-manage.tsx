@@ -1,4 +1,5 @@
-import { confirmResourceRemoval } from '@/components/confirm-resource-removal';
+import { removeResource, restoreResource } from '@/components/confirm-resource-removal';
+import { isHistoryGuard } from '@/lib/resource-removal';
 import { CropFileInput } from '@/components/image-crop';
 import { EmptyState } from '@/components/launch-states';
 import { LangFields, LangPair } from '@/components/lang-fields';
@@ -62,11 +63,11 @@ function TrackEditor({ track, teamId, onClose, preset }: { track: Partial<Track>
     toast.success(t('templates.saved')); await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose(track?.id ? undefined : (res.data as Track));
   };
   const remove = async () => {
-    if (!track?.id || !(await confirmResourceRemoval(t, 'track', track.id, t('learnHub.confirmDeleteTrack')))) return;
+    if (!track?.id) return;
     const files = await learnPathsForTracks([track.id]);
-    const res = await supabase.from('tracks').delete().eq('id', track.id);
-    if (res.error) { toast.error(errMsg(t, res.error)); return; }
-    void removeUnusedLearnFiles(files);
+    const done = await removeResource(t, 'track', track.id);
+    if (!done) return;
+    if (done === 'delete') void removeUnusedLearnFiles(files);
     await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose();
   };
   return <ResponsiveSheet open={!!track} onOpenChange={o => !o && onClose()} title={preset && !track?.id ? t(`resources.preset.track.${preset}`) : track?.id ? t('learnHub.editTrack') : t('learnHub.newTrack')} description={preset && !track?.id ? t(`resources.preset.trackText.${preset}`) : undefined}>
@@ -80,7 +81,9 @@ function TrackEditor({ track, teamId, onClose, preset }: { track: Partial<Track>
       {trackPlaceholder && <p className="field-hint" role="alert">{t('resources.item.placeholderBlock')}</p>}
       {track?.id && <MembersOnlyPicker table="tracks" id={track.id} teamId={teamId} />}
       <Button className="onboarding-continue" disabled={busy || !ok} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
-      {track?.id && <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('learnHub.deleteTrack')}</Button>}
+      {track?.id && (track.archived_at
+        ? <Button variant="outline" onClick={async () => { if (await restoreResource(t, 'track', track.id!)) { await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose(); } }}>{t('resources.removal.restore')}</Button>
+        : <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('resources.removal.remove')}</Button>)}
     </div>
   </ResponsiveSheet>;
 }
@@ -128,7 +131,7 @@ function LessonEditor({ lesson, teamId, onClose, preset }: { lesson: (Partial<Le
     if (!lesson?.id || !(await confirmAction({ title: t('learnHub.confirmDeleteLesson'), destructive: true }))) return;
     const files = learnPathsOf([lesson]);
     const r = await supabase.from('lessons').delete().eq('id', lesson.id);
-    if (r.error) { toast.error(errMsg(t, r.error)); return; }
+    if (r.error) { toast.error(isHistoryGuard(r.error) ? t('resources.removal.historyBlocked') : errMsg(t, r.error)); return; }
     void removeUnusedLearnFiles(files);
     await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose();
   };
@@ -235,9 +238,7 @@ function RecipeEditor({ recipe, teamId, onClose }: { recipe: Partial<Recipe> | n
     toast.success(t('templates.saved')); await qc.invalidateQueries({ queryKey: ['recipes', userId] }); onClose();
   };
   const remove = async () => {
-    if (!recipe?.id || !(await confirmResourceRemoval(t, 'recipe', recipe.id, t('learnHub.confirmDeleteRecipe')))) return;
-    const res = await supabase.from('recipes').delete().eq('id', recipe.id);
-    if (res.error) { toast.error(errMsg(t, res.error)); return; }
+    if (!recipe?.id || !(await removeResource(t, 'recipe', recipe.id))) return;
     await qc.invalidateQueries({ queryKey: ['recipes', userId] }); onClose();
   };
   return <ResponsiveSheet open={!!recipe} onOpenChange={o => !o && onClose()} title={recipe?.id ? t('learnHub.editRecipe') : t('learnHub.addRecipe')} description={t('learnHub.recipeRule')}>
@@ -250,7 +251,9 @@ function RecipeEditor({ recipe, teamId, onClose }: { recipe: Partial<Recipe> | n
       <LangPair id="rc-ing" label={t('learnHub.ingredients')} en={f.ing_en} es={f.ing_es} onEn={v => setF({ ...f, ing_en: v })} onEs={v => setF({ ...f, ing_es: v })} multiline rows={5} />
       <LangPair id="rc-steps" label={t('learnHub.steps')} en={f.steps_en} es={f.steps_es} onEn={v => setF({ ...f, steps_en: v })} onEs={v => setF({ ...f, steps_es: v })} multiline rows={5} />
       <Button className="onboarding-continue" disabled={busy || !ok} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
-      {recipe?.id && <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('learnHub.deleteRecipe')}</Button>}
+      {recipe?.id && (recipe.archived_at
+        ? <Button variant="outline" onClick={async () => { if (await restoreResource(t, 'recipe', recipe.id!)) { await qc.invalidateQueries({ queryKey: ['recipes', userId] }); onClose(); } }}>{t('resources.removal.restore')}</Button>
+        : <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('resources.removal.remove')}</Button>)}
     </div>
   </ResponsiveSheet>;
 }

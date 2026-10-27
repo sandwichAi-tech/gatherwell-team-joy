@@ -1,3 +1,4 @@
+import { isHistoryGuard } from '@/lib/resource-removal';
 import { urlHint } from '@/lib/url-hint';
 import { BuilderStepFooter, focusField } from '@/components/builder-step-footer';
 import { DestinationSummary, ResourceAccessFields } from '@/components/resource-access-fields';
@@ -160,7 +161,7 @@ function Curriculum({ trackId, teamId, lang, onLessons }: { trackId: string; tea
     const files = learnPathsOf([l]);
     const { error } = await db.from('lessons').delete().eq('id', l.id);
     if (!error) void removeUnusedLearnFiles(files);
-    if (error) { toast.error(t('profile.saveError')); return; }
+    if (error) { toast.error(isHistoryGuard(error) ? t('resources.removal.historyBlocked') : t('profile.saveError')); return; }
     void load(); void qc.invalidateQueries();
   };
   const move = async (l: Lesson, dir: -1 | 1) => {

@@ -1,5 +1,6 @@
+import { removeResource, restoreResource } from '@/components/confirm-resource-removal';
 import { BuilderStepFooter } from '@/components/builder-step-footer';
-import { DestinationSummary, ResourceAccessFields, livePlacementList } from '@/components/resource-access-fields';
+import { DestinationSummary, ResourceAccessFields } from '@/components/resource-access-fields';
 import { myOffersQuery, offerTitle } from '@/lib/offers';
 import { getPaymentsReadiness } from '@/lib/billing.functions';
 import { canSellPaid } from '@/lib/payments-readiness';
@@ -231,15 +232,15 @@ export function QuizStudio({ quizId }: { quizId: string }) {
   const duplicate = async () => {
     const { data, error } = await db.rpc('duplicate_quiz', { _quiz: quizId });
     if (error) { toast.error(t('profile.saveError')); return; }
-    toast.success(t('quizStudio.duplicated')); void navigate({ to: '/learn/quiz/$id', params: { id: data } });
+    const src = await db.rpc('resource_destinations', { _kind: 'quiz', _id: quizId });
+    const omitted = ((src.data?.courses ?? []) as { available?: boolean }[]).filter(c => c.available === false).length;
+    toast.success(t('quizStudio.duplicated'));
+    if (omitted) toast.info(t('resources.removal.copyOmitted', { count: omitted }));
+    void navigate({ to: '/learn/quiz/$id', params: { id: data } });
   };
   const remove = async () => {
-    const places = livePlacementList(dest, courseOptions, t, lang);
-    const body = [hasAttempts ? t('quizStudio.deleteWithAnswers') : '', places ? t('resourcePlacement.archiveWarn', { places }) : ''].filter(Boolean).join(' ');
-    if (!(await confirmAction({ title: t('quiz.confirmDelete'), ...(body ? { body } : {}), destructive: true }))) return;
-    const { error } = await db.from('quizzes').delete().eq('id', quizId);
-    if (error) { toast.error(t('profile.saveError')); return; }
-    toast.success(t('quizStudio.deleted')); await qc.invalidateQueries({ queryKey: ['team-quizzes'] });
+    if (!(await removeResource(t, 'quiz', quizId))) return;
+    await qc.invalidateQueries({ queryKey: ['team-quizzes'] });
     void navigate({ to: '/learn', search: { tab: 'mine' } });
   };
   const exit = async () => {
@@ -335,7 +336,9 @@ export function QuizStudio({ quizId }: { quizId: string }) {
             : <><Button disabled={busy || !dirty} onClick={update}>{t('quizStudio.update')}</Button><Button variant="secondary" disabled={busy} onClick={unpublish}>{t('quiz.unpublish')}</Button></>}
           <Button variant="secondary" onClick={() => setTab('preview')}><Eye />{t('quizStudio.tabs.preview')}</Button>
           <Button variant="ghost" onClick={duplicate}><CopyPlus />{t('quizStudio.duplicate')}</Button>
-          <Button variant="ghost" className="danger-text" onClick={remove}><Trash2 />{t('quiz.delete')}</Button>
+          {(s as { archived_at?: string | null }).archived_at
+            ? <Button variant="outline" onClick={async () => { if (await restoreResource(t, 'quiz', quizId)) await qc.invalidateQueries(); }}>{t('resources.removal.restore')}</Button>
+            : <Button variant="ghost" className="danger-text" onClick={remove}><Trash2 />{t('resources.removal.remove')}</Button>}
         </div>
         <Button variant="ghost" onClick={() => void exit()}>{t('quizStudio.exit')}</Button>
       </section>
