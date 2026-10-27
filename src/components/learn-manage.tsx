@@ -82,7 +82,7 @@ function TrackEditor({ track, teamId, onClose, preset }: { track: Partial<Track>
       {track?.id && <MembersOnlyPicker table="tracks" id={track.id} teamId={teamId} />}
       <Button className="onboarding-continue" disabled={busy || !ok} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
       {track?.id && (track.archived_at
-        ? <Button variant="outline" onClick={async () => { if (await restoreResource(t, 'track', track.id)) { await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose(); } }}>{t('resources.removal.restore')}</Button>
+        ? <Button variant="outline" onClick={async () => { if (await restoreResource(t, 'track', track.id!)) { await qc.invalidateQueries({ queryKey: ['learn', userId] }); onClose(); } }}>{t('resources.removal.restore')}</Button>
         : <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('resources.removal.remove')}</Button>)}
     </div>
   </ResponsiveSheet>;
@@ -252,7 +252,7 @@ function RecipeEditor({ recipe, teamId, onClose }: { recipe: Partial<Recipe> | n
       <LangPair id="rc-steps" label={t('learnHub.steps')} en={f.steps_en} es={f.steps_es} onEn={v => setF({ ...f, steps_en: v })} onEs={v => setF({ ...f, steps_es: v })} multiline rows={5} />
       <Button className="onboarding-continue" disabled={busy || !ok} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
       {recipe?.id && (recipe.archived_at
-        ? <Button variant="outline" onClick={async () => { if (await restoreResource(t, 'recipe', recipe.id)) { await qc.invalidateQueries({ queryKey: ['recipes', userId] }); onClose(); } }}>{t('resources.removal.restore')}</Button>
+        ? <Button variant="outline" onClick={async () => { if (await restoreResource(t, 'recipe', recipe.id!)) { await qc.invalidateQueries({ queryKey: ['recipes', userId] }); onClose(); } }}>{t('resources.removal.restore')}</Button>
         : <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('resources.removal.remove')}</Button>)}
     </div>
   </ResponsiveSheet>;

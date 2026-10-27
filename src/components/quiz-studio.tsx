@@ -1,4 +1,4 @@
-import { removeResource } from '@/components/confirm-resource-removal';
+import { removeResource, restoreResource } from '@/components/confirm-resource-removal';
 import { BuilderStepFooter } from '@/components/builder-step-footer';
 import { DestinationSummary, ResourceAccessFields } from '@/components/resource-access-fields';
 import { myOffersQuery, offerTitle } from '@/lib/offers';
@@ -336,7 +336,9 @@ export function QuizStudio({ quizId }: { quizId: string }) {
             : <><Button disabled={busy || !dirty} onClick={update}>{t('quizStudio.update')}</Button><Button variant="secondary" disabled={busy} onClick={unpublish}>{t('quiz.unpublish')}</Button></>}
           <Button variant="secondary" onClick={() => setTab('preview')}><Eye />{t('quizStudio.tabs.preview')}</Button>
           <Button variant="ghost" onClick={duplicate}><CopyPlus />{t('quizStudio.duplicate')}</Button>
-          <Button variant="ghost" className="danger-text" onClick={remove}><Trash2 />{t('quiz.delete')}</Button>
+          {(s as { archived_at?: string | null }).archived_at
+            ? <Button variant="outline" onClick={async () => { if (await restoreResource(t, 'quiz', quizId)) await qc.invalidateQueries(); }}>{t('resources.removal.restore')}</Button>
+            : <Button variant="ghost" className="danger-text" onClick={remove}><Trash2 />{t('resources.removal.remove')}</Button>}
         </div>
         <Button variant="ghost" onClick={() => void exit()}>{t('quizStudio.exit')}</Button>
       </section>
