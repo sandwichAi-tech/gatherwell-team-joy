@@ -243,6 +243,9 @@ export const startTicketCheckout = createServerFn({ method: 'POST' })
   .handler(async ({ data }): Promise<Result> => {
     // Purchasers must be adults; the unchecked attestation is required server-side.
     if (data.adult !== true) return { ok: false, error: 'adult_required' };
+    // Paid fulfillment does not yet persist the separate pinned platform acceptance.
+    // Fail before provider calls rather than charging for an ineligible registration.
+    return { ok: false, error: 'approved_legal_document_required' };
     {
       // Event waivers are validated against the active versions before any checkout is attempted.
       const { supabaseAdmin: sa } = await import('@/integrations/supabase/client.server');

@@ -1,6 +1,8 @@
 @import "tailwindcss" source(none);
 @import "tw-animate-css";
 @source "../src";
+.guest-host[href] { color:var(--foreground); text-decoration:none; min-height:48px; border-radius:4px; overflow-wrap:anywhere; }
+.guest-host[href]:focus-visible { outline:2px solid var(--ring); outline-offset:4px; }
 .team-membership-list { list-style:none; margin:16px 0; padding:0; display:grid; gap:12px; }
 .team-membership-list > li { display:flex; flex-direction:column; align-items:flex-start; gap:8px; border-bottom:1px solid var(--border); padding:12px 0; min-width:0; overflow-wrap:anywhere; }
 .team-membership-list small { color:var(--muted-foreground); }

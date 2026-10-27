@@ -1,4 +1,5 @@
 import { WaiverLibraryPicker } from '@/components/waiver-library';
+import { PlatformAgreementNotice, usePlatformAgreement } from '@/components/platform-event-agreement';
 import { blueprintDefaults } from '@/lib/blueprint-defaults';
 import { useFeature } from '@/lib/feature-flags';
 import { policyFromEvent, policyIssues, policyPayload } from '@/lib/event-policy';
@@ -46,6 +47,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const { t, i18n } = useTranslation(); const { userId } = useGatherwell(); const navigate = useNavigate(); const router = useRouter(); const queryClient = useQueryClient();
   const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
   const editing = !!eventId;
+  const platformAgreement = usePlatformAgreement(eventId);
   const { data: workspace } = useQuery(workspaceQuery(userId));
   const { data: planStatus } = useQuery(planStatusQuery(userId));
   const { data: templates = [] } = useQuery({ ...templatesQuery(), enabled: !editing });
@@ -412,7 +414,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       </section>}
 
       <WaiverLibraryPicker teamId={teamId} value={libraryWaivers} onChange={setLibraryWaivers}/>
-      <label className="settings-row"><span>{t('waiverLibrary.team')}<small className="field-hint">{t('waiverLibrary.scope')}</small></span><Switch checked={teamWaiver} onCheckedChange={setTeamWaiver} aria-label={t('waiverLibrary.team')}/></label>
+      {teamWaiver && <p className="field-hint">{t('eventAgreements.legacyPinned')}</p>}
+      {eventId && <PlatformAgreementNotice agreement={platformAgreement.data} loading={platformAgreement.isPending} />}
       <section className="form-section">
         <label className="field-label" htmlFor="g-title">{t('gathering.title')} · {t('eventReliability.required')}</label>
         <Input id="g-title" className="field-input" maxLength={120} value={title} onChange={e => setTitle(e.target.value)} placeholder={t('gathering.titlePlaceholder')} aria-invalid={tried && !title.trim()} />
