@@ -9,9 +9,9 @@ describe('sectionsFor', () => {
     expect(sectionsFor('course')).toEqual(['presentation', 'content', 'access', 'options', 'preview']);
     expect(sectionsFor('file')).toContain('options');
   });
-  it('hides checkout options for types without pricing', () => {
-    expect(sectionsFor('quiz')).toEqual(['presentation', 'content', 'preview']);
-    expect(sectionsFor('recipe')).not.toContain('access');
+  it('shows placement and access for every standalone type', () => {
+    expect(sectionsFor('quiz')).toEqual(['presentation', 'content', 'access', 'preview']);
+    expect(sectionsFor('recipe')).toContain('access');
     expect(sectionsFor('link')).toContain('access');
     expect(sectionsFor('link')).not.toContain('options');
   });
