@@ -24,12 +24,12 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - App screens live under _authenticated/_app: the _authenticated gate redirects signed-out visitors to /login, and the _app layout sends anyone not onboarded (or holding a pending invite) to /onboarding before rendering GatherwellShell.
 - Public pages (marketing + GuestShell /e /h /l /t /i /r) SSR in English, then applySavedLanguage(); loaders prefetchPublic() and the router dehydrates the cache for crawlers. Render stays window-free and deterministic. AuthFrame pages (/login, /join, /terms, /privacy) use ClientOnly.
 - Uploads go to private media under the uploader's folder, shown via signed URLs (public buckets blocked).
-- Event detail lives at /event/$id inside the app shell; the public guest page stays at /e/$id.
+- Event detail: app /event/$id; public /e/$id.
 - Signed-out visitors may call only guest RPCs (public event/price, RSVP by code, polls, invites, email prefs by token); all else needs sign-in + team role, as the guest page is the only anonymous surface.
 - Event photos live in the private event-photos bucket and are uploaded/listed only through event-day server functions (host via bearer, guests via checked-in checkin_code), with signed URLs.
 - All outbound messages go via notification_outbox, sent only by src/lib/notify/process.server.ts through /api/public/outbox/process (app_config token, 5 min); missing provider secrets mark rows 'simulated', so a channel needs only its secrets.
 - Provider webhooks live under /api/public/{sms/inbound,email/resend,email/mailgun}, verify signatures, and return 503 until their secrets exist.
-- Icons render only through GwIcon (src/components/gw-icon.tsx, Phosphor); src/components/icons.tsx re-exports named wrappers so call sites stay simple and nothing imports an icon library directly.
+- Icons use Phosphor via GwIcon only; icons.tsx re-exports wrappers.
 - Photos render only through BrandImage and come from site_media slots (private site-media bucket, signed URLs, anonymous read); only user_roles admins (has_role) can edit them at /admin/site-media.
 - Communications hub (/communications) writes only via 0095 RPCs into notification_outbox; email/SMS activation blocked until provider secrets exist.
 - All AI (assistant + src/lib/ai/*, smart.functions.ts) runs server-side via Claude, model in assistant/config.ts; no key → preview text, not counted. Cards act on confirm.
@@ -46,7 +46,7 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Resources: /learn + feature_learn, type-first create; configure_resource_access + offers; courses separate. Resolve visibility before signing. Paid checkout blocked until orders/refunds verified.
 - Home/brief: caller-only personal_home saved progress, auth-cleared cache; shortcuts use event-local occurrence/session days. Insights: UTC.
 - Admin password sign-in: public /admin-login with existing Cloud Auth accounts; getAdminAccess checks the role before navigation and every admin handler re-checks, so sign-in never grants privileges.
-- Blueprints/challenges reuse existing editors; drafts stay private. Experience sessions use existing events and whole-event admission.
+- Challenges: retry-keyed atomic save_challenge_request; locked enroll_challenge; enrolled/owner private progress and leaderboard; paid checkout blocked until orders/refunds verified. Extras reuse event media; cleanup preserves Challenge references.
 - Platform fees come only from versioned fee_rules (calc_platform_fee_cents, mirrored in src/lib/fees.ts); orders snapshot the rule.
 - Database role regressions live in tests/database and run only by explicit invocation against a disposable copy; never connect these fixture-writing tests to production, preview, or the ordinary automated suite.
 - Consent acceptances resolve version/hash in database triggers, and flag changes append server-owned config history; clients never choose snapshots or write audit history.
