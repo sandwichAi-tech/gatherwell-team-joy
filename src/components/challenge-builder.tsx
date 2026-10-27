@@ -164,7 +164,7 @@ export function ChallengeBuilder({ draft, teamId, onClose }: { draft: Partial<Ch
       {loading && <p role="status">{t('publicEvent.loading')}</p>}{loadError && <p role="alert" className="field-error">{t('challenges.builder.loadError')}</p>}
       {errors.length > 0 && <div ref={errorFocus} tabIndex={-1} role="alert" className="builder-issues">{errors.map(k => <p key={k}>{t(`challenges.builder.issue.${k}`)}</p>)}</div>}
       <div className="segmented-tabs builder-steps" role="tablist" aria-label={t('challenges.builder.steps')}>
-        {STEPS.map((s, i) => <Button variant="ghost" key={s} type="button" role="tab" disabled={busy || loading || uploading > 0 || loadError || i > stepIndex + 1} aria-selected={step === s} className={step === s ? 'is-active' : ''} onClick={() => navigateStep(s)}>{i + 1}. {t(`challenges.builder.step.${s}`)}</Button>)}
+        {STEPS.map((s, i) => <Button variant="ghost" key={s} type="button" role="tab" tabIndex={step === s ? 0 : -1} disabled={busy || loading || uploading > 0 || loadError || i > stepIndex + 1} aria-selected={step === s} className={step === s ? 'is-active' : ''} onKeyDown={e => { if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return; e.preventDefault(); const next = STEPS[i + (e.key === 'ArrowRight' ? 1 : -1)]; if (next) navigateStep(next); }} onClick={() => navigateStep(s)}>{i + 1}. {t(`challenges.builder.step.${s}`)}</Button>)}
       </div>
 
       {step === 'basics' && <>

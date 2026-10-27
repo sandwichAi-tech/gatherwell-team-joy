@@ -196,8 +196,8 @@ export function ChallengePage({ id }: { id: string }) {
   } });
   const { data: joinedRow, refetch: refetchJoin, isPending: joinPending, isError: joinError } = useQuery({ queryKey: ['challenge-joined', id, userId], refetchInterval: 15000, queryFn: async () => { const r = await supabase.from('challenge_members').select('challenge_id,extras').eq('challenge_id', id).eq('user_id', userId).maybeSingle(); if (r.error) throw r.error; return r.data; } });
   const { data: eligible = false, isPending: eligibilityPending } = useQuery({ queryKey: ['challenge-eligible', id, userId], refetchInterval: 15000, queryFn: async () => { const r = await supabase.rpc('challenge_can_enroll', { _c: id }); if (r.error) throw r.error; return r.data; } });
-  const { data: mine = [] } = useQuery(myCheckinsQuery(userId, id));
-  const { data: savedProgress } = useQuery({ queryKey: ['challenge-progress', id, userId], enabled: !!joinedRow, refetchInterval: 15000, queryFn: async () => { const r = await supabase.rpc('my_challenge_progress', { _c: id }); if (r.error) throw r.error; return r.data as { total: number; current: number; best: number }; } });
+  const { data: mine = [], isPending: progressDatesPending, isError: progressDatesError, refetch: refetchProgressDates } = useQuery({ ...myCheckinsQuery(userId, id), enabled: !!joinedRow });
+  const { data: savedProgress, isPending: progressPending, isError: progressError, refetch: refetchProgress } = useQuery({ queryKey: ['challenge-progress', id, userId], enabled: !!joinedRow, refetchInterval: 15000, queryFn: async () => { const r = await supabase.rpc('my_challenge_progress', { _c: id }); if (r.error) throw r.error; return r.data as { total: number; current: number; best: number }; } });
   const { data: board = [] } = useQuery({ ...leaderboardQuery(id, userId), enabled: !!c?.leaderboard_on && (!!joinedRow || c.created_by === userId) });
   const { data: activities = [] } = useQuery({ queryKey: ['challenge-activities', id, userId], enabled: !!joinedRow || c?.created_by === userId, queryFn: async () => ((await supabase.from('challenge_activities').select('*').eq('challenge_id', id).order('sort_order')).data ?? []) as ChallengeActivity[] });
   const { data: messages = [] } = useQuery({ queryKey: ['challenge-messages', id, userId], enabled: !!joinedRow || c?.created_by === userId, queryFn: async () => ((await supabase.from('challenge_messages').select('*').eq('challenge_id', id).order('sort_order')).data ?? []) as ChallengeMessage[] });
@@ -209,6 +209,8 @@ export function ChallengePage({ id }: { id: string }) {
   const { data: counts = [], isPending: countsPending } = useQuery({ queryKey: ['challenge-counts', id, userId], refetchInterval: 15000, queryFn: async () => { const r = await supabase.rpc('challenge_counts', { _ids: [id] }); if (r.error) throw r.error; return r.data; } });
   if (isError || joinError) return <RetryState retry={() => { void refetch(); void refetchJoin(); }} />;
   if (isLoading || joinPending) return <ListSkeleton />;
+  if (joinedRow && (progressDatesError || progressError)) return <RetryState retry={() => { void refetchProgressDates(); void refetchProgress(); }} />;
+  if (joinedRow && (progressDatesPending || progressPending)) return <ListSkeleton />;
   if (!c) return <section className="panel"><Link to="/team" className="back-link"><ArrowLeft />{t('nav.team')}</Link><p className="auth-subtitle">{t('learnHub.notFound')}</p></section>;
   const today = localDate(new Date(), c.timezone ?? 'UTC'); const yesterday = addDays(today, -1); const phase = phaseOf(c, today); const len = lengthOf(c);
   const dates = new Set(mine.map(m => m.checkin_date)); const s = savedProgress ?? streaksOf([...dates], today);
@@ -266,7 +268,7 @@ export function ChallengePage({ id }: { id: string }) {
       <div className="section-heading"><h2>{welcomeTitle || t('challenges.msg.welcome')}</h2><Button variant="ghost" size="icon" aria-label={t('common.close')} onClick={() => setWelcomeGone(true)}><X /></Button></div>
       {welcomeBody && <p>{welcomeBody}</p>}</section>}
 
-    {joined && s.total >= periods && <Finisher c={c} days={s.total} />}
+    {joined && (goal ? goal.complete : s.total >= periods) && <Finisher c={c} days={s.total} />}
 
     {joined && phase === 'active' && <section className="panel prompt-card"><span className="eyebrow">{t('challenges.todaysPrompt')}</span><p className="prompt-text">{prompt || t('challenges.defaultPrompt')}</p>
       {donePeriod ? <div className="done-today" role="status"><Check /><span><strong>{t(c.frequency === 'weekly' ? 'challenges.periodDone' : 'challenges.doneToday')}</strong><small>{t('challenges.doneAt', { time: todayRow ? timeOf(todayRow.created_at) : '—' })}</small></span></div>

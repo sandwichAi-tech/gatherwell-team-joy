@@ -38,7 +38,8 @@ export function challengeStepIssues(step: ChallengeStep, f: ChallengeBasics, act
     if (addons.length > 8 || addons.some(a => !a.name.trim() || a.name.length > 60 || !Number.isInteger(a.price_cents) || a.price_cents < 0 || a.price_cents > 100000 || a.description.length > 500 || !Number.isInteger(a.max_quantity) || a.max_quantity < 1 || a.max_quantity > 20 || a.inventory != null && (!Number.isInteger(a.inventory) || a.inventory < 0))) out.push('addons');
   }
   if (step === 'model' || step === 'review') {
-    if (f.model === 'goal' && (!Number.isInteger(Number(f.goal_target)) || Number(f.goal_target) < 1 || Number(f.goal_target) > 1000)) out.push('goal');
+    const possible = challengePeriods((Date.parse(f.ends_on) - Date.parse(f.starts_on)) / 864e5 + 1, f.frequency);
+    if (f.model === 'goal' && (!Number.isInteger(Number(f.goal_target)) || Number(f.goal_target) < 1 || Number(f.goal_target) > Math.min(1000, possible))) out.push('goal');
     if (f.capacity && (!Number.isInteger(Number(f.capacity)) || Number(f.capacity) < 1 || Number(f.capacity) > 10000)) out.push('capacity');
   }
   const len = (Date.parse(f.ends_on) - Date.parse(f.starts_on)) / 864e5 + 1;
@@ -46,7 +47,7 @@ export function challengeStepIssues(step: ChallengeStep, f: ChallengeBasics, act
     if (acts.length > 30 || acts.some(a => !hasTitle(a.title_en, a.title_es) || a.day_offset != null && (!Number.isInteger(a.day_offset) || a.day_offset < 1 || a.day_offset > len) || a.due_hour != null && (!Number.isInteger(a.due_hour) || a.due_hour < 0 || a.due_hour > 23) || !!a.link_url && !validHttps(a.link_url))) out.push('activities');
   }
   if (step === 'messages' || step === 'review') {
-    if (msgs.some(m => !Number.isInteger(m.send_hour) || m.send_hour < 0 || m.send_hour > 23 || !Number.isInteger(m.send_offset_days) || m.send_offset_days < -7 || m.send_offset_days > len || m.enabled && (!hasTitle(m.body_en, m.body_es) || m.kind !== 'welcome'))) out.push('messages');
+    if (msgs.some(m => !Number.isInteger(m.send_hour) || m.send_hour < 0 || m.send_hour > 23 || !Number.isInteger(m.send_offset_days) || m.send_offset_days < -7 || m.send_offset_days > len || m.enabled && (!hasTitle(m.body_en, m.body_es) || m.kind !== 'welcome' || m.send_offset_days !== 0))) out.push('messages');
   }
   return out;
 }

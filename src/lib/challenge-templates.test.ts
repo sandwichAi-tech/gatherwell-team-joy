@@ -39,6 +39,15 @@ describe('complete challenge templates', () => {
     const d = create('walk'); expect(challengeStepIssues('activities', d.f, [{ ...d.activities[0], link_url: 'http://example.org' } as typeof d.activities[number]], [], false, '', [])).toEqual(['activities']);
     expect(challengeStepIssues('messages', d.f, [], [{ ...d.messages[1], enabled: true } as typeof d.messages[number]], false, '', [])).toEqual(['messages']);
   });
+  it('rejects unattainable goals when duration or weekly rhythm changes', () => {
+    const d = create('walk');
+    expect(challengeStepIssues('model', { ...d.f, frequency: 'weekly' }, [], [], false, '', [])).toEqual(['goal']);
+    expect(challengeStepIssues('review', { ...d.f, ends_on: '2026-11-07' }, [], [], false, '', [])).toEqual(['goal']);
+  });
+  it('welcome displays on joining only, never pretends a delayed schedule fired', () => {
+    const d = create('walk'); const welcome = d.messages[0]; if (!welcome) throw new Error('missing welcome');
+    expect(challengeStepIssues('messages', d.f, [], [{ ...welcome, enabled: true, send_offset_days: 1 }], false, '', [])).toEqual(['messages']);
+  });
 });
 describe('challenge scoring and extras', () => {
   it('one point per valid check-in, capped goal, streak scoring', () => { expect(challengeScore('points', 3, 2)).toBe(3); expect(challengeScore('goal', 20, 2, 14)).toBe(14); expect(challengeScore('streak', 20, 2)).toBe(2); });
