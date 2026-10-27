@@ -58,7 +58,7 @@ export function HomePage() {
       {data.drafts > 0 && <section className="panel"><Link to="/events" search={{ tab: 'hosting' }}>{t('personalHome.drafts', { count: data.drafts })}<ArrowRight /></Link></section>}
       <section className="panel upcoming-panel"><div className="section-heading"><h2>{t('home.upcoming')}</h2><Button asChild variant="link"><Link to="/events" search={{ tab: 'hosting' }}>{t('home.viewAll')}<ArrowRight /></Link></Button></div>
         {!data.events.length && <EmptyState compact icon="CalendarDays" text={t('events.empty.hosting')} />}
-        <ul className="customer-list">{data.events.map(e => <li key={e.id}><Link to="/event/$id" params={{ id: e.id }} className="customer-item-head"><strong>{e.title}</strong><small>{formatWhen(e.starts_at, i18n.resolvedLanguage)}</small><ChevronRight /></Link></li>)}</ul>
+        <ul className="customer-list">{data.events.map(e => <li key={e.id}><Link to="/event/$id" params={{ id: e.id }} className="customer-item-head"><strong>{e.title}</strong><small>{formatWhen(e.starts_at, i18n.resolvedLanguage ?? 'en')}</small><ChevronRight /></Link></li>)}</ul>
       </section>
       <FoundingCommitmentsCard /><CoachLaunchCard /><FollowupsHomeCard /><NextCard />
     </> : <CustomerHome userId={userId} />}
