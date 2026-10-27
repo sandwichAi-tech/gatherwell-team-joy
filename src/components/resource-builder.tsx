@@ -1,3 +1,4 @@
+import { urlHint } from '@/lib/url-hint';
 import { BuilderStepFooter, focusField } from '@/components/builder-step-footer';
 import { DestinationSummary, ResourceAccessFields } from '@/components/resource-access-fields';
 import { CurriculumPanel } from '@/components/content-studio';
@@ -221,12 +222,6 @@ function Curriculum({ trackId, teamId, lang, onLessons }: { trackId: string; tea
  * publish actions, and reopening of existing items via ?id=. Switching type keeps shared
  * input and asks before discarding incompatible type-specific content.
  */
-/** Plain-language link feedback: what customers will open, or what is wrong. */
-export function urlHint(raw: string): { key: 'urlEmpty' | 'urlHttps' | 'urlOpens' | 'urlInvalid'; host?: string } {
-  const v = raw.trim(); if (!v) return { key: 'urlEmpty' };
-  try { const u = new URL(v); if (u.protocol === 'http:') return { key: 'urlHttps' }; if (u.protocol !== 'https:') return { key: 'urlInvalid' }; return { key: 'urlOpens', host: u.hostname.replace(/^www\./, '') }; }
-  catch { return { key: 'urlInvalid' }; }
-}
 const RESOURCE_FIELD: Record<string, string> = { title: 'rb-title', url: 'rb-url', live_time: 'rb-live', price: 'rb-price', destination: 'rb-destinations', courseUnavailable: 'rb-destinations' };
 
 export function ResourceBuilder({ initialType, initialId }: { initialType: CreateType; initialId?: string | undefined }) {
