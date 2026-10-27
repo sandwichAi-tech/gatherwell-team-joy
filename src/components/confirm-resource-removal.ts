@@ -31,7 +31,8 @@ export async function removeResource(t: TFunction, kind: Kind, id: string): Prom
   const plan = await (supabase as any).rpc('resource_removal_plan', { _kind: kind, _id: id });
   if (plan.error || !plan.data) { toast.error(t('profile.saveError')); return null; }
   const action: RemovalAction = plan.data.action === 'delete' ? 'delete' : 'archive';
-  const names = livePlacementNames(fromSavedDestinations(plan.data.destinations), i18next.language?.startsWith('es') ? 'es' : 'en', { team: t('resources.removal.team'), coach: t('resources.removal.coach') });
+  // An untouched draft has no real placements (legacy defaults only), so list places only when archiving.
+  const names = action === 'delete' ? [] : livePlacementNames(fromSavedDestinations(plan.data.destinations), i18next.language?.startsWith('es') ? 'es' : 'en', { team: t('resources.removal.team'), coach: t('resources.removal.coach') });
   const k = removalCopyKeys(action);
   const body = [names.length ? t('resources.removal.places', { places: names.join(', ') }) : null, t(k.body)].filter(Boolean).join(' ');
   if (!(await confirmAction({ title: t(k.title), body, confirmLabel: t(k.confirm), destructive: action === 'delete' }))) return null;
