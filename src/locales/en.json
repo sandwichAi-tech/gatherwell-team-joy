@@ -7540,7 +7540,10 @@
       "ranges": "Result ranges must cover 0–100 without gaps or overlaps.",
       "results": "Add a result title and explanation.",
       "url": "Use a valid HTTPS link without credentials."
-    }
+    },
+    "scopeDocument": "Approved scope document",
+    "selectScope": "Select a document",
+    "scopeVersion": "Version {{version}}"
   },
   "lifecycle": {
     "receipts": "Orders and receipts",

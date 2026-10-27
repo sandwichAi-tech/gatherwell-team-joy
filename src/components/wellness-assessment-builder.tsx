@@ -28,6 +28,22 @@ export function WellnessAssessmentBuilder({ id, course, track, onSaved }: { id?:
   const [price, setPrice] = useState({ free: true, price: '' }); const [busy, setBusy] = useState(false); const lock = useRef(false);
   const [answers, setAnswers] = useState<Record<string, string[]>>({}); const baseline = useRef('');
   const offers = useQuery(myOffersQuery(userId));
+  const [scopeId, setScopeId] = useState('');
+  const scopes = useQuery({ queryKey: ['assessment-scopes', draft.language, userId], queryFn: async () => {
+    const r = await supabase.from('assessment_scope_versions').select('id,version,document_text').eq('locale', draft.language).is('retired_at', null).order('version', { ascending: false });
+    if (r.error) throw r.error; return r.data;
+  } });
+  const publish = async () => {
+    if (lock.current || !savedId || !scopeId || JSON.stringify(draft) !== baseline.current) return;
+    lock.current = true; setBusy(true);
+    try {
+      const r = await supabase.rpc('publish_wellness_assessment_checked', { _quiz: savedId, _scope: scopeId, _revision: revision });
+      if (r.error) throw r.error;
+      await qc.invalidateQueries({ queryKey: ['team-quizzes'] });
+      await qc.invalidateQueries({ queryKey: ['curriculum', course] });
+      toast.success(t('offers.publish')); onSaved?.();
+    } catch { toast.error(t('assessment.saveError')); } finally { lock.current = false; setBusy(false); }
+  };
   const load = useQuery({ queryKey: ['assessment-draft', userId, id], enabled: !!id, queryFn: async () => {
     const { data, error } = await supabase.from('quizzes').select('*').eq('id', id ?? '').maybeSingle();
     if (error) throw error; if (!data?.assessment_config || data.host_id !== userId) throw new Error('not_allowed');
@@ -89,8 +105,12 @@ export function WellnessAssessmentBuilder({ id, course, track, onSaved }: { id?:
         <Input type="url" placeholder="https://" aria-label={t('assessment.nextLink')} aria-invalid={!!r.url && !safeExternalUrl(r.url)} value={r.url} onChange={e => update({ url: e.target.value })} /><Button variant="ghost" onClick={() => patch({ results: draft.results.filter(x => x.id !== r.id) })}><Trash2 />{t('quizStudio.removeBand')}</Button>
       </li>; })}</ol></>}
       {step === 'preview' && <><p className="field-hint">{t('assessment.previewOnly')}</p>{draft.questions.map(q => <fieldset key={q.id}><legend>{q.prompt}</legend>{q.type === 'text' ? <Textarea aria-label={t('quizPlay.yourAnswer')} /> : q.options.map(o => <label className="guest-consent" key={o.id}><input type={q.type === 'multi' ? 'checkbox' : 'radio'} name={q.id} checked={answers[q.id]?.includes(o.id) ?? false} onChange={() => setAnswers(a => ({ ...a, [q.id]: q.type === 'multi' ? a[q.id]?.includes(o.id) ? (a[q.id] ?? []).filter(x => x !== o.id) : [...(a[q.id] ?? []), o.id] : [o.id] }))} />{o.label}</label>)}</fieldset>)}<p role="status">{score !== null ? `${score} / 100` : t('assessment.unscored')}</p>{result && <div><h2>{result.title}</h2><p>{result.body}</p>{safeExternalUrl(result.url) && <a href={result.url} target="_blank" rel="noopener noreferrer">{t('assessment.nextLink')} ↗</a>}</div>}{issues.length > 0 && <ul role="status">{issues.map(issue => <li key={issue}>{t(`assessment.issues.${issue}`)}</li>)}</ul>}</>}
-      <p className="field-hint" role="status">{t('assessment.approvedRequired')}</p>
-      <div className="sheet-actions"><Button variant="secondary" disabled={busy} aria-busy={busy} onClick={() => void save()}><Save />{busy ? t('onboarding.saving') : t('gathering.saveDraft')}</Button><Button disabled title={t('assessment.approvedRequired')}>{t('offers.publish')}</Button></div>
+      {scopes.isError ? <RetryState retry={() => void scopes.refetch()} /> : scopes.data?.length ? <>
+        <label className="field-label" htmlFor="assessment-scope">{t('assessment.scopeDocument')}</label>
+        <select id="assessment-scope" className="field-input" value={scopeId} onChange={e => setScopeId(e.target.value)}><option value="">{t('assessment.selectScope')}</option>{scopes.data.map(s => <option key={s.id} value={s.id}>{t('assessment.scopeVersion', { version: s.version })}</option>)}</select>
+        <p>{scopes.data.find(s => s.id === scopeId)?.document_text}</p>
+      </> : <p className="field-hint" role="status">{t('assessment.approvedRequired')}</p>}
+      <div className="sheet-actions"><Button variant="secondary" disabled={busy} aria-busy={busy} onClick={() => void save()}><Save />{busy ? t('onboarding.saving') : t('gathering.saveDraft')}</Button><Button disabled={busy || !savedId || !scopeId || issues.length > 0 || JSON.stringify(draft) !== baseline.current} title={t('assessment.approvedRequired')} onClick={() => void publish()}>{t('offers.publish')}</Button></div>
     </section>
   </article>;
 }

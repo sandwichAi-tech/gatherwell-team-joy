@@ -7540,7 +7540,10 @@
       "ranges": "Los rangos deben cubrir 0–100 sin huecos ni superposiciones.",
       "results": "Agrega un título y una explicación al resultado.",
       "url": "Usa un enlace HTTPS válido sin credenciales."
-    }
+    },
+    "scopeDocument": "Documento de alcance aprobado",
+    "selectScope": "Selecciona un documento",
+    "scopeVersion": "Versión {{version}}"
   },
   "lifecycle": {
     "receipts": "Pedidos y recibos",

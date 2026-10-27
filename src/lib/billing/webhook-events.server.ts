@@ -148,6 +148,26 @@ export async function processPaymentEvent(db: SupabaseClient, evt: PaymentEvent,
  * no-op, and a failed handling releases the row so the provider can retry.
  */
 export async function handlePaymentEvent(db: SupabaseClient, evt: PaymentEvent, environment?: StripeEnv): Promise<'processed' | 'duplicate' | 'failed'> {
+  if (environment) {
+    // Challenge effects are monotonic/idempotent; a crashed delivery can reclaim its lease.
+    const token = crypto.randomUUID();
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(evt)));
+    const hash = Array.from(new Uint8Array(digest), n => n.toString(16).padStart(2, '0')).join('');
+    const claim = await db.rpc('claim_challenge_provider_event', { _environment: environment, _event: evt.id, _type: evt.type, _hash: hash, _token: token });
+    if (claim.error || claim.data === 'busy') return 'failed';
+    if (claim.data === 'duplicate') return 'duplicate';
+    try {
+      if (await processChallengeOrderEvent(db, evt, environment)) {
+        const done = await db.rpc('finish_challenge_provider_event', { _environment: environment, _event: evt.id, _token: token, _succeeded: true });
+        return done.error || !done.data ? 'failed' : 'processed';
+      }
+      // Legacy effects keep their existing duplicate guard; release this unhandled claim.
+      await db.rpc('finish_challenge_provider_event', { _environment: environment, _event: evt.id, _token: token, _succeeded: false });
+    } catch {
+      await db.rpc('finish_challenge_provider_event', { _environment: environment, _event: evt.id, _token: token, _succeeded: false });
+      return 'failed';
+    }
+  }
   const { error: dup } = await db.from('stripe_events').insert({ id: evt.id, type: evt.type });
   if (dup) return dup.code === '23505' ? 'duplicate' : 'failed';
   try {
