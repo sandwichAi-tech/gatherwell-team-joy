@@ -7710,5 +7710,9 @@
     "loginNeeded": "Solo los anfitriones pueden administrar formularios.",
     "langEn": "Inglés",
     "langEs": "Español"
+  },
+  "builderFooter": {
+    "label": "Acciones del paso",
+    "fixFirst": "Antes de continuar: {{fields}}"
   }
 }

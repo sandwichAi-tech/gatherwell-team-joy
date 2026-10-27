@@ -77,3 +77,16 @@ export const placeholderLessons = <L extends LessonLike>(lessons: L[]) => lesson
  */
 export const lessonsToPublishWithTrack = (lessons: LessonLike[], trackWasPublished: boolean) =>
   trackWasPublished ? [] : lessons.filter(l => !l.is_published && !lessonHasPlaceholder(l)).map(l => l.id);
+
+/** Which builder step owns each required-field issue; issues not listed (e.g. a missing file) only block publishing. */
+export const RESOURCE_ISSUE_STEP: Record<string, ItemSection> = {
+  title: 'presentation', url: 'content', live_time: 'content', price: 'access', destination: 'access', courseUnavailable: 'access', course: 'access',
+};
+export const ASSESSMENT_ISSUE_STEP: Record<string, 'presentation' | 'questions' | 'results'> = {
+  title: 'presentation', price: 'presentation', destination: 'presentation', courseUnavailable: 'presentation',
+  questions: 'questions', options: 'questions', weights: 'questions', textScore: 'questions',
+  ranges: 'results', results: 'results', url: 'results',
+};
+/** Issues that stop Next on the current step: only that step's own required fields. */
+export const stepBlockers = (issues: readonly string[], step: string, owner: Record<string, string>) =>
+  [...new Set(issues)].filter(i => owner[i] === step);
