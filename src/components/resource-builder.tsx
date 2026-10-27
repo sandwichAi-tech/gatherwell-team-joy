@@ -32,7 +32,7 @@ import {
 import { learnPathsOf, listOf, pick, RECIPE_TAGS, removeUnusedLearnFiles, uploadLearnFile, type Lesson } from '@/lib/learn';
 import { myOffersQuery, offerTitle, saveOffer, uploadOfferFile, type Offer } from '@/lib/offers';
 import type { RefundPolicy } from '@/lib/refunds';
-import { activationIso, hasPlaceholder, isMultiLessonTrack, lessonsToPublishWithTrack, placeholderLessons, publishedDestination, stepNav } from '@/lib/resource-flow';
+import { activationIso, hasPlaceholder, isMultiLessonTrack, lessonsToPublishWithTrack, placeholderLessons, publishedDestination, stepBlockers, stepNav, RESOURCE_ISSUE_STEP } from '@/lib/resource-flow';
 import {
   ACCENT_KEYS, accentPair, cardLayoutsFor, defaultCtaKey, emptyItemState, itemIssues, itemSnapshot,
   sanitizeRichText, sectionsFor, type Accent, type CardLayout, type ItemSection, type ItemState,
