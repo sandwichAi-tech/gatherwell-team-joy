@@ -6,7 +6,7 @@ import {
 
 describe('sectionsFor', () => {
   it('gives offers the full section set', () => {
-    expect(sectionsFor('course')).toEqual(['presentation', 'content', 'access', 'options', 'preview']);
+    expect(sectionsFor('course')).toEqual(['presentation', 'content', 'access', 'preview']);
     expect(sectionsFor('file')).toContain('options');
   });
   it('shows placement and access for every standalone type', () => {

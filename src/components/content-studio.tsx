@@ -18,6 +18,7 @@ import { learnPathsForTracks, learnPathsOf, lessonTitle, pick, removeUnusedLearn
 import { formatMoney } from '@/lib/billing';
 import { platformFeeCents } from '@/lib/fees';
 import type { Offer } from '@/lib/offers';
+import { reorderedIds, safeExternalUrl } from '@/lib/wellness-assessment';
 
 const db = supabase as unknown as { from: (t: string) => any };
 
@@ -163,6 +164,7 @@ export function CurriculumPanel({ offer }: { offer: Offer }) {
   const qc = useQueryClient();
   const [section, setSection] = useState<Partial<Track> | null>(null);
   const [lesson, setLesson] = useState<(Partial<LessonRow> & { track_id: string }) | null>(null);
+  const [ordering, setOrdering] = useState(false);
   const q = useQuery({
     queryKey: ['curriculum', offer.id],
     queryFn: async () => {
@@ -177,8 +179,9 @@ export function CurriculumPanel({ offer }: { offer: Offer }) {
     const list = [...(q.data?.tracks ?? [])];
     const i = list.findIndex(x => x.id === tr.id); const j = i + dir;
     if (j < 0 || j >= list.length) return;
-    const a = list[i]!, b = list[j]!;
-    await Promise.all([db.from('tracks').update({ sort_order: b.sort_order }).eq('id', a.id), db.from('tracks').update({ sort_order: a.sort_order }).eq('id', b.id)]);
+    if (ordering) return; setOrdering(true);
+    const { error } = await supabase.rpc('reorder_course_curriculum', { _course: offer.id, _track: null, _ids: reorderedIds(list, i, dir) });
+    setOrdering(false); if (error) toast.error(t('profile.saveError'));
     await qc.invalidateQueries({ queryKey: ['curriculum', offer.id] });
   };
   if (q.isPending) return <ListSkeleton />;
@@ -192,8 +195,8 @@ export function CurriculumPanel({ offer }: { offer: Offer }) {
         <div className="manage-track-head">
           <div className="order-title"><strong>{trackTitle(tr, lang) || t('content.untitledSection')}</strong><small>{tr.is_published ? t('templates.published') : t('templates.draft')}</small></div>
           <div className="row-actions">
-            <Button variant="ghost" size="icon" disabled={i === 0} aria-label={t('templates.moveUp')} onClick={() => moveSection(tr, -1)}><ArrowUp /></Button>
-            <Button variant="ghost" size="icon" disabled={i === tracks.length - 1} aria-label={t('templates.moveDown')} onClick={() => moveSection(tr, 1)}><ArrowDown /></Button>
+            <Button variant="ghost" size="icon" disabled={ordering || i === 0} aria-label={t('templates.moveUp')} onClick={() => moveSection(tr, -1)}><ArrowUp /></Button>
+            <Button variant="ghost" size="icon" disabled={ordering || i === tracks.length - 1} aria-label={t('templates.moveDown')} onClick={() => moveSection(tr, 1)}><ArrowDown /></Button>
             <Button variant="secondary" size="sm" onClick={() => setSection(tr)}><Pencil />{t('templates.edit')}</Button>
           </div></div>
         <LessonList track={tr} lessons={lessons.filter(l => l.track_id === tr.id)} offer={offer} onEdit={l => setLesson(l)} onChanged={() => void qc.invalidateQueries({ queryKey: ['curriculum', offer.id] })} />
@@ -251,11 +254,13 @@ function SectionEditor({ section, offer, onClose }: { section: Partial<Track> | 
 function LessonList({ track, lessons, offer, onEdit, onChanged }: { track: Track; lessons: LessonRow[]; offer: Offer; onEdit: (l: Partial<LessonRow> & { track_id: string }) => void; onChanged: () => void }) {
   const { t, i18n } = useTranslation();
   const qc = useQueryClient();
+  const [ordering, setOrdering] = useState(false);
   const move = async (l: LessonRow, dir: -1 | 1) => {
     const i = lessons.findIndex(x => x.id === l.id); const j = i + dir;
     if (j < 0 || j >= lessons.length) return;
-    const a = lessons[i]!, b = lessons[j]!;
-    await Promise.all([db.from('lessons').update({ sort_order: b.sort_order }).eq('id', a.id), db.from('lessons').update({ sort_order: a.sort_order }).eq('id', b.id)]);
+    if (ordering) return; setOrdering(true);
+    const { error } = await supabase.rpc('reorder_course_curriculum', { _course: offer.id, _track: track.id, _ids: reorderedIds(lessons, i, dir) });
+    setOrdering(false); if (error) toast.error(t('profile.saveError'));
     await qc.invalidateQueries({ queryKey: ['curriculum', offer.id] });
     onChanged();
   };
@@ -263,10 +268,10 @@ function LessonList({ track, lessons, offer, onEdit, onChanged }: { track: Track
     {lessons.length > 0 && <ol className="order-list">{lessons.map((l, i) => <li key={l.id}>
       <span className="order-title"><strong>{lessonTitle(l, i18n.resolvedLanguage)}</strong>
         <small>{[t(`learnHub.type.${l.type}`), l.is_published === false ? t('templates.draft') : null, l.is_preview ? t('content.previewBadge') : null].filter(Boolean).join(' · ')}</small></span>
-      <Button variant="ghost" size="icon" disabled={i === 0} aria-label={t('templates.moveUp')} onClick={() => move(l, -1)}><ArrowUp /></Button>
-      <Button variant="ghost" size="icon" disabled={i === lessons.length - 1} aria-label={t('templates.moveDown')} onClick={() => move(l, 1)}><ArrowDown /></Button>
+      <Button variant="ghost" size="icon" disabled={ordering || i === 0} aria-label={t('templates.moveUp')} onClick={() => move(l, -1)}><ArrowUp /></Button>
+      <Button variant="ghost" size="icon" disabled={ordering || i === lessons.length - 1} aria-label={t('templates.moveDown')} onClick={() => move(l, 1)}><ArrowDown /></Button>
       <Button variant="ghost" size="icon" aria-label={t('templates.edit')} onClick={() => onEdit(l)}><Pencil /></Button></li>)}</ol>}
-    <div className="lesson-add"><Button variant="secondary" onClick={() => onEdit({ track_id: track.id, type: 'text', is_published: false })}><Plus />{t('content.addLesson')}</Button></div>
+    <div className="lesson-add"><Button variant="secondary" onClick={() => onEdit({ track_id: track.id, type: 'text', is_published: false })}><Plus />{t('content.addLesson')}</Button><Button variant="secondary" onClick={() => onEdit({ track_id: track.id, type: 'link', is_published: false })}><Plus />{t('resources.create.types.link.name')}</Button></div>
   </div>;
 }
 
@@ -294,7 +299,7 @@ function CourseLessonEditor({ lesson, offer, siblings, onClose }: { lesson: (Par
   if (!lesson) return null;
   const set = (k: keyof typeof empty) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
   const needsFile = f.type === 'video' || f.type === 'audio' || f.type === 'pdf' || f.type === 'file';
-  const urlOk = isHttpsUrl(f.url);
+  const urlOk = !f.url || safeExternalUrl(f.url);
   const ok = !!(f.title_en.trim() || f.title_es.trim()) && urlOk && (f.type !== 'link' || !!f.url.trim()) && (f.type !== 'live' || !!f.event_id);
   const upload = async (file: File) => {
     const err = lessonFileError(f.type, file);
