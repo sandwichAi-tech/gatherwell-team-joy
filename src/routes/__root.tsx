@@ -140,15 +140,20 @@ function RootComponent() {
     document.documentElement.classList.toggle("dark", theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches));
     const applyLanguage = () => { document.documentElement.lang = i18n.resolvedLanguage ?? "en"; };
     applyLanguage(); i18n.on("languageChanged", applyLanguage);
-    const { data } = supabase.auth.onAuthStateChange((event) => {
+    let identity: string | null | undefined;
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'INITIAL_SESSION') { identity = session?.user.id ?? null; return; }
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       // A saved invite or return path never carries over to a different account on this device.
       if (event === "SIGNED_OUT") { clearPendingInvite(); try { sessionStorage.removeItem("zw-next"); } catch { /* storage unavailable */ } }
       if (event === "SIGNED_IN") claimReferralVisits();
-      if (event === "SIGNED_OUT" || event === "SIGNED_IN") {
+      const nextIdentity = session?.user.id ?? null;
+      const changedIdentity = identity !== undefined && identity !== nextIdentity;
+      identity = nextIdentity;
+      if (event === "SIGNED_OUT" || changedIdentity) {
         // Discard retained personal payloads even when sign-out did not use the app button.
         void queryClient.cancelQueries().then(() => { queryClient.clear(); void router.invalidate(); });
-      } else { void router.invalidate(); void queryClient.invalidateQueries(); }
+      } else if (event === 'USER_UPDATED') { void router.invalidate(); void queryClient.invalidateQueries(); }
     });
     return () => { i18n.off("languageChanged", applyLanguage); data.subscription.unsubscribe(); };
   }, [router, queryClient]);
