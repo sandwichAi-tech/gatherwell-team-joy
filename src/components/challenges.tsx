@@ -29,6 +29,7 @@ import { firstName, initialsOf, profileQuery, workspaceQuery } from '@/lib/accou
 import { ancestorsQuery, compressImage } from '@/lib/learn';
 import { ChallengeBuilder } from '@/components/challenge-builder';
 import { ChallengeHostPanel } from '@/components/challenge-host-panel';
+import { ChallengeOrderReceipts } from '@/components/challenge-order-receipts';
 import { learnFileUrl } from '@/lib/learn';
 import {
   activitiesForDay, addDays, challengePhotoUrls, challengesQuery, dayNumber, goalProgress, leaderboardQuery, lengthOf, lifecycleOf, localDate, localHour, modelOf, myCheckinsQuery, phaseOf, pick, rpcErrorKey,
@@ -296,6 +297,7 @@ export function ChallengePage({ id }: { id: string }) {
 
     {joined && <PhotoGallery paths={mine.map(m => m.photo_path).filter((p): p is string => !!p)} />}
     {leader && <ChallengeHostPanel id={id} userId={userId} inviteOnly={c.enrollment === 'invite'} />}
+    {!leader && <ChallengeOrderReceipts id={id} userId={userId} />}
 
     {sheetDate && <CheckInSheet open={!!sheetDate} onClose={() => setSheetDate(null)} c={c} date={sheetDate} />}
     {leader && workspace && <ChallengeBuilder draft={editing} teamId={c.team_id || workspace.teamId} onClose={() => { setEditing(null); void qc.invalidateQueries({ queryKey: ['challenge', id] }); }} />}
