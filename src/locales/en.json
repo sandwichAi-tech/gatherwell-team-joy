@@ -6403,7 +6403,11 @@
       "titleRow": "Title",
       "languages": "Languages",
       "oneLanguage": "Shown in this language only.",
-      "fix": "Fix"
+      "fix": "Fix",
+      "access": "Access",
+      "paidNoPrice": "Paid · price missing",
+      "paymentsPending": "Publishing paid content waits for payment setup; you can save a draft.",
+      "priceMissing": "Price not set"
     },
     "edit": "Edit",
     "saveTemplate": "Save as blueprint",
@@ -6635,6 +6639,16 @@
       "urlInvalid": "This does not look like a web address yet. Start with https://",
       "liveHint": "Times use your time zone ({{tz}}). The meeting and replay links are shown only to people with access.",
       "fileHint": "PDF, EPUB or ZIP, up to 100 MB. The file stays private: only people with access get a short-lived download link."
+    },
+    "removal": {
+      "team": "Team Resources",
+      "coach": "your coach page",
+      "places": "It currently appears in: {{places}}.",
+      "deleteHistory": "Deleting is permanent: it removes it from every place listed and erases people's progress and quiz attempts for it. Resources that were purchased can't be deleted.",
+      "archiveHistory": "Archiving hides it from every place listed. People who already have access keep their purchase and history.",
+      "delete": "Delete",
+      "archive": "Archive",
+      "archiveTitle": "Archive this resource?"
     }
   },
   "templatesR": {

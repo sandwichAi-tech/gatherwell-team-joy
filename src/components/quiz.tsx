@@ -1,3 +1,4 @@
+import { confirmResourceRemoval } from '@/components/confirm-resource-removal';
 import { useEffect, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
@@ -133,7 +134,7 @@ export function QuizEditor({ quiz, offer, lessons, onClose }: { quiz: Partial<Qu
     onClose();
   };
   const remove = async () => {
-    if (!quiz.id || !(await confirmAction({ title: t('quiz.confirmDelete'), destructive: true }))) return;
+    if (!quiz.id || !(await confirmResourceRemoval(t, 'quiz', quiz.id, t('quiz.confirmDelete')))) return;
     await supabase.from('quizzes').delete().eq('id', quiz.id);
     await qc.invalidateQueries({ queryKey: ['quizzes', offer.id] });
     onClose();

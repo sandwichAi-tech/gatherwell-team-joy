@@ -704,3 +704,9 @@
 - Live session explains time zone and that meeting/replay links are shown only to people with access.
 - Recipe ingredients/steps labels show which language is being edited.
 - Wellness assessment results: visible labels on every field, a plain example, and an exact message for gaps/overlaps (rangeProblem, tested).
+
+## 2026-10-27 — Resource Builder UX pass 3 (access, placement, lifecycle)
+- Deleting a track/recipe/quiz and archiving a live offer now name every live placement (Team Resources, coach page, each course) and state truthfully what is erased or kept (src/lib/placement-warning.ts, tested).
+- Review shows an Access row (Free, price, or "price missing") and notes when paid publishing waits for payment setup.
+- Card preview no longer shows "Buy now · Free" for a paid item without a price.
+- Known gap: deleting a track/quiz cascades learner progress, entitlements and quiz attempts (orders block deletion). This conflicts with history-preservation and needs a soft-delete decision.
