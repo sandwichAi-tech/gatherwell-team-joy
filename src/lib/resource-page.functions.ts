@@ -12,8 +12,13 @@ export const publicResourcePage = createServerFn({ method: 'GET' }).inputValidat
   const client = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false }, global: { fetch: (input, init) => {
     const h = new Headers(init?.headers); if (key.startsWith('sb_') && h.get('Authorization') === `Bearer ${key}`) h.delete('Authorization'); h.set('apikey', key); return fetch(input, { ...init, headers: h });
   } } });
+  const { data: visible, error } = await client.rpc('public_resource_metadata', { _kind: data.kind, _id: data.id });
+  if (error) throw new Error('resource_unavailable');
+  if (!visible) return null;
+  // Only an anonymous-visible resource can proceed to privileged path resolution/signing.
+  const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
   const { readResource } = await import('./resource-page.server');
-  return readResource(client, data.kind, data.id);
+  return readResource(supabaseAdmin, data.kind, data.id);
 });
 
 export const myResourcePage = createServerFn({ method: 'GET' }).middleware([requireSupabaseAuth]).inputValidator(input).handler(async ({ data, context }) => { const { readResource } = await import('./resource-page.server'); return readResource(context.supabase, data.kind, data.id); });
