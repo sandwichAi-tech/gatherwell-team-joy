@@ -1,11 +1,11 @@
 # Resources, course curriculum and wellness assessment pass
 
 ## Website Notes row 115 — In Progress
-- [ ] Audit/reproduce resource type routing, course ordering/reuse, assessment persistence/scoring/privacy and approved scope copy.
-- [ ] Group supported resource choices; dedicated course curriculum and wellness assessment workflows on authoritative models.
-- [ ] Preserve draft/language/placement/pricing/entitlement guards; safe links, exact order, immutable private completion and explicit retakes.
-- [ ] Focused/full tests, isolated ownership/learner checks, EN/ES 320/390/1280, accessibility/errors and exact cleanup.
-- [ ] Report evidence and precise content/provider/device gaps; no publication/deployment, real uploads/messages/charges.
+- [x] Audit/reproduce first-track-only course create, tied/non-atomic order, separate quiz attachments, absent dedicated assessment/approved scope copy.
+- [x] Group choices; dedicated assessment drafts/questions/results/author preview; reuse multi-section studio, active-language course fields, inline links/quiz creation and saved outline.
+- [x] Owner-checked atomic full-ID reorder, HTTPS guard, assessment identity/private draft/revision/history/collection guards. Existing commerce/entitlement model retained.
+- [x] 33 focused / 97 files / 823 full tests; 19 isolated checks; saved author preview and 18 EN/ES 320/390/1280 layouts, no observed page errors/overflow. Automatic compile OK. Exact four principals/two teams/all authored offers/tracks/quizzes/dependent rows removed; no uploads; temporary artifacts removed at close.
+- [ ] In Progress: approved/versioned assessment scope copy; assessment cover/recommendation relations/participant completion/immutable result receipts/retake enforcement; unified section assessment ordering; existing-resource references/reuse/duplicates/progress-aware removal; complete course/learner publish-order and paid/revoked/refunded flows; keyboard focus/history/slow-network/relogin/physical-device/screen-reader matrix. No publication/deployment, real uploads/messages/charges.
 
 ## Website Notes rows 114 and 116 — In Progress
 - [x] Audit/reproduce missing host link, other-host library edits, suspended public identity, absent legal approval provenance.

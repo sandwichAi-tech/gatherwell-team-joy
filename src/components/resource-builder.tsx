@@ -420,7 +420,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const lessonsWithPlaceholders = trackLessons ? placeholderLessons(trackLessons) : [];
   const placeholder = hasPlaceholder(item.titleEn, item.titleEs, item.descEn, item.descEs, item.subtitleEn, item.subtitleEs) || lessonsWithPlaceholders.length > 0;
   const draftLessonsToPublish = trackLessons ? lessonsToPublishWithTrack(trackLessons, loaded?.status === 'published') : [];
-  const canSave = (progress === null || progress === 100) && !busy;
+  const canSave = itemIssues(type, item, { publish: false, courseId: placement === 'course' ? courseId : 'standalone', lessonUrl: draft.lesson.url, live: draft.lesson.live }).filter(i => i === 'title' || i === 'price' || (placement === 'course' && i === 'course')).length === 0 && (progress === null || progress === 100) && !busy;
   const canPublish = canSave && issues.length === 0 && !paidBlocked && !placeholder;
   const nav = stepNav(sections, sections.includes(section) ? section : 'presentation');
   const wasPublished = loaded?.status === 'published';
