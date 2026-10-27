@@ -828,6 +828,7 @@ export type Database = {
           daily_prompt_es: string | null
           description_en: string | null
           description_es: string | null
+          draft_request_id: string | null
           ends_on: string
           enrollment: string
           frequency: string
@@ -857,6 +858,7 @@ export type Database = {
           daily_prompt_es?: string | null
           description_en?: string | null
           description_es?: string | null
+          draft_request_id?: string | null
           ends_on: string
           enrollment?: string
           frequency?: string
@@ -886,6 +888,7 @@ export type Database = {
           daily_prompt_es?: string | null
           description_en?: string | null
           description_es?: string | null
+          draft_request_id?: string | null
           ends_on?: string
           enrollment?: string
           frequency?: string
@@ -8350,6 +8353,7 @@ export type Database = {
         }[]
       }
       challenge_host_enrollments: { Args: { _c: string }; Returns: Json }
+      challenge_invite_candidates: { Args: { _c: string }; Returns: Json }
       challenge_leaderboard: {
         Args: { _c: string; _tz?: string }
         Returns: {
@@ -8944,6 +8948,7 @@ export type Database = {
           daily_prompt_es: string | null
           description_en: string | null
           description_es: string | null
+          draft_request_id: string | null
           ends_on: string
           enrollment: string
           frequency: string
@@ -9537,6 +9542,17 @@ export type Database = {
         }
         Returns: string
       }
+      save_challenge_request: {
+        Args: {
+          _activities: Json
+          _id: string
+          _messages: Json
+          _p: Json
+          _request: string
+          _team: string
+        }
+        Returns: string
+      }
       save_coach_review: {
         Args: { _body: string; _host: string; _rating: number }
         Returns: undefined
@@ -9731,6 +9747,10 @@ export type Database = {
       }
       set_buddy_wish: {
         Args: { _code: string; _on: boolean }
+        Returns: undefined
+      }
+      set_challenge_invite: {
+        Args: { _c: string; _on: boolean; _user: string }
         Returns: undefined
       }
       set_communication_event: {
