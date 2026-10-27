@@ -1,4 +1,11 @@
-# Event identity and waiver pass
+# Resources, course curriculum and wellness assessment pass
+
+## Website Notes row 115 — In Progress
+- [ ] Audit/reproduce resource type routing, course ordering/reuse, assessment persistence/scoring/privacy and approved scope copy.
+- [ ] Group supported resource choices; dedicated course curriculum and wellness assessment workflows on authoritative models.
+- [ ] Preserve draft/language/placement/pricing/entitlement guards; safe links, exact order, immutable private completion and explicit retakes.
+- [ ] Focused/full tests, isolated ownership/learner checks, EN/ES 320/390/1280, accessibility/errors and exact cleanup.
+- [ ] Report evidence and precise content/provider/device gaps; no publication/deployment, real uploads/messages/charges.
 
 ## Website Notes rows 114 and 116 — In Progress
 - [x] Audit/reproduce missing host link, other-host library edits, suspended public identity, absent legal approval provenance.
