@@ -43,7 +43,7 @@ export const pageQuery = (kind: 'host' | 'team', slug: string) => ({
 function HostSeal({ id }: { id: string }) { return useIsVerified(id) ? <> <VerifiedMark compact /></> : null; }
 
 /** One resource card on the public coach page, rendered with the saved Presentation settings. */
-function OfferingCard({ o, lang }: { o: HostOffering; lang: string }) {
+export function OfferingCard({ o, lang }: { o: HostOffering; lang: string }) {
   const { t } = useTranslation();
   const model = publicCardModel(o, lang, t('resources.untitled'), t(o.price_cents ? 'resources.item.ctaBuy' : 'resources.item.ctaGet'));
   const price = o.price_cents ? new Intl.NumberFormat(lang, { style: 'currency', currency: 'USD' }).format(o.price_cents / 100) : t('offers.free');
@@ -72,7 +72,7 @@ function OfferingCard({ o, lang }: { o: HostOffering; lang: string }) {
             <span className="offering-card-foot"><span className="card-preview-cta" style={{ background: model.colors.bg, color: model.colors.fg }}>{model.cta}</span><small>{kind} · {price}</small></span>
           </span>
         </span>;
-  return <Link to={route.to} params={{ id: route.id }} className="offering-link" aria-label={`${model.title}, ${kind}, ${price}`}>{inner}</Link>;
+  return <Link to={route.to} params={{ id: route.id, kind: route.kind ?? 'offer' }} className="offering-link" aria-label={`${model.title}, ${kind}, ${price}`}>{inner}</Link>;
 }
 
 function Avatar({ path, name, size = 96 }: { path: string | null; name: string | null; size?: number }) {
