@@ -1072,6 +1072,13 @@
       "when": 1793070035698,
       "tag": "0152_team_channel_delivery_privacy",
       "breakpoints": true
+    },
+    {
+      "idx": 153,
+      "version": "7",
+      "when": 1793070644537,
+      "tag": "0153_owner_approved_team_membership",
+      "breakpoints": true
     }
   ]
 }

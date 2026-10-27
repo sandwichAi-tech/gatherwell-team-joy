@@ -6950,6 +6950,58 @@ export type Database = {
           },
         ]
       }
+      team_join_requests: {
+        Row: {
+          decided_at: string | null
+          decided_by: string | null
+          invite_id: string | null
+          requested_at: string
+          status: string
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          decided_at?: string | null
+          decided_by?: string | null
+          invite_id?: string | null
+          requested_at?: string
+          status?: string
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          decided_at?: string | null
+          decided_by?: string | null
+          invite_id?: string | null
+          requested_at?: string
+          status?: string
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_join_requests_invite_id_fkey"
+            columns: ["invite_id"]
+            isOneToOne: false
+            referencedRelation: "team_invites"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_join_requests_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_join_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       team_licenses: {
         Row: {
           cancel_at_period_end: boolean
@@ -8356,6 +8408,10 @@ export type Database = {
         Args: { _approve: boolean; _rsvp: string }
         Returns: string
       }
+      decide_team_request: {
+        Args: { _decision: string; _team: string; _user: string }
+        Returns: string
+      }
       default_waiver: { Args: { _team: string }; Returns: undefined }
       delete_comment: { Args: { _id: string }; Returns: undefined }
       delete_my_account: { Args: never; Returns: undefined }
@@ -8778,6 +8834,7 @@ export type Database = {
           team_name: string
         }[]
       }
+      my_team_states: { Args: never; Returns: Json }
       my_tickets: { Args: never; Returns: Json }
       my_updates: { Args: { _limit?: number; _offset?: number }; Returns: Json }
       my_value_meter: { Args: never; Returns: Json }
@@ -9126,6 +9183,10 @@ export type Database = {
         Returns: undefined
       }
       request_ip: { Args: never; Returns: string }
+      request_team_membership: {
+        Args: { _invite?: string; _team: string }
+        Returns: string
+      }
       reserved_profile_slugs: { Args: never; Returns: string[] }
       reset_calendar_feeds: { Args: never; Returns: Json }
       reset_invite_link: { Args: { _event: string }; Returns: string }
@@ -9611,6 +9672,7 @@ export type Database = {
         Args: { _action: string; _meta?: Json; _target?: string; _team: string }
         Returns: undefined
       }
+      team_member_management: { Args: { _team: string }; Returns: Json }
       team_notification_access: {
         Args: { _kind: string; _link: string; _team: string }
         Returns: boolean
