@@ -44,7 +44,7 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Day-60 scoreboard: raw counts come only from admin_day60(); targets and the go/adjust/rethink verdict are evaluated in src/lib/day60.ts so thresholds live in one tested place.
 - Parked features are gated by feature_* flags via src/lib/feature-flags.tsx; admins always see them and off routes throw notFound, so launch scope changes from /admin?tab=flags.
 - Resources: /learn + feature_learn, type-first /learn/create. Placement uses configure_resource_access + existing offers; course containment stays separate. Resolve public visibility before server-only signing. Paid resource checkout stays blocked until orders/refunds verified.
-- Home brief: caller-scoped getDailyBrief, no AI/cache. Insights: UTC cohorts.
+- Home/brief: caller-only personal_home, auth-cleared cache. Insights: UTC cohorts.
 - Admin password sign-in: public /admin-login with existing Cloud Auth accounts; getAdminAccess checks the role before navigation and every admin handler re-checks, so sign-in never grants privileges.
 - Blueprints/challenges reuse existing editors; drafts stay private. Experience sessions use existing events and whole-event admission.
 - Platform fees come only from versioned fee_rules (calc_platform_fee_cents, mirrored in src/lib/fees.ts); orders snapshot the rule.

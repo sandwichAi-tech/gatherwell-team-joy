@@ -26,7 +26,7 @@ export function useSwitchMode(userId: string) {
     }
     const { error } = await supabase.from('profiles').update(modeUpdate(mode, eligible)).eq('id', userId);
     if (error) { toast.error(t('profile.saveError')); return false; }
-    await queryClient.invalidateQueries({ queryKey: ['profile', userId] });
+    await Promise.all([queryClient.invalidateQueries({ queryKey: ['profile', userId] }), queryClient.invalidateQueries({ queryKey: ['personal-home', userId] }), queryClient.invalidateQueries({ queryKey: ['daily-brief-personal', userId] })]);
     void navigate({ to: mode === 'host' && !eligible ? '/onboarding' : '/home' });
     return true;
   };

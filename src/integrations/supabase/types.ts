@@ -8717,6 +8717,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      home_offer_relationship: { Args: { _offer: string }; Returns: boolean }
       honor_welcome_code: { Args: { _code: string }; Returns: Json }
       host_analytics: { Args: never; Returns: Json }
       host_cancel_rsvp: {
@@ -8980,6 +8981,7 @@ export type Database = {
         Returns: undefined
       }
       payouts_live: { Args: { _uid: string }; Returns: boolean }
+      personal_home: { Args: never; Returns: Json }
       plan_limits: { Args: { _plan: string }; Returns: Json }
       platform_fee_cents: {
         Args: { _amount: number; _host: string }
