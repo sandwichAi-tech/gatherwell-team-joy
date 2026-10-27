@@ -9,5 +9,5 @@ export function ownAddonImagePath(path: string, userId: string): boolean {
   return validAddonImagePath(path) && path.startsWith(`${userId}/`);
 }
 export function publicAddon(a: Addon, image: string | null) {
-  return { id: a.id, name: a.name, price_cents: a.price_cents, image };
+  return { id: a.id, name: a.name, price_cents: a.price_cents, image, description_en: a.description_en ?? null, description_es: a.description_es ?? null };
 }

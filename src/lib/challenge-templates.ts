@@ -1,5 +1,5 @@
 import { addDays, MESSAGE_KINDS, STARTER_DAYS, type ChallengeActivity, type ChallengeMessage, type ChallengeModel, type Starter } from './challenges';
-import { validHttps, type Addon } from './event-builder';
+import { validHttps, addonDescriptionValid, type Addon } from './event-builder';
 
 export type ChallengeAddon = Addon & { description: string; max_quantity: number; inventory: number | null; available: boolean };
 export type ChallengeBasics = {
@@ -35,7 +35,7 @@ export function challengeStepIssues(step: ChallengeStep, f: ChallengeBasics, act
     const days = (Date.parse(f.ends_on) - Date.parse(f.starts_on)) / 864e5 + 1;
     if (!Number.isFinite(days) || days < 1 || days > 366) out.push('end');
     if (paid && challengePrice(price) == null) out.push('price');
-    if (addons.length > 8 || addons.some(a => !a.name.trim() || a.name.length > 60 || !Number.isInteger(a.price_cents) || a.price_cents < 0 || a.price_cents > 100000 || a.description.length > 500 || !Number.isInteger(a.max_quantity) || a.max_quantity < 1 || a.max_quantity > 20 || a.inventory != null && (!Number.isInteger(a.inventory) || a.inventory < 0))) out.push('addons');
+    if (addons.length > 8 || addons.some(a => !a.name.trim() || a.name.length > 60 || !Number.isInteger(a.price_cents) || a.price_cents < 0 || a.price_cents > 100000 || (a.description ?? '').length > 500 || !addonDescriptionValid(a) || !Number.isInteger(a.max_quantity) || a.max_quantity < 1 || a.max_quantity > 20 || a.inventory != null && (!Number.isInteger(a.inventory) || a.inventory < 0))) out.push('addons');
   }
   if (step === 'model' || step === 'review') {
     const possible = challengePeriods((Date.parse(f.ends_on) - Date.parse(f.starts_on)) / 864e5 + 1, f.frequency);
