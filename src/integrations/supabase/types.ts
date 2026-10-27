@@ -6190,12 +6190,15 @@ export type Database = {
       }
       resource_templates: {
         Row: {
+          copied_from_author: string | null
+          copied_from_id: string | null
           created_at: string
           created_by: string | null
           description_en: string | null
           description_es: string | null
           id: string
           kind: string
+          shared_team_ids: string[]
           sort_order: number
           source_id: string | null
           source_kind: string | null
@@ -6206,12 +6209,15 @@ export type Database = {
           title_es: string
         }
         Insert: {
+          copied_from_author?: string | null
+          copied_from_id?: string | null
           created_at?: string
           created_by?: string | null
           description_en?: string | null
           description_es?: string | null
           id?: string
           kind: string
+          shared_team_ids?: string[]
           sort_order?: number
           source_id?: string | null
           source_kind?: string | null
@@ -6222,12 +6228,15 @@ export type Database = {
           title_es?: string
         }
         Update: {
+          copied_from_author?: string | null
+          copied_from_id?: string | null
           created_at?: string
           created_by?: string | null
           description_en?: string | null
           description_es?: string | null
           id?: string
           kind?: string
+          shared_team_ids?: string[]
           sort_order?: number
           source_id?: string | null
           source_kind?: string | null
@@ -7002,6 +7011,44 @@ export type Database = {
           },
         ]
       }
+      team_library_copies: {
+        Row: {
+          created_at: string
+          request_key: string
+          source_id: string
+          source_kind: string
+          target_id: string
+          target_kind: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          request_key: string
+          source_id: string
+          source_kind: string
+          target_id: string
+          target_kind: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          request_key?: string
+          source_id?: string
+          source_kind?: string
+          target_id?: string
+          target_kind?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_library_copies_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       team_licenses: {
         Row: {
           cancel_at_period_end: boolean
@@ -7189,6 +7236,8 @@ export type Database = {
           category: string
           category_label: string | null
           checklist: Json
+          copied_from_author: string | null
+          copied_from_id: string | null
           cover_style: number
           cover_url: string | null
           created_at: string
@@ -7206,6 +7255,7 @@ export type Database = {
           invite_script_es: string | null
           is_published: boolean
           launches_count: number
+          shared_team_ids: string[]
           sort_order: number
           team_id: string | null
           theme: string | null
@@ -7216,6 +7266,8 @@ export type Database = {
           category?: string
           category_label?: string | null
           checklist?: Json
+          copied_from_author?: string | null
+          copied_from_id?: string | null
           cover_style?: number
           cover_url?: string | null
           created_at?: string
@@ -7233,6 +7285,7 @@ export type Database = {
           invite_script_es?: string | null
           is_published?: boolean
           launches_count?: number
+          shared_team_ids?: string[]
           sort_order?: number
           team_id?: string | null
           theme?: string | null
@@ -7243,6 +7296,8 @@ export type Database = {
           category?: string
           category_label?: string | null
           checklist?: Json
+          copied_from_author?: string | null
+          copied_from_id?: string | null
           cover_style?: number
           cover_url?: string | null
           created_at?: string
@@ -7260,6 +7315,7 @@ export type Database = {
           invite_script_es?: string | null
           is_published?: boolean
           launches_count?: number
+          shared_team_ids?: string[]
           sort_order?: number
           team_id?: string | null
           theme?: string | null
@@ -8340,6 +8396,16 @@ export type Database = {
         Args: { _team: string; _template: string }
         Returns: string
       }
+      copy_team_library_item: {
+        Args: {
+          _destination: string
+          _id: string
+          _kind: string
+          _request: string
+          _team: string
+        }
+        Returns: Json
+      }
       course_access_start: {
         Args: { _offer: string; _user: string }
         Returns: string
@@ -8785,6 +8851,7 @@ export type Database = {
       my_following: { Args: never; Returns: Json }
       my_invite_code: { Args: never; Returns: string }
       my_learning: { Args: never; Returns: Json }
+      my_library_sources: { Args: never; Returns: Json }
       my_locked_lessons: {
         Args: never
         Returns: {
@@ -9592,6 +9659,10 @@ export type Database = {
         Args: { _active: boolean; _id: string }
         Returns: undefined
       }
+      share_team_library_item: {
+        Args: { _id: string; _kind: string; _teams: string[] }
+        Returns: undefined
+      }
       shared_progress: {
         Args: { _team: string; _tz: string; _user: string }
         Returns: Json
@@ -9668,6 +9739,7 @@ export type Database = {
         Returns: Json
       }
       team_invites_list: { Args: { _team: string }; Returns: Json }
+      team_library_items: { Args: { _team: string }; Returns: Json }
       team_log: {
         Args: { _action: string; _meta?: Json; _target?: string; _team: string }
         Returns: undefined
