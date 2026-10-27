@@ -18,7 +18,7 @@ export function AddonDescriptionField({ id, value, onChange }: { id: string; val
 }
 
 /** Customer-facing description; renders nothing when the host left it blank. */
-export function AddonDescriptionText({ addon, lang }: { addon: Desc & { description?: string | null }; lang?: string }) {
+export function AddonDescriptionText({ addon, lang }: { addon: Desc & { description?: string | null | undefined }; lang?: string | undefined }) {
   const text = addonDescription(addon, lang);
   return text ? <p className="addon-description">{text}</p> : null;
 }
