@@ -1,5 +1,13 @@
 # Challenge experience pass — DONE
 
+## Resource placement and monetization pass — In Progress
+- [x] Audited ten creator types, placement, public coach/My coaches, access and existing commerce.
+- [x] Added shared exclusive placement/Free-Paid controls, existing-offer bindings, course access guards and bilingual Quiz results wording.
+- [x] Verified isolated host/outsider track types plus recipe/quiz/download access; paid draft/reopen/free publication; EN/ES 320/390/1280; full 87 files/751 tests passed, automatic compile OK.
+- [x] Exact fixture cleanup verified; no messages/charges/publication/deployment.
+- [ ] Paid checkout/order/receipt/refund/idempotency end-to-end remains blocked: resource runtime checkout key absent and existing offer order/refund linkage not verified. Checkout intentionally disabled.
+- [ ] Complete all-type browser/course reassignment/library-price/archive matrix, keyboard/screen-reader and physical devices; these remain unverified, not Completed.
+
 ## Optional event add-on images
 - [x] Reuse private media/crop controls; optional images verified through draft/refresh and publish/reopen.
 - [x] Event-bound signing, uploader/reference-aware cleanup, non-destructive replacement/remove, attendee preview and EN/ES 320/390/1280 checked.

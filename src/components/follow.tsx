@@ -4,6 +4,7 @@ import { CoachTrustSection, VerifiedMark, useIsVerified } from '@/components/coa
 import { CopyButton, ShareButton } from '@/components/copy-button';
 import { FeaturedBadges } from '@/components/recognition';
 import { publicHostCover, publicOfferCover } from '@/lib/host-cover.functions';
+import { publicResourcePage } from '@/lib/resource-page.functions';
 import { publicCardModel, publicCardRoute, publicKindKey, type PublicOffering } from '@/lib/public-cards';
 import { COVER_STYLES } from '@/lib/gatherings';
 import { useState } from 'react';
@@ -43,11 +44,13 @@ export const pageQuery = (kind: 'host' | 'team', slug: string) => ({
 function HostSeal({ id }: { id: string }) { return useIsVerified(id) ? <> <VerifiedMark compact /></> : null; }
 
 /** One resource card on the public coach page, rendered with the saved Presentation settings. */
-function OfferingCard({ o, lang }: { o: HostOffering; lang: string }) {
+export function OfferingCard({ o, lang }: { o: HostOffering; lang: string }) {
   const { t } = useTranslation();
   const model = publicCardModel(o, lang, t('resources.untitled'), t(o.price_cents ? 'resources.item.ctaBuy' : 'resources.item.ctaGet'));
   const price = o.price_cents ? new Intl.NumberFormat(lang, { style: 'currency', currency: 'USD' }).format(o.price_cents / 100) : t('offers.free');
   const cover = useQuery({ queryKey: ['public-offer-cover', o.id], queryFn: () => publicOfferCover({ data: { id: o.id } }), enabled: !!model.coverPath && o.entity !== 'track', staleTime: 50 * 60 * 1000 });
+  const resourceCover = useQuery({ queryKey: ['public-resource-card-cover', o.entity, o.id], enabled: !!o.entity && o.entity !== 'offer', queryFn: async () => { const kind = o.entity === 'recipe' || o.entity === 'quiz' ? o.entity : 'track'; return (await publicResourcePage({ data: { kind, id: o.id } }))?.coverUrl ?? null; }, staleTime: 5 * 60_000 });
+  const image = cover.data ?? resourceCover.data;
   const kind = t(publicKindKey(o));
   const route = publicCardRoute(o);
   const inner = model.layout === 'button'
@@ -64,7 +67,7 @@ function OfferingCard({ o, lang }: { o: HostOffering; lang: string }) {
         </span>
       : <span className="offering-card is-preview">
           <span className="offering-card-cover" style={{ backgroundImage: COVER_STYLES[model.coverStyle % COVER_STYLES.length] }}>
-            {cover.data && <BrandImage src={cover.data} alt={model.title} className="offer-cover-photo" />}
+            {image && <BrandImage src={image} alt={model.title} className="offer-cover-photo" />}
           </span>
           <span className="offering-card-body">
             <strong>{model.title}</strong>
@@ -72,7 +75,7 @@ function OfferingCard({ o, lang }: { o: HostOffering; lang: string }) {
             <span className="offering-card-foot"><span className="card-preview-cta" style={{ background: model.colors.bg, color: model.colors.fg }}>{model.cta}</span><small>{kind} · {price}</small></span>
           </span>
         </span>;
-  return <Link to={route.to} params={{ id: route.id }} className="offering-link" aria-label={`${model.title}, ${kind}, ${price}`}>{inner}</Link>;
+  return <Link to={route.to} params={{ id: route.id, kind: route.kind ?? 'offer' }} className="offering-link" aria-label={`${model.title}, ${kind}, ${price}`}>{inner}</Link>;
 }
 
 function Avatar({ path, name, size = 96 }: { path: string | null; name: string | null; size?: number }) {

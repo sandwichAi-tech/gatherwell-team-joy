@@ -4048,10 +4048,13 @@ export type Database = {
           kind: string
           license_en: string | null
           license_es: string | null
+          parent_course_id: string | null
+          placement: string | null
           price_cents: number
           promo_en: string | null
           promo_es: string | null
           refund_policy: string
+          resource_type: string | null
           status: string
           subtitle_en: string | null
           subtitle_es: string | null
@@ -4107,10 +4110,13 @@ export type Database = {
           kind: string
           license_en?: string | null
           license_es?: string | null
+          parent_course_id?: string | null
+          placement?: string | null
           price_cents?: number
           promo_en?: string | null
           promo_es?: string | null
           refund_policy?: string
+          resource_type?: string | null
           status?: string
           subtitle_en?: string | null
           subtitle_es?: string | null
@@ -4166,10 +4172,13 @@ export type Database = {
           kind?: string
           license_en?: string | null
           license_es?: string | null
+          parent_course_id?: string | null
+          placement?: string | null
           price_cents?: number
           promo_en?: string | null
           promo_es?: string | null
           refund_policy?: string
+          resource_type?: string | null
           status?: string
           subtitle_en?: string | null
           subtitle_es?: string | null
@@ -4185,6 +4194,13 @@ export type Database = {
           visibility?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "offers_parent_course_id_fkey"
+            columns: ["parent_course_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "offers_team_id_fkey"
             columns: ["team_id"]
@@ -5389,6 +5405,7 @@ export type Database = {
       quizzes: {
         Row: {
           attempts_allowed: number | null
+          commerce_offer_id: string | null
           cooldown_minutes: number
           cover_alt: string | null
           cover_path: string | null
@@ -5404,6 +5421,7 @@ export type Database = {
           mode: string
           offer_id: string | null
           pass_pct: number
+          placement: string | null
           randomize_answers: boolean
           randomize_questions: boolean
           reveal_answers: string
@@ -5417,6 +5435,7 @@ export type Database = {
         }
         Insert: {
           attempts_allowed?: number | null
+          commerce_offer_id?: string | null
           cooldown_minutes?: number
           cover_alt?: string | null
           cover_path?: string | null
@@ -5432,6 +5451,7 @@ export type Database = {
           mode?: string
           offer_id?: string | null
           pass_pct?: number
+          placement?: string | null
           randomize_answers?: boolean
           randomize_questions?: boolean
           reveal_answers?: string
@@ -5445,6 +5465,7 @@ export type Database = {
         }
         Update: {
           attempts_allowed?: number | null
+          commerce_offer_id?: string | null
           cooldown_minutes?: number
           cover_alt?: string | null
           cover_path?: string | null
@@ -5460,6 +5481,7 @@ export type Database = {
           mode?: string
           offer_id?: string | null
           pass_pct?: number
+          placement?: string | null
           randomize_answers?: boolean
           randomize_questions?: boolean
           reveal_answers?: string
@@ -5472,6 +5494,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "quizzes_commerce_offer_id_fkey"
+            columns: ["commerce_offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "quizzes_lesson_id_fkey"
             columns: ["lesson_id"]
@@ -5501,6 +5530,7 @@ export type Database = {
           available_from: string | null
           available_tz: string | null
           card_layout: string
+          commerce_offer_id: string | null
           cover_style: number
           cover_url: string | null
           created_at: string
@@ -5510,6 +5540,8 @@ export type Database = {
           id: string
           ingredients: Json
           is_published: boolean
+          parent_course_id: string | null
+          placement: string | null
           prep_minutes: number | null
           private_owner: string | null
           promo_en: string | null
@@ -5528,6 +5560,7 @@ export type Database = {
           available_from?: string | null
           available_tz?: string | null
           card_layout?: string
+          commerce_offer_id?: string | null
           cover_style?: number
           cover_url?: string | null
           created_at?: string
@@ -5537,6 +5570,8 @@ export type Database = {
           id?: string
           ingredients?: Json
           is_published?: boolean
+          parent_course_id?: string | null
+          placement?: string | null
           prep_minutes?: number | null
           private_owner?: string | null
           promo_en?: string | null
@@ -5555,6 +5590,7 @@ export type Database = {
           available_from?: string | null
           available_tz?: string | null
           card_layout?: string
+          commerce_offer_id?: string | null
           cover_style?: number
           cover_url?: string | null
           created_at?: string
@@ -5564,6 +5600,8 @@ export type Database = {
           id?: string
           ingredients?: Json
           is_published?: boolean
+          parent_course_id?: string | null
+          placement?: string | null
           prep_minutes?: number | null
           private_owner?: string | null
           promo_en?: string | null
@@ -5578,6 +5616,20 @@ export type Database = {
           title_es?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "recipes_commerce_offer_id_fkey"
+            columns: ["commerce_offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipes_parent_course_id_fkey"
+            columns: ["parent_course_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "recipes_team_id_fkey"
             columns: ["team_id"]
@@ -7242,6 +7294,7 @@ export type Database = {
           available_from: string | null
           available_tz: string | null
           card_layout: string
+          commerce_offer_id: string | null
           cover_style: number
           cover_url: string | null
           created_at: string
@@ -7254,6 +7307,7 @@ export type Database = {
           is_published: boolean
           is_start_here: boolean
           offer_id: string | null
+          placement: string | null
           promo_en: string | null
           promo_es: string | null
           resource_kind: string | null
@@ -7270,6 +7324,7 @@ export type Database = {
           available_from?: string | null
           available_tz?: string | null
           card_layout?: string
+          commerce_offer_id?: string | null
           cover_style?: number
           cover_url?: string | null
           created_at?: string
@@ -7282,6 +7337,7 @@ export type Database = {
           is_published?: boolean
           is_start_here?: boolean
           offer_id?: string | null
+          placement?: string | null
           promo_en?: string | null
           promo_es?: string | null
           resource_kind?: string | null
@@ -7298,6 +7354,7 @@ export type Database = {
           available_from?: string | null
           available_tz?: string | null
           card_layout?: string
+          commerce_offer_id?: string | null
           cover_style?: number
           cover_url?: string | null
           created_at?: string
@@ -7310,6 +7367,7 @@ export type Database = {
           is_published?: boolean
           is_start_here?: boolean
           offer_id?: string | null
+          placement?: string | null
           promo_en?: string | null
           promo_es?: string | null
           resource_kind?: string | null
@@ -7322,6 +7380,13 @@ export type Database = {
           visibility?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "tracks_commerce_offer_id_fkey"
+            columns: ["commerce_offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "tracks_offer_id_fkey"
             columns: ["offer_id"]
@@ -8133,6 +8198,7 @@ export type Database = {
         }
         Returns: Json
       }
+      coach_resource_cards: { Args: { _host: string }; Returns: Json }
       coach_subscriber_segments: { Args: never; Returns: Json }
       coach_trust: { Args: { _host: string }; Returns: Json }
       coach_update_preferences: { Args: { _token: string }; Returns: Json }
@@ -8147,6 +8213,16 @@ export type Database = {
         Returns: Json
       }
       compute_playbook: { Args: never; Returns: number }
+      configure_resource_access: {
+        Args: {
+          _course: string
+          _id: string
+          _kind: string
+          _placement: string
+          _price: number
+        }
+        Returns: string
+      }
       confirm_adult: { Args: { _attest: boolean }; Returns: undefined }
       consume_auth_intent: { Args: { _token: string }; Returns: string }
       contact_thread_messages: { Args: { _thread: string }; Returns: Json }
@@ -8363,6 +8439,7 @@ export type Database = {
       get_public_team: { Args: { _slug: string }; Returns: Json }
       get_quiz_for_taker: { Args: { _quiz: string }; Returns: Json }
       get_referral_link: { Args: { _program: string }; Returns: string }
+      get_resource_page: { Args: { _id: string; _kind: string }; Returns: Json }
       get_rsvp_by_code: { Args: { _code: string }; Returns: Json }
       get_team_invite: {
         Args: { _code: string }
@@ -8625,6 +8702,7 @@ export type Database = {
           host_name: string
         }[]
       }
+      my_resource_coaches: { Args: never; Returns: Json }
       my_sole_leader_teams: {
         Args: never
         Returns: {
@@ -8765,6 +8843,10 @@ export type Database = {
       public_cover_paths: { Args: { _refs: Json }; Returns: Json }
       public_event_sessions: {
         Args: { _event: string; _token?: string }
+        Returns: Json
+      }
+      public_resource_metadata: {
+        Args: { _id: string; _kind: string }
         Returns: Json
       }
       public_upcoming: { Args: { _host: string; _team: string }; Returns: Json }
@@ -8977,6 +9059,8 @@ export type Database = {
         Returns: undefined
       }
       resource_availability: { Args: { _id: string }; Returns: string }
+      resource_commerce_access: { Args: { _offer: string }; Returns: boolean }
+      resource_course_attachments: { Args: { _course: string }; Returns: Json }
       resource_is_live: { Args: { _from: string }; Returns: boolean }
       resource_journey_activity: {
         Args: { _journey?: string; _limit?: number; _team: string }

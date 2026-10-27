@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export type OfferKind = 'membership' | 'course' | 'download';
 export type Offer = {
-  id: string; host_id: string; team_id: string; kind: OfferKind; title_en: string; title_es: string;
+  placement?: string | null; visibility?: string | null; parent_course_id?: string | null; resource_type?: string | null; id: string; host_id: string; team_id: string; kind: OfferKind; title_en: string; title_es: string;
   description_en: string | null; description_es: string | null; includes_en: string[]; includes_es: string[];
   price_cents: number; cover_style: number; cover_url: string | null; file_path: string | null; drip_days: number; founding_seats: number | null; founding_price_cents: number | null; community_seats?: number | null; status: 'draft' | 'published' | 'archived'; created_at: string; available_from?: string | null; available_tz?: string | null;
 };
@@ -12,7 +12,7 @@ export type Purchase = { id: string; offer_id: string; status: string; cancel_at
 // The generated types may lag behind new tables; keep the casts here.
 const db = supabase as unknown as { from: (t: string) => any; rpc: (f: string, a?: Record<string, unknown>) => any };
 
-const COLS = 'id, host_id, team_id, kind, title_en, title_es, description_en, description_es, includes_en, includes_es, price_cents, cover_style, cover_url, file_path, drip_days, founding_seats, founding_price_cents, community_seats, status, created_at';
+const COLS = 'id, host_id, team_id, kind, title_en, title_es, description_en, description_es, includes_en, includes_es, price_cents, cover_style, cover_url, file_path, drip_days, founding_seats, founding_price_cents, community_seats, status, created_at, placement, parent_course_id, resource_type';
 
 export const offerTitle = (o: Pick<Offer, 'title_en' | 'title_es'>, lang?: string) => (lang?.startsWith('es') ? o.title_es || o.title_en : o.title_en || o.title_es);
 export const offerText = (o: Pick<Offer, 'description_en' | 'description_es'>, lang?: string) => (lang?.startsWith('es') ? o.description_es || o.description_en : o.description_en || o.description_es) ?? '';

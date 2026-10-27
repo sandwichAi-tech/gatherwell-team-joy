@@ -17,7 +17,7 @@ export type ResourceSource = 'team' | 'zoheewell';
 export type ResourceCardData = {
   key: string; id: string;
   entity: 'track' | 'course' | 'download' | 'recipe' | 'lesson' | 'quiz';
-  type: ResourceType; source: ResourceSource;
+  price_cents?: number; type: ResourceType; source: ResourceSource;
   title_en: string; title_es: string;
   cover_url: string | null; cover_style: number; cover: 'learn' | 'offer';
   status: 'draft' | 'published' | 'archived';
@@ -72,7 +72,7 @@ export function toResources({ data, tracks, learning, recipes, quizOffers = new 
     if (tr.offer_id) continue;
     const lessons = data.lessons.filter(l => l.track_id === tr.id);
     if (!lessons.length) continue;
-    out.push({ key: `track:${tr.id}`, id: tr.id, entity: 'track', type: trackType(lessons), source: 'team', title_en: tr.title_en, title_es: tr.title_es,
+    out.push({ key: `track:${tr.id}`, id: tr.id, entity: 'track', type: trackType(lessons), source: 'team', title_en: tr.title_en, title_es: tr.title_es, price_cents: (tr as any).resource_price_cents ?? 0,
       cover_url: tr.cover_url, cover_style: tr.cover_style, cover: 'learn', status: tr.is_published ? 'published' : 'draft', creator: teamName,
       progress: { done: lessons.filter(l => data.done.has(l.id)).length, total: lessons.length },
       minutes: lessons.reduce((n, l) => n + (l.duration_minutes ?? 0), 0) || null,
@@ -80,7 +80,7 @@ export function toResources({ data, tracks, learning, recipes, quizOffers = new 
   }
   for (const e of learning) {
     if (e.kind !== 'course' && e.kind !== 'download') continue;
-    out.push({ key: `offer:${e.id}`, id: e.id, entity: e.kind, type: e.kind === 'course' ? 'course' : 'file', source: 'team', title_en: e.title_en, title_es: e.title_es,
+    out.push({ key: `offer:${e.id}`, id: e.id, entity: e.kind, type: e.kind === 'course' ? 'course' : 'file', source: 'team', title_en: e.title_en, title_es: e.title_es, price_cents: (e as any).price_cents ?? 0,
       cover_url: e.cover_url, cover_style: e.cover_style, cover: 'offer', status: e.status === 'archived' ? 'archived' : 'published', creator: e.host_name,
       progress: e.lessons > 0 ? { done: e.done, total: e.lessons } : null, minutes: null, hasQuiz: quizOffers.has(e.id), href: { to: '/offer/$id', params: { id: e.id } } });
   }
@@ -90,7 +90,7 @@ export function toResources({ data, tracks, learning, recipes, quizOffers = new 
 
 export const recipeCard = (r: Recipe, teamName: string | null = null): ResourceCardData => ({
   key: `recipe:${r.id}`, id: r.id, entity: 'recipe', type: 'recipe', source: r.team_id === null && r.private_owner === null ? 'zoheewell' : 'team',
-  title_en: r.title_en, title_es: r.title_es, cover_url: r.cover_url, cover_style: r.cover_style, cover: 'learn',
+  title_en: r.title_en, title_es: r.title_es, price_cents: (r as any).resource_price_cents ?? 0, cover_url: r.cover_url, cover_style: r.cover_style, cover: 'learn',
   status: r.is_published ? 'published' : 'draft', creator: r.team_id === null ? null : teamName, progress: null, minutes: r.prep_minutes, hasQuiz: false,
   href: { to: '/learn/recipe/$id', params: { id: r.id } },
 });

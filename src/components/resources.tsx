@@ -23,6 +23,7 @@ import {
   type ResourceCardData, type ResourceSourceFilter, type ResourceTab, type ResourceTemplate, type ResourceType, type ResourceTypeFilter,
 } from '@/lib/resources';
 import { CREATE_TYPES, type CreateType } from '@/lib/create-resource';
+import { MyResourceCoaches } from '@/components/my-resource-coaches';
 
 const TYPE_ICON: Record<ResourceType, typeof Video> = { course: GraduationCap, track: Layers, video: Video, audio: Waveform, guide: FileText, file: Download, link: Link2, recipe: Leaf, live: Radio, quiz: ClipboardCheck };
 
@@ -57,6 +58,7 @@ export function ResourceCard({ r, creator, onSaveTemplate }: { r: ResourceCardDa
         {r.hasQuiz && <span className="chip"><ClipboardCheck aria-hidden="true" />{t('resources.quiz')}</span>}
       </div>
       <h3>{title}</h3>
+      <p className="muted-small">{r.price_cents ? new Intl.NumberFormat(lang, { style: 'currency', currency: 'USD' }).format(r.price_cents / 100) : t('offers.free')}</p>
       <p className="track-facts">{[r.creator, r.progress && r.progress.total > 1 ? t('learnHub.progressLabel', { done: r.progress.done, total: r.progress.total }) : null,
         r.minutes ? (r.entity === 'recipe' ? t('learnHub.prep', { count: r.minutes }) : minutesLabel(t, r.minutes)) : null].filter(Boolean).join(' · ')}</p>
       {r.entity !== 'quiz' && r.progress && r.progress.total > 1 && <progress className="attendance-progress" value={r.progress.done} max={r.progress.total} aria-hidden="true" />}
@@ -118,6 +120,7 @@ export function ResourcesPage({ tab, type, source }: { tab: ResourceTab; type: R
         <ul className="offer-list compact">{memberships.map(e => <li key={e.id}><Link to="/offer/$id" params={{ id: e.id }} className="offer-row is-link">
           <OfferCover offer={{ cover_style: e.cover_style, cover_url: e.cover_url, kind: 'membership', title_en: e.title_en, title_es: e.title_es }} />
           <div className="offer-row-main"><strong>{offerTitle(e, lang)}</strong><small>{t('resources.membership')}{e.host_name ? ` · ${e.host_name}` : ''}</small></div><ArrowRight /></Link></li>)}</ul></section>}
+      <MyResourceCoaches userId={userId} />
       <CertificateList userId={userId} />
       {empty && <Empty tab="foryou" action={<Button onClick={() => setSearch({ tab: 'library' })}><BookOpen />{t('resources.empty.foryou.action')}</Button>} />}
     </>;
@@ -147,7 +150,7 @@ export function ResourcesPage({ tab, type, source }: { tab: ResourceTab; type: R
         cover: 'learn' as const, status: tr.is_published ? 'published' as const : 'draft' as const, creator: teamName, progress: null, minutes: null, hasQuiz: false, href: { to: '/learn/track/$id', params: { id: tr.id } } })),
       ...myOffers.filter(o => o.kind === 'course' || o.kind === 'download').map(o => ({
         key: `offer:${o.id}`, id: o.id, entity: o.kind as 'course' | 'download', type: (o.kind === 'course' ? 'course' : 'file') as ResourceType, source: 'team' as const, title_en: o.title_en, title_es: o.title_es,
-        cover_url: o.cover_url, cover_style: o.cover_style, cover: 'offer' as const, status: o.status, creator: null, progress: null, minutes: null, hasQuiz: !!quiz?.offers.has(o.id), href: { to: '/offer/$id', params: { id: o.id } } })),
+        price_cents: o.price_cents, cover_url: o.cover_url, cover_style: o.cover_style, cover: 'offer' as const, status: o.status, creator: null, progress: null, minutes: null, hasQuiz: !!quiz?.offers.has(o.id), href: { to: '/offer/$id', params: { id: o.id } } })),
       ...(rec?.recipes ?? []).filter(r => r.team_id === teamId).map(r => recipeCard(r, teamName)),
       ...teamQuizzes.filter(z => z.mine).map(z => quizCard(z, teamName)),
     ];

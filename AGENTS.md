@@ -9,7 +9,7 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are engineering conventions only. Subdirectories (supabase/) have their own AGENTS.md.
+Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file covers engineering. Read supabase/AGENTS.md for that directory.
 
 ## ZoheeWell architecture (internal names such as Gatherwell*/gathering are legacy identifiers)
 - BrandLogo uses original CDN SVGs and theme variants; BrandImage handles photos, preserving supplied logo colors without photo grading.
@@ -20,7 +20,7 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - GatherwellShell shares desktop/mobile tabs; insights-navigation gates own-host/team access; mobile tabs scroll.
 - localStorage holds only language, theme and a pending invite code (cleared once the join completes); all user data lives in Lovable Cloud with team-scoped RLS.
 - Home-screen installation is manifest-only; the only service worker is public/push-sw.js (push display + click, no caching), registered only after the person turns push on, (offline not requested).
-- Visual rules live in DESIGN_RULES.md's active Blueprint v4 section; its historical sections are not active.
+- Visual rules: DESIGN_RULES.md's active Blueprint v4 section only, not historical sections.
 - App screens live under _authenticated/_app: the _authenticated gate redirects signed-out visitors to /login, and the _app layout sends anyone not onboarded (or holding a pending invite) to /onboarding before rendering GatherwellShell.
 - Public pages (marketing + GuestShell /e /h /l /t /i /r) SSR in English, then applySavedLanguage(); loaders prefetchPublic() and the router dehydrates the cache for crawlers. Render stays window-free and deterministic. AuthFrame pages (/login, /join, /terms, /privacy) use ClientOnly.
 - Uploads go to private media under the uploader's folder, shown via signed URLs (public buckets blocked).
@@ -43,7 +43,7 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - Covers/add-on images reuse private uploader media and shared cropping. Sign only after resolving authorized host/event, never caller paths; add-on cleanup preserves saved references.
 - Day-60 scoreboard: raw counts come only from admin_day60(); targets and the go/adjust/rethink verdict are evaluated in src/lib/day60.ts so thresholds live in one tested place.
 - Parked features are gated by feature_* flags via src/lib/feature-flags.tsx; admins always see them and off routes throw notFound, so launch scope changes from /admin?tab=flags.
-- Resources reuses /learn and the feature_learn gate; readers skip empty tracks/sections, managers keep them. Authoring is type-first via /learn/create?type=… (src/lib/create-resource.ts) into existing editors — no second authoring backend.
+- Resources: /learn + feature_learn, type-first /learn/create. Placement uses configure_resource_access + existing offers; course containment stays separate. Resolve public visibility before server-only signing. Paid resource checkout stays blocked until orders/refunds verified.
 - Home brief: getDailyBrief, caller-scoped, no AI/shared cache. Insights compares UTC event cohorts.
 - Admin password sign-in: public /admin-login with existing Cloud Auth accounts; getAdminAccess checks the role before navigation and every admin handler re-checks, so sign-in never grants privileges.
 - Blueprints/challenges reuse existing editors; drafts stay private. Experience sessions use existing events and whole-event admission.
