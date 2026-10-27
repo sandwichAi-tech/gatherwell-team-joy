@@ -15,8 +15,9 @@ describe('builder step navigation', () => {
     expect(stepNav(s, 'preview').isFinal).toBe(true);
     expect(stepNav(s, 'preview').next).toBeNull();
   });
-  it('recipe skips access/options but still ends on preview', () => {
-    expect(stepNav(sectionsFor('recipe'), 'content').next).toBe('preview');
+  it('recipe includes standalone access and ends on preview', () => {
+    expect(stepNav(sectionsFor('recipe'), 'content').next).toBe('access');
+    expect(stepNav(sectionsFor('recipe'), 'access').next).toBe('preview');
   });
 });
 

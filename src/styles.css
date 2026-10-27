@@ -2726,7 +2726,9 @@ a.gw-cat-chip:hover{background:#fff}
 .event-addons li{display:grid;align-content:start;gap:8px;min-width:0}
 .event-addons li strong{overflow-wrap:anywhere}
 .event-addons li p{color:var(--muted-foreground)}
-.item-editor, .builder-panel, .builder-panel fieldset, .builder-panel .edit-form { min-width: 0; }
+.item-editor, .builder-panel, .builder-panel fieldset, .builder-panel .edit-form { min-width: 0; grid-template-columns: minmax(0, 1fr); }
+.builder-panel > *, .builder-panel .form-field, .builder-panel .field-input { min-width: 0; max-width: 100%; }
+@media (min-width: 1100px) { .item-editor { grid-template-columns: minmax(0, 1fr) 340px; } }
 .builder-panel fieldset { margin: 0; padding: 0; }
 .builder-panel fieldset label > span { min-width: 0; overflow-wrap: anywhere; }
 .builder-panel [data-slot="radio-group-item"], .quiz-studio [data-slot="radio-group-item"] { flex-shrink: 0; }
