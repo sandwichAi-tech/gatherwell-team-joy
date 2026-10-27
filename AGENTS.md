@@ -15,7 +15,7 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - BrandLogo: original CDN SVGs/theme variants; BrandImage: photos; preserve logo colors, no photo grading.
 - Marketing GwIcon: duotone silhouettes/scoped contour reinforcement; preserve signed-in icon weights.
 - Keep homepage hosting paths, steps and tool inventory inside the existing landing page and reuse login intent/discovery routes; marketing copy never claims a provider or checkout is live before it is verified.
-- Enduring product rules: PROJECT_RULES.md under SOURCE_OF_TRUTH.md.
+- Product rules: PROJECT_RULES.md under SOURCE_OF_TRUTH.md.
 - All visible/accessible copy uses matched English/Latin American Spanish react-i18next JSON for instant, complete language switching.
 - GatherwellShell shares desktop/mobile tabs; insights-navigation gates own-host/team access; mobile tabs scroll.
 - localStorage holds only language, theme and a pending invite code (cleared once the join completes); all user data lives in Lovable Cloud with team-scoped RLS.
