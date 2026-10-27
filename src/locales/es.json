@@ -1,4 +1,28 @@
 {
+  "teamCommunication": {
+    "title": "Comunicación del equipo",
+    "announcements": "Anuncios",
+    "chat": "Chat grupal",
+    "announcementHint": "Actualizaciones de la persona que lidera tu equipo.",
+    "chatHint": "Una conversación privada para quien lidera el equipo y sus miembros activos.",
+    "mute": "Silenciar este equipo",
+    "muteHint": "Pausa las notificaciones no esenciales del equipo. Los mensajes sin leer siguen visibles.",
+    "muted": "Las notificaciones del equipo están silenciadas.",
+    "new": "Nuevo anuncio",
+    "subject": "Título",
+    "link": "Enlace (opcional)",
+    "openLink": "Abrir enlace",
+    "badLink": "Ingresa un enlace HTTPS válido sin credenciales de inicio de sesión.",
+    "edited": "Editado",
+    "empty": "Todavía no hay anuncios.",
+    "archive": "Archivar anuncio",
+    "archiveConfirm": "¿Archivar este anuncio? Puedes restaurarlo después.",
+    "archived": "Anuncios archivados",
+    "restore": "Restaurar",
+    "noAccess": "Esta conversación privada no está disponible. Tu membresía puede estar pendiente, eliminada o suspendida.",
+    "checking": "Verificando el acceso al equipo…",
+    "saveError": "No se pudo cargar o guardar. Reconéctate e inténtalo de nuevo; tu texto sin enviar no cambió."
+},
   "addonImages": {
     "label": "Imagen del complemento", "upload": "Subir imagen", "replace": "Reemplazar imagen", "remove": "Quitar imagen",
     "uploading": "Subiendo imagen…", "failed": "No se pudo guardar la imagen. Tu imagen anterior no cambió. Inténtalo de nuevo.",

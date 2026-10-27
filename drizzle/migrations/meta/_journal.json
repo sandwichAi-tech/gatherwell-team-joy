@@ -1051,6 +1051,27 @@
       "when": 1793067367128,
       "tag": "0149_resource_public_path_privacy",
       "breakpoints": true
+    },
+    {
+      "idx": 150,
+      "version": "7",
+      "when": 1793069364279,
+      "tag": "0150_private_team_communication",
+      "breakpoints": true
+    },
+    {
+      "idx": 151,
+      "version": "7",
+      "when": 1793069598480,
+      "tag": "0151_team_channel_retry_and_create_guards",
+      "breakpoints": true
+    },
+    {
+      "idx": 152,
+      "version": "7",
+      "when": 1793070035698,
+      "tag": "0152_team_channel_delivery_privacy",
+      "breakpoints": true
     }
   ]
 }

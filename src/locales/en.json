@@ -1,4 +1,28 @@
 {
+  "teamCommunication": {
+    "title": "Team communication",
+    "announcements": "Announcements",
+    "chat": "Group chat",
+    "announcementHint": "Updates from your team leader.",
+    "chatHint": "A private conversation for your team leader and active members.",
+    "mute": "Mute this team",
+    "muteHint": "Pause non-essential team notifications. Unread counts stay visible.",
+    "muted": "Team notifications are muted.",
+    "new": "New announcement",
+    "subject": "Title",
+    "link": "Link (optional)",
+    "openLink": "Open link",
+    "badLink": "Enter a valid HTTPS link without sign-in credentials.",
+    "edited": "Edited",
+    "empty": "No announcements yet.",
+    "archive": "Archive announcement",
+    "archiveConfirm": "Archive this announcement? You can restore it later.",
+    "archived": "Archived announcements",
+    "restore": "Restore",
+    "noAccess": "This private conversation is unavailable. Your membership may be pending, removed, or suspended.",
+    "checking": "Checking team access…",
+    "saveError": "Unable to load or save. Reconnect and try again; your unsent text is unchanged."
+},
   "addonImages": {
     "label": "Add-on image", "upload": "Upload image", "replace": "Replace image", "remove": "Remove image",
     "uploading": "Uploading image…", "failed": "The image could not be saved. Your previous image is unchanged. Try again.",
