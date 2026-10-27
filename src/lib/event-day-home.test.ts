@@ -3,7 +3,7 @@ import { eventLocalDay, homeNextAction } from './event-day-home';
 import type { PersonalHome } from './personal-home';
 const base: PersonalHome = { mode: 'hosting', events: [], resources: [], coaches: [], drafts: 0, event_progress: { exists: false, draft: null } };
 describe('saved, mode-aware Home recommendations', () => {
-  it('never interprets loading or failed data as zero events', () => { expect(homeNextAction(undefined)).toBeNull(); expect(homeNextAction({ ...base, event_progress: undefined })).toBeNull(); });
+  it('never interprets loading or failed data as zero events', () => { expect(homeNextAction(undefined)).toBeNull(); const { event_progress, ...missing } = base; expect(homeNextAction(missing)).toBeNull(); });
   it('new host with no event or draft gets first event', () => expect(homeNextAction(base)).toEqual({ kind: 'first' }));
   it('draft-only host opens the authoritative recent draft', () => expect(homeNextAction({ ...base, event_progress: { exists: true, draft: { id: 'recent', title: 'Draft' } } })).toEqual({ kind: 'draft', id: 'recent', title: 'Draft' }));
   it('published or completed work never recommends first event or invented sharing', () => expect(homeNextAction({ ...base, event_progress: { exists: true, draft: null } })).toBeNull());
