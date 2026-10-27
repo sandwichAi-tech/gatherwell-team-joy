@@ -63,3 +63,4 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Own QR unchanged; walk_in_admit binds event/retry and owner/assigned staff, capacity/payment/waivers; journeys dedupe. Manager-only waivers snapshot text, never rewrite acceptances.
 - Owner approves joins; legacy members remain. Library reuses templates and independent allowlisted drafts, never entitlements. Channels keep direct guards and separate unread/mute.
 - Event identity uses get_public_host eligibility; host waiver libraries are owner-only, published-once events lock snapshots, and separate approved platform references gate admission without retrofitting historical consent.
+- Resource courses reuse CurriculumPanel/tracks/lessons with transactional full-ID reorder; assessment_config identifies guarded quiz-backed assessment drafts, never quiz grading/certificates, so author previews cannot create participant completions.

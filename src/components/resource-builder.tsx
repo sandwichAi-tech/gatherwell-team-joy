@@ -1,5 +1,6 @@
 import { ResourceAccessFields } from '@/components/resource-access-fields';
 import { CurriculumPanel } from '@/components/content-studio';
+import { CourseOutlinePreview } from '@/components/course-outline-preview';
 import { resourceAccessPrice, savedPlacement, type ResourcePlacement } from '@/lib/resource-placement';
 import { uploadMedia } from '@/lib/account';
 import { OfferCover } from '@/components/offers';
@@ -419,7 +420,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const lessonsWithPlaceholders = trackLessons ? placeholderLessons(trackLessons) : [];
   const placeholder = hasPlaceholder(item.titleEn, item.titleEs, item.descEn, item.descEs, item.subtitleEn, item.subtitleEs) || lessonsWithPlaceholders.length > 0;
   const draftLessonsToPublish = trackLessons ? lessonsToPublishWithTrack(trackLessons, loaded?.status === 'published') : [];
-  const canSave = (progress === null || progress === 100) && !busy;
+  const canSave = itemIssues(type, item, { publish: false, courseId: placement === 'course' ? courseId : 'standalone', lessonUrl: draft.lesson.url, live: draft.lesson.live }).filter(i => i === 'title' || i === 'price' || (placement === 'course' && i === 'course')).length === 0 && (progress === null || progress === 100) && !busy;
   const canPublish = canSave && issues.length === 0 && !paidBlocked && !placeholder;
   const nav = stepNav(sections, sections.includes(section) ? section : 'presentation');
   const wasPublished = loaded?.status === 'published';
@@ -584,6 +585,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
     <p id="rb-active-hint" className="field-hint">{t('resources.item.activeFromHint', { tz })}</p>
   </Field>;
   const preview = <>
+    {type === 'course' && loaded?.id && <CourseOutlinePreview id={loaded.id} />}
     {trackLessons && <div className="form-field" role="status"><span className="field-label">{t('resources.item.lessonStatusTitle')}</span>
       <ul className="lesson-status-list">{trackLessons.map(l => { const ph = hasPlaceholder(l.title_en, l.title_es, l.notes_en, l.notes_es, l.description_en, l.description_es);
         return <li key={l.id}><strong>{pick(lang, l.title_en, l.title_es)}</strong> <small>{ph ? t('resources.item.lessonNeedsReview') : l.is_published && wasPublished ? t('resources.item.lessonLive') : l.is_published || draftLessonsToPublish.includes(l.id) ? t('resources.item.lessonVisible') : t('resources.item.lessonHidden')}</small></li>; })}</ul>
