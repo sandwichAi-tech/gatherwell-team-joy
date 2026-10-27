@@ -6,7 +6,8 @@
 - [x] Add ordered assessment slots, owner-only resource references and detach-only removal; source entitlement remains unchanged.
 - [x] Add versioned scope references, private immutable receipt/scoring/retake functions and learner form; approved product copy absent.
 - [x] 837 full tests / 19 focused / 10 isolated authenticated checks; six public unavailable-state EN/ES width checks; automatic build OK; cleanup.
-- [ ] Remaining CODE: durable provider event recovery, cancel/create-failure compensation, paid Challenge publication, invite public reads, refund tooling, paid reused-item inclusion/shared picker, assessment publish/scope UI/recommendations/cover, active-learning normalization and generic quiz race hardening. Full positive lifecycle/device verification not completed; scope copy/provider readiness also required. See CHANGELOG; no publish/deploy.
+- [x] Continuation: fenced delivery leases, checked checkout binding/cancel, refund monotonicity, approved-scope publication UI/RPC, explicit-consent/retry/reference-progress guards and caller-keyed learner state. 843 full/25 focused tests; 27 isolated checks; populated public EN/ES width/Tab checks; exact fixture cleanup.
+- [ ] Remaining CODE: automatic ambiguous-payment recovery/late-payment compensation, definitive create-failure compensation, paid Challenge activation/app wiring/refund tooling/extra fulfillment, paid reused-item inclusion/shared picker, assessment cover/recommendations/active-learning normalization. Full positive assessment/payment lifecycle, authenticated browser and device verification incomplete; approved scope/legal copy/provider readiness required. Rows 113/115 In Progress; no publish/deploy.
 
 ## Website Notes row 115 — In Progress
 - [x] Audit/reproduce first-track-only course create, tied/non-atomic order, separate quiz attachments, absent dedicated assessment/approved scope copy.
