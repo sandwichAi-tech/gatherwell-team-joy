@@ -1,3 +1,8 @@
+import { ResourceAccessFields } from '@/components/resource-access-fields';
+import { myOffersQuery, offerTitle } from '@/lib/offers';
+import { getPaymentsReadiness } from '@/lib/billing.functions';
+import { canSellPaid } from '@/lib/payments-readiness';
+import { resourceAccessPrice, savedPlacement, type ResourcePlacement } from '@/lib/resource-placement';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -137,6 +142,12 @@ function QuestionSheet({ quiz, question, outcomes, onClose, nextOrder }: { quiz:
 export function QuizStudio({ quizId }: { quizId: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
   const qc = useQueryClient(); const navigate = useNavigate();
+  const { userId } = useGatherwell();
+  const offers = useQuery(myOffersQuery(userId));
+  const readiness = useQuery({ queryKey: ['payments-readiness'], queryFn: () => getPaymentsReadiness() });
+  const [placement, setPlacement] = useState<ResourcePlacement>('team');
+  const [courseId, setCourseId] = useState('');
+  const [pricing, setPricing] = useState({ free: true, price: '' });
   const [tab, setTab] = useState<'build' | 'preview' | 'results'>('build');
   const load = useQuery({ queryKey: ['quiz-studio', quizId], queryFn: async () => {
     const z = await db.from('quizzes').select('*').eq('id', quizId).maybeSingle();
@@ -152,7 +163,7 @@ export function QuizStudio({ quizId }: { quizId: string }) {
     return { quiz: z.data as QuizRow, questions, outcomes: (oc.data ?? []).map((o: any) => ({ ...o, body_en: o.body_en ?? '', body_es: o.body_es ?? '', image_alt: o.image_alt ?? '' })) as (StudioOutcome & { image_path: string | null; image_alt: string; sort_order: number })[], bands: (bd.data ?? []) as (StudioBand & { id: string; body_en: string | null; body_es: string | null })[] };
   } });
   const [s, setS] = useState<QuizRow | null>(null);
-  useEffect(() => { if (load.data?.quiz) setS(load.data.quiz); }, [load.data?.quiz]);
+  useEffect(() => { if (load.data?.quiz) { setS(load.data.quiz); const q = load.data.quiz as any; setPlacement(savedPlacement(q)); setCourseId(q.offer_id ?? ''); if (q.commerce_offer_id) void db.from('offers').select('price_cents').eq('id', q.commerce_offer_id).maybeSingle().then((r: any) => setPricing({ free: !r.data?.price_cents, price: r.data?.price_cents ? String(r.data.price_cents / 100) : '' })); } }, [load.data?.quiz]);
   const [editing, setEditing] = useState<Q | 'new' | null>(null);
   const [outs, setOuts] = useState<(StudioOutcome & { image_path: string | null; image_alt: string })[]>([]);
   const [bands, setBands] = useState<(StudioBand & { body_en: string; body_es: string })[]>([]);
@@ -172,7 +183,11 @@ export function QuizStudio({ quizId }: { quizId: string }) {
   const hasAttempts = (summary.data?.attempts ?? 0) > 0;
 
   const saveSettings = async (extra: Partial<QuizRow> = {}) => {
+    const cents = resourceAccessPrice(placement, pricing.free, pricing.price);
+    if (cents === null || (extra.is_published && cents > 0 && (!readiness.data || !canSellPaid(readiness.data)))) { toast.error(t('resources.item.paidBlocked')); return false; }
     setBusy(true);
+    const a = await supabase.rpc('configure_resource_access', { _kind: 'quiz', _id: quizId, _placement: placement, _course: courseId || undefined, _price: cents });
+    if (a.error) { setBusy(false); toast.error(t('resources.item.saveFailed')); return false; }
     const row = { mode: s.mode, title_en: s.title_en.trim(), title_es: s.title_es.trim(), instructions_en: s.instructions_en?.trim() || null, instructions_es: s.instructions_es?.trim() || null,
       pass_pct: Math.min(100, Math.max(1, Math.round(Number(s.pass_pct) || 80))), attempts_allowed: s.attempts_allowed ? Math.max(1, Math.round(Number(s.attempts_allowed))) : null,
       cooldown_minutes: Math.max(0, Math.round(Number(s.cooldown_minutes) || 0)), show_score: s.show_score, ...extra };
@@ -262,9 +277,10 @@ export function QuizStudio({ quizId }: { quizId: string }) {
           <div className="form-field"><label className="field-label" htmlFor="qs-att">{t('quiz.attemptsAllowed')}</label><Input id="qs-att" type="number" min={1} className="field-input" placeholder={t('quiz.unlimited')} value={s.attempts_allowed ?? ''} onChange={e => setS({ ...s, attempts_allowed: e.target.value ? Number(e.target.value) : null })} /></div>
           <div className="form-field"><label className="field-label" htmlFor="qs-cool">{t('quiz.cooldown')}</label><Input id="qs-cool" type="number" min={0} className="field-input" value={s.cooldown_minutes} onChange={e => setS({ ...s, cooldown_minutes: Number(e.target.value) })} /></div>
         </div>
+        <ResourceAccessFields type="quiz" placement={placement} onPlacement={setPlacement} free={pricing.free} price={pricing.price} onAccess={(free, price) => setPricing({ free, price })} courseId={courseId} onCourse={setCourseId} courses={(offers.data ?? []).filter(o => o.kind === 'course' && o.status !== 'archived').map(o => ({ id: o.id, title: offerTitle(o, lang) }))} ready={!!readiness.data && canSellPaid(readiness.data)} prefix="qs-access" />
         <small className="field-hint">{t('quizStudio.retakeHint')}</small>
         {s.mode === 'scored' && <label className="switch-row"><Switch checked={s.show_score} onCheckedChange={v => setS({ ...s, show_score: v })} /><span><strong>{t('quiz.showScore')}</strong><small>{t('quiz.showScoreText')}</small></span></label>}
-        <Button variant="secondary" disabled={busy || !dirty} onClick={() => void saveSettings().then(ok => ok && toast.success(t('quizStudio.draftSaved')))}>{t('quizStudio.saveDraft')}</Button>
+        <Button variant="secondary" disabled={busy} onClick={() => void saveSettings().then(ok => ok && toast.success(t('quizStudio.draftSaved')))}>{t('quizStudio.saveDraft')}</Button>
       </section>
 
       {s.mode === 'outcome' && <section className="panel edit-form" aria-labelledby="qs-out"><div className="section-heading"><h2 id="qs-out">{t('quizStudio.outcomes')}</h2>
