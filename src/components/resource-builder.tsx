@@ -1,3 +1,4 @@
+import { urlHint } from '@/lib/url-hint';
 import { BuilderStepFooter, focusField } from '@/components/builder-step-footer';
 import { DestinationSummary, ResourceAccessFields } from '@/components/resource-access-fields';
 import { CurriculumPanel } from '@/components/content-studio';
@@ -678,12 +679,14 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
               {progress === null && draft.lesson.storagePath && <p className="field-hint">{t('learnHub.fileAttached')} <button type="button" className="text-link" onClick={() => patchLesson({ storagePath: null })}>{t('learnHub.removeFile')}</button></p>}
               <p className="field-hint">{t(type === 'video' ? 'learnHub.videoHint' : type === 'audio' ? 'learnHub.audioHint' : 'learnHub.pdfHint')}</p></div>}
             {cfg.showsUrl && !draft.lesson.storagePath && <Field id="rb-url" label={t(type === 'video' ? 'learnHub.videoLink' : type === 'guide' ? 'learnHub.pdfLink' : type === 'audio' ? 'learnHub.audioLink' : 'learnHub.link')}>
-              <Input id="rb-url" type="url" inputMode="url" className="field-input" placeholder="https://" value={draft.lesson.url} onChange={e => patchLesson({ url: e.target.value })} aria-invalid={!validUrl(draft.lesson.url)} />
+              <Input id="rb-url" type="url" inputMode="url" className="field-input" placeholder="https://" value={draft.lesson.url} onChange={e => patchLesson({ url: e.target.value })} aria-invalid={!validUrl(draft.lesson.url)} aria-describedby="rb-url-hint" />
+              <p id="rb-url-hint" className="field-hint" aria-live="polite">{(() => { const h = urlHint(draft.lesson.url); return t(`resources.content.${h.key}`, { host: h.host }); })()}</p>
             </Field>}
             {type === 'live' && <>
               <Field id="rb-live" label={t('learnHub.liveStarts')}><Input id="rb-live" type="datetime-local" className="field-input" value={draft.lesson.live} onChange={e => patchLesson({ live: e.target.value })} /></Field>
               <Field id="rb-meet" label={t('learnHub.meetingLink')}><Input id="rb-meet" type="url" className="field-input" placeholder="https://" value={draft.lesson.meeting} onChange={e => patchLesson({ meeting: e.target.value })} /></Field>
               <Field id="rb-replay" label={t('learnHub.replayLink')}><Input id="rb-replay" type="url" className="field-input" placeholder="https://" value={draft.lesson.replay} onChange={e => patchLesson({ replay: e.target.value })} /></Field>
+              <p className="field-hint">{t('resources.content.liveHint', { tz })}</p>
             </>}
           </>}
 
@@ -691,13 +694,15 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
             <Field id="rb-prep" label={t('learnHub.prepLabel')}><Input id="rb-prep" type="number" min={1} max={600} className="field-input" value={draft.recipe.prep} onChange={e => patchRecipe({ prep: e.target.value })} /></Field>
             <div className="form-field"><span className="field-label">{t('learnHub.tagsLabel')}</span><div className="filter-chips">{RECIPE_TAGS.map(tag => { const on = draft.recipe.tags.includes(tag); return <button type="button" key={tag} className={`filter-chip ${on ? 'is-active' : ''}`} aria-pressed={on} onClick={() => patchRecipe({ tags: on ? draft.recipe.tags.filter(x => x !== tag) : [...draft.recipe.tags, tag] })}>{t(`learnHub.tags.${tag}`)}</button>; })}</div></div>
             <p className="field-hint">{t('learnHub.onePerLine')}</p>
-            <Field id="rb-ing" label={t('learnHub.ingredients')}><textarea id="rb-ing" rows={5} className="field-textarea" value={lang === 'es' ? draft.recipe.ingEs : draft.recipe.ingEn} onChange={e => patchRecipe(lang === 'es' ? { ingEs: e.target.value } : { ingEn: e.target.value })} /></Field>
-            <Field id="rb-steps" label={t('learnHub.steps')}><textarea id="rb-steps" rows={5} className="field-textarea" value={lang === 'es' ? draft.recipe.stepsEs : draft.recipe.stepsEn} onChange={e => patchRecipe(lang === 'es' ? { stepsEs: e.target.value } : { stepsEn: e.target.value })} /></Field>
+            <Field id="rb-ing" label={`${t('learnHub.ingredients')} · ${lang.toUpperCase()}`}><textarea id="rb-ing" rows={5} className="field-textarea" value={lang === 'es' ? draft.recipe.ingEs : draft.recipe.ingEn} onChange={e => patchRecipe(lang === 'es' ? { ingEs: e.target.value } : { ingEn: e.target.value })} /></Field>
+            <Field id="rb-steps" label={`${t('learnHub.steps')} · ${lang.toUpperCase()}`}><textarea id="rb-steps" rows={5} className="field-textarea" value={lang === 'es' ? draft.recipe.stepsEs : draft.recipe.stepsEn} onChange={e => patchRecipe(lang === 'es' ? { stepsEs: e.target.value } : { stepsEn: e.target.value })} /></Field>
           </>}
 
           {(type === 'file' || type === 'bundle') && <div className="form-field"><span className="field-label">{t('offers.file')}</span>
             <label className="file-button"><Upload />{draft.offer.filePath ? t('offers.replaceFile') : t('offers.uploadFile')}
               <input type="file" accept="application/pdf,.pdf,.epub,.zip" hidden onChange={e => { const x = e.target.files?.[0]; if (x) void uploadOfferFileAction(x); }} /></label>
+            <p className="field-hint">{t('resources.content.fileHint')}</p>
+            {busy && !draft.offer.filePath && <p className="field-hint" role="status">{t('learnHub.uploading')}</p>}
             {draft.offer.filePath && <small className="muted-small"><Check className="inline-icon" />{t('offers.fileAttached')}</small>}
             {type === 'bundle' && <p className="field-hint">{t('resources.preset.bundle.hint')}</p>}</div>}
 
