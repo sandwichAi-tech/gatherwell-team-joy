@@ -27,7 +27,7 @@ export function PublicResource({ kind, id }: { kind: 'track' | 'recipe' | 'quiz'
     {r.coverUrl && <BrandImage src={r.coverUrl} alt={title} className="offer-cover-photo" />}
     <section className="offer-body px-4 py-6"><span className="chip">{t(`resources.create.types.${labelType}.name`, { defaultValue: t('resources.title') })}</span>
       <h1>{title}</h1><p className="muted-small">{t('offers.by', { name: r['host_name'] ?? '' })}</p>
-      <p className="offer-price">{r['placement'] === 'course' ? t('resourcePlacement.courseAccess') : r['price_cents'] ? formatMoney(r['price_cents'], lang) : t('offers.free')}</p>
+      <p className="offer-price">{r['course_access'] || r['placement'] === 'course' ? t('resourcePlacement.courseAccess') : r['price_cents'] ? formatMoney(r['price_cents'], lang) : t('offers.free')}</p>
       {!r['access'] ? <>
         <p role="status">{t(r['price_cents'] ? 'content.paidSetupRequired' : 'resourcePlacement.notAvailable')}</p>
         {r['parent_course_id'] && <Button asChild><Link to="/o/$id" params={{ id: r['parent_course_id'] }}>{t('resourcePlacement.pickCourse')}</Link></Button>}
