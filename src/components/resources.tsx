@@ -246,7 +246,6 @@ export function ResourceTemplatesPage({ tab }: { tab: 'starters' | 'mine' }) {
           <div className="template-head"><span className="creation-icon"><Icon /></span><span className={`chip ${tpl.team_id ? '' : 'warm-chip'}`}>{tpl.team_id ? <UsersRound aria-hidden="true" /> : <Sparkles aria-hidden="true" />}{t(tpl.team_id ? 'templatesR.teamChip' : 'templatesR.starterChip')}</span></div>
           <div className="resource-body">
             <h3>{title}</h3>
-      <p className="muted-small">{r.price_cents ? new Intl.NumberFormat(lang, { style: 'currency', currency: 'USD' }).format(r.price_cents / 100) : t('offers.free')}</p>
             {pick(lang, tpl.description_en, tpl.description_es) && <p>{pick(lang, tpl.description_en, tpl.description_es)}</p>}
             <p className="track-facts">{[t(`templatesR.target.${tpl.target}`), p.parts ? t('templatesR.parts', { count: p.parts }) : null].filter(Boolean).join(' · ')}</p>
             {p.needsAssets > 0 && <p className="muted-small">{t('templatesR.needsAssets', { count: p.needsAssets })}</p>}
