@@ -128,7 +128,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
     if (!form.phone.trim() && !form.email.trim()) { setError(t('guest.errors.contact_required')); return; }
     if (!waiverReady(waiver, wName, wOk)) { setError(t('guest.errors.waiver_required')); return; }
     if (ew.isError) { setError(t('eventWaivers.errors.load')); return; }
-    if (intent === 'going' && missingRequired(eventWaivers, ewChoices).length) { setError(t('eventWaivers.errors.required')); document.querySelector<HTMLElement>('.event-waivers input, .event-waivers button')?.focus(); return; }
+    if (missingRequired(eventWaivers, ewChoices).length) { setError(t('eventWaivers.errors.required')); document.querySelector<HTMLElement>('.event-waivers input, .event-waivers button')?.focus(); return; }
     const ewAccepted = acceptedPayload(eventWaivers, ewChoices);
     if (intent === 'going' && !answersReady(event.questions, answers)) { setError(t('guest.errors.answers_required')); return; }
     const waiverName = waiver?.required ? wName.trim() : '';
@@ -214,7 +214,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
       {event.require_approval && intent === 'going' && <p className="guest-hint">{t('rsvpq.approvalHint')}</p>}
       {waiver && <WaiverAccept waiver={waiver} name={wName} accepted={wOk} onName={setWName} onAccepted={setWOk} />}
       {intent === 'going' && ew.isError && <p className="field-error" role="alert">{t('eventWaivers.errors.load')} <Button type="button" variant="ghost" onClick={() => void ew.refetch()}>{t('error.retry')}</Button></p>}
-      {intent === 'going' && <EventWaiversAccept waivers={eventWaivers} choices={ewChoices} onChange={setEwChoices} />}
+      <EventWaiversAccept waivers={eventWaivers} choices={ewChoices} onChange={setEwChoices} />
       {!paid && needsTier(tiers) && <fieldset className="guest-tiers">
         <legend className="field-label">{t('guest.tiers.title')}</legend>
         {tiers.map(tier => {
