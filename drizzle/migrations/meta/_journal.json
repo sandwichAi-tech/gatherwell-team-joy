@@ -1331,6 +1331,13 @@
       "when": 1793136180015,
       "tag": "0189_resource_multi_destinations",
       "breakpoints": true
+    },
+    {
+      "idx": 190,
+      "version": "7",
+      "when": 1793136459054,
+      "tag": "0190_resource_destination_publish_sync",
+      "breakpoints": true
     }
   ]
 }
