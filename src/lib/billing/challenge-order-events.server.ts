@@ -23,7 +23,7 @@ export async function processChallengeOrderEvent(db: SupabaseClient, event: Paym
       const intent = await createStripeClient(environment).paymentIntents.retrieve(object.payment_intent);
       const destination = intent.transfer_data?.destination;
       const account = typeof destination === 'string' ? destination : destination?.id;
-      if (intent.status !== 'succeeded' || intent.amount_received !== order.gross_cents || intent.currency !== order.currency || account !== order.connected_account_id || intent.metadata.order_id !== order.id) throw new Error('payment_unverified');
+      if (intent.status !== 'succeeded' || intent.amount_received !== order.gross_cents || intent.currency !== order.currency || account !== order.connected_account_id || intent.metadata['order_id'] !== order.id) throw new Error('payment_unverified');
       state = 'succeeded';
     } else return true;
     const r = await db.rpc('reconcile_challenge_order', { _order: order.id, _session: object.id, _intent: typeof object.payment_intent === 'string' ? object.payment_intent : '', _amount: object.amount_total, _currency: object.currency, _environment: environment, _state: state });
