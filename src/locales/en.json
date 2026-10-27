@@ -7397,16 +7397,20 @@
     "defaultSchedule": "Next day at 09:00 in the event time zone; you can change it."
   },
   "waiverLibrary": {
-    "title": "My waivers",
-    "select": "Select from My waivers",
+    "title": "My host waivers",
+    "select": "Select a host waiver",
     "choose": "Choose a waiver",
     "empty": "No reusable waivers yet. Create one in Me → My waivers.",
-    "scope": "Team waivers apply only when selected for this event. They do not replace ZoheeWell agreements.",
-    "team": "Require the team waiver for this event",
-    "textOnly": "Reusable waivers support entered text in English and Spanish. Document upload remains available for event-specific PDF waivers; no text extraction is provided.",
+    "scope": "Only your host account can manage these documents. Selection is explicit for each event; ZoheeWell’s agreement remains separate.",
+    "team": "Legacy host document",
+    "textOnly": "Enter your existing document text or upload a PDF up to 10 MB. No legal text is generated.",
     "versionHelp": "Saving changed text creates a new immutable version. Existing event attachments and acceptances stay unchanged.",
-    "pinned": "This event keeps the selected version until its attachment is deliberately changed.",
-    "saveError": "The waiver could not be saved. Your entered text is still here."
+    "pinned": "Published events keep this exact version. New versions are available for future drafts only.",
+    "saveError": "The waiver could not be saved. Your entered text is still here.",
+    "default": "Default",
+    "makeDefault": "Set as default",
+    "clearDefault": "Clear default",
+    "applyDefault": "Select default: {{name}}"
   },
   "resourcePlacement": {
     "title": "Where should this resource live?",
@@ -7474,5 +7478,16 @@
     "openDraft": "Open draft",
     "exportSource": "Prepare from an event or resource",
     "prepare": "Create reusable template"
+  },
+  "eventAgreements": {
+    "title": "ZoheeWell platform agreement",
+    "legalRequired": "Approved legal document required. Event publication and registration are unavailable until approved English and Spanish documents are supplied.",
+    "acceptRequired": "Review and explicitly accept the current ZoheeWell agreement.",
+    "open": "Open ZoheeWell agreement",
+    "accept": "I have read and agree to the ZoheeWell platform agreement.",
+    "hostLink": "View {{name}}’s public host page",
+    "hostUnavailable": "Host public page unavailable",
+    "pinned": "Published event agreements are fixed. Create a new draft to use a different document.",
+    "legacyPinned": "This event retains its historical document and acceptance records."
   }
 }
