@@ -5,7 +5,7 @@ import { CustomerHome } from '@/components/customer-home';
 import { HostCheckinActions } from '@/components/host-checkin-actions';
 import { FoundingCommitmentsCard } from '@/components/founding';
 import { CoachLaunchCard } from '@/components/coach-launch';
-import { DailyBriefCard, FollowupsHomeCard } from '@/components/smart';
+import { FollowupsHomeCard } from '@/components/smart';
 import { TeamSwitcher } from '@/components/team-switcher';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';

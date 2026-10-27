@@ -32,6 +32,6 @@ export function CustomerHome({ userId }: { userId: string }) {
         </li>)}</ul>}
       <CheckinQrSheet target={qr} onClose={() => setQr(null)} />
     </section>
-    <section className="learn-section"><h2>{t('resourcePlacement.myCoaches')}</h2>{!data.coaches.length ? <EmptyState compact icon="UsersRound" text={t('resourcePlacement.noCoaches')} action={<Button asChild variant="secondary"><Link to="/discover">{t('personalHome.discoverCoaches')}</Link></Button>} /> : <ul className="customer-list">{data.coaches.map(c => <li key={c.id}><Link to="/h/$slug" params={{ slug: c.slug }} className="customer-item-head"><strong>{c.name}</strong><ChevronRight /></Link></li>)}</ul>}</section>
+    <section className="learn-section"><h2>{t('resourcePlacement.myCoaches')}</h2>{!data.coaches.length ? <EmptyState compact icon="UsersRound" text={t('personalHome.noCoaches')} action={<Button asChild variant="secondary"><Link to="/discover">{t('personalHome.discoverCoaches')}</Link></Button>} /> : <ul className="customer-list">{data.coaches.map(c => <li key={c.id}><Link to="/h/$slug" params={{ slug: c.slug }} className="customer-item-head"><strong>{c.name}</strong><ChevronRight /></Link></li>)}</ul>}</section>
   </>;
 }
