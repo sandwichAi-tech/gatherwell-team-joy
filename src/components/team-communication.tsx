@@ -56,7 +56,9 @@ export function TeamCommunication({ teamId, me, initialBody }: { teamId: string;
   const edit = (item: Announcement | 'new') => { setEditor(item); setTitle(item === 'new' ? '' : item.title); setBody(item === 'new' ? '' : item.body); setLink(item === 'new' ? '' : item.link_url ?? ''); setPinned(item === 'new' ? false : item.pinned); };
   const save = async (item?: Announcement, archive?: boolean) => {
     setBusy(true);
-    const { error } = await supabase.rpc('save_team_announcement', { _team: teamId, _id: item?.id ?? (editor && editor !== 'new' ? editor.id : null), _title: item?.title ?? title, _body: item?.body ?? body, _link: item?.link_url ?? link, _pinned: item?.pinned ?? pinned, _archived: archive ?? false } as Parameters<typeof supabase.rpc<'save_team_announcement'>>[1]);
+    const id = item?.id ?? (editor && editor !== 'new' ? editor.id : null);
+    const args = { _team: teamId, _title: item?.title ?? title, _body: item?.body ?? body, _link: item?.link_url ?? link, _pinned: item?.pinned ?? pinned };
+    const { error } = id ? await supabase.rpc('save_team_announcement', { ...args, _id: id, _archived: archive ?? false }) : await supabase.rpc('create_team_announcement', args);
     setBusy(false); if (error) { toast.error(t('teamCommunication.saveError')); return; }
     setEditor(null); refresh();
   };
