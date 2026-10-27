@@ -8349,6 +8349,7 @@ export type Database = {
           members: number
         }[]
       }
+      challenge_host_enrollments: { Args: { _c: string }; Returns: Json }
       challenge_leaderboard: {
         Args: { _c: string; _tz?: string }
         Returns: {
@@ -8927,6 +8928,8 @@ export type Database = {
         }[]
       }
       my_calendar_feeds: { Args: never; Returns: Json }
+      my_challenge_list: { Args: never; Returns: Json }
+      my_challenge_progress: { Args: { _c: string }; Returns: Json }
       my_challenges: {
         Args: never
         Returns: {
