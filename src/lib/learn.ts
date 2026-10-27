@@ -42,7 +42,7 @@ export const learnQuery = (userId: string) => queryOptions({
   },
 });
 
-export const lessonsOf = (data: LearnData, trackId: string) => data.lessons.filter(l => l.track_id === trackId);
+export const lessonsOf = (data: LearnData, trackId: string) => data.lessons.filter(l => l.track_id === trackId && !l.detached_at);
 /** Participant outline: published lessons only; leaders of the track's team also see drafts. */
 export const visibleLessons = (data: LearnData, trackId: string, showDrafts: boolean) =>
   lessonsOf(data, trackId).filter(l => showDrafts || l.is_published);

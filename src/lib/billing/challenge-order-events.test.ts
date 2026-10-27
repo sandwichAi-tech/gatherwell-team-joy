@@ -1,0 +1,14 @@
+import { describe, expect, it, vi } from 'vitest';
+import { processChallengeOrderEvent } from './challenge-order-events.server';
+import { handlePaymentEvent } from './webhook-events.server';
+const order = { id: 'order', buyer_user_id: 'learner', connected_account_id: 'acct', environment: 'sandbox', stripe_checkout_session_id: 'cs', gross_cents: 1200, currency: 'usd' };
+function dbFor(row: unknown = order) { const rpc = vi.fn().mockResolvedValue({ error: null }); const from = vi.fn(() => { const q: any = { select: () => q, eq: () => q, maybeSingle: async () => ({ data: row, error: null }) }; return q; }); return { from, rpc }; }
+function event(type: string, overrides = {}) { return { id: 'evt', type, data: { object: { id: 'cs', metadata: { kind: 'challenge_order', order_id: 'order', user_id: 'learner' }, payment_status: 'unpaid', amount_total: 1200, currency: 'usd', ...overrides } } }; }
+describe('challenge verified event boundary', () => {
+  it('keeps delayed unpaid checkout pending without enrollment', async () => { const db = dbFor(); expect(await processChallengeOrderEvent(db as any, event('checkout.session.completed'), 'sandbox')).toBe(true); expect(db.rpc).not.toHaveBeenCalled(); });
+  it('consumes verified expiration through the cancellation transition', async () => { const db = dbFor(); await processChallengeOrderEvent(db as any, event('checkout.session.expired'), 'sandbox'); expect(db.rpc).toHaveBeenCalledWith('reconcile_challenge_order', expect.objectContaining({ _state: 'cancelled', _amount: 1200, _order: 'order' })); });
+  it('consumes asynchronous failure without access', async () => { const db = dbFor(); await processChallengeOrderEvent(db as any, event('checkout.session.async_payment_failed'), 'sandbox'); expect(db.rpc).toHaveBeenCalledWith('reconcile_challenge_order', expect.objectContaining({ _state: 'failed' })); });
+  for (const [name, overrides] of [['amount', { amount_total: 1199 }], ['currency', { currency: 'eur' }], ['session', { id: 'other' }], ['buyer', { metadata: { kind: 'challenge_order', order_id: 'order', user_id: 'outsider' } }]] as const) it(`rejects wrong ${name}`, async () => { const db = dbFor(); await expect(processChallengeOrderEvent(db as any, event('checkout.session.completed', overrides), 'sandbox')).rejects.toThrow('payment_unverified'); expect(db.rpc).not.toHaveBeenCalled(); });
+  it('rejects sandbox/live mismatch', async () => { await expect(processChallengeOrderEvent(dbFor() as any, event('checkout.session.completed'), 'live')).rejects.toThrow('payment_unverified'); });
+  it('does not acknowledge database outages as duplicate events', async () => { const db = { from: () => ({ insert: async () => ({ error: { code: '08006' } }) }) }; expect(await handlePaymentEvent(db as any, event('checkout.session.completed'))).toBe('failed'); });
+});
