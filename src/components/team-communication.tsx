@@ -26,9 +26,11 @@ export function TeamCommunication({ teamId, me, initialBody }: { teamId: string;
   const key = channelKey(teamId, me);
   const state = useQuery({ queryKey: key, gcTime: 0, staleTime: 0, refetchInterval: 10_000, retry: false, queryFn: async () => {
     const { data, error } = await supabase.rpc('team_channel_state', { _team: teamId });
-    if (error) throw error; return data as State | null;
+    if (error) throw error;
+    if (!data) { qc.removeQueries({ queryKey: [...key, 'announcements'] }); qc.removeQueries({ queryKey: ['comments'] }); qc.removeQueries({ queryKey: ['topics', teamId] }); qc.removeQueries({ queryKey: ['notifications'] }); }
+    return data as State | null;
   } });
-  const list = useQuery({ queryKey: [...key, 'announcements'], enabled: !!state.data, gcTime: 0, staleTime: 0, queryFn: async () => {
+  const list = useQuery({ queryKey: [...key, 'announcements'], enabled: !!state.data, gcTime: 0, staleTime: 0, refetchInterval: 10_000, queryFn: async () => {
     const { data, error } = await supabase.from('announcements').select('id,title,body,link_url,pinned,created_at,updated_at,archived_at,author_id').eq('team_id', teamId);
     if (error) throw error; return orderAnnouncements(data ?? []);
   } });
@@ -38,9 +40,9 @@ export function TeamCommunication({ teamId, me, initialBody }: { teamId: string;
     const ch = supabase.channel(`team-channel-${teamId}-${crypto.randomUUID()}`);
     const check = () => {
       // Hide cached content until authoritative access has been rechecked.
-      qc.removeQueries({ queryKey: [...key, 'announcements'] });
-      qc.removeQueries({ queryKey: ['comments'] }); qc.removeQueries({ queryKey: ['topics', teamId] });
       void qc.invalidateQueries({ queryKey: key });
+      void qc.invalidateQueries({ queryKey: ['comments'] }); void qc.invalidateQueries({ queryKey: ['topics', teamId] });
+      void qc.invalidateQueries({ queryKey: ['notifications'] });
     };
     for (const table of ['announcements', 'comments', 'discussion_topics', 'team_members'] as const) ch.on('postgres_changes', { event: '*', schema: 'public', table, filter: `team_id=eq.${teamId}` }, check);
     ch.subscribe(); window.addEventListener('online', check); window.addEventListener('focus', check);
@@ -52,6 +54,7 @@ export function TeamCommunication({ teamId, me, initialBody }: { teamId: string;
   useEffect(() => {
     if (surface === 'announcements' && state.data && list.data) void supabase.rpc('set_team_channel_preference', { _team: teamId, _read_announcements: true }).then(({ error }) => { if (!error) void qc.invalidateQueries({ queryKey: key }); });
   }, [surface, list.dataUpdatedAt]);
+  useEffect(() => { if (search.announcement && list.data) document.getElementById(`announcement-${search.announcement}`)?.scrollIntoView({ block: 'center' }); }, [search.announcement, list.dataUpdatedAt]);
   useEffect(() => { if (initialBody && state.data?.owner) { setEditor('new'); setBody(initialBody); } }, [initialBody, state.data?.owner]);
   const edit = (item: Announcement | 'new') => { setEditor(item); setTitle(item === 'new' ? '' : item.title); setBody(item === 'new' ? '' : item.body); setLink(item === 'new' ? '' : item.link_url ?? ''); setPinned(item === 'new' ? false : item.pinned); };
   const save = async (item?: Announcement, archive?: boolean) => {

@@ -199,15 +199,6 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
   </>;
 }
 
-function PinnedAnnouncement({ teamId }: { teamId: string }) {
-  const { t } = useTranslation();
-  const { data = [] } = useQuery(announcementsQuery(teamId));
-  const pinned = data.find(a => a.pinned);
-  const photo = useSignedUrl(pinned?.photo_url);
-  if (!pinned) return null;
-  return <section className="panel pinned-card"><span className="eyebrow pinned-label"><Pin />{t('teamSpace.pinned')}</span><p className="pinned-body">{pinned.body}</p>{photo && <img className="announcement-photo" src={photo} alt="" />}</section>;
-}
-
 function ComingUp({ teamId, lang, onOpen }: { teamId: string; lang: string; onOpen: (event: TeamEvent) => void }) {
   const { t } = useTranslation();
   const { data = [], isLoading } = useQuery(upcomingQuery(teamId));
@@ -408,43 +399,6 @@ function MembersSheet({ open, onOpenChange, teamId, userId, isLeader, directLead
       {selected.userId !== userId && <button type="button" className="delete-account" onClick={async () => { if (await confirmAction({ title: t('teamSpace.remove'), body: t('teamSpace.removeConfirm', { name: selected.name ?? t('teamSpace.someone') }), destructive: true, confirmLabel: t('teamSpace.remove') })) void run(() => supabase.from('team_members').delete().match({ team_id: teamId, user_id: selected.userId }), t('teamSpace.removed')); }}><Trash2 className="inline-icon" />{t('teamSpace.remove')}</button>}
       </section>}
     </div>}
-  </ResponsiveSheet>;
-}
-
-function AnnounceSheet({ open, onOpenChange, teamId, userId, initialBody }: { open: boolean; onOpenChange: (o: boolean) => void; teamId: string; userId: string; initialBody?: string | null }) {
-  const { t } = useTranslation(); const queryClient = useQueryClient();
-  const { data: list = [] } = useQuery(announcementsQuery(teamId));
-  const [body, setBody] = useState(initialBody ?? ''); useEffect(() => { if (initialBody) setBody(initialBody); }, [initialBody]); const [pin, setPin] = useState(true); const [file, setFile] = useState<File | null>(null); const [busy, setBusy] = useState(false);
-  const [emailTeam, setEmailTeam] = useState(false); const [subteams, setSubteams] = useState(false);
-  const { data: channels } = useChannelStatus();
-  const refresh = () => queryClient.invalidateQueries({ queryKey: teamKey(teamId) });
-  const post = async () => {
-    if (!body.trim()) return; setBusy(true);
-    try {
-      const photo_url = file ? await uploadMedia(userId, file, 'announcement') : null;
-      const { data: created, error } = await supabase.from('announcements').insert({ team_id: teamId, author_id: userId, body: body.trim(), photo_url, pinned: pin }).select('id').single();
-      if (error) throw error;
-      const { data: emailed } = await supabase.rpc('notify_announcement', { _announcement: created.id, _email: emailTeam, _subteams: emailTeam && subteams });
-      setBody(''); setFile(null); toast.success(emailTeam ? t('notify.announceQueued', { count: emailed ?? 0 }) : t('teamSpace.posted')); await refresh();
-    } catch (error) { toast.error(errorText(t, error)); }
-    setBusy(false);
-  };
-  const act = async (fn: () => PromiseLike<{ error: unknown }>) => { const { error } = await fn(); if (error) toast.error(errorText(t, error)); await refresh(); };
-  return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={t('teamSpace.announce')}>
-    <div className="edit-form">
-      <div className="form-field"><div className="label-row"><label className="field-label" htmlFor="announce-body">{t('teamSpace.message')}</label><span className="char-count">{body.length}/2000</span></div>
-        <Textarea id="announce-body" rows={4} className="field-textarea" maxLength={2000} value={body} onChange={e => setBody(e.target.value)} placeholder={t('teamSpace.messagePlaceholder')} /><ClaimGuard text={body} onUse={setBody} /></div>
-      <div className="photo-row"><label className="file-button"><Upload />{file ? file.name : t('teamSpace.addPhoto')}<input type="file" accept="image/*" hidden onChange={e => setFile(e.target.files?.[0] ?? null)} /></label>{file && <button type="button" className="auth-link" onClick={() => setFile(null)}>{t('onboarding.removePhoto')}</button>}</div>
-      <label className="switch-row"><Switch checked={pin} onCheckedChange={setPin} /><span>{t('teamSpace.pinThis')}</span></label>
-      <Button className="onboarding-continue" disabled={busy || !body.trim()} onClick={post}><Megaphone />{busy ? t('onboarding.saving') : t('teamSpace.post')}</Button>
-      <label className="switch-row"><Switch checked={emailTeam} onCheckedChange={setEmailTeam} /><span><strong>{t('notify.emailTeam')}</strong>{channels && !channels.announcements && <small className="not-connected-badge">{t('common.notConnected')}</small>}</span></label>
-      {emailTeam && <label className="switch-row"><Switch checked={subteams} onCheckedChange={setSubteams} /><span>{t('notify.includeSubteams')}</span></label>}
-      <p className="not-connected">{t('notify.announceNote')}</p>
-      {list.length > 0 && <div className="announcement-list"><span className="field-label">{t('teamSpace.recent')}</span>{list.map(a => <div className="announcement-row" key={a.id}>
-        <p>{a.body}</p><div className="confirm-actions">
-          <Button size="sm" variant="secondary" onClick={() => act(() => supabase.from('announcements').update({ pinned: !a.pinned }).eq('id', a.id))}><Pin />{a.pinned ? t('teamSpace.unpin') : t('teamSpace.pin')}</Button>
-          <Button size="sm" variant="ghost" aria-label={t('teamSpace.delete')} onClick={() => act(() => supabase.from('announcements').delete().eq('id', a.id))}><Trash2 /></Button></div></div>)}</div>}
-    </div>
   </ResponsiveSheet>;
 }
 

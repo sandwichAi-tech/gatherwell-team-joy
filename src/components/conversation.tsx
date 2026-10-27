@@ -78,7 +78,7 @@ function CommentRow({ c, replies, feed, me, teamId, eventId, topicId, lang }: { 
   const { t } = useTranslation(); const qc = useQueryClient(); const [replying, setReplying] = useState(false);
   const refresh = () => qc.invalidateQueries({ queryKey: ['comments', eventId ?? topicId] });
   const act = async (fn: string, args: Record<string, unknown>, ok?: string) => { const { error } = await db.rpc(fn, args); if (error) { toast.error(t(errorKey(error))); return; } if (ok) toast.success(t(ok)); void refresh(); };
-  const Body = ({ x, child }: { x: Item; child?: boolean }) => <div className={`convo-item ${child ? 'is-reply' : ''} ${x.hidden ? 'is-hidden' : ''}`}>
+  const Body = ({ x, child }: { x: Item; child?: boolean }) => <div id={`message-${x.id}`} className={`convo-item ${child ? 'is-reply' : ''} ${x.hidden ? 'is-hidden' : ''}`}>
     <span className="initial-avatar" aria-hidden="true">{initialsOf(x.name)}</span>
     <div className="convo-main">
       <div className="convo-meta"><strong>{x.name ?? t('teamSpace.someone')}</strong>
@@ -105,7 +105,9 @@ function CommentRow({ c, replies, feed, me, teamId, eventId, topicId, lang }: { 
 
 export function CommentThread({ teamId, eventId = null, topicId = null, me, title }: { teamId: string; eventId?: string | null; topicId?: string | null; me: string; title?: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage === 'es' ? 'es-419' : 'en-US';
+  const messageSearch = useSearch({ strict: false }) as { message?: string };
   const { data: feed, isLoading, isError, refetch } = useFeed(eventId, topicId);
+  useEffect(() => { if (messageSearch.message && feed) document.getElementById(`message-${messageSearch.message}`)?.scrollIntoView({ block: 'center' }); }, [messageSearch.message, feed]);
   const { roots, byParent } = useMemo(() => {
     const items = feed?.items ?? []; const byParent = new Map<string, Item[]>();
     items.forEach(i => { if (i.parent_id) byParent.set(i.parent_id, [...(byParent.get(i.parent_id) ?? []), i]); });
@@ -137,7 +139,7 @@ export function DiscussionsPanel({ teamId, isLeader, me }: { teamId: string; isL
   const [open, setOpen] = useState<string | null>(null); const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState(''); const [body, setBody] = useState(''); const [busy, setBusy] = useState(false);
   // Deep links (/team?topic=<id>) from notifications and push open the matching discussion.
-  const search = useSearch({ strict: false }) as { topic?: string }; const navigate = useNavigate();
+  const search = useSearch({ strict: false }) as { topic?: string; message?: string }; const navigate = useNavigate();
   useEffect(() => { if (search.topic) setOpen(search.topic); }, [search.topic]);
   const close = () => { setOpen(null); if (search.topic) void navigate({ to: '.', search: (s: Record<string, unknown>) => ({ ...s, topic: undefined }) as never, replace: true }); };
   useEffect(() => {
