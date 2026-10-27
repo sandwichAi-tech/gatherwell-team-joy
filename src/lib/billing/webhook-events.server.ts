@@ -8,6 +8,7 @@
 // - A downgrade is applied at the end of the current month.
 // - A failed payment keeps access while the provider retries.
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { confirmedChallengePayment, fullChallengeRefund } from '../challenge-commerce';
 
 const money = (c: number) => `$${(c / 100).toFixed(2)}`;
 const ts = (s?: number | null) => (s ? new Date(s * 1000).toISOString() : null);
@@ -42,8 +43,12 @@ export async function processPaymentEvent(db: SupabaseClient, evt: PaymentEvent)
           _payload: { name: m.first, title: ev?.title ?? '', starts_at: ev?.starts_at, timezone: ev?.timezone, location: ev?.location_name, amount: money(pay?.amount_cents ?? o.amount_total ?? 0), service_fee: pay && pay.service_fee_cents && !pay.service_fee_covered ? money(pay.service_fee_cents) : null, ticket: pay && pay.service_fee_cents && !pay.service_fee_covered ? money(pay.amount_cents - pay.service_fee_cents) : null, code, event_id: m.event_id },
           _send_after: new Date().toISOString(), _event: m.event_id, _rsvp: rsvp?.id ?? undefined });
       } else if (m.kind === 'challenge') {
-        await db.from('challenge_members').upsert({ challenge_id: m.challenge_id, user_id: m.user_id }, { onConflict: 'challenge_id,user_id', ignoreDuplicates: true });
-        await db.from('payments').update({ status: 'paid', stripe_payment_intent: o.payment_intent }).eq('stripe_session_id', o.id);
+        const { data: pay, error: readError } = await db.from('payments').select('id,stripe_session_id,amount_cents,challenge_id,buyer_key').eq('stripe_session_id', o.id).maybeSingle();
+        if (readError) throw readError;
+        if (!pay || !confirmedChallengePayment(o, pay, m, o.id)) throw new Error('challenge_payment_unverified');
+        // Legacy events cannot mint access: the guarded enrollment lifecycle remains setup-blocked.
+        const { error: paymentError } = await db.from('payments').update({ status: 'paid', stripe_payment_intent: o.payment_intent }).eq('id', pay.id);
+        if (paymentError) throw paymentError;
       } else if (m.kind === 'offer') {
         const { data: pay } = await db.from('payments').update({ status: 'paid', stripe_payment_intent: o.payment_intent ?? null }).eq('stripe_session_id', o.id).select('amount_cents').maybeSingle();
         await db.from('offer_purchases' as any).upsert({ offer_id: m.offer_id, user_id: m.user_id, status: o.subscription ? 'active' : 'paid', stripe_subscription_id: o.subscription ?? null, amount_cents: pay?.amount_cents ?? o.amount_total ?? 0, cancel_at_period_end: false, ...(m.founding === '1' ? { founding: true } : {}) }, { onConflict: 'offer_id,user_id' });
@@ -114,6 +119,15 @@ export async function processPaymentEvent(db: SupabaseClient, evt: PaymentEvent)
     }
 
     case 'charge.refunded': {
+      const { data: challengePay, error: challengeError } = await db.from('payments').select('id,challenge_id,amount_cents').eq('kind', 'challenge').eq('stripe_payment_intent', o.payment_intent).maybeSingle();
+      if (challengeError) throw challengeError;
+      if (challengePay) {
+        if (!fullChallengeRefund(challengePay.amount_cents, Number(o.amount_refunded ?? 0))) break;
+        const { error: pe } = await db.from('payments').update({ status: 'refunded' }).eq('id', challengePay.id);
+        const { error: me } = await db.from('challenge_members').update({ access_status: 'refunded' }).eq('payment_id', challengePay.id);
+        if (pe || me) throw pe ?? me;
+        break;
+      }
       const { data: pay } = await db.from('payments').update({ status: 'refunded' }).eq('stripe_payment_intent', o.payment_intent).select('rsvp_id, buyer_email, buyer_name, amount_cents, event_id').maybeSingle();
       if (pay?.rsvp_id) await db.from('rsvps').update({ status: 'cancelled' }).eq('id', pay.rsvp_id);
       if (pay?.buyer_email) {
