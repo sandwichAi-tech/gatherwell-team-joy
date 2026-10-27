@@ -7441,7 +7441,7 @@
     "courseHint": "El acceso depende del curso seleccionado.",
     "coachHint": "Los recursos publicados aparecen en tu página pública de coach. Los borradores son privados.",
     "pickCourse": "Elige el curso",
-    "courseAccess": "Incluido con el acceso al curso. Sin pago adicional.",
+    "courseAccess": "Incluido con este curso",
     "oneTimePrice": "Precio de pago único (USD)",
     "priceError": "Ingresa de $0.50 a $1,000 con un máximo de dos decimales.",
     "setup": "Configurar pagos",
@@ -7472,11 +7472,13 @@
     "removeCourse": "Quitar",
     "lockedNote": "Este elemento se creó dentro de un curso y permanece allí. Crea un recurso nuevo para compartirlo en otros lugares.",
     "needOne": "Elige al menos un lugar antes de publicar.",
-    "courseIncluded": "Los miembros del curso lo reciben con su acceso al curso. Los demás pagan este precio.",
+    "courseIncluded": "Incluido con estos cursos; el precio individual aplica en otros lugares. Quien tenga acceso a un curso elegido, incluso gratuito, lo obtiene sin costo adicional.",
     "summaryTitle": "Dónde aparecerá",
     "fix": "Corregir",
     "edit": "Editar",
-    "archiveWarn": "Está publicado en: {{places}}. Se quitará de todos. El historial de clientes se conserva."
+    "archiveWarn": "Está publicado en: {{places}}. Se quitará de todos. El historial de clientes se conserva.",
+    "includedPaid": "Incluido con estos cursos; el precio individual aplica en otros lugares.",
+    "includedCourse": "Incluido con estos cursos para quien tenga acceso al curso, aunque el curso sea gratuito."
   },
   "teamMembership": {
     "lead": "Equipos que lidero",

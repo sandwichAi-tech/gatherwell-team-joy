@@ -596,7 +596,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
     <p id="rb-active-hint" className="field-hint">{t('resources.item.activeFromHint', { tz })}</p>
   </Field>;
   const preview = <>
-    <DestinationSummary dest={dest} courses={courseOptions} onFix={() => { goStep(sections.includes('access') ? 'access' : 'presentation'); requestAnimationFrame(() => document.getElementById('rb-destinations')?.focus()); }} />
+    <DestinationSummary paid={paid} dest={dest} courses={courseOptions} onFix={() => { goStep(sections.includes('access') ? 'access' : 'presentation'); requestAnimationFrame(() => document.getElementById('rb-destinations')?.focus()); }} />
     {type === 'course' && loaded?.id && <CourseOutlinePreview id={loaded.id} />}
     {trackLessons && <div className="form-field" role="status"><span className="field-label">{t('resources.item.lessonStatusTitle')}</span>
       <ul className="lesson-status-list">{trackLessons.map(l => { const ph = hasPlaceholder(l.title_en, l.title_es, l.notes_en, l.notes_es, l.description_en, l.description_es);

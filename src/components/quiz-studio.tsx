@@ -328,7 +328,7 @@ export function QuizStudio({ quizId }: { quizId: string }) {
       </section>
 
       <section className="panel" aria-labelledby="qs-pub"><h2 id="qs-pub">{t(s.is_published ? 'quizStudio.liveTitle' : 'quizStudio.readyTitle')}</h2>
-        <DestinationSummary dest={dest} courses={courseOptions} onFix={() => document.getElementById('qs-access-destinations')?.focus()} />
+        <DestinationSummary paid={!pricing.free} dest={dest} courses={courseOptions} onFix={() => document.getElementById('qs-access-destinations')?.focus()} />
         {blockers.length ? <ul className="offer-includes" role="status">{blockers.map(b => <li key={b}><AlertCircle />{b.startsWith('dest_') ? t(`resources.item.issue.${b.slice(5)}`) : t(`quiz.blocker.${b}`)}</li>)}</ul> : <p className="muted-small">{t('quizStudio.allGood')}</p>}
         <div className="guest-button-row">
           {!s.is_published ? <Button disabled={busy || blockers.length > 0} onClick={publish}>{t('quiz.publish')}</Button>

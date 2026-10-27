@@ -128,7 +128,7 @@ export function ResourceAccessFields({ type, dest, onDest, free, price, onAccess
 }
 
 /** Review: every place the resource will appear, with a Fix action for missing/unavailable courses. */
-export function DestinationSummary({ dest, courses, onFix }: { dest: Destinations; courses: CourseOption[]; onFix: () => void }) {
+export function DestinationSummary({ dest, courses, onFix, paid = false }: { dest: Destinations; courses: CourseOption[]; onFix: () => void; paid?: boolean }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage;
   const authorized = courses.map(c => c.id);
   const bad = unavailableCourses(dest, authorized).map(c => c.course);
@@ -141,5 +141,6 @@ export function DestinationSummary({ dest, courses, onFix }: { dest: Destination
       <Button type="button" variant="secondary" onClick={onFix}>{rows.length === 0 || bad.length ? t('resourcePlacement.fix') : t('resourcePlacement.edit')}</Button></div>
     {rows.length === 0 ? <p className="field-hint" role="alert">{t('resourcePlacement.needOne')}</p>
       : <ul className="destination-summary">{rows.map(r => <li key={r.key} data-ok={r.ok}><span>{r.label}</span>{!r.ok && <small role="alert">{t('resourcePlacement.unavailableShort')}</small>}</li>)}</ul>}
+    {dest.courses.length > 0 && <p className="field-hint">{t(paid && (dest.team || dest.coach) ? 'resourcePlacement.includedPaid' : 'resourcePlacement.includedCourse')}</p>}
   </section>;
 }
