@@ -5,7 +5,7 @@ import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ArrowDown, ArrowLeft, ArrowUp, Eye, Plus, Save, Trash2 } from '@/components/icons';
+import { ArrowDown, ArrowLeft, ArrowUp, Eye, Plus, Trash2 } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';

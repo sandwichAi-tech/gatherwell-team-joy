@@ -1,3 +1,4 @@
+import { BuilderStepFooter } from '@/components/builder-step-footer';
 import { DestinationSummary, ResourceAccessFields, livePlacementList } from '@/components/resource-access-fields';
 import { myOffersQuery, offerTitle } from '@/lib/offers';
 import { getPaymentsReadiness } from '@/lib/billing.functions';
@@ -149,6 +150,7 @@ export function QuizStudio({ quizId }: { quizId: string }) {
   const [destSnap, setDestSnap] = useState('');
   const [pricing, setPricing] = useState({ free: true, price: '' });
   const [tab, setTab] = useState<'build' | 'preview' | 'results'>('build');
+  const goTab = (k: 'build' | 'preview' | 'results') => { setTab(k); requestAnimationFrame(() => document.getElementById('qs-step-heading')?.focus()); };
   const load = useQuery({ queryKey: ['quiz-studio', quizId], queryFn: async () => {
     const z = await db.from('quizzes').select('*').eq('id', quizId).maybeSingle();
     if (z.error) throw z.error; if (!z.data) return null;
@@ -268,7 +270,8 @@ export function QuizStudio({ quizId }: { quizId: string }) {
       <p><span className="chip">{t(`quizStudio.status.${status}`)}</span> <span className="chip">{t(`quizStudio.mode.${s.mode}`)}</span></p>
     </div></div>
     <div className="scroll-row"><div className="segmented" role="tablist" aria-label={t('quizStudio.eyebrow')}>{(['build', 'preview', 'results'] as const).map(k =>
-      <Button key={k} role="tab" variant="ghost" aria-selected={tab === k} className={tab === k ? 'selected' : ''} onClick={() => setTab(k)}>{k === 'preview' ? <Eye /> : k === 'results' ? <BarChart3 /> : <Pencil />}{t(`quizStudio.tabs.${k}`)}</Button>)}</div></div>
+      <Button key={k} role="tab" variant="ghost" aria-selected={tab === k} className={tab === k ? 'selected' : ''} onClick={() => goTab(k)}>{k === 'preview' ? <Eye /> : k === 'results' ? <BarChart3 /> : <Pencil />}{t(`quizStudio.tabs.${k}`)}</Button>)}</div></div>
+    <h2 id="qs-step-heading" tabIndex={-1} className="builder-step-heading">{t(`quizStudio.tabs.${tab}`)}</h2>
 
     {tab === 'build' && <>
       <section className="panel edit-form" aria-labelledby="qs-basics"><h2 id="qs-basics">{t('quizStudio.basics')}</h2>
@@ -336,12 +339,16 @@ export function QuizStudio({ quizId }: { quizId: string }) {
         </div>
         <Button variant="ghost" onClick={() => void exit()}>{t('quizStudio.exit')}</Button>
       </section>
+      <BuilderStepFooter onSave={() => void saveSettings().then(ok => { if (ok) toast.success(t('resources.item.draftToast')); })} saveDisabled={!dirty} saving={busy}
+        onNext={() => goTab('preview')} />
     </>}
 
     {tab === 'preview' && <section className="panel"><QuizPreview mode={s.mode} title={pick(lang, s.title_en, s.title_es)} questions={playQs} outcomes={outs.map(o => ({ ...o, body_en: o.body_en || null, body_es: o.body_es || null }))}
       bands={bands.map(b => ({ ...b, body_en: b.body_en || null, body_es: b.body_es || null }))} passPct={s.pass_pct} urls={urls}
       keys={Object.fromEntries(questions.map(q => [q.id, q.options.filter(o => o.is_correct).map(o => o.id!)]))}
-      outcomeOf={Object.fromEntries(questions.flatMap(q => q.options.map(o => [o.id!, o.outcome_id])))} /></section>}
+      outcomeOf={Object.fromEntries(questions.flatMap(q => q.options.map(o => [o.id!, o.outcome_id])))} /><BuilderStepFooter onBack={() => goTab('build')} saving={busy}
+        final={!s.is_published ? <Button className="builder-footer-primary" disabled={busy || blockers.length > 0} aria-busy={busy} onClick={publish}>{busy ? t('onboarding.saving') : t('quiz.publish')}</Button>
+          : <Button className="builder-footer-primary" disabled={busy || !dirty} aria-busy={busy} onClick={update}>{busy ? t('onboarding.saving') : t('quizStudio.update')}</Button>} /></section>}
 
     {tab === 'results' && <section className="panel" aria-labelledby="qs-res"><h2 id="qs-res">{t('quizStudio.tabs.results')}</h2>
       {summary.isPending ? <ListSkeleton rows={2} /> : summary.isError || !summary.data ? <RetryState retry={() => void summary.refetch()} /> : summary.data.respondents === 0 ? <p className="muted">{t('quizStudio.noResponses')}</p> : <>
