@@ -710,3 +710,8 @@
 - Review shows an Access row (Free, price, or "price missing") and notes when paid publishing waits for payment setup.
 - Card preview no longer shows "Buy now · Free" for a paid item without a price.
 - Known gap: deleting a track/quiz cascades learner progress, entitlements and quiz attempts (orders block deletion). This conflicts with history-preservation and needs a soft-delete decision.
+
+## 2026-10-27 — Resource safe removal (pass 4)
+- Migrations 0196–0198: resource_protected/removal_plan/remove/restore RPCs, delete guards on tracks/recipes/quizzes/offers/lessons, archived resources cannot be republished until restored, duplicate_quiz copies Team/Coach/price and only courses the caller owns.
+- Every host Remove button (track, recipe, quiz, quiz studio, course/offer) now shows the server-decided action with EN/ES consequence copy and listed placements; Restore returns an archived item as an unplaced draft.
+- Unverified: dialog on screen in browser, non-quiz duplicate (no duplicate feature exists for other types), paid entitlement fixtures.
