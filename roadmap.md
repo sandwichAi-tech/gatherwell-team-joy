@@ -1,5 +1,11 @@
 # Challenge experience pass — DONE
 
+## Website Notes rows 102–105 — In Progress
+- [ ] Audit ownership/membership/invites, private guards and authored sharing/copy models.
+- [ ] Implement owner approval, My teams, named management and integrate direct private access.
+- [ ] Implement explicit private sharing and safe independent draft copies for supported types.
+- [ ] Verify isolated multi-team/account workflow, EN/ES layouts, tests/compile and exact cleanup; report gaps per row.
+
 ## Website Notes row 106 — In Progress
 - [x] Audited existing communication, direct memberships/invitations, owner/leader, notification, search and moderation paths.
 - [x] Reused announcements/chat with strict direct-team access, owner-only management, separate unread/mute, safe links/deep links and retry dedupe.
