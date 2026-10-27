@@ -48,3 +48,19 @@ export function reorderedIds<T extends { id: string }>(rows: T[], index: number,
   if (!a || !b) return ids;
   ids[index] = b; ids[other] = a; return ids;
 }
+export type RangeProblem = { kind: 'empty' | 'invalid' | 'start' | 'end' | 'gap' | 'overlap'; from?: number; to?: number };
+/** First concrete problem with result ranges, in plain terms the builder can show. null = ranges cover 0–100 exactly once. */
+export function rangeProblem(results: AssessmentResult[]): RangeProblem | null {
+  if (!results.length) return { kind: 'empty' };
+  const s = [...results].sort((a, b) => a.min - b.min);
+  for (const r of s) if (!Number.isInteger(r.min) || !Number.isInteger(r.max) || r.min < 0 || r.max > 100 || r.max < r.min) return { kind: 'invalid', from: r.min, to: r.max };
+  if (s[0]!.min !== 0) return { kind: 'start', from: 0, to: s[0]!.min - 1 };
+  for (let i = 1; i < s.length; i++) {
+    const prev = s[i - 1]!.max, cur = s[i]!.min;
+    if (cur > prev + 1) return { kind: 'gap', from: prev + 1, to: cur - 1 };
+    if (cur <= prev) return { kind: 'overlap', from: cur, to: Math.min(prev, s[i]!.max) };
+  }
+  const last = s.at(-1)!.max;
+  if (last !== 100) return { kind: 'end', from: last + 1, to: 100 };
+  return null;
+}
