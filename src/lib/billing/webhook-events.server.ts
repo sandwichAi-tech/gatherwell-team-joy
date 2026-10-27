@@ -9,6 +9,8 @@
 // - A failed payment keeps access while the provider retries.
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { confirmedChallengePayment, fullChallengeRefund } from '../challenge-commerce';
+import type { StripeEnv } from '@/lib/stripe.server';
+import { processChallengeOrderEvent } from '@/lib/billing/challenge-order-events.server';
 
 const money = (c: number) => `$${(c / 100).toFixed(2)}`;
 const ts = (s?: number | null) => (s ? new Date(s * 1000).toISOString() : null);
@@ -22,7 +24,8 @@ export function isFinished(type: string, sub: any): boolean {
   return sub.status === 'canceled' || sub.status === 'incomplete_expired' || sub.status === 'unpaid';
 }
 
-export async function processPaymentEvent(db: SupabaseClient, evt: PaymentEvent): Promise<void> {
+export async function processPaymentEvent(db: SupabaseClient, evt: PaymentEvent, environment?: StripeEnv): Promise<void> {
+  if (environment && await processChallengeOrderEvent(db, evt, environment)) return;
   const o = evt.data.object;
 
   switch (evt.type) {
@@ -144,11 +147,11 @@ export async function processPaymentEvent(db: SupabaseClient, evt: PaymentEvent)
  * Idempotent entry point: the first delivery of an event id wins, a repeat is a
  * no-op, and a failed handling releases the row so the provider can retry.
  */
-export async function handlePaymentEvent(db: SupabaseClient, evt: PaymentEvent): Promise<'processed' | 'duplicate' | 'failed'> {
+export async function handlePaymentEvent(db: SupabaseClient, evt: PaymentEvent, environment?: StripeEnv): Promise<'processed' | 'duplicate' | 'failed'> {
   const { error: dup } = await db.from('stripe_events').insert({ id: evt.id, type: evt.type });
-  if (dup) return 'duplicate';
+  if (dup) return dup.code === '23505' ? 'duplicate' : 'failed';
   try {
-    await processPaymentEvent(db, evt);
+    await processPaymentEvent(db, evt, environment);
     return 'processed';
   } catch (e) {
     console.error('[payments webhook]', evt.type, e);
