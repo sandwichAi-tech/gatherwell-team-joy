@@ -1,5 +1,10 @@
 # ZoheeWell Change Log
 
+## 2026-10-27 — Builder step bar with Next (In Progress)
+- Shared step bar (Back, Save draft, Next; the real Publish/Update on the last step) in the resource builder (all types), the Wellness Builder (previously had no Next) and the quiz editor (Build → Preview). Next is marked unavailable only for the current step's required fields; pressing it shows a "Before continuing" message and focuses the first problem. Each step change moves focus to a new step heading. The bar stays in normal page flow with extra bottom space for the phone tab bar, add button and safe area.
+- Verification: 4 new rule tests; full suite 101 files / 871 tests; typecheck OK. Browser walk-through of video, audio, guide, file, bundle, link, recipe, live, quiz, course and wellness assessment through every step and back in EN/ES at 390, plus five types at 320 and 1280: blocked Next explains and focuses, entered data kept, last button reachable and uncovered, no overflow, raw keys or page errors. Nothing was saved.
+- Not verified: quiz editor bar in the browser (needs a saved quiz), real browser zoom, screen readers, physical devices.
+
 ## 2026-10-27 — Resources publish to multiple destinations (In Progress)
 - Builder, quiz studio and wellness assessment builder now use independent destination cards (Team Resources, Coach public page, Courses) with real checkboxes, a course multi-select (search when more than five), optional section per course, unavailable-course warnings with Remove, and a Review "Where it will appear" list with Edit/Fix. Free/Paid became card radios (the old narrow toggles are gone). Quiz delete warns about every live placement.
 - One canonical resource: course placements are reference lessons (tracks gain resource_track_id), never copies; removing a course detaches (history kept), re-adding reuses the same row; publishing/unpublishing syncs every placement; publishing with no destination is refused server-side. Legacy rows keep NULL flags and load as their single old destination; items built inside a course stay locked there.
