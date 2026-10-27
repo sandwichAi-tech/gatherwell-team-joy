@@ -5,7 +5,7 @@
 - [x] Coherent editable templates, replacement warning, schedule validation, one active language and accessible guarded step navigation; atomic retry save and drafts tab.
 - [x] Authoritative My challenges/progress, model/tie/weekly scoring, participant-only leaderboard and revocation/suspension guards; owner extras and silent invites.
 - [x] Free/Paid draft persistence, safe free enrollment/capacity/inventory/retry and optional extra configuration; paid publication/checkout blocked, never simulated access.
-- [ ] Final tests/cleanup: 35 focused, 811 full tests; 36 isolated checks, template/participant/draft browser flows and 24 EN/ES 320/390/1280 captures. Final rerun and exact cleanup pending.
+- [x] Final tests/cleanup: 37 focused / 95 files / 813 full tests passed; 36 isolated checks, template/participant/draft browser flows and EN/ES 320/390/1280 review. Four new accounts, exact team/challenges/enrollments/progress/generated records removed; zero readback, no auth accounts remain.
 - [ ] Rows110–113 remain In Progress: paid checkout/order lines/reservations/refund reconciliation and anonymous Challenge page are not implemented; automatic message scheduler is absent. Physical-device/screen-reader and complete offline/history/account-switch/each-template participant/media matrix lack final verification. Details in CHANGELOG.
 
 ## Website Notes rows 107–109 — In Progress
