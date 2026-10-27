@@ -7710,5 +7710,9 @@
     "loginNeeded": "Only hosts can manage forms.",
     "langEn": "English",
     "langEs": "Spanish"
+  },
+  "builderFooter": {
+    "label": "Step actions",
+    "fixFirst": "Before continuing: {{fields}}"
   }
 }

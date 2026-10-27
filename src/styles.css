@@ -2830,3 +2830,15 @@ a.gw-cat-chip:hover{background:#fff}
 .destination-grid.is-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .destination-mark.is-radio { border-radius: 999px; }
 [data-checked="true"] > .destination-mark.is-radio::after { width: 0.5rem; height: 0.5rem; border: 0; border-radius: 999px; background: var(--primary-foreground); transform: none; }
+/* Shared builder step bar: in normal flow (never covers fields), with room for the mobile tab bar, add button and safe area. */
+.builder-footer { display: grid; gap: 0.75rem; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border); padding-bottom: calc(5.5rem + env(safe-area-inset-bottom)); }
+@media (min-width: 1024px) { .builder-footer { padding-bottom: env(safe-area-inset-bottom); } }
+.builder-footer-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.builder-footer-row > button { min-height: 48px; height: auto; white-space: normal; }
+.builder-footer-row > :last-child { margin-left: auto; }
+.builder-footer-primary[data-blocked="true"] { opacity: 0.6; }
+.builder-footer-alert { margin: 0; padding: 0.75rem; border-radius: 0.5rem; background: var(--muted); color: var(--foreground); overflow-wrap: anywhere; }
+.builder-step-heading { margin: 0.5rem 0 0; font-size: 1.125rem; }
+.builder-step-heading:focus { outline: none; }
+.builder-step-heading:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+@media (max-width: 480px) { .builder-footer-row > :last-child { width: 100%; margin-left: 0; justify-content: center; } }
