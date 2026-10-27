@@ -180,7 +180,7 @@ export function CurriculumPanel({ offer }: { offer: Offer }) {
     const i = list.findIndex(x => x.id === tr.id); const j = i + dir;
     if (j < 0 || j >= list.length) return;
     if (ordering) return; setOrdering(true);
-    const { error } = await supabase.rpc('reorder_course_curriculum', { _course: offer.id, _track: null, _ids: reorderedIds(list, i, dir) });
+    const { error } = await supabase.rpc('reorder_course_curriculum', { _course: offer.id, _track: null, _ids: reorderedIds(list, i, dir) } as never);
     setOrdering(false); if (error) toast.error(t('profile.saveError'));
     await qc.invalidateQueries({ queryKey: ['curriculum', offer.id] });
   };

@@ -46,7 +46,7 @@ export function WellnessAssessmentBuilder({ id, course }: { id?: string | undefi
     if (cents === null || (placement === 'course' && !courseId)) { toast.error(t('resources.item.saveFailed')); return; }
     lock.current = true; setBusy(true);
     try {
-      const { data, error } = await supabase.rpc('save_wellness_assessment', { _id: savedId ?? null, _team: teamId, _config: draft as never, _placement: placement, _course: courseId || null, _price: cents, _revision: revision });
+      const { data, error } = await supabase.rpc('save_wellness_assessment', { _id: savedId ?? null, _team: teamId, _config: draft as never, _placement: placement, _course: courseId || null, _price: cents, _revision: revision } as never);
       if (error) throw error; const result = data as { id: string; revision: number };
       setSavedId(result.id); setRevision(result.revision); baseline.current = JSON.stringify(draft);
       await qc.invalidateQueries({ queryKey: ['team-quizzes'] }); toast.success(t('resources.item.draftToast'));
