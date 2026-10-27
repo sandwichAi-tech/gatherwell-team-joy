@@ -7678,6 +7678,8 @@
     "moveDown": "Move {{name}} down",
     "removeLabel": "Remove {{name}} from this event",
     "manageLink": "Open Waivers & release forms library (new tab)",
-    "loginNeeded": "Only hosts can manage forms."
+    "loginNeeded": "Only hosts can manage forms.",
+    "langEn": "English",
+    "langEs": "Spanish"
   }
 }

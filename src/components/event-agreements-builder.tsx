@@ -84,7 +84,7 @@ export function EventAgreementsSection({ teamId, userId, eventId, locked, isNew,
               <div><dt>{t('builderAgreements.versionLabel')}</dt><dd>{t('waiver.version', { n: v.version })}{ver ? ` · ${t('builderAgreements.effective', { date: fmt(ver.created_at, lang) })}` : ''}</dd></div>
               <div><dt>{t('builderAgreements.source')}</dt><dd>{ver?.file_name ? t('builderAgreements.sourcePdf', { name: ver.file_name }) : t('builderAgreements.sourceText')}</dd></div>
               {u && <div><dt>{t('hostForms.usage')}</dt><dd>{t('hostForms.usageCounts', { drafts: u.drafts, published: u.published })}</dd></div>}
-              <div><dt>{t('builderAgreements.languages')}</dt><dd>{[ver?.body_en?.trim() ? t('me.english') : '', ver?.body_es?.trim() ? t('me.spanish') : ''].filter(Boolean).join(' · ') || t('builderAgreements.pdfOnly')}</dd></div>
+              <div><dt>{t('builderAgreements.languages')}</dt><dd>{[ver?.body_en?.trim() ? t('hostForms.langEn') : '', ver?.body_es?.trim() ? t('hostForms.langEs') : ''].filter(Boolean).join(' · ') || t('builderAgreements.pdfOnly')}</dd></div>
             </dl>
             {ver && !ver.body_es?.trim() && <p className="field-hint">{t('builderAgreements.noSpanish')}</p>}
             {w.version > v.version && <div role="status" className="field-hint"><p>{t('builderAgreements.newer', { n: w.version })}</p><Button type="button" variant="secondary" onClick={() => onChange(value.map(x => x.id === v.id ? { id: w.id, version: w.version } : x))}>{t('builderAgreements.useLatest', { n: w.version })}</Button></div>}

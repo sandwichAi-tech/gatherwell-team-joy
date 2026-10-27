@@ -7678,6 +7678,8 @@
     "moveDown": "Bajar {{name}}",
     "removeLabel": "Quitar {{name}} de este evento",
     "manageLink": "Abrir la biblioteca de exenciones y formularios (pestaña nueva)",
-    "loginNeeded": "Solo los anfitriones pueden administrar formularios."
+    "loginNeeded": "Solo los anfitriones pueden administrar formularios.",
+    "langEn": "Inglés",
+    "langEs": "Español"
   }
 }
