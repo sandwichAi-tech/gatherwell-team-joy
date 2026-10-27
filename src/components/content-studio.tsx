@@ -207,7 +207,8 @@ export function CurriculumPanel({ offer }: { offer: Offer }) {
 }
 
 function SectionEditor({ section, offer, onClose }: { section: Partial<Track> | null; offer: Offer; onClose: () => void }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
   const qc = useQueryClient();
   const [f, setF] = useState({ title_en: '', title_es: '', description_en: '', description_es: '', is_published: false });
   const [busy, setBusy] = useState(false);
@@ -236,14 +237,8 @@ function SectionEditor({ section, offer, onClose }: { section: Partial<Track> | 
   };
   return <ResponsiveSheet open={!!section} onOpenChange={o => !o && onClose()} title={section?.id ? t('content.editSection') : t('content.addSection')}>
     <div className="edit-form">
-      <div className="bilingual">
-        {Field({ id: 'sec-en', label: `${t('templates.title')} · EN`, children: <Input id="sec-en" className="field-input" maxLength={120} value={f.title_en} onChange={e => setF({ ...f, title_en: e.target.value })} /> })}
-        {Field({ id: 'sec-es', label: `${t('templates.title')} · ES`, children: <Input id="sec-es" className="field-input" maxLength={120} value={f.title_es} onChange={e => setF({ ...f, title_es: e.target.value })} /> })}
-      </div>
-      <div className="bilingual">
-        {Field({ id: 'sec-den', label: `${t('templates.description')} · EN`, children: <Textarea id="sec-den" rows={2} className="field-textarea" maxLength={1000} value={f.description_en} onChange={e => setF({ ...f, description_en: e.target.value })} /> })}
-        {Field({ id: 'sec-des', label: `${t('templates.description')} · ES`, children: <Textarea id="sec-des" rows={2} className="field-textarea" maxLength={1000} value={f.description_es} onChange={e => setF({ ...f, description_es: e.target.value })} /> })}
-      </div>
+      <div className="form-field"><label className="field-label" htmlFor="sec-active">{t('templates.title')}</label><Input id="sec-active" className="field-input" maxLength={120} value={lang === 'es' ? f.title_es : f.title_en} onChange={e => setF({ ...f, [lang === 'es' ? 'title_es' : 'title_en']: e.target.value })} /></div>
+      <div className="form-field"><label className="field-label" htmlFor="sec-d-active">{t('templates.description')}</label><Textarea id="sec-d-active" rows={2} className="field-textarea" maxLength={1000} value={lang === 'es' ? f.description_es : f.description_en} onChange={e => setF({ ...f, [lang === 'es' ? 'description_es' : 'description_en']: e.target.value })} /></div>
       <label className="switch-row"><Switch checked={f.is_published} onCheckedChange={v => setF({ ...f, is_published: v })} /><span><strong>{t('content.publishSection')}</strong><small>{t('content.publishSectionText')}</small></span></label>
       <Button className="onboarding-continue" disabled={busy || !ok} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
       {section?.id && <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('learnHub.deleteTrack')}</Button>}
@@ -342,12 +337,9 @@ function CourseLessonEditor({ lesson, offer, siblings, onClose }: { lesson: (Par
   const prereqOptions = siblings.filter(s => s.track_id === lesson.track_id && s.id !== lesson.id);
   return <ResponsiveSheet open={!!lesson} onOpenChange={o => !o && onClose()} title={lesson?.id ? t('learnHub.editLesson') : t('content.addLesson')}>
     <div className="edit-form">
-      <div className="bilingual">
-        {Field({ id: 'cl-en', label: `${t('templates.title')} · EN`, children: <Input id="cl-en" className="field-input" maxLength={140} value={f.title_en} onChange={set('title_en')} /> })}
-        {Field({ id: 'cl-es', label: `${t('templates.title')} · ES`, children: <Input id="cl-es" className="field-input" maxLength={140} value={f.title_es} onChange={set('title_es')} /> })}
-      </div>
+      <div className="form-field"><label className="field-label" htmlFor="cl-active">{t('templates.title')}</label><Input id="cl-active" className="field-input" maxLength={140} value={lang === 'es' ? f.title_es : f.title_en} onChange={e => setF({ ...f, [lang === 'es' ? 'title_es' : 'title_en']: e.target.value })} /></div>
       <div className="form-field"><span className="field-label">{t('learnHub.lessonType')}</span>
-        <div className="type-choices" role="group" aria-label={t('learnHub.lessonType')}>{LESSON_TYPES.map(ty => <button type="button" key={ty} className={`choice-card ${f.type === ty ? 'is-selected' : ''}`} aria-pressed={f.type === ty} onClick={() => setF({ ...f, type: ty })}><strong>{t(`learnHub.type.${ty}`)}</strong></button>)}</div></div>
+        <div className="type-choices" role="group" aria-label={t('learnHub.lessonType')}>{LESSON_TYPES.map(ty => <Button variant="secondary" type="button" key={ty} className={`choice-card ${f.type === ty ? 'is-selected' : ''}`} aria-pressed={f.type === ty} onClick={() => setF({ ...f, type: ty })}><strong>{t(`learnHub.type.${ty}`)}</strong></Button>)}</div></div>
       {needsFile && <div className="form-field"><span className="field-label">{t(`learnHub.type.${f.type}`)}</span>
         <label className="file-button"><Upload />{t('learnHub.chooseFile')}<input type="file" accept={LESSON_FILE_RULES[f.type]?.accept} hidden onChange={e => { const x = e.target.files?.[0]; if (x) void upload(x); }} /></label>
         {(storagePath || fileName) && <p className="field-hint">{t('learnHub.fileAttached')} {fileName}<button type="button" className="text-link" onClick={() => { setStoragePath(null); setFileName(''); }}>{t('learnHub.removeFile')}</button></p>}
@@ -361,10 +353,7 @@ function CourseLessonEditor({ lesson, offer, siblings, onClose }: { lesson: (Par
           <option value="">{t('content.chooseEvent')}</option>
           {events.map((ev: { id: string; title: string }) => <option key={ev.id} value={ev.id}>{ev.title}</option>)}
         </select></div>}
-      <div className="bilingual">
-        {Field({ id: 'cl-den', label: `${t('content.lessonDescription')} · EN`, children: <Textarea id="cl-den" rows={3} className="field-textarea" maxLength={4000} value={f.description_en} onChange={set('description_en')} /> })}
-        {Field({ id: 'cl-des', label: `${t('content.lessonDescription')} · ES`, children: <Textarea id="cl-des" rows={3} className="field-textarea" maxLength={4000} value={f.description_es} onChange={set('description_es')} /> })}
-      </div>
+      <div className="form-field"><label className="field-label" htmlFor="cl-d-active">{t('content.lessonDescription')}</label><Textarea id="cl-d-active" rows={3} className="field-textarea" maxLength={4000} value={lang === 'es' ? f.description_es : f.description_en} onChange={e => setF({ ...f, [lang === 'es' ? 'description_es' : 'description_en']: e.target.value })} /></div>
       {Field({ id: 'cl-dur', label: t('learnHub.duration'), children: <Input id="cl-dur" type="number" min={1} max={600} className="field-input" value={f.duration} onChange={set('duration')} /> })}
       {prereqOptions.length > 0 && <div className="form-field"><label className="field-label" htmlFor="cl-pre">{t('content.prerequisite')}</label>
         <select id="cl-pre" className="field-input" value={f.prerequisite} onChange={e => setF({ ...f, prerequisite: e.target.value })}>
@@ -373,10 +362,7 @@ function CourseLessonEditor({ lesson, offer, siblings, onClose }: { lesson: (Par
         </select></div>}
       <label className="switch-row"><Switch checked={f.is_preview} onCheckedChange={v => setF({ ...f, is_preview: v })} /><span><strong>{t('content.previewLesson')}</strong><small>{t('content.previewLessonText')}</small></span></label>
       <label className="switch-row"><Switch checked={f.is_published} onCheckedChange={v => setF({ ...f, is_published: v })} /><span><strong>{t('content.publishLesson')}</strong><small>{t('content.publishLessonText')}</small></span></label>
-      <div className="bilingual">
-        {Field({ id: 'cl-nen', label: `${t('content.instructorNotes')} · EN`, children: <Textarea id="cl-nen" rows={2} className="field-textarea" maxLength={2000} value={f.notes_en} onChange={set('notes_en')} /> })}
-        {Field({ id: 'cl-nes', label: `${t('content.instructorNotes')} · ES`, children: <Textarea id="cl-nes" rows={2} className="field-textarea" maxLength={2000} value={f.notes_es} onChange={set('notes_es')} /> })}
-      </div>
+      <div className="form-field"><label className="field-label" htmlFor="cl-n-active">{t('content.instructorNotes')}</label><Textarea id="cl-n-active" rows={2} className="field-textarea" maxLength={2000} value={lang === 'es' ? f.notes_es : f.notes_en} onChange={e => setF({ ...f, [lang === 'es' ? 'notes_es' : 'notes_en']: e.target.value })} /></div>
       <p className="field-hint">{t('content.instructorNotesHint')}</p>
       <Button className="onboarding-continue" disabled={busy || !ok} onClick={save}>{busy ? t('onboarding.saving') : t('profile.save')}</Button>
       {lesson?.id && <Button variant="ghost" className="danger-link" onClick={remove}><Trash2 />{t('learnHub.deleteLesson')}</Button>}
