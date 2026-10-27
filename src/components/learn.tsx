@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { isLive } from '@/lib/resource-flow';
 import { QuizPlay } from '@/components/quiz-play';
 import { WellnessAssessmentPlay } from '@/components/wellness-assessment-play';
+import { CourseResourceReference } from '@/components/course-resource-reference';
 import { ArrowLeft, ArrowRight, Bell, BellRing, Bookmark, BookmarkCheck, CalendarPlus, Check, Clock, ExternalLink, FileText, Link2, Lock, Play, Radio, Settings2, Share2, Video, Waveform, Download } from '@/components/icons';
 import { formatUnlock } from '@/lib/course-release';
 import { Button } from '@/components/ui/button';
@@ -256,11 +257,13 @@ export function LessonPage({ id }: { id: string }) {
     if (!done) { setJustDone(true); toast.success(t('learnHub.completeSaved')); }
   };
   const upcomingLive = lesson.type === 'live' && !lesson.replay_url && lesson.live_starts_at;
+  const reference = lesson as Lesson & { resource_quiz_id?: string | null; resource_offer_id?: string | null; resource_recipe_id?: string | null };
+  const hasReference = !!(reference.resource_quiz_id || reference.resource_offer_id || reference.resource_recipe_id);
   return <>
     <BackLink to="/learn/track/$id" params={{ id: track.id }} label={trackTitle(track, lang)} />
     <div className="lesson-head"><span className="eyebrow">{t('learnHub.lessonOf', { n: idx + 1, total: list.length })}</span><h1>{lessonTitle(lesson, lang)}</h1>
       {lesson.duration_minutes ? <p className="track-facts">{minutesLabel(t, lesson.duration_minutes)}</p> : null}</div>
-    {attachedQuiz.data ? attachedQuiz.data.assessment ? <WellnessAssessmentPlay id={attachedQuiz.data.id} /> : <QuizPlay quizId={attachedQuiz.data.id} /> : upcomingLive ? <LiveCard lesson={lesson} track={track} /> : <Player lesson={lesson} />}
+    {attachedQuiz.data ? attachedQuiz.data.assessment ? <WellnessAssessmentPlay id={attachedQuiz.data.id} /> : <QuizPlay quizId={attachedQuiz.data.id} /> : hasReference ? <CourseResourceReference lesson={id} /> : upcomingLive ? <LiveCard lesson={lesson} track={track} /> : <Player lesson={lesson} />}
     {notes && <section className="panel lesson-notes"><h2>{t('learnHub.notes')}</h2><p>{notes}</p></section>}
     <LessonSummary lessonId={id} leader={leader} />
     {!upcomingLive && !attachedQuiz.data?.assessment && <div className="lesson-complete">

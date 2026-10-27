@@ -1240,6 +1240,34 @@
       "when": 1793125912381,
       "tag": "0176_course_resource_references_and_assessment_reads",
       "breakpoints": true
+    },
+    {
+      "idx": 177,
+      "version": "7",
+      "when": 1793126084890,
+      "tag": "0177_challenge_refund_evidence_and_publication_boundary",
+      "breakpoints": true
+    },
+    {
+      "idx": 178,
+      "version": "7",
+      "when": 1793126591581,
+      "tag": "0178_challenge_reservation_and_adult_guard_hardening",
+      "breakpoints": true
+    },
+    {
+      "idx": 179,
+      "version": "7",
+      "when": 1793126866710,
+      "tag": "0179_challenge_reconciliation_monotonic_access",
+      "breakpoints": true
+    },
+    {
+      "idx": 180,
+      "version": "7",
+      "when": 1793126990541,
+      "tag": "0180_assessment_claims_check_content_only",
+      "breakpoints": true
     }
   ]
 }

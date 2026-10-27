@@ -9,7 +9,7 @@ export function CourseOutlinePreview({ id }: { id: string }) {
   const q = useQuery({ queryKey: ['course-outline-preview', id], queryFn: async () => {
     const { data: tracks, error } = await supabase.from('tracks').select('id,title_en,title_es,is_published').eq('offer_id', id).order('sort_order').order('created_at'); if (error) throw error;
     const ids = (tracks ?? []).map(tr => tr.id);
-    const { data: lessons, error: e } = ids.length ? await supabase.from('lessons').select('id,track_id,title_en,title_es,type,url,is_published').in('track_id', ids).order('sort_order').order('created_at') : { data: [], error: null }; if (e) throw e;
+    const { data: lessons, error: e } = ids.length ? await supabase.from('lessons').select('id,track_id,title_en,title_es,type,url,is_published').in('track_id', ids).is('detached_at', null).order('sort_order').order('created_at').order('id') : { data: [], error: null }; if (e) throw e;
     return { tracks: tracks ?? [], lessons: lessons ?? [] };
   } });
   if (q.isPending) return <ListSkeleton />;

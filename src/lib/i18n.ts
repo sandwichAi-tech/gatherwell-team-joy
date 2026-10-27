@@ -23,5 +23,5 @@ export function applySavedLanguage() {
 /** Marketing pages render on the server in English, so the language switch waits for their own hydration. */
 export function isServerRenderedMarketing(pathname: string) {
   const p = pathname.replace(/\/$/, '') || '/';
-  return ['/', '/hosts', '/pricing', '/studios', '/discover', '/about', '/careers', '/faq'].includes(p) || /^\/(e|h|l|t|i|r)\//.test(p);
+  return ['/', '/hosts', '/pricing', '/studios', '/discover', '/about', '/careers', '/faq'].includes(p) || /^\/(c|e|h|l|t|i|r)\//.test(p);
 }

@@ -7,7 +7,8 @@ export type NetOverview = { is_host: boolean; connections: NetPerson[]; incoming
 export type FeaturedGathering = { id: string; title: string; starts_at: string; timezone: string; location_name: string | null; host_name: string | null; shared_by: string | null; shared_by_id: string };
 export type ReferralSummary = { sent: number; received: number; thanks_earned_cents: number; thanks_owed_cents: number; thanks: { kind: 'none' | 'percent' | 'flat'; amount: number } | null };
 
-const rpc = supabase.rpc.bind(supabase) as unknown as (fn: string, args?: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>;
+const rpcClient = supabase as unknown as { rpc: (fn: string, args?: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }> };
+const rpc = (fn: string, args?: Record<string, unknown>) => rpcClient.rpc(fn, args);
 export async function netRpc<T = unknown>(fn: string, args?: Record<string, unknown>): Promise<T> {
   const { data, error } = await rpc(fn, args);
   if (error) throw new Error(error.message);

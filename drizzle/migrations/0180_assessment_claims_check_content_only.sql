@@ -1,0 +1,3 @@
+DO $$ DECLARE d text; BEGIN SELECT pg_get_functiondef('public.assessment_collection_guard()'::regprocedure) INTO d;
+ d:=replace(d,'NEW.assessment_config->''questions'',NEW.assessment_config->''results''','(SELECT string_agg(concat_ws('' '',q->>''prompt'',(SELECT string_agg(o->>''label'','' '') FROM jsonb_array_elements(coalesce(q->''options'',''[]''::jsonb)) o)),'' '') FROM jsonb_array_elements(coalesce(NEW.assessment_config->''questions'',''[]''::jsonb)) q),(SELECT string_agg(concat_ws('' '',r->>''title'',r->>''body''),'' '') FROM jsonb_array_elements(coalesce(NEW.assessment_config->''results'',''[]''::jsonb)) r)');
+ EXECUTE d; END $$;

@@ -7530,7 +7530,7 @@
     "nextLink": "Enlace HTTPS opcional para el siguiente paso",
     "previewOnly": "Solo vista previa del autor. No se guardan respuestas ni finalizaciones de participantes.",
     "unscored": "Sin puntuación calculada",
-    "approvedRequired": "Se requiere contenido aprobado para la evaluación. Puedes guardar borradores y ver la vista previa; la publicación y la finalización aún no están disponibles.",
+    "approvedRequired": "Se requiere un alcance aprobado para la evaluación. La publicación y la finalización siguen bloqueadas hasta que exista un documento aprobado.",
     "issues": {
       "title": "Agrega un título.",
       "questions": "Agrega preguntas con un enunciado.",
@@ -7540,6 +7540,36 @@
       "ranges": "Los rangos deben cubrir 0–100 sin huecos ni superposiciones.",
       "results": "Agrega un título y una explicación al resultado.",
       "url": "Usa un enlace HTTPS válido sin credenciales."
+    }
+  },
+  "lifecycle": {
+    "receipts": "Pedidos y recibos",
+    "free": "Gratis",
+    "extras": "Extras opcionales",
+    "base": "Reto",
+    "total": "Total",
+    "continuePayment": "Continuar al pago",
+    "signIn": "Inicia sesión para participar",
+    "refundedAmount": "Reembolso: {{amount}}",
+    "currentResult": "Resultado actual",
+    "history": "Historial de intentos",
+    "retake": "Responder de nuevo",
+    "scope": "Documento de alcance · versión {{version}}",
+    "acceptScope": "He leído y acepto este documento de alcance.",
+    "complete": "Completar evaluación",
+    "completionError": "No se pudo completar. Revisa tus respuestas y tu acceso e inténtalo de nuevo.",
+    "useExisting": "Usar recurso existente",
+    "reuseHint": "Conserva el recurso original. Sus reglas de acceso actuales siguen aplicando.",
+    "unavailableReference": "Este recurso no está disponible actualmente con tu acceso.",
+    "removePreserve": "¿Quitar del curso? Se conservarán el recurso original y el historial de aprendizaje.",
+    "status": {
+      "pending": "Pago pendiente",
+      "paid": "Pagado",
+      "partially_refunded": "Reembolso parcial",
+      "refunded": "Reembolsado",
+      "cancelled": "Cancelado",
+      "failed": "Pago fallido",
+      "disputed": "Requiere revisión"
     }
   }
 }

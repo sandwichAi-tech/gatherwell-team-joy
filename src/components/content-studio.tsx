@@ -20,6 +20,7 @@ import { platformFeeCents } from '@/lib/fees';
 import type { Offer } from '@/lib/offers';
 import { reorderedIds, safeExternalUrl } from '@/lib/wellness-assessment';
 import { WellnessAssessmentBuilder } from '@/components/wellness-assessment-builder';
+import { CourseResourcePicker } from '@/components/course-resource-reference';
 
 const db = supabase as unknown as { from: (t: string) => any };
 
@@ -227,7 +228,7 @@ function SectionEditor({ section, offer, onClose }: { section: Partial<Track> | 
     onClose();
   };
   const remove = async () => {
-    if (!section?.id || !(await confirmAction({ title: t('learnHub.confirmDeleteTrack'), destructive: true }))) return;
+    if (!section?.id || !(await confirmAction({ title: t('lifecycle.removePreserve'), destructive: true }))) return;
     const res = await supabase.rpc('detach_course_curriculum', { _course: offer.id, _track: section.id, _lesson: null } as never);
     if (res.error) { toast.error(t('profile.saveError')); return; }
     await qc.invalidateQueries({ queryKey: ['curriculum', offer.id] });
@@ -267,6 +268,7 @@ function LessonList({ track, lessons, offer, onEdit, onChanged }: { track: Track
     onChanged();
   };
   return <div className="lesson-manage">
+    <CourseResourcePicker course={offer.id} track={track.id} />
     {lessons.length > 0 && <ol className="order-list">{lessons.map((l, i) => <li key={l.id}>
       <span className="order-title"><strong>{lessonTitle(l, i18n.resolvedLanguage)}</strong>
         <small>{[t(`learnHub.type.${l.type}`), l.is_published === false ? t('templates.draft') : null, l.is_preview ? t('content.previewBadge') : null].filter(Boolean).join(' · ')}</small></span>
@@ -335,7 +337,7 @@ function CourseLessonEditor({ lesson, offer, siblings, onClose }: { lesson: (Par
     setBusy(false);
   };
   const remove = async () => {
-    if (!lesson?.id || !(await confirmAction({ title: t('learnHub.confirmDeleteLesson'), destructive: true }))) return;
+    if (!lesson?.id || !(await confirmAction({ title: t('lifecycle.removePreserve'), destructive: true }))) return;
     const r = await supabase.rpc('detach_course_curriculum', { _course: offer.id, _track: lesson.track_id, _lesson: lesson.id });
     if (r.error) { toast.error(t('profile.saveError')); return; }
     await qc.invalidateQueries({ queryKey: ['curriculum', offer.id] });
