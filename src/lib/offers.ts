@@ -35,9 +35,10 @@ export const myOffersQuery = (userId: string) => queryOptions({
 export const teamOffersQuery = (teamId: string) => queryOptions({
   queryKey: ['offers', 'team', teamId],
   queryFn: async () => {
-    const { data, error } = await db.from('offers').select(COLS).eq('team_id', teamId).eq('status', 'published').order('created_at', { ascending: false });
+    const { data, error } = await db.from('offers').select(`${COLS}, on_team`).eq('team_id', teamId).eq('status', 'published').order('created_at', { ascending: false });
     if (error) throw error;
-    return (data ?? []) as Offer[];
+    // Explicitly unlisted from Team Resources (multi-destination) stays out of the team list.
+    return ((data ?? []) as (Offer & { on_team?: boolean | null })[]).filter(o => o.on_team !== false);
   },
 });
 

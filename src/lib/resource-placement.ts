@@ -77,3 +77,6 @@ export async function saveDestinations(
   const r = await rpc('set_resource_destinations', { _kind: entity, _id: id, _team: d.team, _coach: d.coach, _courses: destinationsPayload(d, authorized), _price: isStandalone(d) ? priceCents : 0 });
   if (r.error) throw new Error(r.error.message);
 }
+
+/** Team Resources listing: legacy rows (on_team unset) keep their existing visibility; explicit opt-outs are hidden. */
+export const listedInTeam = (row: { on_team?: boolean | null }) => row.on_team !== false;
