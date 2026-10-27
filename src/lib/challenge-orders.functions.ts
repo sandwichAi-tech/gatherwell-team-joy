@@ -1,6 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
+import { getRequest } from '@tanstack/react-start/server';
 
 export type PublicChallenge = { id: string; title_en: string; title_es: string; description_en: string | null; description_es: string | null; starts_on: string; ends_on: string; is_paid: boolean; price_cents: number; currency: string; enrollment: string; addons: { id: string; name: string; description: string; price_cents: number; max_quantity: number; inventory: number | null; available: boolean }[] };
 export const getPublicChallenge = createServerFn({ method: 'GET' })
@@ -19,6 +20,8 @@ export const getPublicChallenge = createServerFn({ method: 'GET' })
 export const beginChallengeOrder = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), request: z.string().uuid(), extras: z.array(z.object({ id: z.string().min(1).max(100), quantity: z.number().int().min(1).max(20) })).max(8), environment: z.enum(['sandbox', 'live']), origin: z.string().url().refine(u => /^https:\/\//.test(u) || /^http:\/\/localhost(:\d+)?$/.test(u)), lang: z.enum(['en', 'es']) }).parse(d))
   .handler(async ({ data, context }): Promise<{ enrolled?: boolean; url?: string; error?: string }> => {
+    const origin = new URL(getRequest().url).origin;
+    if (data.origin !== origin) return { error: 'not_allowed' };
     const { data: c, error } = await context.supabase.from('challenges').select('is_paid,addons').eq('id', data.id).maybeSingle();
     if (error || !c) return { error: 'not_allowed' };
     const extras = c.addons as unknown as PublicChallenge['addons'];
@@ -38,12 +41,37 @@ export const beginChallengeOrder = createServerFn({ method: 'POST' }).middleware
       const stripe = createStripeClient(data.environment);
       if (order.stripe_checkout_session_id) {
         const session = await stripe.checkout.sessions.retrieve(order.stripe_checkout_session_id);
-        return session.url ? { url: session.url } : { error: 'checkout_pending' };
+        return session.status === 'open' && session.url ? { url: session.url } : { error: 'checkout_pending' };
       }
-      const lines = (await db.from('order_items').select('*').eq('order_id', order.id)).data ?? [];
-      const session = await stripe.checkout.sessions.create({ mode: 'payment', expires_at: Math.floor(new Date(order.reservation_expires_at ?? '').getTime() / 1000), line_items: lines.filter(i => i.unit_cents > 0).map(i => ({ quantity: i.quantity, price_data: { currency: order.currency, unit_amount: i.unit_cents, product_data: { name: i.description ?? 'Challenge' } } })), metadata: { kind: 'challenge_order', order_id: order.id, user_id: context.userId }, payment_intent_data: { application_fee_amount: order.platform_fee_cents, transfer_data: { destination: order.connected_account_id }, metadata: { kind: 'challenge_order', order_id: order.id } }, success_url: `${data.origin}/c/${data.id}`, cancel_url: `${data.origin}/c/${data.id}`, locale: data.lang === 'es' ? 'es-419' : 'en' }, { idempotencyKey: order.idempotency_key });
-      const saved = await db.from('orders').update({ stripe_checkout_session_id: session.id }).eq('id', order.id).eq('status', 'pending');
-      if (saved.error) throw saved.error;
+      const lineRead = await db.from('order_items').select('*').eq('order_id', order.id);
+      if (lineRead.error) throw lineRead.error;
+      const claim = await db.rpc('claim_challenge_checkout', { _order: order.id, _buyer: context.userId, _origin: origin, _lang: data.lang });
+      if (claim.error) throw claim.error;
+      const parameters = claim.data as { origin: string; lang: string };
+      const session = await stripe.checkout.sessions.create({ mode: 'payment', expires_at: Math.floor(new Date(order.reservation_expires_at ?? '').getTime() / 1000), line_items: (lineRead.data ?? []).filter(i => i.unit_cents > 0).map(i => ({ quantity: i.quantity, price_data: { currency: order.currency, unit_amount: i.unit_cents, product_data: { name: i.description ?? 'Challenge' } } })), metadata: { kind: 'challenge_order', order_id: order.id, user_id: context.userId }, payment_intent_data: { application_fee_amount: order.platform_fee_cents, transfer_data: { destination: order.connected_account_id }, metadata: { kind: 'challenge_order', order_id: order.id } }, success_url: `${parameters.origin}/c/${data.id}`, cancel_url: `${parameters.origin}/c/${data.id}`, locale: parameters.lang === 'es' ? 'es-419' : 'en' }, { idempotencyKey: order.idempotency_key });
+      const saved = await db.rpc('bind_challenge_checkout', { _order: order.id, _buyer: context.userId, _session: session.id });
+      if (saved.error || !saved.data) { await stripe.checkout.sessions.expire(session.id); throw new Error('checkout_pending'); }
       return session.url ? { url: session.url } : { error: 'checkout_pending' };
+    } catch (e) { return { error: getStripeErrorMessage(e) }; }
+  });
+
+export const cancelChallengeOrder = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ order: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }): Promise<{ cancelled?: boolean; error?: string }> => {
+    const read = await context.supabase.from('orders').select('id,status,environment,stripe_checkout_session_id,buyer_user_id').eq('id', data.order).eq('buyer_user_id', context.userId).eq('offering_type', 'challenge').maybeSingle();
+    if (read.error || !read.data || read.data.status !== 'pending') return { error: 'not_allowed' };
+    const order = read.data;
+    const { createStripeClient, getStripeErrorMessage } = await import('@/lib/stripe.server');
+    try {
+      if (order.stripe_checkout_session_id) {
+        if (order.environment !== 'live' && order.environment !== 'sandbox') return { error: 'not_allowed' };
+        const stripe = createStripeClient(order.environment);
+        const session = await stripe.checkout.sessions.retrieve(order.stripe_checkout_session_id);
+        if (session.status === 'complete') return { error: 'checkout_pending' };
+        if (session.status !== 'expired') await stripe.checkout.sessions.expire(session.id);
+      }
+      const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
+      const r = await supabaseAdmin.rpc('cancel_challenge_checkout_verified', { _order: order.id, _buyer: context.userId, _session: order.stripe_checkout_session_id ?? '' });
+      if (r.error) return { error: r.error.message }; return { cancelled: true };
     } catch (e) { return { error: getStripeErrorMessage(e) }; }
   });

@@ -1268,6 +1268,34 @@
       "when": 1793126990541,
       "tag": "0180_assessment_claims_check_content_only",
       "breakpoints": true
+    },
+    {
+      "idx": 181,
+      "version": "7",
+      "when": 1793127198325,
+      "tag": "0181_challenge_delivery_leases_and_assessment_publish",
+      "breakpoints": true
+    },
+    {
+      "idx": 182,
+      "version": "7",
+      "when": 1793127353511,
+      "tag": "0182_checkout_binding_refund_and_assessment_guard_closure",
+      "breakpoints": true
+    },
+    {
+      "idx": 183,
+      "version": "7",
+      "when": 1793127505232,
+      "tag": "0183_assessment_required_fields_and_reference_evidence",
+      "breakpoints": true
+    },
+    {
+      "idx": 184,
+      "version": "7",
+      "when": 1793128195964,
+      "tag": "0184_challenge_order_access_and_refund_monotonicity",
+      "breakpoints": true
     }
   ]
 }

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { RetryState } from '@/components/launch-states';
 import { pick } from '@/lib/learn';
+import { useLearn } from '@/components/learn';
 type Resource = { id: string; kind: 'quiz' | 'offer' | 'recipe'; title_en: string; title_es: string };
 export function CourseResourcePicker({ course, track }: { course: string; track: string }) {
   const { t, i18n } = useTranslation(); const qc = useQueryClient(); const [open, setOpen] = useState(false); const [busy, setBusy] = useState(false);
@@ -17,7 +18,8 @@ export function CourseResourcePicker({ course, track }: { course: string; track:
 }
 export function CourseResourceReference({ lesson }: { lesson: string }) {
   const { t } = useTranslation();
-  const q = useQuery({ queryKey: ['course-reference', lesson], queryFn: async () => { const r = await supabase.rpc('course_resource_destination', { _lesson: lesson }); if (r.error) throw r.error; return r.data as unknown as { kind: string; id: string } | null; } });
+  const { userId } = useLearn();
+  const q = useQuery({ queryKey: ['course-reference', userId, lesson], queryFn: async () => { const r = await supabase.rpc('course_resource_destination', { _lesson: lesson }); if (r.error) throw r.error; return r.data as unknown as { kind: string; id: string } | null; } });
   if (q.isError) return <RetryState retry={() => void q.refetch()} />;
   if (q.isPending) return <p role="status">{t('publicEvent.loading')}</p>;
   if (!q.data) return <p role="status">{t('lifecycle.unavailableReference')}</p>;

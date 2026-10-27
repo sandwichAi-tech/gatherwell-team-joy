@@ -4512,6 +4512,8 @@ export type Database = {
           buyer_user_id: string | null
           challenge_cart: Json | null
           challenge_id: string | null
+          checkout_create_started_at: string | null
+          checkout_request: Json | null
           connected_account_id: string | null
           created_at: string
           currency: string
@@ -4545,6 +4547,8 @@ export type Database = {
           buyer_user_id?: string | null
           challenge_cart?: Json | null
           challenge_id?: string | null
+          checkout_create_started_at?: string | null
+          checkout_request?: Json | null
           connected_account_id?: string | null
           created_at?: string
           currency?: string
@@ -4578,6 +4582,8 @@ export type Database = {
           buyer_user_id?: string | null
           challenge_cart?: Json | null
           challenge_id?: string | null
+          checkout_create_started_at?: string | null
+          checkout_request?: Json | null
           connected_account_id?: string | null
           created_at?: string
           currency?: string
@@ -5364,8 +5370,10 @@ export type Database = {
           error: string | null
           event_type: string
           id: string
+          lease_until: string | null
           payload_sha256: string | null
           processed_at: string | null
+          processing_token: string | null
           provider: string
           provider_event_id: string
           received_at: string
@@ -5377,8 +5385,10 @@ export type Database = {
           error?: string | null
           event_type: string
           id?: string
+          lease_until?: string | null
           payload_sha256?: string | null
           processed_at?: string | null
+          processing_token?: string | null
           provider: string
           provider_event_id: string
           received_at?: string
@@ -5390,8 +5400,10 @@ export type Database = {
           error?: string | null
           event_type?: string
           id?: string
+          lease_until?: string | null
           payload_sha256?: string | null
           processed_at?: string | null
+          processing_token?: string | null
           provider?: string
           provider_event_id?: string
           received_at?: string
@@ -8562,6 +8574,10 @@ export type Database = {
           holders: number
         }[]
       }
+      bind_challenge_checkout: {
+        Args: { _buyer: string; _order: string; _session: string }
+        Returns: boolean
+      }
       bind_course_assessment: {
         Args: { _quiz: string; _track: string }
         Returns: string
@@ -8622,6 +8638,10 @@ export type Database = {
       can_use_team_templates: { Args: { _team: string }; Returns: boolean }
       can_view_contact_thread: { Args: { _thread: string }; Returns: boolean }
       can_view_event: { Args: { _event_id: string }; Returns: boolean }
+      cancel_challenge_checkout_verified: {
+        Args: { _buyer: string; _order: string; _session: string }
+        Returns: undefined
+      }
       cancel_rsvp_by_code: { Args: { _code: string }; Returns: boolean }
       challenge_can_enroll: { Args: { _c: string }; Returns: boolean }
       challenge_check_in: {
@@ -8700,6 +8720,20 @@ export type Database = {
       }
       checkin_blocker: { Args: { _rsvp: string }; Returns: string }
       checkin_guest_list: { Args: { _event: string }; Returns: Json }
+      claim_challenge_checkout: {
+        Args: { _buyer: string; _lang: string; _order: string; _origin: string }
+        Returns: Json
+      }
+      claim_challenge_provider_event: {
+        Args: {
+          _environment: string
+          _event: string
+          _hash: string
+          _token: string
+          _type: string
+        }
+        Returns: string
+      }
       claim_guest_records: { Args: never; Returns: Json }
       claim_outbox: {
         Args: { _limit?: number }
@@ -8860,6 +8894,10 @@ export type Database = {
         Args: { _body: string; _team: string; _title: string }
         Returns: string
       }
+      credit_course_assessment_receipt: {
+        Args: { _lesson: string }
+        Returns: undefined
+      }
       current_fee_pct: { Args: { _host: string }; Returns: number }
       decide_community_seat: {
         Args: { _approve: boolean; _id: string }
@@ -9003,6 +9041,15 @@ export type Database = {
           name_es: string
           tier: string
         }[]
+      }
+      finish_challenge_provider_event: {
+        Args: {
+          _environment: string
+          _event: string
+          _succeeded: boolean
+          _token: string
+        }
+        Returns: boolean
       }
       follow_target: {
         Args: {
@@ -9515,6 +9562,10 @@ export type Database = {
         Args: { _quiz: string; _revision: number; _scope: string }
         Returns: undefined
       }
+      publish_wellness_assessment_checked: {
+        Args: { _quiz: string; _revision: number; _scope: string }
+        Returns: undefined
+      }
       queue_broadcast: { Args: { _id: string }; Returns: number }
       queue_rsvp_notices: {
         Args: { _rsvp: string; _template: string }
@@ -9701,6 +9752,10 @@ export type Database = {
           code: string
           status: string
         }[]
+      }
+      release_challenge_checkout: {
+        Args: { _order: string; _state: string }
+        Returns: undefined
       }
       remove_library_attachment: {
         Args: { _event: string; _library: string }
