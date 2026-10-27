@@ -1,3 +1,5 @@
+import { SafeChatText } from '@/components/safe-chat-text';
+import { useRef } from 'react';
 import { EmptyState } from '@/components/launch-states';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
@@ -30,10 +32,10 @@ export function errorKey(e: unknown) {
 
 function useFeed(eventId: string | null, topicId: string | null) {
   const qc = useQueryClient(); const key = ['comments', eventId ?? topicId];
-  const q = useQuery({ queryKey: key, queryFn: async (): Promise<Feed> => (await db.rpc('comment_feed', { _event: eventId, _topic: topicId })).data });
+  const q = useQuery({ queryKey: key, gcTime: 0, staleTime: 0, refetchInterval: 10_000, queryFn: async (): Promise<Feed> => { const { data, error } = await db.rpc('comment_feed', { _event: eventId, _topic: topicId }); if (error) throw error; return data; } });
   useEffect(() => {
     const filter = eventId ? `event_id=eq.${eventId}` : `topic_id=eq.${topicId}`;
-    const ch = supabase.channel(`comments-${eventId ?? topicId}`)
+    const ch = supabase.channel(`comments-${eventId ?? topicId}-${crypto.randomUUID()}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'comments', filter }, () => void qc.invalidateQueries({ queryKey: key }))
       .on('postgres_changes', { event: '*', schema: 'public', table: 'comment_reactions' }, () => void qc.invalidateQueries({ queryKey: key }))
       .subscribe();
@@ -45,20 +47,21 @@ function useFeed(eventId: string | null, topicId: string | null) {
 
 function Composer({ teamId, eventId, topicId, parentId, onDone, autoFocus }: { teamId: string; eventId: string | null; topicId: string | null; parentId?: string; onDone?: () => void; autoFocus?: boolean }) {
   const { t } = useTranslation(); const qc = useQueryClient();
+  const request = useRef(crypto.randomUUID());
   const [body, setBody] = useState(''); const [mentions, setMentions] = useState<{ id: string; name: string }[]>([]); const [picking, setPicking] = useState(false); const [busy, setBusy] = useState(false);
   const { data: roster = [] } = useQuery({ ...rosterQuery(teamId), enabled: picking });
   const submit = async (e: FormEvent) => {
     e.preventDefault(); const text = body.trim(); if (!text) return;
     setBusy(true);
     const ids = mentions.filter(m => text.includes(`@${m.name}`)).map(m => m.id);
-    const { error } = await db.rpc('post_comment', { _event: eventId, _topic: topicId, _parent: parentId ?? null, _body: text, _mentions: ids });
+    const { error } = topicId ? await db.rpc('post_team_comment', { _topic: topicId, _parent: parentId ?? null, _body: text, _request: request.current }) : await db.rpc('post_comment', { _event: eventId, _topic: topicId, _parent: parentId ?? null, _body: text, _mentions: ids });
     setBusy(false);
     if (error) { toast.error(t(errorKey(error))); return; }
-    setBody(''); setMentions([]); void qc.invalidateQueries({ queryKey: ['comments', eventId ?? topicId] }); onDone?.();
+    request.current = crypto.randomUUID(); setBody(''); setMentions([]); void qc.invalidateQueries({ queryKey: ['comments', eventId ?? topicId] }); onDone?.();
   };
   return <form className="convo-composer" onSubmit={submit}>
     <label className="sr-only" htmlFor={`c-${parentId ?? 'root'}`}>{parentId ? t('conversation.reply') : t('conversation.write')}</label>
-    <Textarea id={`c-${parentId ?? 'root'}`} autoFocus={autoFocus} rows={parentId ? 2 : 3} maxLength={2000} value={body} placeholder={parentId ? t('conversation.replyPlaceholder') : t('conversation.placeholder')} onChange={e => setBody(e.target.value)} />
+    <Textarea id={`c-${parentId ?? 'root'}`} autoFocus={autoFocus} rows={parentId ? 2 : 3} maxLength={2000} value={body} placeholder={parentId ? t('conversation.replyPlaceholder') : t('conversation.placeholder')} onChange={e => { request.current = crypto.randomUUID(); setBody(e.target.value); }} />
     <div className="convo-composer-actions">
       <Button type="button" variant="ghost" size="icon" aria-label={t('conversation.mention')} onClick={() => setPicking(true)}><AtSign /></Button>
       <Button type="submit" disabled={busy || !body.trim()}><Send />{parentId ? t('conversation.sendReply') : t('conversation.post')}</Button>
@@ -82,7 +85,7 @@ function CommentRow({ c, replies, feed, me, teamId, eventId, topicId, lang }: { 
         <time dateTime={x.created_at}>{new Date(x.created_at).toLocaleString(lang, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</time>
         {x.pinned && <span className="chip"><Pin className="inline-icon" />{t('conversation.pinned')}</span>}
         {x.hidden && <span className="chip">{t('conversation.hiddenChip')}</span>}</div>
-      <p className="convo-body">{x.body}</p>
+      <p className="convo-body"><SafeChatText body={x.body} /></p>
       <div className="convo-actions">
         {KINDS.map(([k, Icon]) => <button key={k} type="button" className={`convo-react ${x.mine.includes(k) ? 'is-mine' : ''}`} aria-pressed={x.mine.includes(k)} aria-label={t(`conversation.reactions.${k}`)} onClick={() => act('toggle_comment_reaction', { _id: x.id, _kind: k })}><Icon />{x.reactions[k] ? <span className="tabular-nums">{x.reactions[k]}</span> : null}</button>)}
         {!child && <button type="button" className="convo-react" onClick={() => setReplying(r => !r)}><Reply />{t('conversation.reply')}</button>}
@@ -102,7 +105,7 @@ function CommentRow({ c, replies, feed, me, teamId, eventId, topicId, lang }: { 
 
 export function CommentThread({ teamId, eventId = null, topicId = null, me, title }: { teamId: string; eventId?: string | null; topicId?: string | null; me: string; title?: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage === 'es' ? 'es-419' : 'en-US';
-  const { data: feed, isLoading } = useFeed(eventId, topicId);
+  const { data: feed, isLoading, isError, refetch } = useFeed(eventId, topicId);
   const { roots, byParent } = useMemo(() => {
     const items = feed?.items ?? []; const byParent = new Map<string, Item[]>();
     items.forEach(i => { if (i.parent_id) byParent.set(i.parent_id, [...(byParent.get(i.parent_id) ?? []), i]); });
@@ -110,7 +113,8 @@ export function CommentThread({ teamId, eventId = null, topicId = null, me, titl
     return { roots, byParent };
   }, [feed]);
   if (isLoading) return <div className="skeleton-list" aria-busy="true"><div className="skeleton-row" /><div className="skeleton-row" /></div>;
-  if (!feed) return eventId ? <p className="auth-subtitle">{t('conversation.rsvpToJoin')}</p> : null;
+  if (isError) return <div role="alert"><p>{t('teamCommunication.saveError')}</p><Button variant="secondary" onClick={() => void refetch()}>{t('error.retry')}</Button></div>;
+  if (!feed) return <p className="auth-subtitle">{t(eventId ? 'conversation.rsvpToJoin' : 'teamCommunication.noAccess')}</p>;
   return <div className="convo">
     {title && <h2>{title}</h2>}
     {roots.length === 0 ? <EmptyState compact icon="MessageCircle" text={t('conversation.empty')} /> :
@@ -129,7 +133,7 @@ type Topic = { id: string; title: string; pinned: boolean; last_post_at: string;
 export function DiscussionsPanel({ teamId, isLeader, me }: { teamId: string; isLeader: boolean; me: string }) {
   const { t, i18n } = useTranslation(); const qc = useQueryClient(); const lang = i18n.resolvedLanguage === 'es' ? 'es-419' : 'en-US';
   const key = ['topics', teamId];
-  const { data: topics = [], isLoading } = useQuery({ queryKey: key, queryFn: async (): Promise<Topic[]> => (await db.rpc('team_topics', { _team: teamId })).data ?? [] });
+  const { data: topics = [], isLoading, isError, refetch } = useQuery({ queryKey: key, gcTime: 0, staleTime: 0, refetchInterval: 10_000, queryFn: async (): Promise<Topic[]> => { const { data, error } = await db.rpc('team_topics', { _team: teamId }); if (error) throw error; return data ?? []; } });
   const [open, setOpen] = useState<string | null>(null); const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState(''); const [body, setBody] = useState(''); const [busy, setBusy] = useState(false);
   // Deep links (/team?topic=<id>) from notifications and push open the matching discussion.
@@ -137,7 +141,7 @@ export function DiscussionsPanel({ teamId, isLeader, me }: { teamId: string; isL
   useEffect(() => { if (search.topic) setOpen(search.topic); }, [search.topic]);
   const close = () => { setOpen(null); if (search.topic) void navigate({ to: '.', search: (s: Record<string, unknown>) => ({ ...s, topic: undefined }) as never, replace: true }); };
   useEffect(() => {
-    const ch = supabase.channel(`topics-${teamId}`)
+    const ch = supabase.channel(`topics-${teamId}-${crypto.randomUUID()}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'discussion_topics', filter: `team_id=eq.${teamId}` }, () => void qc.invalidateQueries({ queryKey: key }))
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'comments', filter: `team_id=eq.${teamId}` }, () => void qc.invalidateQueries({ queryKey: key }))
       .subscribe();
@@ -155,8 +159,9 @@ export function DiscussionsPanel({ teamId, isLeader, me }: { teamId: string; isL
     setTitle(''); setBody(''); setCreating(false); void qc.invalidateQueries({ queryKey: key }); setOpen(data);
   };
   const manage = async (args: Record<string, unknown>) => { const { error } = await db.rpc('manage_topic', { _id: open, _pinned: null, _delete: null, ...args }); if (error) { toast.error(t(errorKey(error))); return; } if (args['_delete']) close(); void qc.invalidateQueries({ queryKey: key }); };
-  return <section className="panel" aria-labelledby="disc-title">
-    <div className="section-heading"><h2 id="disc-title">{t('conversation.discussions')}</h2>{isLeader && <Button variant="secondary" onClick={() => setCreating(true)}><Plus />{t('conversation.newTopic')}</Button>}</div>
+  if (isError) return <div role="alert"><p>{t('teamCommunication.saveError')}</p><Button variant="secondary" onClick={() => void refetch()}>{t('error.retry')}</Button></div>;
+  return <section className="team-discussions" aria-labelledby="disc-title">
+    <div className="section-heading"><h2 id="disc-title">{t('teamCommunication.chat')}</h2>{isLeader && <Button variant="secondary" onClick={() => setCreating(true)}><Plus />{t('conversation.newTopic')}</Button>}</div>
     {isLoading ? <div className="skeleton-list" aria-busy="true"><div className="skeleton-row" /></div> : topics.length === 0 ? <p className="auth-subtitle">{isLeader ? t('conversation.noTopicsLeader') : t('conversation.noTopics')}</p> :
       <ul className="settings-list">{topics.map(x => <li key={x.id}><button type="button" className="settings-row topic-row" onClick={() => setOpen(x.id)}>
         {x.unread ? <span className="unread-dot" aria-label={t('conversation.unread')} /> : <span className="unread-dot is-read" aria-hidden="true" />}
@@ -165,11 +170,11 @@ export function DiscussionsPanel({ teamId, isLeader, me }: { teamId: string; isL
     <ResponsiveSheet open={creating} onOpenChange={setCreating} title={t('conversation.newTopic')}>
       <form className="edit-form" onSubmit={create}>
         <div><label className="field-label" htmlFor="topic-title">{t('conversation.topicTitle')}</label><Input id="topic-title" maxLength={120} required className="field-input" value={title} onChange={e => setTitle(e.target.value)} /></div>
-        <div><label className="field-label" htmlFor="topic-body">{t('conversation.firstPost')}</label><Textarea id="topic-body" rows={4} maxLength={2000} value={body} onChange={e => setBody(e.target.value)} /></div>
+        <div><label className="field-label" htmlFor="topic-body">{t('conversation.firstPost')}</label><Textarea id="topic-body" rows={4} maxLength={2000} value={body} onChange={e => { request.current = crypto.randomUUID(); setBody(e.target.value); }} /></div>
         <Button type="submit" disabled={busy || !title.trim()}>{t('conversation.createTopic')}</Button>
       </form>
     </ResponsiveSheet>
-    <ResponsiveSheet open={!!open} onOpenChange={o => !o && close()} title={current?.title ?? t('conversation.discussions')}>
+    <ResponsiveSheet open={!!open} onOpenChange={o => !o && close()} title={current?.title ?? t('teamCommunication.chat')}>
       {isLeader && current && <div className="guest-button-row"><Button variant="secondary" onClick={() => manage({ _pinned: !current.pinned })}><Pin />{current.pinned ? t('conversation.unpin') : t('conversation.pin')}</Button>
         <Button variant="ghost" className="danger-text" onClick={async () => { if (await confirmAction({ title: t('conversation.deleteTopicConfirm'), destructive: true })) void manage({ _delete: true }); }}><Trash2 />{t('conversation.deleteTopic')}</Button></div>}
       {open && current && <CommentThread teamId={teamId} topicId={open} me={me} />}

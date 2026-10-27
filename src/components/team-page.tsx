@@ -88,10 +88,26 @@ function NoTeam() {
   </section>;
 }
 
-import { DiscussionsPanel, GroupChatLink } from '@/components/conversation';
+import { GroupChatLink } from '@/components/conversation';
+import { TeamCommunication } from '@/components/team-communication';
 export function TeamPage() {
   const { t } = useTranslation(); const { userId } = useGatherwell();
   const { data: workspace, isLoading } = useQuery(workspaceQuery(userId));
+  const requestedTeam = useRouterState({ select: state => state.location.search.team });
+  const target = useQuery({ queryKey: ['team-link', requestedTeam, userId], enabled: !!requestedTeam, staleTime: 0, gcTime: 0, queryFn: async () => {
+    if (!requestedTeam) return null;
+    const { data: access, error } = await supabase.rpc('team_channel_state', { _team: requestedTeam });
+    if (error) throw error; if (!access) return null;
+    const { data: detail } = await supabase.from('teams').select('id,name,owner_id,plan,join_code').eq('id', requestedTeam).maybeSingle();
+    if (!detail) return null;
+    return { teamId: detail.id, name: detail.name, ownerId: detail.owner_id, plan: detail.plan, joinCode: detail.join_code, role: detail.owner_id === userId ? 'leader' : 'member', workspaceRole: 'member', customBadge: null } satisfies TeamMembership;
+  } });
+  if (requestedTeam) {
+    if (target.isPending) return <ListSkeleton />;
+    if (target.isError) return <p role="alert">{t('teamCommunication.saveError')}</p>;
+    if (!target.data) return <p role="status">{t('teamCommunication.noAccess')}</p>;
+    return <TeamSpace key={requestedTeam} workspace={target.data} />;
+  }
   if (isLoading) return <ListSkeleton />;
   return <>
     <TeamSwitcher userId={userId} className="mobile-switcher" />
@@ -142,11 +158,11 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
 
     <HostOfMonthCard teamId={teamId} teamName={workspace.name} />
     <MemberOfMonthCard teamId={teamId} teamName={workspace.name} />
-    <PinnedAnnouncement teamId={teamId} />
+    <TeamCommunication teamId={teamId} me={userId} initialBody={draftBody} />
     <PinnedShoutout teamId={teamId} isLeader={isLeader} />
     <ActiveChallengeCard />
     <GroupChatLink table="teams" id={teamId} links={readChatLinks(team as any)} canEdit={isLeader} />
-    <DiscussionsPanel teamId={teamId} isLeader={isLeader} me={userId} />
+
     {isLeader && <Link to="/team/insights" className="panel tool-tile team-insights-top"><BarChart3 /><span>{t('insights.title')}</span><ChevronRight className="settings-chevron" /></Link>}
     <ComingUp teamId={teamId} lang={lang} onOpen={setOpenEvent} />
     {canHost && <section className="panel"><div className="section-heading"><h2>{t('waiver.hostTools')}</h2></div><button type="button" className="settings-row" onClick={() => setWaiverOpen(true)}><FileText className="settings-icon" /><span className="settings-label">{t('waiver.manage')}</span><ChevronRight className="settings-chevron" /></button></section>}
@@ -162,7 +178,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
         <Feature flag="feature_team_map"><Link to="/team/map" className="tool-tile"><MapPinned /><span>{t('insights.mapLink')}</span><ChevronRight className="settings-chevron" /></Link></Feature>
       </div>
       <div className="tool-grid">
-        {([['edit', Pencil, 'editTeam'], ['invite', Share2, 'invite'], ['members', UsersRound, 'members'], ['announce', Megaphone, 'announce'], ['subteams', Network, 'subteams']] as const).map(([key, Icon, label]) =>
+        {([['edit', Pencil, 'editTeam'], ['invite', Share2, 'invite'], ['members', UsersRound, 'members'], ['subteams', Network, 'subteams']] as const).map(([key, Icon, label]) =>
           <button type="button" key={key} className="tool-tile" onClick={() => setSheet(key)}><Icon /><span>{t(`teamSpace.${label}`)}</span><ChevronRight className="settings-chevron" /></button>)}
       </div>
       <h3 className="field-label recognition-heading">{t('recognition.title')}</h3>
@@ -178,7 +194,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
     <InviteSheet open={sheet === 'invite'} onOpenChange={o => !o && setSheet(null)} workspace={workspace} joinCode={team?.join_code ?? workspace.joinCode} isLeader={isLeader} />
     {isLeader && team && <EditTeamSheet open={sheet === 'edit'} onOpenChange={o => !o && setSheet(null)} team={team} userId={userId} />}
     <MembersSheet open={sheet === 'members'} onOpenChange={o => !o && setSheet(null)} teamId={teamId} userId={userId} isLeader={isLeader} directLeader={isLeader && !workspace.inherited} />
-    {isLeader && <AnnounceSheet open={sheet === 'announce'} onOpenChange={o => !o && setSheet(null)} teamId={teamId} userId={userId} initialBody={draftBody} />}
+
     {isLeader && <ResponsiveSheet open={sheet === 'subteams'} onOpenChange={o => !o && setSheet(null)} title={t('teamSpace.subteams')}><SubTeamSettings teamId={teamId} allowHosts={!!team?.allow_host_subteams} /></ResponsiveSheet>}
   </>;
 }
