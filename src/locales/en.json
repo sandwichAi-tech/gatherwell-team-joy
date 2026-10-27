@@ -7530,7 +7530,7 @@
     "nextLink": "Optional next-step HTTPS link",
     "previewOnly": "Author preview only. No participant answers or completion are saved.",
     "unscored": "No computed score",
-    "approvedRequired": "Approved assessment content required. Drafts and author preview are available; publication and participant completion are not yet available.",
+    "approvedRequired": "Approved assessment scope required. Publication and completion remain blocked until an approved document is available.",
     "issues": {
       "title": "Add a title.",
       "questions": "Add questions with a prompt.",
@@ -7540,6 +7540,36 @@
       "ranges": "Result ranges must cover 0–100 without gaps or overlaps.",
       "results": "Add a result title and explanation.",
       "url": "Use a valid HTTPS link without credentials."
+    }
+  },
+  "lifecycle": {
+    "receipts": "Orders and receipts",
+    "free": "Free",
+    "extras": "Optional extras",
+    "base": "Challenge",
+    "total": "Total",
+    "continuePayment": "Continue to payment",
+    "signIn": "Sign in to join",
+    "refundedAmount": "Refunded: {{amount}}",
+    "currentResult": "Current result",
+    "history": "Attempt history",
+    "retake": "Take again",
+    "scope": "Scope document · version {{version}}",
+    "acceptScope": "I have read and accept this scope document.",
+    "complete": "Complete assessment",
+    "completionError": "Could not complete. Check your answers and access, then retry.",
+    "useExisting": "Use existing resource",
+    "reuseHint": "Keeps the original resource. Its current access rules still apply.",
+    "unavailableReference": "This resource is not currently available with your access.",
+    "removePreserve": "Remove from the course? The original resource and learner history will be preserved.",
+    "status": {
+      "pending": "Payment pending",
+      "paid": "Paid",
+      "partially_refunded": "Partially refunded",
+      "refunded": "Refunded",
+      "cancelled": "Cancelled",
+      "failed": "Payment failed",
+      "disputed": "Review required"
     }
   }
 }
