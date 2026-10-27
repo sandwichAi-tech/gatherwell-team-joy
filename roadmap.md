@@ -1,5 +1,12 @@
 # Challenge experience pass — DONE
 
+## Website Notes rows 107–109 — In Progress
+- [ ] Audit and reproduce walk-in, local-day Home check-in and next-action state.
+- [ ] Implement event-bound duplicate-safe walk-ins with capacity/payment/waiver guards.
+- [ ] Restrict Home shortcuts to event-local today and use saved caller-scoped recommendation state.
+- [ ] Focused/full tests, isolated live owner/staff/outsider checks, EN/ES layouts/accessibility review.
+- [ ] Exact fixture/session/screenshot cleanup; record evidence and remaining gaps; no publication/deployment.
+
 ## Website Notes row 101 — In Progress
 - [x] Audit Home modes, team/catalog leakage, RSVP/purchase/entitlement/follow access and cache lifecycle.
 - [x] Replace broad Home reads with authoritative caller-scoped payload; preserve Discover and rows102–106.
