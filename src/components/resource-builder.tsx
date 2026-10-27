@@ -568,6 +568,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
     void navigate({ to: '/learn/quiz/$id', params: { id: (q.data as { id: string }).id } });
   };
 
+  const priceLabel = placement === 'course' ? t('resourcePlacement.courseAccess') : paid && priceCents !== null ? new Intl.NumberFormat(lang, { style: 'currency', currency: 'USD' }).format(priceCents / 100) : t('offers.free');
   const cta = (lang === 'es' ? item.ctaEs || item.ctaEn : item.ctaEn || item.ctaEs) || t(defaultCtaKey(paid));
 
   if (loadingItem) return <section className="panel builder-panel"><p className="muted-small">{t('publicEvent.loading')}</p></section>;
@@ -587,7 +588,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
         return <li key={l.id}><strong>{pick(lang, l.title_en, l.title_es)}</strong> <small>{ph ? t('resources.item.lessonNeedsReview') : l.is_published && wasPublished ? t('resources.item.lessonLive') : l.is_published || draftLessonsToPublish.includes(l.id) ? t('resources.item.lessonVisible') : t('resources.item.lessonHidden')}</small></li>; })}</ul>
       {!wasPublished && draftLessonsToPublish.length > 0 && <p className="field-hint">{t('resources.item.publishesLessons', { count: draftLessonsToPublish.length })}</p>}
     </div>}
-    <div className="form-field"><span className="field-label">{t('resources.item.cardOnPage')}</span><CardPreview item={item} type={type} lang={lang} cta={cta} /></div>
+    <div className="form-field"><span className="field-label">{t('resources.item.cardOnPage')}</span><CardPreview item={item} type={type} lang={lang} cta={`${cta} · ${priceLabel}`} /></div>
     <div className="form-field"><span className="field-label">{t('resources.item.landingTitle')}</span><LandingPreview item={item} type={type} lang={lang} cta={cta} paid={paid} /></div>
   </>;
 

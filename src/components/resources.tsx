@@ -58,6 +58,7 @@ export function ResourceCard({ r, creator, onSaveTemplate }: { r: ResourceCardDa
         {r.hasQuiz && <span className="chip"><ClipboardCheck aria-hidden="true" />{t('resources.quiz')}</span>}
       </div>
       <h3>{title}</h3>
+      <p className="muted-small">{r.price_cents ? new Intl.NumberFormat(lang, { style: 'currency', currency: 'USD' }).format(r.price_cents / 100) : t('offers.free')}</p>
       <p className="track-facts">{[r.creator, r.progress && r.progress.total > 1 ? t('learnHub.progressLabel', { done: r.progress.done, total: r.progress.total }) : null,
         r.minutes ? (r.entity === 'recipe' ? t('learnHub.prep', { count: r.minutes }) : minutesLabel(t, r.minutes)) : null].filter(Boolean).join(' · ')}</p>
       {r.entity !== 'quiz' && r.progress && r.progress.total > 1 && <progress className="attendance-progress" value={r.progress.done} max={r.progress.total} aria-hidden="true" />}
@@ -149,7 +150,7 @@ export function ResourcesPage({ tab, type, source }: { tab: ResourceTab; type: R
         cover: 'learn' as const, status: tr.is_published ? 'published' as const : 'draft' as const, creator: teamName, progress: null, minutes: null, hasQuiz: false, href: { to: '/learn/track/$id', params: { id: tr.id } } })),
       ...myOffers.filter(o => o.kind === 'course' || o.kind === 'download').map(o => ({
         key: `offer:${o.id}`, id: o.id, entity: o.kind as 'course' | 'download', type: (o.kind === 'course' ? 'course' : 'file') as ResourceType, source: 'team' as const, title_en: o.title_en, title_es: o.title_es,
-        cover_url: o.cover_url, cover_style: o.cover_style, cover: 'offer' as const, status: o.status, creator: null, progress: null, minutes: null, hasQuiz: !!quiz?.offers.has(o.id), href: { to: '/offer/$id', params: { id: o.id } } })),
+        price_cents: o.price_cents, cover_url: o.cover_url, cover_style: o.cover_style, cover: 'offer' as const, status: o.status, creator: null, progress: null, minutes: null, hasQuiz: !!quiz?.offers.has(o.id), href: { to: '/offer/$id', params: { id: o.id } } })),
       ...(rec?.recipes ?? []).filter(r => r.team_id === teamId).map(r => recipeCard(r, teamName)),
       ...teamQuizzes.filter(z => z.mine).map(z => quizCard(z, teamName)),
     ];
@@ -245,6 +246,7 @@ export function ResourceTemplatesPage({ tab }: { tab: 'starters' | 'mine' }) {
           <div className="template-head"><span className="creation-icon"><Icon /></span><span className={`chip ${tpl.team_id ? '' : 'warm-chip'}`}>{tpl.team_id ? <UsersRound aria-hidden="true" /> : <Sparkles aria-hidden="true" />}{t(tpl.team_id ? 'templatesR.teamChip' : 'templatesR.starterChip')}</span></div>
           <div className="resource-body">
             <h3>{title}</h3>
+      <p className="muted-small">{r.price_cents ? new Intl.NumberFormat(lang, { style: 'currency', currency: 'USD' }).format(r.price_cents / 100) : t('offers.free')}</p>
             {pick(lang, tpl.description_en, tpl.description_es) && <p>{pick(lang, tpl.description_en, tpl.description_es)}</p>}
             <p className="track-facts">{[t(`templatesR.target.${tpl.target}`), p.parts ? t('templatesR.parts', { count: p.parts }) : null].filter(Boolean).join(' · ')}</p>
             {p.needsAssets > 0 && <p className="muted-small">{t('templatesR.needsAssets', { count: p.needsAssets })}</p>}

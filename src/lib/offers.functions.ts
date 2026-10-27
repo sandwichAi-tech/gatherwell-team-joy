@@ -16,6 +16,11 @@ export const startOfferCheckout = createServerFn({ method: 'POST' })
     const { data: o } = await context.supabase.from('offers').select('id, host_id, kind, title_en, title_es, price_cents, status, refund_policy').eq('id', data.offerId).maybeSingle();
     if (!o || o.status !== 'published') return { ok: false, error: 'not_open' };
     if (!o.price_cents) return { ok: false, error: 'free' };
+    const { data: access } = await context.supabase.rpc('can_access_offer', { _offer: o.id });
+    if (access) return { ok: false, error: 'already_owned' };
+    // Resource commerce stays setup-blocked until its existing order/refund pipeline is verified.
+    const { data: resource } = await context.supabase.from('offers').select('resource_type').eq('id', o.id).maybeSingle();
+    if (resource?.resource_type) return { ok: false, error: 'not_connected' };
     const { stripe, stripeKey } = await import('./billing/stripe.server');
     if (!stripeKey()) return { ok: false, error: 'not_connected' };
     const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
