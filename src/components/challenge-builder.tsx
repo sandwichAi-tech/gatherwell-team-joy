@@ -23,8 +23,8 @@ import { uploadLearnFile, trackTitle, type Track } from '@/lib/learn';
 import { myOffersQuery, offerTitle, type Offer } from '@/lib/offers';
 import { planStatusQuery } from '@/lib/billing';
 import {
-  addDays, challengeIssues, lengthOf, localDate, modelOf, pick, rpcErrorKey, userTz,
-  CHALLENGE_MODELS, MESSAGE_KINDS, STARTER_DAYS, STARTERS,
+  addDays, lengthOf, localDate, modelOf, pick, rpcErrorKey, userTz,
+  CHALLENGE_MODELS, STARTERS,
   type Challenge, type ChallengeActivity, type ChallengeMessage, type ChallengeModel, type Starter,
 } from '@/lib/challenges';
 
@@ -99,7 +99,7 @@ export function ChallengeBuilder({ draft, teamId, onClose }: { draft: Partial<Ch
     if (baseline.current !== snapshot() && !(await confirmAction({ title: t('challenges.builder.replaceTitle'), body: t('challenges.builder.replaceText') }))) return;
     const next = challengeTemplate(k, f.starts_on || addDays(today, 1), lang === 'es' ? 'es' : 'en', key => t(key), f.timezone);
     setStarter(k); setF(next.f); setActivities(next.activities); setMessages(next.messages); setAddons(next.addons); setPaid(false); setPrice(''); setErrors([]);
-    baseline.current = JSON.stringify(next);
+    baseline.current = JSON.stringify({ f: next.f, activities: next.activities, messages: next.messages, addons: next.addons, paid: next.paid, price: next.price });
   };
   const issues = challengeStepIssues('review', f, activities, messages, paid, price, addons);
   const len = f.starts_on && f.ends_on >= f.starts_on ? lengthOf({ starts_on: f.starts_on, ends_on: f.ends_on }) : 0;
@@ -168,7 +168,7 @@ export function ChallengeBuilder({ draft, teamId, onClose }: { draft: Partial<Ch
       </div>
 
       {step === 'basics' && <>
-        {!draft?.id && <div className="form-field"><span className="field-label">{t('challenges.startFrom')}</span>
+        {draft?.status !== 'published' && <div className="form-field"><span className="field-label">{t('challenges.startFrom')}</span>
           <div className="starter-grid">{([...STARTERS, 'scratch'] as const).map(k => <Button variant="outline" type="button" disabled={busy || loading || uploading > 0} key={k} className={`choice-card ${starter === k ? 'is-selected' : ''}`} aria-pressed={starter === k} onClick={() => void useStarter(k)}><strong>{t(k === 'scratch' ? 'challenges.scratch' : `challenges.starter.${k}.title`)}</strong><small>{t(k === 'scratch' ? 'challenges.scratchPreview' : `challenges.starter.${k}.preview`)}</small></Button>)}</div></div>}
         <LangPair id="chb-title" label={t('templates.title')} en={f.title_en} es={f.title_es} onEn={v => setF({ ...f, title_en: v })} onEs={v => setF({ ...f, title_es: v })} />
         <LangPair id="chb-desc" label={t('templates.description')} en={f.description_en} es={f.description_es} onEn={v => setF({ ...f, description_en: v })} onEs={v => setF({ ...f, description_es: v })} multiline maxLength={1000} />
@@ -176,7 +176,7 @@ export function ChallengeBuilder({ draft, teamId, onClose }: { draft: Partial<Ch
           onEn={v => setF({ ...f, daily_prompt_en: v })} onEs={v => setF({ ...f, daily_prompt_es: v })} multiline maxLength={280} />
         <div className="choice-pair">
           <div className="form-field"><label className="field-label" htmlFor="chb-start">{t('challenges.startsOn')}</label><Input id="chb-start" type="date" className="field-input" value={f.starts_on} onChange={e => { const keep = Math.max(0, (new Date(f.ends_on).getTime() - new Date(f.starts_on).getTime()) / 86_400_000); setF({ ...f, starts_on: e.target.value, ends_on: e.target.value ? addDays(e.target.value, keep) : f.ends_on }); }} /></div>
-          <div className="form-field"><label className="field-label" htmlFor="chb-end">{t('challenges.endsOn')}</label><Input id="chb-end" type="date" min={f.starts_on} className="field-input" value={f.ends_on} onChange={e => { const nextLen = lengthOf({ starts_on: f.starts_on, ends_on: e.target.value }); if (Number.isFinite(nextLen) && nextLen > 0) setActivities(a => resizeChallengeSchedule(a, len, nextLen)); setF({ ...f, ends_on: e.target.value }); }} /></div>
+          <div className="form-field"><label className="field-label" htmlFor="chb-end">{t('challenges.endsOn')}</label><Input id="chb-end" type="date" min={f.starts_on} className="field-input" value={f.ends_on} onChange={e => { const nextLen = lengthOf({ starts_on: f.starts_on, ends_on: e.target.value }); if (Number.isFinite(nextLen) && nextLen > 0) setActivities(a => resizeChallengeSchedule(a, len, nextLen)); setF({ ...f, ends_on: e.target.value, goal_target: f.model === 'goal' && Number(f.goal_target) === len && Number.isFinite(nextLen) && nextLen > 0 ? String(nextLen) : f.goal_target }); }} /></div>
         </div>
         <p className="field-hint">{t('challenges.builder.tzNote', { tz: f.timezone })}</p>
         <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
@@ -211,6 +211,7 @@ export function ChallengeBuilder({ draft, teamId, onClose }: { draft: Partial<Ch
         {f.model === 'points' && <p className="field-hint">{t('challenges.pointsNote')}</p>}
         <div className="form-field"><span className="field-label">{t('challenges.frequency.label')}</span>
           <div className="segmented full" role="group" aria-label={t('challenges.frequency.label')}>{(['daily', 'weekly'] as const).map(fr => <Button key={fr} variant="ghost" className={f.frequency === fr ? 'selected' : ''} aria-pressed={f.frequency === fr} onClick={() => setF({ ...f, frequency: fr })}>{t(`challenges.frequency.${fr}`)}</Button>)}</div></div>
+        <p className="field-hint">{t('challenges.scheduleDescription')}</p>
         <label className="switch-row"><Switch checked={f.leaderboard_on} onCheckedChange={v => setF({ ...f, leaderboard_on: v })} /><span><strong>{t('challenges.leaderboardToggle')}</strong><small>{t('challenges.leaderboardToggleText')}</small></span></label>
         <div className="form-field"><span className="field-label">{t('challenges.enrollment.label')}</span>
           <div className="segmented full" role="group" aria-label={t('challenges.enrollment.label')}>{(['open', 'invite'] as const).map(en => <Button key={en} variant="ghost" className={f.enrollment === en ? 'selected' : ''} aria-pressed={f.enrollment === en} onClick={() => setF({ ...f, enrollment: en })}>{t(`challenges.enrollment.${en}`)}</Button>)}</div></div>
