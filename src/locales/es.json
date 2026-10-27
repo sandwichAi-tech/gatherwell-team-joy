@@ -6279,8 +6279,8 @@
         },
         "guide": {
           "name": "Guía / PDF / hoja de trabajo",
-          "example": "Una guía para leer, un cuaderno o un folleto.",
-          "best": "Ideal para: leer e imprimir."
+          "example": "Una guía que se lee en pantalla: cuaderno, folleto u hoja de trabajo.",
+          "best": "Ideal para: leer paso a paso."
         },
         "audio": {
           "name": "Audio",
@@ -6289,8 +6289,8 @@
         },
         "file": {
           "name": "Archivo descargable",
-          "example": "Un PDF, libro electrónico o zip que las personas guardan.",
-          "best": "Ideal para: un solo archivo para descargar."
+          "example": "Un archivo que las personas descargan y guardan, como un libro electrónico, diapositivas o un zip.",
+          "best": "Ideal para: algo para guardar y usar sin conexión."
         },
         "link": {
           "name": "Enlace",
@@ -6320,7 +6320,7 @@
         "assessment": {
           "name": "Evaluación de bienestar",
           "example": "Preguntas de reflexión y resultados de apoyo, sin respuestas correctas o incorrectas.",
-          "best": "Borradores, rangos ponderados y vista previa; publicar requiere contenido aprobado."
+          "best": "Ideal para: reflexionar con resultados de apoyo. Publicar requiere contenido aprobado."
         }
       },
       "quizParent": {
@@ -6611,7 +6611,8 @@
         "published": "Publicado",
         "publishedEmpty": "Publicado · aún no hay lecciones publicadas ({{total}} borradores)",
         "publishedPartial": "Publicado · {{live}} de {{total}} lecciones publicadas"
-      }
+      },
+      "stepNeedsAttention": "necesita atención"
     }
   },
   "templatesR": {
