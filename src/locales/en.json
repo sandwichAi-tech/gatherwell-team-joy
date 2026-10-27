@@ -6406,7 +6406,8 @@
       "fix": "Fix",
       "access": "Access",
       "paidNoPrice": "Paid · price missing",
-      "paymentsPending": "Publishing paid content waits for payment setup; you can save a draft."
+      "paymentsPending": "Publishing paid content waits for payment setup; you can save a draft.",
+      "priceMissing": "Price not set"
     },
     "edit": "Edit",
     "saveTemplate": "Save as blueprint",

@@ -582,7 +582,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
     void navigate({ to: '/learn/quiz/$id', params: { id: (q.data as { id: string }).id } });
   };
 
-  const priceLabel = !isStandalone(dest) ? t('resourcePlacement.courseAccess') : paid && priceCents !== null ? new Intl.NumberFormat(lang, { style: 'currency', currency: 'USD' }).format(priceCents / 100) : t('offers.free');
+  const priceLabel = !isStandalone(dest) ? t('resourcePlacement.courseAccess') : paid ? (priceCents !== null && priceCents > 0 ? new Intl.NumberFormat(lang, { style: 'currency', currency: 'USD' }).format(priceCents / 100) : t('resources.review.priceMissing')) : t('offers.free');
   const cta = (lang === 'es' ? item.ctaEs || item.ctaEn : item.ctaEn || item.ctaEs) || t(defaultCtaKey(paid));
 
   if (loadingItem) return <section className="panel builder-panel"><p className="muted-small">{t('publicEvent.loading')}</p></section>;
