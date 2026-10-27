@@ -9056,6 +9056,7 @@ export type Database = {
       }
       resource_availability: { Args: { _id: string }; Returns: string }
       resource_commerce_access: { Args: { _offer: string }; Returns: boolean }
+      resource_course_attachments: { Args: { _course: string }; Returns: Json }
       resource_is_live: { Args: { _from: string }; Returns: boolean }
       resource_journey_activity: {
         Args: { _journey?: string; _limit?: number; _team: string }
