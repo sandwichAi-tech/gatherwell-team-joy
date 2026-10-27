@@ -1247,6 +1247,13 @@
       "when": 1793126084890,
       "tag": "0177_challenge_refund_evidence_and_publication_boundary",
       "breakpoints": true
+    },
+    {
+      "idx": 178,
+      "version": "7",
+      "when": 1793126591581,
+      "tag": "0178_challenge_reservation_and_adult_guard_hardening",
+      "breakpoints": true
     }
   ]
 }
