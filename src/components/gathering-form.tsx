@@ -209,7 +209,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const teamId = editing && source ? source.event.team_id : workspace.teamId;
   if (!editing && workspace.role === 'member') return <section className="panel"><h2>{t('gathering.hostsOnly')}</h2><p>{t('gathering.hostsOnlyText')}</p></section>;
   const hostState = hostWaiverStatus(libraryWaivers, agreements.library.data, agreementsLocked);
-  const focusAgreements = () => requestAnimationFrame(() => { const el = document.getElementById('g-agreements'); el?.scrollIntoView({ block: 'start' }); (document.getElementById('g-host-waiver') ?? el)?.focus(); });
+  // Platform problems focus the section (its explanation is the fix); host-waiver problems focus the picker.
+  const focusAgreements = () => requestAnimationFrame(() => { const el = document.getElementById('g-agreements'); el?.scrollIntoView({ block: 'start' }); ((agreements.platformState === 'ready' ? document.getElementById('g-host-waiver') : null) ?? el)?.focus(); });
   const publishError = (e: { message?: string } | null) => e?.message?.includes('approved_legal_document_required') ? t('eventAgreements.legalRequired') : e?.message?.includes('waiver_pinned') ? t('eventAgreements.pinned') : rpcError(t, e);
 
   const urlBad = place !== 'person' && !!url.trim() && !validHttps(url);
