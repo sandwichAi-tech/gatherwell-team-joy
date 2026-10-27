@@ -80,7 +80,7 @@ export const lessonsToPublishWithTrack = (lessons: LessonLike[], trackWasPublish
 
 /** Which builder step owns each required-field issue; issues not listed (e.g. a missing file) only block publishing. */
 export const RESOURCE_ISSUE_STEP: Record<string, ItemSection> = {
-  title: 'presentation', url: 'content', live_time: 'content', price: 'access', destination: 'access', courseUnavailable: 'access', course: 'access',
+  title: 'presentation', url: 'content', live_time: 'content', price: 'access', destination: 'access', courseUnavailable: 'access', course: 'access', file: 'content', placeholder: 'presentation',
 };
 export const ASSESSMENT_ISSUE_STEP: Record<string, 'presentation' | 'questions' | 'results'> = {
   title: 'presentation', price: 'presentation', destination: 'presentation', courseUnavailable: 'presentation',
