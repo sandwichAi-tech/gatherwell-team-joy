@@ -8547,6 +8547,7 @@ export type Database = {
         Returns: undefined
       }
       admin_overview: { Args: { _since: string }; Returns: Json }
+      admin_platform_agreement_status: { Args: never; Returns: Json }
       admin_reports: { Args: { _status: string }; Returns: Json }
       admin_retry_message: { Args: { _id: string }; Returns: Json }
       admin_safety_action: {
@@ -9539,6 +9540,7 @@ export type Database = {
       }
       payouts_live: { Args: { _uid: string }; Returns: boolean }
       personal_home: { Args: never; Returns: Json }
+      pin_unpinned_published_events: { Args: never; Returns: number }
       plan_limits: { Args: { _plan: string }; Returns: Json }
       platform_fee_cents: {
         Args: { _amount: number; _host: string }
