@@ -9,7 +9,7 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are engineering conventions only. Subdirectories (supabase/) have their own AGENTS.md.
+Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file covers engineering. Read supabase/AGENTS.md for that directory.
 
 ## ZoheeWell architecture (internal names such as Gatherwell*/gathering are legacy identifiers)
 - BrandLogo uses original CDN SVGs and theme variants; BrandImage handles photos, preserving supplied logo colors without photo grading.
@@ -20,7 +20,7 @@ Read SOURCE_OF_TRUTH.md first; product rules come from Blueprint v4, these are e
 - GatherwellShell shares desktop/mobile tabs; insights-navigation gates own-host/team access; mobile tabs scroll.
 - localStorage holds only language, theme and a pending invite code (cleared once the join completes); all user data lives in Lovable Cloud with team-scoped RLS.
 - Home-screen installation is manifest-only; the only service worker is public/push-sw.js (push display + click, no caching), registered only after the person turns push on, (offline not requested).
-- Visual rules live in DESIGN_RULES.md's active Blueprint v4 section; its historical sections are not active.
+- Visual rules: DESIGN_RULES.md's active Blueprint v4 section only, not historical sections.
 - App screens live under _authenticated/_app: the _authenticated gate redirects signed-out visitors to /login, and the _app layout sends anyone not onboarded (or holding a pending invite) to /onboarding before rendering GatherwellShell.
 - Public pages (marketing + GuestShell /e /h /l /t /i /r) SSR in English, then applySavedLanguage(); loaders prefetchPublic() and the router dehydrates the cache for crawlers. Render stays window-free and deterministic. AuthFrame pages (/login, /join, /terms, /privacy) use ClientOnly.
 - Uploads go to private media under the uploader's folder, shown via signed URLs (public buckets blocked).
