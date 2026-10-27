@@ -729,7 +729,8 @@
     "memberTitle": "Confirma tu lugar en el próximo evento",
     "memberText": "Mira lo que viene y aparta tu lugar.",
     "memberAction": "Ver eventos",
-    "done": "Listo"
+    "done": "Listo",
+    "finishDraft": "Termina tu borrador"
   },
   "plans": {
     "free": "Plan gratuito",
@@ -1704,17 +1705,17 @@
     "counts": {
       "going": "Van",
       "checked_in": "Registrados",
-      "walk_ins": "Sin confirmar",
+      "walk_ins": "En puerta",
       "waitlist": "En espera"
     },
     "search": "Buscar por nombre",
     "scan": "Escanear QR",
-    "walkIn": "Agregar sin confirmar",
+    "walkIn": "Agregar participante en puerta",
     "toCheckIn": "Por registrar",
     "allIn": "Todos en la lista ya están registrados.",
     "checkIn": "Registrar",
     "checkedIn": "Registrados",
-    "walkInTag": "Sin confirmar",
+    "walkInTag": "En puerta",
     "undo": "Deshacer registro",
     "closeScanner": "Cerrar escáner",
     "cameraDenied": "La cámara no está disponible. Usa el código manual o busca por nombre en la lista.",
@@ -1731,18 +1732,24 @@
       "waiver_required": "Falta una autorización requerida. No se registró la entrada.",
       "event_unavailable": "Este evento no está publicado o fue cancelado.",
       "registration_required": "Se requiere un registro confirmado para entrar.",
-      "rate_limited": "Demasiados intentos. Espera un minuto y vuelve a intentar."
+      "rate_limited": "Demasiados intentos. Espera un minuto y vuelve a intentar.",
+      "payment_required": "Se requiere un pago verificado. Abre la inscripción del participante para resolverlo."
     },
     "scanNext": "Escanear otro",
     "walkInAdded": "{{name}} agregado y registrado",
-    "addAndCheckIn": "Agregar y registrar",
+    "addAndCheckIn": "Agregar y registrar asistencia",
     "undoTitle": "¿Deshacer registro?",
     "undoText": "Esto elimina el registro de entrada de {{name}}. Queda anotado en el registro de actividad del equipo.",
     "undoKeep": "Mantener registro",
     "undoConfirm": "Deshacer registro",
     "manualCode": "Ingresar código a mano",
     "manualCodeHint": "p. ej. EAA8-3320-…",
-    "manualSubmit": "Registrar"
+    "manualSubmit": "Registrar",
+    "walkInRetry": "La asistencia no se confirmó. Tus datos se conservaron; vuelve a intentar cuando tengas conexión.",
+    "walkInExisting": "Ya está inscrito en este evento. Usa la inscripción existente.",
+    "walkInAlready": "Ya tiene la asistencia registrada en este evento. No se creó un duplicado.",
+    "checkExisting": "Registrar asistencia del participante existente",
+    "attendeeResolution": "Abrir inscripción del participante"
   },
   "learnHub": {
     "startHere": "Empieza aquí",
@@ -5150,7 +5157,7 @@
     "discoverResources": "Descubrir recursos",
     "discoverCoaches": "Encontrar un coach",
     "free": "Gratis"
-},
+  },
   "customerHome": {
     "next": "Lo que sigue",
     "noRsvps": "Aún no tienes confirmaciones",

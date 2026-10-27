@@ -1,5 +1,13 @@
 # Challenge experience pass — DONE
 
+## Website Notes rows 107–109 — In Progress
+- [x] Audit/reproduce duplicates, staff denial, unpaid admission, legacy-waiver partial outcome; Home future-event and static first-event paths.
+- [x] Event-bound atomic retry-safe walk-ins; capacity/payment/waiver/owner/assigned-staff guards, existing registrant and retry recovery.
+- [x] Event-local today occurrence/session shortcuts; saved caller-owned draft/first-event recommendation.
+- [x] 24 authoritative isolated checks; real form/network retry/refresh; 12 EN/ES 320/390/1280 overflow checks; 29 focused / 789 full tests, automatic compile OK.
+- [x] Exact fixture cleanup readback; no uploads/messages/charges/publication/deployment.
+- [ ] Rows107–109 In Progress: physical device/camera and full screen-reader/focus checks; provider payment/refund success; fresh browser relogin/account-switch, deterministic live DST/midnight/reschedule/session-day, extended slow/concurrent/tier/guardian cases. These require device/accessibility equipment, provider test readiness, or broader verification; current evidence and gaps are in CHANGELOG.
+
 ## Website Notes row 101 — In Progress
 - [x] Audit Home modes, team/catalog leakage, RSVP/purchase/entitlement/follow access and cache lifecycle.
 - [x] Replace broad Home reads with authoritative caller-scoped payload; preserve Discover and rows102–106.

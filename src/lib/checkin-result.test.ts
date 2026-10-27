@@ -8,5 +8,6 @@ describe('server-confirmed admission feedback', () => {
   it('never confirms queued offline admission', () => expect(confirmedAttendance({ result: 'pending' })).toBe(false));
   it('counts only server-confirmed success', () => expect(confirmedAttendance({ result: 'ok' })).toBe(true));
   it('preserves a required waiver blocker', () => expect(checkinErrorResult({ message: 'waiver_required' })).toEqual({ result: 'waiver_required' }));
+  it('never admits unpaid paid-ticket registrations', () => expect(checkinErrorResult({ message: 'payment_required' })).toEqual({ result: 'payment_required' }));
   it('never treats cancelled registration as success', () => expect(checkinErrorResult({ message: 'cancelled' })).toEqual({ result: 'cancelled' }));
 });

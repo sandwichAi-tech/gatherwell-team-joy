@@ -6373,6 +6373,7 @@ export type Database = {
           tier_id: string | null
           updates_opt_in: boolean
           user_id: string | null
+          walkin_request_id: string | null
           wants_buddy: boolean
         }
         Insert: {
@@ -6411,6 +6412,7 @@ export type Database = {
           tier_id?: string | null
           updates_opt_in?: boolean
           user_id?: string | null
+          walkin_request_id?: string | null
           wants_buddy?: boolean
         }
         Update: {
@@ -6449,6 +6451,7 @@ export type Database = {
           tier_id?: string | null
           updates_opt_in?: boolean
           user_id?: string | null
+          walkin_request_id?: string | null
           wants_buddy?: boolean
         }
         Relationships: [
@@ -8717,6 +8720,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      home_checkin_start: {
+        Args: { _at: string; _event: string }
+        Returns: string
+      }
       home_offer_relationship: { Args: { _offer: string }; Returns: boolean }
       honor_welcome_code: { Args: { _code: string }; Returns: Json }
       host_analytics: { Args: never; Returns: Json }
@@ -9840,6 +9847,18 @@ export type Database = {
         Returns: undefined
       }
       waitlist_position: { Args: { _code: string }; Returns: number }
+      walk_in_admit: {
+        Args: {
+          _email: string
+          _event: string
+          _first: string
+          _language: string
+          _last: string
+          _phone: string
+          _request: string
+        }
+        Returns: Json
+      }
       walk_in_waiver: {
         Args: { _name: string; _rsvp: string }
         Returns: undefined
