@@ -52,7 +52,7 @@ export function HomePage() {
   return <>
     {hosting && <MobileTeamSwitcher />}
     <div className="greeting page-heading"><div><span className="eyebrow">{t(hosting ? 'personalHome.hosting' : 'personalHome.attending')}</span><h1>{name ? t('home.greeting', { name }) : t('home.greetingFallback')}</h1><p>{t('personalHome.subtitle')}</p></div>{hosting && <Button className="page-create" onClick={openCreate}><Plus />{t('common.create')}</Button>}</div>
-    <DailyBriefCard />
+    {data.events[0] && <section className="brief-card morning-brief" aria-labelledby="personal-brief"><div className="section-heading"><h2 id="personal-brief">{t('smart.brief.title')}</h2></div><p>{data.events[0].title} · {formatWhen(data.events[0].starts_at, i18n.resolvedLanguage ?? 'en')}</p></section>}
     {hosting ? <>
       <HostCheckinActions userId={userId} />
       {data.drafts > 0 && <section className="panel"><Link to="/events" search={{ tab: 'hosting' }}>{t('personalHome.drafts', { count: data.drafts })}<ArrowRight /></Link></section>}
