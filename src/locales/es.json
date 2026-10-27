@@ -6644,11 +6644,18 @@
       "team": "Recursos del equipo",
       "coach": "tu página de coach",
       "places": "Actualmente aparece en: {{places}}.",
-      "deleteHistory": "Eliminar es permanente: lo quita de todos los lugares indicados y borra el progreso y los intentos de cuestionario de las personas. Los recursos que se compraron no se pueden eliminar.",
-      "archiveHistory": "Archivarlo lo oculta de todos los lugares indicados. Quienes ya tienen acceso conservan su compra e historial.",
+      "archiveHistory": "Se quitará de todos los lugares indicados y dejará de mostrarse a personas nuevas y para nuevas ventas. Quienes ya tienen acceso lo conservan, y se guardan sus compras, avance, resultados de cuestionarios y recibos. Puedes restaurarlo más tarde como borrador.",
       "delete": "Eliminar",
       "archive": "Archivar",
-      "archiveTitle": "¿Archivar este recurso?"
+      "archiveTitle": "¿Archivar este recurso?",
+      "deleteTitle": "¿Eliminar este borrador?",
+      "deleteDraft": "Este borrador nunca se ha publicado, ubicado ni usado, así que se puede eliminar de forma permanente.",
+      "deleted": "Borrador eliminado.",
+      "archived": "Recurso archivado. El historial se conserva.",
+      "restored": "Restaurado como borrador. Elige dónde debe aparecer antes de publicar.",
+      "restore": "Restaurar",
+      "archivedBadge": "Archivado",
+      "historyBlocked": "No se puede eliminar porque hay personas con avance o compras. Archívalo en su lugar."
     }
   },
   "templatesR": {
