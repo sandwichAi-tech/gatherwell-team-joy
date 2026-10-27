@@ -5765,6 +5765,7 @@ export type Database = {
       }
       quizzes: {
         Row: {
+          archived_at: string | null
           assessment_config: Json | null
           assessment_revision: number
           assessment_scope_id: string | null
@@ -5800,6 +5801,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          archived_at?: string | null
           assessment_config?: Json | null
           assessment_revision?: number
           assessment_scope_id?: string | null
@@ -5835,6 +5837,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          archived_at?: string | null
           assessment_config?: Json | null
           assessment_revision?: number
           assessment_scope_id?: string | null
@@ -5910,6 +5913,7 @@ export type Database = {
       recipes: {
         Row: {
           accent: string
+          archived_at: string | null
           available_from: string | null
           available_tz: string | null
           card_layout: string
@@ -5942,6 +5946,7 @@ export type Database = {
         }
         Insert: {
           accent?: string
+          archived_at?: string | null
           available_from?: string | null
           available_tz?: string | null
           card_layout?: string
@@ -5974,6 +5979,7 @@ export type Database = {
         }
         Update: {
           accent?: string
+          archived_at?: string | null
           available_from?: string | null
           available_tz?: string | null
           card_layout?: string
@@ -7826,6 +7832,7 @@ export type Database = {
       tracks: {
         Row: {
           accent: string
+          archived_at: string | null
           available_from: string | null
           available_tz: string | null
           card_layout: string
@@ -7858,6 +7865,7 @@ export type Database = {
         }
         Insert: {
           accent?: string
+          archived_at?: string | null
           available_from?: string | null
           available_tz?: string | null
           card_layout?: string
@@ -7890,6 +7898,7 @@ export type Database = {
         }
         Update: {
           accent?: string
+          archived_at?: string | null
           available_from?: string | null
           available_tz?: string | null
           card_layout?: string
@@ -9828,6 +9837,7 @@ export type Database = {
         Args: { _team: string; _user: string }
         Returns: undefined
       }
+      remove_resource: { Args: { _id: string; _kind: string }; Returns: string }
       render_message_vars: {
         Args: {
           _date: string
@@ -9934,6 +9944,22 @@ export type Database = {
       resource_journey_activity: {
         Args: { _journey?: string; _limit?: number; _team: string }
         Returns: Json
+      }
+      resource_owner_ok: {
+        Args: { _id: string; _kind: string }
+        Returns: boolean
+      }
+      resource_protected: {
+        Args: { _id: string; _kind: string }
+        Returns: boolean
+      }
+      resource_removal_plan: {
+        Args: { _id: string; _kind: string }
+        Returns: Json
+      }
+      restore_resource: {
+        Args: { _id: string; _kind: string }
+        Returns: undefined
       }
       resume_my_membership: { Args: { _offer: string }; Returns: undefined }
       retreat_checklist: { Args: { _code: string }; Returns: Json }
