@@ -109,7 +109,9 @@
     "save": "Guardar",
     "retry": "Intentar de nuevo",
     "cancel": "Cancelar",
-    "loading": "Cargando…"
+    "loading": "Cargando…",
+    "delete": "Eliminar",
+    "setupRequired": "Configuración pendiente"
   },
   "home": {
     "meta": {
@@ -416,7 +418,8 @@
     "eyebrow": "Espacio",
     "heading": "Conocimiento compartido",
     "sentence": "Cursos, guías, sesiones en vivo, recetas y más.",
-    "button": "Crear capacitación"
+    "button": "Crear capacitación",
+    "uploadError": "No pudimos subir ese archivo. Inténtalo de nuevo."
   },
   "me": {
     "title": "Yo",
@@ -4708,7 +4711,9 @@
     "summary": "{{done}} de {{lessons}} lecciones · {{qdone}} de {{quizzes}} evaluaciones obligatorias",
     "complete": "Curso completo — ¡felicidades!",
     "learners": "Progreso de participantes",
-    "unnamed": "Participante"
+    "unnamed": "Participante",
+    "noBests": "Aún no hay marcas personales.",
+    "noGoals": "Aún no hay metas."
   },
   "coach": {
     "eyebrow": "Tu lanzamiento",
