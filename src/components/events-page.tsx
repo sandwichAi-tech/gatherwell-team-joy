@@ -19,7 +19,7 @@ export function GatheringCard({ e, lang }: { e: Gathering; lang: string }) {
   const d = new Date(e.starts_at); const online = isOnline(e);
   const kind = e.theme === 'training' ? 'training' : online ? 'online' : 'person';
   return <Link to="/event/$id" params={{ id: e.id }} className="gathering-card">
-    <GatheringCover path={e.cover_url} style={e.cover_style} title={e.title} className="card-strip" eventId={e.id} />
+    <GatheringCover path={e.cover_url} category={e.category} style={e.cover_style} title={e.title} className="card-strip" eventId={e.id} />
     <div className="gathering-card-body">
       <div className="date-tile"><span>{d.toLocaleDateString(lang, { month: 'short' })}</span><strong>{d.getDate()}</strong></div>
       <div className="event-info">

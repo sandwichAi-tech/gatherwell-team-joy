@@ -1,3 +1,4 @@
+import { displayTitleCase } from '@/lib/event-presentation';
 import { useState, type CSSProperties, type ReactNode } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
@@ -80,7 +81,7 @@ export function GatheringCard({ g, slot, near, goingOverride, goingSlot, showRsv
   const catName = t(`landing.catOne.${g.category}`);
   return <article className={`gw-gcard ${className ?? ''}`} style={style}>
     <div className="gw-gcard-media">
-      <BrandImage slot={slot ?? feedSlot(g.category)} aspect={4 / 3} sizes="(min-width: 1024px) 360px, 80vw" priority={priority} />
+      <BrandImage slot={slot ?? feedSlot(g.category)} fallbackSlot="hero_card_1" aspect={4 / 3} sizes="(min-width: 1024px) 360px, 80vw" priority={priority} />
       <div className="gw-gcard-chips">
         {showRsvp
           ? <Link to="/discover" search={{ cat: g.category }} className="gw-cat-chip" aria-label={t('landing.card.filterCat', { category: catName })}><GwIcon name={CATEGORY_ICONS[g.category]} variant="marketing" size={16} />{catName}</Link>
@@ -92,7 +93,7 @@ export function GatheringCard({ g, slot, near, goingOverride, goingSlot, showRsv
     <div className="gw-gcard-body">
       <h3 className="gw-gcard-title">{showRsvp ? <button type="button" className="gw-gcard-link" onClick={open} aria-label={t('landing.card.open', { title: g.title })}>{g.title}</button> : g.title}</h3>
       <p className="gw-gcard-meta">{meta}</p>
-      <p className="gw-gcard-host"><span className="gw-mini-avatar tone-2" style={{ width: 20, height: 20, fontSize: 9 }} aria-hidden="true">{g.hostName.trim()[0]?.toUpperCase() ?? 'G'}</span>{t('landing.card.hostedBy', { name: g.hostName })}{g.isSample && <span className="gw-sample-tag">{t('landing.card.sample')}</span>}{g.featured && <span className="gw-sample-tag gw-founding-tag">{t('founding.badge')}</span>}</p>
+      <p className="gw-gcard-host"><span className="gw-mini-avatar tone-2" style={{ width: 20, height: 20, fontSize: 9 }} aria-hidden="true">{g.hostName.trim()[0]?.toUpperCase() ?? 'G'}</span>{t('landing.card.hostedBy', { name: displayTitleCase(g.hostName) })}{g.isSample && <span className="gw-sample-tag">{t('landing.card.sample')}</span>}{g.featured && <span className="gw-sample-tag gw-founding-tag">{t('founding.badge')}</span>}</p>
       <div className="gw-gcard-foot">
         <span className="gw-going"><AvatarStack letters={g.initials} />{goingSlot ?? <GoingLine g={g} going={going} />}</span>
         {showRsvp && <RsvpButton g={g} compact />}
@@ -102,7 +103,7 @@ export function GatheringCard({ g, slot, near, goingOverride, goingSlot, showRsv
       footer={<Button className="w-full" onClick={() => { setPreview(false); void navigate({ to: '/discover', search: {} }); }}>{t('landing.card.browseReal')}</Button>}>
       <div className="edit-form">
         <p className="gw-gcard-meta">{meta}</p>
-        <p>{t('landing.card.hostedBy', { name: g.hostName })}</p>
+        <p>{t('landing.card.hostedBy', { name: displayTitleCase(g.hostName) })}</p>
         <p className="guest-hint">{t('landing.card.sampleBody')}</p>
       </div>
     </ResponsiveSheet>}

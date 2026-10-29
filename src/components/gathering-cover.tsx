@@ -33,7 +33,7 @@ export function GatheringCover({ path, style = 0, title, className = '', overlay
     <BrandImage src={url} alt={alt?.trim() || title} className="gathering-cover-img" focal={{ x: fx, y: fy }} sizes={sizes ?? coverSizes(className)} priority={className.includes('guest-cover')} onNaturalWidth={onNaturalWidth} />
     {scrimEl}
   </span>;
-  if (!className.includes('profile-photo-cover')) return <span className={`gathering-cover has-photo ${className}`}>
+  if (eventId || category !== undefined || /\b(guest-cover|follow-event-cover|manage-cover|card-strip)\b/.test(className)) return <span className={`gathering-cover has-photo ${className}`}>
     <BrandImage slot={eventPhotoSlot(category)} fallbackSlot="hero_card_1" alt={alt?.trim() || title} className="gathering-cover-img" sizes={sizes ?? coverSizes(className)} priority={className.includes('guest-cover')} />
   </span>;
   return <div className={`gathering-cover ${className}`} style={{ backgroundImage: coverStyleAt(style) }} role="img" aria-label={alt?.trim() || title}>

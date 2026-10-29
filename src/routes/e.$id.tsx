@@ -123,18 +123,18 @@ function PublicEventBody() {
   const attendance = attendancePresentation(event.going, event.capacity);
 
   if (teamResult) return <>
-    <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="guest-cover" rendition={coverRendition} overlay={event.cover_overlay} focal={event.cover_focal} alt={event.cover_alt} />
+    <GatheringCover path={event.cover_url} category={event.category} style={event.cover_style} title={event.title} className="guest-cover" rendition={coverRendition} overlay={event.cover_overlay} focal={event.cover_focal} alt={event.cover_alt} />
     <div className="guest-body"><TeamConfirmation result={teamResult} /></div>
   </>;
 
   if (result) return <>
-    <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="guest-cover" rendition={coverRendition} overlay={event.cover_overlay} focal={event.cover_focal} alt={event.cover_alt} />
+    <GatheringCover path={event.cover_url} category={event.category} style={event.cover_style} title={event.title} className="guest-cover" rendition={coverRendition} overlay={event.cover_overlay} focal={event.cover_focal} alt={event.cover_alt} />
     <ConfirmationLoader code={result.code} fallbackStatus={result.status} />
     <div className="guest-body live-extras"><Polls eventId={id} code={result.code} /></div>
   </>;
 
   return <>
-    <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="guest-cover" rendition={coverRendition} overlay={event.cover_overlay} focal={event.cover_focal} alt={event.cover_alt} />
+    <GatheringCover path={event.cover_url} category={event.category} style={event.cover_style} title={event.title} className="guest-cover" rendition={coverRendition} overlay={event.cover_overlay} focal={event.cover_focal} alt={event.cover_alt} />
     <article className="guest-body">
       <div className="guest-title-row"><h1 className="guest-title">{event.title}</h1><ReportButton type="event" id={id} /></div>
       {summary && <p className="guest-summary">{summary}</p>}
@@ -148,11 +148,11 @@ function PublicEventBody() {
       <p className="guest-price-line"><strong className="tabular-nums">{(event.price_cents ?? 0) > 0 ? formatMoney(price?.price_cents ?? event.price_cents ?? 0, lang) : t('guest.metaFree')}</strong>{price && <span>{t('billing.perPerson')}{price.pass_fee ? ` · ${t('billing.feeNote', { pct: price.fee_pct })}` : ''}{price.cover_service_fee ? ` · ${t('billing.allInShort')}` : ` · ${t('billing.plusServiceFee', { fee: formatMoney(serviceFee(price.price_cents, Number(price.service_fee_percent ?? 0), price.service_fee_fixed ?? 0), lang) })}`}</span>}</p>
       {!event.is_online && !cancelled && <WeatherNote lat={event.lat} lng={event.lng} startsAt={event.starts_at} />}
 
-      {publicHostSlug(event.host) ? <Link to="/h/$slug" params={{ slug: publicHostSlug(event.host) ?? '' }} className="guest-host" aria-label={t('eventAgreements.hostLink', { name: event.host?.name })}>
+      {publicHostSlug(event.host) ? <Link to="/h/$slug" params={{ slug: publicHostSlug(event.host) ?? '' }} className="guest-host" aria-label={t('eventAgreements.hostLink', { name: displayTitleCase(event.host?.name) })}>
         {hostPhoto ? <img src={hostPhoto} alt="" className="guest-host-photo" /> : <span className="initial-avatar">{initialsOf(event.host?.name ?? null)}</span>}
         <div><span className="guest-label">{t('guest.hostedBy')}</span><strong>{displayTitleCase(event.host?.name)}{event.host?.verified && <> <VerifiedMark compact /></>}</strong></div>
       </Link> : <div className="guest-host"><span className="guest-label">{t('eventAgreements.hostUnavailable')}</span></div>}
-      {!!event.cohosts?.length && <div className="guest-cohosts"><span className="guest-label">{t('cohosts.withCohosts')}</span><ul>{event.cohosts.map((c, i) => <li key={i}><span className="initial-avatar">{initialsOf(c.name)}</span><span>{c.name ?? t('teamSpace.someone')}</span></li>)}</ul></div>}
+      {!!event.cohosts?.length && <div className="guest-cohosts"><span className="guest-label">{t('cohosts.withCohosts')}</span><ul>{event.cohosts.map((c, i) => <li key={i}><span className="initial-avatar">{initialsOf(c.name)}</span><span>{displayTitleCase(c.name) || t('teamSpace.someone')}</span></li>)}</ul></div>}
 
       {event.has_online && <section className="guest-card"><div className="guest-place"><Video /><div><strong>{t('publicEvent.online')}</strong><p>{t('guest.onlineHidden')}</p></div></div></section>}
       {!event.is_online && (event.location_name || event.address) && <section className="guest-card">
