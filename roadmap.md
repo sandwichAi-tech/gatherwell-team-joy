@@ -1,5 +1,10 @@
 # Challenge commerce and course/assessment lifecycle closure
 
+## October 29 focused visible copy and layout
+- [x] Hosts wording/audience/pricing spacing and availability labels; signed-in Discover/header; footer; Me conditional sections implemented.
+- [x] Locale audit, 106 files/894 tests and signed-out EN/ES 390/1280 browser review; unchanged pricing and CHANGELOG.
+- [ ] Signed-in Discover/header and Me browser/two-account verification: requester has no matching app account; preview sign-in required.
+
 ## October 29 focused event presentation
 - [x] Category cover fallback, Pilates slot, public event details and display-only name/city casing.
 - [x] Five focused rules; 106 files/894 full tests; English/Spanish public-event browser checks at 390/1280; CHANGELOG. Device native share and paid/signed-in browser views remain unverified.

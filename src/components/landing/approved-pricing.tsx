@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { GwIcon } from '@/components/gw-icon';
 import { HOME_PLANS, annualPrice } from '@/lib/homepage';
+import { Button } from '@/components/ui/button';
 
 /**
  * Assisted-setup path for Organization: the in-app support flow with an
@@ -45,7 +46,7 @@ export function ApprovedPlans({ headingLevel = 3 }: { headingLevel?: 2 | 3 }) {
       {'contactSales' in p && p.contactSales
         ? <Link to="/login" search={{ next: CONTACT_SALES_PATH }} className="gw-btn gw-btn-secondary gw-btn-block">{t('pricingV4.contactSales')}</Link>
         : p.monthly > 0
-          ? <span className="gw-home-tool-tag">{t('pricingV4.setupRequired')}</span>
+          ? <Button variant="secondary" className="w-full" disabled>{t('billing.comingSoon')}</Button>
           : <Link to="/login" search={{ intent: 'host' }} className="gw-btn gw-btn-primary gw-btn-block">{t('home.cta.start')}</Link>}
     </li>)}</ul>
     <p className="gw-fine">{t('pricingV4.checkoutNote')}</p>

@@ -1,4 +1,5 @@
 import { displayTitleCase, eventPhotoSlot } from '@/lib/event-presentation';
+import { usePublicSession } from '@/hooks/use-public-session';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
@@ -145,6 +146,7 @@ function CoachCard({ coach, coverUrl, avatarUrl }: { coach: CoachItem; coverUrl:
 
 export function DiscoverPage({ search }: { search: DiscoverSearch }) {
   const { t, i18n } = useTranslation();
+  const signedIn = usePublicSession();
   const navigate = useNavigate({ from: '/discover' });
   const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
   const tab: DiscoverTab = search.tab ?? 'events';
@@ -211,9 +213,10 @@ export function DiscoverPage({ search }: { search: DiscoverSearch }) {
       <section className="gw-container gw-discover-head">
         <span className="gw-label">{t('landing.discover.label')}</span>
         <h1 className="gw-display gw-h1">{t('landing.discover.title')}</h1>
-        <p className="gw-lede">{t('landing.discover.sub')}</p>
+        <p className="gw-lede">{t(signedIn === true ? 'landing.discover.signedInSub' : 'landing.discover.sub')}</p>
         <div className="gw-discover-ctas">
-          <Link to="/login" className="gw-btn gw-btn-primary">{t('discover.joinCta')}</Link>
+          {signedIn === false && <Link to="/login" className="gw-btn gw-btn-primary">{t('discover.joinCta')}</Link>}
+          {signedIn === true && <Link to="/home" className="gw-btn gw-btn-primary">{t('landing.nav.goToApp')}</Link>}
           <Link to="/login" search={{ intent: 'host' }} className="gw-btn gw-btn-secondary">{t('discover.hostCta')}</Link>
         </div>
       </section>

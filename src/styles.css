@@ -2231,6 +2231,15 @@ a.gw-cat-chip:hover{background:#fff}
    are visible on desktop, so sticky adds nothing). Never make it sticky without
    a top offset below the 68px site header. */
 .gw-billing-toggle{position:static;display:inline-flex;gap:4px;padding:4px;margin:0 0 16px;border:1px solid var(--border);border-radius:999px;background:var(--card)}
+.gw-v4-pricing{margin-top:24px}
+.gw-discover .gw-discover-filters{flex-direction:column;align-items:stretch}
+.gw-discover-filters .gw-cat-section{background:transparent;box-shadow:none;clip-path:none;border:0;padding:12px 0;width:100%;min-width:0}
+.gw-discover-filters .gw-cat-section>.gw-container{padding:0;max-width:none}
+.gw-discover-filters .gw-cat-row{justify-content:safe center;overflow-x:auto}
+.me-start-hosting{min-height:48px;margin-top:16px;width:100%}
+.gw-host-types{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;list-style:none;padding:0;margin:24px 0 0}
+.gw-host-types h3{font-size:18px;margin-bottom:8px}.gw-host-types p{color:var(--muted-foreground);line-height:1.6}
+@media(max-width:767px){.gw-host-types{grid-template-columns:1fr}.gw-billing-toggle{flex-wrap:wrap;max-width:100%}.gw-billing-option{padding:8px 12px}}
 .gw-billing-option{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:8px 18px;border:0;border-radius:999px;background:transparent;color:var(--foreground);font:inherit;font-weight:600;cursor:pointer}
 .gw-billing-option[aria-pressed="true"]{background:var(--primary);color:var(--primary-foreground)}
 .gw-billing-option:focus-visible{outline:3px solid var(--ring);outline-offset:2px}

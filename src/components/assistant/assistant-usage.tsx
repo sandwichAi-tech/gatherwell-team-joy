@@ -5,7 +5,7 @@ import { useAssistantStatus } from '@/lib/assistant-client';
 /** Me: monthly assistant allowance; preview-mode replies are never counted. */
 export function AssistantUsage() {
   const { t } = useTranslation(); const { data } = useAssistantStatus();
-  if (!data) return null;
+  if (!data?.connected) return null;
   const pct = data.limit ? Math.min(100, Math.round((data.used / data.limit) * 100)) : 0;
   const close = data.used >= data.limit * 0.8;
   return <section className="panel assistant-usage">

@@ -323,7 +323,7 @@
       },
       "templates": {
         "q": "Can I reuse content across events and resources?",
-        "a": "Yes. Start from bilingual starter templates, save your own, and copy them as drafts — including event blueprints for the gatherings you run again and again."
+        "a": "Yes. Start from bilingual starter templates, save your own, and copy them as drafts — including event blueprints for the events you run again and again."
       },
       "plans": {
         "q": "How much does ZoheeWell cost?",
@@ -367,7 +367,7 @@
       },
       "team": {
         "q": "Can I work with a team?",
-        "a": "Yes. Teams let several people run events and content together. Builder seats cover the owner, admins, hosts, and content editors; check-in staff, analysts, and moderators never use a seat."
+        "a": "Yes. Teams let several people run events and content together. Included hosts cover the owner, admins, hosts, and content editors; check-in staff, analysts, and moderators never use a seat."
       },
       "whoManages": {
         "q": "Who can see and manage my content?",
@@ -873,7 +873,7 @@
     "back": "Back to sign in"
   },
   "publicEvent": {
-    "eyebrow": "GATHERING",
+    "eyebrow": "EVENT",
     "notFound": "This event isn't available.",
     "going": "{{count}} going",
     "rsvpTitle": "Save your spot",
@@ -2438,6 +2438,7 @@
       "getStarted": "Get started",
       "menu": "Open menu",
       "close": "Close menu",
+      "goToApp": "Go to app",
       "main": "Main"
     },
     "hostFirst": {
@@ -2487,7 +2488,7 @@
       "h1B": "Your next workout has a guest list.",
       "h1C": "Less scrolling. More showing up.",
       "h1D": "Find your people. Get well together.",
-      "sub": "Run clubs, fit camps, sunrise yoga, sound baths and walks near you. RSVP in a tap and just show up.",
+      "sub": "Run clubs, fit camps, sunrise yoga, sound baths and walks near you. RSVP in seconds and just show up.",
       "find": "Find an event",
       "host": "Host one",
       "proof": "{{count}} people showed up this month.",
@@ -2604,7 +2605,7 @@
       "title": "People who showed up."
     },
     "footer": {
-      "tagline": "Wellness is better together.",
+      "tagline": "Life is better together.",
       "discover": "Discover",
       "host": "Host",
       "company": "Company",
@@ -2629,11 +2630,12 @@
     "discover": {
       "label": "Discover",
       "title": "Find something worth showing up for",
-      "sub": "Browse upcoming events, courses and coaches near you. Join free to save what you love and RSVP in a tap.",
+      "sub": "Browse upcoming events, courses and coaches near you. Join free to save what you love and RSVP in seconds.",
       "today": "Today",
       "weekend": "This weekend",
       "week": "This week",
       "dateLabel": "When",
+      "signedInSub": "Browse upcoming events, courses and coaches near you. Save what you love and RSVP in seconds.",
       "count_one": "{{count}} event",
       "count_other": "{{count}} events",
       "back": "Back to ZoheeWell"
@@ -2647,9 +2649,9 @@
     },
     "meta": {
       "homeTitle": "ZoheeWell · Wellness events near you",
-      "home": "Find run clubs, fit camps, yoga, sound baths, hikes and walks near you. RSVP in a tap and just show up.",
+      "home": "Find run clubs, fit camps, yoga, sound baths, hikes and walks near you. RSVP in seconds and just show up.",
       "discoverTitle": "Discover events, courses and coaches · ZoheeWell",
-      "discover": "Browse upcoming events, courses, resources and coaches near you. Join free to save what you love and RSVP in a tap.",
+      "discover": "Browse upcoming events, courses, resources and coaches near you. Join free to save what you love and RSVP in seconds.",
       "creditsTitle": "Photography credits · ZoheeWell",
       "credits": "The photographers behind the images on ZoheeWell."
     }
@@ -2888,7 +2890,7 @@
     "seatsGrowth": "Advanced for up to {{n}} members",
     "buy": "Buy",
     "organization": "Organization",
-    "orgText": "Up to 100 builder seats, assisted setup",
+    "orgText": "Up to 100 hosts included, assisted setup",
     "contact": "Contact us",
     "seats": "Seats",
     "earnings": "Earnings",
@@ -4261,7 +4263,7 @@
         }
       ],
       "useLabel": "How it works",
-      "useTitle": "Two sides of the same gathering",
+      "useTitle": "Two sides of the same event",
       "uses": [
         {
           "title": "For hosts",
@@ -4269,7 +4271,7 @@
         },
         {
           "title": "For participants",
-          "body": "Browse Discover for upcoming events, resources, and coaches near you. Save what you love and RSVP in a tap."
+          "body": "Browse Discover for upcoming events, resources, and coaches near you. Save what you love and RSVP in seconds."
         }
       ],
       "betaLabel": "Where we are",
@@ -4318,7 +4320,7 @@
     "benefits": [
       {
         "title": "Create in a minute",
-        "body": "Pick a template, add a place and a time, and your gathering page is ready.",
+        "body": "Pick a template, add a place and a time, and your event page is ready.",
         "demo": "Pilates in the park"
       },
       {
@@ -4333,7 +4335,7 @@
       },
       {
         "title": "Check-in and follow-ups",
-        "body": "Scan a QR code at the door, then send a thoughtful follow-up after the gathering.",
+        "body": "Scan a QR code at the door, then send a thoughtful follow-up after the event.",
         "demo": "Checked in · Ready to connect"
       },
       {
@@ -4407,10 +4409,10 @@
     "hostFaq": [
       {
         "q": "Do my guests need an account?",
-        "a": "No. Guests can RSVP from your gathering link without an app or account. Accounts are for people 18 and older."
+        "a": "No. Guests can RSVP from your event link without an app or account. Accounts are for people 18 and older."
       },
       {
-        "q": "Can I host any kind of gathering?",
+        "q": "Can I host any kind of event?",
         "a": "Choose a category or select Other and give it your own label. Keep it welcoming and follow our host guidelines."
       },
       {
@@ -4429,7 +4431,7 @@
       },
       {
         "q": "Can guests join for free?",
-        "a": "Yes. Guests never need a paid plan to RSVP. A host may set a ticket price for a gathering or a price for an offer."
+        "a": "Yes. Guests never need a paid plan to RSVP. A host may set a ticket price for a event or a price for an offer."
       },
       {
         "q": "Can I cancel anytime?",
@@ -4442,7 +4444,7 @@
       },
       {
         "q": "Who handles refunds?",
-        "a": "You do, with a rule you pick for each paid gathering or Circle: full refund until 24 hours before, until 7 days before, or no refunds. Guests see your rule before they pay, and anything you cancel is refunded in full."
+        "a": "You do, with a rule you pick for each paid event or Circle: full refund until 24 hours before, until 7 days before, or no refunds. Guests see your rule before they pay, and anything you cancel is refunded in full."
       }
     ],
     "finalTitle": "Your next event starts here.",
@@ -4461,7 +4463,7 @@
         },
         {
           "title": "Fill your classes from the community",
-          "body": "Circles, special gatherings and online content keep people connected between classes, so regulars show up more often."
+          "body": "Circles, special events and online content keep people connected between classes, so regulars show up more often."
         },
         {
           "title": "Bilingual from day one",
@@ -4472,7 +4474,7 @@
       "simpleTitle": "Have a small space?",
       "simpleBody": "Simple space mode is made for nutrition clubs, garage gyms and small rooms — no front-desk software needed.",
       "simpleList": [
-        "A weekly schedule of gatherings on your own page",
+        "A weekly schedule of events on your own page",
         "QR check-in at the door, even on a weak connection",
         "Liability waivers people sign before they join",
         "Member-only sessions and simple drop-in pricing"
@@ -4482,13 +4484,40 @@
     },
     "hostsMeta": "For hosts · ZoheeWell",
     "pricingMeta": "Pricing · ZoheeWell",
+    "hostTypesTitle": "For every kind of host",
+    "hostTypes": [
+      {
+        "title": "Run clubs",
+        "body": "Weekly runs and meetups for your running community."
+      },
+      {
+        "title": "Fit camps",
+        "body": "Outdoor workouts with a place for everyone."
+      },
+      {
+        "title": "Classes & trainings",
+        "body": "Bring people together to practice and learn."
+      },
+      {
+        "title": "Team leaders",
+        "body": "Coordinate events and shared learning for your team."
+      },
+      {
+        "title": "Coaches & creators",
+        "body": "Share your knowledge through events, courses and resources."
+      },
+      {
+        "title": "Small studios",
+        "body": "Manage classes and keep your community connected."
+      }
+    ],
     "whoLabel": "Who it's for",
     "whoTitle": "Made for real lives",
     "whoSub": "Wherever you're starting, there's an event that fits.",
     "who": [
       {
         "title": "New to fitness",
-        "body": "Beginner-friendly gatherings and people who make it easy to start."
+        "body": "Beginner-friendly events and people who make it easy to start."
       },
       {
         "title": "Busy schedules",
@@ -4496,7 +4525,7 @@
       },
       {
         "title": "Active at every age",
-        "body": "Gentle, accessible gatherings at your pace."
+        "body": "Gentle, accessible events at your pace."
       },
       {
         "title": "Training for something",
@@ -4504,7 +4533,7 @@
       },
       {
         "title": "Families",
-        "body": "Family-friendly gatherings in your neighborhood."
+        "body": "Family-friendly events in your neighborhood."
       },
       {
         "title": "Coaches and creators",
@@ -5431,9 +5460,9 @@
     "startingAt": "starting at",
     "contactSales": "Contact sales",
     "feeLine": "{{pct}}% platform fee on paid sales",
-    "seatsLine": "{{n}} builder seats",
-    "seatTitle": "What is a builder seat?",
-    "seatBody": "A builder seat is for anyone who creates or manages your offerings: the owner, admins, hosts, and content editors.",
+    "seatsLine": "{{n}} hosts included",
+    "seatTitle": "Who is included as a host?",
+    "seatBody": "Included hosts are people who create or manage your offerings: the owner, admins, hosts, and content editors.",
     "seatFree": "Check-in staff, analysts, moderators, members, attendees and learners never use a builder seat — add as many as you need.",
     "desc": {
       "free": "Host free events and get started.",
@@ -5451,11 +5480,11 @@
         },
         {
           "title": "Growing your audience",
-          "body": "Advanced lowers your fee to 3% and keeps three builder seats for you and two collaborators."
+          "body": "Advanced lowers your fee to 3% and includes three hosts for you and two collaborators."
         },
         {
           "title": "Hosting full time",
-          "body": "Pro drops the fee to 2% and gives you five builder seats for a small team."
+          "body": "Pro drops the fee to 2% and includes five hosts for a small team."
         },
         {
           "title": "Running a team or studio",
@@ -5473,8 +5502,8 @@
         "a": "A ZoheeWell platform fee applies to paid sales you make, and it gets lower as your plan grows: 5% on Free, 3% on Advanced, 2% on Pro, 1% on Team 25, and 0.5% on Organization. Free offerings have no platform fee. Stripe processing is separate."
       },
       {
-        "q": "What is a builder seat?",
-        "a": "A builder seat is for anyone who creates or manages your offerings: the owner, admins, hosts, and content editors. Check-in staff, analysts, moderators, members, attendees and learners never use a builder seat."
+        "q": "Who is included as a host?",
+        "a": "Included hosts are people who create or manage your offerings: the owner, admins, hosts, and content editors. Check-in staff, analysts, moderators, members, attendees and learners never use a builder seat."
       },
       {
         "q": "How does annual billing work?",
@@ -7002,7 +7031,7 @@
       },
       "planSeats": {
         "title": "Seats",
-        "desc": "Who fills your builder seats."
+        "desc": "Who is included in your hosting plan."
       },
       "insights": {
         "title": "Insights",

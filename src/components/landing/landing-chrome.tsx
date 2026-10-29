@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { featureFlagsQuery, track } from '@/lib/landing';
 import { applySavedLanguage, SPANISH_ENABLED } from '@/lib/i18n';
 import { BrandLogo } from '@/components/brand-logo';
+import { usePublicSession } from '@/hooks/use-public-session';
 
 export function LandingLogo() {
   const { t } = useTranslation();
@@ -26,6 +27,7 @@ export function NavLanguage() {
 
 export function LandingNav() {
   const { t } = useTranslation();
+  const signedIn = usePublicSession();
   const [solid, setSolid] = useState(false);
   const [open, setOpenRaw] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -67,11 +69,12 @@ export function LandingNav() {
         <Link to="/pricing" className="gw-nav-link">{t('marketing.navPricing')}</Link>
         <Link to="/discover" className="gw-nav-link">{t('home.nav.explore')}</Link>
         <NavLanguage />
-        <Link to="/login" className="gw-nav-link">{t('landing.nav.signIn')}</Link>
-        <Link to="/login" search={{ intent: 'host' }} className="gw-btn gw-btn-primary gw-btn-sm">{t('home.cta.start')}</Link>
+        {signedIn === false && <Link to="/login" className="gw-nav-link">{t('landing.nav.signIn')}</Link>}
+        {signedIn === true ? <Link to="/home" className="gw-btn gw-btn-primary gw-btn-sm">{t('landing.nav.goToApp')}</Link> : signedIn === false && <Link to="/login" search={{ intent: 'host' }} className="gw-btn gw-btn-primary gw-btn-sm">{t('home.cta.start')}</Link>}
       </nav>
       <div className="gw-nav-mobile">
         <NavLanguage />
+        {signedIn === true && <Link to="/home" className="gw-nav-link">{t('landing.nav.goToApp')}</Link>}
         <button ref={triggerRef} type="button" className="gw-icon-btn" aria-label={t('landing.nav.menu')} aria-expanded={open} onClick={() => setOpen(true)}><GwIcon name="List" size={24} /></button>
       </div>
     </div>
@@ -82,23 +85,24 @@ export function LandingNav() {
         <a href="/#tools" onClick={() => setOpen(false)}>{t('home.nav.tools')}</a>
         <Link to="/pricing" onClick={() => setOpen(false)}>{t('marketing.navPricing')}</Link>
         <Link to="/discover" onClick={() => setOpen(false)}>{t('home.nav.explore')}</Link>
-        <Link to="/login" onClick={() => setOpen(false)}>{t('landing.nav.signIn')}</Link>
+        {signedIn === false && <Link to="/login" onClick={() => setOpen(false)}>{t('landing.nav.signIn')}</Link>}
       </nav>
       <NavLanguage />
-      <Link to="/login" search={{ intent: 'host' }} className="gw-btn gw-btn-primary gw-btn-block" onClick={() => setOpen(false)}>{t('home.cta.start')}</Link>
+      {signedIn === true ? <Link to="/home" className="gw-btn gw-btn-primary gw-btn-block" onClick={() => setOpen(false)}>{t('landing.nav.goToApp')}</Link> : signedIn === false && <Link to="/login" search={{ intent: 'host' }} className="gw-btn gw-btn-primary gw-btn-block" onClick={() => setOpen(false)}>{t('home.cta.start')}</Link>}
     </div>}
   </header>;
 }
 
 export function LandingFooter() {
   const { t } = useTranslation();
+  const signedIn = usePublicSession();
   return <footer className="gw-footer" id="site-footer">
     <div className="gw-container gw-footer-grid">
       <div className="gw-footer-brand"><LandingLogo /><p>{t('landing.footer.tagline')}</p><LanguageToggle /></div>
       <div><h3>{t('landing.footer.discover')}</h3><Link to="/discover">{t('landing.footer.allGatherings')}</Link><Link to="/discover">{t('landing.footer.thisWeekend')}</Link></div>
       <div><h3>{t('landing.footer.host')}</h3><Link to="/login" search={{ intent: 'host' }}>{t('landing.footer.hostOne')}</Link><a href="/#for-hosts">{t('home.footer.hostTools')}</a></div>
-      <div><h3>{t('landing.footer.company')}</h3><Link to="/about">{t('landing.footer.about')}</Link><Link to="/careers">{t('landing.footer.careers')}</Link><a href="/#how-it-works">{t('landing.footer.howItWorks')}</a><Link to="/pricing">{t('marketing.navPricing')}</Link><Link to="/faq">{t('landing.footer.faq')}</Link><Link to="/login">{t('landing.footer.signIn')}</Link></div>
-      <div><h3>{t('landing.footer.legal')}</h3><Link to="/terms">{t('landing.footer.terms')}</Link><Link to="/privacy">{t('landing.footer.privacy')}</Link>{(['host', 'guest', 'sms', 'cookies'] as const).map(d => <Link key={d} to="/legal/$doc" params={{ doc: d }}>{t(`legalDocs.docs.${d}.title`)}</Link>)}<Link to="/credits">{t('landing.footer.credits')}</Link></div>
+      <div><h3>{t('landing.footer.company')}</h3><Link to="/about">{t('landing.footer.about')}</Link><a href="/#how-it-works">{t('landing.footer.howItWorks')}</a><Link to="/pricing">{t('marketing.navPricing')}</Link><Link to="/faq">{t('landing.footer.faq')}</Link>{signedIn === false && <Link to="/login">{t('landing.footer.signIn')}</Link>}{signedIn === true && <Link to="/home">{t('landing.nav.goToApp')}</Link>}</div>
+      <div><h3>{t('landing.footer.legal')}</h3><Link to="/terms">{t('landing.footer.terms')}</Link><Link to="/privacy">{t('landing.footer.privacy')}</Link>{(['host', 'guest', 'sms', 'cookies'] as const).map(d => <Link key={d} to="/legal/$doc" params={{ doc: d }}>{t(`legalDocs.docs.${d}.title`)}</Link>)}</div>
     </div>
     <div className="gw-container gw-footer-base"><span>{t('landing.footer.copyright')}</span><span><Link to="/terms">{t('landing.footer.terms')}</Link> · <Link to="/privacy">{t('landing.footer.privacy')}</Link></span></div>
   </footer>;

@@ -60,6 +60,7 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Profile IA: account fields edit only in Me's Edit profile, public-page fields only in HostProfilePanel (src/lib/profile-ia.ts PROFILE_FIELDS); host categories are allowed keys normalized by a DB trigger.
 - Event images use share-image.ts for all outputs; admin menu uses role checks.
 - Event cover category selection and display-only title casing use event-presentation.ts; default photos resolve through site_media so admin photo changes propagate without changing event records.
+- usePublicSession affects navigation display only, never access.
 - Course drip is decided only by lesson_unlock_at()/lesson_is_unlocked() (mirrored in src/lib/course-release.ts) and enforced by restrictive RLS on lessons, summaries and learn-media; browsers get locked titles only via my_locked_lessons().
 - Event Builder partial drafts use manager-only event_builder_drafts snapshots; publish validates and writes canonical event fields, so incomplete input never becomes attendee data.
 - Own QR unchanged; walk_in_admit binds event/retry and owner/assigned staff, capacity/payment/waivers; journeys dedupe. Manager-only waivers snapshot text, never rewrite acceptances.
