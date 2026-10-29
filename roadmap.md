@@ -2,7 +2,7 @@
 
 ## October 29 translation-only completion
 - [x] Add missing progress/invite/event-error/resource-type EN/ES entries; update host-count explanatory copy without changing rules.
-- [ ] Verify source-wide translation coverage and locale parity; record exact added keys and test results in CHANGELOG.
+- [x] Source-wide literal coverage, finite billing/marketing/progress families and parity verified; 107 files/899 tests passed, automatic compilation clean; all 54 added keys recorded in CHANGELOG.
 
 ## October 29 focused visible copy and layout
 - [x] Hosts wording/audience/pricing spacing and availability labels; signed-in Discover/header; footer; Me conditional sections implemented.
