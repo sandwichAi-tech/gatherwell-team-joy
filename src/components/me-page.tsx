@@ -26,7 +26,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { useSwitchTeam } from '@/components/team-switcher';
-import { useSwitchMode } from '@/lib/switch-mode';
+import { useSwitchMode, useStartHosting } from '@/lib/switch-mode';
 import { hostEligibilityQuery } from '@/lib/host-eligibility';
 import { setLanguage } from '@/components/auth-frame';
 import { BadgeWall, FeaturedBadges, RecognitionSummary, useHostOfMonthId } from '@/components/recognition';
@@ -192,7 +192,13 @@ export function MePage() {
 
   // Customers and hosts share one login; the mode lives on role_intent. Shared with the account menu.
   const switchMode = useSwitchMode(userId);
+  const startHosting = useStartHosting(userId);
   const { data: canHost = false } = useQuery(hostEligibilityQuery(userId));
+  const { data: referrals } = useQuery({ queryKey: ['me-referral-visibility', userId], queryFn: async () => {
+    const { data, error } = await supabase.rpc('my_referral_dashboard');
+    if (error) throw error;
+    return data as unknown as { links?: { enabled: boolean }[] } | null;
+  } });
   const openDelete = async () => {
     setConfirmText(''); setDeleting(true); setSoleTeams(null);
     const { data } = await supabase.rpc('my_sole_leader_teams');
@@ -262,6 +268,7 @@ export function MePage() {
         <Button variant="secondary" size="icon" className="gw-hero-icon" aria-label={t('profile.qrTitle')} title={t('profile.qrTitle')} onClick={() => setPanel('qr')}><QrCode /></Button>
       </>}
     />
+    {!canHost && <Button className="me-start-hosting" onClick={() => void startHosting()}><GwFeatureTile name="CalendarHeart" size={24} />{t('customerHome.startHosting')}</Button>}
     {profile?.shop_url && <a className="auth-link shop-link" href={profile.shop_url} target="_blank" rel="noopener noreferrer">{t('profile.shop')}<ExternalLink /></a>}
     <FeaturedBadges userId={userId} />
     <StatsStrip userId={userId} teamId={workspace?.teamId} />
@@ -283,14 +290,14 @@ export function MePage() {
     </SettingsGroup>
     <SettingsGroup title={t('customerHome.modeGroup')}>
       {profile?.role_intent === 'guest'
-        ? row('CalendarHeart', canHost ? t('customerHome.switchHost') : t('customerHome.startHosting'), () => void switchMode('host'))
+        ? canHost && row('CalendarHeart', t('customerHome.switchHost'), () => void switchMode('host'))
         : row('Compass', t('customerHome.switchAttending'), () => void switchMode('guest'))}
       <p className="auth-note">{t('identity.viewNote')}</p>
     </SettingsGroup>
     <SettingsGroup title={t('profile.groupActivity')}>
       {linkRow('BellRing', t('following.title'), '/following')}
       {linkRow('Bookmark', t('saved.title'), '/saved')}
-      <Link className="settings-row" to="/referrals/mine"><GwFeatureTile name="Share2" size={24} className="settings-tile" /><span className="settings-label">{t('referral.mine.title')}</span><ChevronRight className="settings-chevron" /></Link>
+      {referrals?.links?.some(link => link.enabled) && <Link className="settings-row" to="/referrals/mine"><GwFeatureTile name="Share2" size={24} className="settings-tile" /><span className="settings-label">{t('referral.mine.title')}</span><ChevronRight className="settings-chevron" /></Link>}
       <Link className="settings-row" to="/progress"><GwFeatureTile name="Flame" size={24} className="settings-tile" /><span className="settings-label">{t('progress.title')}</span><ChevronRight className="settings-chevron" /></Link>
       {row('CalendarDays', t('profile.myGatherings'), () => setPanel('gatherings'))}
       {row('Flag', t('profile.myChallenges'), () => setPanel('challenges'))}
