@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { readFileSync, readdirSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import ts from 'typescript';
@@ -53,7 +52,7 @@ describe('source translation coverage', () => {
       await translator.init({ lng: language, fallbackLng: false, resources: { [language]: { translation: dictionary } } });
       const missing = calls.flatMap(({ key, plural, file }) => {
         const counts = plural ? [0, 1, 2] : [undefined];
-        return counts.some(count => !translator.exists(key, { count })) ? [`${file}: ${key}`] : [];
+        return counts.some(count => !translator.exists(key, count === undefined ? {} : { count })) ? [`${file}: ${key}`] : [];
       });
       expect(missing).toEqual([]);
     });
