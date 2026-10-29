@@ -367,7 +367,7 @@
       },
       "team": {
         "q": "Can I work with a team?",
-        "a": "Yes. Teams let several people run events and content together. hosts included cover the owner, admins, hosts, and content editors; check-in staff, analysts, and moderators never use a seat."
+        "a": "Yes. Teams let several people run events and content together. Included hosts cover the owner, admins, hosts, and content editors; check-in staff, analysts, and moderators never use a seat."
       },
       "whoManages": {
         "q": "Who can see and manage my content?",
@@ -1204,7 +1204,7 @@
     "down": "−{{count}} vs. previous period",
     "chart": "Check-ins per week",
     "topHosts": "Top hosts",
-    "hostLine": "{{events}} events · {{checkins}} check-ins",
+    "hostLine": "{{gatherings}} events · {{checkins}} check-ins",
     "noHosts": "No events hosted in this period yet.",
     "shout": "Send a shout-out",
     "shoutTitle": "Shout-out for {{name}}",
@@ -5461,8 +5461,8 @@
     "contactSales": "Contact sales",
     "feeLine": "{{pct}}% platform fee on paid sales",
     "seatsLine": "{{n}} hosts included",
-    "seatTitle": "What is a builder seat?",
-    "seatBody": "A builder seat is for anyone who creates or manages your offerings: the owner, admins, hosts, and content editors.",
+    "seatTitle": "Who is included as a host?",
+    "seatBody": "Included hosts are people who create or manage your offerings: the owner, admins, hosts, and content editors.",
     "seatFree": "Check-in staff, analysts, moderators, members, attendees and learners never use a builder seat — add as many as you need.",
     "desc": {
       "free": "Host free events and get started.",
@@ -5480,11 +5480,11 @@
         },
         {
           "title": "Growing your audience",
-          "body": "Advanced lowers your fee to 3% and keeps three hosts included for you and two collaborators."
+          "body": "Advanced lowers your fee to 3% and includes three hosts for you and two collaborators."
         },
         {
           "title": "Hosting full time",
-          "body": "Pro drops the fee to 2% and gives you five hosts included for a small team."
+          "body": "Pro drops the fee to 2% and includes five hosts for a small team."
         },
         {
           "title": "Running a team or studio",
@@ -5502,8 +5502,8 @@
         "a": "A ZoheeWell platform fee applies to paid sales you make, and it gets lower as your plan grows: 5% on Free, 3% on Advanced, 2% on Pro, 1% on Team 25, and 0.5% on Organization. Free offerings have no platform fee. Stripe processing is separate."
       },
       {
-        "q": "What is a builder seat?",
-        "a": "A builder seat is for anyone who creates or manages your offerings: the owner, admins, hosts, and content editors. Check-in staff, analysts, moderators, members, attendees and learners never use a builder seat."
+        "q": "Who is included as a host?",
+        "a": "Included hosts are people who create or manage your offerings: the owner, admins, hosts, and content editors. Check-in staff, analysts, moderators, members, attendees and learners never use a builder seat."
       },
       {
         "q": "How does annual billing work?",
@@ -7031,7 +7031,7 @@
       },
       "planSeats": {
         "title": "Seats",
-        "desc": "Who fills your hosts included."
+        "desc": "Who is included in your hosting plan."
       },
       "insights": {
         "title": "Insights",

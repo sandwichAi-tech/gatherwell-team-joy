@@ -367,7 +367,7 @@
       },
       "team": {
         "q": "¿Puedo trabajar con un equipo?",
-        "a": "Sí. Los equipos permiten que varias personas gestionen eventos y contenido juntas. Los asientos de creación cubren al propietario, administradores, anfitriones y editores de contenido; el personal de registro, los analistas y los moderadores nunca usan un asiento."
+        "a": "Sí. Los equipos permiten que varias personas gestionen eventos y contenido juntas. Los anfitriones incluidos cubren al propietario, administradores, anfitriones y editores de contenido; el personal de registro, los analistas y los moderadores nunca usan un asiento."
       },
       "whoManages": {
         "q": "¿Quién puede ver y gestionar mi contenido?",
@@ -402,7 +402,7 @@
     "empty": {
       "upcoming": "Crea tu primer evento",
       "hosting": "Crea tu primer evento",
-      "past": "Aún no hay eventos pasadas"
+      "past": "Aún no hay eventos pasados"
     },
     "emptyText": "Toma menos de un minuto. Elige hora y lugar, y comparte el enlace."
   },
@@ -570,7 +570,7 @@
     "james": {
       "name": "James Wilson",
       "initials": "JW",
-      "note": "Faltó a las últimas dos eventos · Escríbele",
+      "note": "Faltó a los últimos dos eventos · Escríbele",
       "role": "Miembro · 8 eventos"
     },
     "emily": {
@@ -1277,7 +1277,7 @@
   "map": {
     "eyebrow": "Vista de líder",
     "title": "Mapa del equipo",
-    "subtitle": "Todas las próximos eventos de tu equipo y subequipos.",
+    "subtitle": "Todos los próximos eventos de tu equipo y subequipos.",
     "placeholder": "Vista previa del mapa — aún no conectado",
     "when": "Cuándo",
     "week": "Esta semana",
@@ -1303,7 +1303,7 @@
     "newTitle": "Nuevo evento",
     "editTitle": "Editar evento",
     "fromTemplate": "De la plantilla: {{title}}",
-    "hostsOnly": "Los eventos las crean anfitriones y líderes",
+    "hostsOnly": "Los eventos los crean anfitriones y líderes",
     "hostsOnlyText": "Pídele a tu líder que te haga anfitrión.",
     "addPhoto": "Sube o toma una foto",
     "changePhoto": "Cambiar foto",
@@ -1384,7 +1384,7 @@
     "repeat": "Repetir",
     "noRepeat": "No se repite",
     "weekly": "Cada semana",
-    "weeklyHelp": "Crea este evento y las de las próximas 7 semanas como una serie.",
+    "weeklyHelp": "Crea este evento y los de las próximas 7 semanas como una serie.",
     "weeklyNote": "se repite cada semana por 8 semanas",
     "applyTo": "Aplicar cambios a",
     "thisDate": "Solo esta fecha",
@@ -2494,7 +2494,7 @@
       "proof": "{{count}} personas llegaron este mes.",
       "pause": "Pausar la animación de tarjetas",
       "play": "Reproducir la animación de tarjetas",
-      "stackLabel": "Eventos próximas",
+      "stackLabel": "Eventos próximos",
       "photoTitle_run": "Clubes de corredores cerca de ti",
       "photoTitle_fitcamp": "Fit camps cerca de ti",
       "photoTitle_yoga": "Yoga cerca de ti",
@@ -2692,7 +2692,7 @@
     "openWhatsapp": "Abrir WhatsApp",
     "postToTeam": "Publicar en mi equipo",
     "upcoming": "Próximamente",
-    "noUpcoming": "Aún no hay eventos próximas.",
+    "noUpcoming": "Aún no hay eventos próximos.",
     "directions": "Cómo llegar",
     "openMaps": "Abrir en mapas",
     "recipe": "Receta",
@@ -5125,7 +5125,7 @@
     "membersFirst": "Primero para miembros",
     "spots_one": "{{count}} lugar",
     "spots_other": "{{count}} lugares",
-    "noUpcoming": "Aún no hay eventos próximas aquí. Síguelo para enterarte de la siguiente.",
+    "noUpcoming": "Aún no hay eventos próximos aquí. Síguelo para enterarte de la siguiente.",
     "map": "Mapa",
     "mapSoon": "Pronto tendrás un mapa interactivo",
     "directions": "Cómo llegar",
@@ -5461,8 +5461,8 @@
     "contactSales": "Contactar a ventas",
     "feeLine": "{{pct}}% de tarifa de plataforma sobre ventas pagadas",
     "seatsLine": "{{n}} anfitriones incluidos",
-    "seatTitle": "¿Qué es un lugar de constructor?",
-    "seatBody": "Un lugar de constructor es para quien crea o administra lo que ofreces: el dueño, administradores, anfitriones y editores de contenido.",
+    "seatTitle": "¿Quién cuenta como anfitrión incluido?",
+    "seatBody": "Los anfitriones incluidos son quienes crean o administran lo que ofreces: el dueño, administradores, anfitriones y editores de contenido.",
     "seatFree": "El personal de registro, analistas, moderadores, miembros, asistentes y estudiantes nunca usan un lugar de constructor: agrega los que necesites.",
     "desc": {
       "free": "Organiza eventos gratuitos y empieza.",
@@ -5502,8 +5502,8 @@
         "a": "Se aplica una tarifa de plataforma de ZoheeWell a tus ventas pagadas, y baja a medida que crece tu plan: 5% en Gratis, 3% en Avanzado, 2% en Pro, 1% en Equipo 25 y 0.5% en Organización. Lo gratuito no tiene tarifa de plataforma. El procesamiento de Stripe es aparte."
       },
       {
-        "q": "¿Qué es un lugar de constructor?",
-        "a": "Un lugar de constructor es para quien crea o administra lo que ofreces: el dueño, administradores, anfitriones y editores de contenido. El personal de registro, analistas, moderadores, miembros, asistentes y estudiantes nunca usan un lugar de constructor."
+        "q": "¿Quién cuenta como anfitrión incluido?",
+        "a": "Los anfitriones incluidos son quienes crean o administran lo que ofreces: el dueño, administradores, anfitriones y editores de contenido. El personal de registro, analistas, moderadores, miembros, asistentes y estudiantes nunca usan un lugar de constructor."
       },
       {
         "q": "¿Cómo funciona el pago anual?",
