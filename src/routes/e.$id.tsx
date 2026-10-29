@@ -54,7 +54,7 @@ export const Route = createFileRoute('/e/$id')({
     const bits = [date, loaderData.place ?? (loaderData.online ? i18n.t('guest.metaOnline') : null), loaderData.host ? i18n.t('guest.metaHost', { name: loaderData.host }) : null, loaderData.priceCents ? formatMoney(loaderData.priceCents, lng) : i18n.t('guest.metaFree')].filter(Boolean);
     const description = loaderData.cancelled ? i18n.t('guest.cancelledTitle') : `${bits.join(' · ')} — ${i18n.t('guest.metaInvite')}`;
     const meta: Array<Record<string, string>> = [{ title }, { name: 'description', content: description }, { property: 'og:title', content: title }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: loaderData.image ? 'summary_large_image' : 'summary' }, { name: 'twitter:title', content: title }, { name: 'twitter:description', content: description }];
-    if (loaderData.image) meta.push({ property: 'og:image', content: loaderData.image }, { name: 'twitter:image', content: loaderData.image });
+    if (loaderData.image?.startsWith('https://')) meta.push({ property: 'og:image', content: loaderData.image }, { name: 'twitter:image', content: loaderData.image });
     meta.push(...indexing.meta);
     // Event JSON-LD from real public fields only — no ratings, attendance, or fabricated offers.
     const eventLd: Record<string, unknown> = {
