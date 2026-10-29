@@ -31,10 +31,17 @@ export function CopyButton({ text, label, icon, variant = 'secondary', ...rest }
 }
 
 /** Opens the phone's share menu; hidden where the browser has none, so the copy button stays the fallback. */
-export function ShareButton({ text, url, title, variant = 'secondary', ...rest }: { text?: string; url: string; title?: string } & Omit<ComponentProps<typeof Button>, 'onClick' | 'children'>) {
+export function ShareButton({ text, url, title, fallbackCopy = false, variant = 'secondary', ...rest }: { text?: string; url: string; title?: string; fallbackCopy?: boolean } & Omit<ComponentProps<typeof Button>, 'onClick' | 'children'>) {
   const { t } = useTranslation();
   const [can, setCan] = useState(false);
   useEffect(() => { setCan(typeof navigator.share === 'function'); }, []);
-  if (!can) return null;
-  return <Button variant={variant} {...rest} onClick={() => { void navigator.share({ url, ...(text ? { text } : {}), ...(title ? { title } : {}) }).catch(() => undefined); }}><Share2 />{t('shareKit.share')}</Button>;
+  if (!can && !fallbackCopy) return null;
+  const share = async () => {
+    if (can) {
+      try { await navigator.share({ url, ...(text ? { text } : {}), ...(title ? { title } : {}) }); return; }
+      catch (error) { if (error instanceof Error && error.name === 'AbortError') return; }
+    }
+    if (fallbackCopy) { if (await copyText(url)) toast.success(t('onboarding.copied')); else toast.error(t('error.message')); }
+  };
+  return <Button variant={variant} {...rest} disabled={!url} onClick={() => void share()}><Share2 />{t('shareKit.share')}</Button>;
 }

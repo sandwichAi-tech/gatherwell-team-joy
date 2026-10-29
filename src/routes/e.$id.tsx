@@ -32,6 +32,7 @@ import { ReferralShareCard, useReferralCapture } from '@/components/referrals';
 import { RetryState } from '@/components/launch-states';
 import { SITE_URL, publicIndexing } from '@/lib/seo';
 import { publicHostSlug } from '@/lib/event-agreements';
+import { attendancePresentation, displayTitleCase, showAgePolicy } from '@/lib/event-presentation';
 
 export const Route = createFileRoute('/e/$id')({
   loader: async ({ params, context }) => {
@@ -119,6 +120,7 @@ function PublicEventBody() {
   const regClosed = regState === 'closed';
   const regNotOpen = regState === 'not_open';
   const waitlistOff = full && event.waitlist_enabled === false;
+  const attendance = attendancePresentation(event.going, event.capacity);
 
   if (teamResult) return <>
     <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="guest-cover" rendition={coverRendition} overlay={event.cover_overlay} focal={event.cover_focal} alt={event.cover_alt} />
@@ -137,18 +139,18 @@ function PublicEventBody() {
       <div className="guest-title-row"><h1 className="guest-title">{event.title}</h1><ReportButton type="event" id={id} /></div>
       {summary && <p className="guest-summary">{summary}</p>}
       {!!event.tags?.length && <ul className="guest-tags" aria-label={t('builder.tags')}>{event.tags.map(tag => <li key={tag} className="chip">{tag}</li>)}</ul>}
-      {price && <p className="guest-price-line"><strong className="tabular-nums">{formatMoney(price.price_cents, lang)}</strong><span>{t('billing.perPerson')}{price.pass_fee ? ` · ${t('billing.feeNote', { pct: price.fee_pct })}` : ''}{price.cover_service_fee ? ` · ${t('billing.allInShort')}` : ` · ${t('billing.plusServiceFee', { fee: formatMoney(serviceFee(price.price_cents, Number(price.service_fee_percent ?? 0), price.service_fee_fixed ?? 0), lang) })}`}</span></p>}
       {price && <RefundLine policy={price.refund_policy} />}
       {cancelled && <div className="guest-cancelled" role="status"><Ban /><div><strong>{t('guest.cancelledTitle')}</strong><p>{t('guest.cancelledText')}</p></div></div>}
       <ul className="guest-facts">
         <li><CalendarDays /><span>{day}</span></li>
         <li><Clock /><span>{time}</span></li>
       </ul>
+      <p className="guest-price-line"><strong className="tabular-nums">{(event.price_cents ?? 0) > 0 ? formatMoney(price?.price_cents ?? event.price_cents ?? 0, lang) : t('guest.metaFree')}</strong>{price && <span>{t('billing.perPerson')}{price.pass_fee ? ` · ${t('billing.feeNote', { pct: price.fee_pct })}` : ''}{price.cover_service_fee ? ` · ${t('billing.allInShort')}` : ` · ${t('billing.plusServiceFee', { fee: formatMoney(serviceFee(price.price_cents, Number(price.service_fee_percent ?? 0), price.service_fee_fixed ?? 0), lang) })}`}</span>}</p>
       {!event.is_online && !cancelled && <WeatherNote lat={event.lat} lng={event.lng} startsAt={event.starts_at} />}
 
       {publicHostSlug(event.host) ? <Link to="/h/$slug" params={{ slug: publicHostSlug(event.host) ?? '' }} className="guest-host" aria-label={t('eventAgreements.hostLink', { name: event.host?.name })}>
         {hostPhoto ? <img src={hostPhoto} alt="" className="guest-host-photo" /> : <span className="initial-avatar">{initialsOf(event.host?.name ?? null)}</span>}
-        <div><span className="guest-label">{t('guest.hostedBy')}</span><strong>{event.host?.name}{event.host?.verified && <> <VerifiedMark compact /></>}</strong></div>
+        <div><span className="guest-label">{t('guest.hostedBy')}</span><strong>{displayTitleCase(event.host?.name)}{event.host?.verified && <> <VerifiedMark compact /></>}</strong></div>
       </Link> : <div className="guest-host"><span className="guest-label">{t('eventAgreements.hostUnavailable')}</span></div>}
       {!!event.cohosts?.length && <div className="guest-cohosts"><span className="guest-label">{t('cohosts.withCohosts')}</span><ul>{event.cohosts.map((c, i) => <li key={i}><span className="initial-avatar">{initialsOf(c.name)}</span><span>{c.name ?? t('teamSpace.someone')}</span></li>)}</ul></div>}
 
@@ -168,10 +170,10 @@ function PublicEventBody() {
       {description && <section className="guest-description"><p>{description}</p></section>}
       {event.accessibility_notes && <section className="guest-card"><strong>{t('builder.accessibility')}</strong><p>{event.accessibility_notes}</p></section>}
       {event.what_to_bring && <section className="guest-card"><strong>{t('builder.bring')}</strong><p>{event.what_to_bring}</p></section>}
-      <section className="guest-card" aria-label={t('builder.minorsTitle')}>
+      {showAgePolicy(event) && <section className="guest-card" aria-label={t('builder.minorsTitle')}>
         <strong>{t('builder.minorsTitle')}</strong>
         <p>{event.allows_minors ? (event.min_age != null ? t('builder.minorsMinAge', { age: event.min_age }) : t('builder.minorsWelcome')) : t('builder.adultsOnly')}</p>
-      </section>
+      </section>}
       {(event.cancellation_policy || event.contact_email || event.contact_phone) && <section className="guest-card">
         {event.cancellation_policy && <><strong>{t('builder.cancellation')}</strong><p>{event.cancellation_policy}</p></>}
         {(event.contact_email || event.contact_phone) && <><strong>{t('builder.contact')}</strong><p>{[event.contact_email, event.contact_phone].filter(Boolean).join(' · ')}</p></>}
@@ -182,7 +184,7 @@ function PublicEventBody() {
 
       <section className="guest-going" aria-live="polite">
         {!event.hide_guest_list && (event.initials?.length ?? 0) > 0 && <div className="guest-avatars" aria-hidden="true">{event.initials!.map((i, n) => <span key={n} className="initial-avatar">{i}</span>)}</div>}
-        <p className="tabular-nums">{t('guest.goingCount', { count: event.going })}{left != null && ` · ${full ? t('guest.full') : t('guest.spotsLeft', { count: left })}`}</p>
+        <p className="tabular-nums">{attendance.first ? t('guest.firstRsvp') : t('guest.goingCount', { count: event.going })}{attendance.left != null && ` · ${full ? t('guest.full') : t('guest.spotsLeft', { count: attendance.left })}`}</p>
       </section>
 
       {!cancelled && early && <EarlyAccessNotice access={early} />}
@@ -191,7 +193,7 @@ function PublicEventBody() {
       {!cancelled && !regClosed && !regNotOpen && (!early || early.has_access || event.my_code) && <>
         {event.my_code ? <div className="guest-actions"><p className="guest-label">{t('guest.alreadyIn')}</p><Button asChild className="guest-primary"><Link to="/r/$code" params={{ code: event.my_code }}>{t('guest.manage')}</Link></Button></div>
           : <div className="guest-actions">
-            <Button className="guest-primary" disabled={waitlistOff} onClick={() => setIntent('going')}>{waitlistOff ? t('guest.full') : full ? t('guest.joinWaitlist') : price ? t('billing.imInPrice', { amount: formatMoney(price.price_cents, lang) }) : t('guest.imIn')}</Button>
+            <div className="guest-rsvp-bar"><Button className="guest-primary" disabled={waitlistOff} onClick={() => setIntent('going')}>{waitlistOff ? t('guest.full') : full ? t('guest.joinWaitlist') : (event.price_cents ?? 0) > 0 ? t('billing.imInPrice', { amount: formatMoney(price?.price_cents ?? event.price_cents ?? 0, lang) }) : t('guest.imIn')}</Button></div>
             <Button variant="secondary" className="guest-secondary" onClick={() => setIntent('maybe')}>{t('guest.maybe')}</Button>
             {event.team_registration && <Button variant="secondary" className="guest-secondary" onClick={() => setTeamOpen(true)}>{t('teamRsvp.cta', { min: event.team_min ?? 2, max: event.team_max ?? 6 })}</Button>}
           </div>}
