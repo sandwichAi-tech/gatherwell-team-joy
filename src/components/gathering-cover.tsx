@@ -4,6 +4,7 @@ import type { Rendition } from '@/lib/media-renditions';
 import { eventCoverRendition } from '@/lib/media.functions';
 import { coverStyleAt, clampOverlay, clampFocal } from '@/lib/cover';
 import { BrandImage } from '@/components/brand-image';
+import { eventPhotoSlot } from '@/lib/event-presentation';
 
 /** Display-size hint per cover placement so the browser fetches a rendition that matches the real slot. */
 export function coverSizes(className: string): string {
@@ -13,13 +14,14 @@ export function coverSizes(className: string): string {
 }
 
 /** Uploaded photo when present, otherwise a curated brand gradient with the first letter. */
-export function GatheringCover({ path, style = 0, title, className = '', overlay = 0, focal, alt, rendition, sizes, onNaturalWidth, eventId }: {
+export function GatheringCover({ path, style = 0, title, className = '', overlay = 0, focal, alt, rendition, sizes, onNaturalWidth, eventId, category }: {
   path?: string | null; style?: number | null; title: string; className?: string;
   overlay?: number | null | undefined; focal?: string | null | undefined; alt?: string | null | undefined;
   /** Server-signed renditions (public pages, where the visitor cannot sign private media). */
   rendition?: Rendition | null | undefined; sizes?: string | undefined; onNaturalWidth?: ((width: number) => void) | undefined;
   /** Signed-in surfaces showing other hosts' events: lets the server sign after checking the viewer can read the event. */
   eventId?: string | undefined;
+  category?: string | null | undefined;
 }) {
   const { data: signed } = useQuery({ queryKey: ['media-rendition', path, eventId ?? null], queryFn: async () => (eventId ? await eventCoverRendition({ data: { id: eventId } }).catch(() => null) : null) ?? (await mediaRendition(path)), enabled: !!path && !rendition, staleTime: 50 * 60 * 1000 });
   const url = rendition ?? signed ?? null;
@@ -30,6 +32,9 @@ export function GatheringCover({ path, style = 0, title, className = '', overlay
   if (url) return <span className={`gathering-cover has-photo ${className}`}>
     <BrandImage src={url} alt={alt?.trim() || title} className="gathering-cover-img" focal={{ x: fx, y: fy }} sizes={sizes ?? coverSizes(className)} priority={className.includes('guest-cover')} onNaturalWidth={onNaturalWidth} />
     {scrimEl}
+  </span>;
+  if (!className.includes('profile-photo-cover')) return <span className={`gathering-cover has-photo ${className}`}>
+    <BrandImage slot={eventPhotoSlot(category)} fallbackSlot="hero_card_1" alt={alt?.trim() || title} className="gathering-cover-img" sizes={sizes ?? coverSizes(className)} priority={className.includes('guest-cover')} />
   </span>;
   return <div className={`gathering-cover ${className}`} style={{ backgroundImage: coverStyleAt(style) }} role="img" aria-label={alt?.trim() || title}>
     {scrimEl}
