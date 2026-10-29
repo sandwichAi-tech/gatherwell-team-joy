@@ -215,10 +215,10 @@ export function MePage() {
   const publicUrl = profile?.slug ? `${window.location.origin}/h/${profile.slug}` : null;
   const panelIcons: Record<Exclude<Panel, null>, GwIconName> = { waivers: 'FileText', qr: 'QrCode', gatherings: 'CalendarDays', challenges: 'Flag', badges: 'Award', teams: 'UsersRound', notifications: 'Bell', updates: 'Megaphone', inbox: 'MessageCircle', support: 'LifeBuoy', plan: 'CreditCard', purchases: 'CreditCard', invite: 'UserPlus', calendar: 'CalendarPlus', hostProfile: 'Globe2', privacy: 'ShieldCheck' };
   const panels: Record<Exclude<Panel, null>, { title: string; icon: GwIconName; body: ReactNode }> = {
-    waivers: { title: t('waiverLibrary.title'), icon: 'FileText', body: workspace && canHost ? <WaiverLibrary teamId={workspace.teamId} userId={userId} /> : <EmptyState compact icon="FileText" text={t('workspace.none')} /> },
+    waivers: { title: t('waiverLibrary.title'), icon: 'FileText', body: workspace && canHost ? <WaiverLibrary teamId={workspace.teamId} userId={userId} /> : <EmptyState compact icon="FileText" text={t('workspace.noTeam')} /> },
     gatherings: { title: t('profile.myGatherings'), icon: 'CalendarDays', body: <MyGatheringsList userId={userId} /> },
     challenges: { title: t('profile.myChallenges'), icon: 'Flag', body: <MyChallengesList userId={userId} /> },
-    badges: { title: t('profile.myBadges'), icon: 'Award', body: workspace ? <BadgeWall teamId={workspace.teamId} /> : <EmptyState compact icon="UsersRound" text={t('workspace.none')} /> },
+    badges: { title: t('profile.myBadges'), icon: 'Award', body: workspace ? <BadgeWall teamId={workspace.teamId} /> : <EmptyState compact icon="UsersRound" text={t('workspace.noTeam')} /> },
     teams: { title: t('profile.myTeams'), icon: 'UsersRound', body: <MyTeams userId={userId} /> },
     notifications: { title: t('profile.notifications'), icon: 'Bell', body: <NotificationSettings userId={userId} /> },
     updates: { title: t('nav.updates'), icon: 'Megaphone', body: <p className="auth-subtitle"><Link to="/updates" search={{ u: undefined }} className="auth-link">{t('nav.updates')} →</Link></p> },
@@ -241,7 +241,7 @@ export function MePage() {
         <p className="auth-subtitle">{t('profile.qrInviteText')}</p>
       </> : <p className="auth-subtitle">{t('publicEvent.loading')}</p>}
     </div> },
-    plan: { title: t('profile.plan'), icon: 'CreditCard', body: <><p className="plan-name">{t(`plans.${workspace?.plan ?? 'free'}`)}</p><p className="auth-subtitle">{workspace?.name ?? t('workspace.none')}</p></> },
+    plan: { title: t('profile.plan'), icon: 'CreditCard', body: <><p className="plan-name">{t(`plans.${workspace?.plan ?? 'free'}`)}</p><p className="auth-subtitle">{workspace?.name ?? t('workspace.noTeam')}</p></> },
     hostProfile: { title: t('hostProfile.title'), icon: 'Globe2', body: <HostProfilePanel userId={userId} /> },
     privacy: { title: t('profile.privacyData'), icon: 'ShieldCheck', body: <PrivacyDataPanel /> },
   };

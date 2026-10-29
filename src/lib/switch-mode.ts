@@ -31,3 +31,17 @@ export function useSwitchMode(userId: string) {
     return true;
   };
 }
+
+/** "Start hosting": switch to host view and go straight to event creation; the builder creates the personal host space if needed. */
+export function useStartHosting(userId: string) {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+  return async (): Promise<boolean> => {
+    const { error } = await supabase.from('profiles').update({ role_intent: 'host', view_mode: 'hosting' }).eq('id', userId);
+    if (error) { toast.error(t('profile.saveError')); return false; }
+    await Promise.all([queryClient.invalidateQueries({ queryKey: ['profile', userId] }), queryClient.invalidateQueries({ queryKey: ['personal-home', userId] })]);
+    void navigate({ to: '/gathering/new' });
+    return true;
+  };
+}

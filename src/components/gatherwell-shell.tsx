@@ -64,6 +64,8 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
  const current = navTabs.find(tab => isActive(tab.path)) ?? (resourcesOwnsPath(pathname) ? navTabs.find(tab => tab.key === 'learn') : undefined) ?? tabs[0];
  // Mobile bar stays fixed at five slots: four primary destinations plus a More menu for the rest.
  const { primary: primaryTabs, more: moreTabs } = splitMobileNav(navTabs);
+ // Header shows the real current page; builder paths get their own title instead of the parent tab.
+ const pageTitle = /^\/gathering\/new/.test(pathname) ? t('pageTitle.newEvent') : /^\/gathering\/[^/]+\/edit/.test(pathname) ? t('pageTitle.editEvent') : navTabs.some(tab => isActive(tab.path)) || resourcesOwnsPath(pathname) ? navLabel(current.key) : t(`pageTitle.${pathname.split('/')[1] || 'home'}`, { defaultValue: navLabel(current.key) });
  const moreActive = moreTabs.some(tab => isActive(tab.path));
  useEffect(() => {
   const stored = localStorage.getItem('gatherwell-theme');
@@ -89,8 +91,8 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
    <div className="app-main">
     <header className="app-header">
      <Link to="/home" className="brand mobile-brand"><BrandLogo /><span className="sr-only">{t('brand')}</span></Link>
-     <span className="desktop-header-label">{t('common.workspaceLabel')}<span>/</span><strong>{navLabel(current.key)}</strong></span>
-     <div className="header-actions"><Link to="/notifications" className="header-bell" aria-label={t('notifications.title')}><GwIcon name="Bell" size={20}/>{unread > 0 && <span className="header-bell-badge" aria-label={t('notifications.unread')}>{unread > 99 ? '99+' : unread}</span>}</Link><Link to="/discover" className="gw-app-discover" aria-label={t('marketing.discover')}><GwIcon name="Compass" size={20}/><span>{t('marketing.discover')}</span></Link><Button variant="ghost" size="icon" className="assistant-button" aria-label={t('common.assistant')} title={t('common.assistant')} onClick={() => openSheet('assistant')}><Sparkles /></Button><AccountMenu initials={initials} isAdmin={isAdmin} userId={userId} canSwitchToAttending={!!profile && profile.role_intent !== 'guest'} canSwitchToHost={profile?.role_intent === 'guest' && canHost} /></div>
+     <span className="desktop-header-label"><strong>{pageTitle}</strong></span>
+     <div className="header-actions"><Link to="/notifications" className="header-bell" aria-label={t('notifications.title')}><GwIcon name="Bell" size={20}/>{unread > 0 && <span className="header-bell-badge" aria-label={t('notifications.unread')}>{unread > 99 ? '99+' : unread}</span>}</Link><Link to="/discover" className="gw-app-discover" aria-label={t('marketing.discover')}><GwIcon name="Compass" size={20}/><span>{t('marketing.discover')}</span></Link><Button variant="ghost" size="icon" className="assistant-button" aria-label={t('common.assistant')} title={t('common.assistant')} onClick={() => openSheet('assistant')}><Sparkles /></Button><AccountMenu initials={initials} isAdmin={isAdmin} userId={userId} canSwitchToAttending={!!profile && profile.role_intent !== 'guest'} canSwitchToHost={profile?.role_intent === 'guest' && canHost} canStartHosting={!!profile && profile.role_intent === 'guest' && !canHost} /></div>
     </header>
     <main id="main-content" className="page-content"><ClientOnly fallback={<ListSkeleton />}><PlatformNotices teamId={workspace?.teamId} /><QueryFeedback /><div key={pathname} className="page-transition">{children}</div></ClientOnly></main>
    </div>

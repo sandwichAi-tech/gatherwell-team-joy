@@ -100,7 +100,6 @@
     "initials": "NC",
     "name": "Nick",
     "workspace": "Nick’s workspace",
-    "workspaceLabel": "Workspace",
     "plan": "Advanced plan · Sample",
     "sampleNote": "Sample data. Changes last for this session.",
     "memberView": "Switch to member view",
@@ -109,7 +108,8 @@
     "previewNote": "Sample preview. This action is not connected yet.",
     "save": "Save",
     "retry": "Try again",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "loading": "Loading…"
   },
   "home": {
     "meta": {
@@ -742,7 +742,6 @@
   },
   "workspace": {
     "title": "Workspace settings",
-    "none": "No workspace selected.",
     "members": "Members",
     "invites": "Invitations",
     "seats": "Seats",
@@ -861,7 +860,8 @@
       "event": "Event",
       "content": "Content",
       "moderation": "Moderation"
-    }
+    },
+    "noTeam": "No team yet"
   },
   "legal": {
     "termsTitle": "Terms",
@@ -5250,7 +5250,7 @@
   "personalHome": {
     "noCoaches": "Coaches you follow or whose team you belong to appear here.",
     "hosting": "Your hosting",
-    "attending": "Your attending",
+    "attending": "Attending",
     "subtitle": "Your events, learning and connections.",
     "drafts": "Drafts to finish: {{count}}",
     "resources": "Your resources",
@@ -5274,7 +5274,8 @@
     "modeGroup": "How you use ZoheeWell",
     "startHosting": "Start hosting",
     "switchAttending": "Switch to attending",
-    "switchHost": "Switch to host"
+    "switchHost": "Switch to host",
+    "hostFree": "Host your own event — free"
   },
   "policy": {
     "none": "No policy shown",
@@ -7755,5 +7756,14 @@
   "builderFooter": {
     "label": "Step actions",
     "fixFirst": "Before continuing: {{fields}}"
+  },
+  "pageTitle": {
+    "newEvent": "New event",
+    "editEvent": "Edit event"
+  },
+  "gatheringSetup": {},
+  "hostSpace": {
+    "creating": "Setting up your host space…",
+    "failed": "We couldn't set up your host space."
   }
 }

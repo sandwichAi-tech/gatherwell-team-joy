@@ -50,8 +50,12 @@ export function HomePage() {
         <ul className="customer-list">{data.events.map(e => <li key={e.id}><Link to="/event/$id" params={{ id: e.id }} className="customer-item-head"><strong>{e.title}</strong><small>{formatWhen(e.starts_at, i18n.resolvedLanguage ?? 'en')}</small><ChevronRight /></Link></li>)}</ul>
       </section>
       <FoundingCommitmentsCard /><CoachLaunchCard /><FollowupsHomeCard /><NextCard home={data} />
-    </> : <CustomerHome userId={userId} />}
+    </> : <><StartHostingCard userId={userId} /><CustomerHome userId={userId} /></>}
     <PersonalHomeResources resources={data.resources} />
   </>;
+}
+function StartHostingCard({ userId }: { userId: string }) {
+  const { t } = useTranslation(); const startHosting = useStartHosting(userId); const [busy, setBusy] = useState(false);
+  return <section className="next-panel mb-6" aria-labelledby="start-hosting-title"><h2 id="start-hosting-title">{t('customerHome.hostFree')}</h2><Button className="min-h-12 whitespace-normal" disabled={busy} onClick={async () => { setBusy(true); if (!(await startHosting())) setBusy(false); }}><Plus />{t('customerHome.startHosting')}</Button></section>;
 }
 function MobileTeamSwitcher() { const { userId } = useGatherwell(); return <TeamSwitcher userId={userId} className="mobile-switcher" />; }
