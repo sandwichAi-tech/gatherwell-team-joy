@@ -2890,7 +2890,7 @@
     "seatsGrowth": "Avanzado para hasta {{n}} miembros",
     "buy": "Comprar",
     "organization": "Organización",
-    "orgText": "Hasta 100 lugares de constructor, con ayuda en la configuración",
+    "orgText": "Hasta 100 anfitriones incluidos, con ayuda en la configuración",
     "contact": "Contáctanos",
     "seats": "Lugares",
     "earnings": "Ganancias por boletos",
@@ -4241,34 +4241,7 @@
       "whatLabel": "Qué es",
       "whatTitle": "Un solo lugar en vez de cinco herramientas",
       "whatBody": "Hoy los anfitriones alternan entre una página de boletos, un chat grupal, una hoja de cálculo, una app de pagos y un enlace en la bio. ZoheeWell reúne las piezas: crea un evento o retiro, comparte un solo enlace, recibe confirmaciones y registra asistencia, enseña con cursos y quizzes, y mantén viva la conversación — en inglés y español.",
-      "hostTypesTitle": "Para todo tipo de anfitrión",
-    "hostTypes": [
-      {
-        "title": "Clubes de running",
-        "body": "Carreras semanales y encuentros para tu comunidad."
-      },
-      {
-        "title": "Fit camps",
-        "body": "Entrenamientos al aire libre con espacio para todos."
-      },
-      {
-        "title": "Clases y capacitaciones",
-        "body": "Reúne a personas para practicar y aprender."
-      },
-      {
-        "title": "Líderes de equipo",
-        "body": "Coordina eventos y aprendizaje compartido para tu equipo."
-      },
-      {
-        "title": "Coaches y creadores",
-        "body": "Comparte lo que sabes con eventos, cursos y recursos."
-      },
-      {
-        "title": "Estudios pequeños",
-        "body": "Organiza clases y mantén conectada a tu comunidad."
-      }
-    ],
-    "whoLabel": "A quién sirve",
+      "whoLabel": "A quién sirve",
       "whoTitle": "Hecho para personas que reúnen personas",
       "whoSub": "ZoheeWell le da la bienvenida a coaches independientes, estudios, educadores, creadores y organizadores de comunidades de todo tipo. Muchos de nuestros primeros anfitriones vienen de redes de bienestar basadas en relaciones — comunidades construidas a partir de la invitación personal — y la plataforma está diseñada para servirles a ellos y a todos los demás.",
       "who": [
@@ -4512,6 +4485,33 @@
     "hostsMeta": "Para anfitriones · ZoheeWell",
     "pricingMeta": "Precios · ZoheeWell",
     "whoLabel": "Para quién es",
+    "hostTypesTitle": "Para todo tipo de anfitrión",
+    "hostTypes": [
+      {
+        "title": "Clubes de running",
+        "body": "Carreras semanales y encuentros para tu comunidad."
+      },
+      {
+        "title": "Fit camps",
+        "body": "Entrenamientos al aire libre con espacio para todos."
+      },
+      {
+        "title": "Clases y capacitaciones",
+        "body": "Reúne a personas para practicar y aprender."
+      },
+      {
+        "title": "Líderes de equipo",
+        "body": "Coordina eventos y aprendizaje compartido para tu equipo."
+      },
+      {
+        "title": "Coaches y creadores",
+        "body": "Comparte lo que sabes con eventos, cursos y recursos."
+      },
+      {
+        "title": "Estudios pequeños",
+        "body": "Organiza clases y mantén conectada a tu comunidad."
+      }
+    ],
     "whoTitle": "Hecho para la vida real",
     "whoSub": "Empieces donde empieces, hay un evento para ti.",
     "who": [
@@ -5463,13 +5463,13 @@
     "seatsLine": "{{n}} anfitriones incluidos",
     "seatTitle": "¿Quién cuenta como anfitrión incluido?",
     "seatBody": "Los anfitriones incluidos son quienes crean o administran lo que ofreces: el dueño, administradores, anfitriones y editores de contenido.",
-    "seatFree": "El personal de registro, analistas, moderadores, miembros, asistentes y estudiantes nunca usan un lugar de constructor: agrega los que necesites.",
+    "seatFree": "El personal de registro, analistas, moderadores, miembros, asistentes y estudiantes nunca usan un plaza de anfitrión: agrega los que necesites.",
     "desc": {
       "free": "Organiza eventos gratuitos y empieza.",
       "advanced": "Más herramientas para anfitriones en crecimiento.",
       "pro": "Todo para anfitriones con mucha actividad.",
-      "team25": "Para equipos de hasta 25 constructores.",
-      "organization": "Para organizaciones de hasta 100 constructores, con ayuda en la configuración."
+      "team25": "Para equipos de hasta 25 anfitriones.",
+      "organization": "Para organizaciones de hasta 100 anfitriones, con ayuda en la configuración."
     },
     "whichPlan": {
       "title": "¿Qué plan es para mí?",
@@ -5480,19 +5480,19 @@
         },
         {
           "title": "Haces crecer tu audiencia",
-          "body": "Avanzado baja tu tarifa a 3% y mantiene tres lugares de constructor para ti y dos colaboradores."
+          "body": "Avanzado baja tu tarifa a 3% y mantiene tres anfitriones incluidos para ti y dos colaboradores."
         },
         {
           "title": "Te dedicas a organizar",
-          "body": "Pro baja la tarifa a 2% y te da cinco lugares de constructor para un equipo pequeño."
+          "body": "Pro baja la tarifa a 2% y te da cinco anfitriones incluidos para un equipo pequeño."
         },
         {
           "title": "Diriges un equipo o estudio",
-          "body": "Equipo 25 cubre hasta 25 constructores con una tarifa de 1% sobre ventas pagadas."
+          "body": "Equipo 25 cubre hasta 25 anfitriones con una tarifa de 1% sobre ventas pagadas."
         },
         {
           "title": "Una organización grande",
-          "body": "Organización llega hasta 100 constructores con una tarifa de 0.5%. Contacta a ventas y lo configuramos contigo."
+          "body": "Organización llega hasta 100 anfitriones con una tarifa de 0.5%. Contacta a ventas y lo configuramos contigo."
         }
       ]
     },
@@ -5503,7 +5503,7 @@
       },
       {
         "q": "¿Quién cuenta como anfitrión incluido?",
-        "a": "Los anfitriones incluidos son quienes crean o administran lo que ofreces: el dueño, administradores, anfitriones y editores de contenido. El personal de registro, analistas, moderadores, miembros, asistentes y estudiantes nunca usan un lugar de constructor."
+        "a": "Los anfitriones incluidos son quienes crean o administran lo que ofreces: el dueño, administradores, anfitriones y editores de contenido. El personal de registro, analistas, moderadores, miembros, asistentes y estudiantes nunca usan un plaza de anfitrión."
       },
       {
         "q": "¿Cómo funciona el pago anual?",
@@ -7031,7 +7031,7 @@
       },
       "planSeats": {
         "title": "Asientos",
-        "desc": "Quién ocupa tus asientos de creación."
+        "desc": "Quién ocupa tus plazas de anfitrión."
       },
       "insights": {
         "title": "Estadísticas",

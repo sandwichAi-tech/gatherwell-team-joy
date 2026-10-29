@@ -4241,34 +4241,7 @@
       "whatLabel": "What it is",
       "whatTitle": "One home instead of five tools",
       "whatBody": "Hosts today juggle a ticketing page, a group chat, a spreadsheet, a payment app, and a link-in-bio. ZoheeWell brings the pieces together: create an event or retreat, share one link, take RSVPs and check people in, teach with courses and quizzes, and keep the conversation going — in English and Spanish.",
-      "hostTypesTitle": "For every kind of host",
-    "hostTypes": [
-      {
-        "title": "Run clubs",
-        "body": "Weekly runs and meetups for your running community."
-      },
-      {
-        "title": "Fit camps",
-        "body": "Outdoor workouts with a place for everyone."
-      },
-      {
-        "title": "Classes & trainings",
-        "body": "Bring people together to practice and learn."
-      },
-      {
-        "title": "Team leaders",
-        "body": "Coordinate events and shared learning for your team."
-      },
-      {
-        "title": "Coaches & creators",
-        "body": "Share your knowledge through events, courses and resources."
-      },
-      {
-        "title": "Small studios",
-        "body": "Manage classes and keep your community connected."
-      }
-    ],
-    "whoLabel": "Who it serves",
+      "whoLabel": "Who it serves",
       "whoTitle": "Built for people who gather people",
       "whoSub": "ZoheeWell welcomes independent coaches, studios, educators, creators, and community builders of every kind. Many of our earliest hosts come from relationship-led wellness networks — communities built on personal invitation — and the platform is designed to serve them and everyone beyond them.",
       "who": [
@@ -4511,6 +4484,33 @@
     },
     "hostsMeta": "For hosts · ZoheeWell",
     "pricingMeta": "Pricing · ZoheeWell",
+    "hostTypesTitle": "For every kind of host",
+    "hostTypes": [
+      {
+        "title": "Run clubs",
+        "body": "Weekly runs and meetups for your running community."
+      },
+      {
+        "title": "Fit camps",
+        "body": "Outdoor workouts with a place for everyone."
+      },
+      {
+        "title": "Classes & trainings",
+        "body": "Bring people together to practice and learn."
+      },
+      {
+        "title": "Team leaders",
+        "body": "Coordinate events and shared learning for your team."
+      },
+      {
+        "title": "Coaches & creators",
+        "body": "Share your knowledge through events, courses and resources."
+      },
+      {
+        "title": "Small studios",
+        "body": "Manage classes and keep your community connected."
+      }
+    ],
     "whoLabel": "Who it's for",
     "whoTitle": "Made for real lives",
     "whoSub": "Wherever you're starting, there's an event that fits.",
