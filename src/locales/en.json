@@ -425,7 +425,7 @@
     "sentence": "Courses, guides, live sessions, recipes and more.",
     "button": "Create training",
     "uploadError": "We couldn't upload that file. Try again.",
-    "fileTooBig": "Files can be up to 100 MB."
+    "fileTooBig": "Choose a file no larger than 50 MB."
   },
   "me": {
     "title": "Me",

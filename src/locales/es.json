@@ -425,7 +425,7 @@
     "sentence": "Cursos, guías, sesiones en vivo, recetas y más.",
     "button": "Crear capacitación",
     "uploadError": "No pudimos subir ese archivo. Inténtalo de nuevo.",
-    "fileTooBig": "Los archivos pueden pesar hasta 100 MB."
+    "fileTooBig": "Elige un archivo de hasta 50 MB."
   },
   "me": {
     "title": "Yo",
