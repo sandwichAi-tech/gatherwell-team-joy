@@ -7761,7 +7761,6 @@
     "newEvent": "New event",
     "editEvent": "Edit event"
   },
-  "gatheringSetup": {},
   "hostSpace": {
     "creating": "Setting up your host space…",
     "failed": "We couldn't set up your host space."

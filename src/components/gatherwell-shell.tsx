@@ -84,7 +84,7 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
   <div className="min-h-dvh bg-background text-foreground">
    <aside className="desktop-sidebar">
     <Link to="/home" className="brand" aria-label={t('brand')}><BrandLogo /><span className="sr-only">{t('brand')}</span></Link>
-    <div className="workspace-card"><span className="initial-avatar" aria-label={profile?.full_name ?? t('common.you')}>{initials}</span><div><strong>{workspace?.name ?? t('workspace.none')}</strong><p>{workspace ? t(`plans.${workspace.plan}`) : profile?.full_name}</p></div></div>
+    <div className="workspace-card"><span className="initial-avatar" aria-label={profile?.full_name ?? t('common.you')}>{initials}</span><div><strong>{workspace?.name ?? t('workspace.noTeam')}</strong><p>{workspace ? t(`plans.${workspace.plan}`) : profile?.full_name}</p></div></div>
     <TeamSwitcher userId={userId} className="sidebar-switcher" />
     <nav className="sidebar-nav" aria-label={t('nav.label')}>{navTabs.map(({ key, path, icon: Icon }) => <Link key={key} to={path} activeOptions={{ exact: false }} aria-current={isActive(path) ? 'page' : undefined} className={`sidebar-link ${isActive(path) ? 'is-active' : ''}`}><Icon /><span>{navLabel(key)}</span></Link>)}{profile?.role_intent !== 'guest' && <Link to="/discover" className="sidebar-link"><GwIcon name="Compass"/><span>{t('marketing.discover')}</span></Link>}</nav>
    </aside>

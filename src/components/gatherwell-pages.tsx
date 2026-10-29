@@ -11,6 +11,7 @@ import { TeamSwitcher } from '@/components/team-switcher';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, Plus, ChevronRight } from '@/components/icons';
+import { useStartHosting } from '@/lib/switch-mode';
 import { Button } from '@/components/ui/button';
 import { useGatherwell } from './gatherwell-shell';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
