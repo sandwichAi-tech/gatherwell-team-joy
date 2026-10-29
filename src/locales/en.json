@@ -6346,6 +6346,9 @@
   },
   "resources": {
     "title": "Resources",
+    "type": {
+      "track": "Course"
+    },
     "sentence": "Courses, guides, live sessions, recipes and more from your team and ZoheeWell.",
     "templatesButton": "Resource blueprints",
     "create": {

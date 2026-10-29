@@ -6346,6 +6346,9 @@
   },
   "resources": {
     "title": "Recursos",
+    "type": {
+      "track": "Curso"
+    },
     "sentence": "Cursos, guías, sesiones en vivo, recetas y más de tu equipo y de ZoheeWell.",
     "templatesButton": "Modelos de recursos",
     "create": {
