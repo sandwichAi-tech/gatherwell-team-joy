@@ -2854,3 +2854,6 @@ ul.create-type-grid { list-style: none; padding: 0; }
 .review-fix-list button { min-height: 44px; }
 .review-fix-list li span::first-letter { text-transform: uppercase; }
 .assessment-range-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* Desktop shows the logo once, in the sidebar. */
+@media (min-width: 768px) { .app-header .mobile-brand { display: none; } }
