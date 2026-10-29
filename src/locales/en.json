@@ -114,6 +114,11 @@
     "setupRequired": "Setup required"
   },
   "home": {
+    "explore": {
+      "inviteTitle": "Invite your people",
+      "inviteText": "Share this link and find your next event together.",
+      "inviteCopied": "Invite link copied."
+    },
     "meta": {
       "title": "ZoheeWell · Host events, courses, and community in one place",
       "description": "ZoheeWell helps wellness hosts and coaches create events and retreats, sell tickets, teach courses, and grow their community. Create your first event free."
@@ -4743,7 +4748,62 @@
     "learners": "Learner progress",
     "unnamed": "Learner",
     "noBests": "No personal bests yet.",
-    "noGoals": "No goals yet."
+    "noGoals": "No goals yet.",
+    "add": "Add",
+    "bestKind": "What are you tracking?",
+    "bestLabel": "Personal best name",
+    "bestPlaceholder": "For example, longest walk",
+    "bestUnit": "Unit",
+    "bestValue": "Value",
+    "bests": "Personal bests",
+    "byCategory": "Events by category",
+    "checkToday": "Mark {{goal}} for today",
+    "checks_one": "{{count}} day checked",
+    "checks_other": "{{count}} days checked",
+    "claim": "Keep your goal or personal best free of health, medical, or income claims.",
+    "goalPlaceholder": "For example, go for a walk",
+    "goals": "Your goals",
+    "newGoal": "New goal",
+    "otherCategory": "Other events",
+    "private": "Private unless you choose to share with your team.",
+    "recapEyebrow": "Your {{month}} recap",
+    "recapLine": "{{g}} events · {{s}}-week streak · {{n}} new people · {{c}} goal check-ins",
+    "recapTitle": "Your month, together",
+    "removeBest": "Remove personal best",
+    "removeGoal": "Archive goal",
+    "saveError": "Your change could not be saved. Please try again.",
+    "shareRecap": "Download your recap",
+    "shareText": "Let your team see your event totals, goals, and personal bests. You can turn sharing off anytime.",
+    "shareTitle": "Share your progress with {{team}}",
+    "sharedOn": "Progress sharing is on.",
+    "sharedOff": "Progress sharing is off.",
+    "sharedWithYou": "Progress shared with you",
+    "stat": {
+      "attended": "Events attended",
+      "streak": "Current weekly streak",
+      "best": "Best weekly streak",
+      "lessons": "Lessons completed"
+    },
+    "recap": {
+      "gatherings": "Events attended",
+      "streak": "Weekly streak",
+      "people": "New people met",
+      "goals": "Goal check-ins"
+    },
+    "kind": {
+      "distance": "Distance",
+      "time": "Time",
+      "reps": "Repetitions",
+      "lifted": "Weight lifted"
+    },
+    "unit": {
+      "km": "km",
+      "mi": "mi",
+      "min": "min",
+      "reps": "reps",
+      "kg": "kg",
+      "lb": "lb"
+    }
   },
   "coach": {
     "eyebrow": "Your launch",
@@ -5463,7 +5523,7 @@
     "seatsLine": "{{n}} hosts included",
     "seatTitle": "Who is included as a host?",
     "seatBody": "Included hosts are people who create or manage your offerings: the owner, admins, hosts, and content editors.",
-    "seatFree": "Check-in staff, analysts, moderators, members, attendees and learners never use a builder seat — add as many as you need.",
+    "seatFree": "Check-in staff, members and attendees never count toward your hosts — add as many as you need.",
     "desc": {
       "free": "Host free events and get started.",
       "advanced": "More tools for growing hosts.",
@@ -5599,7 +5659,8 @@
       "hybrid": "Hybrid"
     },
     "errors": {
-      "reg_window": "Registration must open before it closes."
+      "reg_window": "Registration must open before it closes.",
+      "tier_invalid": "Complete each ticket name, price, quantity, and sales window."
     },
     "experience": {
       "label": "Event format",

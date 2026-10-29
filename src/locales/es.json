@@ -114,6 +114,11 @@
     "setupRequired": "Configuración pendiente"
   },
   "home": {
+    "explore": {
+      "inviteTitle": "Invita a tu gente",
+      "inviteText": "Comparte este enlace y encuentren su próximo evento juntos.",
+      "inviteCopied": "Enlace de invitación copiado."
+    },
     "meta": {
       "title": "ZoheeWell · Eventos, cursos y comunidad en un solo lugar",
       "description": "ZoheeWell ayuda a anfitriones y coaches de bienestar a crear eventos y retiros, vender boletos, enseñar cursos y hacer crecer su comunidad. Crea tu primer evento gratis."
@@ -4743,7 +4748,62 @@
     "learners": "Progreso de participantes",
     "unnamed": "Participante",
     "noBests": "Aún no hay marcas personales.",
-    "noGoals": "Aún no hay metas."
+    "noGoals": "Aún no hay metas.",
+    "add": "Agregar",
+    "bestKind": "¿Qué quieres registrar?",
+    "bestLabel": "Nombre de la marca personal",
+    "bestPlaceholder": "Por ejemplo, caminata más larga",
+    "bestUnit": "Unidad",
+    "bestValue": "Valor",
+    "bests": "Marcas personales",
+    "byCategory": "Eventos por categoría",
+    "checkToday": "Marcar {{goal}} para hoy",
+    "checks_one": "{{count}} día marcado",
+    "checks_other": "{{count}} días marcados",
+    "claim": "Evita afirmaciones de salud, médicas o de ingresos en tu meta o marca personal.",
+    "goalPlaceholder": "Por ejemplo, salir a caminar",
+    "goals": "Tus metas",
+    "newGoal": "Nueva meta",
+    "otherCategory": "Otros eventos",
+    "private": "Privado, salvo que decidas compartirlo con tu equipo.",
+    "recapEyebrow": "Tu resumen de {{month}}",
+    "recapLine": "{{g}} eventos · racha de {{s}} semanas · {{n}} personas nuevas · {{c}} registros de metas",
+    "recapTitle": "Tu mes, en compañía",
+    "removeBest": "Eliminar marca personal",
+    "removeGoal": "Archivar meta",
+    "saveError": "No se pudo guardar tu cambio. Inténtalo de nuevo.",
+    "shareRecap": "Descargar tu resumen",
+    "shareText": "Permite que tu equipo vea tus totales de eventos, metas y marcas personales. Puedes dejar de compartir cuando quieras.",
+    "shareTitle": "Comparte tu progreso con {{team}}",
+    "sharedOn": "Estás compartiendo tu progreso.",
+    "sharedOff": "Ya no compartes tu progreso.",
+    "sharedWithYou": "Progreso compartido contigo",
+    "stat": {
+      "attended": "Eventos asistidos",
+      "streak": "Racha semanal actual",
+      "best": "Mejor racha semanal",
+      "lessons": "Lecciones completadas"
+    },
+    "recap": {
+      "gatherings": "Eventos asistidos",
+      "streak": "Racha semanal",
+      "people": "Personas nuevas conocidas",
+      "goals": "Registros de metas"
+    },
+    "kind": {
+      "distance": "Distancia",
+      "time": "Tiempo",
+      "reps": "Repeticiones",
+      "lifted": "Peso levantado"
+    },
+    "unit": {
+      "km": "km",
+      "mi": "mi",
+      "min": "min",
+      "reps": "repeticiones",
+      "kg": "kg",
+      "lb": "lb"
+    }
   },
   "coach": {
     "eyebrow": "Tu lanzamiento",
@@ -5463,7 +5523,7 @@
     "seatsLine": "{{n}} anfitriones incluidos",
     "seatTitle": "¿Quién cuenta como anfitrión incluido?",
     "seatBody": "Los anfitriones incluidos son quienes crean o administran lo que ofreces: el dueño, administradores, anfitriones y editores de contenido.",
-    "seatFree": "El personal de registro, analistas, moderadores, miembros, asistentes y estudiantes nunca usan un plaza de anfitrión: agrega los que necesites.",
+    "seatFree": "El personal de registro, los miembros y los asistentes nunca cuentan dentro de tus anfitriones — agrega tantos como necesites.",
     "desc": {
       "free": "Organiza eventos gratuitos y empieza.",
       "advanced": "Más herramientas para anfitriones en crecimiento.",
@@ -5599,7 +5659,8 @@
       "hybrid": "Híbrido"
     },
     "errors": {
-      "reg_window": "El registro debe abrir antes de cerrar."
+      "reg_window": "El registro debe abrir antes de cerrar.",
+      "tier_invalid": "Completa el nombre, precio, cantidad y fechas de venta de cada boleto."
     },
     "experience": {
       "label": "Formato del evento",
