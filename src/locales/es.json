@@ -100,7 +100,6 @@
     "initials": "NC",
     "name": "Nick",
     "workspace": "Espacio de Nick",
-    "workspaceLabel": "Espacio",
     "plan": "Plan Avanzado · Ejemplo",
     "sampleNote": "Datos de ejemplo. Los cambios duran esta sesión.",
     "memberView": "Cambiar a vista de miembro",
@@ -109,7 +108,10 @@
     "previewNote": "Vista de ejemplo. Esta acción aún no está conectada.",
     "save": "Guardar",
     "retry": "Intentar de nuevo",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "loading": "Cargando…",
+    "delete": "Eliminar",
+    "setupRequired": "Configuración pendiente"
   },
   "home": {
     "meta": {
@@ -416,7 +418,8 @@
     "eyebrow": "Espacio",
     "heading": "Conocimiento compartido",
     "sentence": "Cursos, guías, sesiones en vivo, recetas y más.",
-    "button": "Crear capacitación"
+    "button": "Crear capacitación",
+    "uploadError": "No pudimos subir ese archivo. Inténtalo de nuevo."
   },
   "me": {
     "title": "Yo",
@@ -742,7 +745,6 @@
   },
   "workspace": {
     "title": "Ajustes del espacio de trabajo",
-    "none": "No hay espacio de trabajo seleccionado.",
     "members": "Miembros",
     "invites": "Invitaciones",
     "seats": "Asientos",
@@ -861,7 +863,8 @@
       "event": "Evento",
       "content": "Contenido",
       "moderation": "Moderación"
-    }
+    },
+    "noTeam": "Aún no tienes equipo"
   },
   "legal": {
     "termsTitle": "Términos",
@@ -4708,7 +4711,9 @@
     "summary": "{{done}} de {{lessons}} lecciones · {{qdone}} de {{quizzes}} evaluaciones obligatorias",
     "complete": "Curso completo — ¡felicidades!",
     "learners": "Progreso de participantes",
-    "unnamed": "Participante"
+    "unnamed": "Participante",
+    "noBests": "Aún no hay marcas personales.",
+    "noGoals": "Aún no hay metas."
   },
   "coach": {
     "eyebrow": "Tu lanzamiento",
@@ -5250,7 +5255,7 @@
   "personalHome": {
     "noCoaches": "Aquí verás los coaches que sigues o a cuyos equipos perteneces.",
     "hosting": "Tus eventos como anfitrión",
-    "attending": "Tus actividades como participante",
+    "attending": "Asistiendo",
     "subtitle": "Tus eventos, aprendizaje y conexiones.",
     "drafts": "Borradores por terminar: {{count}}",
     "resources": "Tus recursos",
@@ -5274,7 +5279,8 @@
     "modeGroup": "Cómo usas ZoheeWell",
     "startHosting": "Empezar a organizar",
     "switchAttending": "Cambiar a asistir",
-    "switchHost": "Cambiar a organizar"
+    "switchHost": "Cambiar a organizar",
+    "hostFree": "Organiza tu propio evento: es gratis"
   },
   "policy": {
     "none": "Sin política visible",
@@ -7755,5 +7761,13 @@
   "builderFooter": {
     "label": "Acciones del paso",
     "fixFirst": "Antes de continuar: {{fields}}"
+  },
+  "pageTitle": {
+    "newEvent": "Nuevo evento",
+    "editEvent": "Editar evento"
+  },
+  "hostSpace": {
+    "creating": "Preparando tu espacio de anfitrión…",
+    "failed": "No pudimos preparar tu espacio de anfitrión."
   }
 }

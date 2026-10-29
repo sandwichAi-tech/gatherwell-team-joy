@@ -1,5 +1,12 @@
 # ZoheeWell Change Log
 
+## 2026-10-29 — Start hosting without a team (Done)
+- /gathering/new no longer hangs for accounts with no team: it creates the personal host space (same create_team as onboarding), selects it and opens the event form; failure shows a retry instead of a raw key. Added common.loading (EN/ES) plus other missing loading/empty keys (common.delete, common.setupRequired, learn.uploadError, progress.noBests, progress.noGoals).
+- Attendee Home has a "Host your own event — free" card with a primary Start hosting button; the avatar menu offers Start hosting to attendee-only accounts. Both switch to host view and open event creation.
+- Wording: Home eyebrow "Attending"/"Asistiendo"; "No team yet"/"Aún no tienes equipo" replaces "No workspace selected."; desktop header shows only the real page title (e.g. "New event" on /gathering/new). Desktop shows the logo once (sidebar).
+- Verification: fresh ZZ-TEST no-team adult account, EN and ES at 1280: Home → Start hosting → form → publish free event → "Your event is live" share screen; account, team and events deleted afterward (counts 0). Avatar-menu tests added; full suite run.
+- Open: My Progress page still references ~30 missing translation keys; not checked on phone widths or with a screen reader.
+
 ## 2026-10-27 — ZoheeWell event agreement is automatic (Done, pending approved documents)
 - Event builder: removed the ZoheeWell agreement card, readiness summary, Fix action and missing-document message. Hosts see only an optional "Host waivers & release forms" section (library, multiple forms, order, versions unchanged). Publishing is only stopped by a host's own form that is no longer in their library.
 - Migration 0195: new document kind event_agreement (ordinary Terms are no longer treated as the event agreement); publishing pins the current approved agreement if one exists and otherwise publishes without it; approving an agreement fills empty pins on published events; existing pins never change; admin_platform_agreement_status() for admins. Registration still fails closed without a pinned agreement, with a customer-safe message.

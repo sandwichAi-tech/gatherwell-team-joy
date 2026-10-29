@@ -18,7 +18,7 @@ export const Route = createFileRoute('/_authenticated/_app/team_/settings')({
     const { userId } = useGatherwell();
     const { data: workspace, isLoading } = useQuery(workspaceQuery(userId));
     if (isLoading) return <ListSkeleton />;
-    if (!workspace) return <p className="auth-subtitle">{t('workspace.none')}</p>;
+    if (!workspace) return <p className="auth-subtitle">{t('workspace.noTeam')}</p>;
     const isOwner = workspace.ownerId === userId;
     if (!isOwner && !roleAllows(workspace.workspaceRole as never, 'settings')) {
       return <p className="auth-subtitle" role="alert">{t('workspace.noAccess')}</p>;

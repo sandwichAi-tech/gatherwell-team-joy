@@ -2,10 +2,11 @@ import {fireEvent,render,screen,cleanup} from '@testing-library/react';
 import {afterEach,describe,it,expect,vi} from 'vitest';
 import type {ReactNode} from 'react';
 vi.mock('@tanstack/react-router',()=>({Link:({to,children,...props}:{to:string;children:ReactNode})=><a href={to} {...props}>{children}</a>}));
-vi.mock('react-i18next',()=>({useTranslation:()=>({t:(key:string)=>({'me.profile':'Your profile','admin.platformGroup':'Platform administration','admin.dashboardLink':'Admin dashboard','customerHome.switchAttending':'Switch to attending','customerHome.switchHost':'Switch to host'}[key]??key)})}));
+vi.mock('react-i18next',()=>({useTranslation:()=>({t:(key:string)=>({'me.profile':'Your profile','admin.platformGroup':'Platform administration','admin.dashboardLink':'Admin dashboard','customerHome.switchAttending':'Switch to attending','customerHome.switchHost':'Switch to host','customerHome.startHosting':'Start hosting'}[key]??key)})}));
 vi.mock('./gw-icon',()=>({GwIcon:()=>null}));
 const switchMode=vi.fn().mockResolvedValue(true);
-vi.mock('@/lib/switch-mode',()=>({useSwitchMode:()=>switchMode}));
+const startHosting=vi.fn(async()=>true);
+vi.mock('@/lib/switch-mode',()=>({useSwitchMode:()=>switchMode,useStartHosting:()=>startHosting}));
 import {AccountMenu} from './account-menu';
 afterEach(()=>{cleanup();switchMode.mockClear();});
 describe('Persistent account menu permissions',()=>{
@@ -39,4 +40,13 @@ describe('Account menu mode switch',()=>{
    render(<AccountMenu initials="G" isAdmin={false} userId="u1" />);fireEvent.keyDown(screen.getByRole('button'),{key:'Enter'});
    expect(screen.queryByRole('menuitem',{name:'Switch to host'})).toBeNull();
   });
+ it('offers Start hosting to attendee-only accounts and opens event creation',()=>{
+   render(<AccountMenu initials="G" isAdmin={false} userId="u1" canStartHosting />);fireEvent.keyDown(screen.getByRole('button'),{key:'Enter'});
+   fireEvent.click(screen.getByRole('menuitem',{name:'Start hosting'}));
+   expect(startHosting).toHaveBeenCalledTimes(1);
+ });
+ it('hides Start hosting when not offered',()=>{
+   render(<AccountMenu initials="G" isAdmin={false} userId="u1" />);fireEvent.keyDown(screen.getByRole('button'),{key:'Enter'});
+   expect(screen.queryByRole('menuitem',{name:'Start hosting'})).toBeNull();
+ });
 });

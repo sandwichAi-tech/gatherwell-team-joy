@@ -30,7 +30,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { GatheringCover } from '@/components/gathering-cover';
 import { useGatherwell } from '@/components/gatherwell-shell';
 import { supabase } from '@/integrations/supabase/client';
-import { uploadMedia, workspaceQuery } from '@/lib/account';
+import { profileQuery, uploadMedia, workspaceQuery } from '@/lib/account';
 import { ShareKit } from '@/components/share-kit';
 import { COVER_STYLES, datePresets, isOnline, rpcError, shareLink, toLocalInput, usualSlot, expandRepeat, REPEATS, type Repeat as RepeatKind, type RepeatRule } from '@/lib/gatherings';
 import { useMapsKey, loadMaps } from '@/lib/maps-client';
@@ -47,7 +47,21 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const { t, i18n } = useTranslation(); const { userId } = useGatherwell(); const navigate = useNavigate(); const router = useRouter(); const queryClient = useQueryClient();
   const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
   const editing = !!eventId;
-  const { data: workspace } = useQuery(workspaceQuery(userId));
+  const { data: workspace, isPending: workspacePending } = useQuery(workspaceQuery(userId));
+  const { data: profile } = useQuery(profileQuery(userId));
+  // No team yet: create the personal host space (same RPC as onboarding) and continue into the form.
+  const [spaceState, setSpaceState] = useState<'idle' | 'creating' | 'failed'>('idle');
+  const createSpace = async () => {
+    setSpaceState('creating');
+    const name = profile?.full_name?.trim() || t('common.you');
+    const { data: made, error } = await supabase.rpc('create_team', { _name: name });
+    if (error || !made?.[0]) { setSpaceState('failed'); return; }
+    await supabase.from('profiles').update({ active_team_id: made[0].id }).eq('id', userId);
+    await Promise.all([queryClient.invalidateQueries({ queryKey: ['teams', userId] }), queryClient.invalidateQueries({ queryKey: ['profile', userId] })]);
+    await queryClient.invalidateQueries({ queryKey: ['workspace', userId] });
+    setSpaceState('idle');
+  };
+  useEffect(() => { if (!editing && !workspacePending && workspace === null && profile && spaceState === 'idle') void createSpace(); }, [editing, workspacePending, workspace, profile, spaceState]); // eslint-disable-line react-hooks/exhaustive-deps
   const { data: planStatus } = useQuery(planStatusQuery(userId));
   const { data: templates = [] } = useQuery({ ...templatesQuery(), enabled: !editing });
   const sourceId = eventId ?? fromId;
@@ -180,7 +194,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   }, [mapsKey, place, ready]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (sourceError || draftError) return <div role="alert"><p>{t("profile.saveError")}</p><Button onClick={() => { void reloadSource(); void reloadDraft(); }}>{t("common.retry")}</Button></div>;
-  if (!workspace || !ready) return <p role="status">{t('common.loading')}</p>;
+  if (spaceState === 'failed') return <div role="alert"><p>{t('hostSpace.failed')}</p><Button onClick={() => void createSpace()}>{t('common.retry')}</Button></div>;
+  if (!workspace || !ready) return <p role="status">{t(spaceState === 'creating' || (!workspacePending && !workspace) ? 'hostSpace.creating' : 'common.loading')}</p>;
   const canSell = planStatus?.connect_status === 'active';
   const priceCents = price ? Math.round(Number(price) * 100) : null;
   const saveTeamReg = async (id: string) => {
