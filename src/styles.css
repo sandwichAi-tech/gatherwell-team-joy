@@ -2233,7 +2233,7 @@ a.gw-cat-chip:hover{background:#fff}
 .gw-billing-toggle{position:static;display:inline-flex;gap:4px;padding:4px;margin:0 0 16px;border:1px solid var(--border);border-radius:999px;background:var(--card)}
 .gw-v4-pricing{margin-top:24px}
 .gw-discover .gw-discover-filters{flex-direction:column;align-items:stretch}
-.gw-discover-filters .gw-cat-section{background:transparent;border:0;padding:12px 0;width:100%;min-width:0}
+.gw-discover-filters .gw-cat-section{background:transparent;box-shadow:none;clip-path:none;border:0;padding:12px 0;width:100%;min-width:0}
 .gw-discover-filters .gw-cat-section>.gw-container{padding:0;max-width:none}
 .gw-discover-filters .gw-cat-row{justify-content:safe center;overflow-x:auto}
 .me-start-hosting{min-height:48px;margin-top:16px;width:100%}
