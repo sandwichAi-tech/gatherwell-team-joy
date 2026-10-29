@@ -424,7 +424,8 @@
     "heading": "Shared knowledge",
     "sentence": "Courses, guides, live sessions, recipes and more.",
     "button": "Create training",
-    "uploadError": "We couldn't upload that file. Try again."
+    "uploadError": "We couldn't upload that file. Try again.",
+    "fileTooBig": "Files can be up to 100 MB."
   },
   "me": {
     "title": "Me",
@@ -5106,6 +5107,7 @@
       "joined": "Joined",
       "invited": "Invited, not joined yet",
       "launch": "Launch {{date}}",
+      "gatherings": "{{n}} events this month",
       "gatherings_one": "{{count}} event this month",
       "gatherings_other": "{{count}} events this month",
       "council": "Council this month"

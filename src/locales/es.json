@@ -424,7 +424,8 @@
     "heading": "Conocimiento compartido",
     "sentence": "Cursos, guías, sesiones en vivo, recetas y más.",
     "button": "Crear capacitación",
-    "uploadError": "No pudimos subir ese archivo. Inténtalo de nuevo."
+    "uploadError": "No pudimos subir ese archivo. Inténtalo de nuevo.",
+    "fileTooBig": "Los archivos pueden pesar hasta 100 MB."
   },
   "me": {
     "title": "Yo",
@@ -5106,6 +5107,7 @@
       "joined": "Se unió",
       "invited": "Invitado, aún no se une",
       "launch": "Lanzamiento {{date}}",
+      "gatherings": "{{n}} eventos este mes",
       "gatherings_one": "{{count}} evento este mes",
       "gatherings_other": "{{count}} eventos este mes",
       "council": "Consejo este mes"
