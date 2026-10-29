@@ -1,5 +1,9 @@
 # Challenge commerce and course/assessment lifecycle closure
 
+## October 29 translation-only completion
+- [x] Add missing progress/invite/event-error/resource-type EN/ES entries; update host-count explanatory copy without changing rules.
+- [x] Source-wide literal coverage, finite billing/marketing/progress families and parity verified; 107 files/899 tests passed, automatic compilation clean; all 54 added keys recorded in CHANGELOG.
+
 ## October 29 focused visible copy and layout
 - [x] Hosts wording/audience/pricing spacing and availability labels; signed-in Discover/header; footer; Me conditional sections implemented.
 - [x] Locale audit, 106 files/894 tests and signed-out EN/ES 390/1280 browser review; unchanged pricing and CHANGELOG.
