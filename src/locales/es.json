@@ -73,7 +73,7 @@
   "feature_name_plural": "Círculos",
   "nav": {
     "home": "Inicio",
-    "events": "Reuniones",
+    "events": "Eventos",
     "team": "Equipo",
     "learn": "Recursos",
     "me": "Yo",
@@ -384,11 +384,11 @@
     }
   },
   "events": {
-    "title": "Reuniones",
+    "title": "Eventos",
     "eyebrow": "Espacio",
     "heading": "El calendario de tu comunidad",
     "sentence": "Tres eventos, una comunidad conectada.",
-    "button": "Crear una reunión",
+    "button": "Crear un evento",
     "liveSentence": "Todo lo que viene en tus equipos.",
     "tabs": {
       "upcoming": "Próximas",
@@ -400,9 +400,9 @@
     "list": "Lista",
     "map": "Mapa",
     "empty": {
-      "upcoming": "Crea tu primera reunión",
-      "hosting": "Crea tu primera reunión",
-      "past": "Aún no hay reuniones pasadas"
+      "upcoming": "Crea tu primer evento",
+      "hosting": "Crea tu primer evento",
+      "past": "Aún no hay eventos pasadas"
     },
     "emptyText": "Toma menos de un minuto. Elige hora y lugar, y comparte el enlace."
   },
@@ -441,7 +441,7 @@
   "create": {
     "title": "Crear",
     "description": "Un evento, una novedad o una meta compartida.",
-    "event": "Nueva reunión",
+    "event": "Nuevo evento",
     "eventText": "Reúne a tu gente",
     "announcement": "Anuncio",
     "announcementText": "Comparte una novedad",
@@ -451,7 +451,7 @@
     "trainingText": "Un espacio para aprender"
   },
   "placeholder": {
-    "event": "Tu próxima reunión",
+    "event": "Tu próximo evento",
     "announcement": "Una novedad para compartir",
     "challenge": "Un nuevo reto en equipo",
     "training": "Un momento para aprender",
@@ -480,7 +480,7 @@
     "walkingClub": "Club de caminata",
     "training": "Taller",
     "challenge": "Reto",
-    "teamEvent": "Reunión de equipo",
+    "teamEvent": "Evento de equipo",
     "rsvp": "Confirmar asistencia",
     "checkIn": "Registrar llegada",
     "badge": "Insignia",
@@ -511,7 +511,7 @@
       "note": "+12 este mes"
     },
     "events": {
-      "label": "Próximas reuniones",
+      "label": "Próximos eventos",
       "value": "3",
       "note": "En toda tu comunidad"
     },
@@ -556,7 +556,7 @@
       "time": "Constancia de 21 días · Hace 1 hora"
     },
     "maria": {
-      "title": "Maria compartió una reunión",
+      "title": "Maria compartió un evento",
       "time": "Tu red · Hace 2 horas"
     }
   },
@@ -565,19 +565,19 @@
       "name": "Sofia Martinez",
       "initials": "SM",
       "note": "Asistió ayer · Invítala de nuevo",
-      "role": "Anfitriona · 12 reuniones"
+      "role": "Anfitriona · 12 eventos"
     },
     "james": {
       "name": "James Wilson",
       "initials": "JW",
-      "note": "Faltó a las últimas dos reuniones · Escríbele",
+      "note": "Faltó a las últimas dos eventos · Escríbele",
       "role": "Miembro · 8 eventos"
     },
     "emily": {
       "name": "Emily Chen",
       "initials": "EC",
       "note": "Preguntó por los próximos programas",
-      "role": "Anfitriona · 6 reuniones"
+      "role": "Anfitriona · 6 eventos"
     }
   },
   "trainingRows": {
@@ -675,7 +675,7 @@
     "leader": "Lidero un equipo",
     "leaderText": "Crea tu espacio de equipo e invita a tu gente.",
     "host": "Organizo eventos",
-    "hostText": "Planea reuniones y recibe a tus invitados.",
+    "hostText": "Planea eventos y recibe a tus invitados.",
     "member": "Soy parte de un equipo",
     "memberText": "Únete a eventos, capacitaciones y retos.",
     "joinTitle": "Únete a tu equipo",
@@ -702,11 +702,11 @@
     "goHome": "Ir a mi inicio",
     "error": "No pudimos guardarlo. Inténtalo de nuevo.",
     "inviteCardTitle": "El enlace de invitación de tu equipo",
-    "inviteExplain": "Este es el enlace de invitación de tu equipo. Cualquier persona que lo abra puede crear una cuenta y unirse a {{team}} como integrante. Envíalo por WhatsApp o mensaje de texto, o muestra el código QR en tu próxima reunión.",
+    "inviteExplain": "Este es el enlace de invitación de tu equipo. Cualquier persona que lo abra puede crear una cuenta y unirse a {{team}} como integrante. Envíalo por WhatsApp o mensaje de texto, o muestra el código QR en tu próximo evento.",
     "inviteHow": "¿Qué pasa cuando lo abren?",
     "inviteStep1": "El enlace abre una breve página de bienvenida de {{team}}.",
     "inviteStep2": "Crean una cuenta gratis con su correo o con Google.",
-    "inviteStep3": "Entran a {{team}} como integrantes y ven tus próximas reuniones.",
+    "inviteStep3": "Entran a {{team}} como integrantes y ven tus próximos eventos.",
     "inviteQr": "Código QR del enlace de invitación de tu equipo"
   },
   "join": {
@@ -1191,7 +1191,7 @@
     "scope": "Alcance",
     "wholeOrg": "Toda mi organización",
     "stats": {
-      "gatherings": "Reuniones realizadas",
+      "gatherings": "Eventos realizados",
       "guests": "Invitados recibidos",
       "checkins": "Asistencias",
       "hosts": "Anfitriones activos",
@@ -1205,7 +1205,7 @@
     "chart": "Asistencias por semana",
     "topHosts": "Mejores anfitriones",
     "hostLine": "{{gatherings}} eventos · {{checkins}} asistencias",
-    "noHosts": "Todavía no hay reuniones en este periodo.",
+    "noHosts": "Todavía no hay eventos en este periodo.",
     "shout": "Dar un reconocimiento",
     "shoutTitle": "Reconocimiento para {{name}}",
     "shoutHelp": "Se publica en los logros del equipo.",
@@ -1220,17 +1220,17 @@
     "checkinsCount_other": "{{count}} asistencias",
     "noTemplates": "Aún no hay plantillas del equipo.",
     "nudge": "Necesitan un empujoncito",
-    "nudgeText": "Anfitriones sin reuniones en los últimos 30 días.",
-    "lastHosted": "Última reunión: {{date}}",
+    "nudgeText": "Anfitriones sin eventos en los últimos 30 días.",
+    "lastHosted": "Último evento: {{date}}",
     "neverHosted": "Aún no ha organizado",
     "checkIn": "Saludar",
     "checkInTitle": "Saluda a {{name}}",
     "noAutoSend": "No se envía nada automáticamente. Copia el mensaje o abre WhatsApp.",
     "allActive": "Todos los anfitriones se reunieron en los últimos 30 días.",
     "copy": "Copiar mensaje",
-    "nudgeMessage": "¡Hola, {{name}}! Me acordé de ti y de la banda de {{team}}. ¿Organizamos juntos una reunión este mes? Te ayudo con la plantilla y la invitación.",
+    "nudgeMessage": "¡Hola, {{name}}! Me acordé de ti y de la banda de {{team}}. ¿Organizamos juntos un evento este mes? Te ayudo con la plantilla y la invitación.",
     "homeLink": "Ver Insights",
-    "homeText": "Reuniones, asistencias y mejores anfitriones de tu organización.",
+    "homeText": "Eventos, asistencias y mejores anfitriones de tu organización.",
     "mapLink": "Mapa del equipo",
     "homeShort": "La semana de tu organización de un vistazo",
     "registered": "Registrados",
@@ -1277,7 +1277,7 @@
   "map": {
     "eyebrow": "Vista de líder",
     "title": "Mapa del equipo",
-    "subtitle": "Todas las próximas reuniones de tu equipo y subequipos.",
+    "subtitle": "Todas las próximos eventos de tu equipo y subequipos.",
     "placeholder": "Vista previa del mapa — aún no conectado",
     "when": "Cuándo",
     "week": "Esta semana",
@@ -1288,22 +1288,22 @@
     "online": "En línea",
     "nearMe": "Cerca de mí",
     "noLocation": "No hay ubicación disponible. La lista sigue por fecha.",
-    "list_one": "{{count}} reunión",
-    "list_other": "{{count}} reuniones",
-    "empty": "No hay próximas reuniones con estos filtros.",
+    "list_one": "{{count}} evento",
+    "list_other": "{{count}} eventos",
+    "empty": "No hay próximos eventos con estos filtros.",
     "distance": "a {{km}} km",
-    "view": "Ver reunión",
+    "view": "Ver evento",
     "going_one": "{{count}} registrado",
     "going_other": "{{count}} registrados"
   },
   "gathering": {
     "coverLowRes": "Esta foto de portada mide solo {{width}} px de ancho, así que puede verse poco nítida en pantallas grandes o de alta resolución. Sube un original más grande (al menos 1200 px de ancho) para una portada más nítida.",
-    "create": "Crear reunión",
-    "createFirst": "Crea tu primera reunión",
-    "newTitle": "Nueva reunión",
-    "editTitle": "Editar reunión",
+    "create": "Crear evento",
+    "createFirst": "Crea tu primer evento",
+    "newTitle": "Nuevo evento",
+    "editTitle": "Editar evento",
     "fromTemplate": "De la plantilla: {{title}}",
-    "hostsOnly": "Las reuniones las crean anfitriones y líderes",
+    "hostsOnly": "Los eventos las crean anfitriones y líderes",
     "hostsOnlyText": "Pídele a tu líder que te haga anfitrión.",
     "addPhoto": "Sube o toma una foto",
     "changePhoto": "Cambiar foto",
@@ -1368,7 +1368,7 @@
     "address": "Dirección",
     "addressNote": "La búsqueda en mapa aún no está conectada. Escribe la dirección.",
     "note": "Punto de evento o estacionamiento (opcional)",
-    "link": "Enlace de la reunión",
+    "link": "Enlace de el evento",
     "capacity": "Cupo",
     "noLimit": "Sin límite",
     "visibility": "Quién puede verla",
@@ -1384,7 +1384,7 @@
     "repeat": "Repetir",
     "noRepeat": "No se repite",
     "weekly": "Cada semana",
-    "weeklyHelp": "Crea esta reunión y las de las próximas 7 semanas como una serie.",
+    "weeklyHelp": "Crea este evento y las de las próximas 7 semanas como una serie.",
     "weeklyNote": "se repite cada semana por 8 semanas",
     "applyTo": "Aplicar cambios a",
     "thisDate": "Solo esta fecha",
@@ -1397,7 +1397,7 @@
     "fixFields": "Revisa los campos marcados.",
     "saved": "Cambios guardados",
     "draftSaved": "Borrador guardado",
-    "live": "Tu reunión ya está publicada.",
+    "live": "Tu evento ya está publicado.",
     "copyLink": "Copiar enlace",
     "text": "Mensaje de texto",
     "done": "Listo",
@@ -1408,17 +1408,17 @@
       "training": "Capacitación"
     },
     "goingOf": "{{count}} / {{total}} van",
-    "backToGatherings": "Reuniones",
+    "backToGatherings": "Eventos",
     "edit": "Editar",
     "duplicate": "Duplicar",
     "share": "Compartir",
-    "cancel": "Cancelar reunión",
+    "cancel": "Cancelar evento",
     "deleteDraft": "Eliminar borrador",
     "keep": "Mantenerla",
-    "cancelTitle": "¿Cancelar esta reunión?",
+    "cancelTitle": "¿Cancelar este evento?",
     "cancelText": "Tus invitados la verán como cancelada.",
     "notifyGuests": "¿Avisar a los invitados?",
-    "cancelled": "Reunión cancelada",
+    "cancelled": "Evento cancelado",
     "deleteTitle": "¿Eliminar este borrador?",
     "deleteText": "No se puede deshacer.",
     "deleted": "Borrador eliminado",
@@ -1439,7 +1439,7 @@
       "invalid_url": "Usa un enlace que empiece con https://",
       "invalid_capacity": "El cupo debe ser al menos 1.",
       "invalid_duration": "Elige una duración entre 5 minutos y 24 horas.",
-      "not_allowed": "No puedes crear reuniones para este equipo.",
+      "not_allowed": "No puedes crear eventos para este equipo.",
       "template_not_found": "Esa plantilla ya no está disponible.",
       "too_long": "Uno de los campos es demasiado largo."
     },
@@ -1476,9 +1476,9 @@
     "repeatSummary": "{{count}} fechas, la última el {{last}}"
   },
   "guest": {
-    "metaFallback": "Una reunión",
+    "metaFallback": "Un evento",
     "metaInvite": "Estás invitado. Confirma en segundos, sin crear cuenta.",
-    "hostYourOwn": "Organiza tu propia reunión en ZoheeWell",
+    "hostYourOwn": "Organiza tu propio evento en ZoheeWell",
     "hostedBy": "Organiza",
     "onlineHidden": "El enlace aparece después de confirmar.",
     "mapAlt": "Mapa del punto de evento",
@@ -1496,9 +1496,9 @@
     "manage": "Administrar mi confirmación",
     "addCalendar": "Agregar al calendario",
     "googleCalendar": "Google Calendar",
-    "calendarDetails": "Detalles de la reunión:",
+    "calendarDetails": "Detalles de el evento:",
     "directions": "Cómo llegar",
-    "cancelledTitle": "Esta reunión se canceló",
+    "cancelledTitle": "Este evento se canceló",
     "cancelledText": "Gracias por tu interés. Atento a la próxima.",
     "sheetGoing": "Aparta tu lugar",
     "sheetMaybe": "Avísale a quien organiza",
@@ -1513,8 +1513,8 @@
     "plusOnes": "Invitados que llevas",
     "less": "Uno menos",
     "more": "Uno más",
-    "smsConsent": "Envíenme recordatorios por mensaje de texto sobre esta reunión (pueden aplicar tarifas de mensajes y datos; responde STOP para cancelar)",
-    "emailConsent": "Envíenme recordatorios por correo sobre esta reunión",
+    "smsConsent": "Envíenme recordatorios por mensaje de texto sobre este evento (pueden aplicar tarifas de mensajes y datos; responde STOP para cancelar)",
+    "emailConsent": "Envíenme recordatorios por correo sobre este evento",
     "saving": "Guardando…",
     "confirmGoing": "Confirmar, voy",
     "confirmMaybe": "Enviar tal vez",
@@ -1530,9 +1530,9 @@
       "going": "Muestra este código al llegar.",
       "maybe": "Cámbialo a “Voy” cuando quieras.",
       "waitlist": "Si se libera un lugar, entrarás automáticamente.",
-      "cancelled": "¿Cambiaste de opinión? Abre el enlace de la reunión para confirmar de nuevo.",
+      "cancelled": "¿Cambiaste de opinión? Abre el enlace de el evento para confirmar de nuevo.",
       "requested": "El anfitrión revisará tu confirmación pronto. Te avisamos.",
-      "declined": "Esta vez el anfitrión no tuvo lugar. Esperamos verte en otra reunión."
+      "declined": "Esta vez el anfitrión no tuvo lugar. Esperamos verte en otro evento."
     },
     "joinOnline": "Entrar en línea",
     "qrHelp": "Tu código de registro",
@@ -1555,12 +1555,12 @@
       "name_required": "Agrega tu nombre.",
       "contact_required": "Agrega un celular o un correo.",
       "invalid_email": "Revisa tu correo.",
-      "not_open": "Esta reunión no está recibiendo confirmaciones.",
+      "not_open": "Este evento no está recibiendo confirmaciones.",
       "too_long": "Uno de los campos es demasiado largo.",
       "generic": "Algo salió mal. Inténtalo de nuevo.",
       "save_failed": "No pudimos guardar tu confirmación. Inténtalo de nuevo.",
       "rate_limited": "Demasiadas confirmaciones en poco tiempo. Espera un minuto.",
-      "members_only": "Esta reunión es solo para miembros.",
+      "members_only": "Este evento es solo para miembros.",
       "waiver_required": "Escribe tu nombre completo y marca la casilla para aceptar la exención.",
       "answers_required": "Responde las preguntas obligatorias.",
       "early_access": "Aún no se abren las confirmaciones para todos.",
@@ -1617,7 +1617,7 @@
     }
   },
   "guestList": {
-    "back": "Volver a la reunión",
+    "back": "Volver a el evento",
     "title": "Lista de invitados",
     "tabs": {
       "going": "Van",
@@ -1672,16 +1672,16 @@
     "publishPoll": "Publicar encuesta",
     "photos": "Fotos",
     "addPhoto": "Agregar foto",
-    "photosLater": "Las fotos se abren cuando empieza la reunión.",
+    "photosLater": "Las fotos se abren cuando empieza el evento.",
     "noPhotos": "Aún no hay fotos.",
     "photoAdded": "Foto agregada",
-    "photoAlt": "Foto de la reunión",
+    "photoAlt": "Foto de el evento",
     "show": "Mostrar foto",
     "hide": "Ocultar foto",
     "photoErrors": {
-      "not_open": "Esta reunión no recibe fotos.",
-      "not_started": "Las fotos se abren cuando empieza la reunión.",
-      "not_checked_in": "Regístrate en la reunión para agregar fotos.",
+      "not_open": "Este evento no recibe fotos.",
+      "not_started": "Las fotos se abren cuando empieza el evento.",
+      "not_checked_in": "Regístrate en el evento para agregar fotos.",
       "not_allowed": "Solo quien organiza y los invitados registrados pueden agregar fotos.",
       "too_large": "La foto es demasiado grande.",
       "upload_failed": "La foto no se subió. Inténtalo de nuevo."
@@ -1695,7 +1695,7 @@
       "snow": "nieve",
       "storm": "tormentas"
     },
-    "summaryTitle": "Después de la reunión",
+    "summaryTitle": "Después de el evento",
     "summary": {
       "rsvps": "Confirmaciones",
       "checkins": "Registros",
@@ -1730,7 +1730,7 @@
     "scanResult": {
       "ok": "{{name}} quedó registrado",
       "already": "{{name}} ya estaba registrado",
-      "not_found": "No está en la lista de esta reunión",
+      "not_found": "No está en la lista de este evento",
       "error": "No se confirmó la entrada. Revisa tu conexión y vuelve a intentar.",
       "cancelled": "Este registro fue cancelado",
       "waitlist": "Esta persona está en la lista de espera",
@@ -1854,7 +1854,7 @@
         "facts": "4 lecciones · 25 min"
       },
       "host": {
-        "title": "Organiza tu primera reunión",
+        "title": "Organiza tu primer evento",
         "facts": "5 lecciones · 40 min"
       },
       "rhythm": {
@@ -1888,7 +1888,7 @@
     "pdfLink": "O el enlace a un PDF",
     "link": "Enlace",
     "liveStarts": "Empieza (tu hora)",
-    "meetingLink": "Enlace de la reunión",
+    "meetingLink": "Enlace de el evento",
     "meetingHint": "Los integrantes lo ven 10 minutos antes de empezar.",
     "replayLink": "Enlace de la repetición",
     "replayHint": "Agrégalo después de la sesión; así se vuelve una lección normal.",
@@ -2307,7 +2307,7 @@
       "not_leader": "Solo las líderes pueden hacer esto.",
       "not_allowed": "No puedes hacer eso aquí.",
       "invalid_message": "Máximo 280 caracteres.",
-      "already_exists": "Esta reunión ya tiene una insignia.",
+      "already_exists": "Este evento ya tiene una insignia.",
       "invalid": "Revisa el nombre e inténtalo de nuevo."
     },
     "feature": "Destacar",
@@ -2327,7 +2327,7 @@
     "eventOnly": "Solo para quienes vengan",
     "kind": {
       "seasonal": "De temporada",
-      "event": "Reunión",
+      "event": "Evento",
       "founding": "Fundador"
     },
     "section": {
@@ -2335,9 +2335,9 @@
       "limited": "Edición limitada",
       "locked": "Por ganar"
     },
-    "eventBadgeTitle": "Insignia de la reunión",
-    "eventBadgeHint": "Crea una insignia de recuerdo que solo ganan quienes registran su llegada a esta reunión.",
-    "eventBadgeCta": "Crear insignia de la reunión",
+    "eventBadgeTitle": "Insignia de el evento",
+    "eventBadgeHint": "Crea una insignia de recuerdo que solo ganan quienes registran su llegada a este evento.",
+    "eventBadgeCta": "Crear insignia de el evento",
     "eventBadgeNote": "Quienes ya llegaron la reciben ahora; los demás, al registrar su llegada.",
     "badgeType": "Tipo",
     "typeStandard": "Estándar",
@@ -2357,13 +2357,13 @@
     },
     "type": {
       "reminders": "Recordatorios",
-      "remindersText": "Reuniones y sesiones en vivo a las que te uniste.",
+      "remindersText": "Eventos y sesiones en vivo a las que te uniste.",
       "announcements": "Avisos del equipo",
       "announcementsText": "Notas de tu líder.",
       "badges": "Insignias y logros",
       "badgesText": "Cuando obtienes una insignia.",
       "followups": "Seguimiento",
-      "followupsText": "Notas de agradecimiento después de una reunión.",
+      "followupsText": "Notas de agradecimiento después de un evento.",
       "conversation": "Respuestas y menciones",
       "conversationText": "Cuando alguien te responde o te menciona."
     },
@@ -2375,7 +2375,7 @@
     "pushWhy": {
       "rsvp": "Ya tienes lugar — ¿quieres un recordatorio antes de empezar?",
       "joined": "Ya eres parte del equipo — ¿quieres un aviso cuando tu líder publique algo?",
-      "hosted": "Organizaste tu primera reunión — ¿quieres saber cuando lleguen confirmaciones y salgan recordatorios?"
+      "hosted": "Organizaste tu primer evento — ¿quieres saber cuando lleguen confirmaciones y salgan recordatorios?"
     },
     "notNow": "Ahora no",
     "turnOn": "Activar",
@@ -2386,7 +2386,7 @@
       "sent": "Enviados",
       "simulated": "Simulados"
     },
-    "allMessages": "{{count}} mensajes para esta reunión · {{skipped}} omitidos",
+    "allMessages": "{{count}} mensajes para este evento · {{skipped}} omitidos",
     "cancelNote": "Envía correo y texto a quienes van o están en lista de espera y pidieron avisos.",
     "cancelQueued": "Aviso de cancelación en cola para {{count}} invitados",
     "emailTeam": "Enviar también por correo a mi equipo",
@@ -2403,7 +2403,7 @@
     "saved": "Guardado. Gracias.",
     "doneAll": "Te diste de baja de todos los correos de ZoheeWell.",
     "invalid": "Este enlace ya no es válido.",
-    "note": "Aún podrías recibir mensajes importantes sobre una reunión a la que confirmaste."
+    "note": "Aún podrías recibir mensajes importantes sobre un evento a la que confirmaste."
   },
   "siteMedia": {
     "eyebrow": "Admin",
@@ -2432,12 +2432,13 @@
   },
   "landing": {
     "nav": {
-      "find": "Encontrar una reunión",
+      "find": "Encontrar un evento",
       "host": "Para anfitriones",
       "signIn": "Iniciar sesión",
       "getStarted": "Comenzar",
       "menu": "Abrir menú",
       "close": "Cerrar menú",
+      "goToApp": "Ir a la app",
       "main": "Principal"
     },
     "hostFirst": {
@@ -2488,12 +2489,12 @@
       "h1C": "Menos scroll. Más presencia.",
       "h1D": "Encuentra a tu gente. Siéntete bien en compañía.",
       "sub": "Clubes de corredores, fit camps, yoga al amanecer, baños de sonido y caminatas cerca de ti. Confirma con un toque y solo llega.",
-      "find": "Encontrar una reunión",
+      "find": "Encontrar un evento",
       "host": "Organizar una",
       "proof": "{{count}} personas llegaron este mes.",
       "pause": "Pausar la animación de tarjetas",
       "play": "Reproducir la animación de tarjetas",
-      "stackLabel": "Reuniones próximas",
+      "stackLabel": "Eventos próximas",
       "photoTitle_run": "Clubes de corredores cerca de ti",
       "photoTitle_fitcamp": "Fit camps cerca de ti",
       "photoTitle_yoga": "Yoga cerca de ti",
@@ -2501,8 +2502,8 @@
       "photoTitle_hike": "Caminatas de montaña cerca de ti",
       "photoTitle_walk": "Caminatas cerca de ti",
       "photoTitle_pickleball": "Pickleball cerca de ti",
-      "photoTitle_more": "Reuniones cerca de ti",
-      "photoMeta": "Nuevas reuniones cada semana",
+      "photoTitle_more": "Eventos cerca de ti",
+      "photoMeta": "Nuevas eventos cada semana",
       "photoTitle_pilates": "Pilates en el parque"
     },
     "card": {
@@ -2521,11 +2522,11 @@
       "sample": "Ejemplo",
       "rsvpFor": "Confirmar asistencia a {{title}}",
       "open": "Abrir {{title}}",
-      "sampleTitle": "Reunión de ejemplo",
-      "sampleBody": "Así se ven las reuniones. Las reuniones reales cerca de ti abren su propia página donde puedes confirmar tu asistencia.",
-      "sampleRsvp": "Reunión de ejemplo: esta confirmación es solo una vista previa.",
-      "filterCat": "Ver todas las reuniones de {{category}}",
-      "browseReal": "Ver todas las reuniones"
+      "sampleTitle": "Evento de ejemplo",
+      "sampleBody": "Así se ven los eventos. Los eventos reales cerca de ti abren su propia página donde puedes confirmar tu asistencia.",
+      "sampleRsvp": "Evento de ejemplo: esta confirmación es solo una vista previa.",
+      "filterCat": "Ver todas los eventos de {{category}}",
+      "browseReal": "Ver todas los eventos"
     },
     "cat": {
       "run": "Correr",
@@ -2536,7 +2537,7 @@
       "walk": "Caminatas",
       "pickleball": "Pickleball",
       "more": "Más",
-      "rowLabel": "Explorar por tipo de reunión",
+      "rowLabel": "Explorar por tipo de evento",
       "pilates": "Pilates"
     },
     "catOne": {
@@ -2547,28 +2548,28 @@
       "hike": "Montaña",
       "walk": "Caminata",
       "pickleball": "Pickleball",
-      "more": "Reunión",
+      "more": "Evento",
       "pilates": "Pilates"
     },
     "feed": {
       "label": "Esta semana",
       "title": "Esta semana cerca de ti",
       "popular": "Populares esta semana",
-      "seeAll": "Ver todas las reuniones",
+      "seeAll": "Ver todas los eventos",
       "useLocation": "Usar mi ubicación",
-      "locationWhy": "Usamos tu ubicación una sola vez para ordenar las reuniones por distancia. Nunca se guarda.",
+      "locationWhy": "Usamos tu ubicación una sola vez para ordenar los eventos por distancia. Nunca se guarda.",
       "allow": "Compartir ubicación",
       "notNow": "Ahora no",
       "zipLabel": "Código postal o ciudad",
       "zipPlaceholder": "p. ej. 06700 o Guadalajara",
       "zipApply": "Ver cercanas",
-      "zipNote": "Aún no conectado: la búsqueda por lugar se activa cuando se conecten los mapas. Por ahora mostramos las reuniones populares.",
+      "zipNote": "Aún no conectado: la búsqueda por lugar se activa cuando se conecten los mapas. Por ahora mostramos los eventos populares.",
       "nearYou": "Ordenadas por distancia",
       "clear": "Quitar ubicación",
-      "empty": "Aún no hay reuniones publicadas aquí.",
+      "empty": "Aún no hay eventos publicados aquí.",
       "emptyCat": "No hay nada de esta categoría esta semana.",
       "hostFirst": "Organiza la primera",
-      "sampleNote": "Las reuniones de ejemplo solo aparecen en la vista previa."
+      "sampleNote": "Los eventos de ejemplo solo aparecen en la vista previa."
     },
     "how": {
       "label": "Cómo funciona",
@@ -2596,7 +2597,7 @@
     "leaders": {
       "label": "Para líderes",
       "title": "¿Lideras un equipo más grande?",
-      "body": "Plantillas, un calendario de equipo y estadísticas para que cada anfitrión de tu equipo lance grandes reuniones.",
+      "body": "Plantillas, un calendario de equipo y estadísticas para que cada anfitrión de tu equipo lance grandes eventos.",
       "cta": "Ver herramientas para líderes"
     },
     "testimonials": {
@@ -2604,12 +2605,12 @@
       "title": "Gente que llegó."
     },
     "footer": {
-      "tagline": "El bienestar es mejor en compañía.",
+      "tagline": "La vida es mejor juntos.",
       "discover": "Descubrir",
       "host": "Organizar",
       "company": "Compañía",
       "legal": "Legal",
-      "allGatherings": "Todas las reuniones",
+      "allGatherings": "Todas los eventos",
       "thisWeekend": "Este fin de semana",
       "hostOne": "Organizar una",
       "leaderTools": "Herramientas para líderes",
@@ -2624,7 +2625,7 @@
       "careers": "Empleo"
     },
     "sticky": {
-      "find": "Encontrar una reunión"
+      "find": "Encontrar un evento"
     },
     "discover": {
       "label": "Descubrir",
@@ -2634,8 +2635,9 @@
       "weekend": "Este fin de semana",
       "week": "Esta semana",
       "dateLabel": "Cuándo",
-      "count_one": "{{count}} reunión",
-      "count_other": "{{count}} reuniones",
+      "signedInSub": "Explora próximos eventos, cursos y coaches cerca de ti. Guarda tus favoritos y confirma tu asistencia en segundos.",
+      "count_one": "{{count}} evento",
+      "count_other": "{{count}} eventos",
       "back": "Volver a ZoheeWell"
     },
     "credits": {
@@ -2646,7 +2648,7 @@
       "none": "Sin crédito"
     },
     "meta": {
-      "homeTitle": "ZoheeWell · Reuniones de bienestar cerca de ti",
+      "homeTitle": "ZoheeWell · Eventos de bienestar cerca de ti",
       "home": "Encuentra clubes de corredores, fit camps, yoga, baños de sonido y caminatas cerca de ti. Confirma con un toque y solo llega.",
       "discoverTitle": "Descubre eventos, cursos y coaches · ZoheeWell",
       "discover": "Explora eventos, cursos, recursos y coaches cerca de ti. Únete gratis para guardar lo que te encanta y confirmar con un toque.",
@@ -2672,7 +2674,7 @@
     "chips": {
       "today": "¿Qué debería hacer hoy?",
       "week": "Planea mi semana",
-      "plan": "Planear una reunión",
+      "plan": "Planear un evento",
       "invite": "Escribe mi invitación",
       "announce": "Redacta un anuncio",
       "thank": "Agradece a mis mejores anfitriones",
@@ -2682,7 +2684,7 @@
     "createIt": "Se ve bien, créala",
     "edit": "Editar",
     "doneEditing": "Listo",
-    "openGathering": "Abrir reunión",
+    "openGathering": "Abrir evento",
     "spots": "{{count}} lugares",
     "spots_one": "{{count}} lugar",
     "spots_other": "{{count}} lugares",
@@ -2690,7 +2692,7 @@
     "openWhatsapp": "Abrir WhatsApp",
     "postToTeam": "Publicar en mi equipo",
     "upcoming": "Próximamente",
-    "noUpcoming": "Aún no hay reuniones próximas.",
+    "noUpcoming": "Aún no hay eventos próximas.",
     "directions": "Cómo llegar",
     "openMaps": "Abrir en mapas",
     "recipe": "Receta",
@@ -2772,13 +2774,13 @@
       "noneSendable": "Las personas aprobadas no aceptaron correo ni mensajes de texto. Usa Abrir en WhatsApp en cada tarjeta.",
       "whatsappLeft_one": "A 1 persona aprobada hay que escribirle por WhatsApp desde su tarjeta.",
       "whatsappLeft_other": "A {{count}} personas aprobadas hay que escribirles por WhatsApp desde sus tarjetas.",
-      "empty": "Todavía no hay seguimientos. Aparecen aquí a las 8:00 de la mañana siguiente a cada reunión que organizas.",
-      "prepareTitle": "Reuniones recientes",
-      "prepareText": "¿Los quieres antes? Prepara ahora los seguimientos de una reunión que ya pasó.",
+      "empty": "Todavía no hay seguimientos. Aparecen aquí a las 8:00 de la mañana siguiente a cada evento que organizas.",
+      "prepareTitle": "Eventos recientes",
+      "prepareText": "¿Los quieres antes? Prepara ahora los seguimientos de un evento que ya pasó.",
       "prepare": "Preparar ahora",
       "prepared_one": "1 seguimiento listo",
       "prepared_other": "{{count}} seguimientos listos",
-      "noGuests": "No hay invitados para dar seguimiento en esta reunión.",
+      "noGuests": "No hay invitados para dar seguimiento en este evento.",
       "kind": {
         "first_time": "Primera vez",
         "returning": "Regresó",
@@ -2853,10 +2855,10 @@
     "plan_pro": "Pro",
     "licensePlan": "Avanzado (Licencia de equipo de {{leader}})",
     "renews": "Se renueva el {{date}}",
-    "meterGatherings": "{{used}} de {{max}} reuniones este mes",
-    "meterGatheringsUnlimited": "{{used}} reuniones este mes · ilimitadas",
-    "meterGuests": "{{used}} de {{max}} invitados en tu reunión más grande",
-    "meterGuestsUnlimited": "{{used}} invitados en tu reunión más grande · ilimitados",
+    "meterGatherings": "{{used}} de {{max}} eventos este mes",
+    "meterGatheringsUnlimited": "{{used}} eventos este mes · ilimitadas",
+    "meterGuests": "{{used}} de {{max}} invitados en tu evento más grande",
+    "meterGuestsUnlimited": "{{used}} invitados en tu evento más grande · ilimitados",
     "meterStorage": "{{used}} de {{max}} de almacenamiento",
     "meterAssistant": "{{used}} de {{max}} solicitudes al asistente",
     "manage": "Administrar pagos",
@@ -2871,9 +2873,9 @@
     "name_team": "Licencias de equipo",
     "perMonth": "/mes",
     "perYear": "/año",
-    "fGatherings": "{{n}} reuniones al mes",
-    "fGatheringsUnlimited": "Reuniones ilimitadas",
-    "fGuests": "{{n}} invitados por reunión",
+    "fGatherings": "{{n}} eventos al mes",
+    "fGatheringsUnlimited": "Eventos ilimitadas",
+    "fGuests": "{{n}} invitados por evento",
     "fGuestsUnlimited": "Invitados ilimitados",
     "fStorage": "{{size}} de almacenamiento",
     "fAssistant": "{{n}} solicitudes al asistente al mes",
@@ -2896,15 +2898,15 @@
     "connect_not_started": "Sin iniciar",
     "connect_pending": "Pendiente",
     "connect_active": "Activo",
-    "getPaidText": "Pon precio a reuniones y retos y recibe los pagos en tu banco. La comisión de la plataforma en tu plan es de {{n}}%.",
+    "getPaidText": "Pon precio a eventos y retos y recibe los pagos en tu banco. La comisión de la plataforma en tu plan es de {{n}}%.",
     "connectStart": "Configurar pagos",
     "connectContinue": "Terminar configuración",
     "passFee": "Pasar la comisión a quien compra",
     "passFeeHint": "Tus invitados ven un pequeño cargo por reservación al pagar y tú recibes el precio completo.",
     "downgradeTitle": "¿Cambiar a {{plan}}?",
-    "downKeep": "Todo lo que creaste se queda: reuniones, invitados, confirmaciones, registros de llegada, lecciones y fotos.",
-    "downGatherings": "Nuevas reuniones limitadas a {{n}} al mes",
-    "downGuests": "Los nuevos invitados después de {{n}} por reunión pasan a lista de espera",
+    "downKeep": "Todo lo que creaste se queda: eventos, invitados, confirmaciones, registros de llegada, lecciones y fotos.",
+    "downGatherings": "Nuevas eventos limitadas a {{n}} al mes",
+    "downGuests": "Los nuevos invitados después de {{n}} por evento pasan a lista de espera",
     "downStorage": "{{size}} de almacenamiento para nuevos archivos",
     "downConfirm": "Continuar",
     "notNow": "Ahora no",
@@ -2912,12 +2914,12 @@
     "notConnected": "Los pagos aún no están conectados. Tu plan y tus límites ya están listos, y los pagos se activarán pronto.",
     "error": "Algo salió mal. Inténtalo de nuevo.",
     "limitTitle": "Llegaste al límite de tu plan",
-    "limit_gatherings": "Tu plan incluye 4 reuniones nuevas al mes. Mejora tu plan para seguir creando este mes.",
+    "limit_gatherings": "Tu plan incluye 4 eventos nuevas al mes. Mejora tu plan para seguir creando este mes.",
     "limit_storage": "Este archivo superaría el almacenamiento de tu plan. Mejora tu plan para tener más espacio.",
-    "limit_guests": "Los nuevos invitados pasan a lista de espera porque esta reunión llegó al límite de invitados de tu plan. Mejora tu plan para recibir a más.",
+    "limit_guests": "Los nuevos invitados pasan a lista de espera porque este evento llegó al límite de invitados de tu plan. Mejora tu plan para recibir a más.",
     "limitSafe": "Nada de lo que ya creaste se ve afectado.",
     "seePlans": "Ver planes",
-    "pastDue": "Tu último pago del plan no se completó. Tus reuniones están a salvo; actualiza tu tarjeta, por favor.",
+    "pastDue": "Tu último pago del plan no se completó. Tus eventos están a salvo; actualiza tu tarjeta, por favor.",
     "updateCard": "Actualizar tarjeta",
     "leadersOnly": "Los lugares los administran las líderes del equipo.",
     "seatsUsed": "{{used}} de {{total}} lugares usados",
@@ -2945,7 +2947,7 @@
     "status_refunded": "Reembolsado",
     "status_pending": "Pendiente",
     "price": "Precio del boleto",
-    "priceHint": "Déjalo vacío para una reunión gratis.",
+    "priceHint": "Déjalo vacío para un evento gratis.",
     "priceNeedsPayouts": "Configura tus pagos en Yo → Plan para vender boletos.",
     "perPerson": "por persona",
     "bookingFee": "+ {{fee}} de cargo por reservación",
@@ -3073,7 +3075,7 @@
     "actions": "Acciones",
     "keep": "Volver",
     "pausedTitle": "Este equipo está en pausa",
-    "pausedBody": "Por ahora no se pueden crear reuniones nuevas. El equipo de soporte de ZoheeWell se pondrá en contacto.",
+    "pausedBody": "Por ahora no se pueden crear eventos nuevas. El equipo de soporte de ZoheeWell se pondrá en contacto.",
     "tabs": {
       "overview": "Resumen",
       "teams": "Equipos",
@@ -3105,7 +3107,7 @@
     "stats": {
       "signups": "Registros",
       "activeTeams": "Equipos activos",
-      "gatherings": "Reuniones creadas",
+      "gatherings": "Eventos creadas",
       "rsvps": "Confirmaciones",
       "checkins": "Registros de llegada",
       "assistant": "Solicitudes al asistente",
@@ -3141,7 +3143,7 @@
       "subteams_other": "{{count}} subequipos",
       "last": "Última actividad",
       "membersTitle": "Miembros",
-      "gatherings": "Reuniones recientes",
+      "gatherings": "Eventos recientes",
       "templates": "Plantillas",
       "activity": "Actividad reciente",
       "launches_one": "{{count}} uso",
@@ -3169,7 +3171,7 @@
       "linkSent": "Enlace de acceso enviado.",
       "suspend": "Pausar cuenta",
       "delete": "Eliminar cuenta",
-      "deleteConfirm": "Esto elimina para siempre la cuenta y su perfil. Sus equipos y reuniones se quedan. No se puede deshacer.",
+      "deleteConfirm": "Esto elimina para siempre la cuenta y su perfil. Sus equipos y eventos se quedan. No se puede deshacer.",
       "deleteNow": "Eliminar para siempre"
     },
     "mod": {
@@ -3189,7 +3191,7 @@
       "saveEdit": "Guardar cambios",
       "remove": "Quitar",
       "type": {
-        "event": "Reunión",
+        "event": "Evento",
         "shoutout": "Reconocimiento",
         "photo": "Foto",
         "activity": "Logro del equipo",
@@ -3255,7 +3257,7 @@
         "HandHeart": "Apoyo",
         "Flame": "Llama",
         "Crown": "Corona",
-        "CalendarHeart": "Reunión",
+        "CalendarHeart": "Evento",
         "UsersRound": "Personas",
         "Footprints": "Pasos",
         "Leaf": "Hoja",
@@ -3344,7 +3346,7 @@
     },
     "activity": {
       "member_joined": "Nuevo miembro",
-      "event_published": "Reunión publicada",
+      "event_published": "Evento publicada",
       "checkin": "Llegadas",
       "announcement_posted": "Aviso",
       "shoutout": "Reconocimiento",
@@ -3633,15 +3635,15 @@
   },
   "network": {
     "title": "Tu red",
-    "subtitle": "Anfitriones de confianza de otros equipos. Comparte reuniones y lleva a tus invitados.",
-    "hostsOnly": "La red es para anfitriones y líderes. Organiza una reunión para empezar a conectar.",
+    "subtitle": "Anfitriones de confianza de otros equipos. Comparte eventos y lleva a tus invitados.",
+    "hostsOnly": "La red es para anfitriones y líderes. Organiza un evento para empezar a conectar.",
     "requests": "Solicitudes",
     "accept": "Aceptar",
     "decline": "Rechazar",
     "accepted": "Ya están conectados.",
     "declined": "Solicitud rechazada.",
     "fromNetwork": "De tu red",
-    "noGatherings": "Aún no hay reuniones compartidas. Comparte una tuya desde su botón Compartir.",
+    "noGatherings": "Aún no hay eventos compartidas. Comparte una tuya desde su botón Compartir.",
     "connections": "Mis conexiones",
     "noConnections": "Aún no tienes conexiones. Agrega a un anfitrión abajo.",
     "pending": "Pendiente",
@@ -3652,7 +3654,7 @@
     "add": "Agregar a mi red",
     "requested": "Solicitud enviada.",
     "online": "En línea",
-    "yours": "Tu reunión",
+    "yours": "Tu evento",
     "hostedBy": "Organiza {{name}}",
     "copyGuestLink": "Enlace para invitados",
     "feature": "Mostrar a mi equipo",
@@ -3669,7 +3671,7 @@
     "unshared": "Ya no se comparte.",
     "error": "No funcionó. Inténtalo de nuevo.",
     "referralsTitle": "Invitados recomendados",
-    "referralsText": "Cuando el enlace de un anfitrión aliado trae a alguien a una reunión de pago, ambos lo verán aquí. Solo aplica a invitados que asisten a reuniones.",
+    "referralsText": "Cuando el enlace de un anfitrión aliado trae a alguien a un evento de pago, ambos lo verán aquí. Solo aplica a invitados que asisten a eventos.",
     "guestsSent": "Invitados que enviaste",
     "guestsReceived": "Invitados que recibiste",
     "thanksEarned": "Agradecimientos recibidos",
@@ -3831,7 +3833,7 @@
       "download": "Descarga"
     },
     "kindText": {
-      "membership": "Reuniones exclusivas, recursos y comunidad",
+      "membership": "Eventos exclusivas, recursos y comunidad",
       "course": "Lecciones que se abren con el tiempo",
       "download": "Una guía o archivo para conservar"
     },
@@ -3846,13 +3848,13 @@
     "titlePlaceholder": "Bienestar en comunidad",
     "description": "Descripción",
     "includes": "Qué incluye (uno por línea)",
-    "includesPlaceholder": "Reuniones solo para miembros\nBiblioteca de recursos\nComunidad",
+    "includesPlaceholder": "Eventos solo para miembros\nBiblioteca de recursos\nComunidad",
     "price": "Precio (USD)",
     "priceMonthly": "Precio mensual (USD)",
     "feeNote": "La comisión de ZoheeWell depende de tu plan. El procesamiento de Stripe es aparte. Los recursos gratuitos no tienen comisión de plataforma.",
     "drip": "Días entre lecciones",
     "courseHelp": "Después de guardar, vincula una ruta de Recursos a este curso. Las lecciones se abren una por una.",
-    "membershipHelp": "Después de guardar, marca reuniones o rutas de Recursos como exclusivas de este Círculo.",
+    "membershipHelp": "Después de guardar, marca eventos o rutas de Recursos como exclusivas de este Círculo.",
     "file": "Archivo",
     "uploadFile": "Subir archivo (PDF)",
     "replaceFile": "Cambiar archivo",
@@ -3882,7 +3884,7 @@
     "owned": "Comprada",
     "member": "Ya eres miembro",
     "download": "Descargar",
-    "seeGatherings": "Ver reuniones",
+    "seeGatherings": "Ver eventos",
     "buy": "Comprar",
     "join": "Unirme",
     "cancelAnytime": "Cancela cuando quieras desde Yo > Compras.",
@@ -3937,13 +3939,13 @@
   },
   "welcome": {
     "title": "Invita a tus amigos",
-    "intro": "Comparte tu enlace personal. Cuando una amiga o amigo llegue a su primera reunión con él, ganas puntos de bienvenida con ese anfitrión.",
+    "intro": "Comparte tu enlace personal. Cuando una amiga o amigo llegue a su primer evento con él, ganas puntos de bienvenida con ese anfitrión.",
     "yourLink": "Tu enlace de invitación",
     "share": "Compartir",
-    "shareMessage": "¡Ven conmigo a una reunión! Encuentra una aquí: {{link}}",
+    "shareMessage": "¡Ven conmigo a un evento! Encuentra una aquí: {{link}}",
     "friendsCame": "Amigos que llegaron",
     "points": "Puntos de bienvenida",
-    "howItWorks": "10 puntos por cada amigo en su primer registro de llegada. Los puntos valen con el anfitrión de esa reunión.",
+    "howItWorks": "10 puntos por cada amigo en su primer registro de llegada. Los puntos valen con el anfitrión de esa evento.",
     "rewards": "Recompensas",
     "aHost": "Un anfitrión",
     "pointsCount_one": "{{count}} punto",
@@ -3958,14 +3960,14 @@
     "came": "Llegó",
     "rsvped": "Confirmó",
     "noFriends": "Aún no hay amigos. Comparte tu enlace para empezar.",
-    "rules": "Las recompensas son servicios de tus anfitriones, nunca dinero. Solo aplica a amigos que vienen a reuniones.",
+    "rules": "Las recompensas son servicios de tus anfitriones, nunca dinero. Solo aplica a amigos que vienen a eventos.",
     "redeemed": "Tu código: {{code}}. Muéstraselo a tu anfitrión.",
     "notEnough": "Todavía no tienes suficientes puntos.",
     "error": "Algo salió mal. Inténtalo de nuevo.",
     "hostTitle": "Recompensas de bienvenida",
     "hostIntro": "Agradece a quienes traen amigos. Elige recompensas de tus propios servicios y los puntos necesarios (se ganan 10 puntos por cada amigo que llega por primera vez).",
     "rewardName": "Recompensa",
-    "rewardPlaceholder": "Próxima reunión gratis",
+    "rewardPlaceholder": "Próximo evento gratis",
     "pointsNeeded": "Puntos necesarios",
     "addReward": "Agregar recompensa",
     "rewardInvalid": "Agrega un nombre y entre 10 y 1,000 puntos.",
@@ -3978,8 +3980,8 @@
     "codeNotFound": "Código no encontrado o ya usado.",
     "waiting": "Sin usar",
     "inviteTitle": "Te invitaron",
-    "inviteMeta": "Alguien te invitó a una reunión en ZoheeWell.",
-    "inviteLoading": "Buscando reuniones cerca de ti...",
+    "inviteMeta": "Alguien te invitó a un evento en ZoheeWell.",
+    "inviteLoading": "Buscando eventos cerca de ti...",
     "landing": {
       "title": "Te invitaron a ZoheeWell",
       "body": "Alguien te compartió ZoheeWell. Encuentra un evento cerca de ti o crea una cuenta gratis para apartar tu lugar más rápido.",
@@ -3992,22 +3994,22 @@
   },
   "playbook": {
     "title": "Playbook",
-    "slot": "Las reuniones de {{cat}} los {{day}} cerca de las {{time}} tienen en promedio {{ratio}} veces más llegadas que en otros horarios.",
-    "length": "Las reuniones de {{cat}} con mejores resultados duran entre {{min}} y {{max}} minutos.",
+    "slot": "Los eventos de {{cat}} los {{day}} cerca de las {{time}} tienen en promedio {{ratio}} veces más llegadas que en otros horarios.",
+    "length": "Los eventos de {{cat}} con mejores resultados duran entre {{min}} y {{max}} minutos.",
     "followup": "Los equipos que dan seguimiento en las primeras 24 horas conservan más personas nuevas: regresa el {{fast}}%, frente al {{slow}}%.",
-    "sampleNote": "Consejo de ejemplo. Los patrones reales aparecen cuando la red tenga al menos 20 reuniones de 5 equipos.",
+    "sampleNote": "Consejo de ejemplo. Los patrones reales aparecen cuando la red tenga al menos 20 eventos de 5 equipos.",
     "realNote": "Basado en actividad anónima de los equipos de ZoheeWell. Nunca con nombres.",
     "benchTitle": "Tu equipo y la red",
     "benchText": "Últimos 90 días, solo actividad.",
     "bench": {
-      "avg": "Llegadas por reunión",
+      "avg": "Llegadas por evento",
       "showup": "Asistencia confirmada"
     },
     "yourTeam": "Tu equipo",
     "network": "Red",
-    "benchFoot": "Tu equipo organizó {{count}} reuniones en este periodo.",
-    "slotAny": "Las reuniones los {{day}} cerca de las {{time}} tienen en promedio {{ratio}} veces más llegadas que en otros horarios.",
-    "lengthAny": "Las reuniones con mejores resultados duran entre {{min}} y {{max}} minutos."
+    "benchFoot": "Tu equipo organizó {{count}} eventos en este periodo.",
+    "slotAny": "Los eventos los {{day}} cerca de las {{time}} tienen en promedio {{ratio}} veces más llegadas que en otros horarios.",
+    "lengthAny": "Los eventos con mejores resultados duran entre {{min}} y {{max}} minutos."
   },
   "waiver": {
     "draft": "Borrador — pendiente de revisión legal",
@@ -4035,7 +4037,7 @@
   },
   "cohosts": {
     "title": "Coanfitriones",
-    "help": "Quienes coorganizan pueden editar esta reunión, registrar llegadas, ver la lista de invitados y recibir borradores de seguimiento.",
+    "help": "Quienes coorganizan pueden editar este evento, registrar llegadas, ver la lista de invitados y recibir borradores de seguimiento.",
     "add": "Agregar coanfitriones",
     "change": "Cambiar",
     "none": "Todavía no hay coanfitriones.",
@@ -4058,7 +4060,7 @@
     "heading": "Opciones de confirmación",
     "approval": "Aprobar invitados primero",
     "approvalHelp": "Las nuevas confirmaciones esperan a que las apruebes o rechaces.",
-    "approvalPaid": "La aprobación no está disponible en reuniones de pago.",
+    "approvalPaid": "La aprobación no está disponible en eventos de pago.",
     "inviteOnly": "Solo con invitación",
     "inviteOnlyHelp": "No aparece en Descubrir. Solo quien tenga el enlace privado puede abrirla.",
     "resetLink": "Crear un enlace nuevo",
@@ -4117,7 +4119,7 @@
     "discussions": "Conversaciones",
     "newTopic": "Nuevo tema",
     "noTopics": "Aún no hay temas. Tu líder puede iniciar uno.",
-    "noTopicsLeader": "Inicia un tema para que tu equipo platique entre reuniones.",
+    "noTopicsLeader": "Inicia un tema para que tu equipo platique entre eventos.",
     "topicTitle": "Tema",
     "firstPost": "Primera publicación (opcional)",
     "createTopic": "Crear tema",
@@ -4135,7 +4137,7 @@
     "linkSaved": "Enlaces de chat guardados",
     "badLink": "Ese enlace no parece una invitación de chat grupal compatible.",
     "errors": {
-      "blocked_claim": "Mantén el tema en la reunión. No se permiten afirmaciones de salud, peso ni ingresos.",
+      "blocked_claim": "Mantén el tema en el evento. No se permiten afirmaciones de salud, peso ni ingresos.",
       "rate_limited": "Estás publicando muy rápido. Intenta de nuevo en un minuto.",
       "not_allowed": "No puedes publicar aquí.",
       "invalid_title": "Ponle un título al tema."
@@ -4159,9 +4161,9 @@
   "follow": {
     "meta": {
       "hostTitle": "Perfil de anfitrión",
-      "host": "Próximas reuniones, biografía y un botón para seguir a este anfitrión.",
+      "host": "Próximos eventos, biografía y un botón para seguir a este anfitrión.",
       "teamTitle": "Página del equipo",
-      "team": "Próximas reuniones públicas de este equipo. Síguelo para enterarte de las nuevas."
+      "team": "Próximos eventos públicas de este equipo. Síguelo para enterarte de las nuevas."
     },
     "hostLabel": "Anfitrión",
     "teamLabel": "Equipo",
@@ -4171,20 +4173,20 @@
     "followers_other": "{{count}} seguidores",
     "ledBy": "Dirigido por",
     "shop": "Tienda",
-    "upcoming": "Próximas reuniones",
-    "noUpcoming": "{{name}} no tiene reuniones públicas próximas. Síguelo para enterarte de la siguiente.",
+    "upcoming": "Próximos eventos",
+    "noUpcoming": "{{name}} no tiene eventos públicas próximas. Síguelo para enterarte de la siguiente.",
     "online": "En línea",
     "notFoundTitle": "Esta página no está disponible",
-    "notFound": "Puede que el enlace haya cambiado. Mejor explora reuniones cerca de ti.",
-    "discover": "Descubrir reuniones",
+    "notFound": "Puede que el enlace haya cambiado. Mejor explora eventos cerca de ti.",
+    "discover": "Descubrir eventos",
     "follow": "Seguir",
     "following": "Siguiendo",
     "unfollow": "Dejar de seguir",
     "unfollowTitle": "¿Dejar de seguir?",
-    "done": "Ya lo sigues. Te avisaremos de nuevas reuniones.",
-    "emailDone": "Listo. Te escribiremos cuando haya una nueva reunión.",
+    "done": "Ya lo sigues. Te avisaremos de nuevas eventos.",
+    "emailDone": "Listo. Te escribiremos cuando haya una nuevo evento.",
     "emailTitle": "Seguir por correo",
-    "emailText": "No necesitas cuenta. Te escribiremos cuando se publique una nueva reunión pública.",
+    "emailText": "No necesitas cuenta. Te escribiremos cuando se publique una nuevo evento pública.",
     "email": "Correo electrónico",
     "emailFine": "Puedes darte de baja desde cualquier correo. ¿Ya tienes cuenta?",
     "signIn": "Inicia sesión",
@@ -4192,11 +4194,11 @@
     "self": "Esta es tu propia página.",
     "slowDown": "Demasiados intentos. Espera un poco.",
     "feedTitle": "Calendario",
-    "feedIntro": "Agrega tus reuniones a Google, Apple u Outlook. Se actualizan solas. No compartas estos enlaces.",
-    "myFeed": "Mis reuniones",
+    "feedIntro": "Agrega tus eventos a Google, Apple u Outlook. Se actualizan solas. No compartas estos enlaces.",
+    "myFeed": "Mis eventos",
     "myFeedHint": "Las que organizas, coorganizas o confirmaste.",
     "teamFeed": "Mi equipo",
-    "teamFeedHint": "Todas las reuniones del equipo, menos las de solo invitación.",
+    "teamFeedHint": "Todas los eventos del equipo, menos las de solo invitación.",
     "copyLink": "Copiar enlace",
     "appleOutlook": "Apple u Outlook",
     "copied": "Enlace copiado",
@@ -4239,7 +4241,34 @@
       "whatLabel": "Qué es",
       "whatTitle": "Un solo lugar en vez de cinco herramientas",
       "whatBody": "Hoy los anfitriones alternan entre una página de boletos, un chat grupal, una hoja de cálculo, una app de pagos y un enlace en la bio. ZoheeWell reúne las piezas: crea un evento o retiro, comparte un solo enlace, recibe confirmaciones y registra asistencia, enseña con cursos y quizzes, y mantén viva la conversación — en inglés y español.",
-      "whoLabel": "A quién sirve",
+      "hostTypesTitle": "Para todo tipo de anfitrión",
+    "hostTypes": [
+      {
+        "title": "Clubes de running",
+        "body": "Carreras semanales y encuentros para tu comunidad."
+      },
+      {
+        "title": "Fit camps",
+        "body": "Entrenamientos al aire libre con espacio para todos."
+      },
+      {
+        "title": "Clases y capacitaciones",
+        "body": "Reúne a personas para practicar y aprender."
+      },
+      {
+        "title": "Líderes de equipo",
+        "body": "Coordina eventos y aprendizaje compartido para tu equipo."
+      },
+      {
+        "title": "Coaches y creadores",
+        "body": "Comparte lo que sabes con eventos, cursos y recursos."
+      },
+      {
+        "title": "Estudios pequeños",
+        "body": "Organiza clases y mantén conectada a tu comunidad."
+      }
+    ],
+    "whoLabel": "A quién sirve",
       "whoTitle": "Hecho para personas que reúnen personas",
       "whoSub": "ZoheeWell le da la bienvenida a coaches independientes, estudios, educadores, creadores y organizadores de comunidades de todo tipo. Muchos de nuestros primeros anfitriones vienen de redes de bienestar basadas en relaciones — comunidades construidas a partir de la invitación personal — y la plataforma está diseñada para servirles a ellos y a todos los demás.",
       "who": [
@@ -4297,9 +4326,9 @@
     "discover": "Descubrir",
     "other": "Otro",
     "category": "Categoría",
-    "customCategory": "¿Qué tipo de reunión es?",
+    "customCategory": "¿Qué tipo de evento es?",
     "customCategoryHint": "Dale una categoría que las personas puedan reconocer.",
-    "allCategories": "Todas las categorías de reuniones",
+    "allCategories": "Todas las categorías de eventos",
     "guestTitle": "Cómo funciona para invitados",
     "guest1": "Encuentra",
     "guest1b": "Descubre algo cerca de ti que vaya contigo.",
@@ -4308,13 +4337,13 @@
     "guest3": "Asiste",
     "guest3b": "Conoce a tu gente y haz de cada evento una costumbre.",
     "hostLink": "¿Organizas un grupo? Descubre cómo ser anfitrión",
-    "hostsTitle": "Organiza reuniones a las que quieran volver.",
+    "hostsTitle": "Organiza eventos a las que quieran volver.",
     "hostsSub": "Crea una página en un minuto, invita con un enlace, registra las llegadas y da seguimiento automáticamente — en inglés y español.",
     "hostCta": "Empieza a organizar gratis",
     "seePricing": "Ver precios",
     "hostsLabel": "Para quienes reúnen a su gente",
     "benefitTitle": "Menos pendientes. Más eventos.",
-    "benefitSub": "Un solo lugar para los detalles que hacen especial cada reunión.",
+    "benefitSub": "Un solo lugar para los detalles que hacen especial cada evento.",
     "benefits": [
       {
         "title": "Crea en un minuto",
@@ -4333,7 +4362,7 @@
       },
       {
         "title": "Llegadas y seguimiento",
-        "body": "Escanea un código QR al llegar y envía un mensaje después de la reunión.",
+        "body": "Escanea un código QR al llegar y envía un mensaje después de el evento.",
         "demo": "Llegada registrada · A conectar"
       },
       {
@@ -4349,7 +4378,7 @@
       }
     ],
     "howHostTitle": "Cómo funciona para anfitriones",
-    "howHostSub": "De tu primera idea a tu próxima reunión habitual.",
+    "howHostSub": "De tu primera idea a tu próximo evento habitual.",
     "hostSteps": [
       {
         "title": "Crea",
@@ -4365,7 +4394,7 @@
       },
       {
         "title": "Da seguimiento",
-        "body": "Agradece a quienes vinieron e invítalos a la siguiente reunión."
+        "body": "Agradece a quienes vinieron e invítalos a la siguiente evento."
       }
     ],
     "leaderLabel": "Para líderes de equipo",
@@ -4391,8 +4420,8 @@
     "unlimited": "Sin límite",
     "perMember": "{{value}} por miembro",
     "rows": {
-      "gatherings": "Reuniones al mes",
-      "guests": "Invitados por reunión",
+      "gatherings": "Eventos al mes",
+      "guests": "Invitados por evento",
       "storage": "Almacenamiento",
       "assistant": "Solicitudes al asistente al mes",
       "fee": "Cargo de la plataforma",
@@ -4407,10 +4436,10 @@
     "hostFaq": [
       {
         "q": "¿Mis invitados necesitan una cuenta?",
-        "a": "No. Pueden confirmar desde el enlace de la reunión, sin app ni cuenta. Las cuentas son para mayores de 18 años."
+        "a": "No. Pueden confirmar desde el enlace de el evento, sin app ni cuenta. Las cuentas son para mayores de 18 años."
       },
       {
-        "q": "¿Puedo organizar cualquier tipo de reunión?",
+        "q": "¿Puedo organizar cualquier tipo de evento?",
         "a": "Elige una categoría o selecciona Otro y escribe tu propia etiqueta. Crea un ambiente acogedor y sigue nuestras pautas para anfitriones."
       },
       {
@@ -4429,7 +4458,7 @@
       },
       {
         "q": "¿Los invitados pueden participar gratis?",
-        "a": "Sí. Nunca necesitan un plan de pago para confirmar. El anfitrión puede poner un precio a una reunión o a una oferta."
+        "a": "Sí. Nunca necesitan un plan de pago para confirmar. El anfitrión puede poner un precio a un evento o a una oferta."
       },
       {
         "q": "¿Puedo cancelar cuando quiera?",
@@ -4442,14 +4471,14 @@
       },
       {
         "q": "¿Quién se encarga de los reembolsos?",
-        "a": "Tú, con una regla que eliges para cada reunión o Círculo de pago: reembolso completo hasta 24 horas antes, hasta 7 días antes, o sin reembolsos. Los invitados ven tu regla antes de pagar, y todo lo que canceles se reembolsa por completo."
+        "a": "Tú, con una regla que eliges para cada evento o Círculo de pago: reembolso completo hasta 24 horas antes, hasta 7 días antes, o sin reembolsos. Los invitados ven tu regla antes de pagar, y todo lo que canceles se reembolsa por completo."
       }
     ],
-    "finalTitle": "Tu próxima reunión empieza aquí.",
+    "finalTitle": "Tu próximo evento empieza aquí.",
     "finalBody": "Haz que llegar sea fácil. Dales un motivo para volver.",
     "studios": {
       "meta": "Para estudios · ZoheeWell",
-      "metaDesc": "Conserva tu software de reservas y suma una comunidad más allá de tus cuatro paredes: Círculos, reuniones especiales y páginas bilingües.",
+      "metaDesc": "Conserva tu software de reservas y suma una comunidad más allá de tus cuatro paredes: Círculos, eventos especiales y páginas bilingües.",
       "label": "Para estudios y espacios pequeños",
       "title": "Tu software de reservas atiende la recepción. ZoheeWell construye la comunidad más allá de tus cuatro paredes.",
       "sub": "Conserva las herramientas que ya usas. Suma una comunidad que tu gente visita cada semana, en inglés y español.",
@@ -4461,7 +4490,7 @@
         },
         {
           "title": "Llena tus clases desde la comunidad",
-          "body": "Los Círculos, las reuniones especiales y el contenido en línea mantienen a tu gente conectada entre clases, así los habituales llegan más seguido."
+          "body": "Los Círculos, los eventos especiales y el contenido en línea mantienen a tu gente conectada entre clases, así los habituales llegan más seguido."
         },
         {
           "title": "Bilingüe desde el primer día",
@@ -4472,7 +4501,7 @@
       "simpleTitle": "¿Tienes un espacio pequeño?",
       "simpleBody": "El modo espacio simple está hecho para clubes de nutrición, gimnasios de garage y cuartos pequeños, sin necesidad de software de recepción.",
       "simpleList": [
-        "Un horario semanal de reuniones en tu propia página",
+        "Un horario semanal de eventos en tu propia página",
         "Registro con código QR en la puerta, incluso con mala conexión",
         "Cartas de responsabilidad que se firman antes de participar",
         "Sesiones solo para miembros y precios sencillos por visita"
@@ -4484,11 +4513,11 @@
     "pricingMeta": "Precios · ZoheeWell",
     "whoLabel": "Para quién es",
     "whoTitle": "Hecho para la vida real",
-    "whoSub": "Empieces donde empieces, hay una reunión para ti.",
+    "whoSub": "Empieces donde empieces, hay un evento para ti.",
     "who": [
       {
         "title": "Recién empiezas",
-        "body": "Reuniones para principiantes y gente que te hace fácil empezar."
+        "body": "Eventos para principiantes y gente que te hace fácil empezar."
       },
       {
         "title": "Agendas ocupadas",
@@ -4496,7 +4525,7 @@
       },
       {
         "title": "Activos a cualquier edad",
-        "body": "Reuniones suaves y accesibles, a tu ritmo."
+        "body": "Eventos suaves y accesibles, a tu ritmo."
       },
       {
         "title": "Entrenando para algo",
@@ -4504,7 +4533,7 @@
       },
       {
         "title": "Familias",
-        "body": "Reuniones para toda la familia en tu vecindario."
+        "body": "Eventos para toda la familia en tu vecindario."
       },
       {
         "title": "Coaches y creadores",
@@ -4553,7 +4582,7 @@
     "capacityNote": "Cada integrante cuenta para el límite de lugares.",
     "errors": {
       "team_name_required": "Agrega un nombre de equipo.",
-      "team_size": "Este tamaño de equipo no está permitido para esta reunión.",
+      "team_size": "Este tamaño de equipo no está permitido para este evento.",
       "payment_required": "Las inscripciones de equipo pagadas se abren cuando los pagos estén conectados.",
       "captain_contact": "Agrega un teléfono o correo del capitán."
     }
@@ -4580,7 +4609,7 @@
   },
   "promo": {
     "title": "Códigos de descuento",
-    "subtitle": "Dales un descuento a tus invitados en tus reuniones, retos y ofertas de pago.",
+    "subtitle": "Dales un descuento a tus invitados en tus eventos, retos y ofertas de pago.",
     "new": "Nuevo código",
     "editTitle": "Editar código",
     "code": "Código de descuento",
@@ -4590,8 +4619,8 @@
     "percentLabel": "Porcentaje de descuento (1–100)",
     "flatLabel": "Monto de descuento (USD)",
     "appliesAll": "Aplica a todo",
-    "appliesAllHelp": "Todas tus reuniones, retos y ofertas de pago",
-    "gatherings": "Reuniones",
+    "appliesAllHelp": "Todas tus eventos, retos y ofertas de pago",
+    "gatherings": "Eventos",
     "challenges": "Retos",
     "offers": "Ofertas",
     "nothingPaid": "Todavía no tienes nada de pago.",
@@ -4639,7 +4668,7 @@
   "textInvite": {
     "open": "Invitar por mensaje",
     "title": "Invitar por mensaje de texto",
-    "body": "Solo aparecen personas que aceptaron recibir mensajes en las reuniones de tu equipo. Pueden responder SI para reservar su lugar.",
+    "body": "Solo aparecen personas que aceptaron recibir mensajes en los eventos de tu equipo. Pueden responder SI para reservar su lugar.",
     "preview": "Vista previa del mensaje",
     "previewText": "{{host}} te invita a {{title}}, {{date}}. Responde SI para reservar tu lugar. Responde STOP para no recibir más.",
     "empty": "Todavía nadie aceptó recibir mensajes. Quienes marquen la opción de mensajes al confirmar aparecerán aquí.",
@@ -4673,7 +4702,7 @@
     "noOptions": "Todavía no hay nadie más apuntado.",
     "groups": "Grupos pequeños",
     "groupsTitle": "Grupos pequeños",
-    "groupsHint": "Divide tu reunión en grupos por ritmo, mesas o círculos. Se ven en la pantalla de registro de llegada.",
+    "groupsHint": "Divide tu evento en grupos por ritmo, mesas o círculos. Se ven en la pantalla de registro de llegada.",
     "groupName": "Nombre del grupo",
     "groupPlaceholder": "p. ej. Ritmo suave, Mesa 1",
     "addGroup": "Agregar",
@@ -4724,7 +4753,7 @@
     "keepGoing": "Seguir",
     "steps": {
       "profile": "Completa tu perfil",
-      "offer": "Crea un Círculo ZoheeWell o una reunión de pago",
+      "offer": "Crea un Círculo ZoheeWell o un evento de pago",
       "shared": "Comparte tu enlace",
       "first_rsvp": "Recibe tu primera confirmación",
       "first_paid": "Recibe a tu primer miembro de pago",
@@ -4733,7 +4762,7 @@
     "hints": {
       "profile": "Agrega una foto, tu nombre y una breve biografía.",
       "offer": "Ofrece algo a lo que la gente pueda unirse.",
-      "shared": "Usa el kit para compartir en cualquier reunión.",
+      "shared": "Usa el kit para compartir en cualquier evento.",
       "first_rsvp": "Envía tu enlace a algunas amistades.",
       "first_paid": "Primero hay que conectar los pagos con tarjeta.",
       "first_100": "Se cuenta después de las comisiones de la plataforma."
@@ -4745,7 +4774,7 @@
       },
       "offer": {
         "title": "Ya tienes algo que ofrecer",
-        "text": "Tu primer Círculo o reunión de pago ya está publicado."
+        "text": "Tu primer Círculo o evento de pago ya está publicado."
       },
       "shared": {
         "title": "Enlace compartido",
@@ -4779,7 +4808,7 @@
     "milestonesTitle": "Logros de ganancias",
     "reached": "Logrado",
     "toGo": "Faltan {{amount}}",
-    "priceGuide": "Reuniones similares suelen costar de {{low}} a {{high}}."
+    "priceGuide": "Eventos similares suelen costar de {{low}} a {{high}}."
   },
   "coachTrust": {
     "verified": "Verificado",
@@ -4977,7 +5006,7 @@
     "c": {
       "launch": "Una fecha de lanzamiento firme",
       "launchOn": "Lanzamiento el {{date}}",
-      "twoMonthly": "Al menos 2 reuniones al mes",
+      "twoMonthly": "Al menos 2 eventos al mes",
       "council": "Unirte al consejo mensual de coaches",
       "media": "Permiso para usar tus fotos y reseñas",
       "audience": "Traer a tu propio público en el lanzamiento"
@@ -5017,8 +5046,8 @@
       "joined": "Se unió",
       "invited": "Invitado, aún no se une",
       "launch": "Lanzamiento {{date}}",
-      "gatherings_one": "{{count}} reunión este mes",
-      "gatherings_other": "{{count}} reuniones este mes",
+      "gatherings_one": "{{count}} evento este mes",
+      "gatherings_other": "{{count}} eventos este mes",
       "council": "Consejo este mes"
     },
     "errors": {
@@ -5068,11 +5097,11 @@
     "removeSlot": "Quitar sesión",
     "capacity": "Cupo del salón",
     "dropin": "Precio por visita (USD)",
-    "simpleHint": "Cada reunión que hagas aquí conserva sus lugares, lista de espera, exención, acceso para miembros y registro con QR.",
+    "simpleHint": "Cada evento que hagas aquí conserva sus lugares, lista de espera, exención, acceso para miembros y registro con QR.",
     "storeUrl": "Enlace a nuestra tienda (opcional)",
     "storeHint": "Lleva a tu propia tienda externa. Nada se vende a través de ZoheeWell.",
-    "linkGatherings": "Reuniones en este lugar",
-    "noGatherings": "Crea una próxima reunión y luego vincúlala aquí.",
+    "linkGatherings": "Eventos en este lugar",
+    "noGatherings": "Crea una próximo evento y luego vincúlala aquí.",
     "save": "Guardar lugar",
     "saved": "Lugar guardado",
     "needName": "Ponle un nombre a tu lugar.",
@@ -5080,12 +5109,12 @@
     "badUrl": "Los enlaces deben empezar con https://",
     "delete": "Eliminar lugar",
     "deleteTitle": "¿Eliminar este lugar?",
-    "deleteBody": "Su página desaparece. Tus reuniones quedan igual.",
+    "deleteBody": "Su página desaparece. Tus eventos quedan igual.",
     "notFoundTitle": "No encontramos este lugar",
     "notFound": "Puede que la página se haya movido o eliminado.",
     "bookClass": "Reservar clase",
     "ourStore": "Nuestra tienda",
-    "linkedNote": "Las clases se reservan en la página del estudio. Aquí encuentras la comunidad: Círculos, reuniones especiales y contenido en línea.",
+    "linkedNote": "Las clases se reservan en la página del estudio. Aquí encuentras la comunidad: Círculos, eventos especiales y contenido en línea.",
     "roomFor_one": "Cupo para {{count}}",
     "roomFor_other": "Cupo para {{count}}",
     "dropinFree": "Visita gratis",
@@ -5096,7 +5125,7 @@
     "membersFirst": "Primero para miembros",
     "spots_one": "{{count}} lugar",
     "spots_other": "{{count}} lugares",
-    "noUpcoming": "Aún no hay reuniones próximas aquí. Síguelo para enterarte de la siguiente.",
+    "noUpcoming": "Aún no hay eventos próximas aquí. Síguelo para enterarte de la siguiente.",
     "map": "Mapa",
     "mapSoon": "Pronto tendrás un mapa interactivo",
     "directions": "Cómo llegar",
@@ -5107,7 +5136,7 @@
     "upcomingCount_one": "{{count}} próxima",
     "upcomingCount_other": "{{count}} próximas",
     "metaTitle": "Un espacio local",
-    "metaDescription": "Mira el horario semanal, los coaches y las próximas reuniones de este espacio."
+    "metaDescription": "Mira el horario semanal, los coaches y las próximos eventos de este espacio."
   },
   "quickStart": {
     "eyebrow": "Inicio rápido para coaches",
@@ -5131,8 +5160,8 @@
     "lang_es": "Español",
     "city": "Ciudad",
     "pickStarter": "Elige con qué empezar",
-    "kind_free": "Una reunión gratis",
-    "kind_paid": "Una reunión pagada",
+    "kind_free": "Un evento gratis",
+    "kind_paid": "Un evento pagada",
     "kind_circle": "Un Círculo",
     "kindHint_free": "La forma más fácil de empezar",
     "kindHint_paid": "Boletos por persona",
@@ -5142,7 +5171,7 @@
     "starter_circle": "Círculo Reinicio de 30 días",
     "desc_free": "Un entrenamiento al aire libre para todos los niveles. Trae agua y un tapete si tienes.",
     "desc_paid": "Una noche para bajar el ritmo, moverte con calma y convivir con buena gente.",
-    "circleDesc": "Un Círculo mensual con reportes semanales y reuniones para ayudarte a seguir viniendo.",
+    "circleDesc": "Un Círculo mensual con reportes semanales y eventos para ayudarte a seguir viniendo.",
     "starterTitle": "Nombre",
     "date": "Fecha",
     "time": "Hora",
@@ -5161,18 +5190,18 @@
     "error": "Algo salió mal. Inténtalo de nuevo.",
     "yourLink": "Tu enlace",
     "qrAlt": "Código QR de {{title}}",
-    "qrHint": "Muéstralo en tu próxima reunión para que la gente lo escanee y se una.",
+    "qrHint": "Muéstralo en tu próximo evento para que la gente lo escanee y se una.",
     "copyWa": "Copiar mensaje de WhatsApp",
     "copiedWa": "Mensaje copiado",
     "waGathering": "Acompáñame a {{title}} el {{when}}. Reserva tu lugar aquí: {{link}}",
     "waCircle": "Empecé {{title}}. Únete: {{link}}",
     "images": "Imágenes para compartir",
-    "circleImages": "Las imágenes se hacen para reuniones con fecha. Para tu Círculo, comparte el enlace o el código QR.",
+    "circleImages": "Las imágenes se hacen para eventos con fecha. Para tu Círculo, comparte el enlace o el código QR.",
     "back": "Atrás",
     "next": "Siguiente",
     "payouts": "Conecta tus pagos",
     "payoutsText": "Los pagos envían lo que ganas a tu cuenta bancaria.",
-    "payoutsFree": "Tu reunión es gratis, así que los pagos pueden esperar. Conéctalos cuando agregues un precio.",
+    "payoutsFree": "Tu evento es gratis, así que los pagos pueden esperar. Conéctalos cuando agregues un precio.",
     "notConnected": "Los pagos con tarjeta aún no están conectados. Puedes terminar ahora y conectarlos después.",
     "connectPayouts": "Conectar pagos",
     "choosePlan": "Elige tu plan",
@@ -5194,8 +5223,8 @@
     "ttlLabel": "Tiempo para publicar",
     "ttlValue": "{{minutes}} min",
     "ttlSub": "Mediana de {{live}} coaches · {{hour}} en menos de una hora",
-    "draftNote": "Tu reunión pagada quedó guardada como borrador. Se publica con su precio en cuanto conectes tus pagos. Podrás compartir el enlace cuando esté publicada.",
-    "liveDraft": "Buen trabajo, {{name}}. Tu perfil está listo y tu reunión pagada se publicará en cuanto conectes tus pagos.",
+    "draftNote": "Tu evento pagada quedó guardada como borrador. Se publica con su precio en cuanto conectes tus pagos. Podrás compartir el enlace cuando esté publicada.",
+    "liveDraft": "Buen trabajo, {{name}}. Tu perfil está listo y tu evento pagada se publicará en cuanto conectes tus pagos.",
     "draftLabel": "Esperando pagos",
     "onFree": "Estás en Gratis, sin límites durante tus primeros 30 días."
   },
@@ -5431,7 +5460,7 @@
     "startingAt": "desde",
     "contactSales": "Contactar a ventas",
     "feeLine": "{{pct}}% de tarifa de plataforma sobre ventas pagadas",
-    "seatsLine": "{{n}} lugares de constructor",
+    "seatsLine": "{{n}} anfitriones incluidos",
     "seatTitle": "¿Qué es un lugar de constructor?",
     "seatBody": "Un lugar de constructor es para quien crea o administra lo que ofreces: el dueño, administradores, anfitriones y editores de contenido.",
     "seatFree": "El personal de registro, analistas, moderadores, miembros, asistentes y estudiantes nunca usan un lugar de constructor: agrega los que necesites.",
@@ -6484,7 +6513,7 @@
         "pdf": "Sube un PDF o pega un enlace HTTPS.",
         "audio": "Sube un archivo de audio o pega un enlace HTTPS.",
         "link": "Pega el enlace HTTPS. No necesitas archivo.",
-        "live": "Elige fecha y hora. El enlace de la reunión solo lo ven los miembros de tu equipo."
+        "live": "Elige fecha y hora. El enlace de el evento solo lo ven los miembros de tu equipo."
       },
       "bundle": {
         "hint": "Guarda primero lo básico. Después abre el paquete para agregar texto, archivos, enlaces y contenido integrado en cualquier orden."
@@ -6644,7 +6673,7 @@
       "urlHttps": "Este enlace no es seguro (http). Usa un enlace https:// si el sitio lo ofrece.",
       "urlOpens": "Las personas abrirán {{host}} en una pestaña nueva.",
       "urlInvalid": "Esto todavía no parece una dirección web. Empieza con https://",
-      "liveHint": "Las horas usan tu zona horaria ({{tz}}). Los enlaces de la reunión y de la repetición solo se muestran a quienes tienen acceso.",
+      "liveHint": "Las horas usan tu zona horaria ({{tz}}). Los enlaces de el evento y de la repetición solo se muestran a quienes tienen acceso.",
       "fileHint": "PDF, EPUB o ZIP, hasta 100 MB. El archivo es privado: solo quienes tienen acceso reciben un enlace de descarga temporal."
     },
     "removal": {
