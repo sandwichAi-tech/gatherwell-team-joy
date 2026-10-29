@@ -16,6 +16,7 @@ function isNearViewport(el: Element): boolean {
 type Props = {
   /** A site_media slot key, or pass src directly. */
   slot?: string | undefined;
+  fallbackSlot?: string | undefined;
   /** A plain URL or a signed rendition set (src + srcSet). */
   src?: MediaSrc;
   alt?: string | undefined;
@@ -30,10 +31,10 @@ type Props = {
 };
 
 /** Every photo renders here: one soft brand grade over real photos, grain texture only on the tonal fallback, and responsive renditions. */
-export function BrandImage({ slot, src, alt, resizable, focal, aspect, sizes = '100vw', className, priority, onNaturalWidth }: Props) {
+export function BrandImage({ slot, fallbackSlot, src, alt, resizable, focal, aspect, sizes = '100vw', className, priority, onNaturalWidth }: Props) {
   const { i18n } = useTranslation();
   const { data } = useQuery({ ...siteMediaQuery(), enabled: !!slot });
-  const row = slot ? data?.find(r => r.slot === slot) : undefined;
+  const row = (slot ? data?.find(r => r.slot === slot && r.url) : undefined) ?? (fallbackSlot ? data?.find(r => r.slot === fallbackSlot) : undefined);
   const given = toRendition(src);
   const url = given?.src ?? row?.url ?? null;
   const canResize = resizable ?? row?.resizable ?? false;

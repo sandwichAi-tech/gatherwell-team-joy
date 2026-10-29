@@ -1,3 +1,4 @@
+import { displayTitleCase } from '@/lib/event-presentation';
 import { Feature } from '@/lib/feature-flags';
 import { EventAddons } from '@/components/event-addons';
 import { EventSessions } from '@/components/event-sessions';
@@ -123,7 +124,7 @@ function EventDetailPage() {
   return <>
     <Link to="/events" className="auth-link back-link"><ArrowLeft />{t('gathering.backToGatherings')}</Link>
     <section className="panel manage-header">
-      <GatheringCover path={event.cover_url} style={event.cover_style} title={event.title} className="manage-cover" eventId={event.id} overlay={event.cover_overlay} focal={event.cover_focal} alt={event.cover_alt} />
+      <GatheringCover path={event.cover_url} category={event.category} style={event.cover_style} title={event.title} className="manage-cover" eventId={event.id} overlay={event.cover_overlay} focal={event.cover_focal} alt={event.cover_alt} />
       <div className="manage-body">
         <div className="profile-chips">{statusChip}<span className="chip">{t(`gathering.vis.${event.visibility === 'public' ? 'public' : event.visibility === 'invite' ? 'invite' : 'team'}`)}</span>{event.series_id && <span className="chip"><Repeat className="inline-icon" />{t('gathering.weekly')}</span>}</div>
         <h1 className="manage-title">{event.title}</h1>
@@ -131,7 +132,7 @@ function EventDetailPage() {
           <li><CalendarDays />{when}</li>
           <li><MapPin />{placeOf(event) ?? (event.online_url ? t('teamSpace.online') : t('teamSpace.placeTbd'))}{event.address && event.location_name ? ` · ${event.address}` : ''}</li>
           {event.meeting_note && <li><MapPin />{event.meeting_note}</li>}
-          <li><UserRound /><span className="initial-avatar small-avatar">{initialsOf(hostName)}</span>{t('eventDetail.hostedBy', { name: hostName ?? t('teamSpace.someone') })}{teamName ? ` · ${teamName}` : ''}</li>
+          <li><UserRound /><span className="initial-avatar small-avatar">{initialsOf(hostName)}</span>{t('eventDetail.hostedBy', { name: displayTitleCase(hostName) || t('teamSpace.someone') })}{teamName ? ` · ${teamName}` : ''}</li>
           <li><UsersRound />{event.capacity ? t('gathering.goingOf', { count: going, total: event.capacity }) : t('map.going', { count: going })}</li>
         </ul>
         {description && <p className="detail-description">{description}</p>}

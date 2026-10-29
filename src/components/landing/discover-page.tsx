@@ -1,3 +1,4 @@
+import { displayTitleCase, eventPhotoSlot } from '@/lib/event-presentation';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
@@ -80,11 +81,12 @@ function focalPoint(focal: string | null): { x: number; y: number } {
 }
 
 /** Uploaded cover when one signed, otherwise a deterministic branded gradient with the first letter — never a broken image. */
-function CardMedia({ title, alt, style, focal, url, className = '' }: {
-  title: string; alt: string | null; style: number; focal: string | null; url: MediaSrc; className?: string;
+function CardMedia({ title, alt, style, focal, url, category, event = false, className = '' }: {
+  title: string; alt: string | null; style: number; focal: string | null; url: MediaSrc; category?: string | null; event?: boolean; className?: string;
 }) {
   const label = alt?.trim() || title;
   if (url) return <BrandImage src={url} alt={label} aspect={16 / 9} focal={focalPoint(focal)} sizes="(min-width: 1024px) 360px, 90vw" className={`catalog-card-media ${className}`.trim()} />;
+  if (event) return <BrandImage slot={eventPhotoSlot(category)} fallbackSlot="hero_card_1" alt={label} aspect={16 / 9} sizes="(min-width: 1024px) 360px, 90vw" className={`catalog-card-media ${className}`.trim()} />;
   return <span className={`catalog-card-media catalog-card-fallback ${className}`.trim()} style={{ backgroundImage: coverStyleAt(style) }} role="img" aria-label={label}>
     <span className="catalog-card-letter" aria-hidden="true">{(title.trim()[0] ?? 'Z').toUpperCase()}</span>
   </span>;
@@ -95,7 +97,7 @@ function CatalogCard({ item, lang, coverUrl }: { item: CatalogItem; lang: string
   const when = item.starts_at ? new Intl.DateTimeFormat(lang === 'es' ? 'es' : 'en', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: item.timezone || undefined }).format(new Date(item.starts_at)) : null;
   return <li className="gw-card catalog-card">
     <Link to={item.kind === 'event' ? '/e/$id' : '/o/$id'} params={{ id: item.id }} className="catalog-card-main">
-      <CardMedia title={item.title} alt={item.cover_alt} style={fallbackCoverStyle(item.id, item.cover_style)} focal={item.cover_focal} url={coverUrl} />
+      <CardMedia event={item.kind === 'event'} category={item.category} title={item.title} alt={item.cover_alt} style={fallbackCoverStyle(item.id, item.cover_style)} focal={item.cover_focal} url={coverUrl} />
       <span className="catalog-card-body">
         <span className="chip">{t(`discover.kind.${item.kind}`)}</span>
         <strong>{item.title}</strong>
@@ -104,7 +106,7 @@ function CatalogCard({ item, lang, coverUrl }: { item: CatalogItem; lang: string
           {when ? `${when} · ` : ''}{item.format === 'online' ? t('discover.online') : item.location_name ?? t('discover.online')}
           {item.distance_km != null ? ` · ${t('discover.kmAway', { km: Math.round(item.distance_km) })}` : ''}
         </small>
-        <small className="catalog-meta">{item.price_cents ? t('discover.paid') : t('discover.free')}{item.host_name ? ` · ${item.host_name}` : ''}</small>
+        <small className="catalog-meta">{item.price_cents ? t('discover.paid') : t('discover.free')}{item.host_name ? ` · ${displayTitleCase(item.host_name)}` : ''}</small>
       </span>
     </Link>
     <SaveButton kind={item.kind === 'event' ? 'event' : 'offer'} targetId={item.id} />
@@ -113,7 +115,7 @@ function CatalogCard({ item, lang, coverUrl }: { item: CatalogItem; lang: string
 
 function CoachCard({ coach, coverUrl, avatarUrl }: { coach: CoachItem; coverUrl: MediaSrc; avatarUrl: MediaSrc }) {
   const { t } = useTranslation();
-  const name = coach.name?.trim() || coach.slug;
+  const name = displayTitleCase(coach.name?.trim()) || coach.slug;
   return <li className="gw-card catalog-card coach-card">
     <Link to="/h/$slug" params={{ slug: coach.slug }} className="catalog-card-main">
       <CardMedia title={name} alt={null} style={fallbackCoverStyle(coach.id, null)} focal={null} url={coverUrl} />
@@ -127,7 +129,7 @@ function CoachCard({ coach, coverUrl, avatarUrl }: { coach: CoachItem; coverUrl:
             {coach.org && <small className="catalog-meta">{coach.org}</small>}
           </span>
         </span>
-        {coach.city && <small className="catalog-meta">{coach.city}</small>}
+        {coach.city && <small className="catalog-meta">{displayTitleCase(coach.city)}</small>}
         {coach.categories.length > 0 && <span className="chip-row coach-card-cats">{coach.categories.slice(0, 3).map(c => <span key={c} className="chip chip-static">{t(`landing.cat.${c}`, { defaultValue: c })}</span>)}</span>}
         {coach.bio && <small className="catalog-summary">{coach.bio}</small>}
         <small className="catalog-meta coach-card-counts">

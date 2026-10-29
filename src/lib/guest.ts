@@ -4,6 +4,7 @@ import type { TicketTier } from '@/lib/registration';
 import { downloadIcsFile, googleCalendarUrl as googleUrl } from '@/lib/ics';
 
 export type PublicEvent = {
+  category?: string | null;
   id: string; title: string; description_en: string | null; description_es: string | null;
   cover_url: string | null; cover_style: number | null; cover_overlay?: number | null; cover_focal?: string | null; cover_alt?: string | null; starts_at: string; ends_at: string | null; timezone: string;
   location_name: string | null; address: string | null; meeting_note: string | null; lat: number | null; lng: number | null;

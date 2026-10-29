@@ -51,7 +51,7 @@ export function CalendarButtons({ event }: { event: CalEvent }) {
     description: details, url: link || null,
     recurrence: (event as { recurrence?: string | null }).recurrence ?? null,
   };
-  return <div className="guest-button-row"><AddToCalendar event={icsEvent} filename="gathering.ics" /></div>;
+  return <div className="guest-button-row"><AddToCalendar event={icsEvent} filename="gathering.ics" /><ShareButton url={link} title={event.title} fallbackCopy /></div>;
 }
 
 export function DirectionsButton({ event, variant = 'secondary' }: { event: Pick<PublicEvent, 'address' | 'location_name' | 'lat' | 'lng'> & { map_url?: string | null; is_online?: boolean }; variant?: 'secondary' | 'default' }) {

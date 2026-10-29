@@ -1,5 +1,9 @@
 # Challenge commerce and course/assessment lifecycle closure
 
+## October 29 focused event presentation
+- [x] Category cover fallback, Pilates slot, public event details and display-only name/city casing.
+- [x] Five focused rules; 106 files/894 full tests; English/Spanish public-event browser checks at 390/1280; CHANGELOG. Device native share and paid/signed-in browser views remain unverified.
+
 ## Website Notes rows 113 and 115 — current closure pass
 - [x] Audit exact missing code versus legal/provider blockers, preserving existing guards.
 - [x] Add Challenge public detail, order/reservation/receipt RPCs and verified webhook integration; not positive-provider verified.

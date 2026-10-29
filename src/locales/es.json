@@ -1484,6 +1484,7 @@
     "mapAlt": "Mapa del punto de evento",
     "meetingPoint": "Punto de evento",
     "goingCount_one": "{{count}} va",
+    "firstRsvp": "Sé de los primeros en confirmar tu asistencia",
     "goingCount_other": "{{count}} van",
     "spotsLeft_one": "Queda {{count}} lugar",
     "spotsLeft_other": "Quedan {{count}} lugares",

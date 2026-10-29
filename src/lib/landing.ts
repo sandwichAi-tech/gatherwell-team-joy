@@ -2,6 +2,7 @@ import { trackEvent } from './analytics';
 import { queryOptions } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { CATEGORY_ICONS } from '@/components/gw-icon';
+import { eventPhotoSlot } from '@/lib/event-presentation';
 
 export type Category = keyof typeof CATEGORY_ICONS;
 export const CATEGORIES: Category[] = ['run', 'fitcamp', 'yoga', 'pilates', 'soundbath', 'hike', 'walk', 'pickleball', 'more'];
@@ -162,7 +163,7 @@ export function pickH1Variant(): H1Variant {
 }
 
 export const HERO_SLOTS = ['hero_card_1', 'hero_card_2', 'hero_card_3', 'hero_card_4'] as const;
-export const feedSlot = (c: Category) => `feed_default_${c === 'more' ? 'walk' : c === 'pilates' ? 'yoga' : c}`;
+export const feedSlot = (c: Category) => eventPhotoSlot(c);
 
 /** Tustin, CA — reference point for preview-only sample gathering distances. */
 export const SAMPLE_ORIGIN = { lat: 33.7458, lng: -117.8262 } as const;

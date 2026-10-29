@@ -15,7 +15,7 @@ export function LandingLogo() {
 
 /** Sticky nav: transparent over the hero, frosted white with a hairline after 24px. */
 /** Compact "EN · ES" text toggle for the marketing top bar. */
-function NavLanguage() {
+export function NavLanguage() {
   const { t, i18n } = useTranslation();
   const cur = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
   if (!SPANISH_ENABLED) return null;

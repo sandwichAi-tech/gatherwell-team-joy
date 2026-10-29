@@ -1484,6 +1484,7 @@
     "mapAlt": "Map of the meeting place",
     "meetingPoint": "Meeting point",
     "goingCount_one": "{{count}} going",
+    "firstRsvp": "Be one of the first to RSVP",
     "goingCount_other": "{{count}} going",
     "spotsLeft_one": "{{count}} spot left",
     "spotsLeft_other": "{{count}} spots left",

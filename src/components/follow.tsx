@@ -1,3 +1,4 @@
+import { displayTitleCase } from '@/lib/event-presentation';
 import { RequestTeamJoin } from '@/components/team-membership';
 import { FoundingSeal } from '@/components/founding';
 import { GetCoachUpdates } from '@/components/coach-updates';
@@ -95,7 +96,7 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
   if (!d) return <EmptyState icon="Compass" title={t('follow.notFoundTitle')} text={t('follow.notFound')} action={<Button asChild variant="secondary"><Link to="/discover">{t('follow.discover')}</Link></Button>} />;
   const host = kind === 'host' ? d as HostPage : null; const team = kind === 'team' ? d as TeamPage : null;
   const isOwner = !!viewer.data && viewer.data === d.id;
-  const name = host?.name ?? team?.name ?? '';
+  const name = host ? displayTitleCase(host.name) : team?.name ?? '';
   const avatarPath = host?.avatar_url ?? team?.leader?.avatar_url ?? null;
   return <div className="follow-page">
     <section className="gw-hero-card follow-hero">
@@ -105,8 +106,8 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
         <p className="eyebrow">{t(kind === 'host' ? 'follow.hostLabel' : 'follow.teamLabel')}</p>
         <h1 className="follow-name">{name}{host && <HostSeal id={host.id} />}{host && <FoundingSeal id={host.id} />}</h1>
         {host?.org && <p className="follow-org">{host.org}</p>}
-        <p className="follow-meta">{[host?.city, team ? t('follow.members', { count: team.members }) : null, t('follow.followers', { count: d.followers })].filter(Boolean).join(' · ')}</p>
-        {team?.leader?.name && <p className="follow-meta">{t('follow.ledBy')} {team.leader.slug ? <Link to="/h/$slug" params={{ slug: team.leader.slug }}>{team.leader.name}</Link> : team.leader.name}</p>}
+        <p className="follow-meta">{[displayTitleCase(host?.city), team ? t('follow.members', { count: team.members }) : null, t('follow.followers', { count: d.followers })].filter(Boolean).join(' · ')}</p>
+        {team?.leader?.name && <p className="follow-meta">{t('follow.ledBy')} {team.leader.slug ? <Link to="/h/$slug" params={{ slug: team.leader.slug }}>{displayTitleCase(team.leader.name)}</Link> : displayTitleCase(team.leader.name)}</p>}
         {host?.bio && <p className="follow-bio">{host.bio}</p>}
         {host && (host.categories.length > 0 || host.languages.length > 0) && <ul className="follow-chips" aria-label={t('hostProfile.categories')}>
           {host.categories.map(c => <li key={c} className="discover-chip is-static">{t(`landing.cat.${c}`, { defaultValue: c })}</li>)}

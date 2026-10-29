@@ -1,3 +1,4 @@
+import { displayTitleCase } from '@/lib/event-presentation';
 import { FoundingMark } from '@/components/founding';
 import { VerifiedMark } from '@/components/coach-trust';
 import type { ReactNode } from 'react';
@@ -20,8 +21,8 @@ export function ProfileHero({ founding, verified, avatar, name, city, team, role
     <div className="gw-hero-body">
       <div className="gw-hero-avatar">{avatar}</div>
       {actions && <div className="gw-hero-actions">{actions}</div>}
-      <h2 className="gw-hero-name">{name}{verified && <> <VerifiedMark compact /></>}{founding && <> <FoundingMark /></>}</h2>
-      {(city || team) && <p className="gw-hero-sub">{[city, team].filter(Boolean).join(' · ')}</p>}
+      <h2 className="gw-hero-name">{displayTitleCase(name)}{verified && <> <VerifiedMark compact /></>}{founding && <> <FoundingMark /></>}</h2>
+      {(city || team) && <p className="gw-hero-sub">{[displayTitleCase(city), team].filter(Boolean).join(' · ')}</p>}
       {(role || badge) && <div className="profile-chips">{role && <span className="chip">{role}</span>}{badge && <span className="chip warm-chip">{badge}</span>}</div>}
       {bio && <p className="gw-hero-bio">{bio}</p>}
     </div>
