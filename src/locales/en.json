@@ -7865,5 +7865,55 @@
   "hostSpace": {
     "creating": "Setting up your host space…",
     "failed": "We couldn't set up your host space."
+  },
+  "legalCenter": {
+    "title": "Legal Center",
+    "intro": "The terms and policies that keep ZoheeWell safe, fair and clear.",
+    "metaDesc": "ZoheeWell's terms, privacy policy and other policies in one place, with contacts for support, privacy, legal and copyright questions.",
+    "company": "Company",
+    "companyLine": "ZoheeWell LLC · A Wyoming limited liability company",
+    "addressPending": "Mailing address coming soon.",
+    "contacts": {
+      "support": "Support",
+      "privacy": "Privacy",
+      "legal": "Legal",
+      "copyright": "Copyright"
+    },
+    "groups": {
+      "everyone": "For everyone",
+      "guests": "For guests",
+      "hosts": "For hosts",
+      "rights": "Rights"
+    },
+    "titles": {
+      "community": "Community Guidelines",
+      "accessibility": "Accessibility",
+      "refund": "Refund & Cancellation",
+      "safety": "Health & Safety",
+      "copyright": "Copyright & DMCA"
+    },
+    "summaries": {
+      "terms": "The rules for using ZoheeWell.",
+      "privacy": "What we collect, why, and the choices you have.",
+      "cookies": "How we use cookies and similar storage.",
+      "community": "How we expect everyone to treat each other.",
+      "accessibility": "Our commitment to an app everyone can use.",
+      "guest": "What hosts see when you RSVP as a guest.",
+      "refund": "How refunds and cancellations work.",
+      "safety": "Taking part safely in events.",
+      "sms": "Text message reminders and how to stop them.",
+      "host": "What hosts agree to when they run events.",
+      "copyright": "How to report content that uses your work."
+    },
+    "effectiveShort": "Effective {{date}} · v{{version}}",
+    "effectiveLong": "Effective {{date}} · Version {{version}}",
+    "datePending": "date pending",
+    "notPublished": "Not yet published",
+    "onThisPage": "On this page",
+    "print": "Print",
+    "copyLink": "Copy link",
+    "linkTo": "Link to {{section}}",
+    "questions": "Questions?",
+    "back": "Back to Legal Center"
   }
 }

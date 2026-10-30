@@ -34,6 +34,7 @@ import { Route as HSlugRouteImport } from './routes/h.$slug'
 import { Route as ICodeRouteImport } from './routes/i.$code'
 import { Route as JoinCodeRouteImport } from './routes/join.$code'
 import { Route as LSlugRouteImport } from './routes/l.$slug'
+import { Route as LegalIndexRouteImport } from './routes/legal.index'
 import { Route as LegalDocRouteImport } from './routes/legal.$doc'
 import { Route as OIdRouteImport } from './routes/o.$id'
 import { Route as RCodeRouteImport } from './routes/r.$code'
@@ -227,6 +228,11 @@ const JoinCodeRoute = JoinCodeRouteImport.update({
 const LSlugRoute = LSlugRouteImport.update({
   id: '/l/$slug',
   path: '/l/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalIndexRoute = LegalIndexRouteImport.update({
+  id: '/legal/',
+  path: '/legal/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LegalDocRoute = LegalDocRouteImport.update({
@@ -648,6 +654,7 @@ export interface FileRoutesByFullPath {
   '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/verify/$number': typeof VerifyNumberRoute
+  '/legal/': typeof LegalIndexRoute
   '/alerts': typeof AuthenticatedAppAlertsRoute
   '/attendance': typeof AuthenticatedAppAttendanceRoute
   '/blueprints': typeof AuthenticatedAppBlueprintsRoute
@@ -744,6 +751,7 @@ export interface FileRoutesByTo {
   '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/verify/$number': typeof VerifyNumberRoute
+  '/legal': typeof LegalIndexRoute
   '/alerts': typeof AuthenticatedAppAlertsRoute
   '/attendance': typeof AuthenticatedAppAttendanceRoute
   '/blueprints': typeof AuthenticatedAppBlueprintsRoute
@@ -843,6 +851,7 @@ export interface FileRoutesById {
   '/t/$slug': typeof TSlugRoute
   '/unsubscribe/$token': typeof UnsubscribeTokenRoute
   '/verify/$number': typeof VerifyNumberRoute
+  '/legal/': typeof LegalIndexRoute
   '/_authenticated/_app/alerts': typeof AuthenticatedAppAlertsRoute
   '/_authenticated/_app/attendance': typeof AuthenticatedAppAttendanceRoute
   '/_authenticated/_app/blueprints': typeof AuthenticatedAppBlueprintsRoute
@@ -941,6 +950,7 @@ export interface FileRouteTypes {
     | '/t/$slug'
     | '/unsubscribe/$token'
     | '/verify/$number'
+    | '/legal/'
     | '/alerts'
     | '/attendance'
     | '/blueprints'
@@ -1037,6 +1047,7 @@ export interface FileRouteTypes {
     | '/t/$slug'
     | '/unsubscribe/$token'
     | '/verify/$number'
+    | '/legal'
     | '/alerts'
     | '/attendance'
     | '/blueprints'
@@ -1135,6 +1146,7 @@ export interface FileRouteTypes {
     | '/t/$slug'
     | '/unsubscribe/$token'
     | '/verify/$number'
+    | '/legal/'
     | '/_authenticated/_app/alerts'
     | '/_authenticated/_app/attendance'
     | '/_authenticated/_app/blueprints'
@@ -1232,6 +1244,7 @@ export interface RootRouteChildren {
   TSlugRoute: typeof TSlugRoute
   UnsubscribeTokenRoute: typeof UnsubscribeTokenRoute
   VerifyNumberRoute: typeof VerifyNumberRoute
+  LegalIndexRoute: typeof LegalIndexRoute
   IHostTokenRoute: typeof IHostTokenRoute
   InviteTeamTokenRoute: typeof InviteTeamTokenRoute
   ResourceKindIdRoute: typeof ResourceKindIdRoute
@@ -1420,6 +1433,13 @@ declare module '@tanstack/react-router' {
       path: '/l/$slug'
       fullPath: '/l/$slug'
       preLoaderRoute: typeof LSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/': {
+      id: '/legal/'
+      path: '/legal'
+      fullPath: '/legal/'
+      preLoaderRoute: typeof LegalIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/legal/$doc': {
@@ -2084,6 +2104,7 @@ const rootRouteChildren: RootRouteChildren = {
   TSlugRoute: TSlugRoute,
   UnsubscribeTokenRoute: UnsubscribeTokenRoute,
   VerifyNumberRoute: VerifyNumberRoute,
+  LegalIndexRoute: LegalIndexRoute,
   IHostTokenRoute: IHostTokenRoute,
   InviteTeamTokenRoute: InviteTeamTokenRoute,
   ResourceKindIdRoute: ResourceKindIdRoute,

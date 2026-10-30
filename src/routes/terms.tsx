@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { LegalPage, pageHead } from '@/components/auth-frame';
-import { publicIndexing } from '@/lib/seo';
+import { LegalDocument } from '@/components/legal-center';
+import { legalHead } from '@/lib/legal-head';
 
 export const Route = createFileRoute('/terms')({
-  head: () => { const h = pageHead('legal.termsTitle', 'meta.terms'); const indexing = publicIndexing('/terms'); return { meta: [...h.meta, ...indexing.meta], links: indexing.links }; },
-  component: () => <LegalPage kind="terms" />,
+  head: () => legalHead('legalDocs.docs.terms.title', 'legalCenter.summaries.terms', '/terms'),
+  component: () => <LegalDocument kind="terms" />,
 });

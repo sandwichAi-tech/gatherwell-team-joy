@@ -7865,5 +7865,55 @@
   "hostSpace": {
     "creating": "Preparando tu espacio de anfitrión…",
     "failed": "No pudimos preparar tu espacio de anfitrión."
+  },
+  "legalCenter": {
+    "title": "Centro legal",
+    "intro": "Los términos y políticas que mantienen ZoheeWell seguro, justo y claro.",
+    "metaDesc": "Los términos, la política de privacidad y otras políticas de ZoheeWell en un solo lugar, con contactos de soporte, privacidad, legal y derechos de autor.",
+    "company": "Empresa",
+    "companyLine": "ZoheeWell LLC · Una sociedad de responsabilidad limitada de Wyoming",
+    "addressPending": "Dirección postal próximamente.",
+    "contacts": {
+      "support": "Soporte",
+      "privacy": "Privacidad",
+      "legal": "Legal",
+      "copyright": "Derechos de autor"
+    },
+    "groups": {
+      "everyone": "Para todos",
+      "guests": "Para invitados",
+      "hosts": "Para anfitriones",
+      "rights": "Derechos"
+    },
+    "titles": {
+      "community": "Normas de la comunidad",
+      "accessibility": "Accesibilidad",
+      "refund": "Reembolsos y cancelaciones",
+      "safety": "Salud y seguridad",
+      "copyright": "Derechos de autor y DMCA"
+    },
+    "summaries": {
+      "terms": "Las reglas para usar ZoheeWell.",
+      "privacy": "Qué recopilamos, por qué y qué opciones tienes.",
+      "cookies": "Cómo usamos cookies y almacenamiento similar.",
+      "community": "Cómo esperamos que todos se traten.",
+      "accessibility": "Nuestro compromiso con una app que todos puedan usar.",
+      "guest": "Qué ven los anfitriones cuando confirmas como invitado.",
+      "refund": "Cómo funcionan los reembolsos y cancelaciones.",
+      "safety": "Participar en eventos de forma segura.",
+      "sms": "Recordatorios por mensaje de texto y cómo detenerlos.",
+      "host": "Lo que aceptan los anfitriones al organizar eventos.",
+      "copyright": "Cómo reportar contenido que usa tu obra."
+    },
+    "effectiveShort": "Vigente desde {{date}} · v{{version}}",
+    "effectiveLong": "Vigente desde {{date}} · Versión {{version}}",
+    "datePending": "fecha pendiente",
+    "notPublished": "Aún no publicado",
+    "onThisPage": "En esta página",
+    "print": "Imprimir",
+    "copyLink": "Copiar enlace",
+    "linkTo": "Enlace a {{section}}",
+    "questions": "¿Preguntas?",
+    "back": "Volver al Centro legal"
   }
 }
