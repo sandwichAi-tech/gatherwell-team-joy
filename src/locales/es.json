@@ -5488,7 +5488,9 @@
       "processing_other": "Los reembolsos se procesan en {{count}} días hábiles.",
       "exceptions": "Excepciones: {{text}}.",
       "contact": "Para cancelar o preguntar: {{contact}}."
-    }
+    },
+    "reviewHint": "Antes de publicar, marca la casilla de arriba para confirmar que revisaste este texto personalizado.",
+    "replaceEdits": "¿Reemplazar el texto que editaste con el texto estándar de esta opción? Se perderán tus cambios."
   },
   "refunds": {
     "label": "Reembolsos",
@@ -7985,5 +7987,13 @@
     "coachPage": "Mi página de coach",
     "openZoheeWell": "Abrir en ZoheeWell",
     "newTabNote": "Los enlaces abren ZoheeWell en una pestaña nueva."
+  },
+  "publicCounts": {
+    "label": "Mostrar en la página pública",
+    "hint": "Los registros son inscripciones, no asistencias confirmadas. Tú y tu equipo del evento siempre ven las cifras completas.",
+    "none": "Sin cifras (predeterminado)",
+    "registered": "Número de personas registradas",
+    "remaining": "Lugares disponibles (solo con cupo limitado)",
+    "both": "Personas registradas y lugares disponibles"
   }
 }

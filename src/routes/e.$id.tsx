@@ -32,7 +32,7 @@ import { ReferralShareCard, useReferralCapture } from '@/components/referrals';
 import { RetryState } from '@/components/launch-states';
 import { SITE_URL, publicIndexing } from '@/lib/seo';
 import { publicHostSlug } from '@/lib/event-agreements';
-import { attendancePresentation, displayTitleCase, showAgePolicy } from '@/lib/event-presentation';
+import { attendancePresentation, publicAvailability, displayTitleCase, showAgePolicy } from '@/lib/event-presentation';
 
 export const Route = createFileRoute('/e/$id')({
   loader: async ({ params, context }) => {
@@ -112,15 +112,17 @@ function PublicEventBody() {
   const day = formatWhen(event.starts_at, lang, tzOpts);
   const time = formatWhen(event.starts_at, lang, { hour: 'numeric', minute: '2-digit' }) + (event.ends_at ? ` – ${formatWhen(event.ends_at, lang, { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })}` : ` ${formatWhen(event.starts_at, lang, { timeZoneName: 'short' }).split(' ').pop()}`);
   const description = lang === 'es' ? event.description_es || event.description_en : event.description_en || event.description_es;
-  const left = event.capacity != null ? Math.max(0, event.capacity - event.going) : null;
-  const full = left === 0;
+  const avail = publicAvailability(event);
+  const full = avail.full;
   const cancelled = event.status === 'cancelled';
   const summary = lang === 'es' ? event.summary_es || event.summary_en : event.summary_en || event.summary_es;
   const regState = regWindowState(event.reg_opens_at, event.reg_closes_at);
   const regClosed = regState === 'closed';
   const regNotOpen = regState === 'not_open';
   const waitlistOff = full && event.waitlist_enabled === false;
-  const attendance = attendancePresentation(event.going, event.capacity);
+  const attendance = attendancePresentation(avail.going ?? 0, event.capacity);
+  const leftShown = avail.left != null && (avail.going == null || attendance.left != null) ? avail.left : null;
+  const countLine = [avail.going != null ? (attendance.first ? t('guest.firstRsvp') : t('guest.goingCount', { count: avail.going })) : null, full ? t('guest.full') : leftShown != null ? t('guest.spotsLeft', { count: leftShown }) : null].filter(Boolean).join(' · ');
 
   if (teamResult) return <>
     <GatheringCover path={event.cover_url} category={event.category} style={event.cover_style} title={event.title} className="guest-cover" rendition={coverRendition} overlay={event.cover_overlay} focal={event.cover_focal} alt={event.cover_alt} />
@@ -184,7 +186,7 @@ function PublicEventBody() {
 
       <section className="guest-going" aria-live="polite">
         {!event.hide_guest_list && (event.initials?.length ?? 0) > 0 && <div className="guest-avatars" aria-hidden="true">{event.initials!.map((i, n) => <span key={n} className="initial-avatar">{i}</span>)}</div>}
-        <p className="tabular-nums">{attendance.first ? t('guest.firstRsvp') : t('guest.goingCount', { count: event.going })}{attendance.left != null && ` · ${full ? t('guest.full') : t('guest.spotsLeft', { count: attendance.left })}`}</p>
+        {countLine && <p className="tabular-nums">{countLine}</p>}
       </section>
 
       {!cancelled && early && <EarlyAccessNotice access={early} />}

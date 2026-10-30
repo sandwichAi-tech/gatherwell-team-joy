@@ -9,7 +9,7 @@ export type PublicEvent = {
   cover_url: string | null; cover_style: number | null; cover_overlay?: number | null; cover_focal?: string | null; cover_alt?: string | null; starts_at: string; ends_at: string | null; timezone: string;
   location_name: string | null; address: string | null; meeting_note: string | null; lat: number | null; lng: number | null;
   is_online: boolean; has_online: boolean; capacity: number | null; status: 'published' | 'cancelled';
-  hide_guest_list: boolean; going: number; initials: string[] | null;
+  hide_guest_list: boolean; going: number | null; spots_left?: number | null; is_full?: boolean; public_counts?: string; initials: string[] | null;
   host: { name: string | null; avatar_url: string | null; slug?: string | null; verified?: boolean } | null; retreat?: unknown; cohosts?: { name: string | null; avatar_url: string | null }[]; team_name: string | null; my_code: string | null;
   questions?: RsvpQuestion[]; require_approval?: boolean; team_registration?: boolean; team_min?: number; team_max?: number; team_price_mode?: 'person' | 'team'; visibility?: 'public' | 'team' | 'invite';
   summary_en?: string | null; summary_es?: string | null; language?: string; format?: 'person' | 'online' | 'hybrid'; map_url?: string | null;

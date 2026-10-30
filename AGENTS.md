@@ -37,6 +37,7 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Plans/limits live in billing_accounts, team_licenses, license_seats; effective_plan()+plan_limits() decide limits (triggers, new rows only). Stripe: billing.functions.ts + /api/public/stripe/webhook only; no key → sheet.
 - Platform admin: /admin data and actions go only through src/lib/admin.functions.ts and every action writes admin_audit; reports come from report_content() or the claims trigger.
 - Safety: caller-scoped admin_safety RPCs (bounded, throttled, audited); bans via managed auth, never deletion; restrictions via service-only RPC with checked compensation; retries via admin_retry_message().
+- Public counts: events.public_counts enforced by mask_public_counts() in the public event/feed RPCs; staff bypass.
 - Public follows use get_public_host/get_public_team; iCal token is its only credential.
 
 - ResponsiveSheet owns header/footer/scroll body; pass primary actions via footer.
@@ -50,7 +51,6 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Challenges: retry-keyed atomic save_challenge_request; locked enroll_challenge; enrolled/owner private progress and leaderboard; paid checkout blocked until orders/refunds verified. Extras reuse event media; cleanup preserves Challenge references.
 - Platform fees come only from versioned fee_rules (calc_platform_fee_cents, mirrored in src/lib/fees.ts); orders snapshot the rule.
 - Database role regressions live in tests/database and run only by explicit invocation against a disposable copy; never connect these fixture-writing tests to production, preview, or the ordinary automated suite.
-- Consent acceptances resolve version/hash in database triggers, and flag changes append server-owned config history; clients never choose snapshots or write audit history.
 - Identity: one auth user = one profile; return paths only via src/lib/return-to.ts; emailed links use single-use auth_intents; 18+ via confirm_adult(); view_mode display-only (host-return eligibility: src/lib/host-eligibility.ts, never admin/mode); guest rows link only via claim_guest_records().
 
 - WhichPlan guides pricing; no capability tables.

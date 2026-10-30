@@ -1415,6 +1415,13 @@
       "when": 1793395469626,
       "tag": "0201_public_challenges_on_coach_page",
       "breakpoints": true
+    },
+    {
+      "idx": 202,
+      "version": "7",
+      "when": 1793396691406,
+      "tag": "0202_event_public_counts",
+      "breakpoints": true
     }
   ]
 }

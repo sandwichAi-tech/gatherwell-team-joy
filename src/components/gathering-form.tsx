@@ -273,6 +273,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (!detailsJson) return true;
     const { error } = await supabase.rpc('update_event_details', { _event: id, _p: { ...detailsJson, format: place } });
     if (error) { toast.error(rpcError(t, error)); return false; }
+    const counts = await supabase.rpc('set_event_public_counts', { _event: id, _mode: details.publicCounts });
+    if (counts.error) { toast.error(rpcError(t, counts.error)); return false; }
     return true;
   };
   const saveWaivers=async(id:string)=>{

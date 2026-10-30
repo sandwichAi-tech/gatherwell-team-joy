@@ -175,7 +175,7 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
       setBusy(false);
     }
   };
-  const full = event.capacity != null && event.going >= event.capacity;
+  const full = event.is_full ?? (event.capacity != null && event.going != null && event.going >= event.capacity);
   const title = intent === 'maybe' ? t('guest.sheetMaybe') : full ? t('guest.sheetWaitlist') : t('guest.sheetGoing');
   return <ResponsiveSheet open={!!intent} onOpenChange={o => !o && onClose()} title={title} description={event.title} footer={<Button type="submit" form="guest-rsvp-form" className="guest-primary" disabled={busy || gate.busy || platform.isPending || !platformDoc?.id}>{busy || gate.busy ? t('guest.saving') : paid ? t('billing.payAndRsvp', { amount: formatMoney(total, lang) }) : intent === 'maybe' ? t('guest.confirmMaybe') : full ? t('guest.joinWaitlist') : t('guest.confirmGoing')}</Button>}>
     <form id="guest-rsvp-form" className="guest-form" onSubmit={submit} noValidate>

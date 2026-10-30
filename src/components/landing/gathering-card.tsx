@@ -23,6 +23,7 @@ export function AvatarStack({ letters, size = 24 }: { letters: string[]; size?: 
 
 export function GoingLine({ g, going }: { g: FeedGathering; going: number }) {
   const { t } = useTranslation();
+  if (g.countsHidden) return null;
   if (going <= 0) return <span className="gw-going-text">{t('landing.card.beFirst')}</span>;
   const names = g.goingNames.slice(0, 2);
   const text = names.length === 2 && going > 2

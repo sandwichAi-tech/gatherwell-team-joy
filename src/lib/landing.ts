@@ -25,12 +25,16 @@ export type FeedGathering = {
   lng: number | null;
   capacity: number | null;
   going: number;
+  /** Host hid the exact registration count; never show it or a "be first" line. */
+  countsHidden?: boolean;
+  /** Server-provided remaining spots (null when hidden or unlimited). */
+  serverLeft?: number | null;
   goingNames: string[];
   initials: string[];
   hostName: string;
 };
 
-type RawReal = { category_label?: string | null; id: string; title: string; starts_at: string; category: string; location_name: string | null; is_online: boolean; lat: number | null; lng: number | null; capacity: number | null; going: number; host_name: string; initials: string[]; featured?: boolean };
+type RawReal = { category_label?: string | null; id: string; title: string; starts_at: string; category: string; location_name: string | null; is_online: boolean; lat: number | null; lng: number | null; capacity: number | null; going: number | null; spots_left?: number | null; host_name: string; initials: string[]; featured?: boolean };
 type RawSample = { id: string; hero: boolean; slot_order: number; title_en: string; title_es: string; category: string; dow: number; local_time: string; location_name: string; lat: number | null; lng: number | null; capacity: number | null; going: number; going_names: string[]; host_name: string };
 
 /** Samples exist only for previews; the published site never requests them. */
@@ -60,7 +64,7 @@ export const publicGatheringsQuery = (lang: 'en' | 'es', includeSamples: boolean
     const real = payload.real.map((r): FeedGathering => ({
       id: r.id, isSample: false, hero: false, title: r.title, startsAt: new Date(r.starts_at),
       categoryLabel: r.category_label ?? null, category: isCategory(r.category) ? r.category : 'more', locationName: r.location_name, isOnline: r.is_online,
-      lat: r.lat, lng: r.lng, capacity: r.capacity, going: r.going, goingNames: [], initials: r.initials ?? [], hostName: r.host_name, featured: !!r.featured,
+      lat: r.lat, lng: r.lng, capacity: r.capacity, going: r.going ?? 0, countsHidden: r.going == null, serverLeft: r.spots_left ?? null, goingNames: [], initials: r.initials ?? [], hostName: r.host_name, featured: !!r.featured,
     }));
     const samples = payload.samples.map((s): FeedGathering => ({
       id: s.id, isSample: true, hero: s.hero, title: lang === 'es' ? s.title_es : s.title_en, startsAt: nextOccurrence(s.dow, s.local_time),
@@ -93,7 +97,8 @@ export const testimonialsQuery = () => queryOptions({
 /** Spots-left threshold for the status chip. */
 export function spotsLeft(g: FeedGathering) {
   if (g.isSample || !g.capacity) return null; // only real capacity data
-  const left = g.capacity - g.going;
+  if (g.serverLeft === null && g.countsHidden !== undefined) return null; // host hid remaining spots
+  const left = g.serverLeft ?? g.capacity - g.going;
   return left > 0 && left <= 5 ? left : null;
 }
 

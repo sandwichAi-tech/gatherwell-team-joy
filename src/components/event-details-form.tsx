@@ -9,7 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useRef } from 'react';
-import { buildPolicyText, emptyPolicy, normalizePolicyText, policyIssues, presetsFor, sha256Hex, type PolicyConfig, type PolicyMode } from '@/lib/event-policy';
+import { buildPolicyText, emptyPolicy, pickPolicyMode, normalizePolicyText, policyIssues, presetsFor, sha256Hex, type PolicyConfig, type PolicyMode } from '@/lib/event-policy';
 import { formatMoney } from '@/lib/billing';
 import { AGE_BANDS } from '@/lib/identity';
 import { PaidBlockedNote } from '@/components/payments-readiness';
@@ -21,13 +21,15 @@ export type EventDetails = {
   mapUrl: string; regOpens: string; regCloses: string; waitlist: boolean;
   tagsInput: string; contactEmail: string; contactPhone: string;
   accessibility: string; bring: string; cancellation: string; policy: PolicyConfig;
+  /** What signed-out visitors see: exact registrations, remaining spots, both (legacy) or neither (default). */
+  publicCounts: PublicCounts;
   allowsMinors: boolean; minAge: string;
   tiers: TicketTier[]; addons: Addon[];
 };
 
 export const emptyDetails: EventDetails = {
   summaryEn: '', summaryEs: '', language: 'en', mapUrl: '', regOpens: '', regCloses: '', waitlist: true,
-  tagsInput: '', contactEmail: '', contactPhone: '', accessibility: '', bring: '', cancellation: '', policy: emptyPolicy(),
+  tagsInput: '', contactEmail: '', contactPhone: '', accessibility: '', bring: '', cancellation: '', policy: emptyPolicy(), publicCounts: 'none',
   allowsMinors: false, minAge: '', tiers: [], addons: [],
 };
 
@@ -46,11 +48,14 @@ export function detailsFromEvent(e: SourceEvent): EventDetails {
     waitlist: e['waitlist_enabled'] !== false, tagsInput: Array.isArray(e['tags']) ? (e['tags'] as string[]).join(', ') : '',
     contactEmail: s('contact_email'), contactPhone: s('contact_phone'),
     accessibility: s('accessibility_notes'), bring: s('what_to_bring'), cancellation: s('cancellation_policy'), policy: emptyPolicy(),
+    publicCounts: (['none', 'registered', 'remaining', 'both'] as const).find(m => m === e['public_counts']) ?? 'none',
     allowsMinors: !!e.allows_minors, minAge: e['min_age'] != null ? String(e['min_age']) : '',
     tiers: Array.isArray(e['ticket_tiers']) ? (e['ticket_tiers'] as TicketTier[]).map(tier => ({ ...tier, sale_starts_at: local(tier.sale_starts_at) || null, sale_ends_at: local(tier.sale_ends_at) || null })) : [],
     addons: Array.isArray(e['addons']) ? (e['addons'] as Addon[]) : [],
   };
 }
+
+export type PublicCounts = 'none' | 'registered' | 'remaining' | 'both';
 
 const iso = (v: string) => (v ? new Date(v).toISOString() : '');
 
@@ -90,14 +95,8 @@ export function PolicyPicker({ id, paid, config, text, onChange }: { id: string;
   };
   const pick = (mode: PolicyMode) => {
     if (config.mode === 'custom') customText.current = { text, edited: config.edited };
-    if (mode === 'custom') {
-      const kept = customText.current;
-      const next = { ...config, mode, edited: kept?.edited ?? false, reviewedSha: null };
-      onChange(next, kept?.edited ? kept.text : buildPolicyText(next, paid, tt));
-      return;
-    }
-    const next = { ...config, mode, edited: false, reviewedSha: null };
-    onChange(next, mode ? tt(`policy.text.${mode}`) : '');
+    const r = pickPolicyMode(config, text, mode, paid, tt, customText.current, () => window.confirm(t('policy.replaceEdits')));
+    if (r) onChange(r.config, r.text);
   };
   const review = async (on: boolean) => onChange({ ...config, reviewedSha: on ? await sha256Hex(normalizePolicyText(text)) : null }, text);
   const n = (v: string) => v.replace(/\D/g, '').slice(0, 3);
@@ -170,8 +169,9 @@ export function PolicyPicker({ id, paid, config, text, onChange }: { id: string;
       <span className="eyebrow">{t('policy.previewLabel')}</span><p>{normalizePolicyText(text)}</p>
     </div>}
     {custom && normalizePolicyText(text) && <label className="guest-consent">
-      <Checkbox checked={!!config.reviewedSha} onCheckedChange={v => void review(!!v)} /><span>{t('policy.reviewConfirm')}</span>
+      <Checkbox checked={!!config.reviewedSha} onCheckedChange={v => void review(!!v)} aria-describedby={`${id}-review-hint`} /><span>{t('policy.reviewConfirm')}</span>
     </label>}
+    {custom && normalizePolicyText(text) && !config.reviewedSha && <small id={`${id}-review-hint`} className="field-hint">{t('policy.reviewHint')}</small>}
   </div>;
 }
 
@@ -222,6 +222,11 @@ export function EventDetailsSections({ value, onChange, priceCents, lang, userId
       <Textarea id="g-access" rows={2} maxLength={1000} className="field-textarea" value={value.accessibility} onChange={e => set({ accessibility: e.target.value })} placeholder={t('builder.accessibilityPlaceholder')} />
       <label className="field-label" htmlFor="g-bring">{t('builder.bring')}</label>
       <Textarea id="g-bring" rows={2} maxLength={1000} className="field-textarea" value={value.bring} onChange={e => set({ bring: e.target.value })} placeholder={t('builder.bringPlaceholder')} />
+      <label className="field-label" htmlFor="g-public-counts">{t('publicCounts.label')}</label>
+      <select id="g-public-counts" className="field-input" aria-describedby="g-public-counts-hint" value={value.publicCounts} onChange={e => set({ publicCounts: e.target.value as PublicCounts })}>
+        {(['none', 'registered', 'remaining', ...(value.publicCounts === 'both' ? ['both' as const] : [])] as PublicCounts[]).map(m => <option key={m} value={m}>{t(`publicCounts.${m}`)}</option>)}
+      </select>
+      <small id="g-public-counts-hint" className="field-hint">{t('publicCounts.hint')}</small>
       <label className="field-label" htmlFor="g-cancel-preset">{t('builder.cancellation')}</label>
       <PolicyPicker id="g-cancel-preset" paid={!!priceCents} config={value.policy} text={value.cancellation} onChange={(policy, cancellation) => set({ policy, cancellation })} />
     </section>

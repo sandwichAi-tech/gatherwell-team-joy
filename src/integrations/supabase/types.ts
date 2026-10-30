@@ -2300,6 +2300,7 @@ export type Database = {
           platform_agreement_es: string | null
           policy_config: Json | null
           price_cents: number | null
+          public_counts: string
           public_rsvp_at: string | null
           recurrence: string
           refund_policy: string
@@ -2381,6 +2382,7 @@ export type Database = {
           platform_agreement_es?: string | null
           policy_config?: Json | null
           price_cents?: number | null
+          public_counts?: string
           public_rsvp_at?: string | null
           recurrence?: string
           refund_policy?: string
@@ -2462,6 +2464,7 @@ export type Database = {
           platform_agreement_es?: string | null
           policy_config?: Json | null
           price_cents?: number | null
+          public_counts?: string
           public_rsvp_at?: string | null
           recurrence?: string
           refund_policy?: string
@@ -9158,6 +9161,7 @@ export type Database = {
         Args: { _id: string; _token: string }
         Returns: Json
       }
+      get_public_event_unmasked: { Args: { _id: string }; Returns: Json }
       get_public_host: { Args: { _slug: string }; Returns: Json }
       get_public_location: { Args: { _slug: string }; Returns: Json }
       get_public_offer: { Args: { _id: string }; Returns: Json }
@@ -9346,6 +9350,10 @@ export type Database = {
         Args: { _days?: number; _include_samples?: boolean; _limit?: number }
         Returns: Json
       }
+      list_public_gatherings_unmasked: {
+        Args: { _days?: number; _include_samples?: boolean; _limit?: number }
+        Returns: Json
+      }
       list_public_locations: { Args: never; Returns: Json }
       live_lesson_link: { Args: { _lesson: string }; Returns: string }
       local_today: { Args: { _tz: string }; Returns: string }
@@ -9358,6 +9366,10 @@ export type Database = {
       mark_notifications_read: { Args: { _id?: string }; Returns: undefined }
       mark_topic_read: { Args: { _id: string }; Returns: undefined }
       mark_update_read: { Args: { _id: string }; Returns: undefined }
+      mask_public_counts: {
+        Args: { _cap: number; _j: Json; _manager: boolean; _mode: string }
+        Returns: Json
+      }
       moderate_comment:
         | {
             Args: {
@@ -10396,6 +10408,10 @@ export type Database = {
       }
       set_event_policy: {
         Args: { _config: Json; _event: string; _text: string }
+        Returns: undefined
+      }
+      set_event_public_counts: {
+        Args: { _event: string; _mode: string }
         Returns: undefined
       }
       set_event_retreat: {
