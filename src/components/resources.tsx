@@ -1,4 +1,5 @@
 import { listedInTeam } from '@/lib/resource-placement';
+import { Feature } from '@/lib/feature-flags';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -122,7 +123,7 @@ export function ResourcesPage({ tab, type, source }: { tab: ResourceTab; type: R
           <OfferCover offer={{ cover_style: e.cover_style, cover_url: e.cover_url, kind: 'membership', title_en: e.title_en, title_es: e.title_es }} />
           <div className="offer-row-main"><strong>{offerTitle(e, lang)}</strong><small>{t('resources.membership')}{e.host_name ? ` · ${e.host_name}` : ''}</small></div><ArrowRight /></Link></li>)}</ul></section>}
       <MyResourceCoaches userId={userId} />
-      <CertificateList userId={userId} />
+      <Feature flag="feature_courses"><CertificateList userId={userId} /></Feature>
       {empty && <Empty tab="foryou" action={<Button onClick={() => setSearch({ tab: 'library' })}><BookOpen />{t('resources.empty.foryou.action')}</Button>} />}
     </>;
   } else if (tab === 'library') {
