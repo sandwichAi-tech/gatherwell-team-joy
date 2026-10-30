@@ -51,7 +51,6 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Challenges: retry-keyed atomic save_challenge_request; locked enroll_challenge; enrolled/owner private progress and leaderboard; paid checkout blocked until orders/refunds verified. Extras reuse event media; cleanup preserves Challenge references.
 - Platform fees come only from versioned fee_rules (calc_platform_fee_cents, mirrored in src/lib/fees.ts); orders snapshot the rule.
 - Database role regressions live in tests/database and run only by explicit invocation against a disposable copy; never connect these fixture-writing tests to production, preview, or the ordinary automated suite.
-- Consent acceptances resolve version/hash in database triggers, and flag changes append server-owned config history; clients never choose snapshots or write audit history.
 - Identity: one auth user = one profile; return paths only via src/lib/return-to.ts; emailed links use single-use auth_intents; 18+ via confirm_adult(); view_mode display-only (host-return eligibility: src/lib/host-eligibility.ts, never admin/mode); guest rows link only via claim_guest_records().
 
 - WhichPlan guides pricing; no capability tables.
