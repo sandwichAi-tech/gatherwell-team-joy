@@ -1443,6 +1443,13 @@
       "when": 1793398794278,
       "tag": "0205_referral_partial_refunds_snapshot",
       "breakpoints": true
+    },
+    {
+      "idx": 206,
+      "version": "7",
+      "when": 1793398851506,
+      "tag": "0206_referral_dashboard_refund_flags",
+      "breakpoints": true
     }
   ]
 }
