@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { LegalPage, pageHead } from '@/components/auth-frame';
-import { publicIndexing } from '@/lib/seo';
+import { LegalDocument } from '@/components/legal-center';
+import { legalHead } from '@/lib/legal-head';
 
 export const Route = createFileRoute('/privacy')({
-  head: () => { const h = pageHead('legal.privacyTitle', 'meta.privacy'); const indexing = publicIndexing('/privacy'); return { meta: [...h.meta, ...indexing.meta], links: indexing.links }; },
-  component: () => <LegalPage kind="privacy" />,
+  head: () => legalHead('legalDocs.docs.privacy.title', 'legalCenter.summaries.privacy', '/privacy'),
+  component: () => <LegalDocument kind="privacy" />,
 });
