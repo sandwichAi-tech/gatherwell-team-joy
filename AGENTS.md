@@ -37,7 +37,7 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Plans/limits live in billing_accounts, team_licenses, license_seats; effective_plan()+plan_limits() decide limits (triggers, new rows only). Stripe: billing.functions.ts + /api/public/stripe/webhook only; no key → sheet.
 - Platform admin: /admin data and actions go only through src/lib/admin.functions.ts and every action writes admin_audit; reports come from report_content() or the claims trigger.
 - Safety: caller-scoped admin_safety RPCs (bounded, throttled, audited); bans via managed auth, never deletion; restrictions via service-only RPC with checked compensation; retries via admin_retry_message().
-- Public registration counts: events.public_counts is enforced by mask_public_counts() inside get_public_event/list_public_gatherings (unmasked originals are not executable by clients); event staff bypass it.
+- Public counts: events.public_counts enforced by mask_public_counts() in the public event/feed RPCs; staff bypass.
 - Public follows use get_public_host/get_public_team; iCal token is its only credential.
 
 - ResponsiveSheet owns header/footer/scroll body; pass primary actions via footer.
