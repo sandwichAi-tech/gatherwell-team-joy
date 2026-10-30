@@ -19,3 +19,11 @@ describe('Resources return paths (row 62)', () => {
   it('a signed-out quiz link returns to the quiz after sign-in', () => expect(safeReturnPath('/learn/quiz/ab12')).toBe('/learn/quiz/ab12'));
   it('still refuses unknown nested learn paths', () => expect(safeReturnPath('/learn/admin/x')).toBeNull());
 });
+
+import { safeReturnPath as srp } from './return-to';
+describe('public challenge return path', () => {
+  it('returns signed-out visitors to the same public challenge after sign-in', () => {
+    expect(srp('/c/7a1b2c3d-0000-4000-8000-000000000000')).toBe('/c/7a1b2c3d-0000-4000-8000-000000000000');
+    expect(srp('//c/evil')).toBeNull();
+  });
+});
