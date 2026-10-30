@@ -81,7 +81,7 @@ export function OfferingCard({ o, lang }: { o: HostOffering; lang: string }) {
   return <Link to={route.to} params={{ id: route.id, kind: route.kind ?? 'offer' }} className="offering-link" aria-label={`${model.title}, ${kind}, ${price}`}>{inner}</Link>;
 }
 
-function Avatar({ path, name, size = 96 }: { path: string | null; name: string | null; size?: number }) {
+export function Avatar({ path, name, size = 96 }: { path: string | null; name: string | null; size?: number }) {
   const { data: url } = useQuery({ queryKey: ['media-url', path], queryFn: () => mediaUrl(path), enabled: !!path, staleTime: 50 * 60 * 1000 });
   return url ? <img src={url} alt={name ?? ''} className="follow-avatar" width={size} height={size} loading="lazy" decoding="async" /> : <span className="follow-avatar is-initials" aria-hidden="true">{initialsOf(name)}</span>;
 }

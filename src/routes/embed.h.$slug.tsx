@@ -2,7 +2,8 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { pageQuery } from '@/components/follow';
+import { Avatar, pageQuery } from '@/components/follow';
+import { BrandImage } from '@/components/brand-image';
 import { HostChallengeCards, type HostChallenge } from '@/components/host-challenges';
 import { prefetchPublic, formatWhen } from '@/lib/guest';
 import { applySavedLanguage } from '@/lib/i18n';
@@ -10,7 +11,7 @@ import { displayTitleCase } from '@/lib/event-presentation';
 import { publicCardRoute } from '@/lib/public-cards';
 import { pick } from '@/lib/learn';
 
-type EmbedHost = { name: string | null; org: string | null; city: string | null; bio: string | null; upcoming: { id: string; title: string; starts_at: string; timezone: string; location_name: string | null; online: boolean }[]; offerings: { id: string; entity?: string; title_en?: string; title_es?: string; title?: string }[]; challenges?: HostChallenge[] };
+type EmbedHost = { avatar_url: string | null; coverSrc?: import('@/lib/media-renditions').Rendition | null; name: string | null; org: string | null; city: string | null; bio: string | null; upcoming: { id: string; title: string; starts_at: string; timezone: string; location_name: string | null; online: boolean }[]; offerings: { id: string; entity?: string; title_en?: string; title_es?: string; title?: string }[]; challenges?: HostChallenge[] };
 
 /** Public-only, read-only coach page for third-party iframes. Every action opens ZoheeWell in a new tab, so sign-in and payment never run inside the frame. */
 export const Route = createFileRoute('/embed/h/$slug')({
@@ -31,7 +32,7 @@ function EmbedPage() {
   if (!d) return <main className="embed-page"><h1>{t('follow.notFoundTitle')}</h1><a className="embed-open" href="/discover" target="_blank" rel="noopener">{t('embed.openZoheeWell')}</a></main>;
   const name = displayTitleCase(d.name) ?? '';
   return <main className="embed-page">
-    <header className="embed-head"><h1>{name}</h1>{d.org && <p>{d.org}</p>}{d.city && <p className="follow-meta">{displayTitleCase(d.city)}</p>}{d.bio && <p className="follow-bio">{d.bio}</p>}</header>
+    <header className="embed-head">{d.coverSrc && <BrandImage src={d.coverSrc} alt="" sizes="(max-width: 600px) 100vw, 600px" className="embed-cover" />}<Avatar path={d.avatar_url} name={name} size={64} /><h1>{name}</h1>{d.org && <p>{d.org}</p>}{d.city && <p className="follow-meta">{displayTitleCase(d.city)}</p>}{d.bio && <p className="follow-bio">{d.bio}</p>}</header>
     <HostChallengeCards items={d.challenges ?? []} external />
     <section className="follow-upcoming"><h2>{t('follow.upcoming')}</h2>
       {d.upcoming.length ? <ul className="follow-list">{d.upcoming.map(e => <li key={e.id}><a className="embed-item" href={`/e/${e.id}`} target="_blank" rel="noopener"><span><strong>{e.title}</strong><small>{formatWhen(e.starts_at, lang, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: e.timezone || undefined })}</small><small>{e.location_name ?? (e.online ? t('follow.online') : '')}</small></span></a></li>)}</ul> : <p className="field-hint">{t('follow.noUpcoming', { name })}</p>}
