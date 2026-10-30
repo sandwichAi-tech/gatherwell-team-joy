@@ -1006,6 +1006,20 @@ ul.as-list{list-style:disc}ol.as-list{list-style:decimal}
 .morning-brief .brief-lines li a { min-height: 48px; overflow-wrap: anywhere; padding-block: 12px; }
 .morning-brief .brief-lines li a:hover { color: var(--primary); }
 .morning-brief .brief-lines li a:active { background: var(--secondary); }
+.brief-group { margin-top: 1rem; }
+.brief-group h3 { font-size: .8125rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted-foreground); margin: 0 0 .25rem; }
+.brief-items { list-style: none; margin: 0; padding: 0; display: grid; }
+.brief-item { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem .75rem; padding: .75rem 0; border-bottom: 1px solid var(--border); }
+.brief-item:last-child { border-bottom: 0; }
+.brief-item.is-required { border-left: 3px solid var(--accent); padding-left: .75rem; }
+.brief-item-text { display: grid; gap: .125rem; min-width: 0; flex: 1 1 14rem; overflow-wrap: anywhere; }
+.brief-item-text small { color: var(--muted-foreground); font-size: .875rem; }
+.brief-action { display: inline-flex; align-items: center; gap: .375rem; min-height: 48px; padding: 0 .875rem; border-radius: 999px; border: 1px solid var(--border); color: var(--foreground); font-weight: 600; text-decoration: none; white-space: nowrap; }
+.brief-action.is-primary { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
+.brief-action svg { width: 16px; height: 16px; }
+.brief-caught-up { display: flex; align-items: center; gap: .5rem; min-height: 48px; margin: 0; color: var(--muted-foreground); }
+.brief-caught-up svg { width: 18px; height: 18px; color: var(--primary); }
+.brief-more summary { min-height: 48px; display: flex; align-items: center; cursor: pointer; font-weight: 600; color: var(--primary); }
 .brief-empty { display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
 .brief-tools { display: flex; align-items: center; gap:8px; }
 .brief-lines { list-style: none; margin: .5rem 0 0; padding: 0; display: grid; gap: .25rem; }
