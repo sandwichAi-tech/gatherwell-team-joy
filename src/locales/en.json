@@ -2896,7 +2896,8 @@
       "file_unsupported": "Only PDF files with selectable text can be summarized.",
       "file_too_large": "This PDF is larger than 10 MB, so it was not read.",
       "file_unreadable": "No readable text was found. Scanned or image-only PDFs cannot be summarized yet.",
-      "file_timeout": "Reading this PDF took too long. Try a smaller file or paste the text."
+      "file_timeout": "Reading this PDF took too long. Try a smaller file or paste the text.",
+      "unverified": "Source not verified: this summary was saved before source tracking. Regenerate to confirm it matches the current lesson."
     },
     "library": {
       "sources": "Sources",
@@ -7479,10 +7480,52 @@
       "flat_too_high": "The reward must be less than the item price.",
       "payout_date": "Choose today or an earlier date.",
       "payout_invalid": "Some rewards are no longer available. Refresh and try again.",
-      "payout_empty": "Choose at least one reward."
+      "payout_empty": "Choose at least one reward.",
+      "terms_unavailable": "Approved affiliate terms aren’t available yet, so joining is paused.",
+      "not_approved": "You need the host’s approval and accepted terms before you can get a link.",
+      "not_invited": "You need an invitation or approval from the host first.",
+      "invalid_transition": "That change isn’t possible for this person right now.",
+      "member_not_found": "That person isn’t on this program."
     },
     "refunded": "Refunded {{amount}}",
-    "reconcile": "Refunded after you recorded this payout. Nothing was taken back automatically; settle it directly with the referrer."
+    "reconcile": "Refunded after you recorded this payout. Nothing was taken back automatically; settle it directly with the referrer.",
+    "member": {
+      "request": "Ask to join",
+      "requestHint": "The host approves who can share this. You can share once they approve and you accept the affiliate terms.",
+      "waiting": "Request sent. The host hasn’t decided yet.",
+      "termsMissing": "Joining is paused: ZoheeWell hasn’t published approved affiliate terms yet. You’ll be able to join once they are approved.",
+      "termsMissingShort": "Waiting for approved terms",
+      "closed": "Sharing isn’t available for you on this item.",
+      "invited": "The host has approved you. Read and accept the affiliate terms to get your link.",
+      "readTerms": "Read the affiliate terms (version {{version}})",
+      "agree": "I have read and agree to the affiliate terms.",
+      "accept": "Accept and join",
+      "joined": "You’ve joined. You can now get your link.",
+      "ownerTitle": "Who can share",
+      "ownerHint": "Only people you invite or approve can get a link. Revoking stops new links and rewards; rewards already earned stay on record.",
+      "inviteLabel": "Invite by account email",
+      "inviteHint": "We don’t say whether the email has an account. No message is sent; they’ll see the invitation when they visit this item.",
+      "invite": "Invite",
+      "invitedToast": "Invitation saved. If that email has an account, they’ll see it on this item.",
+      "emailInvalid": "Enter a valid email address.",
+      "unnamed": "Unnamed account",
+      "awaitingTerms": "Hasn’t accepted terms yet",
+      "legacy": "Had a link before approval was required",
+      "mineTitle": "Invitations and requests",
+      "review": "Review",
+      "status": {
+        "invited": "Invited",
+        "requested": "Requested",
+        "approved": "Approved",
+        "rejected": "Declined",
+        "revoked": "Removed"
+      },
+      "action": {
+        "approve": "Approve",
+        "reject": "Decline",
+        "revoke": "Remove"
+      }
+    }
   },
   "quizStudio": {
     "pageTitle": "Quiz",
