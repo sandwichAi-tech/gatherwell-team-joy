@@ -8756,6 +8756,7 @@ export type Database = {
       admin_users: { Args: { _q: string }; Returns: Json }
       advance_journey_runs: { Args: { _limit?: number }; Returns: number }
       advance_resource_journeys: { Args: { _limit?: number }; Returns: number }
+      affiliate_terms_doc: { Args: { _locale: string }; Returns: Json }
       ai_usage_status: { Args: never; Returns: Json }
       approved_affiliate_terms: { Args: { _locale: string }; Returns: string }
       approved_event_agreement: { Args: { _locale: string }; Returns: string }
