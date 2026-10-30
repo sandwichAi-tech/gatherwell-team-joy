@@ -3308,6 +3308,9 @@
         "feature_badges_limited": "Insignias limitadas y mejores marcas",
         "feature_playbook": "Tarjetas de estrategias",
         "feature_team_map": "Mapa del equipo"
+      },
+      "desc": {
+        "landing_sticky_host_experiment": "Prueba de la página principal: una barra fija \"Organiza un evento\" para la mitad de los visitantes."
       }
     },
     "audit": {

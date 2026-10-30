@@ -3308,6 +3308,9 @@
         "feature_badges_limited": "Limited badges and personal bests",
         "feature_playbook": "Playbook cards",
         "feature_team_map": "Team map"
+      },
+      "desc": {
+        "landing_sticky_host_experiment": "Front page test: a sticky \"Host an event\" bar shown to half of visitors."
       }
     },
     "audit": {

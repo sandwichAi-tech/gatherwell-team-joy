@@ -447,7 +447,7 @@ function FlagsPanel() {
   if (isLoading) return <ListSkeleton />;
   return <section className="panel"><h2 className="section-title">{t('admin.flags.title')}</h2><p className="muted-copy">{t('admin.flags.intro')}</p>
     <ul className="admin-list">{data.map(fl => <li key={fl.key} className="admin-row flag-row">
-      <span className="admin-row-main"><strong>{t(`admin.flags.name.${fl.key}`, { defaultValue: fl.key })}</strong><small>{(lang === 'es' ? fl.description_es : fl.description_en) || t('admin.flags.noDescription')}</small></span>
+      <span className="admin-row-main"><strong>{t(`admin.flags.name.${fl.key}`, { defaultValue: fl.key })}</strong><small>{(lang === 'es' ? fl.description_es : fl.description_en) || t(`admin.flags.desc.${fl.key}`, { defaultValue: t('admin.flags.noDescription') })}</small></span>
       {fl.key === 'landing_headline' && <select aria-label={t('admin.flags.variant')} className="field-input flag-select" value={fl.value ?? 'A'} onChange={e => update(fl.key, fl.enabled, e.target.value)}>{['A', 'B', 'C', 'D'].map(v => <option key={v} value={v}>{t('admin.flags.headline', { v })}</option>)}</select>}
       <Switch checked={fl.enabled} onCheckedChange={v => update(fl.key, v, fl.value)} aria-label={t(`admin.flags.name.${fl.key}`, { defaultValue: fl.key })} />
     </li>)}</ul>
