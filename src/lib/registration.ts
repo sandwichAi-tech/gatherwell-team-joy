@@ -6,6 +6,8 @@ export type TicketTier = {
   price_cents: number;
   quantity?: number | null;
   sold?: number;
+  /** Present when the host hides remaining spots: the server says only whether the tier is sold out. */
+  sold_out?: boolean;
   sale_starts_at?: string | null;
   sale_ends_at?: string | null;
 };
@@ -17,7 +19,7 @@ export function tierState(tier: TicketTier, now = new Date()): TierState {
   if (tier.price_cents > 0) return 'setup_required';
   if (tier.sale_starts_at && now < new Date(tier.sale_starts_at)) return 'not_yet';
   if (tier.sale_ends_at && now >= new Date(tier.sale_ends_at)) return 'ended';
-  if (tier.quantity != null && (tier.sold ?? 0) >= tier.quantity) return 'sold_out';
+  if (tier.sold_out || (tier.quantity != null && tier.sold != null && tier.sold >= tier.quantity)) return 'sold_out';
   return 'open';
 }
 
@@ -40,5 +42,5 @@ export function registrationReady(opts: { terms: boolean; tiers?: TicketTier[] |
 
 /** Spots left in a tier; null when unlimited. */
 export function tierSpotsLeft(tier: TicketTier): number | null {
-  return tier.quantity == null ? null : Math.max(0, tier.quantity - (tier.sold ?? 0));
+  return tier.quantity == null || tier.sold == null ? null : Math.max(0, tier.quantity - (tier.sold ?? 0));
 }
