@@ -50,8 +50,10 @@ export function ClaimGuard({ text, onUse, lang: forced }: { text: string; onUse:
 
 export function DailyBriefCard() {
   const { t } = useTranslation(); const lang = useLang(); const { userId } = useGatherwell();
-  const { data } = useSuspenseQuery(dailyBriefQuery(userId, lang));
-  const groups = groupBrief(data.lines);
+  const q = useQuery(dailyBriefQuery(userId, lang));
+  if (q.isLoading) return null;
+  if (!q.data) return <section className="brief-card morning-brief" aria-labelledby="brief-h"><h2 id="brief-h">{t('smart.brief.title')}</h2><p role="alert">{t('smart.brief.loadError')}</p><Button variant="secondary" onClick={() => void q.refetch()}>{t('smart.brief.retry')}</Button></section>;
+  const groups = groupBrief(q.data.lines);
   const when = (v: unknown) => typeof v === 'string' ? new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(v)) : '';
   const label = (l: string) => (l === 'attendingCode' ? 'attending' : l);
   const vals = (item: BriefItem) => ({ ...item.values, when: when(item.values['when']), place: item.values['place'] ? ` · ${item.values['place']}` : '' });

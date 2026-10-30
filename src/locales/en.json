@@ -2794,7 +2794,9 @@
         "teamEvents": "{{team}} · For your awareness.",
         "quietHosts": "{{team}} · Optional: check in with them.",
         "resource": "Added this week."
-      }
+      },
+      "loadError": "Your brief could not be loaded.",
+      "retry": "Try again"
     },
     "followups": {
       "eyebrow": "Follow-ups",

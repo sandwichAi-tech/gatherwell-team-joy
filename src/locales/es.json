@@ -2794,7 +2794,9 @@
         "teamEvents": "{{team}} · Para que estés al tanto.",
         "quietHosts": "{{team}} · Opcional: escríbeles.",
         "resource": "Agregado esta semana."
-      }
+      },
+      "loadError": "No se pudo cargar tu resumen.",
+      "retry": "Intentar de nuevo"
     },
     "followups": {
       "eyebrow": "Seguimientos",
