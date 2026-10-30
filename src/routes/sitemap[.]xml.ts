@@ -10,7 +10,15 @@ export const Route = createFileRoute('/sitemap.xml')({
   server: {
     handlers: {
       GET: async () => {
-        const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${PATHS.map(p => `<url><loc>${SITE_URL}${p}</loc></url>`).join('')}</urlset>`;
+        // Launch mode: Careers/Studios stay out of the sitemap while feature_marketing_extra is off.
+        let extraOn = false;
+        try {
+          const key = process.env['SUPABASE_PUBLISHABLE_KEY'];
+          const r = await fetch(`${process.env['SUPABASE_URL']}/rest/v1/feature_flags?key=eq.feature_marketing_extra&select=enabled`, { headers: { apikey: key ?? '' } });
+          extraOn = r.ok && ((await r.json()) as { enabled: boolean }[])[0]?.enabled === true;
+        } catch { extraOn = false; }
+        const paths = PATHS.filter(p => extraOn || (p !== '/careers' && p !== '/studios'));
+        const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map(p => `<url><loc>${SITE_URL}${p}</loc></url>`).join('')}</urlset>`;
         return new Response(body, { headers: { 'content-type': 'application/xml', 'cache-control': 'public, max-age=3600' } });
       },
     },
