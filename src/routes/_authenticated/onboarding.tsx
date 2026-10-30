@@ -19,6 +19,7 @@ import { takeNext } from '@/lib/return-to';
 import { recordPendingHostInvite } from '@/lib/discovery';
 import { clearPendingInvite, pendingInvite, initialsOf, joinLink, markProfileOnboarded, parseJoinCode, profileQuery, uploadMedia, workspaceQuery } from '@/lib/account';
 import { NOINDEX_META } from '@/lib/seo';
+import { VerificationStatusCard } from '@/components/coach-trust';
 
 export const Route = createFileRoute('/_authenticated/onboarding')({ head: () => { const h = pageHead('onboarding.nameTitle', 'meta.onboarding'); return { meta: [...h.meta, { ...NOINDEX_META }] }; }, component: Onboarding });
 
@@ -49,6 +50,7 @@ function Onboarding() {
   const [finishing, setFinishing] = useState(false);
   const [adultChecked, setAdultChecked] = useState(false);
   const [start, setStart] = useState<Start | null>(null);
+  const [offerVerify, setOfferVerify] = useState<string | null>(null);
   const started = useRef(false);
 
   useEffect(() => {
@@ -95,7 +97,10 @@ function Onboarding() {
     await markProfileOnboarded(queryClient, user.id);
     await queryClient.invalidateQueries({ queryKey: ['workspace', user.id] }).catch(() => null);
     // Resume the deep link that started sign-in; otherwise use the chosen start.
-    const dest = takeNext() ?? (role === 'host' || role === 'leader' ? '/start' : start === 'find' ? '/discover' : '/home');
+    const next = takeNext();
+    const dest = next ?? (role === 'host' || role === 'leader' ? '/start' : start === 'find' ? '/discover' : '/home');
+    // Hosts get an optional verification step. The profile is already saved and onboarded, so skipping never blocks.
+    if (!next && (role === 'host' || role === 'leader')) { setOfferVerify(dest); setFinishing(false); void queryClient.invalidateQueries(); return; }
     try { await navigate({ href: dest, replace: true }); } catch { window.location.assign(dest); }
     void queryClient.invalidateQueries();
   }
@@ -176,6 +181,14 @@ function Onboarding() {
   </div>;
 
   if (!steps) return shell(<p className="auth-subtitle">{t('onboarding.saving')}</p>, false);
+
+  if (offerVerify) return shell(<>
+    <div className="auth-icon"><Check /></div>
+    <h1 className="onboarding-title">{t('coachTrust.setupTitle')}</h1>
+    <p className="auth-subtitle">{t('coachTrust.setupText')}</p>
+    <VerificationStatusCard userId={user.id} />
+    <Button className="onboarding-continue" variant="secondary" onClick={() => void navigate({ href: offerVerify, replace: true })}>{t('coachTrust.later')}</Button>
+  </>, false);
 
   if (atEnd && created) return shell(<>
     <div className="auth-icon"><Check /></div>
