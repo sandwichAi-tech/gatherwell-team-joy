@@ -9,7 +9,8 @@ import { useLearn } from '@/components/learn';
 import { useCanCreate } from '@/components/resources';
 import { ResourceBuilder } from '@/components/resource-builder';
 import { WellnessAssessmentBuilder } from '@/components/wellness-assessment-builder';
-import { CREATE_GROUPS, parseCreateType, type CreateType } from '@/lib/create-resource';
+import { createTypeAllowed, launchCreateGroups, parseCreateType, type CreateType } from '@/lib/create-resource';
+import { useFeature } from '@/lib/feature-flags';
 
 const TYPE_ICON: Record<CreateType, typeof Video> = {
   assessment: Compass, video: Video, quiz: ClipboardCheck, guide: FileText, audio: Waveform, file: Download,
@@ -17,10 +18,10 @@ const TYPE_ICON: Record<CreateType, typeof Video> = {
 };
 
 /** "What are you creating?" — visually distinct cards, one per resource type. */
-function TypeChooser() {
+function TypeChooser({ flags }: { flags: { courses: boolean; assessment: boolean } }) {
   const { t } = useTranslation();
   return <>
-    {CREATE_GROUPS.map(group => <section key={group.key} className="resource-type-group" aria-labelledby={`type-${group.key}`}><h2 id={`type-${group.key}`}>{t(`resources.create.groups.${group.key}`)}</h2><p className="muted-small">{t(`resources.create.groupHints.${group.key}`)}</p><ul className="create-type-grid">
+    {launchCreateGroups(flags).map(group => <section key={group.key} className="resource-type-group" aria-labelledby={`type-${group.key}`}><h2 id={`type-${group.key}`}>{t(`resources.create.groups.${group.key}`)}</h2><p className="muted-small">{t(`resources.create.groupHints.${group.key}`)}</p><ul className="create-type-grid">
       {group.types.map(type => {
         const Icon = TYPE_ICON[type];
         return <li key={type} className="create-type-item"><Link to="/learn/create" search={{ type }} className="create-type-card">
@@ -47,8 +48,8 @@ function TypeChooser() {
       <div className="section-heading"><div><h2 id="create-help-title"><CircleHelp aria-hidden="true" /> {t('resources.create.helpTitle')}</h2></div></div>
       <ul className="create-help-list">
         <li><strong>{t('resources.create.helpSingleTitle')}</strong><p>{t('resources.create.helpSingle')}</p></li>
-        <li><strong>{t('resources.create.helpCourseTitle')}</strong><p>{t('resources.create.helpCourse')}</p></li>
-        <li><strong>{t('resources.create.helpBundleTitle')}</strong><p>{t('resources.create.helpBundle')}</p></li>
+        {flags.courses && <li><strong>{t('resources.create.helpCourseTitle')}</strong><p>{t('resources.create.helpCourse')}</p></li>}
+        {flags.courses && <li><strong>{t('resources.create.helpBundleTitle')}</strong><p>{t('resources.create.helpBundle')}</p></li>}
       </ul>
     </section>
   </>;
@@ -57,9 +58,13 @@ function TypeChooser() {
 export function CreateResourcePage({ type, id }: { type?: string | undefined; id?: string | undefined }) {
   const { t } = useTranslation();
   const { workspace } = useLearn(); const canCreate = useCanCreate();
-  const parsed = parseCreateType(type);
+  const [courses, coursesReady] = useFeature('feature_courses'); const [assessment, assessmentReady] = useFeature('feature_assessment');
+  const flags = { courses, assessment };
+  const picked = parseCreateType(type);
+  // Switched-off types are hidden completely: a direct link falls back to the chooser.
+  const parsed = picked && createTypeAllowed(picked, flags) ? picked : null;
 
-  if (!workspace) return <ListSkeleton />;
+  if (!workspace || !coursesReady || !assessmentReady) return <ListSkeleton />;
   if (!canCreate) return <section className="panel"><Link to="/learn" className="back-link"><ArrowLeft />{t('resources.title')}</Link><p className="auth-subtitle">{t('resources.create.creatorsOnly')}</p></section>;
   if (parsed === 'assessment') return <WellnessAssessmentBuilder id={id} />;
   // A picked type (or an existing item via ?id=) opens the single dynamic builder.
@@ -69,6 +74,6 @@ export function CreateResourcePage({ type, id }: { type?: string | undefined; id
     <Link to="/learn" className="back-link"><ArrowLeft />{t('resources.create.back')}</Link>
     <div className="page-heading"><div><span className="eyebrow">{t('resources.title')}</span><h1>{t('resources.create.title')}</h1><p>{t('resources.create.sentence')}</p></div>
       <Button asChild variant="secondary"><Link to="/learn/templates"><BookOpen />{t('resources.templatesButton')}</Link></Button></div>
-    <TypeChooser />
+    <TypeChooser flags={flags} />
   </>;
 }
