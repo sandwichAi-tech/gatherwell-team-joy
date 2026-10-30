@@ -2885,11 +2885,18 @@
       "published": "Resumen publicado",
       "saved": "Resumen guardado",
       "unpublished": "Borrador",
-      "filesNote": "Los resúmenes usan las notas de la lección o el texto que pegues aquí. Aún no se leen los archivos adjuntos.",
+      "filesNote": "Los resúmenes usan las notas de la lección, el texto que pegues aquí o el PDF adjunto si lo eliges. No se leen otros tipos de archivo.",
       "noSource": "No hay texto para resumir. Primero pega notas o una transcripción.",
       "tooShort": "No hay suficiente texto para resumir con precisión. Pega al menos unos párrafos.",
       "unavailable": "Los resúmenes aún no están activados. No se creó nada.",
-      "failed": "No se pudo crear el resumen. Inténtalo de nuevo."
+      "failed": "No se pudo crear el resumen. Inténtalo de nuevo.",
+      "useFile": "Resumir el PDF adjunto",
+      "stale": "Las notas o el archivo de la lección cambiaron después de guardar este resumen. Revísalo o vuelve a resumir.",
+      "partial": "Solo se leyó la primera parte de un PDF largo. Compara el resumen con el documento completo.",
+      "file_unsupported": "Solo se pueden resumir archivos PDF con texto seleccionable.",
+      "file_too_large": "Este PDF pesa más de 10 MB, así que no se leyó.",
+      "file_unreadable": "No se encontró texto legible. Aún no se pueden resumir PDF escaneados o solo de imágenes.",
+      "file_timeout": "Leer este PDF tardó demasiado. Prueba con un archivo más pequeño o pega el texto."
     },
     "library": {
       "sources": "Fuentes",
