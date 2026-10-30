@@ -43,6 +43,7 @@ import { WaiverLibrary } from '@/components/waiver-library';
 import { QRCodeSVG } from 'qrcode.react';
 import { Share2, QrCode, Trash2 } from '@/components/icons';
 import { CopyButton, ShareButton } from '@/components/copy-button';
+import { EmbedCodePanel } from '@/components/embed-code';
 import { initialsOf, mediaUrl, profileQuery, teamsQuery, uploadMedia, workspaceQuery } from '@/lib/account';
 
 const HTTPS_URL = /^https:\/\/[^\s/]+\.[^\s]+$/i;
@@ -241,6 +242,7 @@ export function MePage() {
         <code className="slug-url" data-testid="share-public-url">{publicUrl}</code>
         <div className="feed-actions"><CopyButton text={publicUrl} label={t('hostProfile.slug.copy')} /><ShareButton url={publicUrl} /></div>
         <p className="auth-subtitle">{t('profile.qrText')}</p>
+        <EmbedCodePanel slug={publicUrl.split('/h/')[1] ?? ''} name={t('embed.coachPage')} />
       </> : isHost ? <>
         <p className="auth-subtitle">{t('profile.noPublicPage')}</p>
         <Button variant="secondary" onClick={() => setPanel('hostProfile')}><Globe2 />{t('hostProfile.title')}</Button>

@@ -2121,7 +2121,8 @@
     "enrollment": {
       "label": "Inscripción",
       "open": "Abierto al equipo",
-      "invite": "Solo con invitación"
+      "invite": "Solo con invitación",
+      "public": "Abierto a todos"
     },
     "msg": {
       "welcome": "Bienvenida",
@@ -2253,7 +2254,12 @@
     "inviteNoMessages": "Las invitaciones solo habilitan la elegibilidad; no se envían mensajes. El acceso de pago requiere un pago verificado.",
     "enrollmentDetails": "Detalles de inscripción",
     "participantNumber": "Participante {{number}}",
-    "inactiveEnrollment": "Acceso inactivo"
+    "inactiveEnrollment": "Acceso inactivo",
+    "enrollmentHint": {
+      "open": "Solo los miembros de tu equipo pueden verlo y unirse.",
+      "public": "Aparece en tu página pública de coach. Cualquier persona mayor de 18 con cuenta de ZoheeWell puede unirse.",
+      "invite": "Solo pueden unirse las personas que invites. No se muestra públicamente."
+    }
   },
   "recognition": {
     "title": "Reconocimiento",
@@ -4233,7 +4239,11 @@
     "myPage": "Mi página de anfitrión",
     "teamPage": "Página del equipo",
     "googleCalendar": "Calendario de Google",
-    "offerings": "Cursos y recursos"
+    "offerings": "Cursos y recursos",
+    "challenges": "Retos",
+    "viewChallenge": "Ver reto",
+    "challengeFull": "El reto está lleno",
+    "challengeEnded": "Este reto terminó"
   },
   "crop": {
     "lowRes": "Este recorte mide solo {{width}} px de ancho, así que puede verse poco nítido en pantallas grandes o de alta resolución. Para una portada más nítida, aleja el zoom o elige una foto más grande (al menos 1200 px de ancho).",
@@ -7202,7 +7212,10 @@
   },
   "langFields": {
     "add": "Agregar traducción en {{lang}}",
-    "hide": "Ocultar {{lang}} por ahora"
+    "hide": "Ocultar {{lang}} por ahora",
+    "editing": "Idioma de {{field}}",
+    "filled": "tiene texto",
+    "translateFrom": "Traducir del {{lang}} (revisa antes de guardar)"
   },
   "eventWaivers": {
     "groupLabel": "Acuerdos del evento",
@@ -7957,5 +7970,20 @@
     "blockTitle": "Compañía",
     "callUs": "Llámanos",
     "email": "Soporte por correo"
+  },
+  "embed": {
+    "title": "Inserta en tu sitio web",
+    "intro": "Muestra tu página pública de coach —eventos, retos y recursos— en tu propio sitio web. Se actualiza sola cuando cambias tu página.",
+    "step1": "Copia el código de abajo.",
+    "step2": "En tu creador de sitios, agrega un bloque \"HTML\" o \"Insertar\" donde lo quieras.",
+    "step3": "Pega el código y guarda tu sitio.",
+    "code": "Código para insertar",
+    "copy": "Copiar código",
+    "signInNote": "Unirse, iniciar sesión y pagar abren ZoheeWell en una pestaña nueva, para que funcionen en cualquier sitio.",
+    "preview": "Vista previa",
+    "iframeTitle": "{{name}} en ZoheeWell",
+    "coachPage": "Mi página de coach",
+    "openZoheeWell": "Abrir en ZoheeWell",
+    "newTabNote": "Los enlaces abren ZoheeWell en una pestaña nueva."
   }
 }

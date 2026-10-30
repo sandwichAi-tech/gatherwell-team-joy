@@ -1,3 +1,4 @@
+import { HostChallengeCards, type HostChallenge } from '@/components/host-challenges';
 import { displayTitleCase } from '@/lib/event-presentation';
 import { RequestTeamJoin } from '@/components/team-membership';
 import { FoundingSeal } from '@/components/founding';
@@ -30,7 +31,7 @@ import { initialsOf, mediaUrl } from '@/lib/account';
 type Upcoming = { id: string; title: string; starts_at: string; timezone: string; location_name: string | null; online: boolean; cover_style: number | null };
 type HostOffering = PublicOffering & { kind: string; id: string };
 type HostLink = { label: string; url: string; kind: 'website' | 'social' };
-type HostPage = { id: string; name: string | null; org: string | null; avatar_url: string | null; cover_url: string | null; coverSrc?: import('@/lib/media-renditions').Rendition | null; city: string | null; bio: string | null; shop_url: string | null; categories: string[]; languages: string[]; accessibility: string | null; links: HostLink[]; followers: number; following: boolean; upcoming: Upcoming[]; offerings: HostOffering[] };
+type HostPage = { id: string; name: string | null; org: string | null; avatar_url: string | null; cover_url: string | null; coverSrc?: import('@/lib/media-renditions').Rendition | null; city: string | null; bio: string | null; shop_url: string | null; categories: string[]; languages: string[]; accessibility: string | null; links: HostLink[]; followers: number; following: boolean; upcoming: Upcoming[]; offerings: HostOffering[]; challenges?: HostChallenge[] };
 type TeamPage = { id: string; name: string; cover_url: string | null; leader: { name: string | null; slug: string | null; avatar_url: string | null } | null; members: number; followers: number; following: boolean; upcoming: Upcoming[] };
 
 export const pageQuery = (kind: 'host' | 'team', slug: string) => ({
@@ -124,6 +125,7 @@ export function FollowPage({ kind, slug }: { kind: 'host' | 'team'; slug: string
       </div>
     </section>
     {host && <CoachTrustSection hostId={host.id} />}
+    {host && <HostChallengeCards items={host.challenges ?? []} />}
     {host && host.offerings.length > 0 && <section className="follow-upcoming">
       <h2>{t('follow.offerings')}</h2>
       <ul className="follow-list offering-cards">{host.offerings.map(o => <li key={o.id}><OfferingCard o={o} lang={i18n.resolvedLanguage ?? 'en'} /></li>)}</ul>
