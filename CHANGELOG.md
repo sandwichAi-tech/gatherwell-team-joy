@@ -1,5 +1,12 @@
 # ZoheeWell Change Log
 
+## 2026-10-30 — Legal Center layout (L1)
+- New /legal Legal Center: company card (ZoheeWell LLC, Wyoming LLC), support/privacy/legal/copyright mailto contacts, grouped document cards (For everyone, For guests, For hosts, Rights) with one-line summaries and effective/version line.
+- /terms, /privacy and /legal/$doc now use a wide reading layout (720px text, sticky desktop contents, collapsible phone contents, section anchors, Print and Copy link, document footer, print stylesheet with wordmark and page numbers). Draft badge kept. No legal wording changed.
+- Community Guidelines, Accessibility, Refund & Cancellation, Health & Safety and Copyright & DMCA have no approved text yet, so their cards read "Not yet published" and do not link.
+- Effective date shows "date pending" until approved (LEGAL_EFFECTIVE_DATE); mailing address shows "coming soon" until supplied.
+- /legal added to the sitemap; each legal page has its own title and description. EN/ES keys under legalCenter.*.
+
 ## 2026-10-29 — Missing translations (text only)
 - Added 54 keys in both English and Latin American Spanish. Existing prices, eligibility, access, layout and stored data unchanged. Updated pricingV4.seatFree to the approved host-count explanation and matching Spanish.
 - Added keys: progress.add, progress.bestKind, progress.bestLabel, progress.bestPlaceholder, progress.bestUnit, progress.bestValue, progress.bests, progress.byCategory, progress.checkToday, progress.checks_one, progress.checks_other, progress.claim, progress.goalPlaceholder, progress.goals, progress.newGoal, progress.otherCategory, progress.private, progress.recapEyebrow, progress.recapLine, progress.recapTitle, progress.removeBest, progress.removeGoal, progress.saveError, progress.shareRecap, progress.shareText, progress.shareTitle, progress.sharedOn, progress.sharedOff, progress.sharedWithYou, progress.stat.attended, progress.stat.streak, progress.stat.best, progress.stat.lessons, progress.recap.gatherings, progress.recap.streak, progress.recap.people, progress.recap.goals, progress.kind.distance, progress.kind.time, progress.kind.reps, progress.kind.lifted, progress.unit.km, progress.unit.mi, progress.unit.min, progress.unit.reps, progress.unit.kg, progress.unit.lb, home.explore.inviteTitle, home.explore.inviteText, home.explore.inviteCopied, builder.errors.tier_invalid, resources.type.track, learn.fileTooBig, founding.admin.gatherings.
