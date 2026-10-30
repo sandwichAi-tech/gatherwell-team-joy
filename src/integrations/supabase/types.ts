@@ -6119,6 +6119,66 @@ export type Database = {
           },
         ]
       }
+      referral_memberships: {
+        Row: {
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          id: string
+          invited_by: string | null
+          legacy: boolean
+          program_id: string
+          referrer_id: string
+          status: string
+          terms_accepted_at: string | null
+          terms_version_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          invited_by?: string | null
+          legacy?: boolean
+          program_id: string
+          referrer_id: string
+          status: string
+          terms_accepted_at?: string | null
+          terms_version_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          invited_by?: string | null
+          legacy?: boolean
+          program_id?: string
+          referrer_id?: string
+          status?: string
+          terms_accepted_at?: string | null
+          terms_version_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_memberships_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "referral_programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referral_memberships_terms_version_id_fkey"
+            columns: ["terms_version_id"]
+            isOneToOne: false
+            referencedRelation: "consent_text_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       referral_payouts: {
         Row: {
           amount_cents: number
@@ -6309,6 +6369,51 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "referral_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      referral_terms_acceptances: {
+        Row: {
+          accepted_at: string
+          body_sha256: string
+          consent_version_id: string
+          id: string
+          locale: string
+          membership_id: string
+          referrer_id: string
+        }
+        Insert: {
+          accepted_at?: string
+          body_sha256: string
+          consent_version_id: string
+          id?: string
+          locale: string
+          membership_id: string
+          referrer_id: string
+        }
+        Update: {
+          accepted_at?: string
+          body_sha256?: string
+          consent_version_id?: string
+          id?: string
+          locale?: string
+          membership_id?: string
+          referrer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_terms_acceptances_consent_version_id_fkey"
+            columns: ["consent_version_id"]
+            isOneToOne: false
+            referencedRelation: "consent_text_versions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referral_terms_acceptances_membership_id_fkey"
+            columns: ["membership_id"]
+            isOneToOne: false
+            referencedRelation: "referral_memberships"
             referencedColumns: ["id"]
           },
         ]
@@ -8582,6 +8687,10 @@ export type Database = {
     }
     Functions: {
       accept_founding: { Args: never; Returns: undefined }
+      accept_referral_terms: {
+        Args: { _locale: string; _program: string }
+        Returns: boolean
+      }
       accept_team_invite: { Args: { _token: string }; Returns: Json }
       active_fee_rule: {
         Args: { _at?: string; _offering_type: string }
@@ -8648,6 +8757,7 @@ export type Database = {
       advance_journey_runs: { Args: { _limit?: number }; Returns: number }
       advance_resource_journeys: { Args: { _limit?: number }; Returns: number }
       ai_usage_status: { Args: never; Returns: Json }
+      approved_affiliate_terms: { Args: { _locale: string }; Returns: string }
       approved_event_agreement: { Args: { _locale: string }; Returns: string }
       archive_host_update: { Args: { _id: string }; Returns: undefined }
       archive_message_template: {
@@ -9031,6 +9141,10 @@ export type Database = {
         Args: { _approve: boolean; _id: string }
         Returns: string
       }
+      decide_referrer: {
+        Args: { _action: string; _program: string; _referrer: string }
+        Returns: string
+      }
       decide_rsvp: {
         Args: { _approve: boolean; _rsvp: string }
         Returns: string
@@ -9337,6 +9451,10 @@ export type Database = {
         Args: { _category: string; _title: string }
         Returns: string
       }
+      invite_referrer: {
+        Args: { _email: string; _program: string }
+        Returns: boolean
+      }
       invite_team_member: {
         Args: { _email: string; _role?: string; _team: string }
         Returns: Json
@@ -9390,6 +9508,7 @@ export type Database = {
         }
         Returns: string
       }
+      learn_file_version: { Args: { _path: string }; Returns: string }
       learn_object_unlocked: { Args: { _name: string }; Returns: boolean }
       leave_free_offer: { Args: { _offer: string }; Returns: undefined }
       leave_team: { Args: { _team: string }; Returns: undefined }
@@ -9687,6 +9806,7 @@ export type Database = {
         Args: { _limit?: number }
         Returns: number
       }
+      program_referrers: { Args: { _program: string }; Returns: Json }
       progress_core: { Args: { _tz: string; _user: string }; Returns: Json }
       promo_usage: {
         Args: never
@@ -9813,10 +9933,15 @@ export type Database = {
           title: string
         }[]
       }
+      referral_member_active: {
+        Args: { _program: string; _user: string }
+        Returns: boolean
+      }
       referral_program_for: {
         Args: { _item: string; _kind: string }
         Returns: Json
       }
+      referral_program_manager: { Args: { _program: string }; Returns: boolean }
       referral_release_due: { Args: never; Returns: undefined }
       referral_reverse_order: {
         Args: { _order: string; _reason: string }
@@ -9996,6 +10121,10 @@ export type Database = {
         Returns: undefined
       }
       request_ip: { Args: never; Returns: string }
+      request_referral_membership: {
+        Args: { _program: string }
+        Returns: string
+      }
       request_team_membership: {
         Args: { _invite?: string; _team: string }
         Returns: string
