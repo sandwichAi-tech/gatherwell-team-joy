@@ -2955,3 +2955,14 @@ a.legal-doc-card:hover, a.legal-doc-card:focus-visible { border-color: var(--pri
 .lang-switch button{min-height:44px;min-width:48px;padding:0 12px;background:transparent;color:var(--foreground);font-weight:600;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:4px}
 .lang-switch button.is-active{background:var(--primary);color:var(--primary-foreground)}
 .lang-dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.7}
+/* Public challenge cards + website embed */
+.host-challenge{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-height:48px}
+.host-challenge-desc{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.host-challenge-cta{font-weight:600;color:var(--primary)}
+.embed-page{max-width:720px;margin:0 auto;padding:16px;display:grid;gap:16px;background:var(--background);color:var(--foreground)}
+.embed-head h1{margin:0;font-size:24px}
+.embed-open{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;border-radius:12px;background:var(--primary);color:var(--primary-foreground);font-weight:600;text-decoration:none}
+.embed-panel{display:grid;gap:8px;margin-top:16px}
+.embed-steps{margin:0;padding-left:20px;display:grid;gap:4px}
+.embed-code{font-family:ui-monospace,monospace;font-size:12px}
+.embed-preview{width:100%;height:480px;border:1px solid var(--border);border-radius:12px;margin-top:8px}
