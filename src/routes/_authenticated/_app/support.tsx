@@ -13,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 const db = supabase as unknown as { rpc: (fn: string, args?: Record<string, unknown>) => Promise<{ data: any; error: { message?: string } | null }> };
 import { gatherwellHead } from '@/lib/gatherwell-head';
+import { COMPANY, phoneHref } from '@/lib/company';
 
 export const Route = createFileRoute('/_authenticated/_app/support')({
   head: () => gatherwellHead('me'),
@@ -59,6 +60,7 @@ function SupportPage() {
       <AlertCircle /><div><strong>{t('support.emergencyTitle')}</strong><p>{t('support.emergencyText')}</p></div>
     </div>
     <p className="muted">{t('support.routingNote')}</p>
+    <p className="support-call"><a className="gw-call-link" href={phoneHref}>{t('company.callUs')} {COMPANY.phoneDisplay}</a></p>
     {isLoading ? <ListSkeleton /> : error ? <RetryState retry={() => void refetch()} /> : data.length === 0 ?
       <EmptyState icon="LifeBuoy" text={t('support.empty')} /> :
       <ul className="settings-list">{data.map(tk => <li key={tk.id}>

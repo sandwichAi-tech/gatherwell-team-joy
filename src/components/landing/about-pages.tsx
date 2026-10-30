@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { GwIcon, type GwIconName } from '@/components/gw-icon';
 import { LandingFrame } from './landing-chrome';
+import { COMPANY, phoneHref } from '@/lib/company';
 
 const ABOUT_WHO_ICONS: GwIconName[] = ['CalendarHeart', 'BookOpen', 'MessageCircle', 'Compass'];
 const ABOUT_USE_ICONS: GwIconName[] = ['UsersRound', 'Heart'];
@@ -52,6 +53,16 @@ export function AboutPage() {
         <span className="gw-label">{t('marketing.about.betaLabel')}</span>
         <h2 id="about-beta" className="gw-display gw-h2">{t('marketing.about.betaTitle')}</h2>
         <p className="gw-marketing-sub">{t('marketing.about.betaBody')}</p>
+      </div>
+    </section>
+    <section className="gw-band gw-band-white gw-marketing-section" aria-labelledby="about-company">
+      <div className="gw-container">
+        <h2 id="about-company" className="gw-label">{t('company.blockTitle')}</h2>
+        <ul className="gw-company-block">
+          <li>{COMPANY.legalName}</li>
+          <li><a className="gw-call-link" href={phoneHref}>{t('company.callUs')} {COMPANY.phoneDisplay}</a></li>
+          <li><a className="gw-mail-link" href={`mailto:${COMPANY.supportEmail}`}>{COMPANY.supportEmail}</a></li>
+        </ul>
       </div>
     </section>
     <section className="gw-band gw-band-canvas gw-marketing-section gw-final-host">
