@@ -1,3 +1,4 @@
+import { LangPair } from '@/components/lang-fields';
 import { listedInTeam } from '@/lib/resource-placement';
 import { Feature } from '@/lib/feature-flags';
 import { useMemo, useState } from 'react';
@@ -207,8 +208,7 @@ function SaveTemplateSheet({ resource, onClose }: { resource: ResourceCardData |
   const valid = !!(names.en.trim() || names.es.trim());
   return <ResponsiveSheet open={!!resource} onOpenChange={v => { if (!v) onClose(); }} title={t('templatesR.saveTitle')} description={t('templatesR.saveText')} icon="CopyPlus"
     footer={<Button className="onboarding-continue" disabled={busy || !valid} onClick={() => void save()}>{busy ? t('templatesR.saving') : t('templatesR.save')}</Button>}>
-    <div className="form-field"><label className="field-label" htmlFor="rt-en">{t('templatesR.nameEn')}</label><Input id="rt-en" className="field-input" maxLength={120} value={names.en} onChange={e => setNames({ ...names, en: e.target.value })} /></div>
-    <div className="form-field"><label className="field-label" htmlFor="rt-es">{t('templatesR.nameEs')}</label><Input id="rt-es" className="field-input" maxLength={120} value={names.es} onChange={e => setNames({ ...names, es: e.target.value })} /></div>
+    <LangPair id="rt-name" label={t('templates.title')} en={names.en} es={names.es} onEn={v => setNames({ ...names, en: v })} onEs={v => setNames({ ...names, es: v })} maxLength={120} />
   </ResponsiveSheet>;
 }
 

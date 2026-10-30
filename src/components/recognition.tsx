@@ -1,3 +1,4 @@
+import { LangPair } from '@/components/lang-fields';
 import { useFeature } from '@/lib/feature-flags';
 import { EmptyState } from '@/components/launch-states';
 import { trackEvent } from '@/lib/analytics';
@@ -440,8 +441,7 @@ export function EventBadgePanel({ eventId, teamId }: { eventId: string; teamId: 
     <ResponsiveSheet open={open} onOpenChange={setOpen} title={t('recognition.eventBadgeTitle')} footer={<Button className="onboarding-continue" disabled={busy || !f.name_en.trim() || !f.name_es.trim()} onClick={() => void save()}>{t('common.create')}</Button>}>
       <div className="edit-form">
         <div className="badge-preview"><Medallion badge={f} size={96} /></div>
-        <div className="form-field"><label className="field-label" htmlFor="eb-en">{t('recognition.nameEn')}</label><Input id="eb-en" className="field-input" maxLength={40} value={f.name_en} onChange={e => setF({ ...f, name_en: e.target.value })} /></div>
-        <div className="form-field"><label className="field-label" htmlFor="eb-es">{t('recognition.nameEs')}</label><Input id="eb-es" className="field-input" maxLength={40} value={f.name_es} onChange={e => setF({ ...f, name_es: e.target.value })} /></div>
+        <LangPair id="eb-name" label={t('templates.title')} en={f.name_en} es={f.name_es} onEn={v => setF({ ...f, name_en: v })} onEs={v => setF({ ...f, name_es: v })} maxLength={40} />
         <div className="form-field"><span className="field-label">{t('recognition.icon')}</span>
           <div className="icon-pick">{CUSTOM_ICONS.map(name => <button type="button" key={name} aria-label={name} aria-pressed={f.icon === name} className={`icon-option ${f.icon === name ? 'is-selected' : ''}`} onClick={() => setF({ ...f, icon: name })}><GwIcon name={name} variant="feature" size={24} /></button>)}</div></div>
         <div className="form-field"><span className="field-label">{t('recognition.tier')}</span>
