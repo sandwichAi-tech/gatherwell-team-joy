@@ -2757,7 +2757,44 @@
       "quietHosts_other": "{{team}} · {{count}} anfitriones no tienen eventos programados",
       "resource": "Nuevo recurso: {{title}}",
       "empty": "No hay nada para hoy. Crea un evento",
-      "create": "Crear un evento"
+      "create": "Crear un evento",
+      "sections": {
+        "attention": "Requiere tu atención",
+        "upcoming": "Próximamente",
+        "updates": "Novedades"
+      },
+      "caughtUp": "Estás al día. Nada requiere tu atención por ahora.",
+      "viewAll_one": "Ver todo ({{count}})",
+      "viewAll_other": "Ver todo ({{count}})",
+      "actions": {
+        "share": "Compartir evento",
+        "viewEvent": "Ver evento",
+        "reviewRegistrations": "Revisar inscripciones",
+        "viewTicket": "Ver tu lugar",
+        "viewTeam": "Ver equipo",
+        "open": "Abrir"
+      },
+      "h": {
+        "share": "{{title}} aún no tiene inscripciones",
+        "hosting": "Organizas {{title}}",
+        "attending": "Vas a {{title}}",
+        "signups_one": "1 inscripción nueva",
+        "signups_other": "{{count}} inscripciones nuevas",
+        "teamEvents_one": "1 evento del equipo esta semana",
+        "teamEvents_other": "{{count}} eventos del equipo esta semana",
+        "quietHosts_one": "1 anfitrión no tiene nada programado",
+        "quietHosts_other": "{{count}} anfitriones no tienen nada programado",
+        "resource": "Recurso nuevo: {{title}}"
+      },
+      "ctx": {
+        "share": "Es esta semana. Compartir tu enlace es la forma más rápida de llenar lugares.",
+        "hosting": "{{when}}{{place}} · {{count}} asistirán",
+        "attending": "{{when}}",
+        "signups": "Desde ayer en tus eventos. No necesitas hacer nada.",
+        "teamEvents": "{{team}} · Para que estés al tanto.",
+        "quietHosts": "{{team}} · Opcional: escríbeles.",
+        "resource": "Agregado esta semana."
+      }
     },
     "followups": {
       "eyebrow": "Seguimientos",
@@ -2845,7 +2882,12 @@
       "saveDraft": "Guardar borrador",
       "published": "Resumen publicado",
       "saved": "Resumen guardado",
-      "unpublished": "Borrador"
+      "unpublished": "Borrador",
+      "filesNote": "Los resúmenes usan las notas de la lección o el texto que pegues aquí. Aún no se leen los archivos adjuntos.",
+      "noSource": "No hay texto para resumir. Primero pega notas o una transcripción.",
+      "tooShort": "No hay suficiente texto para resumir con precisión. Pega al menos unos párrafos.",
+      "unavailable": "Los resúmenes aún no están activados. No se creó nada.",
+      "failed": "No se pudo crear el resumen. Inténtalo de nuevo."
     },
     "library": {
       "sources": "Fuentes",
@@ -4967,7 +5009,20 @@
       "storage_limit": "No hay espacio suficiente para estos archivos.",
       "tooBig": "Este archivo pesa más de 5 MB.",
       "failed": "Algo salió mal. Inténtalo de nuevo."
-    }
+    },
+    "optional": "Opcional",
+    "whyVerify": "La verificación confirma tu identidad y tus credenciales para que las personas confíen en quién organiza. Tus documentos se mantienen privados.",
+    "cardStatus": {
+      "none": "Estado: sin iniciar",
+      "pending": "Estado: en revisión",
+      "approved": "Estado: verificado",
+      "rejected": "Estado: no aprobado. Puedes intentarlo de nuevo.",
+      "error": "No se pudo cargar el estado."
+    },
+    "tryAgainAction": "Intentar de nuevo",
+    "setupTitle": "Tu perfil está listo",
+    "setupText": "Puedes verificarte ahora o más tarde desde Yo, Editar tu página pública. Puedes organizar de cualquier forma.",
+    "later": "Hacerlo más tarde"
   },
   "retreat": {
     "toggle": "Es un retiro o viaje",
@@ -7214,7 +7269,15 @@
     "accountConfirm": "Inicia sesión para confirmar preferencias",
     "unsubscribed": "Te diste de baja de las novedades de este coach.",
     "confirmedStatus": "Tus preferencias de correo están confirmadas para este coach.",
-    "unconfirmedStatus": "Confirma tus preferencias seleccionadas para este coach."
+    "unconfirmedStatus": "Confirma tus preferencias seleccionadas para este coach.",
+    "prepareTitle": "Avisa a tus suscriptores",
+    "prepareAudienceEvents_one": "1 suscriptor confirmado recibe eventos nuevos",
+    "prepareAudienceEvents_other": "{{count}} suscriptores confirmados reciben eventos nuevos",
+    "prepareAudienceResources_one": "1 suscriptor confirmado recibe recursos nuevos",
+    "prepareAudienceResources_other": "{{count}} suscriptores confirmados reciben recursos nuevos",
+    "prepareChannel": "Correo electrónico",
+    "preparePreview": "Novedad de tu coach: {{title}}. Ver detalles: {{link}}",
+    "prepareNotSent": "El envío de novedades a suscriptores aún no está activado. No se ha enviado nada."
   },
   "langFields": {
     "add": "Agregar traducción en {{lang}}",
@@ -7690,7 +7753,8 @@
       "removed": "Eliminado",
       "suspended": "Suspendido",
       "unavailable": "No disponible"
-    }
+    },
+    "separateNote": "Unirte a un equipo es para coaches que trabajan juntos. No te convierte en afiliado, no te da compras ni contenido pagado de nadie y no comparte datos de clientes."
   },
   "teamLibrary": {
     "title": "Biblioteca del equipo",
