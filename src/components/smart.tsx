@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { EmptyState } from '@/components/launch-states';
 import { trackEvent } from '@/lib/analytics';
 import { ListSkeleton } from '@/components/launch-states';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -16,6 +17,7 @@ import { myCohostedEventIds } from '@/components/cohosts';
 import { supabase } from '@/integrations/supabase/client';
 import { workspaceQuery } from '@/lib/account';
 import { dailyBriefQuery } from '@/lib/daily-brief-query';
+import { BRIEF_UPDATES_SHOWN, groupBrief, type BriefItem } from '@/lib/morning-brief';
 import { hasBlockedClaim } from '@/lib/recognition';
 import { prepareFollowupsNow, sendFollowup, suggestRewrite, summarizeLesson } from '@/lib/smart.functions';
 
@@ -48,25 +50,37 @@ export function ClaimGuard({ text, onUse, lang: forced }: { text: string; onUse:
 
 export function DailyBriefCard() {
   const { t } = useTranslation(); const lang = useLang(); const { userId } = useGatherwell();
-  const { data } = useSuspenseQuery(dailyBriefQuery(userId, lang));
-  const text = (line: typeof data.lines[number]) => // The long check-in code is never the primary Home display; the Next up QR sheet carries it.
-  t(`smart.brief.${line.label === 'attendingCode' ? 'attending' : line.label}`, {
-    ...line.values,
-    when: typeof line.values['when'] === 'string' ? new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' }).format(new Date(line.values['when'])) : '',
-    place: line.values['place'] ? ` · ${line.values['place']}` : '',
-  });
+  const q = useQuery(dailyBriefQuery(userId, lang));
+  if (q.isLoading) return null;
+  if (!q.data) return <section className="brief-card morning-brief" aria-labelledby="brief-h"><h2 id="brief-h">{t('smart.brief.title')}</h2><p role="alert">{t('smart.brief.loadError')}</p><Button variant="secondary" onClick={() => void q.refetch()}>{t('smart.brief.retry')}</Button></section>;
+  const groups = groupBrief(q.data.lines);
+  const when = (v: unknown) => typeof v === 'string' ? new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(v)) : '';
+  const label = (l: string) => (l === 'attendingCode' ? 'attending' : l);
+  const vals = (item: BriefItem) => ({ ...item.values, when: when(item.values['when']), place: item.values['place'] ? ` · ${item.values['place']}` : '' });
+  const target = (item: BriefItem, children: ReactNode, className: string) => {
+    const id = item.id ?? '';
+    if (item.target === 'team') return <Link className={className} to="/team/insights">{children}</Link>;
+    if (item.label === 'signups') return <Link className={className} to="/event/$id/guests" params={{ id }}>{children}</Link>;
+    if (item.target === 'resource') return item.values['kind'] === 'recipe' ? <Link className={className} to="/learn/recipe/$id" params={{ id }}>{children}</Link>
+      : item.values['kind'] === 'track' ? <Link className={className} to="/learn/track/$id" params={{ id }}>{children}</Link>
+      : <Link className={className} to="/learn/lesson/$id" params={{ id }}>{children}</Link>;
+    if (item.target === 'attending') return <Link className={className} to="/e/$id" params={{ id }}>{children}</Link>;
+    return <Link className={className} to="/event/$id" params={{ id }}>{children}</Link>;
+  };
+  const row = (item: BriefItem) => <li key={item.key} className={`brief-item ${item.required ? 'is-required' : ''}`}>
+    <div className="brief-item-text"><strong>{t(`smart.brief.h.${label(item.label)}`, vals(item))}</strong><small>{t(`smart.brief.ctx.${label(item.label)}`, vals(item))}</small></div>
+    {target(item, <>{t(`smart.brief.actions.${item.action}`)}<ArrowRight /></>, item.required ? 'brief-action is-primary' : 'brief-action')}
+  </li>;
+  const shown = groups.updates.slice(0, BRIEF_UPDATES_SHOWN), more = groups.updates.slice(BRIEF_UPDATES_SHOWN);
+  const empty = !groups.attention.length && !groups.upcoming.length && !groups.updates.length;
   return <section className="brief-card morning-brief" aria-labelledby="brief-h">
     <div className="section-heading"><div><span className="eyebrow">{t('smart.brief.eyebrow')}</span><h2 id="brief-h">{t('smart.brief.title')}</h2></div></div>
-    {data.lines.length ? <ul className="brief-lines">{data.lines.map(line => {
-      const content = <>{text(line)}<ArrowRight /></>;
-      return <li key={line.key}>{line.target === 'team' ? <Link to="/team/insights">{content}</Link>
-        : line.label === 'signups' ? <Link to="/event/$id/guests" params={{ id: line.id ?? '' }}>{content}</Link>
-        : line.target === 'resource' ? line.values['kind'] === 'recipe' ? <Link to="/learn/recipe/$id" params={{ id: line.id ?? '' }}>{content}</Link>
-          : line.values['kind'] === 'track' ? <Link to="/learn/track/$id" params={{ id: line.id ?? '' }}>{content}</Link>
-          : <Link to="/learn/lesson/$id" params={{ id: line.id ?? '' }}>{content}</Link>
-        : line.target === 'attending' ? <Link to="/e/$id" params={{ id: line.id ?? '' }}>{content}</Link>
-        : <Link to="/event/$id" params={{ id: line.id ?? '' }}>{content}</Link>}</li>;
-    })}</ul> : <div className="brief-empty"><p>{t('smart.brief.empty')}</p><Button asChild><Link to="/gathering/new">{t('smart.brief.create')}<ArrowRight /></Link></Button></div>}
+    <div className="brief-group"><h3>{t('smart.brief.sections.attention')}</h3>
+      {groups.attention.length ? <ul className="brief-items">{groups.attention.map(row)}</ul> : <p className="brief-caught-up" role="status"><Check />{t('smart.brief.caughtUp')}</p>}</div>
+    {groups.upcoming.length > 0 && <div className="brief-group"><h3>{t('smart.brief.sections.upcoming')}</h3><ul className="brief-items">{groups.upcoming.map(row)}</ul></div>}
+    {groups.updates.length > 0 && <div className="brief-group"><h3>{t('smart.brief.sections.updates')}</h3><ul className="brief-items">{shown.map(row)}</ul>
+      {more.length > 0 && <details className="brief-more"><summary>{t('smart.brief.viewAll', { count: groups.updates.length })}</summary><ul className="brief-items">{more.map(row)}</ul></details>}</div>}
+    {empty && <div className="brief-empty"><p>{t('smart.brief.empty')}</p><Button asChild><Link to="/gathering/new">{t('smart.brief.create')}<ArrowRight /></Link></Button></div>}
   </section>;
 }
 
@@ -218,12 +232,13 @@ export function LessonSummary({ lessonId, leader }: { lessonId: string; leader: 
   const key = ['lesson-summary', lessonId];
   const { data } = useQuery({ queryKey: key, queryFn: async () => (await supabase.from('lesson_summaries').select('*').eq('lesson_id', lessonId).maybeSingle()).data as (Sum & { team_id: string; published: boolean }) | null });
   const [open, setOpen] = useState(false); const [notes, setNotes] = useState(''); const [busy, setBusy] = useState(false);
-  const [draft, setDraft] = useState<(Sum & { team_id: string }) | null>(null); const [preview, setPreview] = useState(false);
+  const [draft, setDraft] = useState<(Sum & { team_id: string }) | null>(null); const [preview, setPreview] = useState(false); const [fail, setFail] = useState<string | null>(null);
   const run = async () => {
     setBusy(true);
     try {
       const r = await fn({ data: { lessonId, notes } });
-      if (!r.ok) { toast.error(t(r.error === 'limit' ? 'assistant.limitReached' : 'assistant.failed')); return; }
+      if (!r.ok) { setFail(r.error); return; }
+      setFail(null);
       setDraft({ ...r.summary, team_id: r.teamId }); setPreview(r.preview);
     } finally { setBusy(false); }
   };
@@ -245,7 +260,9 @@ export function LessonSummary({ lessonId, leader }: { lessonId: string; leader: 
       {leader && <Button variant="secondary" size="sm" onClick={() => setDraft({ ...shown })}><Pencil />{t('smart.summary.edit')}</Button>}</section>}
     {leader && !draft && <div className="summary-cta">{!open ? <Button variant="secondary" onClick={() => setOpen(true)}>{t(shown ? 'smart.summary.redo' : 'smart.summary.summarize')}</Button>
       : <section className="panel"><h2>{t('smart.summary.summarize')}</h2><p className="auth-subtitle">{t('smart.summary.pasteHint')}</p>
-        <Textarea rows={6} maxLength={30000} className="field-textarea" value={notes} onChange={e => setNotes(e.target.value)} aria-label={t('smart.summary.notes')} placeholder={t('smart.summary.notesPlaceholder')} />
+        <p className="field-hint">{t('smart.summary.filesNote')}</p>
+        <Textarea rows={6} maxLength={30000} className="field-textarea" value={notes} onChange={e => { setNotes(e.target.value); setFail(null); }} aria-label={t('smart.summary.notes')} placeholder={t('smart.summary.notesPlaceholder')} />
+        {fail && <p className="field-error" role="alert">{t(fail === 'limit' ? 'assistant.limitReached' : fail === 'no_source' ? 'smart.summary.noSource' : fail === 'too_short' ? 'smart.summary.tooShort' : fail === 'unavailable' ? 'smart.summary.unavailable' : 'smart.summary.failed')}</p>}
         <div className="as-actions"><Button disabled={busy} onClick={run}>{busy ? t('smart.summary.working') : t('smart.summary.summarize')}</Button><Button variant="ghost" onClick={() => setOpen(false)}>{t('smart.cancel')}</Button></div></section>}</div>}
     {draft && <section className="panel summary-editor"><div className="section-heading"><h2>{t('smart.summary.review')}</h2>{preview && <span className="chip quiet-chip">{t('assistant.previewMode')}</span>}</div>
       {(['en', 'es'] as const).map(l => <div key={l} className="summary-lang"><span className="gw-label">{l.toUpperCase()}</span>

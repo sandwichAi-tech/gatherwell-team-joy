@@ -14,6 +14,13 @@
 
 export const SITE_URL = 'https://zoheewell.com';
 
+/** Origin for links people share with others: the production domain, except local development. Preview and
+ * secondary hosts are never handed to recipients. */
+export function shareOrigin(current?: string): string {
+  const origin = current ?? (typeof window !== 'undefined' ? window.location.origin : '');
+  return /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin) ? origin : SITE_URL;
+}
+
 /** Absolute canonical URL for a public path (path must start with '/'). */
 export function canonicalUrl(path: string): string {
   return `${SITE_URL}${path === '/' ? '/' : path}`;

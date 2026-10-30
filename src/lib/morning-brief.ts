@@ -45,3 +45,30 @@ export function buildMorningBrief(input: BriefInput): BriefLine[] {
   }
   return lines;
 }
+export type BriefSection = 'attention' | 'upcoming' | 'updates';
+export type BriefAction = 'share' | 'viewEvent' | 'reviewRegistrations' | 'viewTicket' | 'viewTeam' | 'open';
+export type BriefItem = BriefLine & { section: BriefSection; action: BriefAction; required: boolean };
+/** Section, action and whether action is required. Only an event with no sign-ups this week needs the host; everything else is informational. */
+const PLACE: Record<string, { section: BriefSection; action: BriefAction; required: boolean }> = {
+  share: { section: 'attention', action: 'share', required: true },
+  hosting: { section: 'upcoming', action: 'viewEvent', required: false },
+  attending: { section: 'upcoming', action: 'viewTicket', required: false },
+  attendingCode: { section: 'upcoming', action: 'viewTicket', required: false },
+  signups: { section: 'updates', action: 'reviewRegistrations', required: false },
+  teamEvents: { section: 'updates', action: 'viewTeam', required: false },
+  quietHosts: { section: 'updates', action: 'viewTeam', required: false },
+  resource: { section: 'updates', action: 'open', required: false },
+};
+export const BRIEF_UPDATES_SHOWN = 3;
+/** Groups brief lines into Needs your attention / Upcoming / Updates, dropping duplicate keys and keeping rule order inside each group. */
+export function groupBrief(lines: BriefLine[]): Record<BriefSection, BriefItem[]> {
+  const out: Record<BriefSection, BriefItem[]> = { attention: [], upcoming: [], updates: [] };
+  const seen = new Set<string>();
+  for (const line of lines) {
+    const place = PLACE[line.label];
+    if (!place || seen.has(line.key)) continue;
+    seen.add(line.key);
+    out[place.section].push({ ...line, ...place });
+  }
+  return out;
+}

@@ -48,6 +48,7 @@ function JoinPage() {
       <h1 className="auth-title">{t('join.title', { team: state.team })}</h1>
       {state.leader && <div className="leader-line"><span className="initial-avatar">{initialsOf(state.leader)}</span><span>{t('join.led', { name: state.leader })}</span></div>}
       <p className="auth-subtitle">{t('teamMembership.pendingHint')}</p>
+      <p className="field-hint">{t('teamMembership.separateNote')}</p>
       <RequestTeamJoin teamId={state.id} />
       <Button variant="link" className="auth-link" onClick={() => { clearPendingInvite(); void navigate({ to: '/' }); }}>{t('join.cancel')}</Button>
     </>}

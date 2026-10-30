@@ -1,8 +1,9 @@
+import { welcomeLink } from '@/lib/welcome';
 import { MyTeams } from '@/components/team-membership';
 import { useFeature } from '@/lib/feature-flags';
 import { SPANISH_ENABLED } from '@/lib/i18n';
 import { useIsFounding } from '@/components/founding';
-import { useIsVerified } from '@/components/coach-trust';
+import { useIsVerified, VerificationStatusCard } from '@/components/coach-trust';
 import { CropFileInput } from '@/components/image-crop';
 import { GatheringCover } from '@/components/gathering-cover';
 import { CalendarFeedPanel } from '@/components/follow';
@@ -188,7 +189,7 @@ export function MePage() {
   const [confirmText, setConfirmText] = useState('');
   const [soleTeams, setSoleTeams] = useState<string[] | null>(null);
   const [deleteBusy, setDeleteBusy] = useState(false);
-  const { data: inviteUrl } = useQuery({ queryKey: ['my-invite-url', userId], enabled: panel === 'qr', queryFn: async () => { const { data } = await supabase.rpc('my_invite_code'); return data ? `${window.location.origin}/i/${data}` : null; } });
+  const { data: inviteUrl } = useQuery({ queryKey: ['my-invite-url', userId], enabled: panel === 'qr', queryFn: async () => { const { data } = await supabase.rpc('my_invite_code'); return data ? welcomeLink(String(data)) : null; } });
 
   const signOut = async () => { await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut(); void navigate({ to: '/login', replace: true }); };
 
@@ -252,7 +253,7 @@ export function MePage() {
       </> : <p className="auth-subtitle">{t('publicEvent.loading')}</p>}
     </div> },
     plan: { title: t('profile.plan'), icon: 'CreditCard', body: <><p className="plan-name">{t(`plans.${workspace?.plan ?? 'free'}`)}</p><p className="auth-subtitle">{workspace?.name ?? t('workspace.noTeam')}</p></> },
-    hostProfile: { title: t('hostProfile.title'), icon: 'Globe2', body: <HostProfilePanel userId={userId} /> },
+    hostProfile: { title: t('hostProfile.title'), icon: 'Globe2', body: <><VerificationStatusCard userId={userId} /><HostProfilePanel userId={userId} /></> },
     privacy: { title: t('profile.privacyData'), icon: 'ShieldCheck', body: <PrivacyDataPanel /> },
   };
 

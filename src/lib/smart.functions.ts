@@ -1,3 +1,4 @@
+import { summarySource } from '@/lib/summary-source';
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
@@ -91,18 +92,20 @@ export const summarizeLesson = createServerFn({ method: 'POST' })
     if (!lesson || !teamId) return { ok: false as const, error: 'not_found' };
     const { data: isLeader } = await sb.rpc('is_team_member', { _team_id: teamId, _roles: ['leader'] });
     if (!isLeader) return { ok: false as const, error: 'not_leader' };
-    const source = data.notes.trim() || [lesson.notes_en, lesson.notes_es].filter(Boolean).join('\n\n');
-    const { sampleSummary, claudeSummary } = await import('@/lib/ai/smart.server');
+    // Only real text is summarized: pasted notes or the lesson's own notes. Attached files are not read, and
+    // the title alone is never enough, so nothing is invented when there is no source or no AI key.
+    const picked = summarySource(data.notes, [lesson.notes_en, lesson.notes_es]);
+    if (!picked.ok) return { ok: false as const, error: picked.error };
     const key = process.env['ANTHROPIC_API_KEY'];
-    if (key) {
-      if (!await underLimit(sb)) return { ok: false as const, error: 'limit' };
-      try {
-        const r = await claudeSummary(key, source || lesson.title_en, lesson.title_en);
-        await record(sb, 'lesson_summary', r.input, r.output);
-        if (r.summary) return { ok: true as const, teamId, summary: r.summary, preview: false };
-      } catch (e) { console.error('[summary] failed', e); return { ok: false as const, error: 'failed' }; }
-    }
-    return { ok: true as const, teamId, summary: sampleSummary(source, lesson.title_en), preview: true };
+    if (!key) return { ok: false as const, error: 'unavailable' };
+    if (!await underLimit(sb)) return { ok: false as const, error: 'limit' };
+    const { claudeSummary } = await import('@/lib/ai/smart.server');
+    try {
+      const r = await claudeSummary(key, picked.text, lesson.title_en);
+      await record(sb, 'lesson_summary', r.input, r.output);
+      if (r.summary) return { ok: true as const, teamId, summary: r.summary, preview: false, source: picked.from };
+      return { ok: false as const, error: 'failed' };
+    } catch (e) { console.error('[summary] failed', e); return { ok: false as const, error: 'failed' }; }
   });
 
 /** Personal, deterministic brief. All reads run as the caller; no AI or stored daily snapshots. */

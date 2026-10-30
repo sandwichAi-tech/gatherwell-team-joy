@@ -62,3 +62,17 @@ export function CoachSubscriberSegments() {
  {query.isError ? <p role="alert">{t('coachUpdates.error')}</p> : query.data ? <div className="stats-grid">{(['confirmed', 'announcements', 'new_events', 'new_resources'] as const).map(key => <div className="stat-card" key={key}><strong>{query.data[key]}</strong><p>{t(`coachUpdates.segment_${key}`)}</p></div>)}</div> : <p>{t('coachUpdates.loading')}</p>}
  <p className="field-hint">{t('coachUpdates.setup')}</p></section>;
 }
+
+/** After publishing: shows who an update would reach and on which channel. Preparation only — this never sends. */
+export function PrepareCoachUpdate({ kind, title, link }: { kind: 'event' | 'resource'; title: string; link: string }) {
+ const { t } = useTranslation(); const read = useServerFn(subscriberSegments);
+ const query = useQuery({ queryKey: ['coach-subscriber-segments', 'prepare'], queryFn: () => read() });
+ const count = query.data ? (kind === 'event' ? query.data.new_events : query.data.new_resources) : null;
+ return <section className="panel prepare-update" aria-labelledby="prepare-update-h">
+  <h2 id="prepare-update-h">{t('coachUpdates.prepareTitle')}</h2>
+  {query.isError ? <p role="alert">{t('coachUpdates.error')}</p> : count === null ? <p>{t('coachUpdates.loading')}</p>
+   : <p>{t(kind === 'event' ? 'coachUpdates.prepareAudienceEvents' : 'coachUpdates.prepareAudienceResources', { count })} · {t('coachUpdates.prepareChannel')}</p>}
+  <blockquote className="prepare-preview">{t('coachUpdates.preparePreview', { title, link })}</blockquote>
+  <p className="field-hint" role="status">{t('coachUpdates.prepareNotSent')}</p>
+ </section>;
+}

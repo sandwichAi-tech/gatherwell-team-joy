@@ -2757,7 +2757,46 @@
       "quietHosts_other": "{{team}} · {{count}} hosts have nothing scheduled",
       "resource": "New resource: {{title}}",
       "empty": "Nothing on today. Create an event",
-      "create": "Create an event"
+      "create": "Create an event",
+      "sections": {
+        "attention": "Needs your attention",
+        "upcoming": "Upcoming",
+        "updates": "Updates"
+      },
+      "caughtUp": "You're all caught up. Nothing needs your attention right now.",
+      "viewAll_one": "View all ({{count}})",
+      "viewAll_other": "View all ({{count}})",
+      "actions": {
+        "share": "Share event",
+        "viewEvent": "View event",
+        "reviewRegistrations": "Review registrations",
+        "viewTicket": "View your spot",
+        "viewTeam": "View team",
+        "open": "Open"
+      },
+      "h": {
+        "share": "{{title}} has no sign-ups yet",
+        "hosting": "You host {{title}}",
+        "attending": "You're going to {{title}}",
+        "signups_one": "1 new sign-up",
+        "signups_other": "{{count}} new sign-ups",
+        "teamEvents_one": "1 team event this week",
+        "teamEvents_other": "{{count}} team events this week",
+        "quietHosts_one": "1 host has nothing scheduled",
+        "quietHosts_other": "{{count}} hosts have nothing scheduled",
+        "resource": "New resource: {{title}}"
+      },
+      "ctx": {
+        "share": "It happens this week. Sharing your link is the quickest way to fill spots.",
+        "hosting": "{{when}}{{place}} · {{count}} going",
+        "attending": "{{when}}",
+        "signups": "Since yesterday on your events. No action needed.",
+        "teamEvents": "{{team}} · For your awareness.",
+        "quietHosts": "{{team}} · Optional: check in with them.",
+        "resource": "Added this week."
+      },
+      "loadError": "Your brief could not be loaded.",
+      "retry": "Try again"
     },
     "followups": {
       "eyebrow": "Follow-ups",
@@ -2845,7 +2884,12 @@
       "saveDraft": "Save draft",
       "published": "Summary published",
       "saved": "Summary saved",
-      "unpublished": "Draft"
+      "unpublished": "Draft",
+      "filesNote": "Summaries use the lesson notes or text you paste here. Attached files are not read yet.",
+      "noSource": "There is no text to summarize. Paste notes or a transcript first.",
+      "tooShort": "There is not enough text to summarize accurately. Paste at least a few paragraphs.",
+      "unavailable": "Summaries are not turned on yet. Nothing was created.",
+      "failed": "The summary could not be created. Try again."
     },
     "library": {
       "sources": "Sources",
@@ -4967,7 +5011,20 @@
       "storage_limit": "Not enough storage space for these files.",
       "tooBig": "This file is larger than 5 MB.",
       "failed": "Something went wrong. Please try again."
-    }
+    },
+    "optional": "Optional",
+    "whyVerify": "Verification confirms your identity and credentials so guests can trust who they are booking with. Your documents stay private.",
+    "cardStatus": {
+      "none": "Status: not started",
+      "pending": "Status: in review",
+      "approved": "Status: verified",
+      "rejected": "Status: not approved. You can try again.",
+      "error": "Status could not be loaded."
+    },
+    "tryAgainAction": "Try again",
+    "setupTitle": "Your profile is ready",
+    "setupText": "You can get verified now or later from Me, Edit your public page. You can host either way.",
+    "later": "Do this later"
   },
   "retreat": {
     "toggle": "This is a retreat or trip",
@@ -7214,7 +7271,15 @@
     "accountConfirm": "Sign in to confirm preferences",
     "unsubscribed": "Unsubscribed from this coach.",
     "confirmedStatus": "Your email preferences are confirmed for this coach.",
-    "unconfirmedStatus": "Confirm your selected preferences for this coach."
+    "unconfirmedStatus": "Confirm your selected preferences for this coach.",
+    "prepareTitle": "Tell your subscribers",
+    "prepareAudienceEvents_one": "1 confirmed subscriber gets new events",
+    "prepareAudienceEvents_other": "{{count}} confirmed subscribers get new events",
+    "prepareAudienceResources_one": "1 confirmed subscriber gets new resources",
+    "prepareAudienceResources_other": "{{count}} confirmed subscribers get new resources",
+    "prepareChannel": "Email",
+    "preparePreview": "New from your coach: {{title}}. See details: {{link}}",
+    "prepareNotSent": "Sending updates to subscribers is not turned on yet. Nothing has been sent."
   },
   "langFields": {
     "add": "Add {{lang}} translation",
@@ -7690,7 +7755,8 @@
       "removed": "Removed",
       "suspended": "Suspended",
       "unavailable": "Unavailable"
-    }
+    },
+    "separateNote": "Joining a team is for coaches working together. It does not make you an affiliate, give you anyone’s purchases or paid content, or share any customer details."
   },
   "teamLibrary": {
     "title": "Team library",
