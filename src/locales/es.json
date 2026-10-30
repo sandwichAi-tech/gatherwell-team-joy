@@ -7995,5 +7995,37 @@
     "registered": "Número de personas registradas",
     "remaining": "Lugares disponibles (solo con cupo limitado)",
     "both": "Personas registradas y lugares disponibles"
+  },
+  "teamMetrics": {
+    "shareTitle": "Compartir con quien lidera este equipo",
+    "shareHint": "Elige lo que solo quien lidera este equipo puede ver de tus eventos. Unirte a un equipo no comparte nada. Puedes cambiarlo cuando quieras.",
+    "metric": {
+      "upcoming_events": "Cantidad de próximos eventos",
+      "registrations": "Registros por evento",
+      "attendance": "Asistencias registradas por evento"
+    },
+    "preview": {
+      "upcoming_events": "Ve cuántos eventos publicados tienes próximamente.",
+      "registrations": "Ve nombres y fechas de eventos y cuántas personas se registraron.",
+      "attendance": "Ve nombres y fechas de eventos pasados y cuántas personas hicieron check-in."
+    },
+    "neverShared": "Nunca se comparte: quién se registró, datos de contacto, pagos, exenciones ni ingresos.",
+    "save": "Guardar",
+    "shareNothing": "No compartir nada",
+    "saved": "Se actualizó lo que compartes",
+    "stopped": "Ya no compartes nada con quien lidera",
+    "saveError": "No se pudo guardar. Inténtalo de nuevo.",
+    "viewInsights": "Resumen de eventos",
+    "insightsTitle": "{{name}}: resumen de eventos",
+    "notShared": "Este coach no ha elegido compartir su resumen de eventos contigo.",
+    "noEvents": "No hay eventos publicados en este periodo.",
+    "range": "Eventos desde el {{date}} y próximos",
+    "upcomingCount_one": "próximo evento",
+    "upcomingCount_other": "próximos eventos",
+    "registered_one": "{{count}} registro",
+    "registered_other": "{{count}} registros",
+    "checkedIn_one": "{{count}} check-in",
+    "checkedIn_other": "{{count}} check-ins",
+    "leaderNote": "Los registros son inscripciones, no asistencia. Solo tú, como líder, ves esto, y solo lo que el coach eligió compartir."
   }
 }

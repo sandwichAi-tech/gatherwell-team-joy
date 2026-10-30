@@ -15,7 +15,6 @@ export function insightsState(pending: boolean, error: boolean, d: MemberInsight
   if (pending) return 'loading';
   if (error || !d) return 'error';
   if (!d.shared?.length) return 'not_shared';
-  if (!(d.events ?? []).length && !d.shared.includes('upcoming_events')) return 'no_events';
   if (!(d.events ?? []).length) return 'no_events';
   return 'ready';
 }
