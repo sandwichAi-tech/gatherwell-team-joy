@@ -81,11 +81,16 @@ function Overview() {
   const { t } = useTranslation(); const lang = useLang();
   const [period, setPeriod] = useState<'week' | 'month' | 'all'>('month');
   const fn = useServerFn(getAdminOverview);
-  const { data: o } = useQuery({ queryKey: ['admin', 'overview', period], queryFn: () => fn({ data: { period } }) });
+  const qc = useQueryClient();
+  const ov = useQuery({ queryKey: ['admin', 'overview', period], staleTime: 0, queryFn: () => fn({ data: { period } }) }); const o = ov.data;
   const channels = ['email', 'sms', 'push'] as const; const states = ['queued', 'sent', 'simulated', 'failed', 'skipped'] as const;
   return <>
     <Segmented value={period} options={['week', 'month', 'all'] as const} onChange={setPeriod} label={v => t(`admin.period.${v}`)} />
-    {!o ? <p className="muted-copy">{t('admin.loading')}</p> : <>
+    <div className="feed-actions admin-refresh" aria-live="polite">
+      {ov.dataUpdatedAt > 0 && <small className="field-hint">{t('admin.updatedAt', { time: new Date(ov.dataUpdatedAt).toLocaleTimeString(lang === 'es' ? 'es-419' : 'en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' }) })}</small>}
+      <Button variant="secondary" disabled={ov.isFetching} onClick={() => void qc.invalidateQueries({ queryKey: ['admin'] })}><GwIcon name="RefreshCw" size={18} />{t(ov.isFetching ? 'admin.refreshing' : 'admin.refresh')}</Button>
+    </div>
+    {ov.isError ? <><p role="alert" className="field-error">{t('admin.loadError')}</p><Button variant="secondary" onClick={() => void ov.refetch()}>{t('admin.refresh')}</Button></> : !o ? <p className="muted-copy">{t('admin.loading')}</p> : <>
       <div className="admin-stats">
         <Stat icon="UserPlus" label={t('admin.stats.signups')} value={num(o.signups, lang)} />
         <Stat icon="UsersRound" label={t('admin.stats.activeTeams')} value={num(o.active_teams, lang)} />

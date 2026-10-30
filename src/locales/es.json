@@ -3494,7 +3494,11 @@
       }
     },
     "dashboardLink": "Panel de administración",
-    "platformGroup": "Administración de la plataforma"
+    "platformGroup": "Administración de la plataforma",
+    "updatedAt": "Actualizado a las {{time}}",
+    "refresh": "Actualizar",
+    "refreshing": "Actualizando…",
+    "loadError": "No se pudieron cargar estas cifras. Lo que ves aquí no está actualizado."
   },
   "legalDocs": {
     "draft": "Borrador — pendiente de revisión legal",

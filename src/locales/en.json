@@ -3494,7 +3494,11 @@
       }
     },
     "dashboardLink": "Admin dashboard",
-    "platformGroup": "Platform administration"
+    "platformGroup": "Platform administration",
+    "updatedAt": "Updated {{time}}",
+    "refresh": "Refresh",
+    "refreshing": "Refreshing…",
+    "loadError": "Couldn't load these numbers. Nothing shown here is current."
   },
   "legalDocs": {
     "draft": "Draft — pending legal review",
