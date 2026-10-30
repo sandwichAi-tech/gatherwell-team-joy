@@ -6223,11 +6223,16 @@ export type Database = {
           id: string
           link_id: string
           order_id: string
+          original_reward_cents: number | null
           payout_id: string | null
           program_id: string
           referrer_id: string
+          refunded_after_payout: boolean
+          refunded_cents: number
           reversed_reason: string | null
           reward_cents: number
+          reward_kind: string | null
+          reward_value: number | null
           sale_cents: number
           status: string
           updated_at: string
@@ -6239,11 +6244,16 @@ export type Database = {
           id?: string
           link_id: string
           order_id: string
+          original_reward_cents?: number | null
           payout_id?: string | null
           program_id: string
           referrer_id: string
+          refunded_after_payout?: boolean
+          refunded_cents?: number
           reversed_reason?: string | null
           reward_cents: number
+          reward_kind?: string | null
+          reward_value?: number | null
           sale_cents: number
           status?: string
           updated_at?: string
@@ -6255,11 +6265,16 @@ export type Database = {
           id?: string
           link_id?: string
           order_id?: string
+          original_reward_cents?: number | null
           payout_id?: string | null
           program_id?: string
           referrer_id?: string
+          refunded_after_payout?: boolean
+          refunded_cents?: number
           reversed_reason?: string | null
           reward_cents?: number
+          reward_kind?: string | null
+          reward_value?: number | null
           sale_cents?: number
           status?: string
           updated_at?: string
@@ -9783,6 +9798,7 @@ export type Database = {
         Returns: undefined
       }
       redeem_welcome_reward: { Args: { _reward: string }; Returns: string }
+      referral_adjust_partial: { Args: { _order: string }; Returns: number }
       referral_attribute_order: { Args: { _order: string }; Returns: string }
       referral_item: {
         Args: { _id: string; _kind: string }
