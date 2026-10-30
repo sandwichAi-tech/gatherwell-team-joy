@@ -1,3 +1,4 @@
+import { PrepareCoachUpdate } from '@/components/coach-updates';
 import { EventAgreementsSection, useBuilderAgreements } from '@/components/event-agreements-builder';
 import { hostFormsBlockPublish, hostWaiverStatus } from '@/lib/builder-agreements';
 import { blueprintDefaults } from '@/lib/blueprint-defaults';
@@ -373,6 +374,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
       <h1>{t('gathering.live')}</h1>
       <p className="success-title">{title}</p><p className="auth-subtitle">{when}{weekly ? ` · ${t(`gathering.repeats.${rule.kind}`)}` : ''}</p>
       <div className="success-share"><ShareKit title={title.trim()} startsAt={startDate.toISOString()} place={place === 'person' ? (locationName || address) : t('teamSpace.online')} link={link} coverPath={coverPath} coverStyle={coverStyle} focal={coverFocal} /></div>
+      {!editing && <PrepareCoachUpdate kind="event" title={title.trim()} link={link} />}
       <Button className="onboarding-continue" onClick={() => navigate({ to: '/events', search: { tab: 'hosting' } })}>{t('gathering.done')}</Button>
     </div></div>;
   }
