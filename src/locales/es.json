@@ -7473,7 +7473,9 @@
       "payout_date": "Elige hoy o una fecha anterior.",
       "payout_invalid": "Algunas recompensas ya no están disponibles. Actualiza e inténtalo de nuevo.",
       "payout_empty": "Elige al menos una recompensa."
-    }
+    },
+    "refunded": "Reembolsado {{amount}}",
+    "reconcile": "Se reembolsó después de que registraste este pago. No se descontó nada automáticamente; resuélvelo directamente con la persona que refirió."
   },
   "quizStudio": {
     "pageTitle": "Quiz",

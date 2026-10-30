@@ -7473,7 +7473,9 @@
       "payout_date": "Choose today or an earlier date.",
       "payout_invalid": "Some rewards are no longer available. Refresh and try again.",
       "payout_empty": "Choose at least one reward."
-    }
+    },
+    "refunded": "Refunded {{amount}}",
+    "reconcile": "Refunded after you recorded this payout. Nothing was taken back automatically; settle it directly with the referrer."
   },
   "quizStudio": {
     "pageTitle": "Quiz",

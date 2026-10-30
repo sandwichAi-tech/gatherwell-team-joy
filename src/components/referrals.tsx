@@ -20,7 +20,7 @@ import { readRefParam, referralUrl, rewardCents, validateReward, REFERRAL_WINDOW
 
 type Kind = 'event' | 'offer';
 type Program = { id: string; item_kind: Kind; item_id: string; title: string; price_cents: number; eligible: boolean; enabled: boolean; reward_kind: RewardKind; reward_value: number; window_days: number };
-type CoachReward = { id: string; program_id: string; referrer_id: string; referrer_name: string; sale_cents: number; reward_cents: number; status: RewardStatus; created_at: string };
+type CoachReward = { id: string; program_id: string; referrer_id: string; referrer_name: string; sale_cents: number; reward_cents: number; status: RewardStatus; created_at: string; refunded_cents?: number; refunded_after_payout?: boolean };
 type Payout = { id: string; referrer_id?: string; referrer_name?: string; amount_cents: number; paid_on: string; note?: string | null; reference?: string | null };
 type Totals = { clicks: number; signups: number; conversions: number; revenue_cents: number; pending_cents: number; available_cents: number; paid_cents: number; reversed_cents: number };
 type CoachData = { programs: Program[]; referrers: { id: string; name: string }[]; totals: Totals; rewards: CoachReward[]; payouts: Payout[] };
@@ -158,7 +158,7 @@ export function CoachReferralsPage() {
         {STATUSES.map(s => <Stat key={s} label={t(`referral.status.${s}`)} value={formatMoney(totals[`${s}_cents`], lang)} />)}
       </div>}
       {dash.data && (!dash.data.rewards.length ? <EmptyState compact icon="Share2" text={t('referral.coach.noRewards')} /> : dash.data.rewards.map(r => <div key={r.id} className="seat-row">
-        <span><strong>{r.referrer_name || t('referral.unnamed')}</strong><small>{progTitle(r.program_id)} · {dateFmt(r.created_at, lang)} · {t('referral.sale', { amount: formatMoney(r.sale_cents, lang) })}</small></span>
+        <span><strong>{r.referrer_name || t('referral.unnamed')}</strong><small>{progTitle(r.program_id)} · {dateFmt(r.created_at, lang)} · {t('referral.sale', { amount: formatMoney(r.sale_cents, lang) })}{(r.refunded_cents ?? 0) > 0 ? ` · ${t('referral.refunded', { amount: formatMoney(r.refunded_cents ?? 0, lang) })}` : ''}</small>{r.refunded_after_payout && <small className="field-error" role="note">{t('referral.reconcile')}</small>}</span>
         <span className={`chip referral-${r.status}`}>{formatMoney(r.reward_cents, lang)} · {t(`referral.status.${r.status}`)}</span>
       </div>))}
       {dash.data && dash.data.referrers.filter(r => availableBy(r.id).length).map(r => <Button key={r.id} variant="secondary" onClick={() => setPayFor(r)}>{t('referral.payout.recordFor', { name: r.name || t('referral.unnamed') })}</Button>)}
