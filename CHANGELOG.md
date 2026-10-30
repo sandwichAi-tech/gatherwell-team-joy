@@ -1,5 +1,13 @@
 # ZoheeWell Change Log
 
+## 2026-10-30 — Tracker batch 3 (Events / check-in / challenges)
+
+- Row 6: reproduced the custom-policy loss path — switching from an edited preset to Custom (or between presets) silently replaced the coach's wording. Custom now keeps edited preset wording, restores earlier Custom text, and asks before replacing edited text with a preset (cancel keeps it). Inline hint explains the "I reviewed this" box required before publishing custom wording. Guided fill-in (deadline, refund kind/percent, processing days, transfer, host-cancel, exceptions, contact) already generated editable wording; it stays deterministic — no AI draft added (no invented terms).
+- Row 96: new per-event "Show on the public page" choice: No counts (default for new events), Number registered, Spots left. Existing events keep their previous display (legacy "both"). Enforced in the database: get_public_event / list_public_gatherings strip hidden counts, initials and ticket-tier sales (only a sold-out flag remains); live-count table reads follow the same rule; event staff always see full numbers. Hint states registrations are not check-ins.
+- Row 97: verified already implemented (optional private add-on photos with crop/replace/remove, public display beside name/price); no change.
+- Tests: src/lib/policy-counts.test.ts (10). Full suite 111 files / 922 tests exit 0; typecheck exit 0.
+- Unverified: signed-in builder clicks for the new count selector and policy confirm; paid custom-policy publish (payments not connected); member map counts (event_going_count, signed-in only) not masked; capacity remains public, so with "Spots left" the registered number can be inferred.
+
 ## 2026-10-30 — Tracker rows 41, 117, 121 (batch 2)
 
 - Row 41: shared language field shows ONE box per field with an EN/ES switch (dot = has text) and an optional "Translate from …" fill to review before saving. Hidden languages never required; switching keeps text. Applies to Challenges (title, description, daily prompt, activities, messages), Resources, quizzes, offers, waivers, add-on descriptions, event Short summary (was two boxes), resource templates, welcome rewards, event badges (now saves with one language). Challenge Next already used a translated label; product links and resource attachments already existed per activity.
