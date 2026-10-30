@@ -12,6 +12,7 @@ import { canSellPaid } from '@/lib/payments-readiness';
 import { buildToolSections, hasManagementTools } from '@/lib/tools-inventory';
 import type { WorkspaceRole } from '@/components/workspace-settings';
 import { Button } from '@/components/ui/button';
+import { ComingSoonCard, showComingSoon } from '@/components/coming-soon-card';
 
 /**
  * Tools launchpad: every management destination the current person is authorized
@@ -26,9 +27,13 @@ export function ToolsPage() {
   const { data: readiness } = useQuery(paymentsReadinessQuery);
   const [learnOn, learnReady] = useFeature('feature_learn');
   const [mapOn, mapReady] = useFeature('feature_team_map');
+  const [sellingOn, sellingReady] = useFeature('feature_selling');
+  const [coursesOn, coursesReady] = useFeature('feature_courses');
+  const [referralsOn] = useFeature('feature_referrals');
+  const [locationsOn] = useFeature('feature_locations');
 
   const wsRole = workspace ? ((workspace.ownerId === userId ? 'owner' : workspace.workspaceRole) as WorkspaceRole | 'owner') : null;
-  const ready = workspace !== undefined && isAdmin !== undefined && learnReady && mapReady && readiness !== undefined;
+  const ready = workspace !== undefined && isAdmin !== undefined && learnReady && mapReady && sellingReady && coursesReady && readiness !== undefined;
   if (!ready) return <p className="auth-subtitle tools-loading">{t('publicEvent.loading')}</p>;
 
   const sections = buildToolSections({
@@ -37,6 +42,9 @@ export function ToolsPage() {
     isAdmin: !!isAdmin,
     learnOn,
     teamMapOn: mapOn,
+    sellingOn,
+    referralsOn,
+    locationsOn,
     canSellPaid: readiness ? canSellPaid(readiness) : false,
   });
 

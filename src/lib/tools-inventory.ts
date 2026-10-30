@@ -33,6 +33,10 @@ export type ToolsInput = {
   learnOn: boolean;
   /** feature_team_map flag (admins always pass true). */
   teamMapOn: boolean;
+  /** Launch-mode switches (admins pass true unless viewing as a regular user). */
+  sellingOn?: boolean;
+  referralsOn?: boolean;
+  locationsOn?: boolean;
   /** From payments readiness: platform connected AND coach payouts active. */
   canSellPaid: boolean;
 };
@@ -41,7 +45,7 @@ export type ToolsInput = {
 const MANAGER_ROLES: readonly string[] = ['owner', 'admin', 'host'];
 
 export function buildToolSections(input: ToolsInput): ToolSection[] {
-  const { isLeader, workspaceRole, isAdmin, learnOn, teamMapOn, canSellPaid } = input;
+  const { isLeader, workspaceRole, isAdmin, learnOn, teamMapOn, canSellPaid, sellingOn = false, referralsOn = false, locationsOn = false } = input;
   const cap = (c: WorkspaceCapability) => isLeader || roleAllows(workspaceRole, c);
   const manager = isLeader || (!!workspaceRole && MANAGER_ROLES.includes(workspaceRole));
   const builder = cap('events') || cap('content');
@@ -65,10 +69,12 @@ export function buildToolSections(input: ToolsInput): ToolSection[] {
   ] : []);
 
   add('selling', cap('content') ? [
-    { id: 'offers', to: '/offers', icon: 'Store', badge: sellBadge },
-    { id: 'promos', to: '/promos', icon: 'Gift', badge: sellBadge },
-    { id: 'referrals', to: '/referrals', icon: 'Share2', badge: sellBadge },
-    { id: 'earnings', to: '/earnings', icon: 'CreditCard', badge: sellBadge },
+    ...(sellingOn ? [
+      { id: 'offers', to: '/offers', icon: 'Store', badge: sellBadge } as Tool,
+      { id: 'promos', to: '/promos', icon: 'Gift', badge: sellBadge } as Tool,
+    ] : []),
+    ...(referralsOn ? [{ id: 'referrals', to: '/referrals', icon: 'Share2', badge: sellBadge } as Tool] : []),
+    ...(sellingOn ? [{ id: 'earnings', to: '/earnings', icon: 'CreditCard', badge: sellBadge } as Tool] : []),
   ] : []);
 
   add('communication', manager ? [
@@ -83,7 +89,7 @@ export function buildToolSections(input: ToolsInput): ToolSection[] {
     ...(cap('analytics') && teamMapOn ? [{ id: 'teamMap', to: '/team/map', icon: 'Map' } as Tool] : []),
     ...(cap('billing_view') ? [
       { id: 'plan', to: '/plan', icon: 'CreditCard' } as Tool,
-      { id: 'planSeats', to: '/plan/seats', icon: 'UsersRound' } as Tool,
+      ...(sellingOn ? [{ id: 'planSeats', to: '/plan/seats', icon: 'UsersRound' } as Tool] : []),
     ] : []),
   ]);
 
@@ -93,7 +99,7 @@ export function buildToolSections(input: ToolsInput): ToolSection[] {
 
   add('presence', builder ? [
     { id: 'hostProfile', to: '/me', search: { panel: 'hostProfile' }, icon: 'Globe2' },
-    { id: 'locations', to: '/locations', icon: 'MapPin' },
+    ...(locationsOn ? [{ id: 'locations', to: '/locations', icon: 'MapPin' } as Tool] : []),
     { id: 'verify', to: '/verify', icon: 'BadgeCheck' },
   ] : []);
 
