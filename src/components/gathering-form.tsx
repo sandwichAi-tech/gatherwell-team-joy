@@ -95,6 +95,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const [teamReg, setTeamReg] = useState({ on: false, min: 2, max: 6, mode: 'person' as 'person' | 'team' });
   const [full, setFull] = useState(editing || !!templateId || !!fromId);
   const [retreatsOn] = useFeature('feature_retreats');
+  const [sellingOn] = useFeature('feature_selling');
   const [retreatOn, setRetreatOn] = useState(false); const [retreat, setRetreat] = useState<Retreat>(emptyRetreat); const [retreatEnd, setRetreatEnd] = useState(''); const [galleryBusy, setGalleryBusy] = useState(false);
   const [libraryWaivers,setLibraryWaivers]=useState<{id:string;version:number}[]>([]);
   const [teamWaiver,setTeamWaiver]=useState(false);
@@ -490,14 +491,14 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
           <div className="segmented full" role="group" aria-label={t('gathering.capacity')}>{(['unlimited', 'limited'] as const).map(mode => <Button key={mode} variant="ghost" aria-pressed={capacityMode === mode} className={capacityMode === mode ? 'selected' : ''} onClick={() => setCapacityMode(mode)}>{t(`eventReliability.${mode}`)}</Button>)}</div>
           {capacityMode === 'limited' && <Input id="g-cap" aria-invalid={tried && capacityBad} type="number" min={1} inputMode="numeric" className="field-input" value={capacity} onChange={e => setCapacity(e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder={t('eventReliability.limited')} />}
           {tried && capacityBad && <p className="field-error">{t('gathering.errors.invalid_capacity')}</p>}</div>
-        <div><label className="field-label" htmlFor="g-price">{t('billing.price')}</label>
+        {(sellingOn || !!price) && <div><label className="field-label" htmlFor="g-price">{t('billing.price')}</label>
           <Input id="g-price" aria-invalid={tried && (priceBad || blockers.includes('payouts'))} type="text" inputMode="decimal" className="field-input" disabled={!canSell && !price} value={price} onChange={e => setPrice(e.target.value.replace(/[^\d.]/g, '').slice(0, 7))} placeholder="$0" />
           {tried && blockers.includes('payouts') && <p className="field-error">{t('eventReliability.errors.payouts')}</p>}
           {tried && priceBad && <p className="field-error">{t('eventReliability.priceInvalid')}</p>}
           <small className="field-hint">{canSell ? t('billing.priceHint') : t('billing.priceNeedsPayouts')}</small>
           <PriceGuidance category={category} />
           {!!priceCents && <label className="settings-row is-static gathering-cover-fee"><span className="settings-label">{t('billing.coverFee')}<small className="field-hint">{coverFee ? t('billing.coverFeeOn') : t('billing.coverFeeOff')}</small></span><Switch aria-label={t('billing.coverFee')} checked={coverFee} onCheckedChange={setCoverFee} /></label>}
-          {!!priceCents && <><label className="field-label" htmlFor="g-cseats">{t('community.seatsField')}</label><Input id="g-cseats" inputMode="numeric" className="field-input" value={communitySeats} onChange={e => setCommunitySeats(e.target.value.replace(/\D/g, '').slice(0, 3))} placeholder={t('community.seatsNone')} /><small className="field-hint">{t('community.seatsHint')}</small></>}</div>
+          {!!priceCents && <><label className="field-label" htmlFor="g-cseats">{t('community.seatsField')}</label><Input id="g-cseats" inputMode="numeric" className="field-input" value={communitySeats} onChange={e => setCommunitySeats(e.target.value.replace(/\D/g, '').slice(0, 3))} placeholder={t('community.seatsNone')} /><small className="field-hint">{t('community.seatsHint')}</small></>}</div>}
         <div><span className="field-label">{t('gathering.visibility')}</span>
           <div className="segmented full" role="group" aria-label={t('gathering.visibility')}>{(['public', 'invite', 'team'] as const).map(v => <Button key={v} variant="ghost" className={visibility === v ? 'selected' : ''} aria-pressed={visibility === v} onClick={() => setVisibility(v)}>{t(`gathering.vis.${v}`)}</Button>)}</div></div>
       </section>
@@ -522,7 +523,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         {tr.preview && <p className="not-connected">{t('assistant.previewTranslateNote')}</p>}
       </section>
 
-      <EventDetailsSections value={details} onChange={setDetails} priceCents={priceCents} lang={lang} userId={userId} onImageBusy={imageBusy} tried={tried} />
+      <EventDetailsSections sellingOn={sellingOn} value={details} onChange={setDetails} priceCents={priceCents} lang={lang} userId={userId} onImageBusy={imageBusy} tried={tried} />
 
       <section className="form-section">
         {retreatOn && <RetreatEditor value={retreat} onChange={setRetreat} end={retreatEnd} setEnd={setRetreatEnd} priceCents={priceCents} onUpload={uploadGallery} uploading={galleryBusy} />}

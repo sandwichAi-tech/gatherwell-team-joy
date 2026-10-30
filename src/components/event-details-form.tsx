@@ -174,7 +174,7 @@ export function PolicyPicker({ id, paid, config, text, onChange }: { id: string;
   </div>;
 }
 
-export function EventDetailsSections({ value, onChange, priceCents, lang, userId, onImageBusy, tried = false }: { userId: string; onImageBusy: (busy: boolean) => void; tried?: boolean; value: EventDetails; onChange: (d: EventDetails) => void; priceCents: number | null; lang: 'en' | 'es' }) {
+export function EventDetailsSections({ value, onChange, priceCents, lang, userId, onImageBusy, tried = false, sellingOn = true }: { sellingOn?: boolean; userId: string; onImageBusy: (busy: boolean) => void; tried?: boolean; value: EventDetails; onChange: (d: EventDetails) => void; priceCents: number | null; lang: 'en' | 'es' }) {
   const { t } = useTranslation();
   const set = (patch: Partial<EventDetails>) => onChange({ ...value, ...patch });
   const setTier = (id: string, patch: Partial<TicketTier>) => set({ tiers: value.tiers.map(x => x.id === id ? { ...x, ...patch } : x) });
