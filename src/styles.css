@@ -2961,6 +2961,9 @@ a.legal-doc-card:hover, a.legal-doc-card:focus-visible { border-color: var(--pri
 .host-challenge-cta{font-weight:600;color:var(--primary)}
 .embed-page{max-width:720px;margin:0 auto;padding:16px;display:grid;gap:16px;background:var(--background);color:var(--foreground)}
 .embed-head h1{margin:0;font-size:24px}
+.embed-head{display:grid;gap:8px;justify-items:start}
+.embed-head .follow-avatar{width:64px;height:64px}
+.embed-cover{width:100%;aspect-ratio:3/1;object-fit:cover;border-radius:12px}
 .embed-open{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;border-radius:12px;background:var(--primary);color:var(--primary-foreground);font-weight:600;text-decoration:none}
 .embed-panel{display:grid;gap:8px;margin-top:16px}
 .embed-steps{margin:0;padding-left:20px;display:grid;gap:4px}
