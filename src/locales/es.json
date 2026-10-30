@@ -2885,11 +2885,18 @@
       "published": "Resumen publicado",
       "saved": "Resumen guardado",
       "unpublished": "Borrador",
-      "filesNote": "Los resúmenes usan las notas de la lección o el texto que pegues aquí. Aún no se leen los archivos adjuntos.",
+      "filesNote": "Los resúmenes usan las notas de la lección, el texto que pegues aquí o el PDF adjunto si lo eliges. No se leen otros tipos de archivo.",
       "noSource": "No hay texto para resumir. Primero pega notas o una transcripción.",
       "tooShort": "No hay suficiente texto para resumir con precisión. Pega al menos unos párrafos.",
       "unavailable": "Los resúmenes aún no están activados. No se creó nada.",
-      "failed": "No se pudo crear el resumen. Inténtalo de nuevo."
+      "failed": "No se pudo crear el resumen. Inténtalo de nuevo.",
+      "useFile": "Resumir el PDF adjunto",
+      "stale": "Las notas o el archivo de la lección cambiaron después de guardar este resumen. Revísalo o vuelve a resumir.",
+      "partial": "Solo se leyó la primera parte de un PDF largo. Compara el resumen con el documento completo.",
+      "file_unsupported": "Solo se pueden resumir archivos PDF con texto seleccionable.",
+      "file_too_large": "Este PDF pesa más de 10 MB, así que no se leyó.",
+      "file_unreadable": "No se encontró texto legible. Aún no se pueden resumir PDF escaneados o solo de imágenes.",
+      "file_timeout": "Leer este PDF tardó demasiado. Prueba con un archivo más pequeño o pega el texto."
     },
     "library": {
       "sources": "Fuentes",
@@ -7424,7 +7431,7 @@
       "attribution": "La compra se acredita al último enlace de referido válido que abrió la persona compradora en los últimos {{days}} días. Cada compra genera como máximo una recompensa.",
       "blocked": "No hay recompensa por referirte a ti, por la persona anfitriona ni cuando quien compra y quien refiere comparten algún equipo.",
       "states": "Las recompensas pendientes pasan a disponibles 14 días después de una compra confirmada. Pagada significa que la persona anfitriona registró un pago manual.",
-      "refunds": "Si una compra se reembolsa, cancela o disputa, su recompensa pendiente o disponible se revierte.",
+      "refunds": "Si una compra se reembolsa, se cancela o se disputa, su recompensa pendiente o disponible se revierte. Un reembolso parcial reduce la recompensa según lo que conservó el comprador. Las recompensas ya pagadas se marcan para que el anfitrión lo resuelva directamente.",
       "payouts": "En beta los pagos son manuales. La persona anfitriona paga fuera de ZoheeWell y lo registra; ZoheeWell nunca envía dinero."
     },
     "payout": {
@@ -7473,7 +7480,9 @@
       "payout_date": "Elige hoy o una fecha anterior.",
       "payout_invalid": "Algunas recompensas ya no están disponibles. Actualiza e inténtalo de nuevo.",
       "payout_empty": "Elige al menos una recompensa."
-    }
+    },
+    "refunded": "Reembolsado {{amount}}",
+    "reconcile": "Se reembolsó después de que registraste este pago. No se descontó nada automáticamente; resuélvelo directamente con la persona que refirió."
   },
   "quizStudio": {
     "pageTitle": "Quiz",

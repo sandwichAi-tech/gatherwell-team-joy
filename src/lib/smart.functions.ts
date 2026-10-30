@@ -84,17 +84,30 @@ export const suggestRewrite = createServerFn({ method: 'POST' })
 /** Leader-only: summary, 5 key points and 3 action items in both languages. Saved separately after editing. */
 export const summarizeLesson = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ lessonId: z.string().uuid(), notes: z.string().max(30000) }).parse(d))
+  .inputValidator((d: unknown) => z.object({ lessonId: z.string().uuid(), notes: z.string().max(30000), useFile: z.boolean().optional() }).parse(d))
   .handler(async ({ data, context }) => {
     const sb = context.supabase;
-    const { data: lesson } = await sb.from('lessons').select('title_en, notes_en, notes_es, track_id, tracks(team_id)').eq('id', data.lessonId).maybeSingle();
+    const { data: lesson } = await sb.from('lessons').select('title_en, notes_en, notes_es, storage_path, track_id, tracks(team_id)').eq('id', data.lessonId).maybeSingle();
     const teamId = (lesson as unknown as { tracks: { team_id: string } | null } | null)?.tracks?.team_id;
     if (!lesson || !teamId) return { ok: false as const, error: 'not_found' };
     const { data: isLeader } = await sb.rpc('is_team_member', { _team_id: teamId, _roles: ['leader'] });
     if (!isLeader) return { ok: false as const, error: 'not_leader' };
     // Only real text is summarized: pasted notes or the lesson's own notes. Attached files are not read, and
     // the title alone is never enough, so nothing is invented when there is no source or no AI key.
-    const picked = summarySource(data.notes, [lesson.notes_en, lesson.notes_es]);
+    let fileText: string | null = null; let partial = false;
+    if (data.useFile) {
+      // The caller already passed the RLS read of this lesson and the leader check; the file is downloaded with their
+      // own client (storage RLS applies) and never exposed through a public or signed URL.
+      const path = (lesson as { storage_path?: string | null }).storage_path;
+      if (!path || !/\.pdf$/i.test(path)) return { ok: false as const, error: 'file_unsupported' };
+      const { data: blob, error: dl } = await sb.storage.from('learn-media').download(path);
+      if (dl || !blob) return { ok: false as const, error: 'file_unreadable' };
+      const { extractPdfText } = await import('@/lib/ai/pdf-text.server');
+      const pdf = await extractPdfText(new Uint8Array(await blob.arrayBuffer()));
+      if (!pdf.ok) return { ok: false as const, error: `file_${pdf.error}` };
+      fileText = pdf.text; partial = pdf.truncated;
+    }
+    const picked = summarySource(fileText ?? data.notes, fileText ? [] : [lesson.notes_en, lesson.notes_es]);
     if (!picked.ok) return { ok: false as const, error: picked.error };
     const key = process.env['ANTHROPIC_API_KEY'];
     if (!key) return { ok: false as const, error: 'unavailable' };
@@ -103,7 +116,7 @@ export const summarizeLesson = createServerFn({ method: 'POST' })
     try {
       const r = await claudeSummary(key, picked.text, lesson.title_en);
       await record(sb, 'lesson_summary', r.input, r.output);
-      if (r.summary) return { ok: true as const, teamId, summary: r.summary, preview: false, source: picked.from };
+      if (r.summary) return { ok: true as const, teamId, summary: r.summary, preview: false, source: fileText ? 'file' as const : picked.from, partial };
       return { ok: false as const, error: 'failed' };
     } catch (e) { console.error('[summary] failed', e); return { ok: false as const, error: 'failed' }; }
   });

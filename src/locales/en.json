@@ -2885,11 +2885,18 @@
       "published": "Summary published",
       "saved": "Summary saved",
       "unpublished": "Draft",
-      "filesNote": "Summaries use the lesson notes or text you paste here. Attached files are not read yet.",
+      "filesNote": "Summaries use the lesson notes, text you paste here, or the attached PDF if you choose it. Other file types are not read.",
       "noSource": "There is no text to summarize. Paste notes or a transcript first.",
       "tooShort": "There is not enough text to summarize accurately. Paste at least a few paragraphs.",
       "unavailable": "Summaries are not turned on yet. Nothing was created.",
-      "failed": "The summary could not be created. Try again."
+      "failed": "The summary could not be created. Try again.",
+      "useFile": "Summarize the attached PDF",
+      "stale": "The lesson notes or file changed after this summary was saved. Review it or summarize again.",
+      "partial": "Only the first part of a long PDF was read. Check the summary against the full document.",
+      "file_unsupported": "Only PDF files with selectable text can be summarized.",
+      "file_too_large": "This PDF is larger than 10 MB, so it was not read.",
+      "file_unreadable": "No readable text was found. Scanned or image-only PDFs cannot be summarized yet.",
+      "file_timeout": "Reading this PDF took too long. Try a smaller file or paste the text."
     },
     "library": {
       "sources": "Sources",
@@ -7424,7 +7431,7 @@
       "attribution": "The purchase is credited to the last valid referral link the buyer opened within {{days}} days. One purchase earns at most one reward.",
       "blocked": "No reward for referring yourself, for the host, or when the buyer and referrer share any team.",
       "states": "Pending rewards become available 14 days after a confirmed purchase. Paid means the host recorded a manual payout.",
-      "refunds": "If a purchase is refunded, cancelled or disputed, its pending or available reward is reversed.",
+      "refunds": "If a purchase is refunded, cancelled or disputed, its pending or available reward is reversed. A partial refund lowers the reward to match what the buyer kept. Rewards already paid are flagged for the host to settle directly.",
       "payouts": "Payouts are manual in beta. The host pays outside ZoheeWell and records it; ZoheeWell never sends money."
     },
     "payout": {
@@ -7473,7 +7480,9 @@
       "payout_date": "Choose today or an earlier date.",
       "payout_invalid": "Some rewards are no longer available. Refresh and try again.",
       "payout_empty": "Choose at least one reward."
-    }
+    },
+    "refunded": "Refunded {{amount}}",
+    "reconcile": "Refunded after you recorded this payout. Nothing was taken back automatically; settle it directly with the referrer."
   },
   "quizStudio": {
     "pageTitle": "Quiz",

@@ -1,3 +1,6 @@
+import { ResponsiveSheet } from '@/components/responsive-sheet';
+import { PrepareCoachUpdate } from '@/components/coach-updates';
+import { shareOrigin } from '@/lib/seo';
 import { useFeature } from '@/lib/feature-flags';
 import { isHistoryGuard } from '@/lib/resource-removal';
 import { urlHint } from '@/lib/url-hint';
@@ -237,6 +240,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const [type, setType] = useState<CreateType>(initialType);
   useEffect(() => { if (!initialId) setType(initialType); }, [initialType, initialId]);
   const [item, setItem] = useState<ItemState>(emptyItemState);
+  const [justPublished, setJustPublished] = useState<{ entity: 'track' | 'recipe' | 'offer'; id: string } | null>(null);
   const [draft, setDraft] = useState<BuilderDraft>(emptyBuilderDraft);
   const [section, setSection] = useState<ItemSection>('presentation');
   const [loaded, setLoaded] = useState<LoadedRef | null>(null);
@@ -448,6 +452,8 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
     await qc.invalidateQueries();
     if (published?.id) {
       toast.success(t(wasPublished ? 'resources.item.updatedToast' : 'resources.item.publishedToast'));
+      // First publication only: show who an update would reach (preparation only, nothing is sent). Edits skip it.
+      if (!wasPublished) { setJustPublished({ entity: published.entity, id: published.id }); return; }
       void navigate(publishedDestination(published.entity, published.id));
       return;
     }
@@ -610,6 +616,15 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
     <div className="form-field"><span className="field-label">{t('resources.item.cardOnPage')}</span><CardPreview item={item} type={type} lang={lang} cta={`${cta} · ${priceLabel}`} /></div>
     <div className="form-field"><span className="field-label">{t('resources.item.landingTitle')}</span><LandingPreview item={item} type={type} lang={lang} cta={cta} paid={paid} /></div>
   </>;
+
+  if (justPublished) {
+    const dest = publishedDestination(justPublished.entity, justPublished.id);
+    const link = `${shareOrigin()}${dest.to.replace('$id', justPublished.id)}`;
+    return <ResponsiveSheet open onOpenChange={o => { if (!o) void navigate(dest); }} title={t('resources.item.publishedToast')}
+      footer={<Button onClick={() => void navigate(dest)}>{t('gathering.done')}</Button>}>
+      <PrepareCoachUpdate kind="resource" title={(lang === 'es' ? item.titleEs || item.titleEn : item.titleEn || item.titleEs) || t('resources.untitled')} link={link} />
+    </ResponsiveSheet>;
+  }
 
   return <>
     <Link to={loaded ? '/learn' : '/learn/create'} className="back-link"><ArrowLeft />{loaded ? t('resources.title') : t('resources.create.chooseAnother')}</Link>

@@ -265,7 +265,7 @@ export function LessonPage({ id }: { id: string }) {
       {lesson.duration_minutes ? <p className="track-facts">{minutesLabel(t, lesson.duration_minutes)}</p> : null}</div>
     {attachedQuiz.isPending ? <ListSkeleton /> : attachedQuiz.isError ? <RetryState retry={() => void attachedQuiz.refetch()} /> : attachedQuiz.data ? attachedQuiz.data.assessment ? <WellnessAssessmentPlay id={attachedQuiz.data.id} lesson={id} /> : <QuizPlay quizId={attachedQuiz.data.id} /> : hasReference ? <CourseResourceReference lesson={id} /> : upcomingLive ? <LiveCard lesson={lesson} track={track} /> : <Player lesson={lesson} />}
     {notes && <section className="panel lesson-notes"><h2>{t('learnHub.notes')}</h2><p>{notes}</p></section>}
-    <LessonSummary lessonId={id} leader={leader} />
+    <LessonSummary lessonId={id} leader={leader} hasPdf={!!lesson.storage_path && /\.pdf$/i.test(lesson.storage_path)} />
     {!upcomingLive && !attachedQuiz.isPending && !attachedQuiz.isError && !attachedQuiz.data?.assessment && <div className="lesson-complete">
       <Button className={`complete-button ${justDone ? 'is-celebrating' : ''}`} variant={done ? 'secondary' : 'default'} disabled={busy} onClick={toggle} aria-pressed={done}><Check />{t(done ? 'learnHub.completed' : 'learnHub.markComplete')}</Button>
       {done && <span className="completed-note">{t('learnHub.savedProgress')}</span>}</div>}

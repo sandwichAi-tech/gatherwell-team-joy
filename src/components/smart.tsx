@@ -227,18 +227,19 @@ export function FollowupInbox() {
 
 type Sum = { summary_en: string; summary_es: string; points_en: string[]; points_es: string[]; actions_en: string[]; actions_es: string[]; published?: boolean };
 
-export function LessonSummary({ lessonId, leader }: { lessonId: string; leader: boolean }) {
+export function LessonSummary({ lessonId, leader, hasPdf = false }: { lessonId: string; leader: boolean; hasPdf?: boolean }) {
   const { t } = useTranslation(); const lang = useLang(); const qc = useQueryClient(); const fn = useServerFn(summarizeLesson);
   const key = ['lesson-summary', lessonId];
   const { data } = useQuery({ queryKey: key, queryFn: async () => (await supabase.from('lesson_summaries').select('*').eq('lesson_id', lessonId).maybeSingle()).data as (Sum & { team_id: string; published: boolean }) | null });
   const [open, setOpen] = useState(false); const [notes, setNotes] = useState(''); const [busy, setBusy] = useState(false);
-  const [draft, setDraft] = useState<(Sum & { team_id: string }) | null>(null); const [preview, setPreview] = useState(false); const [fail, setFail] = useState<string | null>(null);
+  const [draft, setDraft] = useState<(Sum & { team_id: string }) | null>(null); const [preview, setPreview] = useState(false); const [fail, setFail] = useState<string | null>(null); const [useFile, setUseFile] = useState(false); const [partial, setPartial] = useState(false);
+  const current = useQuery({ queryKey: ['lesson-source-hash', lessonId], enabled: leader, queryFn: async () => (await supabase.rpc('lesson_source_hash', { _lesson: lessonId })).data as string | null });
   const run = async () => {
     setBusy(true);
     try {
-      const r = await fn({ data: { lessonId, notes } });
+      const r = await fn({ data: { lessonId, notes: useFile ? '' : notes, useFile } });
       if (!r.ok) { setFail(r.error); return; }
-      setFail(null);
+      setFail(null); setPartial('partial' in r && !!r.partial);
       setDraft({ ...r.summary, team_id: r.teamId }); setPreview(r.preview);
     } finally { setBusy(false); }
   };
@@ -254,6 +255,7 @@ export function LessonSummary({ lessonId, leader }: { lessonId: string; leader: 
   const L = <T,>(en: T, es: T) => (lang === 'es' ? es : en);
   return <>
     {shown && !draft && <section className="panel lesson-summary"><div className="section-heading"><h2>{t('smart.summary.title')}</h2>{!data!.published && <span className="chip quiet-chip">{t('smart.summary.unpublished')}</span>}</div>
+      {leader && (data as { source_hash?: string | null }).source_hash && current.data && (data as { source_hash?: string | null }).source_hash !== current.data && <p className="field-error" role="note">{t('smart.summary.stale')}</p>}
       <p>{L(shown.summary_en, shown.summary_es || shown.summary_en)}</p>
       <h3>{t('smart.summary.points')}</h3><ol>{L(shown.points_en, shown.points_es).map((p, i) => <li key={i}>{p}</li>)}</ol>
       <h3>{t('smart.summary.actions')}</h3><ul className="summary-actions">{L(shown.actions_en, shown.actions_es).map((p, i) => <li key={i}><Check />{p}</li>)}</ul>
@@ -261,10 +263,12 @@ export function LessonSummary({ lessonId, leader }: { lessonId: string; leader: 
     {leader && !draft && <div className="summary-cta">{!open ? <Button variant="secondary" onClick={() => setOpen(true)}>{t(shown ? 'smart.summary.redo' : 'smart.summary.summarize')}</Button>
       : <section className="panel"><h2>{t('smart.summary.summarize')}</h2><p className="auth-subtitle">{t('smart.summary.pasteHint')}</p>
         <p className="field-hint">{t('smart.summary.filesNote')}</p>
-        <Textarea rows={6} maxLength={30000} className="field-textarea" value={notes} onChange={e => { setNotes(e.target.value); setFail(null); }} aria-label={t('smart.summary.notes')} placeholder={t('smart.summary.notesPlaceholder')} />
-        {fail && <p className="field-error" role="alert">{t(fail === 'limit' ? 'assistant.limitReached' : fail === 'no_source' ? 'smart.summary.noSource' : fail === 'too_short' ? 'smart.summary.tooShort' : fail === 'unavailable' ? 'smart.summary.unavailable' : 'smart.summary.failed')}</p>}
+        {hasPdf && <label className="check-row"><input type="checkbox" checked={useFile} onChange={e => { setUseFile(e.target.checked); setFail(null); }} /><span>{t('smart.summary.useFile')}</span></label>}
+        {!useFile && <Textarea rows={6} maxLength={30000} className="field-textarea" value={notes} onChange={e => { setNotes(e.target.value); setFail(null); }} aria-label={t('smart.summary.notes')} placeholder={t('smart.summary.notesPlaceholder')} />}
+        {fail && <p className="field-error" role="alert">{t(fail === 'limit' ? 'assistant.limitReached' : fail === 'no_source' ? 'smart.summary.noSource' : fail === 'too_short' ? 'smart.summary.tooShort' : fail === 'unavailable' ? 'smart.summary.unavailable' : fail.startsWith('file_') ? `smart.summary.${fail}` : 'smart.summary.failed')}</p>}
         <div className="as-actions"><Button disabled={busy} onClick={run}>{busy ? t('smart.summary.working') : t('smart.summary.summarize')}</Button><Button variant="ghost" onClick={() => setOpen(false)}>{t('smart.cancel')}</Button></div></section>}</div>}
     {draft && <section className="panel summary-editor"><div className="section-heading"><h2>{t('smart.summary.review')}</h2>{preview && <span className="chip quiet-chip">{t('assistant.previewMode')}</span>}</div>
+      {partial && <p className="field-hint" role="note">{t('smart.summary.partial')}</p>}
       {(['en', 'es'] as const).map(l => <div key={l} className="summary-lang"><span className="gw-label">{l.toUpperCase()}</span>
         <Textarea rows={3} className="field-textarea" value={draft[`summary_${l}`]} aria-label={`${t('smart.summary.title')} ${l}`} onChange={e => setDraft({ ...draft, [`summary_${l}`]: e.target.value })} />
         <ClaimGuard text={draft[`summary_${l}`]} lang={l} onUse={v => setDraft({ ...draft, [`summary_${l}`]: v })} />
