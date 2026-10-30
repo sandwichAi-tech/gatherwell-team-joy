@@ -7942,5 +7942,10 @@
     "toggle": "Ver como usuario normal",
     "banner": "Viendo como usuario normal",
     "stop": "Salir"
+  },
+  "company": {
+    "blockTitle": "Compañía",
+    "callUs": "Llámanos",
+    "email": "Soporte por correo"
   }
 }

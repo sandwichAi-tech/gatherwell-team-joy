@@ -7942,5 +7942,10 @@
     "toggle": "View as a regular user",
     "banner": "Viewing as a regular user",
     "stop": "Stop"
+  },
+  "company": {
+    "blockTitle": "Company",
+    "callUs": "Call us",
+    "email": "Email support"
   }
 }

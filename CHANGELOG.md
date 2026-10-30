@@ -1,5 +1,11 @@
 # ZoheeWell Change Log
 
+## 2026-10-30 — Company phone number in one place
+- New src/lib/company.ts holds the company contact details (ZoheeWell LLC, (949) 630-3386, +19496303386, support@zoheewell.com), so they only ever change in one place.
+- A tap-to-call "Call us (949) 630-3386" link (tel:+19496303386) now appears on About in a small Company block (legal name, phone, support email), in the site footer next to the support email in small text, and on the signed-in Help page. Spanish reads "Llámanos"; the number itself is shown the same in both languages.
+- Phone and email links are at least 48px tall on phones.
+- English and Spanish text under company.*; tests in src/lib/company.test.ts.
+
 ## 2026-10-29 — Launch mode switches
 
 Follows the launch mode decision in SOURCE_OF_TRUTH.md. No code or data was deleted.
