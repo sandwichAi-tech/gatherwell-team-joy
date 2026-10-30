@@ -64,6 +64,31 @@ export function buildPolicyText(c: PolicyConfig, paid: boolean, t: T): string {
   return parts.join(' ');
 }
 
+/** True when the visible wording differs from what the current option would generate (host edits at stake). */
+export function policyTextEdited(c: PolicyConfig, text: string, paid: boolean, t: T): boolean {
+  if (c.mode === '') return false;
+  if (c.mode === 'custom') return c.edited;
+  return normalizePolicyText(text) !== normalizePolicyText(t(`policy.text.${c.mode}`));
+}
+
+/**
+ * Switching options. Custom wording typed earlier is restored when returning to Custom; edited preset text
+ * carries into Custom instead of being replaced; leaving edited text for a preset needs explicit confirmation.
+ */
+export function pickPolicyMode(c: PolicyConfig, text: string, mode: PolicyMode, paid: boolean, t: T,
+  kept: { text: string; edited: boolean } | null, confirmReplace: () => boolean): { config: PolicyConfig; text: string } | null {
+  if (mode === c.mode) return null;
+  const edited = policyTextEdited(c, text, paid, t);
+  if (mode === 'custom') {
+    if (kept?.edited) return { config: { ...c, mode, edited: true, reviewedSha: null }, text: kept.text };
+    if (edited) return { config: { ...c, mode, edited: true, reviewedSha: null }, text };
+    const next = { ...c, mode, edited: false, reviewedSha: null };
+    return { config: next, text: buildPolicyText(next, paid, t) };
+  }
+  if (edited && c.mode !== 'custom' && !confirmReplace()) return null;
+  return { config: { ...c, mode, edited: false, reviewedSha: null }, text: mode ? t(`policy.text.${mode}`) : '' };
+}
+
 /** Exactly what the server stores and hashes. */
 export const normalizePolicyText = (s: string) => s.replace(/^[ \t\r\n]+|[ \t\r\n]+$/g, '').slice(0, 1000);
 

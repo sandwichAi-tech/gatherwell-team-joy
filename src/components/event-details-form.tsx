@@ -9,7 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useRef } from 'react';
-import { buildPolicyText, emptyPolicy, normalizePolicyText, policyIssues, presetsFor, sha256Hex, type PolicyConfig, type PolicyMode } from '@/lib/event-policy';
+import { buildPolicyText, emptyPolicy, pickPolicyMode, normalizePolicyText, policyIssues, presetsFor, sha256Hex, type PolicyConfig, type PolicyMode } from '@/lib/event-policy';
 import { formatMoney } from '@/lib/billing';
 import { AGE_BANDS } from '@/lib/identity';
 import { PaidBlockedNote } from '@/components/payments-readiness';
@@ -95,14 +95,8 @@ export function PolicyPicker({ id, paid, config, text, onChange }: { id: string;
   };
   const pick = (mode: PolicyMode) => {
     if (config.mode === 'custom') customText.current = { text, edited: config.edited };
-    if (mode === 'custom') {
-      const kept = customText.current;
-      const next = { ...config, mode, edited: kept?.edited ?? false, reviewedSha: null };
-      onChange(next, kept?.edited ? kept.text : buildPolicyText(next, paid, tt));
-      return;
-    }
-    const next = { ...config, mode, edited: false, reviewedSha: null };
-    onChange(next, mode ? tt(`policy.text.${mode}`) : '');
+    const r = pickPolicyMode(config, text, mode, paid, tt, customText.current, () => window.confirm(t('policy.replaceEdits')));
+    if (r) onChange(r.config, r.text);
   };
   const review = async (on: boolean) => onChange({ ...config, reviewedSha: on ? await sha256Hex(normalizePolicyText(text)) : null }, text);
   const n = (v: string) => v.replace(/\D/g, '').slice(0, 3);
@@ -175,8 +169,9 @@ export function PolicyPicker({ id, paid, config, text, onChange }: { id: string;
       <span className="eyebrow">{t('policy.previewLabel')}</span><p>{normalizePolicyText(text)}</p>
     </div>}
     {custom && normalizePolicyText(text) && <label className="guest-consent">
-      <Checkbox checked={!!config.reviewedSha} onCheckedChange={v => void review(!!v)} /><span>{t('policy.reviewConfirm')}</span>
+      <Checkbox checked={!!config.reviewedSha} onCheckedChange={v => void review(!!v)} aria-describedby={`${id}-review-hint`} /><span>{t('policy.reviewConfirm')}</span>
     </label>}
+    {custom && normalizePolicyText(text) && !config.reviewedSha && <small id={`${id}-review-hint`} className="field-hint">{t('policy.reviewHint')}</small>}
   </div>;
 }
 

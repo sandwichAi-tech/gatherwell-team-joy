@@ -5489,8 +5489,8 @@
       "exceptions": "Exceptions: {{text}}.",
       "contact": "To cancel or ask a question: {{contact}}."
     },
-    "keepEdits": "Keep my edited wording when switching to another option?",
-    "reviewHint": "Before publishing, check the box above to confirm you reviewed this custom wording."
+    "reviewHint": "Before publishing, check the box above to confirm you reviewed this custom wording.",
+    "replaceEdits": "Replace your edited wording with this option's standard text? Your edits will be lost."
   },
   "refunds": {
     "label": "Refunds",

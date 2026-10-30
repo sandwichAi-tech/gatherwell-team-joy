@@ -5489,8 +5489,8 @@
       "exceptions": "Excepciones: {{text}}.",
       "contact": "Para cancelar o preguntar: {{contact}}."
     },
-    "keepEdits": "¿Conservar el texto que editaste al cambiar a otra opción?",
-    "reviewHint": "Antes de publicar, marca la casilla de arriba para confirmar que revisaste este texto personalizado."
+    "reviewHint": "Antes de publicar, marca la casilla de arriba para confirmar que revisaste este texto personalizado.",
+    "replaceEdits": "¿Reemplazar el texto que editaste con el texto estándar de esta opción? Se perderán tus cambios."
   },
   "refunds": {
     "label": "Reembolsos",
