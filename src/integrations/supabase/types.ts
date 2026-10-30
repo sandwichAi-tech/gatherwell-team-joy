@@ -9133,6 +9133,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      flag_on: { Args: { _key: string }; Returns: boolean }
       follow_target: {
         Args: {
           _email?: string
@@ -9274,6 +9275,7 @@ export type Database = {
         Returns: Json
       }
       host_no_limits_until: { Args: { _uid: string }; Returns: string }
+      host_publicly_listed: { Args: { _host: string }; Returns: boolean }
       host_sales_this_month: { Args: { _host: string }; Returns: number }
       host_value_month: {
         Args: { _host: string; _start: string }
