@@ -4,7 +4,7 @@ import { trackEvent } from '@/lib/analytics';
 import { ListSkeleton } from '@/components/launch-states';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
