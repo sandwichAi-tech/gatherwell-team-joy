@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Languages, Plus, X } from '@/components/icons';
+import { Languages } from '@/components/icons';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useTranslateFill } from '@/lib/assistant-client';
-import { activeLang, otherLang, showBothLanguages, type ContentLang } from '@/lib/lang-fields';
+import { activeLang, otherLang, type ContentLang } from '@/lib/lang-fields';
 
 type PairProps = {
   id: string;
@@ -21,45 +21,34 @@ type PairProps = {
 };
 
 /**
- * One Title/Description-style field in the creator's active language. The other language stays
- * hidden behind an "Add translation" action unless it already holds content; entered text is
- * never discarded by switching — both sides live in the parent's state and save together.
+ * One content field in a single language at a time. Defaults to the creator's UI language; an
+ * EN/ES switch edits the other translation in the same box. Both values live in the parent state,
+ * so switching never discards text, and the hidden language is never required.
  */
 export function LangPair({ id, label, en, es, onEn, onEs, multiline, rows = 3, maxLength, placeholder }: PairProps) {
   const { t, i18n } = useTranslation();
-  const active = activeLang(i18n.resolvedLanguage);
-  const other = otherLang(active);
-  const [expanded, setExpanded] = useState(false);
+  const [editing, setEditing] = useState<ContentLang>(() => activeLang(i18n.resolvedLanguage));
   const values: Record<ContentLang, string> = { en, es };
   const setters: Record<ContentLang, (v: string) => void> = { en: onEn, es: onEs };
-  const both = showBothLanguages(values[other], expanded);
-
-  const field = (lang: ContentLang) => {
-    const fieldId = both ? `${id}-${lang}` : id;
-    const fieldLabel = both ? `${label} · ${lang.toUpperCase()}` : label;
-    const shared = {
-      id: fieldId,
-      className: multiline ? 'field-textarea' : 'field-input',
-      maxLength,
-      value: values[lang],
-      placeholder,
-      'aria-label': fieldLabel,
-      onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setters[lang](e.target.value),
-    };
-    return <div className="form-field" key={lang}>
-      <label className="field-label" htmlFor={fieldId}>{fieldLabel}</label>
-      {multiline ? <Textarea rows={rows} {...shared} /> : <Input {...shared} />}
-    </div>;
+  const other = otherLang(editing);
+  const tr = useTranslateFill();
+  const langName = (l: ContentLang) => t(l === 'es' ? 'me.spanish' : 'me.english');
+  const shared = {
+    id, className: multiline ? 'field-textarea' : 'field-input', maxLength, value: values[editing], placeholder, lang: editing,
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setters[editing](e.target.value),
   };
-
-  return <div className="lang-pair">
-    {both ? <div className="bilingual">{field(active)}{field(other)}</div> : field(active)}
-    {!both && <button type="button" className="translate-button" onClick={() => setExpanded(true)}>
-      <Plus />{t('langFields.add', { lang: t(other === 'es' ? 'me.spanish' : 'me.english') })}
+  return <div className="form-field lang-pair">
+    <div className="lang-pair-head">
+      <label className="field-label" htmlFor={id}>{label}</label>
+      <div className="lang-switch" role="group" aria-label={t('langFields.editing', { field: label })}>
+        {(['en', 'es'] as const).map(l => <button key={l} type="button" className={editing === l ? 'is-active' : ''} aria-pressed={editing === l} aria-label={`${langName(l)}${values[l].trim() ? ` · ${t('langFields.filled')}` : ''}`} onClick={() => setEditing(l)}>{l.toUpperCase()}{values[l].trim() ? <span className="lang-dot" aria-hidden="true" /> : null}</button>)}
+      </div>
+    </div>
+    {multiline ? <Textarea rows={rows} {...shared} /> : <Input {...shared} />}
+    {!values[editing].trim() && values[other].trim() && <button type="button" className="translate-button" disabled={tr.busy} onClick={() => void tr.run(other === 'en' ? values.en : '', other === 'es' ? values.es : '', onEn, onEs)}>
+      <Languages />{tr.busy ? t('assistant.translating') : t('langFields.translateFrom', { lang: langName(other) })}
     </button>}
-    {both && !values[other].trim() && <button type="button" className="translate-button" onClick={() => setExpanded(false)}>
-      <X />{t('langFields.hide', { lang: t(other === 'es' ? 'me.spanish' : 'me.english') })}
-    </button>}
+    {tr.preview && <small className="not-connected">{t('assistant.previewTranslateNote')}</small>}
   </div>;
 }
 

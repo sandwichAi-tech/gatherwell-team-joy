@@ -7,7 +7,7 @@ export type ChallengeBasics = {
   daily_prompt_en: string; daily_prompt_es: string; starts_on: string; ends_on: string;
   cover_url: string | null; cover_style: number; timezone: string;
   model: ChallengeModel; goal_target: string; goal_unit: string; frequency: 'daily' | 'weekly';
-  enrollment: 'open' | 'invite'; capacity: string; leaderboard_on: boolean;
+  enrollment: 'open' | 'invite' | 'public'; capacity: string; leaderboard_on: boolean;
 };
 export const CHALLENGE_STEPS = ['basics', 'model', 'activities', 'messages', 'review'] as const;
 export type ChallengeStep = typeof CHALLENGE_STEPS[number];

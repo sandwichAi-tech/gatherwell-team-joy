@@ -1,5 +1,15 @@
 # ZoheeWell Change Log
 
+## 2026-10-30 — Tracker rows 41, 117, 121 (batch 2)
+
+- Row 41: shared language field shows ONE box per field with an EN/ES switch (dot = has text) and an optional "Translate from …" fill to review before saving. Hidden languages never required; switching keeps text. Applies to Challenges (title, description, daily prompt, activities, messages), Resources, quizzes, offers, waivers, add-on descriptions, event Short summary (was two boxes), resource templates, welcome rewards, event badges (now saves with one language). Challenge Next already used a translated label; product links and resource attachments already existed per activity.
+- Row 117: new "Open to anyone" challenge enrollment (`public`) beside Open to the team / Invite only, with hints. Coach public pages list published, public, not-ended challenges (`public_host_challenges`): title, short description, dates, length, Free/price, View challenge / full. Public challenge page shows the coach, ended/full states; Sign in returns to the same challenge (`/c/` added to safe return paths in app and database). Security change: "Open to the team" challenges are no longer readable via the public challenge link.
+- Row 121: "Embed on your website" in Me → Share my page (steps, copyable iframe code, preview). Read-only `/embed/h/<slug>` shows public profile, public challenges, upcoming events and resources; all links open ZoheeWell in a new tab so sign-in, joining and payment never run in the frame. Language follows `?lang=` or the visitor's browser (third-party frames don't share saved settings).
+
+Checked: full suite, typecheck and production build (exit 0). Signed-out browser: embed pasted into a separate test site on another address, EN/ES at 390 and 1280, new-tab links, no sideways scroll, unknown coach shows "page isn't available".
+
+Unverified: signed-in screens (Challenge builder, event Short summary, Me embed panel) not opened in a browser; no public challenge exists yet, so the coach-page Challenges section, join/sign-in return and full/ended states were not seen on screen; paid challenge checkout stays blocked; two-account isolation not run; AI translation only in preview mode without a key; dev-mode Spanish page-load warning inside a third-party frame (page recovers); no site-wide framing protection for signed-in/admin pages (would block the editor preview — needs a hosting decision).
+
 ## 2026-10-30 — Company phone number in one place
 - New src/lib/company.ts holds the company contact details (ZoheeWell LLC, (949) 630-3386, +19496303386, support@zoheewell.com), so they only ever change in one place.
 - A tap-to-call "Call us (949) 630-3386" link (tel:+19496303386) now appears on About in a small Company block (legal name, phone, support email), in the site footer next to the support email in small text, and on the signed-in Help page. Spanish reads "Llámanos"; the number itself is shown the same in both languages.

@@ -9640,6 +9640,7 @@ export type Database = {
         Args: { _event: string; _token?: string }
         Returns: Json
       }
+      public_host_challenges: { Args: { _host: string }; Returns: Json }
       public_resource_metadata: {
         Args: { _id: string; _kind: string }
         Returns: Json

@@ -1,3 +1,4 @@
+import { LangPair } from '@/components/lang-fields';
 import { tgShare } from '@/lib/chat-links';
 import { CopyButton, copyText } from '@/components/copy-button';
 import { useState } from 'react';
@@ -115,8 +116,7 @@ export function WelcomeRewardsCard() {
         <Switch checked={r.active} aria-label={t('welcome.active')} onCheckedChange={async v => { await toggleReward(r.id, v); await refresh(); }} />
         <Button size="icon" variant="ghost" aria-label={t('welcome.removeReward')} onClick={async () => { await removeReward(r.id); await refresh(); }}><Trash2 /></Button></li>)}</ul>}
       <div className="bilingual">
-        <div className="form-field"><label className="field-label" htmlFor="wr-en">{t('welcome.rewardName')} · EN</label><Input id="wr-en" className="field-input" maxLength={80} placeholder={t('welcome.rewardPlaceholder')} value={f.en} onChange={e => setF({ ...f, en: e.target.value })} /></div>
-        <div className="form-field"><label className="field-label" htmlFor="wr-es">{t('welcome.rewardName')} · ES</label><Input id="wr-es" className="field-input" maxLength={80} value={f.es} onChange={e => setF({ ...f, es: e.target.value })} /></div>
+        <LangPair id="wr-name" label={t('welcome.rewardName')} en={f.en} es={f.es} onEn={v => setF({ ...f, en: v })} onEs={v => setF({ ...f, es: v })} maxLength={80} placeholder={t('welcome.rewardPlaceholder')} />
       </div>
       <div className="form-field"><label className="field-label" htmlFor="wr-cost">{t('welcome.pointsNeeded')}</label><Input id="wr-cost" className="field-input" inputMode="numeric" value={f.cost} onChange={e => setF({ ...f, cost: e.target.value.replace(/\D/g, '') })} /></div>
       <Button variant="secondary" onClick={add}>{t('welcome.addReward')}</Button>

@@ -1,3 +1,4 @@
+import { LangPair } from '@/components/lang-fields';
 import { useTranslation } from 'react-i18next';
 import { AddonImageInput } from '@/components/addon-image-input';
 import { AddonDescriptionField } from '@/components/addon-description-field';
@@ -184,10 +185,7 @@ export function EventDetailsSections({ value, onChange, priceCents, lang, userId
 
   return <>
     <section className="form-section">
-      <label className="field-label" htmlFor="g-summary">{t('builder.summary')}</label>
-      <Input id="g-summary" className="field-input" maxLength={200} value={value.summaryEn} onChange={e => set({ summaryEn: e.target.value })} placeholder={t('builder.summaryPlaceholder')} />
-      <label className="field-label" htmlFor="g-summary-es">{t('builder.summaryEs')}</label>
-      <Input id="g-summary-es" className="field-input" maxLength={200} value={value.summaryEs} onChange={e => set({ summaryEs: e.target.value })} placeholder={t('builder.summaryPlaceholder')} />
+      <LangPair id="g-summary" label={t('builder.summary')} en={value.summaryEn} es={value.summaryEs} onEn={v => set({ summaryEn: v })} onEs={v => set({ summaryEs: v })} maxLength={200} placeholder={t('builder.summaryPlaceholder')} />
       <label className="field-label" htmlFor="g-lang">{t('builder.language')}</label>
       <select id="g-lang" className="field-input" value={value.language} onChange={e => set({ language: e.target.value === 'es' ? 'es' : 'en' })}>
         <option value="en">{t('me.english')}</option><option value="es">{t('me.spanish')}</option>

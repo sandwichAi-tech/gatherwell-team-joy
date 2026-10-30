@@ -2121,7 +2121,8 @@
     "enrollment": {
       "label": "Enrollment",
       "open": "Open to the team",
-      "invite": "Invite only"
+      "invite": "Invite only",
+      "public": "Open to anyone"
     },
     "msg": {
       "welcome": "Welcome",
@@ -2253,7 +2254,12 @@
     "inviteNoMessages": "Invitations enable eligibility only; no messages are sent. Paid access still requires verified payment.",
     "enrollmentDetails": "Enrollment details",
     "participantNumber": "Participant {{number}}",
-    "inactiveEnrollment": "Access inactive"
+    "inactiveEnrollment": "Access inactive",
+    "enrollmentHint": {
+      "open": "Only members of your team can see and join.",
+      "public": "Shown on your public coach page. Anyone 18+ with a ZoheeWell account can join.",
+      "invite": "Only people you invite can join. Not shown publicly."
+    }
   },
   "recognition": {
     "title": "Recognition",
@@ -4233,7 +4239,11 @@
     "myPage": "My host page",
     "teamPage": "Team page",
     "googleCalendar": "Google Calendar",
-    "offerings": "Courses and resources"
+    "offerings": "Courses and resources",
+    "challenges": "Challenges",
+    "viewChallenge": "View challenge",
+    "challengeFull": "Challenge is full",
+    "challengeEnded": "This challenge has ended"
   },
   "crop": {
     "lowRes": "This crop is only {{width}} px wide, so it may look soft on large or high-resolution screens. For a sharper cover, zoom out or choose a larger photo (at least 1200 px wide).",
@@ -7202,7 +7212,10 @@
   },
   "langFields": {
     "add": "Add {{lang}} translation",
-    "hide": "Hide {{lang}} for now"
+    "hide": "Hide {{lang}} for now",
+    "editing": "{{field}} language",
+    "filled": "has text",
+    "translateFrom": "Translate from {{lang}} (review before saving)"
   },
   "eventWaivers": {
     "groupLabel": "Event agreements",
@@ -7957,5 +7970,20 @@
     "blockTitle": "Company",
     "callUs": "Call us",
     "email": "Email support"
+  },
+  "embed": {
+    "title": "Embed on your website",
+    "intro": "Show your public coach page — events, challenges and resources — on your own website. It updates automatically when you change your page.",
+    "step1": "Copy the code below.",
+    "step2": "In your website builder, add an \"HTML\" or \"Embed\" block where you want it.",
+    "step3": "Paste the code and save your site.",
+    "code": "Embed code",
+    "copy": "Copy embed code",
+    "signInNote": "Joining, signing in and paying open ZoheeWell in a new tab, so they work on any website.",
+    "preview": "Preview",
+    "iframeTitle": "{{name}} on ZoheeWell",
+    "coachPage": "My coach page",
+    "openZoheeWell": "Open on ZoheeWell",
+    "newTabNote": "Links open ZoheeWell in a new tab."
   }
 }
