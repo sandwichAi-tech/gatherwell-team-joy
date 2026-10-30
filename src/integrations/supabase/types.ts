@@ -7544,6 +7544,35 @@ export type Database = {
           },
         ]
       }
+      team_metric_shares: {
+        Row: {
+          metrics: string[]
+          team_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          metrics?: string[]
+          team_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          metrics?: string[]
+          team_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_metric_shares_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       team_suspensions: {
         Row: {
           created_at: string
@@ -10465,6 +10494,10 @@ export type Database = {
         Args: { _muted?: boolean; _read_announcements?: boolean; _team: string }
         Returns: undefined
       }
+      set_team_metric_share: {
+        Args: { _metrics: string[]; _team: string }
+        Returns: string[]
+      }
       set_workspace_assignment_active: {
         Args: { _active: boolean; _id: string }
         Returns: undefined
@@ -10553,6 +10586,14 @@ export type Database = {
       team_log: {
         Args: { _action: string; _meta?: Json; _target?: string; _team: string }
         Returns: undefined
+      }
+      team_member_active: {
+        Args: { _team: string; _user: string }
+        Returns: boolean
+      }
+      team_member_insights: {
+        Args: { _team: string; _user: string }
+        Returns: Json
       }
       team_member_management: { Args: { _team: string }; Returns: Json }
       team_notification_access: {
