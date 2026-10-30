@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { shareOrigin } from '@/lib/seo';
 
 export type WelcomeReward = { id: string; title_en: string; title_es: string; cost: number };
 export type WelcomeSummary = {
@@ -14,7 +15,7 @@ export type HostRedemption = { id: string; code: string; title: string; points: 
 const db = supabase as unknown as { from: (t: string) => any; rpc: (f: string, a?: Record<string, unknown>) => Promise<{ data: any; error: any }> };
 const INV_KEY = 'gatherwell-inv';
 
-export const welcomeLink = (code: string) => `${typeof window !== 'undefined' ? window.location.origin : ''}/i/${code}`;
+export const welcomeLink = (code: string) => `${shareOrigin()}/i/${encodeURIComponent(code)}`;
 export const rewardTitle = (r: { title_en: string; title_es: string }, lang?: string) => (lang?.startsWith('es') ? r.title_es || r.title_en : r.title_en || r.title_es);
 
 export const myWelcomeQuery = (userId: string) => queryOptions({

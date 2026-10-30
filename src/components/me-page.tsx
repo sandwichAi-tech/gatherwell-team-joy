@@ -1,3 +1,4 @@
+import { welcomeLink } from '@/lib/welcome';
 import { MyTeams } from '@/components/team-membership';
 import { useFeature } from '@/lib/feature-flags';
 import { SPANISH_ENABLED } from '@/lib/i18n';
@@ -188,7 +189,7 @@ export function MePage() {
   const [confirmText, setConfirmText] = useState('');
   const [soleTeams, setSoleTeams] = useState<string[] | null>(null);
   const [deleteBusy, setDeleteBusy] = useState(false);
-  const { data: inviteUrl } = useQuery({ queryKey: ['my-invite-url', userId], enabled: panel === 'qr', queryFn: async () => { const { data } = await supabase.rpc('my_invite_code'); return data ? `${window.location.origin}/i/${data}` : null; } });
+  const { data: inviteUrl } = useQuery({ queryKey: ['my-invite-url', userId], enabled: panel === 'qr', queryFn: async () => { const { data } = await supabase.rpc('my_invite_code'); return data ? welcomeLink(String(data)) : null; } });
 
   const signOut = async () => { await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut(); void navigate({ to: '/login', replace: true }); };
 

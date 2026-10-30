@@ -1,3 +1,4 @@
+import { shareOrigin } from '@/lib/seo';
 import { queryOptions, type QueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -105,7 +106,7 @@ export function initialsOf(name?: string | null) {
 export const firstName = (name?: string | null) => (name ?? '').trim().split(/\s+/)[0] ?? '';
 
 export function joinLink(code: string) {
-  return `${window.location.origin}/join/${code}`;
+  return `${shareOrigin()}/join/${code}`;
 }
 
 /** Accepts a bare code or a pasted invite link like https://…/join/ABC123 */
