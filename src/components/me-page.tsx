@@ -195,6 +195,7 @@ export function MePage() {
   const switchMode = useSwitchMode(userId);
   const startHosting = useStartHosting(userId);
   const { data: canHost = false } = useQuery(hostEligibilityQuery(userId));
+  const [referralsOn] = useFeature('feature_referrals');
   const { data: referrals } = useQuery({ queryKey: ['me-referral-visibility', userId], queryFn: async () => {
     const { data, error } = await supabase.rpc('my_referral_dashboard');
     if (error) throw error;
