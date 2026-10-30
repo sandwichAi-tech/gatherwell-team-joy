@@ -218,12 +218,13 @@ export function LessonSummary({ lessonId, leader }: { lessonId: string; leader: 
   const key = ['lesson-summary', lessonId];
   const { data } = useQuery({ queryKey: key, queryFn: async () => (await supabase.from('lesson_summaries').select('*').eq('lesson_id', lessonId).maybeSingle()).data as (Sum & { team_id: string; published: boolean }) | null });
   const [open, setOpen] = useState(false); const [notes, setNotes] = useState(''); const [busy, setBusy] = useState(false);
-  const [draft, setDraft] = useState<(Sum & { team_id: string }) | null>(null); const [preview, setPreview] = useState(false);
+  const [draft, setDraft] = useState<(Sum & { team_id: string }) | null>(null); const [preview, setPreview] = useState(false); const [fail, setFail] = useState<string | null>(null);
   const run = async () => {
     setBusy(true);
     try {
       const r = await fn({ data: { lessonId, notes } });
-      if (!r.ok) { toast.error(t(r.error === 'limit' ? 'assistant.limitReached' : 'assistant.failed')); return; }
+      if (!r.ok) { setFail(r.error); return; }
+      setFail(null);
       setDraft({ ...r.summary, team_id: r.teamId }); setPreview(r.preview);
     } finally { setBusy(false); }
   };
@@ -245,7 +246,9 @@ export function LessonSummary({ lessonId, leader }: { lessonId: string; leader: 
       {leader && <Button variant="secondary" size="sm" onClick={() => setDraft({ ...shown })}><Pencil />{t('smart.summary.edit')}</Button>}</section>}
     {leader && !draft && <div className="summary-cta">{!open ? <Button variant="secondary" onClick={() => setOpen(true)}>{t(shown ? 'smart.summary.redo' : 'smart.summary.summarize')}</Button>
       : <section className="panel"><h2>{t('smart.summary.summarize')}</h2><p className="auth-subtitle">{t('smart.summary.pasteHint')}</p>
-        <Textarea rows={6} maxLength={30000} className="field-textarea" value={notes} onChange={e => setNotes(e.target.value)} aria-label={t('smart.summary.notes')} placeholder={t('smart.summary.notesPlaceholder')} />
+        <p className="field-hint">{t('smart.summary.filesNote')}</p>
+        <Textarea rows={6} maxLength={30000} className="field-textarea" value={notes} onChange={e => { setNotes(e.target.value); setFail(null); }} aria-label={t('smart.summary.notes')} placeholder={t('smart.summary.notesPlaceholder')} />
+        {fail && <p className="field-error" role="alert">{t(fail === 'limit' ? 'assistant.limitReached' : fail === 'no_source' ? 'smart.summary.noSource' : fail === 'too_short' ? 'smart.summary.tooShort' : fail === 'unavailable' ? 'smart.summary.unavailable' : 'smart.summary.failed')}</p>}
         <div className="as-actions"><Button disabled={busy} onClick={run}>{busy ? t('smart.summary.working') : t('smart.summary.summarize')}</Button><Button variant="ghost" onClick={() => setOpen(false)}>{t('smart.cancel')}</Button></div></section>}</div>}
     {draft && <section className="panel summary-editor"><div className="section-heading"><h2>{t('smart.summary.review')}</h2>{preview && <span className="chip quiet-chip">{t('assistant.previewMode')}</span>}</div>
       {(['en', 'es'] as const).map(l => <div key={l} className="summary-lang"><span className="gw-label">{l.toUpperCase()}</span>
