@@ -5488,7 +5488,9 @@
       "processing_other": "Refunds are processed within {{count}} business days.",
       "exceptions": "Exceptions: {{text}}.",
       "contact": "To cancel or ask a question: {{contact}}."
-    }
+    },
+    "keepEdits": "Keep my edited wording when switching to another option?",
+    "reviewHint": "Before publishing, check the box above to confirm you reviewed this custom wording."
   },
   "refunds": {
     "label": "Refunds",
@@ -7985,5 +7987,13 @@
     "coachPage": "My coach page",
     "openZoheeWell": "Open on ZoheeWell",
     "newTabNote": "Links open ZoheeWell in a new tab."
+  },
+  "publicCounts": {
+    "label": "Show on the public page",
+    "hint": "Registrations are sign-ups, not check-ins. You and your event staff always see the full numbers.",
+    "none": "No counts (default)",
+    "registered": "Number registered",
+    "remaining": "Spots left (limited capacity only)",
+    "both": "Number registered and spots left"
   }
 }
