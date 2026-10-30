@@ -12,6 +12,7 @@ import {
 } from '@/lib/resource-placement';
 import type { CreateType } from '@/lib/create-resource';
 import type { TFunction } from 'i18next';
+import { useFeature } from '@/lib/feature-flags';
 
 /** Human list of every live destination, for archive/delete warnings. */
 export function livePlacementList(dest: Destinations, courses: CourseOption[], t: TFunction, lang: string | undefined) {
@@ -54,6 +55,10 @@ export function ResourceAccessFields({ type, dest, onDest, free, price, onAccess
   const invalid = !free && resourcePriceCents(false, price) === null;
   const [query, setQuery] = useState(''); const [showCourses, setShowCourses] = useState(dest.courses.length > 0);
   const searchId = useId();
+  const [coursesOn] = useFeature('feature_courses'); const [sellingOn] = useFeature('feature_selling');
+  // Launch mode: the Courses destination and the Paid choice are hidden while switched off, unless this item already uses them.
+  const showCourseDest = coursesAllowed(type) && (coursesOn || dest.courses.length > 0);
+  const showPaid = sellingOn || !free;
   const authorized = courses.map(c => c.id);
   const selectedIds = dest.courses.map(c => c.course);
   const sections = useCourseSections(selectedIds.filter(id => authorized.includes(id)));
@@ -71,11 +76,11 @@ export function ResourceAccessFields({ type, dest, onDest, free, price, onAccess
       <div className="destination-grid">
         <DestinationCard id={`${prefix}-team`} checked={dest.team} disabled={dest.locked} title={t('resourcePlacement.teamTitle')} hint={t('resourcePlacement.teamCard')} onToggle={() => onDest(toggleDestination(dest, 'team'))} />
         <DestinationCard id={`${prefix}-coach`} checked={dest.coach} disabled={dest.locked} title={t('resourcePlacement.coachTitle')} hint={t('resourcePlacement.coachCard')} onToggle={() => onDest(toggleDestination(dest, 'coach'))} />
-        {coursesAllowed(type) && <DestinationCard id={`${prefix}-courses`} checked={courseOn} disabled={dest.locked} title={t('resourcePlacement.coursesTitle')} hint={t('resourcePlacement.coursesCard')} onToggle={toggleCourses} />}
+        {showCourseDest && <DestinationCard id={`${prefix}-courses`} checked={courseOn} disabled={dest.locked} title={t('resourcePlacement.coursesTitle')} hint={t('resourcePlacement.coursesCard')} onToggle={toggleCourses} />}
       </div>
     </fieldset>
 
-    {coursesAllowed(type) && courseOn && <fieldset className="form-field" id={`${prefix}-course-list`} tabIndex={-1}>
+    {showCourseDest && courseOn && <fieldset className="form-field" id={`${prefix}-course-list`} tabIndex={-1}>
       <legend className="field-label">{t('resourcePlacement.pickCourses')} <small className="muted-small">{t('resourcePlacement.selectedCount', { count: dest.courses.length })}</small></legend>
       {unavailable.map(c => <div key={c.course} className="destination-warning" role="alert">
         <span>{t('resourcePlacement.unavailable', { course: titleOf(c.course) })}</span>
@@ -108,7 +113,7 @@ export function ResourceAccessFields({ type, dest, onDest, free, price, onAccess
       <p className="field-hint">{t('resourcePlacement.courseAccess')}</p>
     </fieldset>}
 
-    {isStandalone(dest) && <>
+    {isStandalone(dest) && showPaid && <>
       <fieldset className="form-field"><legend className="field-label">{t('resources.item.accessLabel')}</legend>
         <div className="destination-grid is-pair" role="radiogroup" aria-label={t('resources.item.accessLabel')}>
           {(['free', 'paid'] as const).map(v => { const on = (v === 'free') === free; return <label key={v} htmlFor={`${prefix}-${v}`} className="destination-card" data-checked={on}>
