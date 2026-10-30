@@ -3085,6 +3085,7 @@ export type Database = {
           points_en: Json
           points_es: Json
           published: boolean
+          source_hash: string | null
           summary_en: string
           summary_es: string
           team_id: string
@@ -3099,6 +3100,7 @@ export type Database = {
           points_en?: Json
           points_es?: Json
           published?: boolean
+          source_hash?: string | null
           summary_en?: string
           summary_es?: string
           team_id: string
@@ -3113,6 +3115,7 @@ export type Database = {
           points_en?: Json
           points_es?: Json
           published?: boolean
+          source_hash?: string | null
           summary_en?: string
           summary_es?: string
           team_id?: string
@@ -9391,6 +9394,7 @@ export type Database = {
       leave_free_offer: { Args: { _offer: string }; Returns: undefined }
       leave_team: { Args: { _team: string }; Returns: undefined }
       lesson_is_unlocked: { Args: { _lesson: string }; Returns: boolean }
+      lesson_source_hash: { Args: { _lesson: string }; Returns: string }
       lesson_unlock_at: { Args: { _lesson: string }; Returns: string }
       list_public_gatherings: {
         Args: { _days?: number; _include_samples?: boolean; _limit?: number }

@@ -1450,6 +1450,13 @@
       "when": 1793398851506,
       "tag": "0206_referral_dashboard_refund_flags",
       "breakpoints": true
+    },
+    {
+      "idx": 207,
+      "version": "7",
+      "when": 1793398955825,
+      "tag": "0207_lesson_summary_source_hash",
+      "breakpoints": true
     }
   ]
 }
