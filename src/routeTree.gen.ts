@@ -72,6 +72,7 @@ import { Route as AuthenticatedAppToolsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppUpdatesRouteImport } from './routes/_authenticated/_app/updates'
 import { Route as AuthenticatedAppVerifyRouteImport } from './routes/_authenticated/_app/verify'
 import { Route as AuthenticatedAppWaiversRouteImport } from './routes/_authenticated/_app/waivers'
+import { Route as EmbedHSlugRouteImport } from './routes/embed.h.$slug'
 import { Route as IHostTokenRouteImport } from './routes/i.host.$token'
 import { Route as InviteTeamTokenRouteImport } from './routes/invite.team.$token'
 import { Route as ResourceKindIdRouteImport } from './routes/resource.$kind.$id'
@@ -432,6 +433,11 @@ const AuthenticatedAppWaiversRoute = AuthenticatedAppWaiversRouteImport.update({
   path: '/waivers',
   getParentRoute: () => AuthenticatedAppRouteRoute,
 } as any)
+const EmbedHSlugRoute = EmbedHSlugRouteImport.update({
+  id: '/embed/h/$slug',
+  path: '/embed/h/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IHostTokenRoute = IHostTokenRouteImport.update({
   id: '/i/host/$token',
   path: '/i/host/$token',
@@ -686,6 +692,7 @@ export interface FileRoutesByFullPath {
   '/updates': typeof AuthenticatedAppUpdatesRoute
   '/verify': typeof AuthenticatedAppVerifyRoute
   '/waivers': typeof AuthenticatedAppWaiversRoute
+  '/embed/h/$slug': typeof EmbedHSlugRoute
   '/i/host/$token': typeof IHostTokenRoute
   '/invite/team/$token': typeof InviteTeamTokenRoute
   '/resource/$kind/$id': typeof ResourceKindIdRoute
@@ -783,6 +790,7 @@ export interface FileRoutesByTo {
   '/updates': typeof AuthenticatedAppUpdatesRoute
   '/verify': typeof AuthenticatedAppVerifyRoute
   '/waivers': typeof AuthenticatedAppWaiversRoute
+  '/embed/h/$slug': typeof EmbedHSlugRoute
   '/i/host/$token': typeof IHostTokenRoute
   '/invite/team/$token': typeof InviteTeamTokenRoute
   '/resource/$kind/$id': typeof ResourceKindIdRoute
@@ -883,6 +891,7 @@ export interface FileRoutesById {
   '/_authenticated/_app/updates': typeof AuthenticatedAppUpdatesRoute
   '/_authenticated/_app/verify': typeof AuthenticatedAppVerifyRoute
   '/_authenticated/_app/waivers': typeof AuthenticatedAppWaiversRoute
+  '/embed/h/$slug': typeof EmbedHSlugRoute
   '/i/host/$token': typeof IHostTokenRoute
   '/invite/team/$token': typeof InviteTeamTokenRoute
   '/resource/$kind/$id': typeof ResourceKindIdRoute
@@ -982,6 +991,7 @@ export interface FileRouteTypes {
     | '/updates'
     | '/verify'
     | '/waivers'
+    | '/embed/h/$slug'
     | '/i/host/$token'
     | '/invite/team/$token'
     | '/resource/$kind/$id'
@@ -1079,6 +1089,7 @@ export interface FileRouteTypes {
     | '/updates'
     | '/verify'
     | '/waivers'
+    | '/embed/h/$slug'
     | '/i/host/$token'
     | '/invite/team/$token'
     | '/resource/$kind/$id'
@@ -1178,6 +1189,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/updates'
     | '/_authenticated/_app/verify'
     | '/_authenticated/_app/waivers'
+    | '/embed/h/$slug'
     | '/i/host/$token'
     | '/invite/team/$token'
     | '/resource/$kind/$id'
@@ -1245,6 +1257,7 @@ export interface RootRouteChildren {
   UnsubscribeTokenRoute: typeof UnsubscribeTokenRoute
   VerifyNumberRoute: typeof VerifyNumberRoute
   LegalIndexRoute: typeof LegalIndexRoute
+  EmbedHSlugRoute: typeof EmbedHSlugRoute
   IHostTokenRoute: typeof IHostTokenRoute
   InviteTeamTokenRoute: typeof InviteTeamTokenRoute
   ResourceKindIdRoute: typeof ResourceKindIdRoute
@@ -1701,6 +1714,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppWaiversRouteImport
       parentRoute: typeof AuthenticatedAppRouteRoute
     }
+    '/embed/h/$slug': {
+      id: '/embed/h/$slug'
+      path: '/embed/h/$slug'
+      fullPath: '/embed/h/$slug'
+      preLoaderRoute: typeof EmbedHSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/i/host/$token': {
       id: '/i/host/$token'
       path: '/i/host/$token'
@@ -2105,6 +2125,7 @@ const rootRouteChildren: RootRouteChildren = {
   UnsubscribeTokenRoute: UnsubscribeTokenRoute,
   VerifyNumberRoute: VerifyNumberRoute,
   LegalIndexRoute: LegalIndexRoute,
+  EmbedHSlugRoute: EmbedHSlugRoute,
   IHostTokenRoute: IHostTokenRoute,
   InviteTeamTokenRoute: InviteTeamTokenRoute,
   ResourceKindIdRoute: ResourceKindIdRoute,
