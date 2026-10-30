@@ -7424,7 +7424,7 @@
       "attribution": "The purchase is credited to the last valid referral link the buyer opened within {{days}} days. One purchase earns at most one reward.",
       "blocked": "No reward for referring yourself, for the host, or when the buyer and referrer share any team.",
       "states": "Pending rewards become available 14 days after a confirmed purchase. Paid means the host recorded a manual payout.",
-      "refunds": "If a purchase is refunded, cancelled or disputed, its pending or available reward is reversed.",
+      "refunds": "If a purchase is refunded, cancelled or disputed, its pending or available reward is reversed. A partial refund lowers the reward to match what the buyer kept. Rewards already paid are flagged for the host to settle directly.",
       "payouts": "Payouts are manual in beta. The host pays outside ZoheeWell and records it; ZoheeWell never sends money."
     },
     "payout": {

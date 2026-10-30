@@ -7424,7 +7424,7 @@
       "attribution": "La compra se acredita al último enlace de referido válido que abrió la persona compradora en los últimos {{days}} días. Cada compra genera como máximo una recompensa.",
       "blocked": "No hay recompensa por referirte a ti, por la persona anfitriona ni cuando quien compra y quien refiere comparten algún equipo.",
       "states": "Las recompensas pendientes pasan a disponibles 14 días después de una compra confirmada. Pagada significa que la persona anfitriona registró un pago manual.",
-      "refunds": "Si una compra se reembolsa, cancela o disputa, su recompensa pendiente o disponible se revierte.",
+      "refunds": "Si una compra se reembolsa, se cancela o se disputa, su recompensa pendiente o disponible se revierte. Un reembolso parcial reduce la recompensa según lo que conservó el comprador. Las recompensas ya pagadas se marcan para que el anfitrión lo resuelva directamente.",
       "payouts": "En beta los pagos son manuales. La persona anfitriona paga fuera de ZoheeWell y lo registra; ZoheeWell nunca envía dinero."
     },
     "payout": {
