@@ -3097,7 +3097,8 @@
       "mail": "Correo",
       "support": "Ayuda",
       "offerings": "Ofertas",
-      "communities": "Restricciones de comunidad"
+      "communities": "Restricciones de comunidad",
+      "flags": "Interruptores"
     },
     "period": {
       "week": "Esta semana",
@@ -3296,7 +3297,7 @@
       "ended": "Aviso quitado"
     },
     "flags": {
-      "title": "Funciones",
+      "title": "Interruptores de funciones",
       "variant": "Titular",
       "headline": "Titular {{v}}",
       "name": {
@@ -3307,11 +3308,22 @@
         "feature_retreats": "Retiros, viajes y cursos",
         "feature_badges_limited": "Insignias limitadas y mejores marcas",
         "feature_playbook": "Tarjetas de estrategias",
-        "feature_team_map": "Mapa del equipo"
+        "feature_team_map": "Mapa del equipo",
+        "landing_sticky_host_experiment": "Barra fija para anfitriones",
+        "feature_selling": "Ventas pagadas",
+        "feature_referrals": "Programas de referidos",
+        "feature_automations": "Mensajes automáticos y recorridos",
+        "feature_courses": "Cursos, paquetes, sesiones en vivo y certificados",
+        "feature_assessment": "Evaluación de bienestar",
+        "feature_alerts": "Alertas de eventos",
+        "feature_locations": "Lugares guardados",
+        "feature_marketing_extra": "Páginas de Empleos y Estudios"
       },
       "desc": {
         "landing_sticky_host_experiment": "Prueba de la página principal: una barra fija \"Organiza un evento\" para la mitad de los visitantes."
-      }
+      },
+      "intro": "Apagado significa oculto para todos excepto administradores. Al encender un interruptor, la función aparece para todos de inmediato.",
+      "noDescription": "Aún sin descripción."
     },
     "audit": {
       "search": "Busca acciones, identificadores o notas",
@@ -7918,5 +7930,17 @@
     "linkTo": "Enlace a {{section}}",
     "questions": "¿Preguntas?",
     "back": "Volver al Centro legal"
+  },
+  "comingSoon": {
+    "title": "Próximamente",
+    "text": "Boletos pagados, cursos y más herramientas para equipos en crecimiento.",
+    "notify": "Avísame",
+    "saved": "Te avisaremos",
+    "error": "No se pudo guardar. Inténtalo de nuevo."
+  },
+  "viewAsUser": {
+    "toggle": "Ver como usuario normal",
+    "banner": "Viendo como usuario normal",
+    "stop": "Salir"
   }
 }

@@ -7,7 +7,7 @@ const base: ToolsInput = {
   isAdmin: false,
   learnOn: true,
   teamMapOn: true,
-  canSellPaid: true,
+  sellingOn: true, referralsOn: true, locationsOn: true, canSellPaid: true,
 };
 
 const ids = (input: ToolsInput) => buildToolSections(input).flatMap(s => s.tools.map(t => t.id));
@@ -82,10 +82,10 @@ describe('buildToolSections', () => {
   });
 
   it('selling tools carry a setup badge until paid selling is fully ready', () => {
-    const sections = buildToolSections({ ...base, workspaceRole: 'host', canSellPaid: false });
+    const sections = buildToolSections({ ...base, workspaceRole: 'host', sellingOn: true, referralsOn: true, locationsOn: true, canSellPaid: false });
     const selling = sections.find(s => s.id === 'selling')!;
     expect(selling.tools.every(t => t.badge === 'setup')).toBe(true);
-    const ready = buildToolSections({ ...base, workspaceRole: 'host', canSellPaid: true });
+    const ready = buildToolSections({ ...base, workspaceRole: 'host', sellingOn: true, referralsOn: true, locationsOn: true, canSellPaid: true });
     expect(ready.find(s => s.id === 'selling')!.tools.every(t => !t.badge)).toBe(true);
   });
 
