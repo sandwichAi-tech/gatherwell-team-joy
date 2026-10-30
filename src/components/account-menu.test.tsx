@@ -7,6 +7,7 @@ vi.mock('./gw-icon',()=>({GwIcon:()=>null}));
 const switchMode=vi.fn().mockResolvedValue(true);
 const startHosting=vi.fn(async()=>true);
 vi.mock('@/lib/switch-mode',()=>({useSwitchMode:()=>switchMode,useStartHosting:()=>startHosting}));
+vi.mock('@/lib/feature-flags',()=>({setViewAsUser:()=>{},useViewAsUser:()=>false}));
 import {AccountMenu} from './account-menu';
 afterEach(()=>{cleanup();switchMode.mockClear();});
 describe('Persistent account menu permissions',()=>{

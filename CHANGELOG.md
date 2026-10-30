@@ -1,5 +1,17 @@
 # ZoheeWell Change Log
 
+## 2026-10-29 — Launch mode switches
+
+Follows the launch mode decision in SOURCE_OF_TRUTH.md. No code or data was deleted.
+
+- Database rows now exist for every switch so admins can toggle them: feature_learn on; feature_network, feature_retreats, feature_badges_limited, feature_playbook, feature_team_map off.
+- New switches, all off: feature_selling, feature_referrals, feature_automations, feature_courses, feature_assessment, feature_alerts, feature_locations, feature_marketing_extra.
+- Switched-off features are hidden, not grayed out: Tools (offers, promos, earnings, seats, referrals, locations), Circles tab, plan/Me/promo/referral links, Discover alerts, money steps in the host checklist, paid prices/ticket tiers/add-ons on events, Paid on resources and challenges, Courses destination, course/bundle/live/assessment resource types (direct links fall back to the picker), certificates, Communications automations and journeys (templates and follow-ups stay), and their routes. Careers and Studios return the normal 404 and leave the sitemap. Items that already carry a price or course placement keep showing it so saved data is never silently changed.
+- Tools has a "Coming soon" card for hosts with "Notify me" (one saved row per host, no duplicates; then "We'll let you know"), hidden once selling and courses are both on.
+- /admin?tab=flags now opens a Switches tab listing every switch with a plain description.
+- Admins get "View as a regular user" in the avatar menu with a "Viewing as a regular user" banner.
+- English and Spanish text; tests in src/lib/launch-mode.test.ts.
+
 ## 2026-10-29 — Launch mode decision (owner-approved)
 - Approved by Scott Messier (2026-10-29), agreed with Nick and Michael. Recorded in SOURCE_OF_TRUTH.md under "Launch mode decision (2026-10-29)".
 - Beta shows only the launch menu (host and guest lists in SOURCE_OF_TRUTH.md); every other built feature stays in code and data behind a feature switch, off for regular users until the owners turn it on. No feature deleted or changed. Documentation only; no code changed in this step.

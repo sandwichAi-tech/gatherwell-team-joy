@@ -1,3 +1,4 @@
+import { useFeature } from '@/lib/feature-flags';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -56,6 +57,7 @@ export function ChallengeBuilder({ draft, teamId, onClose }: { draft: Partial<Ch
   const [messages, setMessages] = useState<ChallengeMessage[]>(defaultMessages);
   const [busy, setBusy] = useState(false);
   const [paid, setPaid] = useState(false);
+  const [sellingOn] = useFeature('feature_selling');
   const [price, setPrice] = useState('');
   const [starter, setStarter] = useState<Starter | 'scratch' | null>(null);
   const [addons, setAddons] = useState<ChallengeAddon[]>([]);
@@ -184,7 +186,7 @@ export function ChallengeBuilder({ draft, teamId, onClose }: { draft: Partial<Ch
           <GatheringCover path={f.cover_url} style={f.cover_style} title={f.title_en || f.title_es || 'C'} className="cover-preview" />
           <div className="cover-styles">{COVER_STYLES.map((bg, i) => <button key={i} type="button" className={`cover-swatch ${!f.cover_url && f.cover_style === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} aria-label={`${t('onboarding.cover')} ${i + 1}`} aria-pressed={!f.cover_url && f.cover_style === i} onClick={() => setF({ ...f, cover_url: null, cover_style: i })} />)}</div>
           <label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={async r => { try { setF({ ...f, cover_url: await uploadMedia(userId, r.file, 'cover') }); } catch { toast.error(t('profile.saveError')); } }} /></label></div>
-        <div className="form-field"><span className="field-label">{t('challenges.pricing')}</span><div className="segmented full" role="group" aria-label={t('challenges.pricing')}>{[false, true].map(p => <Button key={String(p)} variant="ghost" aria-pressed={paid === p} className={paid === p ? 'selected' : ''} onClick={() => setPaid(p)}>{t(p ? 'challenges.paidChoice' : 'challenges.free')}</Button>)}</div></div>
+        {(sellingOn || paid) && <div className="form-field"><span className="field-label">{t('challenges.pricing')}</span><div className="segmented full" role="group" aria-label={t('challenges.pricing')}>{[false, true].map(p => <Button key={String(p)} variant="ghost" aria-pressed={paid === p} className={paid === p ? 'selected' : ''} onClick={() => setPaid(p)}>{t(p ? 'challenges.paidChoice' : 'challenges.free')}</Button>)}</div></div>}
         {paid && <><div className="choice-pair"><div className="form-field"><label className="field-label" htmlFor="chb-price">{t('billing.price')}</label><Input id="chb-price" inputMode="decimal" className="field-input" value={price} onChange={e => setPrice(e.target.value)} /></div><div className="form-field"><label className="field-label" htmlFor="chb-currency">{t('challenges.currency')}</label><select id="chb-currency" className="field-input" value="usd" disabled><option value="usd">USD</option></select></div></div><p className="not-connected-note" role="note">{t('challenges.checkoutBlocked')} {!canSell && t('billing.priceNeedsPayouts')}</p></>}
         <h3>{t('addonImages.title')}</h3>
         {addons.map(a => <fieldset key={a.id} className="builder-activity"><legend>{a.name || t('builder.addonName')}</legend>

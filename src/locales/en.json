@@ -3097,7 +3097,8 @@
       "mail": "Mail",
       "support": "Support",
       "offerings": "Offerings",
-      "communities": "Community restrictions"
+      "communities": "Community restrictions",
+      "flags": "Switches"
     },
     "period": {
       "week": "This week",
@@ -3296,7 +3297,7 @@
       "ended": "Banner down"
     },
     "flags": {
-      "title": "Feature flags",
+      "title": "Feature switches",
       "variant": "Headline",
       "headline": "Headline {{v}}",
       "name": {
@@ -3307,8 +3308,22 @@
         "feature_retreats": "Retreats, trips and courses",
         "feature_badges_limited": "Limited badges and personal bests",
         "feature_playbook": "Playbook cards",
-        "feature_team_map": "Team map"
-      }
+        "feature_team_map": "Team map",
+        "landing_sticky_host_experiment": "Front page sticky host bar",
+        "feature_selling": "Paid selling",
+        "feature_referrals": "Referral programs",
+        "feature_automations": "Message automations and journeys",
+        "feature_courses": "Courses, bundles, live sessions and certificates",
+        "feature_assessment": "Wellness assessment",
+        "feature_alerts": "Event alerts",
+        "feature_locations": "Saved locations",
+        "feature_marketing_extra": "Careers and Studios pages"
+      },
+      "desc": {
+        "landing_sticky_host_experiment": "Front page test: a sticky \"Host an event\" bar shown to half of visitors."
+      },
+      "intro": "Off means hidden for everyone except admins. Turning a switch on shows that feature to everyone right away.",
+      "noDescription": "No description yet."
     },
     "audit": {
       "search": "Search actions, IDs or notes",
@@ -7915,5 +7930,17 @@
     "linkTo": "Link to {{section}}",
     "questions": "Questions?",
     "back": "Back to Legal Center"
+  },
+  "comingSoon": {
+    "title": "Coming soon",
+    "text": "Paid tickets, courses and more tools for growing teams.",
+    "notify": "Notify me",
+    "saved": "We'll let you know",
+    "error": "Couldn't save. Try again."
+  },
+  "viewAsUser": {
+    "toggle": "View as a regular user",
+    "banner": "Viewing as a regular user",
+    "stop": "Stop"
   }
 }

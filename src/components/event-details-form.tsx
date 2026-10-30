@@ -174,7 +174,7 @@ export function PolicyPicker({ id, paid, config, text, onChange }: { id: string;
   </div>;
 }
 
-export function EventDetailsSections({ value, onChange, priceCents, lang, userId, onImageBusy, tried = false }: { userId: string; onImageBusy: (busy: boolean) => void; tried?: boolean; value: EventDetails; onChange: (d: EventDetails) => void; priceCents: number | null; lang: 'en' | 'es' }) {
+export function EventDetailsSections({ value, onChange, priceCents, lang, userId, onImageBusy, tried = false, sellingOn = true }: { sellingOn?: boolean; userId: string; onImageBusy: (busy: boolean) => void; tried?: boolean; value: EventDetails; onChange: (d: EventDetails) => void; priceCents: number | null; lang: 'en' | 'es' }) {
   const { t } = useTranslation();
   const set = (patch: Partial<EventDetails>) => onChange({ ...value, ...patch });
   const setTier = (id: string, patch: Partial<TicketTier>) => set({ tiers: value.tiers.map(x => x.id === id ? { ...x, ...patch } : x) });
@@ -238,7 +238,7 @@ export function EventDetailsSections({ value, onChange, priceCents, lang, userId
       {tried && value.allowsMinors && !!value.minAge && Number(value.minAge) > 17 && <p className="field-error">{t('eventReliability.errors.min_age')}</p>}
     </section>
 
-    <section className="form-section">
+    {(sellingOn || value.tiers.length > 0 || value.addons.length > 0) && <section className="form-section">
       <span id="g-tiers" tabIndex={-1} className="field-label">{t('builder.tiers')}</span>
       <p className="field-hint">{t('builder.tiersHint')}</p><p className="field-hint">{t('eventReliability.timezone', { zone: Intl.DateTimeFormat().resolvedOptions().timeZone })}</p>
       {value.tiers.map(tier => <div key={tier.id} className="builder-tier">
@@ -270,7 +270,7 @@ export function EventDetailsSections({ value, onChange, priceCents, lang, userId
       </div>)}
       {value.addons.length < MAX_ADDONS && <Button type="button" variant="secondary" onClick={() => set({ addons: [...value.addons, emptyAddon()] })}><Plus />{t('builder.addAddon')}</Button>}
       {(value.tiers.length > 0 || value.addons.length > 0) && <PaidBlockedNote />}
-    </section>
+    </section>}
 
     {!!priceCents && <section className="form-section builder-fee" aria-label={t('builder.feeEstimate')}>
       <span className="field-label">{t('builder.feeEstimate')}</span>

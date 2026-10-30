@@ -1,4 +1,5 @@
 import { displayTitleCase, eventPhotoSlot } from '@/lib/event-presentation';
+import { Feature } from '@/lib/feature-flags';
 import { usePublicSession } from '@/hooks/use-public-session';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
@@ -293,7 +294,7 @@ export function DiscoverPage({ search }: { search: DiscoverSearch }) {
           <div className="gw-empty-actions">
             {hasActiveFilters(filters) && <button type="button" className="gw-btn gw-btn-secondary" onClick={clearAll}>{t('discover.clearAll')}</button>}
             <Link to="/login" search={{ intent: 'host' }} className="gw-btn gw-btn-primary">{t('discover.createInArea')}</Link>
-            <Link to="/alerts" className="gw-btn gw-btn-secondary">{t('discover.notifyMe')}</Link>
+            <Feature flag="feature_alerts"><Link to="/alerts" className="gw-btn gw-btn-secondary">{t('discover.notifyMe')}</Link></Feature>
             <button type="button" className="gw-btn gw-btn-secondary" onClick={() => void shareInvite()}>{t('discover.inviteHost')}</button>
           </div>
         </div>}

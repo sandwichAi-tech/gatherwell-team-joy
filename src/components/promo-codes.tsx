@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Feature } from '@/lib/feature-flags';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -44,7 +45,7 @@ export function PromoUsageCard() {
   const { data } = useQuery(promosQuery(userId));
   const codes = data?.codes ?? [];
   return <section className="panel">
-    <div className="section-heading"><h2>{t('promo.usageTitle')}</h2><Link to="/promos" className="auth-link">{t('promo.manage')}<ChevronRight className="inline-icon" /></Link></div>
+    <div className="section-heading"><h2>{t('promo.usageTitle')}</h2><Feature flag="feature_selling"><Link to="/promos" className="auth-link">{t('promo.manage')}<ChevronRight className="inline-icon" /></Link></Feature></div>
     {!codes.length ? <EmptyState compact icon="Gift" text={t('promo.noCodes')} /> : codes.map(c => { const u = data!.use.get(c.id); return <div key={c.id} className="seat-row">
       <span><strong>{c.code}</strong><small>{label(c, lang)} · {t('promo.uses', { count: u?.uses ?? 0 })}{c.max_uses ? ` / ${c.max_uses}` : ''}</small></span>
       <span className="chip">{t('promo.discounted', { amount: formatMoney(u?.discount_cents ?? 0, lang) })}</span></div>; })}

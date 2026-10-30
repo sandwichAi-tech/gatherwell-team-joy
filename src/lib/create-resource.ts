@@ -11,6 +11,16 @@ export const CREATE_GROUPS = [
 ] as const;
 export type CreateType = (typeof CREATE_TYPES)[number];
 
+/** Launch mode: course, bundle and live need feature_courses; assessment needs feature_assessment. */
+export function createTypeAllowed(type: CreateType, flags: { courses: boolean; assessment: boolean }): boolean {
+  if (type === 'course' || type === 'bundle' || type === 'live') return flags.courses;
+  if (type === 'assessment') return flags.assessment;
+  return true;
+}
+export function launchCreateGroups(flags: { courses: boolean; assessment: boolean }) {
+  return CREATE_GROUPS.map(g => ({ key: g.key, types: (g.types as readonly CreateType[]).filter(t => createTypeAllowed(t, flags)) })).filter(g => g.types.length > 0);
+}
+
 export const parseCreateType = (v: unknown): CreateType | null =>
   (CREATE_TYPES as readonly unknown[]).includes(v) ? (v as CreateType) : null;
 

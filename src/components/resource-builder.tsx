@@ -1,3 +1,4 @@
+import { useFeature } from '@/lib/feature-flags';
 import { isHistoryGuard } from '@/lib/resource-removal';
 import { urlHint } from '@/lib/url-hint';
 import { BuilderStepFooter, focusField } from '@/components/builder-step-footer';
@@ -28,7 +29,7 @@ import { RichTextEditor, RichTextView } from '@/components/rich-text';
 import { getPaymentsReadiness } from '@/lib/billing.functions';
 import { canSellPaid } from '@/lib/payments-readiness';
 import {
-  CREATE_TYPES, emptyBuilderDraft, fileMatchesLessonType, isTrackFlow, lessonEditorConfig, lessonPresetFor, offerKindFor, typeContentAtRisk,
+  CREATE_TYPES, createTypeAllowed, emptyBuilderDraft, fileMatchesLessonType, isTrackFlow, lessonEditorConfig, lessonPresetFor, offerKindFor, typeContentAtRisk,
   type BuilderDraft, type CreateType,
 } from '@/lib/create-resource';
 import { learnPathsOf, listOf, pick, RECIPE_TAGS, removeUnusedLearnFiles, uploadLearnFile, type Lesson } from '@/lib/learn';
@@ -230,6 +231,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const lang = i18n.resolvedLanguage ?? 'en';
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const [coursesOn] = useFeature('feature_courses'); const [assessmentOn] = useFeature('feature_assessment');
   const { teamId, userId } = useLearn();
 
   const [type, setType] = useState<CreateType>(initialType);
@@ -623,7 +625,7 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
       <section className="panel builder-panel">
         <Field id="rb-type" label={t('resources.builder.typeLabel')}>
           <select id="rb-type" className="field-input" value={type} onChange={e => void pickType(e.target.value as CreateType)} disabled={!!loaded}>
-            {CREATE_TYPES.map(ct => <option key={ct} value={ct}>{t(`resources.create.types.${ct}.name`)}</option>)}
+            {CREATE_TYPES.filter(ct => ct === type || createTypeAllowed(ct, { courses: coursesOn, assessment: assessmentOn })).map(ct => <option key={ct} value={ct}>{t(`resources.create.types.${ct}.name`)}</option>)}
           </select>
           {loaded && <p className="field-hint">{t('resources.item.typeLocked')}</p>}
         </Field>

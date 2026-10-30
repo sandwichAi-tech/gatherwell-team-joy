@@ -18,7 +18,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { profileQuery, workspaceQuery, initialsOf, firstName } from '@/lib/account';
 import { roleAllows } from '@/lib/workspace';
 import type { WorkspaceRole } from '@/components/workspace-settings';
-import { useFeature } from '@/lib/feature-flags';
+import { useFeature, useViewAsUser } from '@/lib/feature-flags';
+import { ViewAsUserBanner } from '@/components/view-as-user';
 import { isAdminQuery } from '@/lib/site-media';
 import { hostEligibilityQuery } from '@/lib/host-eligibility';
 import { AccountMenu } from '@/components/account-menu';
@@ -53,11 +54,13 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
  const [theme, updateTheme] = useState<Theme>('system');
  const [ready, setReady] = useState(false);
  const [learnOn] = useFeature('feature_learn');
+ const [sellingOn] = useFeature('feature_selling');
+ const viewAsUser = useViewAsUser();
  const wsRole = workspace ? ((workspace.ownerId === userId ? 'owner' : workspace.workspaceRole) as 'owner' | WorkspaceRole) : null;
  const canContent = workspace?.role === 'leader' || roleAllows(wsRole, 'content');
  const canManageTeam = workspace?.role === 'leader' || roleAllows(wsRole, 'members');
  const coachTabs = [...tabs.slice(0, 4), ...(roleAllows(wsRole, 'messages') ? [{ key: 'communications', path: '/communications', icon: Megaphone } as const] : []), ...(showInsightsNavigation(wsRole, workspace?.role === 'leader', profile?.role_intent === 'guest') ? [{ key: 'insights', path: '/insights', icon: BarChart3 } as const] : []), tabs[4]];
- const navTabs = (profile?.role_intent === 'guest' ? guestTabs : coachTabs).filter(tab => tab.key !== 'learn' || learnOn);
+ const navTabs = (profile?.role_intent === 'guest' ? guestTabs : coachTabs).filter(tab => (tab.key !== 'learn' || learnOn) && (tab.key !== 'circles' || sellingOn));
  const isActive = (path: string) => navigationPathActive(pathname, path);
  const navLabel = (key: string) => key === 'insights' ? insightsNavigationLabel(i18n.resolvedLanguage, t) : t(`nav.${key}`);
  // Course, resource and membership pages (/offer/…) belong to Resources, not Home.
@@ -94,7 +97,7 @@ export function GatherwellShell({ children, userId }: { children: ReactNode; use
      <span className="desktop-header-label"><strong>{pageTitle}</strong></span>
      <div className="header-actions"><Link to="/notifications" className="header-bell" aria-label={t('notifications.title')}><GwIcon name="Bell" size={20}/>{unread > 0 && <span className="header-bell-badge" aria-label={t('notifications.unread')}>{unread > 99 ? '99+' : unread}</span>}</Link><Link to="/discover" className="gw-app-discover" aria-label={t('marketing.discover')}><GwIcon name="Compass" size={20}/><span>{t('marketing.discover')}</span></Link><Button variant="ghost" size="icon" className="assistant-button" aria-label={t('common.assistant')} title={t('common.assistant')} onClick={() => openSheet('assistant')}><Sparkles /></Button><AccountMenu initials={initials} isAdmin={isAdmin} userId={userId} canSwitchToAttending={!!profile && profile.role_intent !== 'guest'} canSwitchToHost={profile?.role_intent === 'guest' && canHost} canStartHosting={!!profile && profile.role_intent === 'guest' && !canHost} /></div>
     </header>
-    <main id="main-content" className="page-content"><ClientOnly fallback={<ListSkeleton />}><PlatformNotices teamId={workspace?.teamId} /><QueryFeedback /><div key={pathname} className="page-transition">{children}</div></ClientOnly></main>
+    <main id="main-content" className="page-content"><ClientOnly fallback={<ListSkeleton />}>{isAdmin && viewAsUser && <ViewAsUserBanner />}<PlatformNotices teamId={workspace?.teamId} /><QueryFeedback /><div key={pathname} className="page-transition">{children}</div></ClientOnly></main>
    </div>
    {userId && <ClientOnly><BadgeEarnedWatcher /><PushPrompt userId={userId} /></ClientOnly>}
    {pathname !== '/me' && <Button size="icon" className="floating-create" onClick={() => openSheet('create')} aria-label={t('common.create')} title={t('common.create')}><Plus /></Button>}

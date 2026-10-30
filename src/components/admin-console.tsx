@@ -23,9 +23,9 @@ import { updatePlanSettings,
   listAdminTickets, replyAdminTicket, closeAdminTicket, type AdminTicket,
 } from '@/lib/admin.functions';
 
-export const ADMIN_TABS = ['overview', 'teams', 'users', 'offerings', 'moderation', 'communities', 'verify', 'library', 'broadcasts', 'founding', 'day60', 'settings', 'audit', 'mail', 'support'] as const;
+export const ADMIN_TABS = ['overview', 'teams', 'users', 'offerings', 'moderation', 'communities', 'verify', 'library', 'broadcasts', 'founding', 'day60', 'settings', 'flags', 'audit', 'mail', 'support'] as const;
 export type AdminTab = (typeof ADMIN_TABS)[number];
-const TAB_ICONS: Record<AdminTab, GwIconProps['name']> = { overview: 'BarChart3', teams: 'UsersRound', users: 'UserRound', offerings: 'BookOpen', communities: 'ShieldCheck', moderation: 'Flag', verify: 'BadgeCheck', library: 'BookOpen', broadcasts: 'Megaphone', founding: 'Medal', day60: 'Trophy', settings: 'Settings2', audit: 'FileText', mail: 'Mail', support: 'LifeBuoy' };
+const TAB_ICONS: Record<AdminTab, GwIconProps['name']> = { overview: 'BarChart3', teams: 'UsersRound', users: 'UserRound', offerings: 'BookOpen', communities: 'ShieldCheck', moderation: 'Flag', verify: 'BadgeCheck', library: 'BookOpen', broadcasts: 'Megaphone', founding: 'Medal', day60: 'Trophy', settings: 'Settings2', flags: 'Settings2', audit: 'FileText', mail: 'Mail', support: 'LifeBuoy' };
 
 const useLang = () => { const { i18n } = useTranslation(); return i18n.resolvedLanguage === 'es' ? 'es' : 'en'; };
 const fmtDate = (iso: string | null | undefined, lang: string, time = false) => iso ? new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', time ? { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' } : { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(iso)) : '—';
@@ -53,6 +53,7 @@ export function AdminConsole({ tab }: { tab: AdminTab }) {
     {tab === 'founding' && <FoundingAdmin />}
     {tab === 'day60' && <Day60Admin />}
     {tab === 'settings' && <Settings />}
+    {tab === 'flags' && <FlagsPanel />}
     {tab === 'audit' && <AdminSafety key={tab} kind="audit" />}
     {tab === 'mail' && <MailLog />}
     {tab === 'support' && <SupportTickets />}
@@ -427,24 +428,30 @@ function Broadcasts() {
 }
 
 function Settings() {
+  const { t } = useTranslation();
+  return <>
+    <section className="panel"><Link to="/admin/site-media" className="settings-row"><GwIcon name="ImageDown" className="settings-icon" /><span className="settings-label">{t('siteMedia.menu')}</span><GwIcon name="ChevronRight" className="settings-chevron" /></Link></section>
+    <PlanSettingsPanel />
+  </>;
+}
+
+/** Launch-mode switches (/admin?tab=flags): every row in feature_flags with its plain-language description. */
+function FlagsPanel() {
   const { t } = useTranslation(); const lang = useLang(); const qc = useQueryClient();
   const fn = useServerFn(getFlags); const save = useServerFn(setFlag);
-  const { data = [] } = useQuery({ queryKey: ['admin', 'flags'], queryFn: () => fn() });
+  const { data = [], isLoading } = useQuery({ queryKey: ['admin', 'flags'], queryFn: () => fn() });
   const update = async (key: string, enabled: boolean, value: string | null) => {
     const r = await save({ data: { key, enabled, value } });
     if (!r.ok) toast.error(t('admin.errors.failed')); else { toast.success(t('admin.saved')); await qc.invalidateQueries({ queryKey: ['admin', 'flags'] }); await qc.invalidateQueries({ queryKey: ['feature-flags'] }); }
   };
-  return <>
-    <section className="panel"><Link to="/admin/site-media" className="settings-row"><GwIcon name="ImageDown" className="settings-icon" /><span className="settings-label">{t('siteMedia.menu')}</span><GwIcon name="ChevronRight" className="settings-chevron" /></Link></section>
-    <PlanSettingsPanel />
-    <section className="panel"><h2 className="section-title">{t('admin.flags.title')}</h2>
-      <ul className="admin-list">{data.map(fl => <li key={fl.key} className="admin-row flag-row">
-        <span className="admin-row-main"><strong>{t(`admin.flags.name.${fl.key}`, { defaultValue: fl.key })}</strong><small>{lang === 'es' ? fl.description_es : fl.description_en}</small></span>
-        {fl.key === 'landing_headline' && <select aria-label={t('admin.flags.variant')} className="field-input flag-select" value={fl.value ?? 'A'} onChange={e => update(fl.key, fl.enabled, e.target.value)}>{['A', 'B', 'C', 'D'].map(v => <option key={v} value={v}>{t('admin.flags.headline', { v })}</option>)}</select>}
-        <Switch checked={fl.enabled} onCheckedChange={v => update(fl.key, v, fl.value)} aria-label={t(`admin.flags.name.${fl.key}`, { defaultValue: fl.key })} />
-      </li>)}</ul>
-    </section>
-  </>;
+  if (isLoading) return <ListSkeleton />;
+  return <section className="panel"><h2 className="section-title">{t('admin.flags.title')}</h2><p className="muted-copy">{t('admin.flags.intro')}</p>
+    <ul className="admin-list">{data.map(fl => <li key={fl.key} className="admin-row flag-row">
+      <span className="admin-row-main"><strong>{t(`admin.flags.name.${fl.key}`, { defaultValue: fl.key })}</strong><small>{(lang === 'es' ? fl.description_es : fl.description_en) || t(`admin.flags.desc.${fl.key}`, { defaultValue: t('admin.flags.noDescription') })}</small></span>
+      {fl.key === 'landing_headline' && <select aria-label={t('admin.flags.variant')} className="field-input flag-select" value={fl.value ?? 'A'} onChange={e => update(fl.key, fl.enabled, e.target.value)}>{['A', 'B', 'C', 'D'].map(v => <option key={v} value={v}>{t('admin.flags.headline', { v })}</option>)}</select>}
+      <Switch checked={fl.enabled} onCheckedChange={v => update(fl.key, v, fl.value)} aria-label={t(`admin.flags.name.${fl.key}`, { defaultValue: fl.key })} />
+    </li>)}</ul>
+  </section>;
 }
 
 function PlanSettingsPanel() {

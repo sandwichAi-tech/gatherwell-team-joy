@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Feature } from '@/lib/feature-flags';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -124,7 +125,7 @@ export function CoachReferralsPage() {
   const availableBy = (rid: string) => (dash.data?.rewards ?? []).filter(r => r.referrer_id === rid && r.status === 'available');
 
   return <>
-    <Link to="/earnings" className="auth-link back-link"><ArrowLeft />{t('billing.earnings')}</Link>
+    <Feature flag="feature_selling"><Link to="/earnings" className="auth-link back-link"><ArrowLeft />{t('billing.earnings')}</Link></Feature>
     <div className="page-heading"><div><span className="eyebrow">{t('profile.groupHost')}</span><h1>{t('referral.coach.title')}</h1><p>{t('referral.coach.subtitle')}</p></div></div>
     <p className="not-connected" role="note">{gate?.connected ? t('referral.manualNote') : t('referral.notConnected')}</p>
 

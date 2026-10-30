@@ -1,4 +1,5 @@
 import { MyTeams } from '@/components/team-membership';
+import { useFeature } from '@/lib/feature-flags';
 import { SPANISH_ENABLED } from '@/lib/i18n';
 import { useIsFounding } from '@/components/founding';
 import { useIsVerified } from '@/components/coach-trust';
@@ -194,6 +195,7 @@ export function MePage() {
   const switchMode = useSwitchMode(userId);
   const startHosting = useStartHosting(userId);
   const { data: canHost = false } = useQuery(hostEligibilityQuery(userId));
+  const [referralsOn] = useFeature('feature_referrals');
   const { data: referrals } = useQuery({ queryKey: ['me-referral-visibility', userId], queryFn: async () => {
     const { data, error } = await supabase.rpc('my_referral_dashboard');
     if (error) throw error;
@@ -297,7 +299,7 @@ export function MePage() {
     <SettingsGroup title={t('profile.groupActivity')}>
       {linkRow('BellRing', t('following.title'), '/following')}
       {linkRow('Bookmark', t('saved.title'), '/saved')}
-      {referrals?.links?.some(link => link.enabled) && <Link className="settings-row" to="/referrals/mine"><GwFeatureTile name="Share2" size={24} className="settings-tile" /><span className="settings-label">{t('referral.mine.title')}</span><ChevronRight className="settings-chevron" /></Link>}
+      {referralsOn && referrals?.links?.some(link => link.enabled) && <Link className="settings-row" to="/referrals/mine"><GwFeatureTile name="Share2" size={24} className="settings-tile" /><span className="settings-label">{t('referral.mine.title')}</span><ChevronRight className="settings-chevron" /></Link>}
       <Link className="settings-row" to="/progress"><GwFeatureTile name="Flame" size={24} className="settings-tile" /><span className="settings-label">{t('progress.title')}</span><ChevronRight className="settings-chevron" /></Link>
       {row('CalendarDays', t('profile.myGatherings'), () => setPanel('gatherings'))}
       {row('Flag', t('profile.myChallenges'), () => setPanel('challenges'))}

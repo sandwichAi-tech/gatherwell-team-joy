@@ -1,3 +1,4 @@
+import { useFeature } from '@/lib/feature-flags';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -27,6 +28,11 @@ const STEPS: { key: string; icon: GwIconName; to: string }[] = [
   { key: 'first_paid', icon: 'HandHeart', to: '/earnings' },
   { key: 'first_100', icon: 'Trophy', to: '/earnings' },
 ];
+/** Money steps (offer, first paid, first $100) need payments connected AND feature_selling on. */
+export function launchSteps<T extends { key: string }>(steps: T[], paymentsLive: boolean, sellingOn: boolean): T[] {
+  if (!sellingOn) return steps.filter(s => s.key !== 'offer' && s.key !== 'first_paid' && s.key !== 'first_100');
+  return paymentsLive ? steps : steps.filter(s => s.key !== 'first_paid' && s.key !== 'first_100');
+}
 const EARN = [{ key: 'earn_100', cents: 10000 }, { key: 'earn_1000', cents: 100000 }, { key: 'earn_10000', cents: 1000000 }] as const;
 
 function doneMap(c: Checklist): Record<string, boolean> {
@@ -77,9 +83,10 @@ export function CoachLaunchCard() {
   const { data: c } = useQuery(coachChecklistQuery);
   const { data: pay } = useQuery(paymentsStatusQuery);
   const live = !!pay?.connected;
+  const [sellingOn] = useFeature('feature_selling');
   const done = c ? doneMap(c) : {};
   // Money steps stay hidden until card payments are connected.
-  const steps = live ? STEPS : STEPS.filter(s => s.key !== 'first_paid' && s.key !== 'first_100');
+  const steps = launchSteps(STEPS, live, sellingOn);
   const keys = steps.map(s => s.key);
   const { step, close } = useCelebrations(c, keys, done);
   if (!c || !c.is_host) return <Celebration step={step} onClose={close} />;

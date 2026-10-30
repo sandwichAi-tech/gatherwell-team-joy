@@ -1,3 +1,4 @@
+import { FeatureRoute } from '@/lib/feature-flags';
 import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 import { OffersManagePage } from '@/components/offers';
@@ -8,6 +9,9 @@ export const Route = createFileRoute('/_authenticated/_app/offers')({
   head: () => gatherwellHead('me', 'offers.title'),
   component: function OffersRoute() {
     const { new: kind, mode } = Route.useSearch();
-    return <OffersManagePage newKind={kind === 'course' || kind === 'download' ? kind : undefined} mode={mode === 'bundle' ? 'bundle' : undefined} />;
+    const page = <OffersManagePage newKind={kind === 'course' || kind === 'download' ? kind : undefined} mode={mode === 'bundle' ? 'bundle' : undefined} />;
+    // Single file resources are part of the launch menu; the full offers/courses manager is not.
+    if (kind === 'download' && mode !== 'bundle') return page;
+    return <FeatureRoute flag={['feature_selling', 'feature_courses']}>{page}</FeatureRoute>;
   },
 });
