@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { EmptyState } from '@/components/launch-states';
 import { trackEvent } from '@/lib/analytics';
 import { ListSkeleton } from '@/components/launch-states';
@@ -54,7 +55,7 @@ export function DailyBriefCard() {
   const when = (v: unknown) => typeof v === 'string' ? new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(v)) : '';
   const label = (l: string) => (l === 'attendingCode' ? 'attending' : l);
   const vals = (item: BriefItem) => ({ ...item.values, when: when(item.values['when']), place: item.values['place'] ? ` · ${item.values['place']}` : '' });
-  const target = (item: BriefItem, children: React.ReactNode, className: string) => {
+  const target = (item: BriefItem, children: ReactNode, className: string) => {
     const id = item.id ?? '';
     if (item.target === 'team') return <Link className={className} to="/team/insights">{children}</Link>;
     if (item.label === 'signups') return <Link className={className} to="/event/$id/guests" params={{ id }}>{children}</Link>;
