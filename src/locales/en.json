@@ -7753,6 +7753,16 @@
       "end": "Scores {{from}}–{{to}} have no result yet. The last range must end at 100.",
       "gap": "Scores {{from}}–{{to}} have no result yet.",
       "overlap": "Scores {{from}}–{{to}} fall in two ranges. Each score needs exactly one result."
+    },
+    "noQuestions": "No questions yet. Add your first question below.",
+    "answerText": "Answer {{n}} text",
+    "answerScore": "Score (0–100)",
+    "publishWhy": {
+      "title": "Why you can't publish yet",
+      "unsaved": "Save your draft first — publishing uses the saved version.",
+      "noScope": "ZoheeWell has not approved the assessment scope document yet. You can keep building and saving; publishing opens once it is approved.",
+      "pickScope": "Choose the approved scope document above.",
+      "issues": "Fix the items listed on the earlier steps."
     }
   },
   "lifecycle": {

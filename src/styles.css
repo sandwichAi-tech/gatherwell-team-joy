@@ -2947,3 +2947,5 @@ a.legal-doc-card:hover, a.legal-doc-card:focus-visible { border-color: var(--pri
 @media (max-width:767px){
   .gw-footer-contact .gw-call-link,.gw-footer-contact .gw-mail-link,.gw-company-block a{min-height:48px}
 }
+.assessment-add-question{margin:12px 0 96px;min-height:48px;width:100%}
+.assessment-option .form-field{flex:1;min-width:0}

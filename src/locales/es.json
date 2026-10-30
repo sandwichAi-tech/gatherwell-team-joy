@@ -7753,6 +7753,16 @@
       "end": "Los puntajes {{from}}–{{to}} aún no tienen resultado. El último rango debe terminar en 100.",
       "gap": "Los puntajes {{from}}–{{to}} aún no tienen resultado.",
       "overlap": "Los puntajes {{from}}–{{to}} están en dos rangos. Cada puntaje necesita exactamente un resultado."
+    },
+    "noQuestions": "Aún no hay preguntas. Agrega la primera abajo.",
+    "answerText": "Texto de la respuesta {{n}}",
+    "answerScore": "Puntaje (0–100)",
+    "publishWhy": {
+      "title": "Por qué aún no puedes publicar",
+      "unsaved": "Primero guarda tu borrador: se publica la versión guardada.",
+      "noScope": "ZoheeWell aún no ha aprobado el documento de alcance de la evaluación. Puedes seguir creando y guardando; podrás publicar cuando se apruebe.",
+      "pickScope": "Elige arriba el documento de alcance aprobado.",
+      "issues": "Corrige los puntos indicados en los pasos anteriores."
     }
   },
   "lifecycle": {
