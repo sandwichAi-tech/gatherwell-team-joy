@@ -49,3 +49,14 @@ export function readRefParam(v: unknown): string | null {
   const s = typeof v === 'string' ? v.trim().toUpperCase() : '';
   return CODE_RE.test(s) ? s : null;
 }
+
+/** Mirrors referral_adjust_partial: an unpaid reward is recomputed from the rate snapshot on what the buyer kept;
+ * nothing kept reverses it; a paid reward is never changed automatically, only flagged for manual reconciliation. */
+export function adjustForRefund(r: { status: RewardStatus; kind: RewardKind; value: number; saleCents: number; rewardCents: number }, refundedCents: number):
+  { status: RewardStatus; rewardCents: number; needsReconcile: boolean } {
+  if (r.status === 'paid') return { status: 'paid', rewardCents: r.rewardCents, needsReconcile: refundedCents > 0 };
+  if (r.status === 'reversed') return { status: 'reversed', rewardCents: r.rewardCents, needsReconcile: false };
+  const kept = Math.max(r.saleCents - refundedCents, 0);
+  const amt = Math.min(rewardCents(r.kind, r.value, kept), r.rewardCents);
+  return amt <= 0 ? { status: 'reversed', rewardCents: 0, needsReconcile: false } : { status: r.status, rewardCents: amt, needsReconcile: false };
+}
