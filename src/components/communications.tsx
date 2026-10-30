@@ -1,3 +1,4 @@
+import { useFeature } from '@/lib/feature-flags';
 import { useMemo, useState } from 'react';
 import { CoachSubscriberSegments } from './coach-updates';
 import { AttendanceJourneyEditor } from './attendance-journey';
@@ -46,6 +47,7 @@ export function CommunicationsPage() {
   const { userId } = useGatherwell();
   const qc = useQueryClient();
   const [tab, setTab] = useState<'templates' | 'automations' | 'journeys'>('templates');
+  const [automationsOn] = useFeature('feature_automations');
   const { data: ws } = useQuery({ ...workspaceQuery(userId), enabled: !!userId });
   const teamId = ws?.teamId ?? null;
   const { data: canManage = false } = useQuery({ queryKey: ['team-capability', teamId, 'messages'], enabled: !!teamId, queryFn: async () => {
@@ -100,14 +102,14 @@ export function CommunicationsPage() {
     {!canManage && <p className="empty-state" role="note">{t('comms.membersReadOnly')}</p>}
 
     <div className="segmented full comms-tabs" role="tablist" aria-label={t('comms.title')}>
-      {(['templates', 'automations', 'journeys'] as const).map(k =>
+      {(automationsOn ? ['templates', 'automations', 'journeys'] as const : ['templates'] as const).map(k =>
         <Button key={k} variant="ghost" role="tab" aria-selected={tab === k} className={tab === k ? 'selected' : ''} onClick={() => setTab(k)}>{t(`comms.tab.${k}`)}</Button>)}
     </div>
     <p className="field-hint comms-tab-hint">{t(`comms.tabHint.${tab}`)}</p>
 
     {tab === 'templates' && <TemplatesTab teamId={teamId ?? ''} templates={templates ?? []} loading={loadingTemplates} canManage={canManage} onChanged={refresh} />}
-    {tab === 'automations' && <AutomationsTab teamId={teamId ?? ''} automations={automations ?? []} templates={templates ?? []} loading={loadingAutomations} canManage={canManage} setup={setup ?? null} onChanged={refresh} />}
-    {tab === 'journeys' && <JourneysTab teamId={teamId ?? ''} journeys={journeys ?? []} templates={templates ?? []} loading={loadingJourneys} canManage={canManage} setup={setup ?? null} onChanged={refresh} />}
+    {automationsOn && tab === 'automations' && <AutomationsTab teamId={teamId ?? ''} automations={automations ?? []} templates={templates ?? []} loading={loadingAutomations} canManage={canManage} setup={setup ?? null} onChanged={refresh} />}
+    {automationsOn && tab === 'journeys' && <JourneysTab teamId={teamId ?? ''} journeys={journeys ?? []} templates={templates ?? []} loading={loadingJourneys} canManage={canManage} setup={setup ?? null} onChanged={refresh} />}
   </div>;
 }
 
