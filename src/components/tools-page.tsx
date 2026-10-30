@@ -90,5 +90,7 @@ export function ToolsPage() {
         </ul>
       </section>
     ))}
+
+    {hasManagementTools(sections) && showComingSoon(sellingOn, coursesOn) && <ComingSoonCard userId={userId} />}
   </div>;
 }

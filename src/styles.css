@@ -2927,3 +2927,12 @@ a.legal-doc-card:hover, a.legal-doc-card:focus-visible { border-color: var(--pri
   .legal-print-mark { display: block; font-weight: 700; font-size: 14pt; margin-bottom: 12pt; }
   .legal-text p { font-size: 11pt; }
 }
+
+/* Launch mode */
+.coming-soon-card { display: grid; gap: 12px; }
+.coming-soon-row { display: flex; gap: 12px; align-items: flex-start; }
+.coming-soon-body h2 { font-size: 17px; font-weight: 600; color: var(--primary); }
+.coming-soon-card > button { min-height: 48px; justify-self: start; }
+.coming-soon-done { min-height: 48px; display: flex; align-items: center; font-weight: 600; color: var(--primary); }
+.view-as-banner { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 8px 12px; margin-bottom: 12px; border-radius: 12px; background: var(--secondary); color: var(--foreground); font-size: 14px; font-weight: 600; }
+.view-as-banner button { min-height: 44px; margin-left: auto; }
