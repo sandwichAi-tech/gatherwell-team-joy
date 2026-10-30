@@ -14,6 +14,7 @@ type EmbedHost = { name: string | null; org: string | null; city: string | null;
 
 /** Public-only, read-only coach page for third-party iframes. Every action opens ZoheeWell in a new tab, so sign-in and payment never run inside the frame. */
 export const Route = createFileRoute('/embed/h/$slug')({
+  validateSearch: (s: Record<string, unknown>): { lang?: 'en' | 'es' } => (s['lang'] === 'es' || s['lang'] === 'en' ? { lang: s['lang'] } : {}),
   loader: ({ context, params }) => prefetchPublic(context.queryClient, pageQuery('host', params.slug)),
   head: () => ({ meta: [{ title: 'ZoheeWell coach page' }, { name: 'description', content: 'Embedded ZoheeWell coach page with public events, challenges and resources.' }, { name: 'robots', content: 'noindex' }, { property: 'og:title', content: 'ZoheeWell coach page' }, { property: 'og:description', content: 'Public events, challenges and resources from this coach.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }] }),
   component: EmbedPage,
@@ -21,7 +22,9 @@ export const Route = createFileRoute('/embed/h/$slug')({
 
 function EmbedPage() {
   const { slug } = Route.useParams(); const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en';
-  useEffect(() => { applySavedLanguage(); }, []);
+  const { lang: forced } = Route.useSearch();
+  // Third-party frames get partitioned storage, so an explicit ?lang= wins, then the visitor's browser language.
+  useEffect(() => { if (forced) void i18n.changeLanguage(forced); else applySavedLanguage(); }, [forced, i18n]);
   const q = useQuery(pageQuery('host', slug)); const d = q.data as EmbedHost | null | undefined;
   const page = `/h/${slug}`;
   if (q.isPending) return <main className="embed-page"><p role="status">{t('common.loading')}</p></main>;
