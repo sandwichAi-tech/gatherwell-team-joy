@@ -232,7 +232,6 @@ export function ResourceBuilder({ initialType, initialId }: { initialType: Creat
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [coursesOn] = useFeature('feature_courses'); const [assessmentOn] = useFeature('feature_assessment');
-  const [sellingOn] = useFeature('feature_selling');
   const { teamId, userId } = useLearn();
 
   const [type, setType] = useState<CreateType>(initialType);
