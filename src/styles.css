@@ -2970,3 +2970,4 @@ a.legal-doc-card:hover, a.legal-doc-card:focus-visible { border-color: var(--pri
 .embed-item small{color:var(--muted-foreground)}
 .embed-page .follow-list{list-style:none;margin:0;padding:0}
 .embed-page .follow-list,.embed-page .follow-list li{display:block}
+.embed-item>span{display:flex;flex-direction:column;gap:2px}
