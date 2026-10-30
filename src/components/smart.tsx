@@ -255,6 +255,7 @@ export function LessonSummary({ lessonId, leader, hasPdf = false }: { lessonId: 
   const L = <T,>(en: T, es: T) => (lang === 'es' ? es : en);
   return <>
     {shown && !draft && <section className="panel lesson-summary"><div className="section-heading"><h2>{t('smart.summary.title')}</h2>{!data!.published && <span className="chip quiet-chip">{t('smart.summary.unpublished')}</span>}</div>
+      {leader && !(data as { source_hash?: string | null }).source_hash && <p className="field-hint" role="note">{t('smart.summary.unverified')}</p>}
       {leader && (data as { source_hash?: string | null }).source_hash && current.data && (data as { source_hash?: string | null }).source_hash !== current.data && <p className="field-error" role="note">{t('smart.summary.stale')}</p>}
       <p>{L(shown.summary_en, shown.summary_es || shown.summary_en)}</p>
       <h3>{t('smart.summary.points')}</h3><ol>{L(shown.points_en, shown.points_es).map((p, i) => <li key={i}>{p}</li>)}</ol>

@@ -37,10 +37,12 @@ Test journeys still to run, in order (isolated test accounts only):
 | Rate snapshot | `reward_kind` / `reward_value` stored per reward | 0205 |
 | Hold before available | 14 days | `available_at` |
 | Payout | manual only (`method = 'manual'`). "Paid" means the host recorded it. ZoheeWell sends no money | constraint, UI note |
-| Not yet built | affiliate invite/approve, and a terms acceptance record per affiliate. Any referrer can currently get a link when the program is on | — |
+| Invite / approve / revoke | owner invites by account email or approves a request; reject and revoke close it. Pending, declined and removed people get no link, no counted clicks and no new rewards; earned rewards stay | 0208, `referral_membership_disposable.sql`, `referral-membership.test.ts` |
+| Affiliate terms | joining needs acceptance of an approved `affiliate_terms` document (EN+ES, approval reference, https URL); each acceptance is stored with version and text hash. **None is approved today, so joining fails closed** | 0208/0209 |
+| Legacy links | carried over as "requested (legacy)": inactive until owner approval + terms. Production had 0 links at migration time | 0208 |
 | Launch | referral rewards and paid selling stay switched off | SOURCE_OF_TRUTH launch mode |
 
-Decision needed (owners: Nick, Michael): affiliate approval model (open vs invite-only), payout method and timing, whether the hold should match the refund policy window, how to recover payouts that were later refunded, and tax-form handling for affiliates.
+Next action: counsel-approved affiliate terms (EN and ES) must be added as an approved `affiliate_terms` version with its reference and document link. Decision needed (owners: Nick, Michael): payout method and timing, whether the hold should match the refund policy window, how to recover payouts that were later refunded, and tax-form handling for affiliates.
 
 ## Row 92: privacy requirements worksheet
 
@@ -77,3 +79,15 @@ Requirements to build only after approved wording exists:
 - Tests: preview, accept, decline, saved receipt, version change, host isolation.
 
 Inputs needed from counsel/owners: release wording per intended use (host marketing, ZoheeWell marketing, social channels), duration and withdrawal terms, jurisdictions, and activity-specific risk language. None will be invented.
+
+## Stripe test-mode verification (checked 2026-10-30)
+
+The test-environment keys work only through the payments gateway. Creating a test checkout charges nothing. But the full journey (checkout, then webhook, then order, entitlement, refund and referral reward) writes its results into the app's database, and that database is shared by the preview and the live site. So the journey can't run here without writing shared test records, and **it was not run**.
+
+What a disposable run needs:
+1. A draft copy of the project with its own isolated backend, with all migrations applied.
+2. That draft's test-mode webhook endpoint registered and pointed at the draft only, with its own signing secret.
+3. A test connected host account set up in Stripe test mode.
+4. ZZ-TEST host, buyer and affiliate accounts in the draft. Approved fixture affiliate terms in the draft only.
+5. Steps: paid checkout with test card 4242, a decline (4000 0000 0000 0002), a partial and a full refund, and duplicate webhook delivery. Expected: one order, one reward, the reward reduced or reversed by refunds, and an idempotent webhook.
+6. Throw the draft away afterwards.

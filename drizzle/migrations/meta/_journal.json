@@ -1457,6 +1457,27 @@
       "when": 1793398955825,
       "tag": "0207_lesson_summary_source_hash",
       "breakpoints": true
+    },
+    {
+      "idx": 208,
+      "version": "7",
+      "when": 1793399798533,
+      "tag": "0208_referral_memberships_terms",
+      "breakpoints": true
+    },
+    {
+      "idx": 209,
+      "version": "7",
+      "when": 1793399839491,
+      "tag": "0209_affiliate_terms_doc",
+      "breakpoints": true
+    },
+    {
+      "idx": 210,
+      "version": "7",
+      "when": 1793400008942,
+      "tag": "0210_tighten_terms_hash_grants",
+      "breakpoints": true
     }
   ]
 }

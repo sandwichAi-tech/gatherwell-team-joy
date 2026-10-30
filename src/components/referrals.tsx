@@ -16,6 +16,7 @@ import { useGatherwell } from '@/components/gatherwell-shell';
 import { supabase } from '@/integrations/supabase/client';
 import { formatMoney, paymentsStatusQuery } from '@/lib/billing';
 import { anonId } from '@/lib/analytics';
+import { cardState, ownerActions, type MemberStatus, type OwnerAction } from '@/lib/referral-membership';
 import { readRefParam, referralUrl, rewardCents, validateReward, REFERRAL_WINDOW_DAYS, type RewardKind, type RewardStatus } from '@/lib/referrals';
 
 type Kind = 'event' | 'offer';
@@ -56,33 +57,87 @@ export function claimReferralVisits() {
   } catch { /* storage unavailable */ }
 }
 
-/** Signed-in, non-host visitors of an item with an active program can get their own private link. */
+/** Signed-in, non-host visitors of an item with an active program: ask to join, accept approved terms, then get their own private link. */
+type ProgramFor = { program_id: string; reward_kind: RewardKind; reward_value: number; example_cents: number; price_cents: number; code: string | null;
+  membership: MemberStatus | null; terms_accepted: boolean; active: boolean; terms_available: boolean };
 export function ReferralShareCard({ kind, id, signedIn }: { kind: Kind; id: string; signedIn: boolean }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
   const qc = useQueryClient();
   const q = useQuery({ queryKey: ['referral-program-for', kind, id], enabled: signedIn, queryFn: async () => {
     const { data, error } = await supabase.rpc('referral_program_for', { _kind: kind, _item: id }); if (error) throw error;
-    return data as null | { program_id: string; reward_kind: RewardKind; reward_value: number; example_cents: number; price_cents: number; code: string | null };
+    return data as unknown as null | ProgramFor;
   } });
-  const [busy, setBusy] = useState(false);
+  const terms = useQuery({ queryKey: ['affiliate-terms-doc', lang], enabled: signedIn && !!q.data?.terms_available, queryFn: async () => {
+    const { data } = await supabase.rpc('affiliate_terms_doc', { _locale: lang }); return data as unknown as null | { version: number; url: string };
+  } });
+  const [busy, setBusy] = useState(false); const [agree, setAgree] = useState(false);
   const [origin, setOrigin] = useState('');
   useEffect(() => setOrigin(window.location.origin), []);
   if (!signedIn || !q.data) return null;
   const p = q.data;
-  const get = async () => {
-    setBusy(true); const { error } = await supabase.rpc('get_referral_link', { _program: p.program_id }); setBusy(false);
-    if (error) { toast.error(t('referral.errors.generic')); return; }
-    void qc.invalidateQueries({ queryKey: ['referral-program-for', kind, id] });
+  const state = cardState(p.membership ? { status: p.membership, termsAccepted: p.terms_accepted } : null, p.terms_available && !!terms.data?.url);
+  const refresh = () => void qc.invalidateQueries({ queryKey: ['referral-program-for', kind, id] });
+  const run = async (fn: () => PromiseLike<{ error: { message: string } | null }>) => {
+    setBusy(true); const { error } = await fn(); setBusy(false);
+    if (error) { toast.error(t(referralErrorKey(error.message))); return false; }
+    refresh(); return true;
   };
+  const get = () => run(() => supabase.rpc('get_referral_link', { _program: p.program_id }));
+  const request = () => run(() => supabase.rpc('request_referral_membership', { _program: p.program_id }));
+  const accept = async () => { if (await run(() => supabase.rpc('accept_referral_terms', { _program: p.program_id, _locale: lang }))) toast.success(t('referral.member.joined')); };
   const url = p.code ? referralUrl(origin, kind, id, p.code) : '';
   return <section className="guest-card referral-share" aria-labelledby="referral-share-title">
     <h2 id="referral-share-title" className="guest-subhead">{t('referral.share.title')}</h2>
     <p className="field-hint">{t('referral.share.body', { reward: rewardLabel(p.reward_kind, p.reward_value, lang), example: formatMoney(p.example_cents, lang), days: REFERRAL_WINDOW_DAYS })}</p>
-    {p.code ? <>
+    {state === 'share' && (p.code ? <>
       <p className="referral-code"><span className="field-label">{t('referral.code')}</span> <strong>{p.code}</strong></p>
       <div className="guest-button-row"><CopyButton text={url} label={t('referral.copyLink')} /><ShareButton url={url} /></div>
       <Link to="/referrals/mine" className="auth-link">{t('referral.mine.open')}<ChevronRight className="inline-icon" /></Link>
-    </> : <Button disabled={busy} onClick={() => void get()}><Share2 />{t('referral.share.get')}</Button>}
+    </> : <Button disabled={busy} onClick={() => void get()}><Share2 />{t('referral.share.get')}</Button>)}
+    {state === 'request' && <><p className="field-hint">{t('referral.member.requestHint')}</p><Button disabled={busy} onClick={() => void request()}>{t('referral.member.request')}</Button></>}
+    {state === 'waiting' && <p className="not-connected" role="status">{t('referral.member.waiting')}</p>}
+    {state === 'terms_missing' && <p className="not-connected" role="note">{t('referral.member.termsMissing')}</p>}
+    {state === 'closed' && <p className="not-connected" role="status">{t('referral.member.closed')}</p>}
+    {state === 'accept' && terms.data && <>
+      <p className="field-hint">{t('referral.member.invited')}</p>
+      <a className="auth-link" href={terms.data.url} target="_blank" rel="noopener noreferrer">{t('referral.member.readTerms', { version: terms.data.version })}</a>
+      <label className="check-row"><Checkbox checked={agree} onCheckedChange={v => setAgree(v === true)} /><span>{t('referral.member.agree')}</span></label>
+      <Button disabled={busy || !agree} onClick={() => void accept()}>{t('referral.member.accept')}</Button>
+    </>}
+  </section>;
+}
+
+type Referrer = { referrer_id: string; name: string; status: MemberStatus; legacy: boolean; terms_accepted: boolean };
+/** Rows 89/90: owner invites, approves, rejects or revokes referrers for one program. Revoking stops new links and rewards; earned history stays. */
+function ProgramReferrers({ programId }: { programId: string }) {
+  const { t } = useTranslation(); const qc = useQueryClient();
+  const q = useQuery({ queryKey: ['program-referrers', programId], queryFn: async () => {
+    const { data, error } = await supabase.rpc('program_referrers', { _program: programId }); if (error) throw error; return data as unknown as Referrer[];
+  } });
+  const [email, setEmail] = useState(''); const [busy, setBusy] = useState(false);
+  const refresh = () => void qc.invalidateQueries({ queryKey: ['program-referrers', programId] });
+  const invite = async () => {
+    if (!/^\S+@\S+\.\S+$/.test(email.trim())) { toast.error(t('referral.member.emailInvalid')); return; }
+    setBusy(true); const { error } = await supabase.rpc('invite_referrer', { _program: programId, _email: email.trim() }); setBusy(false);
+    if (error) { toast.error(t(referralErrorKey(error.message))); return; }
+    setEmail(''); toast.success(t('referral.member.invitedToast')); refresh();
+  };
+  const decide = async (r: Referrer, a: OwnerAction) => {
+    setBusy(true); const { error } = await supabase.rpc('decide_referrer', { _program: programId, _referrer: r.referrer_id, _action: a }); setBusy(false);
+    if (error) { toast.error(t(referralErrorKey(error.message))); return; }
+    refresh();
+  };
+  return <section className="referral-terms" aria-labelledby={`refs-${programId}`}>
+    <h3 id={`refs-${programId}`}>{t('referral.member.ownerTitle')}</h3>
+    <p className="field-hint">{t('referral.member.ownerHint')}</p>
+    <label className="field"><span className="field-label">{t('referral.member.inviteLabel')}</span>
+      <Input className="field-input" type="email" autoComplete="off" value={email} onChange={e => setEmail(e.target.value)} /></label>
+    <p className="field-hint">{t('referral.member.inviteHint')}</p>
+    <Button variant="outline" disabled={busy || !email.trim()} onClick={() => void invite()}>{t('referral.member.invite')}</Button>
+    {q.isError ? <RetryState retry={() => void q.refetch()} /> : (q.data ?? []).map(r => <div key={r.referrer_id} className="seat-row">
+      <span><strong>{r.name || t('referral.member.unnamed')}</strong><small>{t(`referral.member.status.${r.status}`)}{r.status === 'approved' && !r.terms_accepted ? ` · ${t('referral.member.awaitingTerms')}` : ''}{r.legacy ? ` · ${t('referral.member.legacy')}` : ''}</small></span>
+      <span className="guest-button-row">{ownerActions(r.status).map(a => <Button key={a} size="sm" variant={a === 'approve' ? 'default' : 'outline'} disabled={busy} onClick={() => void decide(r, a)}>{t(`referral.member.action.${a}`)}</Button>)}</span>
+    </div>)}
   </section>;
 }
 
@@ -180,7 +235,7 @@ export function CoachReferralsPage() {
 /** Server error codes → copy keys. */
 export function referralErrorKey(message: string | undefined) {
   const m = message ?? '';
-  for (const k of ['percent_too_high', 'flat_too_high', 'ineligible', 'invalid_reward', 'payout_date', 'payout_invalid', 'payout_empty']) if (m.includes(`referral_${k}`)) return `referral.errors.${k}`;
+  for (const k of ['terms_unavailable', 'not_approved', 'not_invited', 'invalid_transition', 'member_not_found', 'percent_too_high', 'flat_too_high', 'ineligible', 'invalid_reward', 'payout_date', 'payout_invalid', 'payout_empty']) if (m.includes(`referral_${k}`)) return `referral.errors.${k}`;
   return 'referral.errors.generic';
 }
 
@@ -208,6 +263,7 @@ function ProgramSheet({ item, program, onClose, onSaved }: { item: Item; program
     <p id="ref-example" className="field-hint" aria-live="polite">{issue ? t(`referral.errors.${issue}`) : t('referral.coach.example', { price: formatMoney(item.price_cents, lang), reward: formatMoney(rewardCents(kind, value, item.price_cents), lang) })}</p>
     <p className="field-hint"><strong>{t('referral.coach.window')}</strong> {t('referral.coach.windowValue', { days: REFERRAL_WINDOW_DAYS })}</p>
     <div className="referral-terms"><h3>{t('referral.terms.title')}</h3><ul>{(['eligibility', 'attribution', 'blocked', 'refunds', 'payouts'] as const).map(k => <li key={k}>{t(`referral.terms.${k}`, { days: REFERRAL_WINDOW_DAYS })}</li>)}</ul></div>
+    {program && <ProgramReferrers programId={program.id} />}
     {error && <p className="field-error" role="alert">{error}</p>}
   </ResponsiveSheet>;
 }
@@ -239,7 +295,8 @@ function PayoutSheet({ referrer, rewards, onClose, onSaved }: { referrer: { id: 
 }
 
 type MyData = { links: { code: string; item_kind: Kind; item_id: string; title: string; enabled: boolean; reward_kind: RewardKind; reward_value: number; clicks: number; conversions: number }[];
-  totals: { pending_cents: number; available_cents: number; paid_cents: number; reversed_cents: number }; rewards: { id: string; title: string; reward_cents: number; status: RewardStatus; created_at: string }[]; payouts: Payout[] };
+  totals: { pending_cents: number; available_cents: number; paid_cents: number; reversed_cents: number }; rewards: { id: string; title: string; reward_cents: number; status: RewardStatus; created_at: string }[]; payouts: Payout[];
+  memberships?: { program_id: string; item_kind: Kind; item_id: string; title: string; status: MemberStatus; legacy: boolean; terms_accepted: boolean }[]; terms_available?: boolean };
 
 /** Row 58: each referrer's own private earnings. */
 export function MyReferralsPage() {
@@ -259,6 +316,12 @@ export function MyReferralsPage() {
           {l.enabled && <span className="guest-button-row"><CopyButton text={url} label={t('referral.copyLink')} /><ShareButton url={url} title={l.title} /></span>}
         </div>; })}
       </section>
+      {!!q.data.memberships?.length && <section className="panel" aria-labelledby="my-invites"><h2 id="my-invites">{t('referral.member.mineTitle')}</h2>
+        {q.data.memberships.map(m => <div key={m.program_id} className="seat-row">
+          <span><strong>{m.title}</strong><small>{t(`referral.member.status.${m.status}`)}{m.legacy ? ` · ${t('referral.member.legacy')}` : ''}{(m.status === 'invited' || m.status === 'approved') && !q.data.terms_available ? ` · ${t('referral.member.termsMissingShort')}` : ''}</small></span>
+          {(m.status === 'invited' || m.status === 'approved') && q.data.terms_available && <Link className="auth-link" to={m.item_kind === 'event' ? '/e/$id' : '/o/$id'} params={{ id: m.item_id }}>{t('referral.member.review')}<ChevronRight className="inline-icon" /></Link>}
+        </div>)}
+      </section>}
       <section className="panel" aria-labelledby="my-rewards"><h2 id="my-rewards">{t('referral.mine.rewards')}</h2>
         {!q.data.rewards.length ? <EmptyState compact icon="Gift" text={t('referral.mine.noRewards')} /> : q.data.rewards.map(r => <div key={r.id} className="seat-row">
           <span><strong>{r.title}</strong><small>{dateFmt(r.created_at, lang)}</small></span><span className={`chip referral-${r.status}`}>{formatMoney(r.reward_cents, lang)} · {t(`referral.status.${r.status}`)}</span></div>)}

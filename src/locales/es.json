@@ -2896,7 +2896,8 @@
       "file_unsupported": "Solo se pueden resumir archivos PDF con texto seleccionable.",
       "file_too_large": "Este PDF pesa más de 10 MB, así que no se leyó.",
       "file_unreadable": "No se encontró texto legible. Aún no se pueden resumir PDF escaneados o solo de imágenes.",
-      "file_timeout": "Leer este PDF tardó demasiado. Prueba con un archivo más pequeño o pega el texto."
+      "file_timeout": "Leer este PDF tardó demasiado. Prueba con un archivo más pequeño o pega el texto.",
+      "unverified": "Fuente no verificada: este resumen se guardó antes del seguimiento de la fuente. Vuelve a generarlo para confirmar que coincide con la lección actual."
     },
     "library": {
       "sources": "Fuentes",
@@ -7479,10 +7480,52 @@
       "flat_too_high": "La recompensa debe ser menor que el precio del artículo.",
       "payout_date": "Elige hoy o una fecha anterior.",
       "payout_invalid": "Algunas recompensas ya no están disponibles. Actualiza e inténtalo de nuevo.",
-      "payout_empty": "Elige al menos una recompensa."
+      "payout_empty": "Elige al menos una recompensa.",
+      "terms_unavailable": "Aún no hay términos de afiliado aprobados, así que unirse está en pausa.",
+      "not_approved": "Necesitas la aprobación del anfitrión y aceptar los términos antes de obtener un enlace.",
+      "not_invited": "Primero necesitas una invitación o aprobación del anfitrión.",
+      "invalid_transition": "Ese cambio no es posible para esta persona ahora.",
+      "member_not_found": "Esa persona no está en este programa."
     },
     "refunded": "Reembolsado {{amount}}",
-    "reconcile": "Se reembolsó después de que registraste este pago. No se descontó nada automáticamente; resuélvelo directamente con la persona que refirió."
+    "reconcile": "Se reembolsó después de que registraste este pago. No se descontó nada automáticamente; resuélvelo directamente con la persona que refirió.",
+    "member": {
+      "request": "Pedir unirme",
+      "requestHint": "El anfitrión aprueba quién puede compartir. Podrás compartir cuando te apruebe y aceptes los términos de afiliado.",
+      "waiting": "Solicitud enviada. El anfitrión aún no decide.",
+      "termsMissing": "Unirse está en pausa: ZoheeWell aún no publica términos de afiliado aprobados. Podrás unirte cuando se aprueben.",
+      "termsMissingShort": "Esperando términos aprobados",
+      "closed": "Compartir no está disponible para ti en este elemento.",
+      "invited": "El anfitrión te aprobó. Lee y acepta los términos de afiliado para obtener tu enlace.",
+      "readTerms": "Leer los términos de afiliado (versión {{version}})",
+      "agree": "Leí y acepto los términos de afiliado.",
+      "accept": "Aceptar y unirme",
+      "joined": "Te uniste. Ya puedes obtener tu enlace.",
+      "ownerTitle": "Quién puede compartir",
+      "ownerHint": "Solo las personas que invites o apruebes pueden obtener un enlace. Quitar a alguien detiene nuevos enlaces y recompensas; las recompensas ya ganadas quedan registradas.",
+      "inviteLabel": "Invitar por correo de la cuenta",
+      "inviteHint": "No decimos si el correo tiene cuenta. No se envía ningún mensaje; verán la invitación al visitar este elemento.",
+      "invite": "Invitar",
+      "invitedToast": "Invitación guardada. Si ese correo tiene cuenta, la verá en este elemento.",
+      "emailInvalid": "Escribe un correo válido.",
+      "unnamed": "Cuenta sin nombre",
+      "awaitingTerms": "Aún no acepta los términos",
+      "legacy": "Tenía un enlace antes de requerir aprobación",
+      "mineTitle": "Invitaciones y solicitudes",
+      "review": "Revisar",
+      "status": {
+        "invited": "Invitado",
+        "requested": "Solicitado",
+        "approved": "Aprobado",
+        "rejected": "Rechazado",
+        "revoked": "Quitado"
+      },
+      "action": {
+        "approve": "Aprobar",
+        "reject": "Rechazar",
+        "revoke": "Quitar"
+      }
+    }
   },
   "quizStudio": {
     "pageTitle": "Quiz",
