@@ -114,10 +114,27 @@ function ReviewAvatar({ path, name }: { path: string | null; name: string }) {
 type MyRequest = { id: string; status: 'pending' | 'approved' | 'rejected'; review_note: string | null; created_at: string };
 type Draft = { kind: 'certification' | 'license'; title: string; issuer: string; file: File | null };
 
+const myVerificationQuery = (userId: string | null | undefined) => ({ queryKey: ['my-verification', userId], enabled: !!userId, queryFn: async () => { const { data, error } = await supabase.from('coach_verifications').select('id,status,review_note,created_at').order('created_at', { ascending: false }).limit(1); if (error) throw error; return (data?.[0] ?? null) as MyRequest | null; } });
+
+/** Optional verification: explains the purpose, shows the real status and links to the form. Never blocks anything. */
+export function VerificationStatusCard({ userId }: { userId: string | null | undefined }) {
+  const { t } = useTranslation();
+  const q = useQuery(myVerificationQuery(userId));
+  const status = q.isLoading ? null : q.isError ? 'error' : (q.data?.status ?? 'none');
+  return <section className="panel verify-status-card" aria-labelledby="verify-card-h">
+    <GwFeatureTile name={status === 'approved' ? 'BadgeCheck' : 'ShieldCheck'} />
+    <div><h2 id="verify-card-h">{t('coachTrust.getVerified')} <span className="chip quiet-chip">{t('coachTrust.optional')}</span></h2>
+      <p className="muted-copy">{t('coachTrust.whyVerify')}</p>
+      {status && <p className="muted-small" role="status">{t(`coachTrust.cardStatus.${status}`)}</p>}
+      {status !== 'pending' && status !== 'approved' && <Button asChild variant="secondary"><Link to="/verify">{t(status === 'rejected' ? 'coachTrust.tryAgainAction' : 'coachTrust.getVerified')}</Link></Button>}
+    </div>
+  </section>;
+}
+
 /** Host tools → Get verified. */
 export function VerifyPage() {
   const { t } = useTranslation(); const { userId } = useGatherwell(); const qc = useQueryClient();
-  const q = useQuery({ queryKey: ['my-verification', userId], queryFn: async () => { const { data, error } = await supabase.from('coach_verifications').select('id,status,review_note,created_at').order('created_at', { ascending: false }).limit(1); if (error) throw error; return (data?.[0] ?? null) as MyRequest | null; } });
+  const q = useQuery(myVerificationQuery(userId));
   const [idFile, setIdFile] = useState<File | null>(null); const [years, setYears] = useState(''); const [creds, setCreds] = useState<Draft[]>([]); const [busy, setBusy] = useState(false);
   if (q.isLoading) return <ListSkeleton />;
   if (q.isError) return <RetryState retry={() => void q.refetch()} />;
