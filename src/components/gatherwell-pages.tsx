@@ -1,4 +1,3 @@
-import { DailyBriefCard } from './smart';
 import { personalHomeQuery } from '@/lib/personal-home-query';
 import { PersonalHomeResources } from '@/components/personal-home-resources';
 import { homeNextAction } from '@/lib/event-day-home';
@@ -7,7 +6,7 @@ import { CustomerHome } from '@/components/customer-home';
 import { HostCheckinActions } from '@/components/host-checkin-actions';
 import { FoundingCommitmentsCard } from '@/components/founding';
 import { CoachLaunchCard } from '@/components/coach-launch';
-import { FollowupsHomeCard } from '@/components/smart';
+import { DailyBriefCard, FollowupsHomeCard } from '@/components/smart';
 import { TeamSwitcher } from '@/components/team-switcher';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
