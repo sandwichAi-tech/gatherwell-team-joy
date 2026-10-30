@@ -429,7 +429,7 @@ export function EventBadgePanel({ eventId, teamId }: { eventId: string; teamId: 
   const save = async () => {
     if (hasBlockedClaim(`${f.name_en} ${f.name_es}`)) { toast.error(t('recognition.err.claim_blocked')); return; }
     setBusy(true);
-    const { error } = await supabase.rpc('create_event_badge', { _event: eventId, _name_en: f.name_en.trim(), _name_es: f.name_es.trim(), _icon: f.icon, _tier: f.tier });
+    const { error } = await supabase.rpc('create_event_badge', { _event: eventId, _name_en: f.name_en.trim() || f.name_es.trim(), _name_es: f.name_es.trim() || f.name_en.trim(), _icon: f.icon, _tier: f.tier });
     setBusy(false);
     if (error) { toast.error(t(recognitionError(error))); return; }
     toast.success(t('recognition.badgeCreated')); await queryClient.invalidateQueries({ queryKey: recognitionKey(teamId) }); setOpen(false);
@@ -438,7 +438,7 @@ export function EventBadgePanel({ eventId, teamId }: { eventId: string; teamId: 
     <h2 className="section-title">{t('recognition.eventBadgeTitle')}</h2>
     {existing ? <div className="event-badge-row"><Medallion badge={existing} size={52} /><div><strong>{badgeName(existing, i18n.resolvedLanguage)}</strong><small>{t('recognition.oneOf', { count: holders[existing.id] ?? 0 })}</small></div></div>
       : <><p className="gw-muted-line">{t('recognition.eventBadgeHint')}</p><Button variant="outline" onClick={() => setOpen(true)}><Plus />{t('recognition.eventBadgeCta')}</Button></>}
-    <ResponsiveSheet open={open} onOpenChange={setOpen} title={t('recognition.eventBadgeTitle')} footer={<Button className="onboarding-continue" disabled={busy || !f.name_en.trim() || !f.name_es.trim()} onClick={() => void save()}>{t('common.create')}</Button>}>
+    <ResponsiveSheet open={open} onOpenChange={setOpen} title={t('recognition.eventBadgeTitle')} footer={<Button className="onboarding-continue" disabled={busy || !(f.name_en.trim() || f.name_es.trim())} onClick={() => void save()}>{t('common.create')}</Button>}>
       <div className="edit-form">
         <div className="badge-preview"><Medallion badge={f} size={96} /></div>
         <LangPair id="eb-name" label={t('templates.title')} en={f.name_en} es={f.name_es} onEn={v => setF({ ...f, name_en: v })} onEs={v => setF({ ...f, name_es: v })} maxLength={40} />
