@@ -1,3 +1,4 @@
+import { FeatureRoute } from '@/lib/feature-flags';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -14,7 +15,7 @@ export const Route = createFileRoute('/_authenticated/_app/circles')({
     const title = `${i18n.t('myCircles.title')} · ${i18n.t('brand')}`; const description = i18n.t('myCircles.meta');
     return { meta: [{ title }, { name: 'description', content: description }, { property: 'og:title', content: title }, { property: 'og:description', content: description }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary' }, { ...NOINDEX_META }] };
   },
-  component: MyCircles,
+  component: () => <FeatureRoute flag="feature_selling"><MyCircles /></FeatureRoute>,
 });
 
 function MyCircles() {
