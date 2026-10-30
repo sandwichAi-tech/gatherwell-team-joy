@@ -2949,3 +2949,9 @@ a.legal-doc-card:hover, a.legal-doc-card:focus-visible { border-color: var(--pri
 }
 .assessment-add-question{margin:12px 0 96px;min-height:48px;width:100%}
 .assessment-option .form-field{flex:1;min-width:0}
+/* Single active-language field with EN/ES switch */
+.lang-pair-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.lang-switch{display:inline-flex;border:1px solid var(--border);border-radius:999px;overflow:hidden}
+.lang-switch button{min-height:44px;min-width:48px;padding:0 12px;background:transparent;color:var(--foreground);font-weight:600;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:4px}
+.lang-switch button.is-active{background:var(--primary);color:var(--primary-foreground)}
+.lang-dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.7}
