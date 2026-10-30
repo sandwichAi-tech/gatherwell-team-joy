@@ -1,5 +1,14 @@
 # ZoheeWell Change Log
 
+## 2026-10-30 — Review fixes (a6497de) + Team/Home/account batch
+
+- Review fix: public coach-page helpers (public_host_challenges, coach_resource_cards, public_upcoming) now check host_public and suspension themselves (host_publicly_listed) and follow launch switches in the data (flag_on): paid challenges/resources need feature_selling; courses/bundles/live need feature_courses; quizzes/assessments need feature_assessment; memberships need feature_selling; retreats/multi-session events need feature_retreats. Applies equally to /h and /embed since both read get_public_host. Raw private challenge cover paths are no longer returned.
+- Review fix: embed now shows the coach's cover photo and profile photo through the same pipeline as the public coach page. Spanish third-party iframe re-tested at 390px: no hydration warning or page error (only the test server's favicon 404); final layout photographed.
+- Row 95/103: coaches choose per team what that team's leader may see (upcoming event count, registrations per event, check-ins per event), with previews and a "Share nothing" revoke, under Me → My teams. Leaders get "Event insights" per approved member in Manage members, with distinct Not shared / No events / loading / error states and a 90-day + upcoming range. Never shared: attendee identities, contacts, payments, waivers, earnings. Removal or suspension cuts access immediately.
+- Row 73: admin Overview shows "Updated <time>", a Refresh button (refreshes all admin panels) and an explicit error instead of an endless "Loading" when the request fails.
+- Tests: src/lib/team-metrics.test.ts; tests/database/team_metric_shares_disposable.sql (disposable only, not run here).
+- Not done/unverified: rows 74, 82, 87, 88, 101, 102, 104–106, 109 not changed this batch (prior passes stand; their listed signed-in/device gaps remain). Team insights and admin refresh not browser-clicked signed in; the disposable DB test was not executed (no disposable environment); member counts do not yet open the roster directly.
+
 ## 2026-10-30 — Tracker batch 3 (Events / check-in / challenges)
 
 - Row 6: reproduced the custom-policy loss path — switching from an edited preset to Custom (or between presets) silently replaced the coach's wording. Custom now keeps edited preset wording, restores earlier Custom text, and asks before replacing edited text with a preset (cancel keeps it). Inline hint explains the "I reviewed this" box required before publishing custom wording. Guided fill-in (deadline, refund kind/percent, processing days, transfer, host-cancel, exceptions, contact) already generated editable wording; it stays deterministic — no AI draft added (no invented terms).

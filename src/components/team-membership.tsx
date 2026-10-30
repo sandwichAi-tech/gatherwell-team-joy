@@ -8,6 +8,7 @@ import { ListSkeleton, RetryState } from '@/components/launch-states';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { confirmAction } from '@/components/confirm-dialog';
 import { supabase } from '@/integrations/supabase/client';
+import { MemberInsightsSheet, TeamMetricSharing } from '@/components/team-metrics';
 import { managementQuery, myTeamStatesQuery, splitMyTeams, privateTeamLink } from '@/lib/team-membership';
 
 export function MyTeams({ userId }: { userId: string }) {
@@ -21,13 +22,14 @@ export function MyTeams({ userId }: { userId: string }) {
     <ul className="team-membership-list">{groups[group].map(team => <li key={team.team_id}>
       <strong>{team.name}</strong><small>{t(`roles.${team.role}`, { defaultValue: t('roles.member') })} · {t(`teamMembership.status.${team.status}`, { defaultValue: t('teamMembership.status.unavailable') })}</small>
       {privateTeamLink(team) ? <Button asChild variant="secondary"><Link to="/team" search={{ team: team.team_id }}>{t('teamMembership.open')}</Link></Button> : <p className="field-hint">{t('teamMembership.pendingHint')}</p>}
+      {group === 'belong' && privateTeamLink(team) && <TeamMetricSharing teamId={team.team_id} userId={userId} />}
     </li>)}</ul>
   </section>)}</div>;
 }
 
 export function TeamMemberManagement({ teamId, userId }: { teamId: string; userId: string }) {
   const { t, i18n } = useTranslation(); const qc = useQueryClient(); const q = useQuery(managementQuery(teamId, userId));
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState(false); const [insights, setInsights] = useState<{ user_id: string; name: string | null } | null>(null);
   const decide = async (id: string, decision: 'approved' | 'declined' | 'removed') => {
     if (decision !== 'approved' && !await confirmAction({ title: t(`teamMembership.${decision}`), destructive: true })) return;
     setBusy(true); const { error } = await supabase.rpc('decide_team_request', { _team: teamId, _user: id, _decision: decision }); setBusy(false);
@@ -46,10 +48,11 @@ export function TeamMemberManagement({ teamId, userId }: { teamId: string; userI
       <small>{t(`roles.${m.role}`, { defaultValue: t('roles.member') })} · {t(`teamMembership.status.${m.status}`)}</small>
       {m.requested_at && <small>{t('teamMembership.requested', { date: date(m.requested_at) })}</small>}{m.joined_at && <small>{t('teamMembership.joined', { date: date(m.joined_at) })}</small>}
       <div className="feed-actions">{m.status === 'pending' && <><Button disabled={busy} onClick={() => void decide(m.user_id, 'approved')}>{t('teamMembership.approve')}</Button><Button disabled={busy} variant="secondary" onClick={() => void decide(m.user_id, 'declined')}>{t('teamMembership.declined')}</Button></>}
+        {group === 'members' && m.status === 'approved' && m.user_id !== userId && <Button variant="secondary" onClick={() => setInsights({ user_id: m.user_id, name: m.name })}>{t('teamMetrics.viewInsights')}</Button>}
         {group === 'members' && m.user_id !== userId && <Button disabled={busy} variant="secondary" onClick={() => void decide(m.user_id, 'removed')}>{t('teamMembership.removed')}</Button>}
       </div>
     </li>)}</ul>
-  </section>)}</div>;
+  </section>)}<MemberInsightsSheet teamId={teamId} member={insights} onClose={() => setInsights(null)} /></div>;
 }
 
 export function TeamMembershipSheet({ open, onOpenChange, teamId, userId }: { open: boolean; onOpenChange: (open: boolean) => void; teamId: string; userId: string }) {

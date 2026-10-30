@@ -3494,7 +3494,11 @@
       }
     },
     "dashboardLink": "Admin dashboard",
-    "platformGroup": "Platform administration"
+    "platformGroup": "Platform administration",
+    "updatedAt": "Updated {{time}}",
+    "refresh": "Refresh",
+    "refreshing": "Refreshing…",
+    "loadError": "Couldn't load these numbers. Nothing shown here is current."
   },
   "legalDocs": {
     "draft": "Draft — pending legal review",
@@ -7995,5 +7999,37 @@
     "registered": "Number registered",
     "remaining": "Spots left (limited capacity only)",
     "both": "Number registered and spots left"
+  },
+  "teamMetrics": {
+    "shareTitle": "Share with this team's leader",
+    "shareHint": "Choose what only this team's leader can see about your events. Joining a team shares nothing. Change it anytime.",
+    "metric": {
+      "upcoming_events": "Upcoming event count",
+      "registrations": "Registrations per event",
+      "attendance": "Check-ins per event"
+    },
+    "preview": {
+      "upcoming_events": "The leader sees how many published events you have coming up.",
+      "registrations": "The leader sees event names, dates and how many people registered.",
+      "attendance": "The leader sees event names, dates and how many people checked in at past events."
+    },
+    "neverShared": "Never shared: who registered, contact details, payments, waivers or earnings.",
+    "save": "Save sharing",
+    "shareNothing": "Share nothing",
+    "saved": "Sharing updated",
+    "stopped": "You're no longer sharing anything with this leader",
+    "saveError": "Couldn't save. Try again.",
+    "viewInsights": "Event insights",
+    "insightsTitle": "{{name}}: event insights",
+    "notShared": "This coach hasn't chosen to share event insights with you.",
+    "noEvents": "No published events in this period.",
+    "range": "Events since {{date}} and upcoming",
+    "upcomingCount_one": "upcoming event",
+    "upcomingCount_other": "upcoming events",
+    "registered_one": "{{count}} registered",
+    "registered_other": "{{count}} registered",
+    "checkedIn_one": "{{count}} checked in",
+    "checkedIn_other": "{{count}} checked in",
+    "leaderNote": "Registrations are sign-ups, not attendance. Only you, as leader, see this, and only what the coach chose to share."
   }
 }

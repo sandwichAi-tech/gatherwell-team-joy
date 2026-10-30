@@ -7544,6 +7544,35 @@ export type Database = {
           },
         ]
       }
+      team_metric_shares: {
+        Row: {
+          metrics: string[]
+          team_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          metrics?: string[]
+          team_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          metrics?: string[]
+          team_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_metric_shares_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       team_suspensions: {
         Row: {
           created_at: string
@@ -9133,6 +9162,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      flag_on: { Args: { _key: string }; Returns: boolean }
       follow_target: {
         Args: {
           _email?: string
@@ -9274,6 +9304,7 @@ export type Database = {
         Returns: Json
       }
       host_no_limits_until: { Args: { _uid: string }; Returns: string }
+      host_publicly_listed: { Args: { _host: string }; Returns: boolean }
       host_sales_this_month: { Args: { _host: string }; Returns: number }
       host_value_month: {
         Args: { _host: string; _start: string }
@@ -10463,6 +10494,10 @@ export type Database = {
         Args: { _muted?: boolean; _read_announcements?: boolean; _team: string }
         Returns: undefined
       }
+      set_team_metric_share: {
+        Args: { _metrics: string[]; _team: string }
+        Returns: string[]
+      }
       set_workspace_assignment_active: {
         Args: { _active: boolean; _id: string }
         Returns: undefined
@@ -10551,6 +10586,14 @@ export type Database = {
       team_log: {
         Args: { _action: string; _meta?: Json; _target?: string; _team: string }
         Returns: undefined
+      }
+      team_member_active: {
+        Args: { _team: string; _user: string }
+        Returns: boolean
+      }
+      team_member_insights: {
+        Args: { _team: string; _user: string }
+        Returns: Json
       }
       team_member_management: { Args: { _team: string }; Returns: Json }
       team_notification_access: {
