@@ -1,5 +1,9 @@
 # ZoheeWell Change Log
 
+## 2026-10-29 — Launch mode decision (owner-approved)
+- Approved by Scott Messier (2026-10-29), agreed with Nick and Michael. Recorded in SOURCE_OF_TRUTH.md under "Launch mode decision (2026-10-29)".
+- Beta shows only the launch menu (host and guest lists in SOURCE_OF_TRUTH.md); every other built feature stays in code and data behind a feature switch, off for regular users until the owners turn it on. No feature deleted or changed. Documentation only; no code changed in this step.
+
 ## 2026-10-30 — Legal Center layout (L1)
 - New /legal Legal Center: company card (ZoheeWell LLC, Wyoming LLC), support/privacy/legal/copyright mailto contacts, grouped document cards (For everyone, For guests, For hosts, Rights) with one-line summaries and effective/version line.
 - /terms, /privacy and /legal/$doc now use a wide reading layout (720px text, sticky desktop contents, collapsible phone contents, section anchors, Print and Copy link, document footer, print stylesheet with wordmark and page numbers). Draft badge kept. No legal wording changed.
