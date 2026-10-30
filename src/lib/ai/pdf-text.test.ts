@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { describe, expect, it } from 'vitest';
 import { extractPdfText, PDF_MAX_BYTES } from '@/lib/ai/pdf-text.server';
 
