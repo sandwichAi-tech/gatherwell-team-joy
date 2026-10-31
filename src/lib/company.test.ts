@@ -13,4 +13,9 @@ describe('company contact details', () => {
     expect(COMPANY.legalName).toBe('ZoheeWell LLC');
     expect(COMPANY.supportEmail).toBe('support@zoheewell.com');
   });
+
+  it('carries the owner-supplied legal entity and mailing address', () => {
+    expect(COMPANY.formation).toBe('A Wyoming limited liability company');
+    expect(COMPANY.mailingAddress).toBe('30 N Gould St, Ste R, Sheridan, WY 82801');
+  });
 });

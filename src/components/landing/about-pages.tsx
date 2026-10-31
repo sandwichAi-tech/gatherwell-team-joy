@@ -60,6 +60,8 @@ export function AboutPage() {
         <h2 id="about-company" className="gw-label">{t('company.blockTitle')}</h2>
         <ul className="gw-company-block">
           <li>{COMPANY.legalName}</li>
+          <li>{t('company.formation')}</li>
+          <li>{COMPANY.mailingAddress}</li>
           <li><a className="gw-call-link" href={phoneHref}>{t('company.callUs')} {COMPANY.phoneDisplay}</a></li>
           <li><a className="gw-mail-link" href={`mailto:${COMPANY.supportEmail}`}>{COMPANY.supportEmail}</a></li>
         </ul>
