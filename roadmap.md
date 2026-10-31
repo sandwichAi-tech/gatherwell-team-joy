@@ -1,5 +1,10 @@
 # Challenge commerce and course/assessment lifecycle closure
 
+## Row 101 — October 31 personal Home isolation
+- [x] Audit Home consumers; reproduce future-track/hidden-recipe/cache retention and fix authoritative boundaries.
+- [x] Isolated stand-in database and helper/browser matrix, focused/full tests, compilation and cleanup; docs/ROW-101-HOME-VERIFICATION.md.
+- [ ] Full authenticated/RLS/direct-ID/course/challenge/lifecycle acceptance needs disposable real app stack; listed eligible Home paths remain incomplete.
+
 ## Row 120 — October 31 Wellness Builder pressure test
 - [x] Reproduce question-2 editing and exact publication failure in isolated tests before fixes.
 - [x] Repair confirmed question/persistence/preview/entry-gate defects and participant SQL ambiguity; preserve launch flags and approved scope requirements.

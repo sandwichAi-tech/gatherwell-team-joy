@@ -6,8 +6,14 @@ export const dailyBriefQuery = (userId: string, lang: 'en' | 'es' = 'en') => {
   const day = new Intl.DateTimeFormat('en-CA').format(new Date());
   return queryOptions({
     queryKey: ['daily-brief-personal', userId, day, tz, lang],
-    queryFn: () => getDailyBrief({ data: { lang, tz } }),
-    staleTime: 30_000,
-    refetchInterval: 60_000,
+    queryFn: async ({ signal }) => {
+      const brief = await getDailyBrief({ data: { lang, tz } });
+      if (signal.aborted || brief.caller_id !== userId) throw new Error('personal_brief_identity_changed');
+      return brief;
+    },
+    staleTime: 0,
+    refetchOnWindowFocus: 'always',
+    refetchOnMount: 'always',
+    refetchInterval: 15_000,
   });
 };

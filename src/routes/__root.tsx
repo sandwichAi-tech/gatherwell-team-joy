@@ -22,6 +22,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ListSkeleton } from '@/components/launch-states';
 import { clearPendingInvite } from '@/lib/account';
 import { BrandLogo } from '@/components/brand-logo';
+import { clearIdentityCache, clearPersonalModeCache, listenModeChanges } from '@/lib/personal-cache';
 
 function NotFoundComponent() {
   const { t } = useTranslation();
@@ -152,10 +153,11 @@ function RootComponent() {
       identity = nextIdentity;
       if (event === "SIGNED_OUT" || changedIdentity) {
         // Discard retained personal payloads even when sign-out did not use the app button.
-        void queryClient.cancelQueries().then(() => { queryClient.clear(); void router.invalidate(); });
+        void clearIdentityCache(queryClient).then(() => { void router.invalidate(); });
       } else if (event === 'USER_UPDATED') { void router.invalidate(); void queryClient.invalidateQueries(); }
     });
-    return () => { i18n.off("languageChanged", applyLanguage); data.subscription.unsubscribe(); };
+    const stopModes = listenModeChanges(userId => { if (identity === userId) void clearPersonalModeCache(queryClient, userId).then(() => { void router.invalidate(); }); });
+    return () => { stopModes(); i18n.off("languageChanged", applyLanguage); data.subscription.unsubscribe(); };
   }, [router, queryClient]);
 
   return (
