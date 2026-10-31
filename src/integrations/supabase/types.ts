@@ -9515,6 +9515,7 @@ export type Database = {
       }
       learn_file_version: { Args: { _path: string }; Returns: string }
       learn_object_unlocked: { Args: { _name: string }; Returns: boolean }
+      leave_challenge: { Args: { _c: string }; Returns: undefined }
       leave_free_offer: { Args: { _offer: string }; Returns: undefined }
       leave_team: { Args: { _team: string }; Returns: undefined }
       lesson_is_unlocked: { Args: { _lesson: string }; Returns: boolean }
