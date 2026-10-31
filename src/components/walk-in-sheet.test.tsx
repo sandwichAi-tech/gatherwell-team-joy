@@ -16,6 +16,17 @@ it('does not claim existing registration check-in from an empty server response'
   await waitFor(() => expect(state.rpc).toHaveBeenCalledTimes(2));
   expect(close).not.toHaveBeenCalled(); expect(state.success).not.toHaveBeenCalled();
 });
+it('retains entered values and reuses the request key after a failed response', async () => {
+  state.rpc.mockRejectedValueOnce(new Error('network')).mockResolvedValueOnce({ data: { result: 'confirmed', rsvp_id: 'r', status: 'going', checked_in: true }, error: null });
+  const close = vi.fn(); render(<WalkInSheet open eventId="e" onClose={close} onSaved={vi.fn()} />); fill(); fireEvent.click(screen.getByText('checkin.addAndCheckIn'));
+  await screen.findByRole('alert'); expect(screen.getByLabelText('guest.firstName')).toHaveValue('ZZ-TEST Guest'); fireEvent.click(screen.getByText('checkin.addAndCheckIn'));
+  await waitFor(() => expect(close).toHaveBeenCalledTimes(1)); expect(state.rpc.mock.calls[0][1]._request).toBe(state.rpc.mock.calls[1][1]._request);
+});
+it('clears stale existing-registration resolution when identity changes', async () => {
+  state.rpc.mockResolvedValue({ data: { result: 'existing', rsvp_id: 'r', status: 'going', checked_in: false }, error: null });
+  render(<WalkInSheet open eventId="e" onClose={vi.fn()} onSaved={vi.fn()} />); fill(); fireEvent.click(screen.getByText('checkin.addAndCheckIn')); await screen.findByText('checkin.checkExisting');
+  fireEvent.change(screen.getByLabelText('guest.email'), { target: { value: 'other@example.invalid' } }); expect(screen.queryByText('checkin.checkExisting')).not.toBeInTheDocument();
+});
 it('disables changing identity during an unresolved admission request', async () => {
   state.rpc.mockReturnValue(new Promise(() => {})); render(<WalkInSheet open eventId="e" onClose={vi.fn()} onSaved={vi.fn()} />); fill(); fireEvent.click(screen.getByText('checkin.addAndCheckIn'));
   await waitFor(() => expect(screen.getByLabelText('guest.email')).toBeDisabled());

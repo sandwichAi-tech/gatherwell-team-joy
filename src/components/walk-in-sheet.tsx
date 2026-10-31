@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { confirmedWalkIn, walkInErrorKey, type WalkInResult } from '@/lib/walk-in';
+import { confirmedAttendance, type CheckinResult } from '@/lib/checkin-result';
 
 export function WalkInSheet({ open, eventId, onClose, onSaved }: { open: boolean; eventId: string; onClose: () => void; onSaved: () => void }) {
   const { t, i18n } = useTranslation();
@@ -36,16 +37,18 @@ export function WalkInSheet({ open, eventId, onClose, onSaved }: { open: boolean
     if (!existing || submitting.current) return;
     submitting.current = true; setBusy(true); setError(null);
     try {
-      const { error: failure } = await supabase.rpc('check_in_rsvp', { _rsvp: existing.rsvp_id, _undo: false });
+      const { data, error: failure } = await supabase.rpc('check_in_admission', { _rsvp: existing.rsvp_id, _undo: false });
       if (failure) { setError(t(walkInErrorKey(failure))); return; }
-      onSaved(); toast.success(t('checkin.scanResult.ok', { name: fields.first.trim() })); onClose();
+      const result = data as unknown as CheckinResult;
+      if (!result || (!confirmedAttendance(result) && result.result !== 'already')) { setError(t('checkin.walkInRetry')); return; }
+      onSaved(); toast.success(t(result.result === 'already' ? 'checkin.walkInAlready' : 'checkin.scanResult.ok', { name: fields.first.trim() })); setFields(blank); setExisting(null); request.current = null; onClose();
     } catch { setError(t('checkin.walkInRetry')); } finally { submitting.current = false; setBusy(false); }
   };
   return <ResponsiveSheet open={open} onOpenChange={value => { if (!value && !busy) onClose(); }} title={t('checkin.walkIn')}
     footer={<Button form="walkin-form" type="submit" className="min-h-12 w-full whitespace-normal" disabled={busy}>{t(busy ? 'launch.waiting' : 'checkin.addAndCheckIn')}</Button>}>
     <form id="walkin-form" className="guest-form" onSubmit={submit} noValidate>
-      <div className="guest-name-row">{(['first', 'last'] as const).map(key => <div key={key}><label className="field-label" htmlFor={`w-${key}`}>{t(key === 'first' ? 'guest.firstName' : 'guest.lastName')}</label><Input id={`w-${key}`} autoFocus={key === 'first'} maxLength={60} value={fields[key]} onChange={e => setFields({ ...fields, [key]: e.target.value })} /></div>)}</div>
-      {(['phone', 'email'] as const).map(key => <div key={key}><label className="field-label" htmlFor={`w-${key}`}>{t(`guest.${key}`)}</label><Input id={`w-${key}`} type={key === 'phone' ? 'tel' : 'email'} maxLength={key === 'phone' ? 30 : 200} value={fields[key]} onChange={e => setFields({ ...fields, [key]: e.target.value })} /></div>)}
+      <div className="guest-name-row">{(['first', 'last'] as const).map(key => <div key={key}><label className="field-label" htmlFor={`w-${key}`}>{t(key === 'first' ? 'guest.firstName' : 'guest.lastName')}</label><Input id={`w-${key}`} required={key === 'first'} disabled={busy} autoFocus={key === 'first'} maxLength={60} value={fields[key]} onChange={e => { setExisting(null); setFields({ ...fields, [key]: e.target.value }); }} /></div>)}</div>
+      {(['phone', 'email'] as const).map(key => <div key={key}><label className="field-label" htmlFor={`w-${key}`}>{t(`guest.${key}`)}</label><Input id={`w-${key}`} disabled={busy} type={key === 'phone' ? 'tel' : 'email'} maxLength={key === 'phone' ? 30 : 200} value={fields[key]} onChange={e => { setExisting(null); setFields({ ...fields, [key]: e.target.value }); }} /></div>)}
       {existing && <div role="status"><p>{t(existing.checked_in ? 'checkin.walkInAlready' : 'checkin.walkInExisting')}</p>{!existing.checked_in && existing.status === 'going' && <Button type="button" className="min-h-12 whitespace-normal" disabled={busy} onClick={() => void checkExisting()}>{t('checkin.checkExisting')}</Button>}</div>}
       {error && <div role="alert"><p className="field-error">{error}</p><Button asChild variant="link"><Link to="/e/$id" params={{ id: eventId }}>{t('checkin.attendeeResolution')}</Link></Button></div>}
     </form>

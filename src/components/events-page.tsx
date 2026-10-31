@@ -21,10 +21,10 @@ export function GatheringCard({ e, lang }: { e: Gathering; lang: string }) {
   return <Link to="/event/$id" params={{ id: e.id }} className="gathering-card">
     <GatheringCover path={e.cover_url} category={e.category} style={e.cover_style} title={e.title} className="card-strip" eventId={e.id} />
     <div className="gathering-card-body">
-      <div className="date-tile"><span>{d.toLocaleDateString(lang, { month: 'short' })}</span><strong>{d.getDate()}</strong></div>
+      <div className="date-tile"><span>{d.toLocaleDateString(lang, { month: 'short', timeZone: e.timezone || 'UTC' })}</span><strong>{d.toLocaleDateString(lang, { day: 'numeric', timeZone: e.timezone || 'UTC' })}</strong></div>
       <div className="event-info">
         <h3>{e.title}</h3>
-        <p>{d.toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' })} · {placeOf(e) ?? t('teamSpace.online')}</p>
+        <p>{d.toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit', timeZone: e.timezone || 'UTC' })} · {placeOf(e) ?? t('teamSpace.online')}</p>
         <div className="event-registration"><span className={`chip ${kind === 'person' ? 'warm-chip' : ''}`}>{t(`gathering.kind.${kind}`)}</span>
           {e.status !== 'published' && <span className="chip">{t(`teamSpace.status.${e.status}`)}</span>}
           <span className="tabular">{e.capacity ? t('gathering.goingOf', { count: e.going ?? 0, total: e.capacity }) : t('map.going', { count: e.going ?? 0 })}</span></div>
