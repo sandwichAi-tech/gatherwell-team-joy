@@ -1492,6 +1492,13 @@
       "when": 1793479597460,
       "tag": "0212_personal_home_availability_destinations_managers",
       "breakpoints": true
+    },
+    {
+      "idx": 213,
+      "version": "7",
+      "when": 1793480326562,
+      "tag": "0213_door_admission_receipts_and_consistent_totals",
+      "breakpoints": true
     }
   ]
 }

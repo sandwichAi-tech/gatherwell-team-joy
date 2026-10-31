@@ -1,5 +1,5 @@
 export type WalkInResult = { result: 'confirmed' | 'existing' | 'already'; rsvp_id: string; status: string; checked_in: boolean };
-export function confirmedWalkIn(value: WalkInResult) { return value.result === 'confirmed' && value.status === 'going' && value.checked_in; }
+export function confirmedWalkIn(value: WalkInResult | null | undefined) { return value?.result === 'confirmed' && value.status === 'going' && value.checked_in; }
 export function walkInErrorKey(error: unknown) {
   const message = error && typeof error === 'object' && 'message' in error ? String(error.message) : '';
   if (message.includes('approved_legal_document_required')) return 'eventAgreements.legalRequired';

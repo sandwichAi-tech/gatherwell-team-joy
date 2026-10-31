@@ -1,4 +1,4 @@
-export type CheckinResult = { result: 'ok' | 'already' | 'not_found' | 'wrong_event' | 'waiver_required' | 'payment_required' | 'event_unavailable' | 'registration_required' | 'rate_limited' | 'error' | 'pending' | 'cancelled' | 'waitlist'; name?: string };
+export type CheckinResult = { result: 'ok' | 'already' | 'undone' | 'not_found' | 'wrong_event' | 'waiver_required' | 'payment_required' | 'event_unavailable' | 'registration_required' | 'rate_limited' | 'error' | 'pending' | 'cancelled' | 'waitlist'; name?: string };
 
 /** Only formatting is removed; URLs and unexpected payloads must never become admission codes. */
 export function normalizeCheckinCode(code: string): string | null {

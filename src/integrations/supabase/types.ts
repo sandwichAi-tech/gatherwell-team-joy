@@ -8947,6 +8947,10 @@ export type Database = {
         Args: { _accepted: Json; _event: string }
         Returns: undefined
       }
+      check_in_admission: {
+        Args: { _rsvp: string; _undo?: boolean }
+        Returns: Json
+      }
       check_in_code: { Args: { _code: string; _event: string }; Returns: Json }
       check_in_rsvp: {
         Args: { _rsvp: string; _undo?: boolean }

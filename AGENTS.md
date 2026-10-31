@@ -63,7 +63,7 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - usePublicSession affects navigation display only, never access.
 - Course drip is decided only by lesson_unlock_at()/lesson_is_unlocked() (mirrored in src/lib/course-release.ts) and enforced by restrictive RLS on lessons, summaries and learn-media; browsers get locked titles only via my_locked_lessons().
 - Event Builder partial drafts use manager-only event_builder_drafts snapshots; publish validates and writes canonical event fields, so incomplete input never becomes attendee data.
-- Own QR unchanged; walk_in_admit binds event/retry and owner/assigned staff, capacity/payment/waivers; journeys dedupe. Manager-only waivers snapshot text, never rewrite acceptances.
+- Door actions use guarded receipts, event-bound retries and staff attendance_totals; merged/inactive rows cannot inflate counts. QR unchanged; waiver snapshots never rewrite acceptances.
 - Owner approves joins; legacy members remain. Library reuses templates and independent allowlisted drafts, never entitlements. Channels keep direct guards and separate unread/mute.
 - Event identity uses get_public_host eligibility; host waiver libraries are owner-only and published-once events lock snapshots. The ZoheeWell event agreement (consent kind event_agreement) is platform-owned: the database pins it on publish or when one is approved, never blocks hosts, never rewrites a pin, and only registration fails closed without it.
 - Resource courses use lesson slots for ordered quiz/assessment/reference items, checked full-ID reorder and detach-only removal to preserve source identity/history; references keep current source access until inclusion is verified.
