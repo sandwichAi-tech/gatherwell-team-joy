@@ -1,6 +1,7 @@
 import { shareOrigin } from '@/lib/seo';
 import { queryOptions, type QueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { teamCallerQuery, announceTeamChange } from './team-query-boundary';
 
 export const JOIN_CODE_KEY = 'gatherwell-join-code';
 /** When the pending invite was saved; the code is a short-lived convenience, never authority. */
@@ -57,7 +58,9 @@ export type TeamMembership = { teamId: string; name: string; plan: string; joinC
 
 export const teamsQuery = (userId: string) => queryOptions({
   queryKey: ['teams', userId],
-  queryFn: async (): Promise<TeamMembership[]> => {
+  staleTime: 0,
+  gcTime: 0,
+  queryFn: ({ signal }): Promise<TeamMembership[]> => teamCallerQuery(userId, signal, async () => {
     const { data, error } = await supabase
       .from('team_members')
       .select('role, workspace_role, custom_badge, joined_at, teams(id, name, plan, join_code, owner_id)')
@@ -65,11 +68,17 @@ export const teamsQuery = (userId: string) => queryOptions({
       .is('suspended_at', null)
       .order('joined_at', { ascending: true });
     if (error) throw error;
-    return (data ?? []).filter(row => row.teams).map(row => {
+    const rows = (data ?? []).filter(row => row.teams);
+    const checks = await Promise.all(rows.map(async row => {
+      const { data: access, error: accessError } = await supabase.rpc('team_channel_state', { _team: row.teams.id });
+      if (accessError) throw accessError;
+      return !!access;
+    }));
+    return rows.filter((_row, index) => checks[index]).map(row => {
       const team = row.teams as { id: string; name: string; plan: string; join_code: string; owner_id: string };
       return { teamId: team.id, name: team.name, plan: team.plan, joinCode: team.join_code, role: row.role, workspaceRole: row.workspace_role ?? 'member', ownerId: team.owner_id, customBadge: row.custom_badge };
     });
-  },
+  }),
 });
 
 /** The active team: the profile's saved choice when still a member, otherwise the first leader team, otherwise the first team. */
@@ -80,22 +89,18 @@ export const workspaceQuery = (userId: string) => queryOptions({
     const saved = profile?.active_team_id;
     const member = teams.find(team => team.teamId === saved);
     if (member) return member;
-    if (saved) {
-      // Leaders of a parent team can open sub-teams they are not directly in; they act there as leader.
-      // Verify an active capability first so a suspended/removed membership never resolves here.
-      const { data: capable } = await supabase.rpc('team_capability', { _team: saved, _cap: 'events' });
-      if (capable) {
-        const { data } = await supabase.from('teams').select('id, name, plan, join_code, owner_id').eq('id', saved).maybeSingle();
-        if (data) return { teamId: data.id, name: data.name, plan: data.plan, joinCode: data.join_code, role: 'leader', workspaceRole: 'admin', ownerId: data.owner_id, customBadge: null, inherited: true };
-      }
-    }
-    return teams.find(team => team.role === 'leader') ?? teams[0] ?? null;
+    return teams.find(team => team.ownerId === userId) ?? teams[0] ?? null;
   },
 });
 
 export async function setActiveTeam(userId: string, teamId: string) {
+  const { data: caller, error: callerError } = await supabase.auth.getUser();
+  if (callerError || caller.user?.id !== userId) throw new Error('identity_changed');
+  const { data: access, error: accessError } = await supabase.rpc('team_channel_state', { _team: teamId });
+  if (accessError || !access) throw new Error('not_allowed');
   const { error } = await supabase.from('profiles').update({ active_team_id: teamId }).eq('id', userId);
   if (error) throw error;
+  announceTeamChange(teamId);
 }
 
 export function initialsOf(name?: string | null) {
