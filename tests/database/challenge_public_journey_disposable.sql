@@ -24,7 +24,10 @@ DO $$ DECLARE c uuid:='72000000-0000-0000-0000-000000000001'; u uuid:=auth.uid()
  UPDATE challenges SET enrollment='public',status='draft' WHERE id=c; IF challenge_can_enroll(c) OR challenge_member_active(c,u) THEN RAISE EXCEPTION 'draft_leak'; END IF;
  UPDATE challenges SET status='published',is_paid=true WHERE id=c; IF challenge_member_active(c,u) THEN RAISE EXCEPTION 'free_record_unlocks_paid'; END IF;
  UPDATE challenges SET is_paid=false WHERE id=c;
- UPDATE challenge_members SET access_status='revoked' WHERE challenge_id=c AND user_id=u;
+ PERFORM leave_challenge(c);
+ IF (SELECT count(*) FROM challenge_checkins WHERE challenge_id=c AND user_id=u)<>1 THEN RAISE EXCEPTION 'leave_erased_progress'; END IF;
+ BEGIN DELETE FROM challenge_members WHERE challenge_id=c AND user_id=u; RAISE EXCEPTION 'membership_history_deleted'; EXCEPTION WHEN OTHERS THEN IF SQLERRM<>'use_leave_challenge' THEN RAISE; END IF; END;
+ BEGIN DELETE FROM challenges WHERE id=c; RAISE EXCEPTION 'challenge_history_deleted'; EXCEPTION WHEN OTHERS THEN IF SQLERRM<>'challenge_history_requires_archive' THEN RAISE; END IF; END;
  IF jsonb_array_length(my_challenge_list())<>0 THEN RAISE EXCEPTION 'revoked_me_leak'; END IF;
  BEGIN PERFORM enroll_challenge(c,'[]'); RAISE EXCEPTION 'silently_reenrolled'; EXCEPTION WHEN OTHERS THEN IF SQLERRM<>'access_revoked' THEN RAISE; END IF; END;
  PERFORM set_config('request.jwt.claim.sub','',true); IF challenge_can_enroll(c) THEN RAISE EXCEPTION 'anon_enrollment'; END IF;
