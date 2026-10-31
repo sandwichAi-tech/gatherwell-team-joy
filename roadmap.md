@@ -1,5 +1,11 @@
 # Challenge commerce and course/assessment lifecycle closure
 
+## Waivers rows 64 / 85 / 86 — October 31 continuation
+- [x] Fix file-opening recovery, document-bound consent, invite-context cache identity, caller-scoped library queries and explicit version selection; preserve automatic platform agreement.
+- [x] Actual-function disposable pin/version/receipt and admission pre/post checks; 59 focused / 1003 full tests, EN/ES 320/390/1280 component checks, documentation.
+- [ ] Apply pending admission hash/locale repair only to an authorized backend target; full free-flow/role/storage acceptance remains incomplete. See docs/WAIVERS-64-85-86-VERIFICATION.md.
+- [ ] Full isolated app/auth/storage/provider acceptance needs a complete disposable stack; no shared fixtures authorized.
+
 ## Teams rows 88 / 104 / 105 / 106 — October 31 continuation
 - [x] Implement invitation/library/communication account fixes and pending authoritative repairs; preserve owner-only approval/independent drafts.
 - [x] Focused 46 / full 994 tests, disposable actual-boundary repro/retest and EN/ES component width checks; zero fixture readback, exact temporary cleanup.

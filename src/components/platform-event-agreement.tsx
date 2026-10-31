@@ -3,9 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { platformSelection, type PlatformAgreement } from '@/lib/event-agreements';
+import { waiverInviteToken } from '@/lib/waiver-consent-context';
 export function usePlatformAgreement(eventId: string | undefined) {
-  return useQuery({ queryKey: ['platform-event-agreement', eventId], enabled: !!eventId, queryFn: async () => {
-    const { data, error } = await supabase.rpc('event_platform_agreement', { _event: eventId ?? '', _token: new URLSearchParams(window.location.search).get('k') ?? '' });
+  const token = waiverInviteToken();
+  return useQuery({ queryKey: ['platform-event-agreement', eventId, token], enabled: !!eventId, queryFn: async () => {
+    const { data, error } = await supabase.rpc('event_platform_agreement', { _event: eventId ?? '', _token: token ?? '' });
     if (error) throw error; return data as PlatformAgreement | null;
   } });
 }

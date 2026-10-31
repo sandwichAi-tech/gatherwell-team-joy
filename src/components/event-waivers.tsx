@@ -13,20 +13,25 @@ import { confirmAction } from '@/components/confirm-dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { downloadCsv } from '@/lib/csv';
 import { signEventWaiverFile } from '@/lib/event-waivers.functions';
+import { waiverInviteToken } from '@/lib/waiver-consent-context';
+import { teamCallerQuery } from '@/lib/team-query-boundary';
+import { uploadHostWaiver, cleanupHostWaiverUpload } from '@/lib/host-waivers.functions';
+import { safeFormFileName } from '@/lib/host-forms';
 import {
   WAIVER_KINDS, canAccept, consentRows, consentState, waiverBody, waiverTitle,
   type PublicWaiver, type WaiverChoices, type WaiverKind, type WaiverStatus,
 } from '@/lib/event-waivers';
 
 const db = supabase as unknown as { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>; from: (t: string) => any };
-const inviteToken = () => (typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('k'));
+const inviteToken = waiverInviteToken;
 
 /** Active waivers an attendee must see for this event (empty when none or not visible). */
 export function useEventWaivers(eventId: string | undefined) {
+  const token = inviteToken();
   return useQuery({
-    queryKey: ['event-waivers', eventId], enabled: !!eventId, staleTime: 60_000,
+    queryKey: ['event-waivers', eventId, token], enabled: !!eventId, staleTime: 60_000,
     queryFn: async () => {
-      const { data, error } = await db.rpc('event_waiver_list', { _event: eventId, _token: inviteToken() });
+      const { data, error } = await db.rpc('event_waiver_list', { _event: eventId, _token: token });
       if (error) throw error;
       return (Array.isArray(data) ? data : []) as PublicWaiver[];
     },
@@ -37,10 +42,12 @@ function useOpenWaiverFile() {
   const sign = useServerFn(signEventWaiverFile);
   return async (waiverId: string, opts: { code?: string; version?: number } = {}) => {
     const tab = window.open('', '_blank', 'noopener');
-    const { url } = await sign({ data: { waiverId, token: inviteToken(), code: opts.code ?? null, version: opts.version ?? null } });
-    if (!url) { tab?.close(); return false; }
-    if (tab) tab.location.href = url; else window.location.assign(url);
-    return true;
+    try {
+      const { url } = await sign({ data: { waiverId, token: inviteToken(), code: opts.code ?? null, version: opts.version ?? null } });
+      if (!url) { tab?.close(); return false; }
+      if (tab) tab.location.href = url; else window.location.assign(url);
+      return true;
+    } catch { tab?.close(); return false; }
   };
 }
 
@@ -60,7 +67,7 @@ export function EventWaiversAccept({ waivers, choices, onChange }: { waivers: Pu
           <span>{t('waiver.version', { n: w.version })}</span></p>
         {body && <div className="waiver-text" tabIndex={0} role="document" aria-label={title}>{body.split(/\n{2,}/).map((p, i) => <p key={i}>{p}</p>)}</div>}
         {w.has_file && <Button type="button" variant="secondary" aria-busy={busy === w.id} disabled={busy === w.id}
-          onClick={async () => { setBusy(w.id); const ok = await open(w.id); setBusy(null); if (ok) set(w.id, { opened: true }); else toast.error(t('eventWaivers.errors.file')); }}>
+          onClick={async () => { setBusy(w.id); try { const ok = await open(w.id); if (ok) set(w.id, { opened: true }); else toast.error(t('eventWaivers.errors.file')); } finally { setBusy(null); } }}>
           <ExternalLink />{t('eventWaivers.openFile', { name: w.file_name || t('eventWaivers.document') })}</Button>}
         {w.has_file && !c?.opened && <p className="field-hint" id={`ew-${w.id}-hint`}>{t('eventWaivers.openFirst')}</p>}
         <label className="guest-consent">
@@ -101,11 +108,12 @@ const blank = (eventId: string, position: number): Row => ({ id: '', event_id: e
 /** Host: add, edit (new version), preview and archive this event's waivers. */
 export function EventWaiversManager({ eventId, userId }: { eventId: string; userId: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en'; const qc = useQueryClient();
-  const { data, isLoading, error, refetch } = useQuery({ queryKey: ['event-waivers-manage', eventId], queryFn: async () => {
+  const { data, isLoading, error, refetch } = useQuery({ queryKey: ['event-waivers-manage', eventId, userId], queryFn: ({ signal }) => teamCallerQuery(userId, signal, async () => {
     const { data: rows, error: e } = await db.from('event_waivers').select('*').eq('event_id', eventId).is('archived_at', null).order('position').order('created_at');
     if (e) throw e; return (rows ?? []) as Row[];
-  } });
+  }) });
   const [edit, setEdit] = useState<Row | null>(null);
+  useEffect(() => setEdit(null), [eventId, userId]);
   const refresh = () => { void qc.invalidateQueries({ queryKey: ['event-waivers-manage', eventId] }); void qc.invalidateQueries({ queryKey: ['event-waivers', eventId] }); void qc.invalidateQueries({ queryKey: ['event-waiver-status', eventId] }); };
   const archive = async (w: Row) => {
     if (!(await confirmAction({ title: t('eventWaivers.archiveTitle'), body: t('eventWaivers.archiveText'), confirmLabel: t('eventWaivers.archive'), destructive: true }))) return;
@@ -132,17 +140,22 @@ export function EventWaiversManager({ eventId, userId }: { eventId: string; user
 function WaiverEditor({ row, userId, onClose, onSaved }: { row: Row; userId: string; onClose: () => void; onSaved: () => void }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
   const [f, setF] = useState<Row>(row); const [busy, setBusy] = useState(false); const [uploading, setUploading] = useState(false); const [preview, setPreview] = useState(false);
+  const uploadPrivate = useServerFn(uploadHostWaiver); const cleanup = useServerFn(cleanupHostWaiverUpload);
+  const [uploads, setUploads] = useState<string[]>([]);
+  const clearUploads = async (keep?: string | null) => { for (const path of uploads) if (path !== keep) await cleanup({ data: { path } }).catch(() => null); setUploads([]); };
+  const close = async () => { if (busy || uploading) return; await clearUploads(); onClose(); };
   useEffect(() => setF(row), [row]);
   const content = (f.title_en.trim() || f.title_es.trim()) && (f.body_en.trim() || f.body_es.trim() || f.file_path);
   const upload = async (file: File) => {
+    if (uploading || busy) return;
     if (file.type !== 'application/pdf' || file.size > 10 * 1024 * 1024) { toast.error(t('eventWaivers.errors.fileType')); return; }
     setUploading(true);
-    // A fresh name per upload: older accepted versions keep pointing at their own file.
-    const path = `${userId}/waivers/${row.event_id}/${crypto.randomUUID()}.pdf`;
-    const { error } = await supabase.storage.from('media').upload(path, file, { contentType: 'application/pdf', upsert: false });
-    setUploading(false);
-    if (error) { toast.error(t('eventWaivers.errors.upload')); return; }
-    setF(x => ({ ...x, file_path: path, file_name: file.name.slice(0, 120) }));
+    try {
+      const data = new FormData(); data.set('file', file);
+      const { path } = await uploadPrivate({ data }); setUploads(x => [...x, path]);
+      setF(x => ({ ...x, file_path: path, file_name: safeFormFileName(file.name) }));
+    } catch (e) { toast.error(t((e as { message?: string })?.message?.includes('unreadable_pdf') ? 'eventWaivers.errors.processing' : 'eventWaivers.errors.upload')); }
+    finally { setUploading(false); }
   };
   const openOwn = async () => {
     if (!f.file_path) return;
@@ -155,9 +168,9 @@ function WaiverEditor({ row, userId, onClose, onSaved }: { row: Row; userId: str
     const { error } = f.id ? await db.from('event_waivers').update(body).eq('id', f.id) : await db.from('event_waivers').insert({ ...body, event_id: f.event_id });
     setBusy(false);
     if (error) { toast.error(t('eventWaivers.errors.save')); return; }
-    toast.success(t('eventWaivers.saved')); onSaved();
+    await clearUploads(f.file_path); toast.success(t('eventWaivers.saved')); onSaved();
   };
-  return <ResponsiveSheet open onOpenChange={o => !o && onClose()} title={t(f.id ? 'eventWaivers.editTitle' : 'eventWaivers.addTitle')} description={t('eventWaivers.editHelp')}
+  return <ResponsiveSheet open onOpenChange={o => !o && void close()} title={t(f.id ? 'eventWaivers.editTitle' : 'eventWaivers.addTitle')} description={t('eventWaivers.editHelp')}
     footer={<Button className="onboarding-continue" disabled={!content || busy || uploading} aria-busy={busy} onClick={() => void save()}>{busy ? t('onboarding.saving') : t('eventWaivers.save')}</Button>}>
     <div className="edit-form">
       {f.id && <p className="field-hint">{t('eventWaivers.versionNote', { n: f.version })}</p>}
@@ -188,11 +201,11 @@ function WaiverEditor({ row, userId, onClose, onSaved }: { row: Row; userId: str
 }
 
 /** Host: attendee-level consent status with an export (names + consent only, no contact details). */
-export function EventWaiverStatusPanel({ eventId }: { eventId: string }) {
+export function EventWaiverStatusPanel({ eventId, userId }: { eventId: string; userId: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
-  const { data, isLoading, error, refetch } = useQuery({ queryKey: ['event-waiver-status', eventId], queryFn: async () => {
+  const { data, isLoading, error, refetch } = useQuery({ queryKey: ['event-waiver-status', eventId, userId], enabled: !!userId, queryFn: ({ signal }) => teamCallerQuery(userId, signal, async () => {
     const { data: d, error: e } = await db.rpc('event_waiver_status', { _event: eventId }); if (e) throw e; return d as WaiverStatus;
-  } });
+  }) });
   if (isLoading) return null;
   if (error) return <p className="field-error" role="alert">{t('eventWaivers.errors.load')} <Button variant="ghost" onClick={() => void refetch()}>{t('error.retry')}</Button></p>;
   if (!data?.waivers.length) return null;
@@ -201,12 +214,12 @@ export function EventWaiverStatusPanel({ eventId }: { eventId: string }) {
   return <section className="panel ew-status" aria-labelledby="ew-status-title">
     <div className="section-heading"><div><h2 id="ew-status-title"><ShieldCheck aria-hidden="true" /> {t('eventWaivers.statusTitle')}</h2>
       <p className="auth-subtitle">{t('eventWaivers.statusSummary', { count: data.attendees.length, missing })}</p></div>
-      <Button variant="secondary" disabled={!data.attendees.length} onClick={() => { const [head, ...rows] = consentRows(data, lang, label); downloadCsv(`waivers-${eventId.slice(0, 8)}.csv`, head!, rows); }}><Download />{t('eventWaivers.export')}</Button></div>
+      <Button variant="secondary" disabled={!data.attendees.length} onClick={() => { const [head, ...rows] = consentRows(data, lang, label); if (head) downloadCsv(`waivers-${eventId.slice(0, 8)}.csv`, head, rows); }}><Download />{t('eventWaivers.export')}</Button></div>
     {!data.attendees.length ? <p className="auth-subtitle">{t('eventWaivers.noAttendees')}</p>
       : <div className="table-scroll"><table className="data-table"><caption className="sr-only">{t('eventWaivers.statusTitle')}</caption>
         <thead><tr><th scope="col">{t('eventWaivers.attendee')}</th>{data.waivers.map(w => <th key={w.id} scope="col">{waiverTitle(w, lang)}</th>)}</tr></thead>
         <tbody>{data.attendees.map(a => <tr key={a.rsvp_id}><th scope="row">{a.name || t('eventWaivers.unnamed')}</th>
-          {data.waivers.map(w => { const st = consentState(w, a); return <td key={w.id} data-state={st}>{label(st)}{a.accepted[w.id] ? ` · v${a.accepted[w.id]!.version}` : ''}</td>; })}</tr>)}</tbody>
+          {data.waivers.map(w => { const st = consentState(w, a); const got = a.accepted[w.id]; return <td key={w.id} data-state={st}>{label(st)}{got ? ` · v${got.version}` : ''}</td>; })}</tr>)}</tbody>
       </table></div>}
   </section>;
 }

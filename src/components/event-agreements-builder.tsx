@@ -7,6 +7,7 @@ import { HostWaiverEditor, HostWaiverPreview, emptyWaiver, useFormUsage, useWaiv
 import { Link } from '@tanstack/react-router';
 import { addPick, hostWaiverStatus, initialHostPick, movePick, removePick, type WaiverPick } from '@/lib/builder-agreements';
 import { Check } from '@/components/icons';
+import { teamCallerQuery } from '@/lib/team-query-boundary';
 
 /** Host forms only: the ZoheeWell event agreement is attached automatically by the platform, never by hosts. */
 export function useBuilderAgreements(userId: string) {
@@ -24,13 +25,17 @@ export function EventAgreementsSection({ teamId, userId, eventId, locked, isNew,
   const [editor, setEditor] = useState<LibraryWaiver | null>(null); const [preview, setPreview] = useState<WaiverPick | null>(null);
   const [busy, setBusy] = useState(false); const [error, setError] = useState('');
   const seeded = useRef(false);
+  useEffect(() => { seeded.current = false; setEditor(null); setPreview(null); setError(''); }, [userId, teamId, eventId]);
   useEffect(() => { if (seeded.current || !own) return; seeded.current = true; if (isNew && !value.length) { const p = initialHostPick(own, true); if (p.length) onChange(p); } }, [own, isNew]); // eslint-disable-line react-hooks/exhaustive-deps
-  const pinnedRows = useQuery({ queryKey: ['event-host-waivers', eventId, userId], enabled: !!eventId && locked, queryFn: async () => {
+  const pinnedRows = useQuery({ queryKey: ['event-host-waivers', eventId, userId], enabled: !!eventId && locked, queryFn: ({ signal }) => teamCallerQuery(userId, signal, async () => {
     const r = await supabase.from('event_waivers').select('id,title_en,title_es,library_version,version,file_name,body_en,body_es,created_at').eq('event_id', eventId ?? '').is('archived_at', null).not('library_id', 'is', null); if (r.error) throw r.error; return r.data;
-  } });
-  const versions = useQuery({ queryKey: ['waiver-versions', userId, value.map(v => `${v.id}:${v.version}`).join(',')], enabled: !locked && value.length > 0, queryFn: async () => {
-    const r = await supabase.from('waiver_library_versions').select('waiver_id,version,name,description,body_en,body_es,file_path,file_name,created_at').in('waiver_id', value.map(v => v.id)); if (r.error) throw r.error; return r.data;
-  } });
+  }) });
+  const versions = useQuery({ queryKey: ['waiver-versions', userId, value.map(v => `${v.id}:${v.version}`).join(',')], enabled: !locked && value.length > 0, queryFn: ({ signal }) => teamCallerQuery(userId, signal, async () => {
+    return Promise.all(value.map(async v => {
+      const r = await supabase.from('waiver_library_versions').select('waiver_id,version,name,description,body_en,body_es,file_path,file_name,created_at').eq('waiver_id', v.id).eq('version', v.version).single();
+      if (r.error) throw r.error; return r.data;
+    }));
+  }) });
   const hostState = hostWaiverStatus(value, own, locked);
   const usage = useFormUsage(userId);
   const addable = active.filter(w => !value.some(v => v.id === w.id));
@@ -42,7 +47,7 @@ export function EventAgreementsSection({ teamId, userId, eventId, locked, isNew,
     <p className="field-hint">{t('builderAgreements.intro')}</p>
 
     <div className="agreement-item" role="group" aria-labelledby="g-agreements-title">
-      {locked ? (pinnedRows.isPending ? <p role="status">{t('publicEvent.loading')}</p> : !pinnedRows.data?.length ? <p>{t('builderAgreements.noneSelected')}</p>
+      {locked ? (pinnedRows.isPending ? <p role="status">{t('publicEvent.loading')}</p> : pinnedRows.isError ? <div role="alert"><p>{t('eventWaivers.errors.load')}</p><Button type="button" variant="secondary" onClick={() => void pinnedRows.refetch()}>{t('error.retry')}</Button></div> : !pinnedRows.data?.length ? <p>{t('builderAgreements.noneSelected')}</p>
         : <ul className="plain-list">{pinnedRows.data.map(w => <li key={w.id}><strong>{lang === 'es' ? w.title_es || w.title_en : w.title_en}</strong><p>{t('waiver.version', { n: w.library_version ?? w.version })} · {t('builderAgreements.pinnedOn', { date: fmt(w.created_at, lang) })}</p></li>)}</ul>)
       : library.isPending ? <p role="status">{t('publicEvent.loading')}</p>
       : library.error ? <div role="alert"><p>{t('eventWaivers.errors.load')}</p><Button type="button" variant="secondary" onClick={() => void library.refetch()}>{t('common.retry')}</Button></div>
@@ -87,7 +92,10 @@ export function EventAgreementsSection({ teamId, userId, eventId, locked, isNew,
 
     {editor && <HostWaiverEditor teamId={teamId} initial={editor} usage={editor.id ? usage.data?.[editor.id] : undefined} onClose={() => setEditor(null)} onSaved={async id => {
       const r = await supabase.from('waiver_library').select('id,version,archived').eq('id', id).maybeSingle();
-      if (r.data && !r.data.archived) onChange(value.some(x => x.id === id) ? value.map(x => x.id === id ? { id, version: r.data!.version } : x) : [...value, { id: r.data.id, version: r.data.version }]); else if (r.data?.archived) onChange(removePick(value, id));
+      const saved = r.data;
+      // Replacement updates the library, never an existing event selection. Use latest is explicit.
+      if (saved && !saved.archived && !value.some(x => x.id === id)) onChange([...value, { id: saved.id, version: saved.version }]);
+      else if (saved?.archived) onChange(removePick(value, id));
     }} />}
     {preview && previewRow && <HostWaiverPreview waiver={{ description: previewRow.description, id: preview.id, name: previewRow.name, version: previewRow.version, body_en: previewRow.body_en, body_es: previewRow.body_es, file_path: previewRow.file_path, file_name: previewRow.file_name }} onClose={() => setPreview(null)} />}
   </section>;

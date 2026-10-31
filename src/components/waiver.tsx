@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { supabase } from '@/integrations/supabase/client';
+import { waiverInviteToken } from '@/lib/waiver-consent-context';
 
 export type EventWaiver = { required: boolean; version?: number; draft?: boolean; title_en?: string; title_es?: string; body_en?: string; body_es?: string };
 const db = supabase as unknown as { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>; from: (t: string) => any };
@@ -18,8 +19,9 @@ const db = supabase as unknown as { rpc: (fn: string, args: Record<string, unkno
 export const waiverRpc = (fn: string, args: Record<string, unknown>) => db.rpc(fn, args);
 
 export function useEventWaiver(eventId: string | undefined) {
-  return useQuery({ queryKey: ['event-waiver', eventId], enabled: !!eventId, staleTime: 5 * 60_000,
-    queryFn: async () => { const { data,error } = await db.rpc('event_waiver_k', { _event: eventId, _token: new URLSearchParams(window.location.search).get('k') }); if(error)throw error;return (data ?? { required: false }) as EventWaiver; } });
+  const token = waiverInviteToken();
+  return useQuery({ queryKey: ['event-waiver', eventId, token], enabled: !!eventId, staleTime: 5 * 60_000,
+    queryFn: async () => { const { data,error } = await db.rpc('event_waiver_k', { _event: eventId, _token: token }); if(error)throw error;return (data ?? { required: false }) as EventWaiver; } });
 }
 
 /** Read-and-accept block used in the RSVP step and at walk-in check-in. */

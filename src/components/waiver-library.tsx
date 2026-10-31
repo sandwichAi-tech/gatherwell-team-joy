@@ -11,23 +11,24 @@ import { FORM_KINDS, FORM_DESCRIPTION_MAX, formLanguages, safeFormFileName, type
 import { useServerFn } from '@tanstack/react-start';
 import { uploadHostWaiver, signHostWaiver, cleanupHostWaiverUpload } from '@/lib/host-waivers.functions';
 import { Upload, FileText } from '@/components/icons';
+import { teamCallerQuery } from '@/lib/team-query-boundary';
 
 export type LibraryWaiver = { id: string; name: string; description: string; form_kind: FormKind; body_en: string; body_es: string; version: number; archived: boolean; file_path: string | null; file_name: string | null; is_default: boolean; updated_at?: string };
 export const emptyWaiver = (): LibraryWaiver => ({ id: '', name: '', description: '', form_kind: 'waiver', body_en: '', body_es: '', version: 0, archived: false, file_path: null, file_name: null, is_default: false });
 
 /** Owner-scoped: RLS only returns forms owned by the signed-in host. */
 export function useWaiverLibrary(userId: string) {
-  return useQuery({ queryKey: ['waiver-library', userId], enabled: !!userId, queryFn: async () => {
-    const { data, error } = await supabase.from('waiver_library').select('id,name,description,form_kind,body_en,body_es,version,archived,file_path,file_name,is_default,updated_at').order('updated_at', { ascending: false });
+  return useQuery({ queryKey: ['waiver-library', userId], enabled: !!userId, queryFn: ({ signal }) => teamCallerQuery(userId, signal, async () => {
+    const { data, error } = await supabase.from('waiver_library').select('id,name,description,form_kind,body_en,body_es,version,archived,file_path,file_name,is_default,updated_at').eq('owner_id', userId).order('updated_at', { ascending: false });
     if (error) throw error; return data as LibraryWaiver[];
-  } });
+  }) });
 }
 /** Caller's own draft/published event counts per form (server-scoped to the caller). */
 export function useFormUsage(userId: string) {
-  return useQuery({ queryKey: ['host-form-usage', userId], enabled: !!userId, queryFn: async () => {
+  return useQuery({ queryKey: ['host-form-usage', userId], enabled: !!userId, queryFn: ({ signal }) => teamCallerQuery(userId, signal, async () => {
     const { data, error } = await supabase.rpc('host_form_usage'); if (error) throw error;
     return Object.fromEntries((data ?? []).map(r => [r.library_id, { drafts: r.drafts, published: r.published }])) as Record<string, { drafts: number; published: number }>;
-  } });
+  }) });
 }
 
 const fmt = (d: string | undefined, lang: string) => d ? new Date(d).toLocaleDateString(lang, { year: 'numeric', month: 'short', day: 'numeric' }) : '';
@@ -55,7 +56,7 @@ export function HostWaiverEditor({ teamId, initial, usage, onClose, onSaved }: {
     if (!safeWaiverPdf(f.size, f.type, await f.slice(0, 5).text())) { setError(t('hostForms.fileRejected')); return; }
     setBusy(true); setError('');
     try { const form = new FormData(); form.set('file', f); const r = await upload({ data: form }); setUploads(x => [...x, r.path]); setEdit(e => ({ ...e, file_path: r.path, file_name: safeFormFileName(f.name) })); }
-    catch { setError(t('eventWaivers.errors.upload')); } finally { setBusy(false); }
+    catch (e) { setError(t((e as { message?: string })?.message?.includes('unreadable_pdf') ? 'eventWaivers.errors.processing' : 'eventWaivers.errors.upload')); } finally { setBusy(false); }
   };
   return <ResponsiveSheet open title={edit.id ? t('hostForms.editTitle') : t('hostForms.newTitle')} onOpenChange={o => !o && void close()} footer={<Button disabled={busy || !valid} onClick={() => void save()}>{busy ? t('onboarding.saving') : t('waiver.save')}</Button>}>
     <div className="edit-form">
@@ -94,7 +95,10 @@ export function HostWaiverPreview({ waiver, onClose }: { waiver: { id: string; n
   </ResponsiveSheet>;
 }
 
-export function WaiverLibrary({ teamId, userId }: { teamId: string; userId: string }) {
+export function WaiverLibrary(props: { teamId: string; userId: string }) {
+  return <WaiverLibraryContent key={`${props.userId}:${props.teamId}`} {...props} />;
+}
+function WaiverLibraryContent({ teamId, userId }: { teamId: string; userId: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage === 'es' ? 'es' : 'en'; const qc = useQueryClient(); const q = useWaiverLibrary(userId); const usage = useFormUsage(userId);
   const [edit, setEdit] = useState<LibraryWaiver | null>(null); const [preview, setPreview] = useState<LibraryWaiver | null>(null); const [busy, setBusy] = useState(false); const [error, setError] = useState(''); const [showArchived, setShowArchived] = useState(false);
   const list = (q.data ?? []).filter(w => showArchived || !w.archived); const archivedCount = (q.data ?? []).filter(w => w.archived).length;

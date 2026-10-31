@@ -7374,6 +7374,7 @@
       "file": "No pudimos abrir ese documento. Inténtalo de nuevo.",
       "fileType": "Elige un PDF de hasta 10 MB.",
       "upload": "No pudimos subir ese archivo. Inténtalo de nuevo.",
+      "processing": "No pudimos leer este PDF. Usa un PDF legible sin contraseña o escribe el texto del documento.",
       "save": "No pudimos guardar la exención. Revisa el título y el texto e inténtalo de nuevo."
     }
   },
@@ -8018,7 +8019,7 @@
     "archiveYes": "Archivar formulario",
     "showArchived": "Mostrar archivados ({{count}})",
     "hideArchived": "Ocultar archivados ({{count}})",
-    "addToEvent": "Agregar un formulario del anfitrión a este evento",
+    "addToEvent": "Seleccionar de Mis exenciones",
     "pick": "Elige un formulario guardado…",
     "noMore": "No hay más formularios guardados",
     "selectedLabel": "Formularios del anfitrión que aceptarán los asistentes, en orden",

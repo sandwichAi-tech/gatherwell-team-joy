@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { FileText, ShieldCheck, UsersRound } from '@/components/icons';
 import { WaiverAccept, useEventWaiver } from '@/components/waiver';
 import { EventWaiverStatusPanel } from '@/components/event-waivers';
+import { useGatherwell } from '@/components/gatherwell-shell';
 import { Check } from '@/components/icons';
 import { ArrowLeft, ArrowUp, Download, Mail, MessageSquareText, Phone, Search, UserPlus, X } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -26,6 +27,7 @@ type Tab = 'requested' | 'going' | 'maybe' | 'waitlist' | 'cancelled' | 'decline
 const ALL_TABS: Tab[] = ['requested', 'going', 'maybe', 'waitlist', 'cancelled', 'declined'];
 
 function GuestListPage() {
+  const { userId } = useGatherwell();
   const { id } = Route.useParams(); const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage === 'es' ? 'es-419' : 'en-US';
   const queryClient = useQueryClient();
   const { data: event } = useQuery({ queryKey: ['event', id, 'title'], queryFn: async () => (await supabase.from('events').select('id,title,status').eq('id', id).maybeSingle()).data });
@@ -129,7 +131,7 @@ function GuestListPage() {
           </div>
         </li></Fragment>)}</ul>}
     </section>
-    <EventWaiverStatusPanel eventId={id} />
+    <EventWaiverStatusPanel eventId={id} userId={userId} />
     {buddyFor && rows.find(r => r.id === buddyFor) && <BuddySheet eventId={id} row={rows.find(r => r.id === buddyFor)!} rows={active} info={belong} onClose={() => setBuddyFor(null)} />}
     {groupsOpen && <SmallGroupsSheet eventId={id} rows={active.filter(r => r.status !== 'waitlist')} onClose={() => setGroupsOpen(false)} />}
     {signing && <DoorWaiverSheet eventId={id} rsvp={signing} onClose={() => setSigning(null)} onSaved={refresh} />}
