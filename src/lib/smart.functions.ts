@@ -142,7 +142,7 @@ export const getDailyBrief = createServerFn({ method: 'POST' })
     for (const event of events) event.going = Number(checked(await sb.rpc('event_going_count', { _event_id: event.id })) ?? 0);
     const attending = home.mode === 'attending' ? home.events.filter(e => e.registration_status === 'going').map(e => ({ event: { id: e.id, host_id: '', team_id: null, title: e.title, starts_at: e.starts_at, location_name: e.location_name, status: e.status, going: 0 }, code: null })) : [];
     const signups = events.length ? checked(await sb.from('rsvps').select('event_id,created_at').in('event_id', events.map(e => e.id)).eq('status', 'going').gte('created_at', from)) ?? [] : [];
-    return { lines: buildMorningBrief({ userId: uid, now, timezone: data.tz, events, attending, signups, leaderTeams: [], teamName: '', hosts: [], resources: [] }) };
+    return { caller_id: uid, lines: buildMorningBrief({ userId: uid, now, timezone: data.tz, events, attending, signups, leaderTeams: [], teamName: '', hosts: [], resources: [] }) };
   });
 
 /** Bilingual share caption (English then Spanish). Claude when the key exists, otherwise a warm preview caption. */
