@@ -77,6 +77,7 @@ export async function challengePhotoUrls(paths: string[]) {
 export function rpcErrorKey(error: unknown) {
   const m = typeof error === 'object' && error && 'message' in error ? String((error as { message: unknown }).message) : '';
   if (m.includes('payouts_required')) return 'billing.payoutsRequired';
+  if (m.includes('challenge_history_requires_archive')) return 'challenges.historyRequiresArchive';
   for (const k of ['checkout_setup_required', 'access_revoked', 'challenge_full', 'addon_sold_out', 'note_required', 'invalid_price', 'invalid_rules', 'invalid_activities', 'invalid_messages', 'invalid_addons', 'not_joined', 'date_closed', 'out_of_range', 'invalid_message', 'not_allowed']) if (m.includes(k)) return `challenges.err.${k}`;
   return 'profile.saveError';
 }
