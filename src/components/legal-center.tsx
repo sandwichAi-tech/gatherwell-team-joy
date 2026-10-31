@@ -32,8 +32,9 @@ export function LegalCenterPage() {
       </header>
       <section className="legal-card legal-company" aria-labelledby="legal-company">
         <h2 id="legal-company">{t('legalCenter.company')}</h2>
-        <p>{t('legalCenter.companyLine')}</p>
-        <p className="legal-muted">{t('legalCenter.addressPending')}</p>
+        <p className="legal-company-name">{COMPANY.legalName}</p>
+        <p className="legal-muted">{t('legalCenter.formation')}</p>
+        <p>{t('legalCenter.mailingAddress')}: {COMPANY.mailingAddress}</p>
         <ul className="legal-contacts">
           {LEGAL_CONTACTS.map(c => <li key={c}><a href={`mailto:${c}@zoheewell.com`}><span>{t(`legalCenter.contacts.${c}`)}</span><span className="legal-muted">{c}@zoheewell.com</span></a></li>)}
         </ul>
