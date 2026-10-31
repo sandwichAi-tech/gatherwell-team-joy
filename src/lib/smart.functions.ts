@@ -135,7 +135,10 @@ export const getDailyBrief = createServerFn({ method: 'POST' })
       return result.data;
     };
     const home = checked(await sb.rpc('personal_home')) as unknown as import('@/lib/personal-home').PersonalHome;
-    const events: BriefEvent[] = home.mode === 'hosting' ? home.events.map(e => ({ id: e.id, host_id: uid, team_id: null, title: e.title, starts_at: e.starts_at, location_name: e.location_name, status: e.status, going: 0 })) : [];
+    // Never relabel an assigned event as caller-owned in the ownership-only brief.
+    const owned = home.mode === 'hosting' && home.events.length ? checked(await sb.from('events').select('id').in('id', home.events.map(e => e.id)).eq('host_id', uid)) ?? [] : [];
+    const ownedIds = new Set(owned.map(e => e.id));
+    const events: BriefEvent[] = home.mode === 'hosting' ? home.events.filter(e => ownedIds.has(e.id)).map(e => ({ id: e.id, host_id: uid, team_id: null, title: e.title, starts_at: e.starts_at, location_name: e.location_name, status: e.status, going: 0 })) : [];
     for (const event of events) event.going = Number(checked(await sb.rpc('event_going_count', { _event_id: event.id })) ?? 0);
     const attending = home.mode === 'attending' ? home.events.filter(e => e.registration_status === 'going').map(e => ({ event: { id: e.id, host_id: '', team_id: null, title: e.title, starts_at: e.starts_at, location_name: e.location_name, status: e.status, going: 0 }, code: null })) : [];
     const signups = events.length ? checked(await sb.from('rsvps').select('event_id,created_at').in('event_id', events.map(e => e.id)).eq('status', 'going').gte('created_at', from)) ?? [] : [];

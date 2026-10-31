@@ -7,7 +7,9 @@ export const dailyBriefQuery = (userId: string, lang: 'en' | 'es' = 'en') => {
   return queryOptions({
     queryKey: ['daily-brief-personal', userId, day, tz, lang],
     queryFn: () => getDailyBrief({ data: { lang, tz } }),
-    staleTime: 30_000,
-    refetchInterval: 60_000,
+    staleTime: 0,
+    refetchOnWindowFocus: 'always',
+    refetchOnMount: 'always',
+    refetchInterval: 15_000,
   });
 };
