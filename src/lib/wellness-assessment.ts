@@ -3,6 +3,22 @@ export type AssessmentQuestion = { id: string; type: 'single' | 'multi' | 'scale
 export type AssessmentResult = { id: string; min: number; max: number; title: string; body: string; url: string };
 export type AssessmentDraft = { kind: 'wellness_assessment'; title_en: string; title_es: string; description_en: string; description_es: string; language: 'en' | 'es'; allow_retake: boolean; questions: AssessmentQuestion[]; results: AssessmentResult[] };
 export const emptyAssessment = (): AssessmentDraft => ({ kind: 'wellness_assessment', title_en: '', title_es: '', description_en: '', description_es: '', language: 'en', allow_retake: false, questions: [], results: [] });
+/** Text hides choice controls, but never discards an author's labels or scores. */
+export function changeAssessmentType(q: AssessmentQuestion, type: AssessmentQuestion['type']): AssessmentQuestion {
+  return { ...q, type, scored: type === 'text' ? false : q.scored,
+    options: q.options.length || type === 'text' ? q.options : [0, 100].map(value => ({ id: crypto.randomUUID(), label: '', value })) };
+}
+export function updateAssessmentQuestion(d: AssessmentDraft, id: string, update: (q: AssessmentQuestion) => AssessmentQuestion): AssessmentDraft {
+  return { ...d, questions: d.questions.map(q => q.id === id ? update(q) : q) };
+}
+export const assessmentSaveFingerprint = (draft: AssessmentDraft, destinations: unknown, price: unknown) => JSON.stringify([draft, destinations, price]);
+export function assessmentErrorKey(error: unknown): string {
+  const message = error && typeof error === 'object' && 'message' in error ? String(error.message) : '';
+  if (message.includes('approved_assessment_content_required')) return 'assessment.publishWhy.noScope';
+  if (message.includes('assessment_history_locked')) return 'assessment.historyLocked';
+  if (message.includes('assessment_changed')) return 'assessment.changed';
+  return 'assessment.saveError';
+}
 export function safeExternalUrl(value: string): boolean {
   try { const u = new URL(value); return u.protocol === 'https:' && !!u.hostname && !u.username && !u.password && !/\s/.test(value); } catch { return false; }
 }
@@ -13,14 +29,15 @@ export function assessmentRangesValid(results: AssessmentResult[]): boolean {
 export function assessmentIssues(d: AssessmentDraft): string[] {
   const issues = new Set<string>();
   if (!(d.title_en.trim() || d.title_es.trim())) issues.add('title');
-  if (!d.questions.length) issues.add('questions');
+  if (!d.questions.length || d.questions.length > 50 || new Set(d.questions.map(q => q.id)).size !== d.questions.length) issues.add('questions');
   for (const q of d.questions) {
     if (!q.prompt.trim()) issues.add('questions');
     if (q.type === 'text' && q.scored) issues.add('textScore');
-    if (q.type !== 'text' && (q.options.length < 2 || q.options.some(o => !o.label.trim()))) issues.add('options');
-    if (q.scored && (!Number.isFinite(q.weight) || q.weight <= 0 || q.options.some(o => !Number.isFinite(o.value) || o.value < 0 || o.value > 100) || Math.max(...q.options.map(o => o.value)) === Math.min(...q.options.map(o => o.value)))) issues.add('weights');
+    if (q.type !== 'text' && (q.options.length < 2 || q.options.length > 8 || new Set(q.options.map(o => o.id)).size !== q.options.length || q.options.some(o => !o.label.trim() || !Number.isFinite(o.value) || o.value < 0 || o.value > 100))) issues.add('options');
+    if (q.scored && (!Number.isFinite(q.weight) || q.weight < 0.1 || q.weight > 100 || Math.max(...q.options.map(o => o.value)) === Math.min(...q.options.map(o => o.value)))) issues.add('weights');
   }
   if (d.questions.some(q => q.scored) && !assessmentRangesValid(d.results)) issues.add('ranges');
+  if (d.results.length && !assessmentRangesValid(d.results)) issues.add('ranges');
   if (d.results.some(r => !r.title.trim() || !r.body.trim())) issues.add('results');
   if (d.results.some(r => r.url && !safeExternalUrl(r.url))) issues.add('url');
   return [...issues];
