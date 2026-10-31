@@ -7374,6 +7374,7 @@
       "file": "We couldn't open that document. Please try again.",
       "fileType": "Choose a PDF up to 10 MB.",
       "upload": "We couldn't upload that file. Please try again.",
+      "processing": "We couldn't read this PDF. Use a readable, unencrypted PDF or enter the document text.",
       "save": "We couldn't save the waiver. Check the title and text and try again."
     }
   },
@@ -8018,7 +8019,7 @@
     "archiveYes": "Archive form",
     "showArchived": "Show archived ({{count}})",
     "hideArchived": "Hide archived ({{count}})",
-    "addToEvent": "Add a host form to this event",
+    "addToEvent": "Select from My waivers",
     "pick": "Choose a saved form…",
     "noMore": "No other saved forms",
     "selectedLabel": "Host forms attendees will accept, in order",

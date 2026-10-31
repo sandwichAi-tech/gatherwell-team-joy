@@ -3,7 +3,7 @@ import type { QueryClient } from '@tanstack/react-query';
 const PERSONAL_KEYS = new Set(['personal-home', 'daily-brief-personal', 'host-checkin-events', 'followups', 'profile', 'teams', 'workspace', 'my-team-states']);
 /** Cancel first, then remove retained values instead of merely marking them stale. */
 export async function clearPersonalModeCache(client: QueryClient, userId: string) {
-  const filters = { predicate: (query: { queryKey: readonly unknown[] }) => (PERSONAL_KEYS.has(String(query.queryKey[0])) && query.queryKey[1] === userId) || String(query.queryKey[0]).startsWith('team-') || ['private-team-access', 'comments', 'topics', 'library-sources', 'authored-library', 'viewer-id'].includes(String(query.queryKey[0])) };
+  const filters = { predicate: (query: { queryKey: readonly unknown[] }) => (PERSONAL_KEYS.has(String(query.queryKey[0])) && query.queryKey[1] === userId) || String(query.queryKey[0]).startsWith('team-') || ['private-team-access', 'comments', 'topics', 'library-sources', 'authored-library', 'viewer-id', 'waiver-library', 'host-form-usage', 'waiver-versions', 'event-host-waivers', 'event-waivers-manage', 'event-waiver-status', 'my-event-waivers'].includes(String(query.queryKey[0])) };
   await client.cancelQueries(filters);
   client.removeQueries(filters);
 }
