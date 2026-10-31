@@ -1,9 +1,9 @@
 # Challenge commerce and course/assessment lifecycle closure
 
 ## Rows 107 / 98 — October 31 check-in and walk-ins
-- [ ] Reproduce door-operation, retry, roster/count and permission defects in isolation.
-- [ ] Fix confirmed authoritative/query/UI defects, preserve capacity/payment/waiver guards.
-- [ ] Focused/full tests, automatic compilation, isolated browser/database evidence, cleanup and remaining acceptance report.
+- [x] Reproduce retry/confirmation/identity/count/timezone defects; fix guards/query/UI without bypassing consent/payment.
+- [x] Isolated actual-function/actual-sheet tests, EN/ES width matrix and evidence: docs/ROW-107-CHECKIN-VERIFICATION.md.
+- [ ] Full positive new walk-in requires attendee-owned approved-consent handoff; real authenticated/RLS/navigation/payment/waiver acceptance needs disposable full app stack. No shared fixtures permitted.
 
 ## Row 101 — October 31 personal Home isolation
 - [x] Audit Home consumers; reproduce future-track/hidden-recipe/cache retention and fix authoritative boundaries.
