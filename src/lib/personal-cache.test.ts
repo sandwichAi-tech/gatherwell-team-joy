@@ -2,6 +2,13 @@ import { QueryClient } from '@tanstack/react-query';
 import { describe, expect, it } from 'vitest';
 import { clearIdentityCache, clearPersonalModeCache } from './personal-cache';
 describe('personal cache boundaries', () => {
+  it('mode switching removes Teams membership, sharing and leader insight caches', async () => {
+    const client = new QueryClient();
+    const keys = [['my-team-states', 'A'], ['workspace', 'A'], ['team-member-insights', 'team', 'coach', 'A'], ['team-metric-share', 'team', 'A']];
+    for (const key of keys) client.setQueryData(key, 'private');
+    await clearPersonalModeCache(client, 'A');
+    for (const key of keys) expect(client.getQueryData(key)).toBeUndefined();
+  });
   it('removes mode-dependent Home, brief and QR state rather than retaining invalidated content', async () => {
     const client = new QueryClient();
     for (const key of ['personal-home', 'daily-brief-personal', 'host-checkin-events', 'followups']) client.setQueryData([key, 'ZZ-TEST-A'], { private: 'A' });
