@@ -1,0 +1,23 @@
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { expect, it, vi } from 'vitest';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+const state = vi.hoisted(() => ({ rpc: vi.fn() }));
+vi.mock('@/integrations/supabase/client', () => ({ supabase: { rpc: state.rpc, from: () => ({ select: () => ({ order: () => Promise.resolve({ data: [] }) }) }) } }));
+vi.mock('@/components/gatherwell-shell', () => ({ useGatherwell: () => ({ userId: 'ZZ-TEST-owner' }) }));
+vi.mock('@/lib/feature-flags', () => ({ useFeature: () => [false, true] }));
+vi.mock('@/lib/billing', () => ({ planStatusQuery: () => ({ queryKey: ['plan'], queryFn: async () => ({}) }), formatMoney: () => '$0' }));
+vi.mock('@/lib/offers', () => ({ myOffersQuery: () => ({ queryKey: ['offers'], queryFn: async () => [] }), offerTitle: () => '' }));
+vi.mock('@/components/responsive-sheet', () => ({ ResponsiveSheet: ({ children, footer }: any) => <div>{children}{footer}</div> }));
+vi.mock('@/components/gathering-cover', () => ({ GatheringCover: () => null }));
+vi.mock('@/components/image-crop', () => ({ CropFileInput: () => null }));
+vi.mock('@/components/addon-image-input', () => ({ AddonImageInput: () => null }));
+vi.mock('@/components/confirm-dialog', () => ({ confirmAction: async () => true }));
+vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key, i18n: { resolvedLanguage: 'en' } }) }));
+import { ChallengeBuilder } from './challenge-builder';
+it('reopening the creation flow without an id resets prior unsaved text', async () => {
+  const client = new QueryClient(); const close = vi.fn();
+  const ui = (draft: {} | null) => <QueryClientProvider client={client}><ChallengeBuilder draft={draft} teamId="ZZ-TEST-team" onClose={close} /></QueryClientProvider>;
+  const view = render(ui({})); fireEvent.change(screen.getByLabelText('templates.title'), { target: { value: 'ZZ-TEST old draft' } });
+  view.rerender(ui(null)); view.rerender(ui({}));
+  await waitFor(() => expect(screen.getByLabelText('templates.title')).toHaveValue(''));
+});

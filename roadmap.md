@@ -1,5 +1,10 @@
 # Challenge commerce and course/assessment lifecycle closure
 
+## Challenges rows 72 / 110 / 111 / 112 / 113 / 117 — October 31
+- [ ] Audit/reproduce builder, public enrollment, active membership and lifecycle defects.
+- [ ] Repair confirmed boundaries with isolated regression tests; preserve launch/commerce rules.
+- [ ] Browser/database matrix, focused/full tests, compilation, cleanup and row-by-row evidence.
+
 ## Rows 107 / 98 — October 31 check-in and walk-ins
 - [x] Reproduce retry/confirmation/identity/count/timezone defects; fix guards/query/UI without bypassing consent/payment.
 - [x] Isolated actual-function/actual-sheet tests, EN/ES width matrix and evidence: docs/ROW-107-CHECKIN-VERIFICATION.md.
