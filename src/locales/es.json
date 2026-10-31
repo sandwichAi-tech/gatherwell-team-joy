@@ -7850,6 +7850,9 @@
     "language": "Idioma de preguntas y resultados",
     "languageChange": "¿Cambiar la etiqueta de idioma? Las preguntas y los resultados existentes no se traducirán.",
     "saveError": "No se pudo guardar. Tu trabajo sigue aquí. Recarga si otra edición cambió este borrador.",
+    "changed": "Esta evaluación cambió en otra sesión. Vuelve a abrir el borrador guardado antes de reintentar.",
+    "historyLocked": "No se pueden modificar las evaluaciones publicadas ni el historial de respuestas completadas. Crea otro borrador para hacer cambios.",
+    "scopeAdminAction": "Se requiere una acción de un administrador de la plataforma ZoheeWell: registrar los documentos de alcance aprobados por el propietario en inglés y español latinoamericano, cada uno con su versión, hash del texto, referencia de aprobación, fecha y persona que aprobó. El documento debe coincidir con el idioma de esta evaluación. Aún no hay un documento aprobado disponible; puedes seguir guardando borradores.",
     "allowRetake": "Permitir nuevos intentos; conservar los envíos completados",
     "types": {
       "single": "Una opción",
@@ -7874,7 +7877,7 @@
       "questions": "Agrega preguntas con un enunciado.",
       "textScore": "El texto libre no puede puntuarse.",
       "options": "Agrega al menos dos opciones con etiqueta.",
-      "weights": "Usa pesos positivos y valores distintos de 0 a 100.",
+      "weights": "Usa pesos de 0.1 a 100 y valores distintos de 0 a 100.",
       "ranges": "Los rangos deben cubrir 0–100 sin huecos ni superposiciones.",
       "results": "Agrega un título y una explicación al resultado.",
       "url": "Usa un enlace HTTPS válido sin credenciales."

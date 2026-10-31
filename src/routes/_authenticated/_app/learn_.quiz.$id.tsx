@@ -18,8 +18,8 @@ function QuizRoute() {
   if (edit.isError) return <RetryState retry={() => void edit.refetch()} />;
   if (edit.data && kind.isPending) return <ListSkeleton />;
   if (kind.isError) return <RetryState retry={() => void kind.refetch()} />;
-  if (edit.data && kind.data) return <WellnessAssessmentBuilder id={id} />;
-  if (!edit.data && kind.data) return <WellnessAssessmentPlay id={id} />;
+  if (edit.data && kind.data) return <FeatureRoute flag="feature_assessment"><WellnessAssessmentBuilder id={id} /></FeatureRoute>;
+  if (!edit.data && kind.data) return <FeatureRoute flag="feature_assessment"><WellnessAssessmentPlay id={id} /></FeatureRoute>;
   return edit.data ? <QuizStudio quizId={id} /> : <QuizPlay quizId={id} />;
 }
 

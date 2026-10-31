@@ -7850,6 +7850,9 @@
     "language": "Question and result language",
     "languageChange": "Change the language label? Existing question and result text will not be translated.",
     "saveError": "Could not save. Your work is still here. Reload if another edit changed this draft.",
+    "changed": "This assessment changed in another session. Reopen the saved draft before trying again.",
+    "historyLocked": "Published assessments and completed response history cannot be rewritten. Create a separate draft for changes.",
+    "scopeAdminAction": "Action required from a ZoheeWell platform administrator: register the owner-approved English and Latin American Spanish scope documents, each with its version, text hash, approval reference, approval date and approver. The document must match this assessment's language. No approved document is currently available; draft saving remains available.",
     "allowRetake": "Allow retakes; keep past completed submissions",
     "types": {
       "single": "Single choice",
@@ -7874,7 +7877,7 @@
       "questions": "Add questions with a prompt.",
       "textScore": "Free text cannot be scored.",
       "options": "Add at least two labeled choices.",
-      "weights": "Use positive weights and distinct choice values from 0 to 100.",
+      "weights": "Use weights from 0.1 to 100 and distinct choice values from 0 to 100.",
       "ranges": "Result ranges must cover 0–100 without gaps or overlaps.",
       "results": "Add a result title and explanation.",
       "url": "Use a valid HTTPS link without credentials."
