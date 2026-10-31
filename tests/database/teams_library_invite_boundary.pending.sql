@@ -22,6 +22,14 @@ END $$;
 CREATE POLICY library_delete_author_only ON public.resource_templates AS RESTRICTIVE FOR DELETE TO authenticated USING(created_by=auth.uid() AND public.team_channel_access(team_id));
 CREATE OR REPLACE FUNCTION public.can_use_team_templates(_team uuid) RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $$ SELECT public.team_channel_access(_team) $$;
 
+DO $$ DECLARE f record; d text; BEGIN
+ FOR f IN SELECT oid FROM pg_proc WHERE pronamespace='public'::regnamespace AND proname IN ('invite_team_member','change_member_role') LOOP
+  d:=pg_get_functiondef(f.oid);
+  d:=replace(d, 'IF _role NOT IN (''admin'',', 'IF _role NOT IN (');
+  EXECUTE d;
+ END LOOP;
+END $$;
+
 -- Validate even the directly callable optional invitation argument. Retries never skip validation.
 DO $$ DECLARE d text; BEGIN
   SELECT pg_get_functiondef('public.request_team_membership(uuid,uuid)'::regprocedure) INTO d;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { AuthFrame, pageHead } from '@/components/auth-frame';
@@ -28,7 +28,7 @@ function JoinPage() {
   useEffect(() => {
     let active = true; setState('loading');
     const clean = parseJoinCode(code);
-    void supabase.rpc('get_team_invite', { _code: clean }).then(async ({ data, error }) => {
+    void supabase.rpc('get_team_invite', { _code: clean }).then(({ data, error }) => {
       if (!active) return;
       const invite = data?.[0];
       if (error || !invite) { clearPendingInvite(); setState('invalid'); return; }

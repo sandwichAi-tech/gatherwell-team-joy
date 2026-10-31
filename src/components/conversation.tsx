@@ -107,7 +107,7 @@ function CommentRow({ c, replies, feed, me, teamId, eventId, topicId, lang }: { 
 export function CommentThread({ teamId, eventId = null, topicId = null, me, title }: { teamId: string; eventId?: string | null; topicId?: string | null; me: string; title?: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage === 'es' ? 'es-419' : 'en-US';
   const messageSearch = useSearch({ strict: false }) as { message?: string };
-  const { data: feed, isLoading, isError, isFetching, refetch } = useFeed(eventId, topicId, me);
+  const { data: feed, isLoading, isError, refetch } = useFeed(eventId, topicId, me);
   useEffect(() => { if (messageSearch.message && feed) document.getElementById(`message-${messageSearch.message}`)?.scrollIntoView({ block: 'center' }); }, [messageSearch.message, feed]);
   const { roots, byParent } = useMemo(() => {
     const items = feed?.items ?? []; const byParent = new Map<string, Item[]>();
@@ -136,7 +136,7 @@ type Topic = { id: string; title: string; pinned: boolean; last_post_at: string;
 export function DiscussionsPanel({ teamId, isLeader, me }: { teamId: string; isLeader: boolean; me: string }) {
   const { t, i18n } = useTranslation(); const qc = useQueryClient(); const lang = i18n.resolvedLanguage === 'es' ? 'es-419' : 'en-US';
   const key = ['topics', teamId, me];
-  const { data: topics = [], isLoading, isError, isFetching, refetch } = useQuery({ queryKey: key, gcTime: 0, staleTime: 0, retry: false, refetchInterval: 3_000, queryFn: ({ signal }) => teamCallerQuery<Topic[]>(me, signal, async () => { const { data, error } = await db.rpc('team_topics', { _team: teamId }); if (error) throw error; return data ?? []; }) });
+  const { data: topics = [], isLoading, isError, refetch } = useQuery({ queryKey: key, gcTime: 0, staleTime: 0, retry: false, refetchInterval: 3_000, queryFn: ({ signal }) => teamCallerQuery<Topic[]>(me, signal, async () => { const { data, error } = await db.rpc('team_topics', { _team: teamId }); if (error) throw error; return data ?? []; }) });
   const [open, setOpen] = useState<string | null>(null); const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState(''); const [body, setBody] = useState(''); const [busy, setBusy] = useState(false);
   useEffect(() => { setOpen(null); setCreating(false); setTitle(''); setBody(''); }, [teamId, me]);
