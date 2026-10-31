@@ -1,6 +1,25 @@
 import { describe, expect, it } from 'vitest';
-import { assessmentIssues, assessmentRangesValid, assessmentResult, assessmentScore, emptyAssessment, reorderedIds, safeExternalUrl } from './wellness-assessment';
+import { assessmentErrorKey, assessmentSaveFingerprint, changeAssessmentType, updateAssessmentQuestion, assessmentIssues, assessmentRangesValid, assessmentResult, assessmentScore, emptyAssessment, reorderedIds, safeExternalUrl } from './wellness-assessment';
 describe('wellness assessment rules', () => {
+  it('preserves question 2 labels and scores through text and choice type changes', () => {
+    const q = { id: 'q2', type: 'single' as const, prompt: 'ZZ-TEST', scored: true, weight: 3, options: [{ id: 'a', label: 'Label', value: 25 }] };
+    const restored = changeAssessmentType(changeAssessmentType(q, 'text'), 'single');
+    expect(restored.options).toEqual(q.options); expect(restored.weight).toBe(3); expect(restored.scored).toBe(false);
+  });
+  it('edits stable question IDs independently after reordering', () => {
+    const d = emptyAssessment(); d.questions = ['q2', 'q1'].map(id => ({ id, type: 'text', prompt: id, scored: false, weight: 1, options: [] }));
+    const changed = updateAssessmentQuestion(d, 'q2', q => ({ ...q, prompt: 'changed' }));
+    expect(changed.questions.map(q => q.prompt)).toEqual(['changed', 'q1']);
+  });
+  it('marks destination and access changes unsaved even when question content is unchanged', () => {
+    const d = emptyAssessment(); const a = assessmentSaveFingerprint(d, { team: true }, { free: true });
+    expect(assessmentSaveFingerprint(d, { team: false }, { free: true })).not.toBe(a);
+    expect(assessmentSaveFingerprint(d, { team: true }, { free: false })).not.toBe(a);
+  });
+  it('maps publication scope and immutable history errors without hiding the required action', () => {
+    expect(assessmentErrorKey({ message: 'approved_assessment_content_required' })).toBe('assessment.publishWhy.noScope');
+    expect(assessmentErrorKey({ message: 'assessment_history_locked' })).toBe('assessment.historyLocked');
+  });
   it('requires complete non-overlapping integer results from 0 through 100', () => {
     const result = { id: 'r', title: 'Result', body: 'Support', url: '' };
     expect(assessmentRangesValid([{ ...result, min: 0, max: 49 }, { ...result, min: 50, max: 100 }])).toBe(true);

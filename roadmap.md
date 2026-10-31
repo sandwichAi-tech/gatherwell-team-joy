@@ -1,5 +1,11 @@
 # Challenge commerce and course/assessment lifecycle closure
 
+## Row 120 — October 31 Wellness Builder pressure test
+- [x] Reproduce question-2 editing and exact publication failure in isolated tests before fixes.
+- [x] Repair confirmed question/persistence/preview/entry-gate defects and participant SQL ambiguity; preserve launch flags and approved scope requirements.
+- [x] Full suite 970 tests, automatic compilation clean; isolated EN/ES 320/390/1280 browser and stand-in database checks; zero fixture readback and documented cleanup.
+- [ ] Full real-auth/RLS/entitlement/lifecycle/cover/accessibility/concurrency acceptance requires disposable app stack and genuinely approved scope; see docs/ROW-120-WELLNESS-VERIFICATION.md. Do not mark complete.
+
 ## October 29 translation-only completion
 - [x] Add missing progress/invite/event-error/resource-type EN/ES entries; update host-count explanatory copy without changing rules.
 - [x] Source-wide literal coverage, finite billing/marketing/progress families and parity verified; 107 files/899 tests passed, automatic compilation clean; all 54 added keys recorded in CHANGELOG.
