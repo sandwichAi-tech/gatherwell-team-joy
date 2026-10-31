@@ -9,7 +9,7 @@ import { CheckCircle2, QrCode, Search, UserPlus, X, AlertCircle, Undo2 } from '@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
-import { useLiveCounts, useRsvpChanges } from '@/components/event-live';
+import { useRsvpChanges } from '@/components/event-live';
 import { supabase } from '@/integrations/supabase/client';
 import { initialsOf } from '@/lib/account';
 import { gatherwellHead } from '@/lib/gatherwell-head';
@@ -40,8 +40,9 @@ function CheckInMode() {
         .map(r => ({ ...r, wants_buddy: r.wants_buddy ?? false }));
     },
   });
-  const counts = useLiveCounts(id);
-  useRsvpChanges(id, () => void queryClient.invalidateQueries({ queryKey: listKey }));
+  const { data: totals } = useQuery({ queryKey: ['event', id, 'attendance-totals'], enabled: authorized, staleTime: 0, refetchInterval: 15_000, refetchOnWindowFocus: 'always', queryFn: async () => { const { data, error } = await supabase.rpc('attendance_totals', { _event: id }); if (error) throw error; return data as unknown as { registered: number; checked_in: number; walk_ins: number; waitlisted: number }; } });
+  const counts = totals ? { going: totals.registered, checked_in: totals.checked_in, walk_ins: totals.walk_ins, waitlist: totals.waitlisted } : null;
+  useRsvpChanges(id, () => void queryClient.invalidateQueries({ queryKey: ['event', id] }));
   const [q, setQ] = useState(''); const [scanning, setScanning] = useState(false); const [walkIn, setWalkIn] = useState(false); const [scan, setScan] = useState<Scan | null>(null);
   const [undoTarget, setUndoTarget] = useState<{ id: string; name: string } | null>(null);
   const queue = useRef(createCheckinQueue());
@@ -56,18 +57,18 @@ function CheckInMode() {
       for (const item of queue.current.items()) {
         if (item.eventId !== id) continue;
         const res = item.rsvpId
-          ? await supabase.rpc('check_in_rsvp', { _rsvp: item.rsvpId, _undo: item.undo })
+          ? await supabase.rpc('check_in_admission', { _rsvp: item.rsvpId, _undo: item.undo })
           : await supabase.rpc('check_in_code', { _event: id, _code: item.code ?? '' });
         if (res.error) {
           if (isRetryableCheckinError(res.error, res.status)) break;
           setScan(checkinErrorResult(res.error)); queue.current.remove(item.key);
         } else {
-          queue.current.remove(item.key); if (!item.code || confirmedAttendance(res.data as Scan)) trackEvent('checkin');
+          queue.current.remove(item.key); if (res.data && confirmedAttendance(res.data as Scan)) trackEvent('checkin');
           if (item.code) setScan((res.data ?? { result: 'error' }) as Scan);
         }
       }
       setPending(queue.current.items());
-      await queryClient.invalidateQueries({ queryKey: listKey });
+      await queryClient.invalidateQueries({ queryKey: ['event', id] });
     } catch { setPending(queue.current.items()); } finally { syncing.current = false; }
   };
   useEffect(() => {
@@ -83,18 +84,26 @@ function CheckInMode() {
   const { data: belong = new Map() } = useBelonging(id); const { data: groups = [] } = useSmallGroups(id);
   const match = (n: string | null) => !q || (n ?? '').toLowerCase().includes(q.toLowerCase());
   const waiting = rows.filter(r => !r.checked_in_at && r.status === 'going' && match(r.guest_name));
-  const done = rows.filter(r => r.checked_in_at && match(r.guest_name)).sort((a, b) => (b.checked_in_at ?? '').localeCompare(a.checked_in_at ?? ''));
+  const done = rows.filter(r => r.status === 'going' && r.checked_in_at && match(r.guest_name)).sort((a, b) => (b.checked_in_at ?? '').localeCompare(a.checked_in_at ?? ''));
+  const manualBusy = useRef(new Set<string>());
   const checkIn = async (rid: string, undo = false) => {
+    if (manualBusy.current.has(rid)) return;
     if (!navigator.onLine) { enqueue({ key: rid, eventId: id, rsvpId: rid, undo }); return; }
-    const { error, status } = await supabase.rpc('check_in_rsvp', { _rsvp: rid, _undo: undo });
+    manualBusy.current.add(rid);
+    try {
+    const { data, error, status } = await supabase.rpc('check_in_admission', { _rsvp: rid, _undo: undo });
     if (error) { if (isRetryableCheckinError(error, status)) enqueue({ key: rid, eventId: id, rsvpId: rid, undo }); else setScan(checkinErrorResult(error)); return; }
-    setScan({ result: undo ? 'already' : 'ok', name: rows.find(r => r.id === rid)?.guest_name ?? '' });
-    trackEvent('checkin');
+    const receipt = data as unknown as Scan | null;
+    if (!receipt || (!undo && !['ok', 'already'].includes(receipt.result))) { setScan({ result: 'error' }); return; }
+    setScan({ result: undo ? 'already' : receipt.result, name: rows.find(r => r.id === rid)?.guest_name ?? '' });
+    if (!undo && confirmedAttendance(receipt)) trackEvent('checkin');
     vibrateOnUserAction(30);
     const b = belong.get(rid); const name = rows.find(r => r.id === rid)?.guest_name?.split(/\s+/)[0] ?? '';
     if (!undo && b && b.checkins === 2) toast.success(t('belong.nowRegular', { name }), { duration: 6000 });
     else if (!undo && b?.first_time) toast.success(t('belong.welcomePrompt', { name }), { duration: 6000 });
-    await queryClient.invalidateQueries({ queryKey: listKey }); void queryClient.invalidateQueries({ queryKey: ['event', id, 'belonging'] });
+    await queryClient.invalidateQueries({ queryKey: ['event', id] });
+    } catch { enqueue({ key: rid, eventId: id, rsvpId: rid, undo }); }
+    finally { manualBusy.current.delete(rid); }
   };
   const admissionBusy = useRef(false);
   const onCode = useCallback(async (raw: string) => {
@@ -109,7 +118,7 @@ function CheckInMode() {
       const res = error ? checkinErrorResult(error) : (data ?? { result: 'error' }) as Scan;
       setScan(res);
       if (confirmedAttendance(res)) { trackEvent('checkin'); vibrateOnUserAction([40, 40, 40]); }
-      await queryClient.invalidateQueries({ queryKey: ['event', id, 'checkin-list'] });
+      await queryClient.invalidateQueries({ queryKey: ['event', id] });
     } catch { enqueue({ key: code, eventId: id, code, undo: false }); setScan({ result: 'pending' }); }
     finally { admissionBusy.current = false; }
   }, [id, queryClient]);
@@ -121,7 +130,7 @@ function CheckInMode() {
     <header className="checkin-top">
       <div className="checkin-title"><strong>{event?.title ?? ''}</strong><Button asChild variant="ghost" size="icon" aria-label={t('checkin.exit')}><Link to="/event/$id" params={{ id }}><X /></Link></Button></div>
       <div className="checkin-counters">{([['going', counts?.going], ['checked_in', counts?.checked_in], ['walk_ins', counts?.walk_ins], ['waitlist', counts?.waitlist]] as const).map(([k, v]) =>
-        <div key={k}><strong className="tabular-nums">{v ?? 0}</strong><span>{t(`checkin.counts.${k}`)}</span></div>)}</div>
+        <div key={k}><strong className="tabular-nums">{v ?? '—'}</strong><span>{t(`checkin.counts.${k}`)}</span></div>)}</div>
       <div className="checkin-search"><Search /><Input aria-label={t('checkin.search')} placeholder={t('checkin.search')} value={q} onChange={e => setQ(e.target.value)} /></div>
       <div className="checkin-tools"><Button className="min-h-12 whitespace-normal" onClick={() => { setScan(null); setScanning(true); }}><QrCode />{t('checkin.scan')}</Button>{authorized && <Button className="min-h-12 whitespace-normal" variant="secondary" disabled={event?.status !== 'published'} onClick={() => setWalkIn(true)}><UserPlus />{t('checkin.walkIn')}</Button>}</div>
     </header>
