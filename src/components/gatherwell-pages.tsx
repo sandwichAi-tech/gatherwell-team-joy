@@ -43,7 +43,7 @@ export function HomePage() {
   return <>
     {hosting && <MobileTeamSwitcher />}
     <div className="greeting page-heading"><div><span className="eyebrow">{t(hosting ? 'personalHome.hosting' : 'personalHome.attending')}</span><h1>{name ? t('home.greeting', { name }) : t('home.greetingFallback')}</h1><p>{t('personalHome.subtitle')}</p></div>{hosting && <Button className="page-create" onClick={openCreate}><Plus />{t('common.create')}</Button>}</div>
-    <DailyBriefCard />
+    <DailyBriefCard key={`${userId}:${data.mode}`} />
     {hosting ? <>
       <HostCheckinActions userId={userId} />
       {data.drafts > 0 && <section className="panel"><Link to="/events" search={{ tab: 'hosting' }}>{t('personalHome.drafts', { count: data.drafts })}<ArrowRight /></Link></section>}
@@ -52,7 +52,7 @@ export function HomePage() {
         <ul className="customer-list">{data.events.map(e => <li key={e.id}><Link to="/event/$id" params={{ id: e.id }} className="customer-item-head"><strong>{e.title}</strong><small>{formatWhen(e.starts_at, i18n.resolvedLanguage ?? 'en')}</small><ChevronRight /></Link></li>)}</ul>
       </section>
       <FoundingCommitmentsCard /><CoachLaunchCard /><FollowupsHomeCard /><NextCard home={data} />
-    </> : <><StartHostingCard userId={userId} /><CustomerHome userId={userId} /></>}
+    </> : <><StartHostingCard userId={userId} /><CustomerHome key={`${userId}:${data.mode}`} userId={userId} /></>}
     <PersonalHomeResources resources={data.resources} />
   </>;
 }
