@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { isLive } from '@/lib/resource-flow';
 import { QuizPlay } from '@/components/quiz-play';
 import { WellnessAssessmentPlay } from '@/components/wellness-assessment-play';
+import { FeatureRoute } from '@/lib/feature-flags';
 import { CourseResourceReference } from '@/components/course-resource-reference';
 import { ArrowLeft, ArrowRight, Bell, BellRing, Bookmark, BookmarkCheck, CalendarPlus, Check, Clock, ExternalLink, FileText, Link2, Lock, Play, Radio, Settings2, Share2, Video, Waveform, Download } from '@/components/icons';
 import { formatUnlock } from '@/lib/course-release';
@@ -263,7 +264,7 @@ export function LessonPage({ id }: { id: string }) {
     <BackLink to="/learn/track/$id" params={{ id: track.id }} label={trackTitle(track, lang)} />
     <div className="lesson-head"><span className="eyebrow">{t('learnHub.lessonOf', { n: idx + 1, total: list.length })}</span><h1>{lessonTitle(lesson, lang)}</h1>
       {lesson.duration_minutes ? <p className="track-facts">{minutesLabel(t, lesson.duration_minutes)}</p> : null}</div>
-    {attachedQuiz.isPending ? <ListSkeleton /> : attachedQuiz.isError ? <RetryState retry={() => void attachedQuiz.refetch()} /> : attachedQuiz.data ? attachedQuiz.data.assessment ? <WellnessAssessmentPlay id={attachedQuiz.data.id} lesson={id} /> : <QuizPlay quizId={attachedQuiz.data.id} /> : hasReference ? <CourseResourceReference lesson={id} /> : upcomingLive ? <LiveCard lesson={lesson} track={track} /> : <Player lesson={lesson} />}
+    {attachedQuiz.isPending ? <ListSkeleton /> : attachedQuiz.isError ? <RetryState retry={() => void attachedQuiz.refetch()} /> : attachedQuiz.data ? attachedQuiz.data.assessment ? <FeatureRoute flag="feature_assessment"><WellnessAssessmentPlay id={attachedQuiz.data.id} lesson={id} /></FeatureRoute> : <QuizPlay quizId={attachedQuiz.data.id} /> : hasReference ? <CourseResourceReference lesson={id} /> : upcomingLive ? <LiveCard lesson={lesson} track={track} /> : <Player lesson={lesson} />}
     {notes && <section className="panel lesson-notes"><h2>{t('learnHub.notes')}</h2><p>{notes}</p></section>}
     <LessonSummary lessonId={id} leader={leader} hasPdf={!!lesson.storage_path && /\.pdf$/i.test(lesson.storage_path)} />
     {!upcomingLive && !attachedQuiz.isPending && !attachedQuiz.isError && !attachedQuiz.data?.assessment && <div className="lesson-complete">
