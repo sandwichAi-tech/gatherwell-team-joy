@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 const state = vi.hoisted(() => ({ sign: vi.fn(), toast: vi.fn() }));
 vi.mock('@tanstack/react-start', () => ({ useServerFn: () => state.sign }));
 vi.mock('@/lib/event-waivers.functions', () => ({ signEventWaiverFile: {} }));
+vi.mock('@/lib/host-waivers.functions', () => ({ uploadHostWaiver: {}, cleanupHostWaiverUpload: {} }));
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (k: string) => k, i18n: { resolvedLanguage: 'en' } }) }));
 vi.mock('@/lib/i18n', () => ({ default: { t: (k: string) => k } }));
 vi.mock('@/components/responsive-sheet', () => ({ ResponsiveSheet: () => null }));
