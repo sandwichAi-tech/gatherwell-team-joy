@@ -1,5 +1,10 @@
 # Challenge commerce and course/assessment lifecycle closure
 
+## Teams rows 88 / 104 / 105 / 106 — October 31 continuation
+- [x] Implement invitation/library/communication account fixes and pending authoritative repairs; preserve owner-only approval/independent drafts.
+- [x] Focused 46 / full 994 tests, disposable actual-boundary repro/retest and EN/ES component width checks; zero fixture readback, exact temporary cleanup.
+- [ ] Full isolated application/auth/RLS/storage/concurrent-session acceptance and pending SQL application need a confirmed complete disposable backend. All four rows partial; docs/TEAMS-88-104-105-106-VERIFICATION.md lists remaining code/acceptance.
+
 ## Teams rows 95 / 102 / 103 — October 31
 - [x] Implement caller-scoped queries/saved-team access, exact roster destinations, preview/revoke and local cache cleanup. Authoritative SQL remains pending, not live.
 - [x] 23 focused / 990 full tests; local SQL and actual sharing-component EN/ES width checks, zero fixture readback and exact cleanup; docs/TEAMS-95-102-103-VERIFICATION.md.

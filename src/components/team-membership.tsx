@@ -12,6 +12,7 @@ import { MemberInsightsSheet, TeamMetricSharing } from '@/components/team-metric
 import { managementQuery, myTeamStatesQuery, splitMyTeams, privateTeamLink, rosterRows, teamRosterLink, type TeamRoster } from '@/lib/team-membership';
 
 import { announceTeamChange } from '@/lib/team-query-boundary';
+import { clearPendingInvite } from '@/lib/account';
 
 function TeamRosterCounts({ team, userId }: { team: Parameters<typeof teamRosterLink>[0]; userId: string }) {
   const { t } = useTranslation(); const q = useQuery(managementQuery(team.team_id, userId));
@@ -74,7 +75,7 @@ export function TeamMembershipSheet({ open, onOpenChange, teamId, userId, teamNa
   const { t } = useTranslation(); return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={`${teamName ?? ''}: ${t(roster ? `teamMembership.${roster}` : 'teamMembership.manage')}`} icon="UsersRound">{open && <TeamMemberManagement key={`${teamId}:${userId}`} teamId={teamId} userId={userId} roster={roster} />}</ResponsiveSheet>;
 }
 
-export function RequestTeamJoin({ teamId }: { teamId: string }) {
+export function RequestTeamJoin({ teamId, inviteCode }: { teamId: string; inviteCode?: string }) {
   const { t } = useTranslation(); const qc = useQueryClient(); const [busy, setBusy] = useState(false); const [failed, setFailed] = useState(false);
   const me = useQuery({ queryKey: ['viewer-id'], queryFn: async () => (await supabase.auth.getUser()).data.user?.id ?? null });
   const states = useQuery({ ...myTeamStatesQuery(me.data ?? ''), enabled: !!me.data });
@@ -82,5 +83,6 @@ export function RequestTeamJoin({ teamId }: { teamId: string }) {
   if (!me.data) return <Button asChild variant="secondary"><Link to="/login">{t('teamMembership.signIn')}</Link></Button>;
   if (states.isPending) return <ListSkeleton rows={1} />;
   if (state) return <p role="status">{t(`teamMembership.status.${state.status}`, { defaultValue: t('teamMembership.status.unavailable') })}</p>;
-  return <div>{failed && <p className="field-error" role="alert">{t('teamMembership.error')}</p>}<Button disabled={busy} onClick={async () => { setBusy(true); const { error } = await supabase.rpc('request_team_membership', { _team: teamId }); setBusy(false); setFailed(!!error); if (!error) void qc.invalidateQueries({ queryKey: ['my-team-states'] }); }}>{t('teamMembership.request')}</Button><p className="field-hint">{t('teamMembership.pendingHint')}</p><p className="field-hint">{t('teamMembership.separateNote')}</p></div>;
+  if (states.isError) return <RetryState retry={() => void states.refetch()} />;
+  return <div>{failed && <p className="field-error" role="alert">{t('teamMembership.error')}</p>}<Button disabled={busy} onClick={async () => { if (busy) return; setBusy(true); const { error } = inviteCode ? await supabase.rpc('join_team_by_code', { _code: inviteCode }) : await supabase.rpc('request_team_membership', { _team: teamId }); setBusy(false); setFailed(!!error); if (!error) { clearPendingInvite(); announceTeamChange(teamId); void qc.invalidateQueries({ queryKey: ['my-team-states', me.data] }); } }}>{t('teamMembership.request')}</Button><p className="field-hint">{t('teamMembership.pendingHint')}</p><p className="field-hint">{t('teamMembership.separateNote')}</p></div>;
 }

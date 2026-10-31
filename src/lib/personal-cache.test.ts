@@ -2,6 +2,12 @@ import { QueryClient } from '@tanstack/react-query';
 import { describe, expect, it } from 'vitest';
 import { clearIdentityCache, clearPersonalModeCache } from './personal-cache';
 describe('personal cache boundaries', () => {
+  it('mode switching clears chat, unread and authored library state', async () => {
+    const client = new QueryClient(); const keys = [['comments', 'topic', 'A'], ['topics', 'team', 'A'], ['team-channel', 'team', 'A'], ['library-sources', 'A'], ['authored-library', 'A']];
+    for (const key of keys) client.setQueryData(key, 'private');
+    await clearPersonalModeCache(client, 'A');
+    for (const key of keys) expect(client.getQueryData(key)).toBeUndefined();
+  });
   it('mode switching removes Teams membership, sharing and leader insight caches', async () => {
     const client = new QueryClient();
     const keys = [['my-team-states', 'A'], ['workspace', 'A'], ['team-member-insights', 'team', 'coach', 'A'], ['team-metric-share', 'team', 'A']];

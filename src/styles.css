@@ -2809,7 +2809,7 @@ a.gw-cat-chip:hover{background:#fff}
 .team-communication{padding-block:24px;border-block:1px solid var(--border);margin-block:24px;min-width:0}
 .team-channel-entry{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:16px}
 .team-channel-entry button{min-height:48px;height:auto;white-space:normal;overflow-wrap:anywhere;line-height:1.4;padding:10px 8px}
-.team-communication .switch-row{gap:12px;margin-bottom:16px}.team-communication .switch-row small{display:block;color:var(--muted-foreground)}
+.team-communication .switch-row{display:flex;max-width:100%;gap:12px;margin-bottom:16px}.team-communication .switch-row>span{min-width:0;flex:1;overflow-wrap:anywhere}.team-communication .switch-row>[role=switch]{flex-shrink:0}.team-communication .switch-row small{display:block;color:var(--muted-foreground)}
 .team-communication .section-heading{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-top:20px}
 .team-communication .section-heading button{white-space:normal;min-height:48px}
 .team-announcements{list-style:none;padding:0;margin:16px 0}.team-announcements>li{position:relative;padding:20px 0;border-top:1px solid var(--border);overflow-wrap:anywhere}

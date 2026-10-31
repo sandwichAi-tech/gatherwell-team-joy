@@ -2,6 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { returnPathOr, safeReturnPath } from './return-to';
 
 describe('safeReturnPath', () => {
+  it('preserves only a safe team invitation token through sign-in', () => {
+    expect(safeReturnPath('/invite/team/ZZ-TEST-token')).toBe('/invite/team/ZZ-TEST-token');
+    expect(safeReturnPath('/invite/team/../admin')).toBeNull();
+    expect(safeReturnPath('/invite/team/token%2fadmin')).toBeNull();
+  });
   it.each(['/e/abc-123', '/l/my-course', '/t/team-slug', '/offer/0b2c', '/join/ABC123', '/learn/track/x1', '/home', '/gathering/new', '/e/abc?k=tok_1'])('allows %s', p => expect(safeReturnPath(p)).toBe(p));
   it.each([
     'https://evil.com', '//evil.com', '/\\evil.com', 'javascript:alert(1)', '/e/abc%0d%0a', '/e/../admin', '/admin', '/admin-login',

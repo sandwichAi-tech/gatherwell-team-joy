@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { ListSkeleton, RetryState } from '@/components/launch-states';
 import { myTeamStatesQuery } from '@/lib/team-membership';
+import { announceTeamChange, listenTeamChanges, teamCallerQuery } from '@/lib/team-query-boundary';
 
 const contentText = (value: unknown): string[] => typeof value === 'string' ? [value] : Array.isArray(value) ? value.flatMap(contentText) : value && typeof value === 'object' ? Object.values(value).flatMap(contentText) : [];
 
@@ -18,20 +19,22 @@ export function TeamLibrary({ teamId, userId }: { teamId: string; userId: string
   const [preview, setPreview] = useState<Item | null>(null); const [copied, setCopied] = useState<{ id: string; target: string } | null>(null);
   const [requestKey, setRequestKey] = useState<string | null>(null);
   const teams = useQuery(myTeamStatesQuery(userId));
-  const list = useQuery({ queryKey: ['team-library', teamId, userId], gcTime: 0, staleTime: 0, refetchInterval: 10_000, retry: false, queryFn: async () => { const { data, error } = await supabase.rpc('team_library_items', { _team: teamId }); if (error) throw error; return data as unknown as Item[]; } });
-  const sources = useQuery({ queryKey: ['library-sources', userId], enabled: shareOpen, queryFn: async () => { const { data, error } = await supabase.rpc('my_library_sources'); if (error) throw error; return data as unknown as Item[]; } });
-  const authored = useQuery({ queryKey: ['authored-library', userId], enabled: shareOpen, queryFn: async () => { const { data, error } = await supabase.rpc('my_authored_library_items'); if (error) throw error; return data as unknown as { id: string; kind: string; title: string }[]; } });
+  const list = useQuery({ queryKey: ['team-library', teamId, userId], gcTime: 0, staleTime: 0, refetchInterval: 3_000, retry: false, queryFn: ({ signal }) => teamCallerQuery(userId, signal, async () => { const { data, error } = await supabase.rpc('team_library_items', { _team: teamId }); if (error) throw error; return data as unknown as Item[]; }) });
+  const sources = useQuery({ queryKey: ['library-sources', userId], enabled: shareOpen, gcTime: 0, queryFn: ({ signal }) => teamCallerQuery(userId, signal, async () => { const { data, error } = await supabase.rpc('my_library_sources'); if (error) throw error; return data as unknown as Item[]; }) });
+  const authored = useQuery({ queryKey: ['authored-library', userId], enabled: shareOpen, gcTime: 0, queryFn: ({ signal }) => teamCallerQuery(userId, signal, async () => { const { data, error } = await supabase.rpc('my_authored_library_items'); if (error) throw error; return data as unknown as { id: string; kind: string; title: string }[]; }) });
   const [exportSource, setExportSource] = useState('');
-  useEffect(() => { if (list.isError) { setPreview(null); setShareOpen(false); } }, [list.isError]);
+  useEffect(() => { if (list.isError || (preview && list.data && !list.data.some(item => item.id === preview.id && item.kind === preview.kind))) { setPreview(null); setCopied(null); setShareOpen(false); } }, [list.isError, list.data, preview]);
+  useEffect(() => { setPreview(null); setCopied(null); setShareOpen(false); setSource(''); setSelected([]); setRequestKey(null); }, [teamId, userId]);
+  useEffect(() => listenTeamChanges(id => { if (id === teamId) { setPreview(null); setShareOpen(false); void qc.cancelQueries({ queryKey: ['team-library', teamId, userId] }).then(() => qc.resetQueries({ queryKey: ['team-library', teamId, userId] })); } }), [teamId, userId, qc]);
   const destinations = teams.data?.filter(x => x.owner && x.access) ?? [];
   const [destination, setDestination] = useState('');
   const share = async () => {
     const item = sources.data?.find(s => `${s.kind}:${s.id}` === source); if (!item) return;
     setBusy(true); const { error } = await supabase.rpc('share_team_library_item', { _kind: item.kind, _id: item.id, _teams: selected }); setBusy(false);
-    if (error) toast.error(t('teamMembership.error')); else { setShareOpen(false); void qc.invalidateQueries({ queryKey: ['team-library'] }); void qc.invalidateQueries({ queryKey: ['library-sources'] }); }
+    if (error) toast.error(t('teamMembership.error')); else { setShareOpen(false); for (const id of new Set([...item.shared_teams, ...selected])) announceTeamChange(id); void qc.invalidateQueries({ queryKey: ['team-library'] }); void qc.invalidateQueries({ queryKey: ['library-sources'] }); }
   };
   const copy = async () => {
-    if (!preview || !destination) return; const key = requestKey ?? crypto.randomUUID(); setRequestKey(key); setBusy(true);
+    if (busy || !preview || !destination || list.isFetching || list.isError) return; const key = requestKey ?? crypto.randomUUID(); setRequestKey(key); setBusy(true);
     const { data, error } = await supabase.rpc('copy_team_library_item', { _team: teamId, _kind: preview.kind, _id: preview.id, _destination: destination, _request: key }); setBusy(false);
     if (error) toast.error(t('teamMembership.error')); else { setCopied(data as { id: string; target: string }); void qc.invalidateQueries({ queryKey: ['templates'] }); void qc.invalidateQueries({ queryKey: ['resources'] }); }
   };
@@ -44,9 +47,9 @@ export function TeamLibrary({ teamId, userId }: { teamId: string; userId: string
         <Button variant="secondary" disabled={busy || !exportSource} onClick={async () => { const item = authored.data?.find(s => `${s.kind}:${s.id}` === exportSource); if (!item) return; setBusy(true); const { data, error } = await supabase.rpc('export_library_source', { _kind: item.kind, _id: item.id }); setBusy(false); if (error) toast.error(t('teamMembership.error')); else { await sources.refetch(); setSource(`${item.kind === 'event' ? 'blueprint' : 'resource_template'}:${data}`); setSelected([]); } }}>{t('teamLibrary.prepare')}</Button>
         </div>}
     </ResponsiveSheet>
-    <ResponsiveSheet open={!!preview} onOpenChange={open => !open && setPreview(null)} title={preview?.title ?? t('teamLibrary.view')} footer={!copied && <Button disabled={busy || !destination} onClick={() => void copy()}>{t('teamLibrary.copy')}</Button>}>
-      {preview && <div className="edit-form"><p>{i18n.resolvedLanguage === 'es' ? preview.description_es || preview.description : preview.description}</p><div className="library-content">{contentText(preview.content).map((text, i) => <p key={i}>{text}</p>)}</div><p className="field-hint">{t('teamLibrary.assets')}</p>
-        {copied ? <><p role="status">{t('teamLibrary.copied')}</p><Button asChild variant="secondary">{copied.target === 'event' ? <Link to="/gathering/$id/edit" params={{ id: copied.id }}>{t('teamLibrary.openDraft')}</Link> : copied.target === 'blueprint' ? <Link to="/blueprints">{t('teamLibrary.openDraft')}</Link> : copied.target === 'track' || copied.target === 'recipe' ? <Link to="/learn/create" search={{ type: copied.target === 'recipe' ? 'recipe' : 'video', id: copied.id }}>{t('teamLibrary.openDraft')}</Link> : <Link to="/offer/$id" params={{ id: copied.id }}>{t('teamLibrary.openDraft')}</Link>}</Button></> : <><label className="field-label" htmlFor="copy-destination">{t('teamLibrary.destination')}</label><select id="copy-destination" className="field-input" value={destination} onChange={e => setDestination(e.target.value)}>{!destinations.length && <option value="">{t('teamLibrary.noWorkspace')}</option>}{destinations.map(tm => <option key={tm.team_id} value={tm.team_id}>{tm.name}</option>)}</select></>}
+    <ResponsiveSheet open={!!preview} onOpenChange={open => !open && setPreview(null)} title={preview?.title ?? t('teamLibrary.view')} footer={!copied && <Button disabled={busy || !destination || list.isFetching || list.isError} onClick={() => void copy()}>{t('teamLibrary.copy')}</Button>}>
+      {list.isFetching ? <ListSkeleton /> : preview && !list.isError && <div className="edit-form"><p>{i18n.resolvedLanguage === 'es' ? preview.description_es || preview.description : preview.description}</p><div className="library-content">{contentText(preview.content).map((text, i) => <p key={i}>{text}</p>)}</div><p className="field-hint">{t('teamLibrary.assets')}</p>
+        {copied ? <><p role="status">{t('teamLibrary.copied')}</p><Button asChild variant="secondary">{copied.target === 'event' ? <Link to="/gathering/$id/edit" params={{ id: copied.id }}>{t('teamLibrary.openDraft')}</Link> : copied.target === 'blueprint' ? <Link to="/blueprints">{t('teamLibrary.openDraft')}</Link> : copied.target === 'track' || copied.target === 'recipe' ? <Link to="/learn/create" search={{ type: copied.target === 'recipe' ? 'recipe' : 'video', id: copied.id }}>{t('teamLibrary.openDraft')}</Link> : <Link to="/offer/$id" params={{ id: copied.id }}>{t('teamLibrary.openDraft')}</Link>}</Button></> : <><label className="field-label" htmlFor="copy-destination">{t('teamLibrary.destination')}</label><select id="copy-destination" className="field-input" value={destination} disabled={busy} onChange={e => { setDestination(e.target.value); setRequestKey(null); }}>{!destinations.length && <option value="">{t('teamLibrary.noWorkspace')}</option>}{destinations.map(tm => <option key={tm.team_id} value={tm.team_id}>{tm.name}</option>)}</select></>}
       </div>}
     </ResponsiveSheet>
   </section>;
