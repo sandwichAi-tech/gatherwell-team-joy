@@ -53,12 +53,4 @@ $$;
 REVOKE ALL ON FUNCTION public.get_team_invite(text) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.get_team_invite(text) TO anon,authenticated;
 
--- Parameterized eligibility remains callable by definer notification functions, never as an outsider probe.
-DO $$ DECLARE d text; BEGIN
-  SELECT pg_get_functiondef('public.team_channel_access(uuid,uuid)'::regprocedure) INTO d;
-  d:=replace(d, 'SELECT _user IS NOT NULL', 'SELECT (current_user NOT IN (''authenticated'',''anon'') OR _user=auth.uid()) AND _user IS NOT NULL');
-  -- SECURITY DEFINER would defeat current_user; use session role setting as the caller boundary instead.
-  d:=replace(d, '(current_user NOT IN (''authenticated'',''anon'') OR _user=auth.uid())', '(coalesce(current_setting(''role'',true),''none'') NOT IN (''authenticated'',''anon'') OR _user=auth.uid())');
-  -- Do not apply this change: internal definer notification fan-out inherits the caller role too.
-  -- The arbitrary-user overload requires a separate service/internal helper migration; retain existing semantics here.
-END $$;
+-- Arbitrary-user channel eligibility still needs a separate internal-helper refactor; do not break notification fan-out here.
