@@ -54,7 +54,8 @@ export function ActiveChallengeCard() {
   const active = list.filter(c => phaseOf(c) === 'active').sort((a, b) => Number(b.joined) - Number(a.joined))[0];
   const { data: mine = [] } = useQuery({ ...myCheckinsQuery(userId, active?.id ?? ''), enabled: !!active?.joined });
   if (!active) return null;
-  const s = streaksOf(mine.map(m => m.checkin_date)); const doneToday = mine.some(m => m.checkin_date === localDate());
+  const today = localDate(new Date(), active?.timezone ?? 'UTC');
+  const s = streaksOf(mine.map(m => m.checkin_date), today); const doneToday = active ? checkedInPeriod(mine.map(m => m.checkin_date), today, active.starts_on, active.frequency) : false;
   return <section className="panel challenge-active">
     <GatheringCover path={active.cover_url} style={active.cover_style} title={titleOf(active, lang)} className="challenge-thumb" />
     <div className="challenge-active-body"><span className="eyebrow">{t('challenges.activeNow')}</span><h2>{titleOf(active, lang)}</h2>
