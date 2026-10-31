@@ -27,7 +27,7 @@ export function WalkInSheet({ open, eventId, onClose, onSaved }: { open: boolean
       const { data, error: failure } = await supabase.rpc('walk_in_admit', { _event: eventId, _request: request.current.id, _first: fields.first.trim(), _last: fields.last.trim(), _phone: fields.phone.trim(), _email: fields.email.trim(), _language: i18n.resolvedLanguage === 'es' ? 'es' : 'en' });
       if (failure) { setError(t(walkInErrorKey(failure))); return; }
       const result = data as unknown as WalkInResult;
-      if (result.result === 'existing' || result.result === 'already') { setExisting(result); onSaved(); return; }
+      if (result?.result === 'existing' || result?.result === 'already') { setExisting(result); onSaved(); return; }
       if (!confirmedWalkIn(result)) { setError(t('checkin.walkInRetry')); return; }
       onSaved(); toast.success(t('checkin.walkInAdded', { name: fields.first.trim() })); setFields(blank); request.current = null; onClose();
     } catch { setError(t('checkin.walkInRetry')); }

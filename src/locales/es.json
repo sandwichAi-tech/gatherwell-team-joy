@@ -1736,6 +1736,7 @@
     "scanResult": {
       "ok": "{{name}} quedó registrado",
       "already": "{{name}} ya estaba registrado",
+      "undone": "Se deshizo el registro de asistencia de {{name}}",
       "not_found": "No está en la lista de este evento",
       "error": "No se confirmó la entrada. Revisa tu conexión y vuelve a intentar.",
       "cancelled": "Este registro fue cancelado",

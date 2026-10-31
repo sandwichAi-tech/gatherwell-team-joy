@@ -63,6 +63,7 @@ function CheckInMode() {
           if (isRetryableCheckinError(res.error, res.status)) break;
           setScan(checkinErrorResult(res.error)); queue.current.remove(item.key);
         } else {
+          if (!res.data || (item.rsvpId && !(item.undo ? (res.data as Scan).result === 'undone' : ['ok', 'already'].includes((res.data as Scan).result)))) { setScan({ result: 'error' }); break; }
           queue.current.remove(item.key); if (res.data && confirmedAttendance(res.data as Scan)) trackEvent('checkin');
           if (item.code) setScan((res.data ?? { result: 'error' }) as Scan);
         }
@@ -94,8 +95,8 @@ function CheckInMode() {
     const { data, error, status } = await supabase.rpc('check_in_admission', { _rsvp: rid, _undo: undo });
     if (error) { if (isRetryableCheckinError(error, status)) enqueue({ key: rid, eventId: id, rsvpId: rid, undo }); else setScan(checkinErrorResult(error)); return; }
     const receipt = data as unknown as Scan | null;
-    if (!receipt || (!undo && !['ok', 'already'].includes(receipt.result))) { setScan({ result: 'error' }); return; }
-    setScan({ result: undo ? 'already' : receipt.result, name: rows.find(r => r.id === rid)?.guest_name ?? '' });
+    if (!receipt || (undo ? receipt.result !== 'undone' : !['ok', 'already'].includes(receipt.result))) { setScan({ result: 'error' }); return; }
+    setScan({ result: receipt.result, name: rows.find(r => r.id === rid)?.guest_name ?? '' });
     if (!undo && confirmedAttendance(receipt)) trackEvent('checkin');
     vibrateOnUserAction(30);
     const b = belong.get(rid); const name = rows.find(r => r.id === rid)?.guest_name?.split(/\s+/)[0] ?? '';

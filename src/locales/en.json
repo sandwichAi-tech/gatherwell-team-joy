@@ -1736,6 +1736,7 @@
     "scanResult": {
       "ok": "{{name}} is checked in",
       "already": "{{name}} is already checked in",
+      "undone": "Check-in for {{name}} was undone",
       "not_found": "Not on the list for this event",
       "error": "Check-in was not confirmed. Check your connection and retry.",
       "cancelled": "This registration was cancelled",
