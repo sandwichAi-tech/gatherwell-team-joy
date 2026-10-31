@@ -11,7 +11,8 @@ DO $$ DECLARE c uuid:='72000000-0000-0000-0000-000000000001'; u uuid:=auth.uid()
  IF enroll_challenge(c,'[]')->>'already'<>'true' THEN RAISE EXCEPTION 'duplicate_not_idempotent'; END IF;
  PERFORM challenge_check_in(c,current_date,'UTC','ZZ-TEST note',NULL); PERFORM challenge_check_in(c,current_date,'UTC','ZZ-TEST note',NULL);
  IF (SELECT count(*) FROM challenge_checkins WHERE challenge_id=c AND user_id=u)<>1 THEN RAISE EXCEPTION 'duplicate_checkin'; END IF;
- UPDATE challenges SET frequency='weekly' WHERE id=c; PERFORM challenge_check_in(c,current_date-1,'UTC','ZZ-TEST note',NULL);
+ UPDATE challenges SET frequency='weekly' WHERE id=c;
+ IF (now() AT TIME ZONE 'UTC')::time < time '12:00' THEN PERFORM challenge_check_in(c,current_date-1,'UTC','ZZ-TEST note',NULL); ELSE PERFORM challenge_check_in(c,current_date,'UTC','ZZ-TEST note',NULL); END IF;
  IF (SELECT count(*) FROM challenge_checkins WHERE challenge_id=c AND user_id=u)<>1 THEN RAISE EXCEPTION 'weekly_duplicate'; END IF;
  INSERT INTO user_suspensions(user_id) VALUES(u); IF challenge_can_enroll(c) OR challenge_member_active(c,u) THEN RAISE EXCEPTION 'suspended_access'; END IF;
  DELETE FROM user_suspensions WHERE user_id=u;
