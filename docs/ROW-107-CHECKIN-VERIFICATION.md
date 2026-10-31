@@ -33,4 +33,6 @@ This was **not bypassed** or converted into host-asserted acceptance. A supporte
 - Existing paid admission uses the preserved authoritative paid-record/intent check. This pass did not change amount/currency/refund settlement policy or validate a provider transaction.
 - Event-day Home helper retains event-local calendar-day/DST tests; Upcoming management remains separately available. Full session/continuous-event timezone boundary SQL/browser matrix remains incomplete.
 
-Cleanup: rollback-only fixtures and temporary concurrency fixtures are removed/read back locally; disposable database/server/browser process and directory removal confirmed in final run. No shared files/accounts/fixtures created.
+Final full suite: 124 files / 981 tests, exit 0. Automatic typecheck/production build: build OK at 21:06:19 UTC. Implementation revision: 08720ae2c101cb889baf38c99b30df1913d2ec5f (documentation updated afterward).
+
+Cleanup: rollback-only fixtures read back zero events/RSVPs/payments/acceptances/members; disposable database stopped, browser harness process stopped, both exact temporary directories removed. No shared files/accounts/fixtures created. Concurrent requests were not exercised.
