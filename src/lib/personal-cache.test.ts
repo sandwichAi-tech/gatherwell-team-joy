@@ -2,6 +2,13 @@ import { QueryClient } from '@tanstack/react-query';
 import { describe, expect, it } from 'vitest';
 import { clearIdentityCache, clearPersonalModeCache } from './personal-cache';
 describe('personal cache boundaries', () => {
+  it('mode switching removes private waiver library, versions and attendee status', async () => {
+    const client = new QueryClient();
+    const keys = ['waiver-library', 'host-form-usage', 'waiver-versions', 'event-host-waivers', 'event-waivers-manage', 'event-waiver-status', 'my-event-waivers'];
+    for (const k of keys) client.setQueryData([k, 'ZZ-TEST-A'], 'private');
+    await clearPersonalModeCache(client, 'ZZ-TEST-A');
+    for (const k of keys) expect(client.getQueryData([k, 'ZZ-TEST-A'])).toBeUndefined();
+  });
   it('mode switching clears chat, unread and authored library state', async () => {
     const client = new QueryClient(); const keys = [['comments', 'topic', 'A'], ['topics', 'team', 'A'], ['team-channel', 'team', 'A'], ['library-sources', 'A'], ['authored-library', 'A']];
     for (const key of keys) client.setQueryData(key, 'private');

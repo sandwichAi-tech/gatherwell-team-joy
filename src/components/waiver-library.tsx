@@ -56,7 +56,7 @@ export function HostWaiverEditor({ teamId, initial, usage, onClose, onSaved }: {
     if (!safeWaiverPdf(f.size, f.type, await f.slice(0, 5).text())) { setError(t('hostForms.fileRejected')); return; }
     setBusy(true); setError('');
     try { const form = new FormData(); form.set('file', f); const r = await upload({ data: form }); setUploads(x => [...x, r.path]); setEdit(e => ({ ...e, file_path: r.path, file_name: safeFormFileName(f.name) })); }
-    catch { setError(t('eventWaivers.errors.upload')); } finally { setBusy(false); }
+    catch (e) { setError(t((e as { message?: string })?.message?.includes('unreadable_pdf') ? 'eventWaivers.errors.processing' : 'eventWaivers.errors.upload')); } finally { setBusy(false); }
   };
   return <ResponsiveSheet open title={edit.id ? t('hostForms.editTitle') : t('hostForms.newTitle')} onOpenChange={o => !o && void close()} footer={<Button disabled={busy || !valid} onClick={() => void save()}>{busy ? t('onboarding.saving') : t('waiver.save')}</Button>}>
     <div className="edit-form">

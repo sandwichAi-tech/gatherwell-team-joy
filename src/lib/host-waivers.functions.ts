@@ -10,6 +10,8 @@ export const uploadHostWaiver = createServerFn({ method: 'POST' }).middleware([r
   let allowed = false;
   for (const m of memberships) { const { data: capability } = await context.supabase.rpc('team_capability', { _team: m.team_id, _cap: 'events' }); if (capability) { allowed = true; break; } }
   if (!allowed) throw new Error('forbidden');
+  const { validateWaiverPdf } = await import('@/lib/waiver-pdf.server');
+  if (!await validateWaiverPdf(new Uint8Array(await f.arrayBuffer()), f.type)) throw new Error('unreadable_pdf');
   const path = `${context.userId}/host-waivers/${crypto.randomUUID()}.pdf`;
   const { error } = await context.supabase.storage.from('media').upload(path, f, { contentType: 'application/pdf', upsert: false });
   if (error) throw new Error('upload_failed'); return { path };
