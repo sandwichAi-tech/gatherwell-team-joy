@@ -107,7 +107,7 @@ export function WellnessAssessmentBuilder({ id, course, track, onSaved }: { id?:
   if (load.isError) return <RetryState retry={() => void load.refetch()} />;
   return <article className="assessment-builder">
     <Link to="/learn" search={{ tab: 'mine' }} className="back-link"><ArrowLeft />{t('resources.title')}</Link>
-    <div className="page-heading"><div><span className="eyebrow">{t('resources.create.types.assessment.name')}</span><h1>{draft[`title_${lang}`] || t('resources.untitled')}</h1></div><span className="chip">{t(published ? 'offers.published' : 'templates.draft')}</span></div>
+    <div className="page-heading"><div><span className="eyebrow">{t('resources.create.types.assessment.name')}</span><h1>{draft[`title_${lang}`] || t('resources.untitled')}</h1></div><span className="chip">{t(published ? 'assessment.published' : 'templates.draft')}</span></div>
     <div className="scroll-row"><div className="segmented" role="tablist" aria-label={t('resources.item.sections')}>{STEPS.map(s => <Button key={s} role="tab" variant="ghost" aria-selected={step === s} disabled={busy} onClick={() => goStep(s)}>{s === 'preview' && <Eye />}{t(`assessment.steps.${s}`)}</Button>)}</div></div>
     <section id="wa-step-body" className="edit-form assessment-body" aria-labelledby="wa-step-heading">
       <h2 id="wa-step-heading" tabIndex={-1} className="builder-step-heading">{t('resources.item.stepOf', { n: stepIndex + 1, total: STEPS.length })} · {t(`assessment.steps.${step}`)}</h2>
@@ -149,7 +149,7 @@ export function WellnessAssessmentBuilder({ id, course, track, onSaved }: { id?:
         onNext={nextStep ? () => goStep(nextStep) : undefined}
         blockers={stepIssues.map(i => t(i in ASSESSMENT_DEST_LABEL ? ASSESSMENT_DEST_LABEL[i] ?? 'resources.item.issue.destination' : `assessment.issues.${i}`))}
         onBlocked={() => focusField(stepIssues[0] === 'title' ? 'wa-title' : stepIssues[0] === 'price' ? 'wa-price' : stepIssues[0] === 'destination' || stepIssues[0] === 'courseUnavailable' ? 'wa-destinations' : firstEmptyIn('wa-step-body'))}
-        final={<Button className="builder-footer-primary" disabled={published || busy || !savedId || !scopeId || scopes.isPending || scopes.isError || !scopes.data?.some(s => s.id === scopeId) || destinationsPrice(dest, price.free, price.price) === null || issues.length > 0 || destProblems.length > 0 || fingerprint !== baseline.current} aria-busy={busy} title={t('assessment.approvedRequired')} onClick={() => void publish()}>{busy ? t('onboarding.saving') : t(published ? 'offers.published' : 'offers.publish')}</Button>} />
+        final={<Button className="builder-footer-primary" disabled={published || busy || !savedId || !scopeId || scopes.isPending || scopes.isError || !scopes.data?.some(s => s.id === scopeId) || destinationsPrice(dest, price.free, price.price) === null || issues.length > 0 || destProblems.length > 0 || fingerprint !== baseline.current} aria-busy={busy} title={t('assessment.approvedRequired')} onClick={() => void publish()}>{busy ? t('onboarding.saving') : t(published ? 'assessment.published' : 'offers.publish')}</Button>} />
     </section>
   </article>;
 }

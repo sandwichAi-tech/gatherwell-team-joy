@@ -7848,6 +7848,7 @@
       "preview": "Vista previa / revisión"
     },
     "language": "Idioma de preguntas y resultados",
+    "published": "Publicado",
     "languageChange": "¿Cambiar la etiqueta de idioma? Las preguntas y los resultados existentes no se traducirán.",
     "saveError": "No se pudo guardar. Tu trabajo sigue aquí. Recarga si otra edición cambió este borrador.",
     "changed": "Esta evaluación cambió en otra sesión. Vuelve a abrir el borrador guardado antes de reintentar.",

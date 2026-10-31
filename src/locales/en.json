@@ -7848,6 +7848,7 @@
       "preview": "Preview / review"
     },
     "language": "Question and result language",
+    "published": "Published",
     "languageChange": "Change the language label? Existing question and result text will not be translated.",
     "saveError": "Could not save. Your work is still here. Reload if another edit changed this draft.",
     "changed": "This assessment changed in another session. Reopen the saved draft before trying again.",
