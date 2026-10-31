@@ -18,6 +18,7 @@ import { initialsOf } from '@/lib/account';
 import { rosterQuery } from '@/lib/team';
 import { GwFeatureTile, GwIcon, type GwIconProps } from '@/components/gw-icon';
 import { CHAT_LABEL, detectChatPlatform, type ChatLink, type ChatPlatform } from '@/lib/chat-links';
+import { teamCallerQuery } from '@/lib/team-query-boundary';
 
 const db = supabase as any;
 const KINDS = [['heart', Heart], ['clap', ThumbsUp], ['highfive', PartyPopper]] as const;
@@ -30,9 +31,9 @@ export function errorKey(e: unknown) {
   return 'profile.saveError';
 }
 
-function useFeed(eventId: string | null, topicId: string | null) {
-  const qc = useQueryClient(); const key = ['comments', eventId ?? topicId];
-  const q = useQuery({ queryKey: key, gcTime: 0, staleTime: 0, refetchInterval: 10_000, queryFn: async (): Promise<Feed> => { const { data, error } = await db.rpc('comment_feed', { _event: eventId, _topic: topicId }); if (error) throw error; return data; } });
+function useFeed(eventId: string | null, topicId: string | null, me: string) {
+  const qc = useQueryClient(); const key = ['comments', eventId ?? topicId, me];
+  const q = useQuery({ queryKey: key, gcTime: 0, staleTime: 0, retry: false, refetchInterval: 3_000, queryFn: ({ signal }) => teamCallerQuery<Feed>(me, signal, async () => { const { data, error } = await db.rpc('comment_feed', { _event: eventId, _topic: topicId }); if (error) throw error; return data; }) });
   useEffect(() => {
     const filter = eventId ? `event_id=eq.${eventId}` : `topic_id=eq.${topicId}`;
     const ch = supabase.channel(`comments-${eventId ?? topicId}-${crypto.randomUUID()}`)
@@ -41,7 +42,7 @@ function useFeed(eventId: string | null, topicId: string | null) {
       .subscribe();
     return () => { void supabase.removeChannel(ch); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventId, topicId]);
+  }, [eventId, topicId, me]);
   return q;
 }
 
@@ -68,7 +69,7 @@ function Composer({ teamId, eventId, topicId, parentId, onDone, autoFocus }: { t
     </div>
     <ResponsiveSheet open={picking} onOpenChange={setPicking} title={t('conversation.mention')}>
       <ul className="convo-mention-list">{roster.filter(m => m.name).map(m => <li key={m.userId}><button type="button" className="settings-row" onClick={() => {
-        setBody(b => `${b}${b && !b.endsWith(' ') ? ' ' : ''}@${m.name} `); setMentions(ms => [...ms, { id: m.userId, name: m.name! }]); setPicking(false);
+        if (!m.name) return; setBody(b => `${b}${b && !b.endsWith(' ') ? ' ' : ''}@${m.name} `); setMentions(ms => [...ms, { id: m.userId, name: m.name }]); setPicking(false);
       }}><span className="initial-avatar">{initialsOf(m.name)}</span><span className="settings-label">{m.name}</span></button></li>)}</ul>
     </ResponsiveSheet>
   </form>;
@@ -106,7 +107,7 @@ function CommentRow({ c, replies, feed, me, teamId, eventId, topicId, lang }: { 
 export function CommentThread({ teamId, eventId = null, topicId = null, me, title }: { teamId: string; eventId?: string | null; topicId?: string | null; me: string; title?: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage === 'es' ? 'es-419' : 'en-US';
   const messageSearch = useSearch({ strict: false }) as { message?: string };
-  const { data: feed, isLoading, isError, refetch } = useFeed(eventId, topicId);
+  const { data: feed, isLoading, isError, isFetching, refetch } = useFeed(eventId, topicId, me);
   useEffect(() => { if (messageSearch.message && feed) document.getElementById(`message-${messageSearch.message}`)?.scrollIntoView({ block: 'center' }); }, [messageSearch.message, feed]);
   const { roots, byParent } = useMemo(() => {
     const items = feed?.items ?? []; const byParent = new Map<string, Item[]>();
@@ -114,14 +115,14 @@ export function CommentThread({ teamId, eventId = null, topicId = null, me, titl
     const roots = items.filter(i => !i.parent_id).sort((a, b) => Number(b.pinned) - Number(a.pinned) || a.created_at.localeCompare(b.created_at));
     return { roots, byParent };
   }, [feed]);
-  if (isLoading) return <div className="skeleton-list" aria-busy="true"><div className="skeleton-row" /><div className="skeleton-row" /></div>;
+  if (isLoading || isFetching) return <div className="skeleton-list" aria-busy="true"><div className="skeleton-row" /><div className="skeleton-row" /></div>;
   if (isError) return <div role="alert"><p>{t('teamCommunication.saveError')}</p><Button variant="secondary" onClick={() => void refetch()}>{t('error.retry')}</Button></div>;
   if (!feed) return <p className="auth-subtitle">{t(eventId ? 'conversation.rsvpToJoin' : 'teamCommunication.noAccess')}</p>;
   return <div className="convo">
     {title && <h2>{title}</h2>}
     {roots.length === 0 ? <EmptyState compact icon="MessageCircle" text={t('conversation.empty')} /> :
       <ul className="convo-list">{roots.map(c => <CommentRow key={c.id} c={c} replies={byParent.get(c.id) ?? []} feed={feed} me={me} teamId={teamId} eventId={eventId} topicId={topicId} lang={lang} />)}</ul>}
-    <Composer teamId={teamId} eventId={eventId} topicId={topicId} />
+    <Composer key={`${me}:${teamId}:${eventId ?? topicId}`} teamId={teamId} eventId={eventId} topicId={topicId} />
   </div>;
 }
 
@@ -134,10 +135,11 @@ type Topic = { id: string; title: string; pinned: boolean; last_post_at: string;
 
 export function DiscussionsPanel({ teamId, isLeader, me }: { teamId: string; isLeader: boolean; me: string }) {
   const { t, i18n } = useTranslation(); const qc = useQueryClient(); const lang = i18n.resolvedLanguage === 'es' ? 'es-419' : 'en-US';
-  const key = ['topics', teamId];
-  const { data: topics = [], isLoading, isError, refetch } = useQuery({ queryKey: key, gcTime: 0, staleTime: 0, refetchInterval: 10_000, queryFn: async (): Promise<Topic[]> => { const { data, error } = await db.rpc('team_topics', { _team: teamId }); if (error) throw error; return data ?? []; } });
+  const key = ['topics', teamId, me];
+  const { data: topics = [], isLoading, isError, isFetching, refetch } = useQuery({ queryKey: key, gcTime: 0, staleTime: 0, retry: false, refetchInterval: 3_000, queryFn: ({ signal }) => teamCallerQuery<Topic[]>(me, signal, async () => { const { data, error } = await db.rpc('team_topics', { _team: teamId }); if (error) throw error; return data ?? []; }) });
   const [open, setOpen] = useState<string | null>(null); const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState(''); const [body, setBody] = useState(''); const [busy, setBusy] = useState(false);
+  useEffect(() => { setOpen(null); setCreating(false); setTitle(''); setBody(''); }, [teamId, me]);
   // Deep links (/team?topic=<id>) from notifications and push open the matching discussion.
   const search = useSearch({ strict: false }) as { topic?: string; message?: string }; const navigate = useNavigate();
   useEffect(() => { if (search.topic) setOpen(search.topic); }, [search.topic]);
@@ -149,7 +151,7 @@ export function DiscussionsPanel({ teamId, isLeader, me }: { teamId: string; isL
       .subscribe();
     return () => { void supabase.removeChannel(ch); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [teamId]);
+  }, [teamId, me]);
   const current = topics.find(x => x.id === open);
   // Only mark/read a topic this person can actually see in this team; unknown ids show an unavailable state.
   useEffect(() => { if (open && current) void db.rpc('mark_topic_read', { _id: open }).then(() => qc.invalidateQueries({ queryKey: key })); // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -162,6 +164,7 @@ export function DiscussionsPanel({ teamId, isLeader, me }: { teamId: string; isL
   };
   const manage = async (args: Record<string, unknown>) => { const { error } = await db.rpc('manage_topic', { _id: open, _pinned: null, _delete: null, ...args }); if (error) { toast.error(t(errorKey(error))); return; } if (args['_delete']) close(); void qc.invalidateQueries({ queryKey: key }); };
   if (isError) return <div role="alert"><p>{t('teamCommunication.saveError')}</p><Button variant="secondary" onClick={() => void refetch()}>{t('error.retry')}</Button></div>;
+  if (isFetching) return <p role="status">{t('teamCommunication.checking')}</p>;
   return <section className="team-discussions" aria-labelledby="disc-title">
     <div className="section-heading"><h2 id="disc-title">{t('teamCommunication.chat')}</h2>{isLeader && <Button variant="secondary" onClick={() => setCreating(true)}><Plus />{t('conversation.newTopic')}</Button>}</div>
     {isLoading ? <div className="skeleton-list" aria-busy="true"><div className="skeleton-row" /></div> : topics.length === 0 ? <p className="auth-subtitle">{isLeader ? t('conversation.noTopicsLeader') : t('conversation.noTopics')}</p> :

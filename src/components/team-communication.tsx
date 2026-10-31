@@ -15,6 +15,7 @@ import { DiscussionsPanel } from '@/components/conversation';
 import { SafeChatText } from '@/components/safe-chat-text';
 import { supabase } from '@/integrations/supabase/client';
 import { channelKey, orderAnnouncements, safeChatUrl, type Announcement } from '@/lib/team-communication';
+import { listenTeamChanges, teamCallerQuery } from '@/lib/team-query-boundary';
 
 type State = { owner: boolean; muted: boolean; announcements_unread: number; chat_unread: number };
 export function TeamCommunication({ teamId, me, initialBody }: { teamId: string; me: string; initialBody?: string | null }) {
@@ -24,18 +25,20 @@ export function TeamCommunication({ teamId, me, initialBody }: { teamId: string;
   const [editor, setEditor] = useState<Announcement | 'new' | null>(null);
   const [title, setTitle] = useState(''); const [body, setBody] = useState(''); const [link, setLink] = useState(''); const [pinned, setPinned] = useState(false); const [busy, setBusy] = useState(false);
   const key = channelKey(teamId, me);
-  const state = useQuery({ queryKey: key, gcTime: 0, staleTime: 0, refetchInterval: 10_000, retry: false, queryFn: async () => {
+  const state = useQuery({ queryKey: key, gcTime: 0, staleTime: 0, refetchInterval: 3_000, retry: false, queryFn: ({ signal }) => teamCallerQuery(me, signal, async () => {
     const { data, error } = await supabase.rpc('team_channel_state', { _team: teamId });
     if (error) throw error;
     if (!data) { qc.removeQueries({ queryKey: [...key, 'announcements'] }); qc.removeQueries({ queryKey: ['comments'] }); qc.removeQueries({ queryKey: ['topics', teamId] }); qc.removeQueries({ queryKey: ['notifications'] }); }
     return data as State | null;
-  } });
-  const list = useQuery({ queryKey: [...key, 'announcements'], enabled: !!state.data, gcTime: 0, staleTime: 0, refetchInterval: 10_000, queryFn: async () => {
+  }) });
+  const list = useQuery({ queryKey: [...key, 'announcements'], enabled: !!state.data && !state.isError && !state.isFetching, gcTime: 0, staleTime: 0, refetchInterval: 3_000, queryFn: ({ signal }) => teamCallerQuery(me, signal, async () => {
     const { data, error } = await supabase.from('announcements').select('id,title,body,link_url,pinned,created_at,updated_at,archived_at,author_id').eq('team_id', teamId);
     if (error) throw error; return orderAnnouncements(data ?? []);
-  } });
+  }) });
   const refresh = () => { void qc.invalidateQueries({ queryKey: key }); void qc.invalidateQueries({ queryKey: ['notifications'] }); void qc.invalidateQueries({ queryKey: ['notifications-unread'] }); };
   useEffect(() => { if (search.surface === 'chat' || search.surface === 'announcements') setSurface(search.surface); }, [search.surface]);
+  useEffect(() => { setEditor(null); setTitle(''); setBody(''); setLink(''); setPinned(false); setSurface(search.surface === 'chat' ? 'chat' : 'announcements'); }, [teamId, me]);
+  useEffect(() => listenTeamChanges(id => { if (id === teamId) { setEditor(null); void qc.invalidateQueries({ queryKey: key }); } }), [teamId, me, qc]);
   useEffect(() => {
     const ch = supabase.channel(`team-channel-${teamId}-${crypto.randomUUID()}`);
     const check = () => {
@@ -52,12 +55,13 @@ export function TeamCommunication({ teamId, me, initialBody }: { teamId: string;
     if (!state.isFetching && !state.data) { qc.removeQueries({ queryKey: [...key, 'announcements'] }); qc.removeQueries({ queryKey: ['comments'] }); qc.removeQueries({ queryKey: ['topics', teamId] }); }
   }, [state.data, state.isFetching, qc, teamId, me]);
   useEffect(() => {
-    if (surface === 'announcements' && state.data && list.data) void supabase.rpc('set_team_channel_preference', { _team: teamId, _read_announcements: true }).then(({ error }) => { if (!error) void qc.invalidateQueries({ queryKey: key }); });
+    if ((surface === 'announcements' || surface === null) && state.data && !state.isFetching && !state.isError && list.data && !list.isError && state.data.announcements_unread > 0) void supabase.rpc('set_team_channel_preference', { _team: teamId, _read_announcements: true }).then(({ error }) => { if (!error) void qc.invalidateQueries({ queryKey: key }); });
   }, [surface, list.dataUpdatedAt]);
   useEffect(() => { if (search.announcement && list.data) document.getElementById(`announcement-${search.announcement}`)?.scrollIntoView({ block: 'center' }); }, [search.announcement, list.dataUpdatedAt]);
   useEffect(() => { if (initialBody && state.data?.owner) { setEditor('new'); setBody(initialBody); } }, [initialBody, state.data?.owner]);
   const edit = (item: Announcement | 'new') => { setEditor(item); setTitle(item === 'new' ? '' : item.title); setBody(item === 'new' ? '' : item.body); setLink(item === 'new' ? '' : item.link_url ?? ''); setPinned(item === 'new' ? false : item.pinned); };
   const save = async (item?: Announcement, archive?: boolean) => {
+    if (busy || state.isFetching || state.isError || !state.data?.owner) return;
     setBusy(true);
     const id = item?.id ?? (editor && editor !== 'new' ? editor.id : null);
     const args = { _team: teamId, _title: item?.title ?? title, _body: item?.body ?? body, _link: item?.link_url ?? link, _pinned: item?.pinned ?? pinned };
@@ -67,6 +71,7 @@ export function TeamCommunication({ teamId, me, initialBody }: { teamId: string;
   };
   if (state.isPending) return <ListSkeleton />;
   if (state.isError) return <RetryState retry={() => void state.refetch()} />;
+  if (state.isFetching) return <section role="status"><p>{t('teamCommunication.checking')}</p></section>;
   if (!state.data) return <section className="team-communication" role="status"><p>{t(state.isFetching ? 'teamCommunication.checking' : 'teamCommunication.noAccess')}</p></section>;
   const owner = state.data.owner;
   const active = list.data?.filter(a => !a.archived_at) ?? [];
