@@ -1,5 +1,11 @@
 # ZoheeWell Change Log
 
+## 2026-10-31 — Teams rows 88 / 104 / 105 / 106 (partial)
+- Fixed join-code submission/rotation boundary, previous-code response race, invite sign-in return and caller Teams refresh; removed legacy join attribution and delegated-admin choices. Owner approval and all launch/payment/consent rules unchanged.
+- Library/channel/topic/comment reads now validate caller identity; chat keys include account, mode switches purge channel/library state, unsharing closes previews, and focus/membership rechecks hide private content. Corrected copy destination retry keys, default-visible announcement read state and narrow-screen mute layout.
+- Disposable SQL reproduced private legacy resource-template direct-ID access before repair; pending SQL adds author/source gates, verified invitation validation, copy source/destination binding, author-only deletion and direct-only template eligibility. **Not applied to shared Cloud**; only disposable targets authorized. Existing arbitrary-user channel eligibility probing and prior metric pending repairs remain unresolved.
+- Focused 46 tests / final full 126 files and 994 tests passed; automatic compilation clean. Local stand-in database assertions including authenticated-role source DELETE passed/rolled back, zero fixtures read back. Actual communication-component mock-response EN/ES 320/390/1280 revoke/restore/account-switch screen checks passed. Full authenticated app/RLS/storage/invite/library/chat/relogin/concurrent-tab acceptance unavailable; each row remains partial. Exact evidence, cleanup and gaps: docs/TEAMS-88-104-105-106-VERIFICATION.md. No deployment, shared fixture writes, external delivery, payments or provider activation.
+
 ## 2026-10-31 — Teams rows 95 / 102 / 103 (partial)
 - Implemented caller-before/after My teams and roster checks, direct saved-team access without inherited leader/admin fallback, exact named-team Members/Requests links with matching filters, and account/team/mode cache cleanup.
 - Added EN/ES sharing preview and Stop sharing now. Insight queries include leader account, hide retained values during permission refetch/errors and purge on local-tab consent/removal signals; remote sessions poll every three seconds, not instantaneous push.
