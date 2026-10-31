@@ -13,8 +13,10 @@ import { confirmAction } from '@/components/confirm-dialog';
 import { ModerationPanel } from '@/components/moderation-panel';
 import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { initialsOf } from '@/lib/account';
+import { rememberNext } from '@/lib/return-to';
+import { announceTeamChange } from '@/lib/team-query-boundary';
 
-export const WORKSPACE_ROLES = ['admin', 'host', 'content_editor', 'checkin', 'moderator', 'analyst', 'member'] as const;
+export const WORKSPACE_ROLES = ['host', 'content_editor', 'checkin', 'moderator', 'analyst', 'member'] as const;
 export type WorkspaceRole = (typeof WORKSPACE_ROLES)[number];
 
 type Member = { user_id: string; full_name: string | null; workspace_role: string; suspended_at: string | null; is_owner: boolean };
@@ -286,16 +288,20 @@ export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string
 export function TeamInvitePage({ token }: { token: string }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const [state, setState] = useState<'idle' | 'busy' | 'done' | 'error'>('idle');
   const [err, setErr] = useState('');
   const accept = async () => {
+    if (state === 'busy' || state === 'done') return;
     setState('busy');
     const { data, error } = await supabase.auth.getUser();
-    if (!data.user) { setState('error'); setErr(t('workspace.signInToAccept')); return; }
+    if (error || !data.user) { rememberNext(`/invite/team/${token}`); setState('error'); setErr(t('workspace.signInToAccept')); return; }
     const { data: res, error: ae } = await supabase.rpc('accept_team_invite', { _token: token });
     if (ae) { setState('error'); setErr(t(`workspace.err.${ae.message}`, { defaultValue: t('error.message') })); return; }
     setState('done');
-    setTimeout(() => void navigate({ to: '/me', search: { panel: 'teams' } }), 1200);
+    for (const key of ['my-team-states', 'teams', 'workspace']) void qc.invalidateQueries({ queryKey: [key, data.user.id] });
+    const teamId = (res as { team_id?: string } | null)?.team_id; if (teamId) announceTeamChange(teamId);
+    void navigate({ to: '/me', search: { panel: 'teams' } });
     return res;
   };
   return <div className="auth-card ws-accept">
@@ -304,6 +310,7 @@ export function TeamInvitePage({ token }: { token: string }) {
     {state === 'error' && <p className="field-error" role="alert">{err}</p>}
     {state === 'done' ? <p className="auth-subtitle" role="status">{t('teamMembership.status.pending')}</p>
       : <Button className="sheet-primary" disabled={state === 'busy'} onClick={() => void accept()}>{state === 'busy' ? t('onboarding.saving') : t('teamMembership.request')}</Button>}
-    <p className="follow-fine"><Link to="/login">{t('follow.signIn')}</Link></p>
+    <p className="field-hint">{t('teamMembership.separateNote')}</p>
+    <p className="follow-fine"><Link to="/login" onClick={() => rememberNext(`/invite/team/${token}`)}>{t('follow.signIn')}</Link></p>
   </div>;
 }

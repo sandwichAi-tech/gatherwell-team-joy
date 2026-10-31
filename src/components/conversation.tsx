@@ -69,7 +69,7 @@ function Composer({ teamId, eventId, topicId, parentId, onDone, autoFocus }: { t
     </div>
     <ResponsiveSheet open={picking} onOpenChange={setPicking} title={t('conversation.mention')}>
       <ul className="convo-mention-list">{roster.filter(m => m.name).map(m => <li key={m.userId}><button type="button" className="settings-row" onClick={() => {
-        if (!m.name) return; setBody(b => `${b}${b && !b.endsWith(' ') ? ' ' : ''}@${m.name} `); setMentions(ms => [...ms, { id: m.userId, name: m.name }]); setPicking(false);
+        const name = m.name; if (!name) return; setBody(b => `${b}${b && !b.endsWith(' ') ? ' ' : ''}@${name} `); setMentions(ms => [...ms, { id: m.userId, name }]); setPicking(false);
       }}><span className="initial-avatar">{initialsOf(m.name)}</span><span className="settings-label">{m.name}</span></button></li>)}</ul>
     </ResponsiveSheet>
   </form>;

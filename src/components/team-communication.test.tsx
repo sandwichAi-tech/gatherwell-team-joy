@@ -19,6 +19,8 @@ afterEach(cleanup);
 function mount() { const client = new QueryClient({ defaultOptions: { queries: { retry: false } } }); render(<QueryClientProvider client={client}><TeamCommunication teamId="team-a" me="member" /></QueryClientProvider>); return client; }
 describe('team-scoped communication actions', () => {
   it('marks only announcements read when announcements are opened', async () => {
+    let unread = 2;
+    mock.rpc.mockImplementation(async name => { if (name === 'set_team_channel_preference') unread = 0; return { error: null, data: name === 'team_channel_state' ? { owner: false, muted: false, announcements_unread: unread, chat_unread: 3 } : null }; });
     mount(); fireEvent.click(await screen.findByRole('button', { name: /teamCommunication.announcements/ }));
     await waitFor(() => expect(mock.rpc).toHaveBeenCalledWith('set_team_channel_preference', { _team: 'team-a', _read_announcements: true }));
     expect(mock.rpc.mock.calls.some(([name]) => name === 'mark_topic_read')).toBe(false);

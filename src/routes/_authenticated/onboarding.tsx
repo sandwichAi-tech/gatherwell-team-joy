@@ -14,7 +14,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { LanguageToggle, pageHead, setLanguage } from '@/components/auth-frame';
 import { supabase } from '@/integrations/supabase/client';
-import { JOIN_BY_KEY } from '@/lib/recognition';
 import { takeNext } from '@/lib/return-to';
 import { recordPendingHostInvite } from '@/lib/discovery';
 import { clearPendingInvite, pendingInvite, initialsOf, joinLink, markProfileOnboarded, parseJoinCode, profileQuery, uploadMedia, workspaceQuery } from '@/lib/account';
@@ -63,8 +62,7 @@ function Onboarding() {
       let joinedTeam: { team: string; leader: string | null } | null = null;
       if (pending) {
         const { data: invite } = await supabase.rpc('get_team_invite', { _code: pending });
-        const by = localStorage.getItem(JOIN_BY_KEY);
-        const { error: joinError } = await supabase.rpc('join_team_by_code', { _code: pending, _role: profile?.role_intent === 'host' ? 'host' : 'member', ...(by ? { _by: by } : {}) });
+        const { error: joinError } = await supabase.rpc('join_team_by_code', { _code: pending });
         clearPendingInvite();
         if (!joinError && invite?.[0]) joinedTeam = { team: invite[0].team_name, leader: invite[0].leader_name };
         await queryClient.invalidateQueries({ queryKey: ['workspace', user.id] });

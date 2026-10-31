@@ -6,7 +6,6 @@ import { AuthFrame, pageHead } from '@/components/auth-frame';
 import { supabase } from '@/integrations/supabase/client';
 import { clearPendingInvite, initialsOf, parseJoinCode, savePendingInvite } from '@/lib/account';
 import { RequestTeamJoin } from '@/components/team-membership';
-import { JOIN_BY_KEY } from '@/lib/recognition';
 import { publicShareImage } from '@/lib/public-media.functions';
 import { RetryState } from '@/components/launch-states';
 import { NOINDEX_META } from '@/lib/seo';
@@ -27,17 +26,16 @@ function JoinPage() {
   const [state, setState] = useState<'loading' | 'invalid' | { team: string; leader: string | null; id: string }>('loading');
 
   useEffect(() => {
+    let active = true; setState('loading');
     const clean = parseJoinCode(code);
-    void supabase.rpc('get_team_invite', { _code: clean }).then(async ({ data }) => {
+    void supabase.rpc('get_team_invite', { _code: clean }).then(async ({ data, error }) => {
+      if (!active) return;
       const invite = data?.[0];
-      if (!invite) { clearPendingInvite(); setState('invalid'); return; }
+      if (error || !invite) { clearPendingInvite(); setState('invalid'); return; }
       savePendingInvite(clean);
-      const by = new URLSearchParams(window.location.search).get('by');
-      if (by && /^[0-9a-f-]{36}$/i.test(by)) localStorage.setItem(JOIN_BY_KEY, by); else localStorage.removeItem(JOIN_BY_KEY);
-      const { data: auth } = await supabase.auth.getUser();
-      if (auth.user) clearPendingInvite();
       setState({ team: invite.team_name, leader: invite.leader_name, id: invite.team_id });
     });
+    return () => { active = false; };
   }, [code, navigate]);
 
   return <AuthFrame>
@@ -49,7 +47,7 @@ function JoinPage() {
       {state.leader && <div className="leader-line"><span className="initial-avatar">{initialsOf(state.leader)}</span><span>{t('join.led', { name: state.leader })}</span></div>}
       <p className="auth-subtitle">{t('teamMembership.pendingHint')}</p>
       <p className="field-hint">{t('teamMembership.separateNote')}</p>
-      <RequestTeamJoin teamId={state.id} />
+      <RequestTeamJoin teamId={state.id} inviteCode={parseJoinCode(code)} />
       <Button variant="link" className="auth-link" onClick={() => { clearPendingInvite(); void navigate({ to: '/' }); }}>{t('join.cancel')}</Button>
     </>}
   </AuthFrame>;
