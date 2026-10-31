@@ -1,0 +1,52 @@
+-- Explicitly invoke only on the local empty stand-in schema in the verification report.
+-- auth/notification/resource instantiation stand-ins are NOT full application acceptance.
+\set ON_ERROR_STOP on
+BEGIN;
+DO $$ BEGIN IF current_setting('app.disposable_database',true) IS DISTINCT FROM 'YES' THEN RAISE EXCEPTION 'disposable only'; END IF; END $$;
+INSERT INTO profiles(id,full_name,adult_confirmed_at) SELECT ('00000000-0000-0000-0000-00000000000'||n)::uuid,'ZZ-TEST '||n,now() FROM generate_series(1,7) n;
+INSERT INTO auth.users SELECT id,full_name||'@example.invalid',now() FROM profiles;
+INSERT INTO teams(id,owner_id,name,join_code) VALUES('10000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000001','ZZ-TEST A','ZZA12345'),('10000000-0000-0000-0000-000000000002','00000000-0000-0000-0000-000000000002','ZZ-TEST B','ZZB12345');
+INSERT INTO team_members(team_id,user_id,role) VALUES('10000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000001','leader'),('10000000-0000-0000-0000-000000000002','00000000-0000-0000-0000-000000000002','leader'),('10000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000003','host'),('10000000-0000-0000-0000-000000000002','00000000-0000-0000-0000-000000000003','host');
+INSERT INTO resource_templates(id,team_id,created_by,kind,target,title_en,structure,shared_team_ids) VALUES('20000000-0000-0000-0000-000000000001','10000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000001','track','track','ZZ-TEST private', '{"lessons":[{"type":"text","notes_en":"ZZ-TEST author text"}]}','{}');
+INSERT INTO templates(id,team_id,created_by,title,is_published,shared_team_ids) VALUES('20000000-0000-0000-0000-000000000002','10000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000001','ZZ-TEST blueprint',true,ARRAY['10000000-0000-0000-0000-000000000001']::uuid[]);
+INSERT INTO team_invites(id,team_id,token,email,expires_at) VALUES('30000000-0000-0000-0000-000000000001','10000000-0000-0000-0000-000000000001','ZZTOKEN','ZZ-TEST 4@example.invalid',now()+interval '1 day');
+DO $$ DECLARE denied boolean; a uuid:='10000000-0000-0000-0000-000000000001'; b uuid:='10000000-0000-0000-0000-000000000002'; src uuid:='20000000-0000-0000-0000-000000000002'; req uuid:=gen_random_uuid(); result jsonb;
+BEGIN
+ PERFORM set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000003',true);
+ denied:=false; BEGIN PERFORM use_resource_template('20000000-0000-0000-0000-000000000001',a); EXCEPTION WHEN others THEN denied:=true; END; ASSERT denied,'private source direct-ID export must be denied';
+ denied:=false; BEGIN PERFORM reset_join_code(a); EXCEPTION WHEN others THEN denied:=true; END; ASSERT denied,'approved member cannot rotate link';
+ denied:=false; BEGIN PERFORM decide_team_request(a,'00000000-0000-0000-0000-000000000004','approved'); EXCEPTION WHEN others THEN denied:=true; END; ASSERT denied,'member cannot approve';
+ PERFORM set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000004',true);
+ denied:=false; BEGIN PERFORM request_team_membership(b,'30000000-0000-0000-0000-000000000001'); EXCEPTION WHEN others THEN denied:=true; END; ASSERT denied,'invitation ID cannot be attached to another team';
+ ASSERT (accept_team_invite('ZZTOKEN')->>'status')='pending','invitation creates pending only';
+ ASSERT (accept_team_invite('ZZTOKEN')->>'status')='pending','invitation retry is idempotent';
+ ASSERT NOT team_channel_access(a),'pending cannot read channel';
+ ASSERT (SELECT count(*)=1 FROM team_join_requests WHERE user_id=auth.uid()),'one pending request';
+ UPDATE team_invites SET revoked_at=now() WHERE token='ZZTOKEN';
+ denied:=false; BEGIN PERFORM accept_team_invite('ZZTOKEN'); EXCEPTION WHEN others THEN denied:=true; END; ASSERT denied,'revoked invite retry fails closed';
+ PERFORM set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000001',true);
+ PERFORM decide_team_request(a,'00000000-0000-0000-0000-000000000004','approved');
+ ASSERT team_channel_access(a,'00000000-0000-0000-0000-000000000004'),'approval allows direct channel';
+ result:=copy_team_library_item(a,'blueprint',src,a,req);
+ ASSERT result=copy_team_library_item(a,'blueprint',src,a,req),'copy retry returns one independent draft';
+ ASSERT (SELECT NOT is_published AND created_by=auth.uid() AND shared_team_ids='{}'::uuid[] FROM templates WHERE id=(result->>'id')::uuid),'copy is private unpublished caller-owned draft';
+ denied:=false; BEGIN PERFORM copy_team_library_item(a,'blueprint',src,b,req); EXCEPTION WHEN others THEN denied:=true; END; ASSERT denied,'wrong destination retry never returns old draft';
+ denied:=false; BEGIN PERFORM copy_team_library_item(a,'blueprint',src,a,NULL); EXCEPTION WHEN others THEN denied:=true; END; ASSERT denied,'null retry denied';
+ PERFORM share_team_library_item('blueprint',src,'{}');
+ ASSERT (SELECT count(*)=1 FROM templates WHERE id=(result->>'id')::uuid),'unsharing preserves independent copy';
+ denied:=false; BEGIN PERFORM copy_team_library_item(a,'blueprint',src,a,gen_random_uuid()); EXCEPTION WHEN others THEN denied:=true; END; ASSERT denied,'unshared source new copy denied';
+ PERFORM decide_team_request(a,'00000000-0000-0000-0000-000000000004','removed');
+ PERFORM set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000004',true); ASSERT NOT team_channel_access(a),'removed denied';
+ denied:=false; BEGIN PERFORM team_library_items(a); EXCEPTION WHEN others THEN denied:=true; END; ASSERT denied,'removed library denied';
+ PERFORM set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000005',true); ASSERT NOT team_channel_access(a),'outsider denied';
+ denied:=false; BEGIN PERFORM team_library_items(a); EXCEPTION WHEN others THEN denied:=true; END; ASSERT denied,'outsider direct library denied';
+ PERFORM set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000003',true);
+ INSERT INTO user_suspensions VALUES(auth.uid()); ASSERT NOT team_channel_access(a) AND NOT team_channel_access(b),'suspended member denied across both teams'; DELETE FROM user_suspensions;
+ PERFORM set_config('request.jwt.claim.sub','',true); ASSERT NOT team_channel_access(a),'signed out denied';
+END $$;
+SET LOCAL ROLE authenticated;
+SELECT set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000003',true);
+DO $$ DECLARE affected int; BEGIN DELETE FROM resource_templates WHERE id='20000000-0000-0000-0000-000000000001'; GET DIAGNOSTICS affected=ROW_COUNT; ASSERT affected=0,'member cannot delete author source'; END $$;
+RESET ROLE;
+ROLLBACK;
+SELECT (SELECT count(*) FROM profiles)+(SELECT count(*) FROM teams)+(SELECT count(*) FROM team_members)+(SELECT count(*) FROM team_join_requests)+(SELECT count(*) FROM templates)+(SELECT count(*) FROM resource_templates)+(SELECT count(*) FROM team_library_copies)+(SELECT count(*) FROM team_invites)+(SELECT count(*) FROM auth.users) AS leftovers;
