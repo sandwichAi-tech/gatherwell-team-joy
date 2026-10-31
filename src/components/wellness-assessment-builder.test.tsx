@@ -4,13 +4,13 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import i18n from '@/lib/i18n';
 import { WellnessAssessmentBuilder } from './wellness-assessment-builder';
 
-const state = vi.hoisted(() => ({ config: null as any, revision: 0, failDest: false, rpc: vi.fn() }));
+const state = vi.hoisted(() => ({ config: null as any, revision: 0, failDest: false, scopes: [] as any[], rpc: vi.fn() }));
 vi.mock('@tanstack/react-router', () => ({ Link: ({ children }: any) => <a>{children}</a>, useNavigate: () => vi.fn() }));
 vi.mock('@/components/learn', () => ({ useLearn: () => ({ userId: 'ZZ-TEST-owner', teamId: 'ZZ-TEST-team' }) }));
 vi.mock('@/components/confirm-dialog', () => ({ confirmAction: async () => true }));
 vi.mock('@/integrations/supabase/client', () => ({ supabase: {
   from: (table: string) => {
-    const result = { data: table === 'quizzes' ? { id: 'ZZ-TEST-assessment', host_id: 'ZZ-TEST-owner', assessment_config: state.config, assessment_revision: state.revision } : [], error: null };
+    const result = { data: table === 'quizzes' ? { id: 'ZZ-TEST-assessment', host_id: 'ZZ-TEST-owner', assessment_config: state.config, assessment_revision: state.revision, is_published: false } : table === 'assessment_scope_versions' ? state.scopes : [], error: null };
     const chain: any = { select: () => chain, eq: () => chain, is: () => chain, order: () => chain, maybeSingle: async () => result, then: (resolve: any) => Promise.resolve(result).then(resolve) };
     return chain;
   },
@@ -19,7 +19,7 @@ vi.mock('@/integrations/supabase/client', () => ({ supabase: {
 
 beforeEach(async () => {
   await i18n.changeLanguage('en');
-  state.revision = 1; state.failDest = false;
+  state.revision = 1; state.failDest = false; state.scopes = [];
   state.config = { kind: 'wellness_assessment', title_en: 'ZZ-TEST assessment', title_es: '', description_en: '', description_es: '', language: 'en', allow_retake: false, questions: [1, 2].map(n => ({ id: `q${n}`, type: 'single', prompt: `ZZ-TEST question ${n}`, scored: true, weight: n, options: [{ id: `q${n}a`, label: `First ${n}`, value: 0 }, { id: `q${n}b`, label: `Second ${n}`, value: 100 }] })), results: [{ id: 'r', min: 0, max: 100, title: 'ZZ-TEST result', body: 'Fixture only', url: '' }] };
   state.rpc.mockReset(); state.rpc.mockImplementation(async (name, args) => {
     if (name === 'resource_destinations') return { data: { team: true, coach: false, courses: [] }, error: null };
@@ -55,4 +55,31 @@ it('keeps question 2 labels and scores when changing to text and back', async ()
   fireEvent.change(q2.getByLabelText(i18n.t('quiz.questionType')), { target: { value: 'single' } });
   expect(q2.getByDisplayValue('First 2')).toBeVisible();
   expect(q2.getByDisplayValue('Second 2')).toBeVisible();
+});
+
+it('does not allow publication after a partial destination-save failure; retry uses the updated revision', async () => {
+  state.scopes = [{ id: 'ZZ-TEST-scope', version: 1, document_text: 'Fixture only' }];
+  await open();
+  fireEvent.click(screen.getByRole('tab', { name: i18n.t('assessment.steps.preview') }));
+  fireEvent.change(screen.getByLabelText(i18n.t('assessment.scopeDocument')), { target: { value: 'ZZ-TEST-scope' } });
+  state.failDest = true;
+  fireEvent.click(screen.getByRole('button', { name: i18n.t('gathering.saveDraft') }));
+  await screen.findByRole('alert');
+  expect(screen.getByRole('button', { name: i18n.t('offers.publish') })).toBeDisabled();
+  state.failDest = false;
+  fireEvent.click(screen.getByRole('button', { name: i18n.t('gathering.saveDraft') }));
+  await waitFor(() => expect(screen.getByRole('button', { name: i18n.t('offers.publish') })).toBeEnabled());
+  const saves = state.rpc.mock.calls.filter(([name]) => name === 'save_wellness_assessment');
+  expect(saves.map(([, args]) => args._revision)).toEqual([1, 2]);
+});
+
+it('retains optional preview text when leaving and returning to review', async () => {
+  state.config.questions[1].type = 'text'; state.config.questions[1].scored = false;
+  await open();
+  fireEvent.click(screen.getByRole('tab', { name: i18n.t('assessment.steps.preview') }));
+  fireEvent.change(screen.getByLabelText('ZZ-TEST question 2'), { target: { value: 'ZZ-TEST note' } });
+  fireEvent.click(screen.getByRole('tab', { name: i18n.t('assessment.steps.questions') }));
+  fireEvent.click(screen.getByRole('tab', { name: i18n.t('assessment.steps.preview') }));
+  expect(screen.getByLabelText('ZZ-TEST question 2')).toHaveValue('ZZ-TEST note');
+  expect(state.rpc.mock.calls.some(([name]) => name === 'complete_wellness_assessment')).toBe(false);
 });
