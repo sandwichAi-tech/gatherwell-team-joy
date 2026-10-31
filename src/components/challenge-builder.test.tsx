@@ -21,3 +21,11 @@ it('reopening the creation flow without an id resets prior unsaved text', async 
   view.rerender(ui(null)); view.rerender(ui({}));
   await waitFor(() => expect(screen.getByLabelText('templates.title')).toHaveValue(''));
 });
+it('template Next/Back preserves the active-language title', async () => {
+  render(<QueryClientProvider client={new QueryClient()}><ChallengeBuilder draft={{}} teamId="ZZ-TEST-team" onClose={vi.fn()} /></QueryClientProvider>);
+  fireEvent.click(screen.getByText('challenges.starter.walk.title'));
+  await waitFor(() => expect(screen.getByLabelText('templates.title')).toHaveValue('challenges.starter.walk.title'));
+  fireEvent.click(screen.getByText('challenges.builder.next'));
+  await screen.findByLabelText('challenges.goalTarget'); expect(screen.getByLabelText('challenges.goalTarget')).toHaveValue(14);
+  fireEvent.click(screen.getByText('challenges.builder.back')); expect(screen.getByLabelText('templates.title')).toHaveValue('challenges.starter.walk.title');
+});
