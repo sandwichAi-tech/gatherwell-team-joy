@@ -13,20 +13,22 @@ import { confirmAction } from '@/components/confirm-dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { downloadCsv } from '@/lib/csv';
 import { signEventWaiverFile } from '@/lib/event-waivers.functions';
+import { waiverInviteToken } from '@/lib/waiver-consent-context';
 import {
   WAIVER_KINDS, canAccept, consentRows, consentState, waiverBody, waiverTitle,
   type PublicWaiver, type WaiverChoices, type WaiverKind, type WaiverStatus,
 } from '@/lib/event-waivers';
 
 const db = supabase as unknown as { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>; from: (t: string) => any };
-const inviteToken = () => (typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('k'));
+const inviteToken = waiverInviteToken;
 
 /** Active waivers an attendee must see for this event (empty when none or not visible). */
 export function useEventWaivers(eventId: string | undefined) {
+  const token = inviteToken();
   return useQuery({
-    queryKey: ['event-waivers', eventId], enabled: !!eventId, staleTime: 60_000,
+    queryKey: ['event-waivers', eventId, token], enabled: !!eventId, staleTime: 60_000,
     queryFn: async () => {
-      const { data, error } = await db.rpc('event_waiver_list', { _event: eventId, _token: inviteToken() });
+      const { data, error } = await db.rpc('event_waiver_list', { _event: eventId, _token: token });
       if (error) throw error;
       return (Array.isArray(data) ? data : []) as PublicWaiver[];
     },
@@ -37,10 +39,12 @@ function useOpenWaiverFile() {
   const sign = useServerFn(signEventWaiverFile);
   return async (waiverId: string, opts: { code?: string; version?: number } = {}) => {
     const tab = window.open('', '_blank', 'noopener');
-    const { url } = await sign({ data: { waiverId, token: inviteToken(), code: opts.code ?? null, version: opts.version ?? null } });
-    if (!url) { tab?.close(); return false; }
-    if (tab) tab.location.href = url; else window.location.assign(url);
-    return true;
+    try {
+      const { url } = await sign({ data: { waiverId, token: inviteToken(), code: opts.code ?? null, version: opts.version ?? null } });
+      if (!url) { tab?.close(); return false; }
+      if (tab) tab.location.href = url; else window.location.assign(url);
+      return true;
+    } catch { tab?.close(); return false; }
   };
 }
 
@@ -60,7 +64,7 @@ export function EventWaiversAccept({ waivers, choices, onChange }: { waivers: Pu
           <span>{t('waiver.version', { n: w.version })}</span></p>
         {body && <div className="waiver-text" tabIndex={0} role="document" aria-label={title}>{body.split(/\n{2,}/).map((p, i) => <p key={i}>{p}</p>)}</div>}
         {w.has_file && <Button type="button" variant="secondary" aria-busy={busy === w.id} disabled={busy === w.id}
-          onClick={async () => { setBusy(w.id); const ok = await open(w.id); setBusy(null); if (ok) set(w.id, { opened: true }); else toast.error(t('eventWaivers.errors.file')); }}>
+          onClick={async () => { setBusy(w.id); try { const ok = await open(w.id); if (ok) set(w.id, { opened: true }); else toast.error(t('eventWaivers.errors.file')); } finally { setBusy(null); } }}>
           <ExternalLink />{t('eventWaivers.openFile', { name: w.file_name || t('eventWaivers.document') })}</Button>}
         {w.has_file && !c?.opened && <p className="field-hint" id={`ew-${w.id}-hint`}>{t('eventWaivers.openFirst')}</p>}
         <label className="guest-consent">

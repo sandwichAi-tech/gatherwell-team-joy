@@ -35,6 +35,7 @@ import { AGE_BANDS, checkMinorRegistration } from '@/lib/identity';
 import { minorBandAllowed } from '@/lib/event-builder';
 import { defaultTier, needsTier, registrationReady, tierSpotsLeft, tierState } from '@/lib/registration';
 import { PlatformAgreementNotice, usePlatformAgreement } from '@/components/platform-event-agreement';
+import { useWaiverConsentState } from '@/lib/waiver-consent-state';
 import { platformSelection } from '@/lib/event-agreements';
 
 type CalEvent = Pick<PublicEvent, 'id' | 'title' | 'starts_at' | 'ends_at' | 'location_name' | 'address'>;
@@ -82,7 +83,10 @@ export function Stepper({ value, onChange, max = 3, label }: { value: number; on
 
 export type RsvpResult = { code: string; status: 'going' | 'maybe' | 'waitlist' | 'requested' };
 
-export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEvent; intent: 'going' | 'maybe' | null; onClose: () => void; onDone: (r: RsvpResult) => void }) {
+export function RsvpSheet(props: { event: PublicEvent; intent: 'going' | 'maybe' | null; onClose: () => void; onDone: (r: RsvpResult) => void }) {
+  return <RsvpSheetContent key={`${props.event.id}:${props.intent}`} {...props} />;
+}
+function RsvpSheetContent({ event, intent, onClose, onDone }: { event: PublicEvent; intent: 'going' | 'maybe' | null; onClose: () => void; onDone: (r: RsvpResult) => void }) {
   const { t, i18n } = useTranslation();
   const [form, setForm] = useState({ first: '', last: '', phone: '', email: '', plus: 0, sms: false, mail: false });
   const [contact, setContact] = useState<'email' | 'phone'>('email');
@@ -90,12 +94,13 @@ export function RsvpSheet({ event, intent, onClose, onDone }: { event: PublicEve
   const [price, setPrice] = useState<{ price_cents: number; pass_fee: boolean; fee_pct: number; cover_service_fee?: boolean; service_fee_percent?: number; service_fee_fixed?: number; refund_policy?: string } | null>(null);
   const { data: waiver } = useEventWaiver(intent ? event.id : undefined); const [wName, setWName] = useState(''); const [wOk, setWOk] = useState(false); const [adult, setAdult] = useState(false);
   const [minorOn, setMinorOn] = useState(false);
-  const ew = useEventWaivers(intent ? event.id : undefined); const eventWaivers = ew.data ?? []; const [ewChoices, setEwChoices] = useState<WaiverChoices>({});
+  const ew = useEventWaivers(intent ? event.id : undefined); const eventWaivers = ew.data ?? [];
+  const [ewChoices, setEwChoices] = useWaiverConsentState<WaiverChoices>(`${event.id}:${eventWaivers.map(w => `${w.id}:${w.version}`).join(',')}`, {});
   const [minor, setMinor] = useState({ first: '', band: '' as string, gName: '', gRel: 'parent', gEmail: '', gPhone: '', consent: false });
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [termsOk, setTermsOk] = useState(false);
   const platform = usePlatformAgreement(intent ? event.id : undefined);
   const platformDoc = platformSelection(platform.data, i18n.resolvedLanguage ?? 'en');
+  const [termsOk, setTermsOk] = useWaiverConsentState(`${event.id}:${platformDoc?.id ?? ''}`, false);
   const [updates, setUpdates] = useState(false);
   const [tierId, setTierId] = useState<string | null>(null);
   const tiers = event.ticket_tiers ?? [];

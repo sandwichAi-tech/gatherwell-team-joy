@@ -1,0 +1,2 @@
+/** Invite credential is part of read-cache identity; never log or display it. */
+export const waiverInviteToken = () => typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('k');
