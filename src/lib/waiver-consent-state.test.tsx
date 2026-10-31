@@ -9,6 +9,7 @@ describe('document-bound explicit consent', () => {
     rerender({ context: 'ZZ-TEST-event:es-v1' }); expect(result.current[0]).toBe(false);
     act(() => result.current[1](true));
     rerender({ context: 'ZZ-TEST-event:en-v2' }); expect(result.current[0]).toBe(false);
+    rerender({ context: 'ZZ-TEST-event:es-v1' }); expect(result.current[0]).toBe(false);
   });
   it('does not reuse host consent after an event or selected version changes', () => {
     const { result, rerender } = renderHook(({ context }) => useWaiverConsentState(context, {} as Record<string, boolean>), { initialProps: { context: 'ZZ-TEST-A:form-v1' } });

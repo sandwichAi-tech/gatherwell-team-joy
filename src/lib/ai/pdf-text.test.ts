@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { extractPdfText, PDF_MAX_BYTES } from '@/lib/ai/pdf-text.server';
+import { validateWaiverPdf } from '@/lib/waiver-pdf.server';
 
 /** Builds a tiny valid one-page PDF with a text layer (or none, to mimic a scan). */
 function pdf(text: string | null) {
@@ -20,6 +21,10 @@ function pdf(text: string | null) {
 }
 
 describe('lesson PDF text', () => {
+  it('validates a real readable waiver PDF but rejects a real image-only scan', async () => {
+    expect(await validateWaiverPdf(pdf('ZZ-TEST readable document'), 'application/pdf')).toBe(true);
+    expect(await validateWaiverPdf(pdf(null), 'application/pdf')).toBe(false);
+  });
   it('reads the text layer of a real PDF', async () => {
     const r = await extractPdfText(pdf('Breathing practice notes for the Saturday morning group session'));
     expect(r.ok).toBe(true);
