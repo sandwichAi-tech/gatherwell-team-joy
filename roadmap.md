@@ -1,5 +1,10 @@
 # Challenge commerce and course/assessment lifecycle closure
 
+## Row 120 — October 31 Wellness Builder pressure test
+- [ ] Reproduce question-2 editing and exact publication failure in isolated tests before fixes.
+- [ ] Repair confirmed question/persistence/preview/access defects; preserve launch flags and approved scope requirements.
+- [ ] Run focused/full tests and isolated browser/database checks; document unavailable real-stack journeys, compilation signals and exact cleanup.
+
 ## October 29 translation-only completion
 - [x] Add missing progress/invite/event-error/resource-type EN/ES entries; update host-count explanatory copy without changing rules.
 - [x] Source-wide literal coverage, finite billing/marketing/progress families and parity verified; 107 files/899 tests passed, automatic compilation clean; all 54 added keys recorded in CHANGELOG.
