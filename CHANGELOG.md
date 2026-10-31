@@ -1,5 +1,11 @@
 # ZoheeWell Change Log
 
+## 2026-10-31 — Waivers rows 64 / 85 / 86 (partial)
+- Preserved automatic platform pinning without a builder callout or event creation/publish blocker; missing approved agreement still blocks registration only. Locally verified auto pin, immutable reference and host version/archive separation.
+- Fixed file-opening failure/retry, context-bound unchecked acceptance, invitation-aware waiver caches, caller-scoped library/status reads, account editor reset and mode-cache purge. Select from My waivers reads exact versions; library replacement no longer advances an existing selection. PDF uploads now validate private bounded readability; legacy editor shares guarded upload/cleanup. EN/ES 320px metadata overflow corrected.
+- Reproduced initial admission hash/locale inconsistency on disposable tables; `waiver_platform_guard.pending.sql` is locally verified but **not applied to shared Cloud**. No security/provider/launch/payment/approved wording changes.
+- Focused 59 / full 129 files and 1003 tests passed; automatic compilation clean. Actual-function disposable transactions rolled back with zero fixtures. Disconnected attendee component EN/ES 320/390/1280 checks passed; full free registration/check-in, full auth/RLS/storage/relogin/concurrency/accessibility/provider acceptance remains unverified. Exact evidence and gaps: docs/WAIVERS-64-85-86-VERIFICATION.md. No deployment, messages, charges, shared fixtures or user-owned edits.
+
 ## 2026-10-31 — Teams rows 88 / 104 / 105 / 106 (partial)
 - Fixed join-code submission/rotation boundary, previous-code response race, invite sign-in return and caller Teams refresh; removed legacy join attribution and delegated-admin choices. Owner approval and all launch/payment/consent rules unchanged.
 - Library/channel/topic/comment reads now validate caller identity; chat keys include account, mode switches purge channel/library state, unsharing closes previews, and focus/membership rechecks hide private content. Corrected copy destination retry keys, default-visible announcement read state and narrow-screen mute layout.
