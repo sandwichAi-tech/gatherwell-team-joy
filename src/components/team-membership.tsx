@@ -40,7 +40,7 @@ export function MyTeams({ userId }: { userId: string }) {
   </section>)}</div>;
 }
 
-export function TeamMemberManagement({ teamId, userId, roster }: { teamId: string; userId: string; roster?: TeamRoster }) {
+export function TeamMemberManagement({ teamId, userId, roster }: { teamId: string; userId: string; roster?: TeamRoster | undefined }) {
   const { t, i18n } = useTranslation(); const qc = useQueryClient(); const q = useQuery(managementQuery(teamId, userId));
   const [busy, setBusy] = useState(false); const [insights, setInsights] = useState<{ user_id: string; name: string | null } | null>(null);
   useEffect(() => { setInsights(null); }, [teamId, userId]);
@@ -70,7 +70,7 @@ export function TeamMemberManagement({ teamId, userId, roster }: { teamId: strin
   </section>)}<MemberInsightsSheet key={`${teamId}:${userId}:${insights?.user_id}`} userId={userId} teamId={teamId} member={insights} onClose={() => setInsights(null)} /></div>;
 }
 
-export function TeamMembershipSheet({ open, onOpenChange, teamId, userId, teamName, roster }: { open: boolean; onOpenChange: (open: boolean) => void; teamId: string; userId: string; teamName?: string; roster?: TeamRoster }) {
+export function TeamMembershipSheet({ open, onOpenChange, teamId, userId, teamName, roster }: { open: boolean; onOpenChange: (open: boolean) => void; teamId: string; userId: string; teamName?: string; roster?: TeamRoster | undefined }) {
   const { t } = useTranslation(); return <ResponsiveSheet open={open} onOpenChange={onOpenChange} title={`${teamName ?? ''}: ${t(roster ? `teamMembership.${roster}` : 'teamMembership.manage')}`} icon="UsersRound">{open && <TeamMemberManagement key={`${teamId}:${userId}`} teamId={teamId} userId={userId} roster={roster} />}</ResponsiveSheet>;
 }
 
