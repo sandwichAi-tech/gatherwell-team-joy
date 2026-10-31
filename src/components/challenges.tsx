@@ -12,7 +12,7 @@ import { useServerFn } from '@tanstack/react-start';
 import { usePaymentGate } from '@/components/plan-page';
 import { startChallengeCheckout } from '@/lib/billing.functions';
 import { formatMoney } from '@/lib/billing';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -42,7 +42,7 @@ function useChallenges() {
   const teamId = workspace?.teamId ?? '';
   const { data: ancestors = [] } = useQuery({ ...ancestorsQuery(teamId), enabled: !!teamId });
   const { data = [], isLoading } = useQuery(challengesQuery(userId, ancestors));
-  return { userId, workspace, teamId, leader: workspace?.role === 'leader', list: data, isLoading: isLoading || !ancestors.length };
+  return { userId, workspace, teamId, leader: workspace?.role === 'leader', list: data, isLoading: isLoading && !!teamId };
 }
 
 const fmtDate = (iso: string, lang: string) => new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(`${iso}T12:00:00Z`));
@@ -117,9 +117,11 @@ function Finisher({ c, days }: { c: Challenge; days: number }) {
 function CheckInSheet({ open, onClose, c, date }: { open: boolean; onClose: () => void; c: Challenge; date: string }) {
   const { t } = useTranslation(); const qc = useQueryClient(); const { userId } = useGatherwell();
   const [note, setNote] = useState(''); const [file, setFile] = useState<File | null>(null); const [busy, setBusy] = useState(false);
+  const lock = useRef(false);
   useEffect(() => { if (open) { setNote(''); setFile(null); } }, [open]);
   const submit = async () => {
-    if (busy) return;
+    if (lock.current) return;
+    lock.current = true;
     setBusy(true);
     try {
       let photo: string | null = null;
@@ -131,9 +133,9 @@ function CheckInSheet({ open, onClose, c, date }: { open: boolean; onClose: () =
       await Promise.all([qc.invalidateQueries({ queryKey: ['challenge-checkins', userId, c.id] }), qc.invalidateQueries({ queryKey: ['challenge-board', c.id] }), qc.invalidateQueries({ queryKey: ['challenge-progress', c.id] }), qc.invalidateQueries({ queryKey: ['challenge-stats', c.id] })]);
       onClose();
     } catch (e) { toast.error(t(rpcErrorKey(e))); }
-    setBusy(false);
+    lock.current = false; setBusy(false);
   };
-  return <ResponsiveSheet open={open} onOpenChange={o => !o && onClose()} title={t('challenges.checkInFor', { date: date === localDate() ? t('challenges.today') : t('challenges.yesterday') })}>
+  return <ResponsiveSheet open={open} onOpenChange={o => !o && !busy && onClose()} title={t('challenges.checkInFor', { date: date === localDate(new Date(), c.timezone ?? 'UTC') ? t('challenges.today') : t('challenges.yesterday') })}>
     <div className="edit-form">
       <div className="form-field"><label className="field-label" htmlFor="ci-note">{t('challenges.noteOptional')}</label><Textarea id="ci-note" rows={3} maxLength={280} className="field-textarea" value={note} onChange={e => setNote(e.target.value)} /></div>
       <div className="form-field"><span className="field-label">{t('challenges.photoOptional')}</span>
@@ -196,7 +198,7 @@ export function ChallengePage({ id }: { id: string }) {
     if (error) throw error;
     return data;
   } });
-  const { data: joinedRow, refetch: refetchJoin, isPending: joinPending, isError: joinError } = useQuery({ queryKey: ['challenge-joined', id, userId], refetchInterval: 15000, queryFn: async () => { const r = await supabase.from('challenge_members').select('challenge_id,extras').eq('challenge_id', id).eq('user_id', userId).maybeSingle(); if (r.error) throw r.error; return r.data; } });
+  const { data: joinedRow, refetch: refetchJoin, isPending: joinPending, isError: joinError } = useQuery({ queryKey: ['challenge-joined', id, userId], staleTime: 0, refetchOnWindowFocus: 'always', refetchInterval: 15000, queryFn: async () => { const r = await supabase.from('challenge_members').select('challenge_id,extras').eq('challenge_id', id).eq('user_id', userId).maybeSingle(); if (r.error) throw r.error; return r.data; } });
   const { data: eligible = false, isPending: eligibilityPending } = useQuery({ queryKey: ['challenge-eligible', id, userId], refetchInterval: 15000, queryFn: async () => { const r = await supabase.rpc('challenge_can_enroll', { _c: id }); if (r.error) throw r.error; return r.data; } });
   const { data: mine = [], isPending: progressDatesPending, isError: progressDatesError, refetch: refetchProgressDates } = useQuery({ ...myCheckinsQuery(userId, id), enabled: !!joinedRow });
   const { data: savedProgress, isPending: progressPending, isError: progressError, refetch: refetchProgress } = useQuery({ queryKey: ['challenge-progress', id, userId], enabled: !!joinedRow, refetchInterval: 15000, queryFn: async () => { const r = await supabase.rpc('my_challenge_progress', { _c: id }); if (r.error) throw r.error; return r.data as { total: number; current: number; best: number }; } });
@@ -206,6 +208,8 @@ export function ChallengePage({ id }: { id: string }) {
   const [sheetDate, setSheetDate] = useState<string | null>(null); const [editing, setEditing] = useState<Partial<Challenge> | null>(null); const [busy, setBusy] = useState(false);
   const [welcomeGone, setWelcomeGone] = useState(false);
   const [selections, setSelections] = useState<Record<string, number>>({});
+  const joinLock = useRef(false);
+  useEffect(() => { setSelections({}); setWelcomeGone(false); setSheetDate(null); setEditing(null); }, [id, userId]);
   const imagesFn = useServerFn(challengeAddonImages);
   const { data: extras = [], isPending: extrasPending, isError: extrasError, refetch: refetchExtras } = useQuery({ queryKey: ['challenge-extras', id, userId], enabled: !!c, queryFn: () => imagesFn({ data: { id } }) });
   const { data: counts = [], isPending: countsPending } = useQuery({ queryKey: ['challenge-counts', id, userId], refetchInterval: 15000, queryFn: async () => { const r = await supabase.rpc('challenge_counts', { _ids: [id] }); if (r.error) throw r.error; return r.data; } });
@@ -223,7 +227,8 @@ export function ChallengePage({ id }: { id: string }) {
   const meRow = board.find(r => r.user_id === userId); const top = board.slice(0, 10);
   const joined = !!joinedRow;
   const join = async () => {
-    if (busy || !eligible || extrasPending || extrasError || countsPending) return;
+    if (joinLock.current || busy || !eligible || extrasPending || extrasError || countsPending) return;
+    joinLock.current = true;
     setBusy(true);
     try {
       const { error } = await supabase.rpc('enroll_challenge', { _c: id, _extras: Object.entries(selections).filter(([, quantity]) => quantity > 0).map(([id, quantity]) => ({ id, quantity })) });
@@ -231,7 +236,7 @@ export function ChallengePage({ id }: { id: string }) {
       await Promise.all([refetchJoin(), qc.invalidateQueries({ queryKey: ['challenge-board', id] }), qc.invalidateQueries({ queryKey: ['challenge-counts', id] }), qc.invalidateQueries({ queryKey: ['challenges'] }), qc.invalidateQueries({ queryKey: ['my-challenges'] })]);
       toast.success(t('challenges.enrollmentSaved'));
     } catch (e) { toast.error(t(rpcErrorKey(e))); }
-    finally { setBusy(false); }
+    finally { joinLock.current = false; setBusy(false); }
   };
   const title = titleOf(c, lang); const prompt = pick(lang, c.daily_prompt_en, c.daily_prompt_es); const desc = pick(lang, c.description_en, c.description_es);
   const timeOf = (iso: string) => new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', { hour: 'numeric', minute: '2-digit' }).format(new Date(iso));
@@ -300,6 +305,6 @@ export function ChallengePage({ id }: { id: string }) {
     {!leader && <ChallengeOrderReceipts id={id} userId={userId} />}
 
     {sheetDate && <CheckInSheet open={!!sheetDate} onClose={() => setSheetDate(null)} c={c} date={sheetDate} />}
-    {leader && workspace && <ChallengeBuilder draft={editing} teamId={c.team_id || workspace.teamId} onClose={() => { setEditing(null); void qc.invalidateQueries({ queryKey: ['challenge', id] }); }} />}
+    {leader && workspace && <ChallengeBuilder key={`${id}:${userId}`} draft={editing} teamId={c.team_id || workspace.teamId} onClose={() => { setEditing(null); void qc.invalidateQueries({ queryKey: ['challenge', id] }); }} />}
   </>;
 }

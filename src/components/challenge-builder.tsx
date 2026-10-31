@@ -85,7 +85,7 @@ export function ChallengeBuilder({ draft, teamId, onClose }: { draft: Partial<Ch
     if (!draft) return;
     setStep('basics'); setStarter(null); setPaid(!!draft.is_paid); setPrice(draft.price_cents ? String(draft.price_cents / 100) : '');
     setAddons(Array.isArray(draft.addons) ? (draft.addons as unknown as ChallengeAddon[]).map(a => a.description && !a.description_en && !a.description_es ? { ...a, description: '', [i18n.resolvedLanguage === 'es' ? 'description_es' : 'description_en']: a.description } : a) : []);
-    if (!draft.id) { setF(empty); setActivities([]); setMessages(defaultMessages()); return; }
+    if (!draft.id) { setF(empty); setActivities([]); setMessages(defaultMessages()); setLoading(false); return; }
     setF({ ...empty, title_en: draft.title_en ?? '', title_es: draft.title_es ?? '', description_en: draft.description_en ?? '', description_es: draft.description_es ?? '', daily_prompt_en: draft.daily_prompt_en ?? '', daily_prompt_es: draft.daily_prompt_es ?? '', starts_on: draft.starts_on ?? empty.starts_on, ends_on: draft.ends_on ?? empty.ends_on, cover_url: draft.cover_url ?? null, cover_style: draft.cover_style ?? 0, timezone: draft.timezone ?? userTz(), model: modelOf(draft), goal_target: draft.goal_target ? String(draft.goal_target) : '', goal_unit: draft.goal_unit ?? '', frequency: draft.frequency === 'weekly' ? 'weekly' : 'daily', enrollment: draft.enrollment === 'invite' || draft.enrollment === 'public' ? draft.enrollment : 'open', capacity: draft.capacity ? String(draft.capacity) : '', leaderboard_on: draft.leaderboard_on ?? false });
     let active = true; setLoading(true);
     void Promise.all([supabase.from('challenge_activities').select('*').eq('challenge_id', draft.id).order('sort_order'), supabase.from('challenge_messages').select('*').eq('challenge_id', draft.id).order('sort_order')]).then(([a, m]) => {
@@ -142,7 +142,7 @@ export function ChallengeBuilder({ draft, teamId, onClose }: { draft: Partial<Ch
     if (found.length) { setErrors(found); requestAnimationFrame(() => errorFocus.current?.focus()); return; }
     saveLock.current = true; setBusy(true);
     try {
-      const row = { ...f, description_en: f.description_en || null, description_es: f.description_es || null, goal_target: f.model === 'goal' ? Number(f.goal_target) : null, goal_unit: f.model === 'goal' ? f.goal_unit || null : null, capacity: f.capacity ? Number(f.capacity) : null, status: publish ? 'published' : 'draft', is_paid: paid, price_cents: paid ? challengePrice(price) : null, currency: 'usd', addons };
+      const row = { ...f, description_en: f.description_en || null, description_es: f.description_es || null, goal_target: f.model === 'goal' ? Number(f.goal_target) : null, goal_unit: f.model === 'goal' ? f.goal_unit || null : null, capacity: f.capacity ? Number(f.capacity) : null, status: publish ? 'published' : 'draft', is_paid: paid, price_cents: paid ? challengePrice(price) : null, currency: draft?.currency || 'usd', addons };
       // The generated RPC type omits PostgreSQL's nullable UUID input; serialize the nullable draft ID explicitly.
       const { error } = await supabase.rpc('save_challenge_request', JSON.parse(JSON.stringify({ _id: draft?.id ?? null, _request: requestId.current, _team: teamId, _p: row, _activities: activities.map(({ id, ...a }) => a), _messages: messages.map(({ id, ...m }) => m) })));
       if (error) throw error;
@@ -185,7 +185,7 @@ export function ChallengeBuilder({ draft, teamId, onClose }: { draft: Partial<Ch
         <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
           <GatheringCover path={f.cover_url} style={f.cover_style} title={f.title_en || f.title_es || 'C'} className="cover-preview" />
           <div className="cover-styles">{COVER_STYLES.map((bg, i) => <button key={i} type="button" className={`cover-swatch ${!f.cover_url && f.cover_style === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} aria-label={`${t('onboarding.cover')} ${i + 1}`} aria-pressed={!f.cover_url && f.cover_style === i} onClick={() => setF({ ...f, cover_url: null, cover_style: i })} />)}</div>
-          <label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={async r => { try { setF({ ...f, cover_url: await uploadMedia(userId, r.file, 'cover') }); } catch { toast.error(t('profile.saveError')); } }} /></label></div>
+          <label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" onCropped={async r => { setUploading(n => n + 1); try { const path = await uploadMedia(userId, r.file, 'cover'); setF(current => ({ ...current, cover_url: path })); } catch { toast.error(t('profile.saveError')); } finally { setUploading(n => Math.max(0, n - 1)); } }} /></label></div>
         {(sellingOn || paid) && <div className="form-field"><span className="field-label">{t('challenges.pricing')}</span><div className="segmented full" role="group" aria-label={t('challenges.pricing')}>{[false, true].map(p => <Button key={String(p)} variant="ghost" aria-pressed={paid === p} className={paid === p ? 'selected' : ''} onClick={() => setPaid(p)}>{t(p ? 'challenges.paidChoice' : 'challenges.free')}</Button>)}</div></div>}
         {paid && <><div className="choice-pair"><div className="form-field"><label className="field-label" htmlFor="chb-price">{t('billing.price')}</label><Input id="chb-price" inputMode="decimal" className="field-input" value={price} onChange={e => setPrice(e.target.value)} /></div><div className="form-field"><label className="field-label" htmlFor="chb-currency">{t('challenges.currency')}</label><select id="chb-currency" className="field-input" value="usd" disabled><option value="usd">USD</option></select></div></div><p className="not-connected-note" role="note">{t('challenges.checkoutBlocked')} {!canSell && t('billing.priceNeedsPayouts')}</p></>}
         <h3>{t('addonImages.title')}</h3>
@@ -248,12 +248,12 @@ export function ChallengeBuilder({ draft, teamId, onClose }: { draft: Partial<Ch
             </select></div>
           <div className="form-field"><span className="field-label">{t('challenges.builder.file')}</span>
             <label className="file-button"><Upload />{a.file_path ? t('offers.replaceFile') : t('offers.uploadFile')}
-              <input type="file" hidden onChange={async e => { const x = e.target.files?.[0]; if (!x) return; try { patchAct(i, { file_path: await uploadLearnFile(teamId, x, () => {}) }); } catch { toast.error(t('profile.saveError')); } }} /></label>
+              <input type="file" hidden disabled={uploading > 0} onChange={async e => { const x = e.target.files?.[0]; if (!x) return; setUploading(n => n + 1); try { patchAct(i, { file_path: await uploadLearnFile(teamId, x, () => {}) }); } catch { toast.error(t('profile.saveError')); } finally { setUploading(n => Math.max(0, n - 1)); } }} /></label>
             {a.file_path && <small className="muted-small"><Check className="inline-icon" />{t('offers.fileAttached')}</small>}</div>
           <div className="builder-activity-actions">
-            <Button variant="ghost" size="icon" disabled={i === 0} aria-label={t('templates.moveUp')} onClick={() => moveAct(i, -1)}><ArrowUp /></Button>
-            <Button variant="ghost" size="icon" disabled={i === activities.length - 1} aria-label={t('templates.moveDown')} onClick={() => moveAct(i, 1)}><ArrowDown /></Button>
-            <Button variant="ghost" size="icon" aria-label={t('challenges.delete')} onClick={() => void removeAct(i)}><Trash2 /></Button>
+            <Button variant="ghost" size="icon" disabled={i === 0 || uploading > 0} aria-label={t('templates.moveUp')} onClick={() => moveAct(i, -1)}><ArrowUp /></Button>
+            <Button variant="ghost" size="icon" disabled={i === activities.length - 1 || uploading > 0} aria-label={t('templates.moveDown')} onClick={() => moveAct(i, 1)}><ArrowDown /></Button>
+            <Button variant="ghost" size="icon" disabled={uploading > 0} aria-label={t('challenges.delete')} onClick={() => void removeAct(i)}><Trash2 /></Button>
           </div>
         </fieldset>)}
         <Button variant="secondary" disabled={activities.length >= 30} onClick={() => setActivities(a => [...a, emptyActivity(a.length)])}><Plus />{t('challenges.builder.addActivity')}</Button>
