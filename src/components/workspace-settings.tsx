@@ -16,7 +16,7 @@ import { initialsOf } from '@/lib/account';
 import { rememberNext } from '@/lib/return-to';
 import { announceTeamChange } from '@/lib/team-query-boundary';
 
-export const WORKSPACE_ROLES = ['host', 'content_editor', 'checkin', 'moderator', 'analyst', 'member'] as const;
+export const WORKSPACE_ROLES = ['admin', 'host', 'content_editor', 'checkin', 'moderator', 'analyst', 'member'] as const;
 export type WorkspaceRole = (typeof WORKSPACE_ROLES)[number];
 
 type Member = { user_id: string; full_name: string | null; workspace_role: string; suspended_at: string | null; is_owner: boolean };
@@ -188,7 +188,7 @@ export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string
         {!m.is_owner && m.user_id !== userId && <div className="ws-member-actions">
           <select className="field-input ws-role-select" aria-label={t('workspace.changeRole')} value={m.workspace_role} disabled={busy}
             onChange={e => changeRole(m, e.target.value as WorkspaceRole)}>
-            {WORKSPACE_ROLES.map(r => <option key={r} value={r}>{t(`workspace.role.${r}`)}</option>)}
+            {WORKSPACE_ROLES.filter(r => r !== 'admin').map(r => <option key={r} value={r}>{t(`workspace.role.${r}`)}</option>)}
           </select>
           <Button variant="ghost" size="icon" aria-label={m.suspended_at ? t('workspace.reactivate') : t('workspace.suspend')} onClick={() => toggleSuspend(m)}><GwIcon name={m.suspended_at ? 'Play' : 'Pause'} /></Button>
           <Button variant="ghost" size="icon" aria-label={t('workspace.transfer')} onClick={() => void transfer(m)}><GwIcon name="Crown" /></Button>
@@ -216,7 +216,7 @@ export function WorkspaceSettings({ teamId, userId, teamName }: { teamId: string
             <div className="field"><Label htmlFor="ws-invite-email">{t('follow.email')}</Label><Input id="ws-invite-email" type="email" required autoComplete="off" inputMode="email" value={inviteEmail} onChange={e => setInviteEmail(e.target.value)} /></div>
             <div className="field"><Label htmlFor="ws-invite-role">{t('workspace.roleLabel')}</Label>
               <select id="ws-invite-role" className="field-input" value={inviteRole} onChange={e => setInviteRole(e.target.value as WorkspaceRole)}>
-                {WORKSPACE_ROLES.map(r => <option key={r} value={r}>{t(`workspace.role.${r}`)}</option>)}
+                {WORKSPACE_ROLES.filter(r => r !== 'admin').map(r => <option key={r} value={r}>{t(`workspace.role.${r}`)}</option>)}
               </select></div>
           </form>}
       </ResponsiveSheet>
