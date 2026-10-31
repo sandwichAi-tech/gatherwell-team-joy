@@ -44,7 +44,7 @@ it('reproduces question 2 score toggles without changing either question labels'
   for (let n = 0; n < 6; n++) fireEvent.click(q2.getByRole('switch'));
   expect(q2.getByDisplayValue('ZZ-TEST changed second question')).toBeVisible();
   expect(screen.getByDisplayValue('First 1')).toBeVisible();
-  fireEvent.click(screen.getByRole('button', { name: i18n.t('resources.item.saveDraft') }));
+  fireEvent.click(screen.getByRole('button', { name: i18n.t('gathering.saveDraft') }));
   await waitFor(() => expect(state.config.questions[1].options[0].label).toBe('ZZ-TEST changed second question'));
   expect(state.config.questions[0].options[0].label).toBe('First 1');
 });
