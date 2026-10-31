@@ -1,0 +1,35 @@
+-- Actual functions on minimal dependencies; never invoke on shared preview/production.
+BEGIN;
+DO $$ BEGIN IF current_setting('app.disposable_database',true) IS DISTINCT FROM 'YES' THEN RAISE EXCEPTION 'disposable_database_required'; END IF; END $$;
+INSERT INTO challenges(id,team_id,created_by,status,title_en,title_es,starts_on,ends_on,enrollment,capacity) VALUES('72000000-0000-0000-0000-000000000001','72000000-0000-0000-0000-000000000002','72000000-0000-0000-0000-000000000003','published','ZZ-TEST Public','ZZ-TEST Publico',current_date-1,current_date+10,'public',2);
+SELECT set_config('request.jwt.claim.sub','72000000-0000-0000-0000-000000000004',true);
+DO $$ DECLARE c uuid:='72000000-0000-0000-0000-000000000001'; u uuid:=auth.uid(); result jsonb; BEGIN
+ IF NOT challenge_can_enroll(c) THEN RAISE EXCEPTION 'public_customer_ineligible'; END IF;
+ result:=enroll_challenge(c,'[]'); IF result->>'enrolled'<>'true' THEN RAISE EXCEPTION 'free_enrollment_failed'; END IF;
+ IF NOT challenge_member_active(c,u) THEN RAISE EXCEPTION 'public_enrollment_inactive_without_team'; END IF;
+ IF jsonb_array_length(my_challenge_list())<>1 THEN RAISE EXCEPTION 'missing_from_me'; END IF;
+ IF enroll_challenge(c,'[]')->>'already'<>'true' THEN RAISE EXCEPTION 'duplicate_not_idempotent'; END IF;
+ PERFORM challenge_check_in(c,current_date,'UTC','ZZ-TEST note',NULL); PERFORM challenge_check_in(c,current_date,'UTC','ZZ-TEST note',NULL);
+ IF (SELECT count(*) FROM challenge_checkins WHERE challenge_id=c AND user_id=u)<>1 THEN RAISE EXCEPTION 'duplicate_checkin'; END IF;
+ UPDATE challenges SET frequency='weekly' WHERE id=c;
+ IF (now() AT TIME ZONE 'UTC')::time < time '12:00' THEN PERFORM challenge_check_in(c,current_date-1,'UTC','ZZ-TEST note',NULL); ELSE PERFORM challenge_check_in(c,current_date,'UTC','ZZ-TEST note',NULL); END IF;
+ IF (SELECT count(*) FROM challenge_checkins WHERE challenge_id=c AND user_id=u)<>1 THEN RAISE EXCEPTION 'weekly_duplicate'; END IF;
+ INSERT INTO user_suspensions(user_id) VALUES(u); IF challenge_can_enroll(c) OR challenge_member_active(c,u) THEN RAISE EXCEPTION 'suspended_access'; END IF;
+ DELETE FROM user_suspensions WHERE user_id=u;
+ UPDATE challenges SET enrollment='invite' WHERE id=c;
+ IF challenge_member_active(c,u) THEN RAISE EXCEPTION 'invite_access_without_direct_team'; END IF;
+ INSERT INTO team_members(team_id,user_id) VALUES('72000000-0000-0000-0000-000000000002',u);
+ INSERT INTO challenge_invites(challenge_id,user_id) VALUES(c,u); IF NOT challenge_member_active(c,u) THEN RAISE EXCEPTION 'valid_invite_denied'; END IF;
+ UPDATE challenge_invites SET revoked_at=now() WHERE challenge_id=c AND user_id=u; IF challenge_member_active(c,u) THEN RAISE EXCEPTION 'revoked_invite_access'; END IF;
+ UPDATE challenges SET enrollment='public',status='draft' WHERE id=c; IF challenge_can_enroll(c) OR challenge_member_active(c,u) THEN RAISE EXCEPTION 'draft_leak'; END IF;
+ UPDATE challenges SET status='published',is_paid=true WHERE id=c; IF challenge_member_active(c,u) THEN RAISE EXCEPTION 'free_record_unlocks_paid'; END IF;
+ UPDATE challenges SET is_paid=false WHERE id=c;
+ PERFORM leave_challenge(c);
+ IF (SELECT count(*) FROM challenge_checkins WHERE challenge_id=c AND user_id=u)<>1 THEN RAISE EXCEPTION 'leave_erased_progress'; END IF;
+ BEGIN DELETE FROM challenge_members WHERE challenge_id=c AND user_id=u; RAISE EXCEPTION 'membership_history_deleted'; EXCEPTION WHEN OTHERS THEN IF SQLERRM<>'use_leave_challenge' THEN RAISE; END IF; END;
+ BEGIN DELETE FROM challenges WHERE id=c; RAISE EXCEPTION 'challenge_history_deleted'; EXCEPTION WHEN OTHERS THEN IF SQLERRM<>'challenge_history_requires_archive' THEN RAISE; END IF; END;
+ IF jsonb_array_length(my_challenge_list())<>0 THEN RAISE EXCEPTION 'revoked_me_leak'; END IF;
+ BEGIN PERFORM enroll_challenge(c,'[]'); RAISE EXCEPTION 'silently_reenrolled'; EXCEPTION WHEN OTHERS THEN IF SQLERRM<>'access_revoked' THEN RAISE; END IF; END;
+ PERFORM set_config('request.jwt.claim.sub','',true); IF challenge_can_enroll(c) THEN RAISE EXCEPTION 'anon_enrollment'; END IF;
+END $$;
+ROLLBACK;

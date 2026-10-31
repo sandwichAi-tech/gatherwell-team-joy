@@ -12,7 +12,7 @@ import { useServerFn } from '@tanstack/react-start';
 import { usePaymentGate } from '@/components/plan-page';
 import { startChallengeCheckout } from '@/lib/billing.functions';
 import { formatMoney } from '@/lib/billing';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -42,7 +42,7 @@ function useChallenges() {
   const teamId = workspace?.teamId ?? '';
   const { data: ancestors = [] } = useQuery({ ...ancestorsQuery(teamId), enabled: !!teamId });
   const { data = [], isLoading } = useQuery(challengesQuery(userId, ancestors));
-  return { userId, workspace, teamId, leader: workspace?.role === 'leader', list: data, isLoading: isLoading || !ancestors.length };
+  return { userId, workspace, teamId, leader: workspace?.role === 'leader', list: data, isLoading: isLoading && !!teamId };
 }
 
 const fmtDate = (iso: string, lang: string) => new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(`${iso}T12:00:00Z`));
@@ -54,7 +54,8 @@ export function ActiveChallengeCard() {
   const active = list.filter(c => phaseOf(c) === 'active').sort((a, b) => Number(b.joined) - Number(a.joined))[0];
   const { data: mine = [] } = useQuery({ ...myCheckinsQuery(userId, active?.id ?? ''), enabled: !!active?.joined });
   if (!active) return null;
-  const s = streaksOf(mine.map(m => m.checkin_date)); const doneToday = mine.some(m => m.checkin_date === localDate());
+  const today = localDate(new Date(), active?.timezone ?? 'UTC');
+  const s = streaksOf(mine.map(m => m.checkin_date), today); const doneToday = active ? checkedInPeriod(mine.map(m => m.checkin_date), today, active.starts_on, active.frequency) : false;
   return <section className="panel challenge-active">
     <GatheringCover path={active.cover_url} style={active.cover_style} title={titleOf(active, lang)} className="challenge-thumb" />
     <div className="challenge-active-body"><span className="eyebrow">{t('challenges.activeNow')}</span><h2>{titleOf(active, lang)}</h2>
@@ -75,14 +76,14 @@ function ChallengeRow({ c }: { c: ChallengeItem }) {
 export function ChallengesSection({ startCreate = false }: { startCreate?: boolean }) {
   const { t } = useTranslation(); const { openDetail } = useGatherwell();
   const { list, leader, teamId, isLoading } = useChallenges();
-  const [tab, setTab] = useState<Phase | 'draft'>('active'); const [editing, setEditing] = useState<Partial<Challenge> | null>(null);
+  const [tab, setTab] = useState<Phase | 'draft' | 'archived'>('active'); const [editing, setEditing] = useState<Partial<Challenge> | null>(null);
   useEffect(() => { if (startCreate && leader) setEditing({}); }, [startCreate, leader]);
-  const groups = useMemo(() => ({ draft: list.filter(c => c.status === 'draft'), active: list.filter(c => c.status === 'published' && phaseOf(c) === 'active'), upcoming: list.filter(c => c.status === 'published' && phaseOf(c) === 'upcoming').reverse(), past: list.filter(c => c.status === 'published' && phaseOf(c) === 'past') }), [list]);
+  const groups = useMemo(() => ({ archived: list.filter(c => c.status === 'archived'), draft: list.filter(c => c.status === 'draft'), active: list.filter(c => c.status === 'published' && phaseOf(c) === 'active'), upcoming: list.filter(c => c.status === 'published' && phaseOf(c) === 'upcoming').reverse(), past: list.filter(c => c.status === 'published' && phaseOf(c) === 'past') }), [list]);
   if (isLoading) return <ListSkeleton />;
   return <section className="panel" id="challenges">
     <div className="section-heading"><h2>{t('challenges.title')}</h2>{leader ? <Button onClick={() => setEditing({})}><Plus />{t('challenges.new')}</Button> : null}</div>
     {list.length ? <>
-      <div className="segmented-tabs" role="tablist">{(['active', 'upcoming', 'past', ...(leader ? ['draft' as const] : [])] as const).map(k => <Button variant="ghost" key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? 'is-active' : ''} onClick={() => setTab(k)}>{t(k === 'draft' ? 'templates.draft' : `challenges.phase.${k}`)} <span className="tab-count">{groups[k].length}</span></Button>)}</div>
+      <div className="segmented-tabs" role="tablist">{(['active', 'upcoming', 'past', ...(leader ? ['draft' as const, 'archived' as const] : [])] as const).map(k => <Button variant="ghost" key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? 'is-active' : ''} onClick={() => setTab(k)}>{t(k === 'draft' ? 'templates.draft' : k === 'archived' ? 'challenges.archived' : `challenges.phase.${k}`)} <span className="tab-count">{groups[k].length}</span></Button>)}</div>
       {groups[tab].length ? <div className="challenge-list">{groups[tab].map(c => <ChallengeRow key={c.id} c={c} />)}</div> : <p className="auth-subtitle">{t(tab === 'draft' ? 'challenges.noDrafts' : `challenges.none.${tab}`)}</p>}
     </> : <p className="auth-subtitle">{t('challenges.noneYet')}</p>}
     {leader && <ChallengeBuilder draft={editing} teamId={teamId} onClose={() => setEditing(null)} />}
@@ -117,9 +118,11 @@ function Finisher({ c, days }: { c: Challenge; days: number }) {
 function CheckInSheet({ open, onClose, c, date }: { open: boolean; onClose: () => void; c: Challenge; date: string }) {
   const { t } = useTranslation(); const qc = useQueryClient(); const { userId } = useGatherwell();
   const [note, setNote] = useState(''); const [file, setFile] = useState<File | null>(null); const [busy, setBusy] = useState(false);
+  const lock = useRef(false);
   useEffect(() => { if (open) { setNote(''); setFile(null); } }, [open]);
   const submit = async () => {
-    if (busy) return;
+    if (lock.current) return;
+    lock.current = true;
     setBusy(true);
     try {
       let photo: string | null = null;
@@ -131,9 +134,9 @@ function CheckInSheet({ open, onClose, c, date }: { open: boolean; onClose: () =
       await Promise.all([qc.invalidateQueries({ queryKey: ['challenge-checkins', userId, c.id] }), qc.invalidateQueries({ queryKey: ['challenge-board', c.id] }), qc.invalidateQueries({ queryKey: ['challenge-progress', c.id] }), qc.invalidateQueries({ queryKey: ['challenge-stats', c.id] })]);
       onClose();
     } catch (e) { toast.error(t(rpcErrorKey(e))); }
-    setBusy(false);
+    lock.current = false; setBusy(false);
   };
-  return <ResponsiveSheet open={open} onOpenChange={o => !o && onClose()} title={t('challenges.checkInFor', { date: date === localDate() ? t('challenges.today') : t('challenges.yesterday') })}>
+  return <ResponsiveSheet open={open} onOpenChange={o => !o && !busy && onClose()} title={t('challenges.checkInFor', { date: date === localDate(new Date(), c.timezone ?? 'UTC') ? t('challenges.today') : t('challenges.yesterday') })}>
     <div className="edit-form">
       <div className="form-field"><label className="field-label" htmlFor="ci-note">{t('challenges.noteOptional')}</label><Textarea id="ci-note" rows={3} maxLength={280} className="field-textarea" value={note} onChange={e => setNote(e.target.value)} /></div>
       <div className="form-field"><span className="field-label">{t('challenges.photoOptional')}</span>
@@ -196,7 +199,7 @@ export function ChallengePage({ id }: { id: string }) {
     if (error) throw error;
     return data;
   } });
-  const { data: joinedRow, refetch: refetchJoin, isPending: joinPending, isError: joinError } = useQuery({ queryKey: ['challenge-joined', id, userId], refetchInterval: 15000, queryFn: async () => { const r = await supabase.from('challenge_members').select('challenge_id,extras').eq('challenge_id', id).eq('user_id', userId).maybeSingle(); if (r.error) throw r.error; return r.data; } });
+  const { data: joinedRow, refetch: refetchJoin, isPending: joinPending, isError: joinError } = useQuery({ queryKey: ['challenge-joined', id, userId], staleTime: 0, refetchOnWindowFocus: 'always', refetchInterval: 15000, queryFn: async () => { const r = await supabase.from('challenge_members').select('challenge_id,extras').eq('challenge_id', id).eq('user_id', userId).maybeSingle(); if (r.error) throw r.error; return r.data; } });
   const { data: eligible = false, isPending: eligibilityPending } = useQuery({ queryKey: ['challenge-eligible', id, userId], refetchInterval: 15000, queryFn: async () => { const r = await supabase.rpc('challenge_can_enroll', { _c: id }); if (r.error) throw r.error; return r.data; } });
   const { data: mine = [], isPending: progressDatesPending, isError: progressDatesError, refetch: refetchProgressDates } = useQuery({ ...myCheckinsQuery(userId, id), enabled: !!joinedRow });
   const { data: savedProgress, isPending: progressPending, isError: progressError, refetch: refetchProgress } = useQuery({ queryKey: ['challenge-progress', id, userId], enabled: !!joinedRow, refetchInterval: 15000, queryFn: async () => { const r = await supabase.rpc('my_challenge_progress', { _c: id }); if (r.error) throw r.error; return r.data as { total: number; current: number; best: number }; } });
@@ -206,6 +209,8 @@ export function ChallengePage({ id }: { id: string }) {
   const [sheetDate, setSheetDate] = useState<string | null>(null); const [editing, setEditing] = useState<Partial<Challenge> | null>(null); const [busy, setBusy] = useState(false);
   const [welcomeGone, setWelcomeGone] = useState(false);
   const [selections, setSelections] = useState<Record<string, number>>({});
+  const joinLock = useRef(false);
+  useEffect(() => { setSelections({}); setWelcomeGone(false); setSheetDate(null); setEditing(null); }, [id, userId]);
   const imagesFn = useServerFn(challengeAddonImages);
   const { data: extras = [], isPending: extrasPending, isError: extrasError, refetch: refetchExtras } = useQuery({ queryKey: ['challenge-extras', id, userId], enabled: !!c, queryFn: () => imagesFn({ data: { id } }) });
   const { data: counts = [], isPending: countsPending } = useQuery({ queryKey: ['challenge-counts', id, userId], refetchInterval: 15000, queryFn: async () => { const r = await supabase.rpc('challenge_counts', { _ids: [id] }); if (r.error) throw r.error; return r.data; } });
@@ -220,10 +225,23 @@ export function ChallengePage({ id }: { id: string }) {
   const donePeriod = checkedInPeriod([...dates], today, c.starts_on, c.frequency);
   const canYesterday = localHour(c.timezone ?? 'UTC') < 12 && yesterday >= c.starts_on && yesterday <= c.ends_on && !dates.has(yesterday);
   const leader = c.created_by === userId;
+  const copyOrDelete = async (remove: boolean) => {
+    if (busy || !(await confirmAction({ title: t(remove ? 'challenges.delete' : 'challenges.duplicate'), body: t(remove ? 'challenges.deleteConfirm' : 'challenges.duplicateConfirm'), destructive: remove }))) return;
+    setBusy(true); try { const r = remove ? await supabase.rpc('delete_challenge_draft', { _c: id }) : await supabase.rpc('duplicate_challenge', { _c: id }); if (r.error) throw r.error; await qc.invalidateQueries({ queryKey: ['challenges'] }); await qc.invalidateQueries({ queryKey: ['challenge', id] }); toast.success(t('templates.saved')); } catch (e) { toast.error(t(rpcErrorKey(e))); } finally { setBusy(false); }
+  };
+  const changeStatus = async (status: 'draft' | 'archived') => {
+    if (busy || !(await confirmAction({ title: t(status === 'archived' ? 'challenges.archive' : c.status === 'archived' ? 'challenges.restore' : 'challenges.unpublish'), body: t('challenges.lifecycleConfirm') }))) return;
+    setBusy(true); try { const r = await supabase.rpc('set_challenge_status', { _c: id, _status: status }); if (r.error) throw r.error; await qc.invalidateQueries({ queryKey: ['challenge'] }); await qc.invalidateQueries({ queryKey: ['challenges'] }); await qc.invalidateQueries({ queryKey: ['my-challenges'] }); } catch (e) { toast.error(t(rpcErrorKey(e))); } finally { setBusy(false); }
+  };
+  const leave = async () => {
+    if (busy || !(await confirmAction({ title: t('challenges.leave'), body: t('challenges.leaveConfirm') }))) return;
+    setBusy(true); try { const r = await supabase.rpc('leave_challenge', { _c: id }); if (r.error) throw r.error; await qc.cancelQueries({ predicate: query => query.queryKey.includes(id) }); qc.removeQueries({ predicate: query => query.queryKey.includes(id) }); await qc.invalidateQueries({ queryKey: ['my-challenges'] }); await qc.invalidateQueries({ queryKey: ['challenges'] }); } catch (e) { toast.error(t(rpcErrorKey(e))); } finally { setBusy(false); }
+  };
   const meRow = board.find(r => r.user_id === userId); const top = board.slice(0, 10);
   const joined = !!joinedRow;
   const join = async () => {
-    if (busy || !eligible || extrasPending || extrasError || countsPending) return;
+    if (joinLock.current || busy || !eligible || extrasPending || extrasError || countsPending) return;
+    joinLock.current = true;
     setBusy(true);
     try {
       const { error } = await supabase.rpc('enroll_challenge', { _c: id, _extras: Object.entries(selections).filter(([, quantity]) => quantity > 0).map(([id, quantity]) => ({ id, quantity })) });
@@ -231,7 +249,7 @@ export function ChallengePage({ id }: { id: string }) {
       await Promise.all([refetchJoin(), qc.invalidateQueries({ queryKey: ['challenge-board', id] }), qc.invalidateQueries({ queryKey: ['challenge-counts', id] }), qc.invalidateQueries({ queryKey: ['challenges'] }), qc.invalidateQueries({ queryKey: ['my-challenges'] })]);
       toast.success(t('challenges.enrollmentSaved'));
     } catch (e) { toast.error(t(rpcErrorKey(e))); }
-    finally { setBusy(false); }
+    finally { joinLock.current = false; setBusy(false); }
   };
   const title = titleOf(c, lang); const prompt = pick(lang, c.daily_prompt_en, c.daily_prompt_es); const desc = pick(lang, c.description_en, c.description_es);
   const timeOf = (iso: string) => new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', { hour: 'numeric', minute: '2-digit' }).format(new Date(iso));
@@ -263,8 +281,9 @@ export function ChallengePage({ id }: { id: string }) {
         {total > 0 && <p className="not-connected-note" role="note">{t('challenges.checkoutBlocked')}</p>}
         {!eligible && c.enrollment === 'invite' && <p role="status">{t('challenges.inviteRequired')}</p>}
       </>}
-      <div className="recipe-actions">{!joined && phase !== 'past' && c.status === 'published' && <Button disabled={busy || full || !eligible || total > 0 || extrasPending || extrasError || countsPending || eligibilityPending} onClick={() => void join()}>{busy ? t('onboarding.saving') : full ? t('challenges.full') : t('challenges.joinChallenge')}</Button>}{leader && <Button variant="secondary" onClick={() => setEditing(c)}><Pencil />{t('challenges.edit')}</Button>}</div></div>
+      <div className="recipe-actions">{!joined && phase !== 'past' && c.status === 'published' && <Button disabled={busy || full || !eligible || total > 0 || extrasPending || extrasError || countsPending || eligibilityPending} onClick={() => void join()}>{busy ? t('onboarding.saving') : full ? t('challenges.full') : t('challenges.joinChallenge')}</Button>}{leader && c.status !== 'archived' && <Button variant="secondary" onClick={() => setEditing(c)}><Pencil />{t('challenges.edit')}</Button>}{leader && <><Button disabled={busy} variant="secondary" onClick={() => void changeStatus(c.status === 'archived' ? 'draft' : 'archived')}>{t(c.status === 'archived' ? 'challenges.restore' : 'challenges.archive')}</Button>{c.status === 'published' && <Button disabled={busy} variant="secondary" onClick={() => void changeStatus('draft')}>{t('challenges.unpublish')}</Button>}</>}{joined && !leader && <Button disabled={busy} variant="secondary" onClick={() => void leave()}>{t('challenges.leave')}</Button>}</div></div>
       {joinedRow && Array.isArray(joinedRow.extras) && joinedRow.extras.length > 0 && <section aria-label={t('challenges.extrasConfirmed')}><h2>{t('challenges.extrasConfirmed')}</h2>{(joinedRow.extras as { id: string; name: string; quantity: number }[]).map(a => <p key={a.id}>{a.name} × {a.quantity}</p>)}</section>}
+      {leader && <div className="recipe-actions"><Button disabled={busy} variant="secondary" onClick={() => void copyOrDelete(false)}>{t('challenges.duplicate')}</Button>{c.status === 'draft' && <Button disabled={busy} variant="secondary" onClick={() => void copyOrDelete(true)}>{t('challenges.delete')}</Button>}</div>}
       {joined && phase !== 'active' && <p role="status">{t(phase === 'upcoming' ? 'challenges.notStarted' : 'challenges.ended')}</p>}
     {joined && welcome && (welcomeTitle || welcomeBody) && !welcomeGone && <section className="panel challenge-welcome" role="status">
       <div className="section-heading"><h2>{welcomeTitle || t('challenges.msg.welcome')}</h2><Button variant="ghost" size="icon" aria-label={t('common.close')} onClick={() => setWelcomeGone(true)}><X /></Button></div>
@@ -300,6 +319,6 @@ export function ChallengePage({ id }: { id: string }) {
     {!leader && <ChallengeOrderReceipts id={id} userId={userId} />}
 
     {sheetDate && <CheckInSheet open={!!sheetDate} onClose={() => setSheetDate(null)} c={c} date={sheetDate} />}
-    {leader && workspace && <ChallengeBuilder draft={editing} teamId={c.team_id || workspace.teamId} onClose={() => { setEditing(null); void qc.invalidateQueries({ queryKey: ['challenge', id] }); }} />}
+    {leader && workspace && <ChallengeBuilder key={`${id}:${userId}`} draft={editing} teamId={c.team_id || workspace.teamId} onClose={() => { setEditing(null); void qc.invalidateQueries({ queryKey: ['challenge', id] }); }} />}
   </>;
 }

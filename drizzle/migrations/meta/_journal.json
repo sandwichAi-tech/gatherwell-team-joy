@@ -1499,6 +1499,27 @@
       "when": 1793480326562,
       "tag": "0213_door_admission_receipts_and_consistent_totals",
       "breakpoints": true
+    },
+    {
+      "idx": 214,
+      "version": "7",
+      "when": 1793481122931,
+      "tag": "0214_challenge_public_membership_and_launch_boundaries",
+      "breakpoints": true
+    },
+    {
+      "idx": 215,
+      "version": "7",
+      "when": 1793481272045,
+      "tag": "0215_challenge_public_constraint_and_safe_archive",
+      "breakpoints": true
+    },
+    {
+      "idx": 216,
+      "version": "7",
+      "when": 1793481412370,
+      "tag": "0216_challenge_owner_copy_and_draft_removal",
+      "breakpoints": true
     }
   ]
 }

@@ -9159,6 +9159,7 @@ export type Database = {
         Returns: string
       }
       default_waiver: { Args: { _team: string }; Returns: undefined }
+      delete_challenge_draft: { Args: { _c: string }; Returns: undefined }
       delete_comment: { Args: { _id: string }; Returns: undefined }
       delete_my_account: { Args: never; Returns: undefined }
       delete_my_coach_review: { Args: { _host: string }; Returns: undefined }
@@ -9192,6 +9193,7 @@ export type Database = {
         Returns: Json
       }
       due_followup_events: { Args: never; Returns: string[] }
+      duplicate_challenge: { Args: { _c: string }; Returns: string }
       duplicate_message_template: {
         Args: { _id: string; _team: string }
         Returns: string
@@ -9515,6 +9517,7 @@ export type Database = {
       }
       learn_file_version: { Args: { _path: string }; Returns: string }
       learn_object_unlocked: { Args: { _name: string }; Returns: boolean }
+      leave_challenge: { Args: { _c: string }; Returns: undefined }
       leave_free_offer: { Args: { _offer: string }; Returns: undefined }
       leave_team: { Args: { _team: string }; Returns: undefined }
       lesson_is_unlocked: { Args: { _lesson: string }; Returns: boolean }
@@ -10569,6 +10572,10 @@ export type Database = {
       }
       set_challenge_invite: {
         Args: { _c: string; _on: boolean; _user: string }
+        Returns: undefined
+      }
+      set_challenge_status: {
+        Args: { _c: string; _status: string }
         Returns: undefined
       }
       set_communication_event: {

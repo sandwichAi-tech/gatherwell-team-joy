@@ -41,7 +41,7 @@ export const challengesQuery = (userId: string, teamIds: string[]) => queryOptio
 export type ChallengeItem = Challenge & { members: number; joined: boolean };
 
 export const myCheckinsQuery = (userId: string, challengeId: string) => queryOptions({
-  queryKey: ['challenge-checkins', userId, challengeId],
+  queryKey: ['challenge-checkins', userId, challengeId], staleTime: 0, refetchInterval: 15_000, refetchOnWindowFocus: 'always',
   queryFn: async () => {
     const { data, error } = await supabase.from('challenge_checkins').select('checkin_date, note, photo_path, created_at').eq('challenge_id', challengeId).eq('user_id', userId).order('checkin_date');
     if (error) throw error;
@@ -77,6 +77,7 @@ export async function challengePhotoUrls(paths: string[]) {
 export function rpcErrorKey(error: unknown) {
   const m = typeof error === 'object' && error && 'message' in error ? String((error as { message: unknown }).message) : '';
   if (m.includes('payouts_required')) return 'billing.payoutsRequired';
+  if (m.includes('challenge_history_requires_archive')) return 'challenges.historyRequiresArchive';
   for (const k of ['checkout_setup_required', 'access_revoked', 'challenge_full', 'addon_sold_out', 'note_required', 'invalid_price', 'invalid_rules', 'invalid_activities', 'invalid_messages', 'invalid_addons', 'not_joined', 'date_closed', 'out_of_range', 'invalid_message', 'not_allowed']) if (m.includes(k)) return `challenges.err.${k}`;
   return 'profile.saveError';
 }

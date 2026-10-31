@@ -1,5 +1,10 @@
 # Challenge commerce and course/assessment lifecycle closure
 
+## Challenges rows 72 / 110 / 111 / 112 / 113 / 117 — October 31
+- [x] Audit/reproduce public constraints/membership and access/commerce/history defects; repair guarded boundaries.
+- [x] Local actual-function and actual-builder EN/ES matrix, 983 tests and automatic compilation; evidence in docs/CHALLENGES-SPRINT-VERIFICATION.md.
+- [ ] Full authenticated/RLS/persisted lifecycle/private media/provider acceptance requires isolated complete app stack; public paid settlement remains parked. All six rows partial.
+
 ## Rows 107 / 98 — October 31 check-in and walk-ins
 - [x] Reproduce retry/confirmation/identity/count/timezone defects; fix guards/query/UI without bypassing consent/payment.
 - [x] Isolated actual-function/actual-sheet tests, EN/ES width matrix and evidence: docs/ROW-107-CHECKIN-VERIFICATION.md.
