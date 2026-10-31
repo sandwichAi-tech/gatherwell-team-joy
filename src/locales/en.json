@@ -8136,6 +8136,9 @@
     "both": "Number registered and spots left"
   },
   "teamMetrics": {
+    "previewTitle": "Sharing preview",
+    "previewNothing": "This team’s leader will see no event metrics.",
+    "stopNow": "Stop sharing now",
     "shareTitle": "Share with this team's leader",
     "shareHint": "Choose what only this team's leader can see about your events. Joining a team shares nothing. Change it anytime.",
     "metric": {

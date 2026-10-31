@@ -1,5 +1,10 @@
 # Challenge commerce and course/assessment lifecycle closure
 
+## Teams rows 95 / 102 / 103 — October 31
+- [ ] Fix caller-scoped saved team/query state, exact roster destinations, sharing preview/revocation and sole-owner insights.
+- [ ] Verify focused/full tests and isolated SQL/component/browser evidence; remove exact temporary fixtures.
+- [ ] Full isolated authenticated app/RLS acceptance and application of any pending SQL requires a confirmed disposable backend target; never use shared backend.
+
 ## Challenges rows 72 / 110 / 111 / 112 / 113 / 117 — October 31
 - [x] Audit/reproduce public constraints/membership and access/commerce/history defects; repair guarded boundaries.
 - [x] Local actual-function and actual-builder EN/ES matrix, 983 tests and automatic compilation; evidence in docs/CHALLENGES-SPRINT-VERIFICATION.md.
