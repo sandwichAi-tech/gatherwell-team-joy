@@ -9159,6 +9159,7 @@ export type Database = {
         Returns: string
       }
       default_waiver: { Args: { _team: string }; Returns: undefined }
+      delete_challenge_draft: { Args: { _c: string }; Returns: undefined }
       delete_comment: { Args: { _id: string }; Returns: undefined }
       delete_my_account: { Args: never; Returns: undefined }
       delete_my_coach_review: { Args: { _host: string }; Returns: undefined }
@@ -9192,6 +9193,7 @@ export type Database = {
         Returns: Json
       }
       due_followup_events: { Args: never; Returns: string[] }
+      duplicate_challenge: { Args: { _c: string }; Returns: string }
       duplicate_message_template: {
         Args: { _id: string; _team: string }
         Returns: string

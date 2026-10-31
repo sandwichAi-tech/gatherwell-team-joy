@@ -1513,6 +1513,13 @@
       "when": 1793481272045,
       "tag": "0215_challenge_public_constraint_and_safe_archive",
       "breakpoints": true
+    },
+    {
+      "idx": 216,
+      "version": "7",
+      "when": 1793481412370,
+      "tag": "0216_challenge_owner_copy_and_draft_removal",
+      "breakpoints": true
     }
   ]
 }
