@@ -26,6 +26,7 @@ export const beginChallengeOrder = createServerFn({ method: 'POST' }).middleware
     if (error || !c) return { error: 'not_allowed' };
     const extras = c.addons as unknown as PublicChallenge['addons'];
     const paid = c.is_paid || data.extras.some(s => (extras.find(a => a.id === s.id)?.price_cents ?? 0) > 0);
+    if (paid) { const flag = await context.supabase.rpc('flag_on', { _key: 'feature_selling' }); if (flag.error || !flag.data) return { error: 'checkout_setup_required' }; }
     if (paid && !process.env[data.environment === 'live' ? 'STRIPE_LIVE_API_KEY' : 'STRIPE_SANDBOX_API_KEY']) return { error: 'checkout_setup_required' };
     const r = await context.supabase.rpc('create_challenge_order', { _c: data.id, _request: data.request, _extras: data.extras, _environment: data.environment });
     if (r.error) return { error: r.error.message };

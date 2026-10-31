@@ -41,7 +41,7 @@ export const challengesQuery = (userId: string, teamIds: string[]) => queryOptio
 export type ChallengeItem = Challenge & { members: number; joined: boolean };
 
 export const myCheckinsQuery = (userId: string, challengeId: string) => queryOptions({
-  queryKey: ['challenge-checkins', userId, challengeId],
+  queryKey: ['challenge-checkins', userId, challengeId], staleTime: 0, refetchInterval: 15_000, refetchOnWindowFocus: 'always',
   queryFn: async () => {
     const { data, error } = await supabase.from('challenge_checkins').select('checkin_date, note, photo_path, created_at').eq('challenge_id', challengeId).eq('user_id', userId).order('checkin_date');
     if (error) throw error;
