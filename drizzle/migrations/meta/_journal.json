@@ -1506,6 +1506,13 @@
       "when": 1793481122931,
       "tag": "0214_challenge_public_membership_and_launch_boundaries",
       "breakpoints": true
+    },
+    {
+      "idx": 215,
+      "version": "7",
+      "when": 1793481272045,
+      "tag": "0215_challenge_public_constraint_and_safe_archive",
+      "breakpoints": true
     }
   ]
 }

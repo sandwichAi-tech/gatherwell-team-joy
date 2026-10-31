@@ -10572,6 +10572,10 @@ export type Database = {
         Args: { _c: string; _on: boolean; _user: string }
         Returns: undefined
       }
+      set_challenge_status: {
+        Args: { _c: string; _status: string }
+        Returns: undefined
+      }
       set_communication_event: {
         Args: { _event: string; _journey: string }
         Returns: undefined
