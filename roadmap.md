@@ -1,5 +1,9 @@
 # Challenge commerce and course/assessment lifecycle closure
 
+## Row 101 — October 31 personal Home isolation
+- [ ] Audit every Home consumer, reproduce access/cache defects in isolation, then fix authoritative boundaries.
+- [ ] Run isolated database/browser checks, focused/full tests and automatic compilation; document full-stack blockers and exact cleanup.
+
 ## Row 120 — October 31 Wellness Builder pressure test
 - [x] Reproduce question-2 editing and exact publication failure in isolated tests before fixes.
 - [x] Repair confirmed question/persistence/preview/entry-gate defects and participant SQL ambiguity; preserve launch flags and approved scope requirements.
