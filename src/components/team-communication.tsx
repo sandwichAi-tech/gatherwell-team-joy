@@ -24,6 +24,7 @@ export function TeamCommunication({ teamId, me, initialBody }: { teamId: string;
   const [surface, setSurface] = useState<'announcements' | 'chat' | null>(search.surface === 'chat' ? 'chat' : search.surface === 'announcements' ? 'announcements' : null);
   const [editor, setEditor] = useState<Announcement | 'new' | null>(null);
   const [title, setTitle] = useState(''); const [body, setBody] = useState(''); const [link, setLink] = useState(''); const [pinned, setPinned] = useState(false); const [busy, setBusy] = useState(false);
+  const [checking, setChecking] = useState(false);
   const key = channelKey(teamId, me);
   const state = useQuery({ queryKey: key, gcTime: 0, staleTime: 0, refetchInterval: 3_000, retry: false, queryFn: ({ signal }) => teamCallerQuery(me, signal, async () => {
     const { data, error } = await supabase.rpc('team_channel_state', { _team: teamId });
@@ -38,12 +39,13 @@ export function TeamCommunication({ teamId, me, initialBody }: { teamId: string;
   const refresh = () => { void qc.invalidateQueries({ queryKey: key }); void qc.invalidateQueries({ queryKey: ['notifications'] }); void qc.invalidateQueries({ queryKey: ['notifications-unread'] }); };
   useEffect(() => { if (search.surface === 'chat' || search.surface === 'announcements') setSurface(search.surface); }, [search.surface]);
   useEffect(() => { setEditor(null); setTitle(''); setBody(''); setLink(''); setPinned(false); setSurface(search.surface === 'chat' ? 'chat' : 'announcements'); }, [teamId, me]);
-  useEffect(() => listenTeamChanges(id => { if (id === teamId) { setEditor(null); void qc.invalidateQueries({ queryKey: key }); } }), [teamId, me, qc]);
+  useEffect(() => listenTeamChanges(id => { if (id === teamId) { setChecking(true); setEditor(null); void qc.invalidateQueries({ queryKey: key }).finally(() => setChecking(false)); } }), [teamId, me, qc]);
   useEffect(() => {
     const ch = supabase.channel(`team-channel-${teamId}-${crypto.randomUUID()}`);
     const check = () => {
       // Hide cached content until authoritative access has been rechecked.
-      void qc.invalidateQueries({ queryKey: key });
+      setChecking(true); setEditor(null);
+      void qc.invalidateQueries({ queryKey: key }).finally(() => setChecking(false));
       void qc.invalidateQueries({ queryKey: ['comments'] }); void qc.invalidateQueries({ queryKey: ['topics', teamId] });
       void qc.invalidateQueries({ queryKey: ['notifications'] });
     };
@@ -71,7 +73,7 @@ export function TeamCommunication({ teamId, me, initialBody }: { teamId: string;
   };
   if (state.isPending) return <ListSkeleton />;
   if (state.isError) return <RetryState retry={() => void state.refetch()} />;
-  if (state.isFetching) return <section role="status"><p>{t('teamCommunication.checking')}</p></section>;
+  if (checking) return <section role="status"><p>{t('teamCommunication.checking')}</p></section>;
   if (!state.data) return <section className="team-communication" role="status"><p>{t(state.isFetching ? 'teamCommunication.checking' : 'teamCommunication.noAccess')}</p></section>;
   const owner = state.data.owner;
   const active = list.data?.filter(a => !a.archived_at) ?? [];

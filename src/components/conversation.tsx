@@ -115,7 +115,7 @@ export function CommentThread({ teamId, eventId = null, topicId = null, me, titl
     const roots = items.filter(i => !i.parent_id).sort((a, b) => Number(b.pinned) - Number(a.pinned) || a.created_at.localeCompare(b.created_at));
     return { roots, byParent };
   }, [feed]);
-  if (isLoading || isFetching) return <div className="skeleton-list" aria-busy="true"><div className="skeleton-row" /><div className="skeleton-row" /></div>;
+  if (isLoading) return <div className="skeleton-list" aria-busy="true"><div className="skeleton-row" /><div className="skeleton-row" /></div>;
   if (isError) return <div role="alert"><p>{t('teamCommunication.saveError')}</p><Button variant="secondary" onClick={() => void refetch()}>{t('error.retry')}</Button></div>;
   if (!feed) return <p className="auth-subtitle">{t(eventId ? 'conversation.rsvpToJoin' : 'teamCommunication.noAccess')}</p>;
   return <div className="convo">
@@ -164,7 +164,6 @@ export function DiscussionsPanel({ teamId, isLeader, me }: { teamId: string; isL
   };
   const manage = async (args: Record<string, unknown>) => { const { error } = await db.rpc('manage_topic', { _id: open, _pinned: null, _delete: null, ...args }); if (error) { toast.error(t(errorKey(error))); return; } if (args['_delete']) close(); void qc.invalidateQueries({ queryKey: key }); };
   if (isError) return <div role="alert"><p>{t('teamCommunication.saveError')}</p><Button variant="secondary" onClick={() => void refetch()}>{t('error.retry')}</Button></div>;
-  if (isFetching) return <p role="status">{t('teamCommunication.checking')}</p>;
   return <section className="team-discussions" aria-labelledby="disc-title">
     <div className="section-heading"><h2 id="disc-title">{t('teamCommunication.chat')}</h2>{isLeader && <Button variant="secondary" onClick={() => setCreating(true)}><Plus />{t('conversation.newTopic')}</Button>}</div>
     {isLoading ? <div className="skeleton-list" aria-busy="true"><div className="skeleton-row" /></div> : topics.length === 0 ? <p className="auth-subtitle">{isLeader ? t('conversation.noTopicsLeader') : t('conversation.noTopics')}</p> :

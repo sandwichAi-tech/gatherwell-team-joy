@@ -38,9 +38,9 @@ describe('team-scoped communication actions', () => {
     const client = mount(); await screen.findByText('ZZ-TEST private team');
     let finish: ((value: unknown) => void) | undefined;
     mock.rpc.mockImplementation(name => name === 'team_channel_state' ? new Promise(resolve => { finish = resolve; }) : Promise.resolve({ data: null, error: null }));
-    const checking = client.invalidateQueries({ queryKey: ['team-channel', 'team-a', 'member'] });
+    fireEvent(window, new Event('focus'));
     await waitFor(() => expect(screen.queryByText('ZZ-TEST private team')).toBeNull());
-    finish?.({ data: null, error: null }); await checking;
+    finish?.({ data: null, error: null });
     await waitFor(() => expect(screen.queryByRole('switch')).toBeNull());
   });
   it('rejects a different signed-in account before reading private channel state', async () => {
