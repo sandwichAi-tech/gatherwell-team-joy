@@ -9,7 +9,7 @@ describe('authoritative personal Home boundary', () => {
   it('calls only the identity-free authoritative Home RPC, not a public catalog', async () => {
     const home = { mode: 'hosting', events: [{ id: 'own' }], resources: [], coaches: [], drafts: 1 };
     state.context.supabase.rpc.mockResolvedValue({ data: home, error: null });
-    expect(await getPersonalHome()).toEqual(home);
+    expect(await getPersonalHome()).toEqual({ ...home, caller_id: 'coach-a' });
     expect(state.context.supabase.rpc).toHaveBeenCalledExactlyOnceWith('personal_home');
   });
   it('does not fallback to public content on a denied relationship read', async () => {
