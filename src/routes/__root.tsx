@@ -23,6 +23,7 @@ import { ListSkeleton } from '@/components/launch-states';
 import { clearPendingInvite } from '@/lib/account';
 import { BrandLogo } from '@/components/brand-logo';
 import { clearIdentityCache, clearPersonalModeCache, listenModeChanges } from '@/lib/personal-cache';
+import { listenTeamChanges } from '@/lib/team-query-boundary';
 
 function NotFoundComponent() {
   const { t } = useTranslation();
@@ -157,7 +158,8 @@ function RootComponent() {
       } else if (event === 'USER_UPDATED') { void router.invalidate(); void queryClient.invalidateQueries(); }
     });
     const stopModes = listenModeChanges(userId => { if (identity === userId) void clearPersonalModeCache(queryClient, userId).then(() => { void router.invalidate(); }); });
-    return () => { stopModes(); i18n.off("languageChanged", applyLanguage); data.subscription.unsubscribe(); };
+    const stopTeams = listenTeamChanges(() => { if (identity) void clearPersonalModeCache(queryClient, identity).then(() => { void router.invalidate(); }); });
+    return () => { stopTeams(); stopModes(); i18n.off("languageChanged", applyLanguage); data.subscription.unsubscribe(); };
   }, [router, queryClient]);
 
   return (

@@ -39,7 +39,8 @@ async function profileNames(ids: (string | null)[]) {
   const unique = [...new Set(ids.filter((id): id is string => !!id))];
   const map = new Map<string, string | null>();
   if (!unique.length) return map;
-  const { data } = await supabase.from('profiles').select('id, full_name').in('id', unique);
+  const { data, error } = await supabase.from('profiles').select('id, full_name').in('id', unique);
+  if (error) throw error;
   (data ?? []).forEach(row => map.set(row.id, row.full_name));
   return map;
 }

@@ -8136,6 +8136,9 @@
     "both": "Personas registradas y lugares disponibles"
   },
   "teamMetrics": {
+    "previewTitle": "Vista previa de lo que compartes",
+    "previewNothing": "Quien lidera este equipo no verá métricas de tus eventos.",
+    "stopNow": "Dejar de compartir ahora",
     "shareTitle": "Compartir con quien lidera este equipo",
     "shareHint": "Elige lo que solo quien lidera este equipo puede ver de tus eventos. Unirte a un equipo no comparte nada. Puedes cambiarlo cuando quieras.",
     "metric": {

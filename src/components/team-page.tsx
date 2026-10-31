@@ -108,13 +108,13 @@ export function TeamPage() {
     if (target.isPending) return <ListSkeleton />;
     if (target.isError) return <p role="alert">{t('teamCommunication.saveError')}</p>;
     if (!target.data) return <p role="status">{t('teamCommunication.noAccess')}</p>;
-    return <PrivateTeamSpace key={requestedTeam} workspace={target.data} />;
+    return <PrivateTeamSpace key={`${userId}:${requestedTeam}`} workspace={target.data} />;
   }
   if (isLoading) return <ListSkeleton />;
   return <>
     <TeamSwitcher userId={userId} className="mobile-switcher" />
     <div className="page-heading"><div><span className="eyebrow">{t('team.eyebrow')}</span><h1>{t('team.title')}</h1></div></div>
-    {workspace ? <PrivateTeamSpace key={workspace.teamId} workspace={workspace} /> : <NoTeam />}
+    {workspace ? <PrivateTeamSpace key={`${userId}:${workspace.teamId}`} workspace={workspace} /> : <NoTeam />}
   </>;
 }
 
@@ -135,6 +135,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
   const { data: team } = useQuery(teamDetailQuery(teamId));
   const { data: tree = [] } = useQuery(teamTreeQuery(teamId));
   const [sheet, setSheet] = useState<Sheet>(null);
+  const roster = useRouterState({ select: state => state.location.search.roster });
   const panel = useRouterState({ select: state => state.location.search.panel });
   useEffect(() => { if (panel === 'members' || panel === 'invite' || (panel === 'edit' && isLeader)) setSheet(panel); }, [panel, isLeader]);
   const [waiverOpen, setWaiverOpen] = useState(false); const canHost = isLeader || workspace.role === 'host';
@@ -158,7 +159,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
       </div>
       <div className="team-header-body">
         <div><h2 className="team-name">{workspace.name}</h2>
-          <div className="team-leader"><span className="initial-avatar">{initialsOf(root?.leader_name)}</span><span>{root?.leader_name ?? t('roles.leader')}</span><span className="dot-sep" aria-hidden="true">·</span><span>{t('teamSpace.memberCount', { count: root?.member_count ?? 0 })}</span></div>
+          <div className="team-leader"><span className="initial-avatar">{initialsOf(root?.leader_name)}</span><span>{root?.leader_name ?? t('roles.leader')}</span><span className="dot-sep" aria-hidden="true">·</span>{isLeader ? <Button variant="link" onClick={() => setSheet('members')}>{t('teamSpace.members')}</Button> : <span>{t('teamSpace.memberCount', { count: root?.member_count ?? 0 })}</span>}</div>
           {team?.description && <p className="team-description">{team.description}</p>}
         </div>
         <div className="team-header-actions">
@@ -205,7 +206,7 @@ function TeamSpace({ workspace }: { workspace: TeamMembership }) {
 
     <InviteSheet open={sheet === 'invite'} onOpenChange={o => !o && setSheet(null)} workspace={workspace} joinCode={team?.join_code ?? workspace.joinCode} isLeader={isLeader} />
     {isLeader && team && <EditTeamSheet open={sheet === 'edit'} onOpenChange={o => !o && setSheet(null)} team={team} userId={userId} />}
-    {isLeader && <TeamMembershipSheet open={sheet === 'members'} onOpenChange={o => !o && setSheet(null)} teamId={teamId} userId={userId} />}
+    {isLeader && <TeamMembershipSheet teamName={workspace.name} roster={roster} open={sheet === 'members'} onOpenChange={o => !o && setSheet(null)} teamId={teamId} userId={userId} />}
 
     {isLeader && <ResponsiveSheet open={sheet === 'subteams'} onOpenChange={o => !o && setSheet(null)} title={t('teamSpace.subteams')}><SubTeamSettings teamId={teamId} allowHosts={!!team?.allow_host_subteams} /></ResponsiveSheet>}
   </>;

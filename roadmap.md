@@ -1,5 +1,10 @@
 # Challenge commerce and course/assessment lifecycle closure
 
+## Teams rows 95 / 102 / 103 — October 31
+- [x] Implement caller-scoped queries/saved-team access, exact roster destinations, preview/revoke and local cache cleanup. Authoritative SQL remains pending, not live.
+- [x] 23 focused / 990 full tests; local SQL and actual sharing-component EN/ES width checks, zero fixture readback and exact cleanup; docs/TEAMS-95-102-103-VERIFICATION.md.
+- [ ] Full isolated authenticated app/RLS acceptance and application of any pending SQL requires a confirmed disposable backend target; never use shared backend.
+
 ## Challenges rows 72 / 110 / 111 / 112 / 113 / 117 — October 31
 - [x] Audit/reproduce public constraints/membership and access/commerce/history defects; repair guarded boundaries.
 - [x] Local actual-function and actual-builder EN/ES matrix, 983 tests and automatic compilation; evidence in docs/CHALLENGES-SPRINT-VERIFICATION.md.
