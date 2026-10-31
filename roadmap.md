@@ -1,5 +1,10 @@
 # Challenge commerce and course/assessment lifecycle closure
 
+## Rows 107 / 98 — October 31 check-in and walk-ins
+- [ ] Reproduce door-operation, retry, roster/count and permission defects in isolation.
+- [ ] Fix confirmed authoritative/query/UI defects, preserve capacity/payment/waiver guards.
+- [ ] Focused/full tests, automatic compilation, isolated browser/database evidence, cleanup and remaining acceptance report.
+
 ## Row 101 — October 31 personal Home isolation
 - [x] Audit Home consumers; reproduce future-track/hidden-recipe/cache retention and fix authoritative boundaries.
 - [x] Isolated stand-in database and helper/browser matrix, focused/full tests, compilation and cleanup; docs/ROW-101-HOME-VERIFICATION.md.
