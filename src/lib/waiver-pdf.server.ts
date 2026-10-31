@@ -14,7 +14,7 @@ export async function validateWaiverPdf(bytes: Uint8Array, mime: string): Promis
         if (text.items.some(item => 'str' in item && item.str.trim().length > 0)) return true;
       }
       return false;
-    } finally { await pdf.destroy(); }
+    } finally { pdf.cleanup(); }
   })().catch(() => false);
   try { return await Promise.race([work, new Promise<boolean>(resolve => { timer = setTimeout(() => resolve(false), 15000); })]); }
   finally { if (timer) clearTimeout(timer); }
