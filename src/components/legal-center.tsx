@@ -5,6 +5,7 @@ import { CopyButton } from '@/components/copy-button';
 import { Button } from '@/components/ui/button';
 import type { LegalDoc } from '@/components/auth-frame';
 import { canonicalUrl } from '@/lib/seo';
+import { COMPANY } from '@/lib/company';
 import { LEGAL_CONTACTS, LEGAL_EFFECTIVE_DATE, LEGAL_GROUPS, LEGAL_VERSION, PUBLISHED_LEGAL_DOCS, legalPath, legalTitleKey, sectionId, type LegalCenterDoc } from '@/lib/legal-center';
 
 function useEffective() {

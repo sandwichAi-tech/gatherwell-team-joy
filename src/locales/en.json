@@ -8033,8 +8033,6 @@
     "intro": "The terms and policies that keep ZoheeWell safe, fair and clear.",
     "metaDesc": "ZoheeWell's terms, privacy policy and other policies in one place, with contacts for support, privacy, legal and copyright questions.",
     "company": "Company",
-    "companyLine": "ZoheeWell LLC · A Wyoming limited liability company",
-    "addressPending": "Mailing address coming soon.",
     "contacts": {
       "support": "Support",
       "privacy": "Privacy",
@@ -8076,7 +8074,9 @@
     "copyLink": "Copy link",
     "linkTo": "Link to {{section}}",
     "questions": "Questions?",
-    "back": "Back to Legal Center"
+    "back": "Back to Legal Center",
+    "formation": "A Wyoming limited liability company",
+    "mailingAddress": "Mailing address"
   },
   "comingSoon": {
     "title": "Coming soon",
@@ -8093,7 +8093,8 @@
   "company": {
     "blockTitle": "Company",
     "callUs": "Call us",
-    "email": "Email support"
+    "email": "Email support",
+    "formation": "A Wyoming limited liability company"
   },
   "embed": {
     "title": "Embed on your website",
