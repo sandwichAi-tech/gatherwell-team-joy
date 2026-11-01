@@ -11,7 +11,7 @@
 
 Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file covers engineering. Read supabase/AGENTS.md for that directory.
 
-## ZoheeWell architecture (internal names such as Gatherwell*/gathering are legacy identifiers)
+## ZoheeWell architecture (Gatherwell*/gathering = legacy names)
 - BrandLogo: original CDN SVGs/theme variants; BrandImage: photos; preserve logo colors, no photo grading.
 - Marketing GwIcon: duotone silhouettes/scoped contour reinforcement; preserve signed-in icon weights.
 - Keep homepage hosting paths, steps and tool inventory inside the existing landing page and reuse login intent/discovery routes; marketing copy never claims a provider or checkout is live before it is verified.
