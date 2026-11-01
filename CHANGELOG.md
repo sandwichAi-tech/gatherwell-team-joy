@@ -1,5 +1,8 @@
 # ZoheeWell Change Log
 
+## 2026-11-01 — Event form visibility layout
+- "Who can see it" choices now wrap without clipping and sit before More options in quick create; More options opens downward (with Fewer options to close). Values and visibility rules unchanged.
+
 ## 2026-11-01 — Row 126 follow-up: legacy invite links for existing customers
 - Onboarded people who don't manage the event and open an old /event/:id?k= link now go to the event signup page (/e/:id?k=) with the same invitation; hosts, co-hosts and leaders (can_manage_event) keep the management page. No token = no redirect and nothing revealed; the "not available" page now explains how to get a fresh invitation (EN/ES).
 - Onboarding that returns to an event signup drops a stale pending team code instead of auto-joining a team, and already-onboarded people return to the event instead of Home.
