@@ -118,5 +118,5 @@ SELECT expect_error($$SELECT approve_refund_request((SELECT id FROM refund_reque
 SELECT set_config('t.uid','00000000-0000-0000-0000-00000000000b',false);
 SELECT ok(approve_refund_request((SELECT id FROM refund_requests WHERE status='review'))='pending', 'owning host approves review -> pending');
 SELECT ok((registration_cancel_preview('zztestcode0000000003')->>'refund_status')='succeeded', 'booking view shows provider-confirmed refund');
-SELECT ok((registration_cancel_preview('zztestcode0000000006')->>'eligibility')='none', 'booking view shows past-cutoff policy');
+SELECT ok((registration_cancel_preview('zztestcode0000000006')->>'eligibility')='review', 'booking view shows custom policy needs host review');
 SELECT ok(registration_cancel_preview('short') IS NULL, 'invalid code reveals nothing');
