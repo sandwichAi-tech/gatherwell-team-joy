@@ -893,7 +893,9 @@
     "doneTitle": "You're on the list",
     "doneText": "Keep this code to check in or cancel:",
     "online": "Online",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "inviteInvalidTitle": "This invitation isn't valid anymore",
+    "inviteInvalidBody": "The link may have been changed or turned off by the host. Ask them for a new link to this event. You don't need a team code to sign up."
   },
   "profile": {
     "edit": "Edit profile",

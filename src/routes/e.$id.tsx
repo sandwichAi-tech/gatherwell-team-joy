@@ -21,7 +21,7 @@ import { TeamRsvpSheet, TeamConfirmation, type TeamResult } from '@/components/t
 import { CalendarButtons, Confirmation, DirectionsButton, RsvpSheet, type RsvpResult } from '@/components/guest-rsvp';
 import { initialsOf, mediaUrl } from '@/lib/account';
 import { Polls, PhotoRoll, WeatherNote, useLiveCounts } from '@/components/event-live';
-import { formatWhen, isUuid, prefetchPublic, publicEventQuery, rsvpByCodeQuery } from '@/lib/guest';
+import { formatWhen, inviteToken, isUuid, prefetchPublic, publicEventQuery, rsvpByCodeQuery } from '@/lib/guest';
 import { regWindowState } from '@/lib/event-builder';
 import { getPublicEventMeta } from '@/lib/public-event.functions';
 import i18n from '@/lib/i18n';
@@ -106,7 +106,7 @@ function PublicEventBody() {
 
   if (isLoading) return <div className="guest-skeleton" aria-busy="true"><div className="guest-cover skeleton" /><p className="guest-empty">{t('publicEvent.loading')}</p></div>;
   if (error) return <RetryState retry={() => void refetch()} />;
-  if (!event) return <p className="guest-empty">{t('publicEvent.notFound')}</p>;
+  if (!event) return inviteToken() ? <section className="guest-card" role="alert"><h1 className="guest-title">{t('publicEvent.inviteInvalidTitle')}</h1><p>{t('publicEvent.inviteInvalidBody')}</p></section> : <p className="guest-empty">{t('publicEvent.notFound')}</p>;
 
   const tzOpts: Intl.DateTimeFormatOptions = { weekday: 'long', month: 'long', day: 'numeric' };
   const day = formatWhen(event.starts_at, lang, tzOpts);

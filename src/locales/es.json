@@ -893,7 +893,9 @@
     "doneTitle": "Ya estás en la lista",
     "doneText": "Guarda este código para registrarte o cancelar:",
     "online": "En línea",
-    "loading": "Cargando…"
+    "loading": "Cargando…",
+    "inviteInvalidTitle": "Esta invitación ya no es válida",
+    "inviteInvalidBody": "Es posible que el anfitrión haya cambiado o desactivado el enlace. Pídele un enlace nuevo para este evento. No necesitas un código de equipo para inscribirte."
   },
   "profile": {
     "edit": "Editar perfil",
