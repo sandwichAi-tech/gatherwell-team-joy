@@ -19,7 +19,7 @@ import { GwFeatureTile, GwIcon, type GwIconProps } from '@/components/gw-icon';
 import { formatMoney, planSettingsQuery, type PlanSetting } from '@/lib/billing';
 import { updatePlanSettings,
   adminTeamAction, adminUserAction, endBroadcast, getAdminAccess, getAdminOverview, getAdminTeam, getAdminUser, getAudit, getBroadcasts, getFlags, getLibrary,
-  listAdminTeams, listAdminUsers, listReports, moderateReport, reorderLibrary, saveLibraryItem, sendBroadcast, setFlag, setLibraryPublished, type AdminReport, listRecentTexts, simulateSmsReply, listMail, retryMail, listVerifications, decideVerification, type AdminVerification,
+  listAdminTeams, listAdminUsers, listReports, moderateReport, reorderLibrary, saveLibraryItem, sendBroadcast, setFlag, setLibraryPublished, type AdminReport, listRecentTexts, simulateSmsReply, listMail, retryMail, sendAdminTestEmailFn, listVerifications, decideVerification, type AdminVerification,
   listAdminTickets, replyAdminTicket, closeAdminTicket, type AdminTicket,
 } from '@/lib/admin.functions';
 
@@ -538,6 +538,22 @@ const mask = (r: string) => r.includes('@') ? r.replace(/^(.{1,2}).*(@.*)$/, '$1
 const MAIL_CHANNELS = ['all', 'email', 'sms', 'push'] as const;
 const MAIL_STATUSES = ['all', 'pending', 'sent', 'simulated', 'failed', 'skipped'] as const;
 
+function TestEmailButton() {
+  const { t } = useTranslation(); const lang = useLang();
+  const send = useServerFn(sendAdminTestEmailFn); const [busy, setBusy] = useState(false);
+  const run = async () => {
+    if (busy) return; setBusy(true);
+    try {
+      const r = await send({ data: { lang: lang === 'es' ? 'es' : 'en' } });
+      if (r.status === 'sent') toast.success(t('admin.mail.testSent'));
+      else if (r.status === 'simulated') toast.message(t('admin.mail.testSimulated'));
+      else if (r.status === 'skipped') toast.message(t('admin.mail.testSkipped'));
+      else toast.error(t('admin.mail.testFailed'));
+    } catch { toast.error(t('admin.mail.testFailed')); } finally { setBusy(false); }
+  };
+  return <div><Button type="button" variant="secondary" onClick={() => void run()} disabled={busy} aria-busy={busy}><GwIcon name="Send" size={18} />{busy ? t('admin.mail.testSending') : t('admin.mail.testButton')}</Button></div>;
+}
+
 function MailLog() {
   const { t } = useTranslation(); const lang = useLang(); const qc = useQueryClient();
   const [channel, setChannel] = useState<(typeof MAIL_CHANNELS)[number]>('all');
@@ -572,6 +588,7 @@ function MailLog() {
     </div>
     {data && <div className="mail-providers"><span className="field-label">{t('admin.mail.providers')}</span>{(['email', 'sms', 'push'] as const).map(k => <span key={k} className={`status-chip ${data.providers[k] ? 'is-live' : 'is-sim'}`}>{t(`admin.mail.${k}`)}: {t(data.providers[k] ? 'admin.mail.live' : 'admin.mail.simulated')}</span>)}</div>}
     {anySim && <p className="not-connected">{t('admin.mail.simNote')}</p>}
+    <TestEmailButton />
     <div className="admin-toolbar mail-filters">
       <Search value={q} onChange={reset(setQ)} label={t('admin.mail.search')} />
       <select aria-label={t('admin.mail.channel')} className="field-input" value={channel} onChange={e => reset(setChannel)(e.target.value as typeof channel)}>{MAIL_CHANNELS.map(c => <option key={c} value={c}>{c === 'all' ? t('admin.mail.allChannels') : t(`admin.mail.${c}`)}</option>)}</select>

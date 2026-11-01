@@ -66,9 +66,12 @@ function copy(template: string, lang: Lang, p: P): Copy | null {
     case 'rsvp_declined': return { subject: es ? `Sobre tu solicitud: ${title}` : `About your request: ${title}`, heading: es ? 'Esta vez no hubo lugar' : "Not this time", body: [hi, es ? `El anfitrión de ${title} no pudo darte lugar esta vez. Esperamos verte en otra reunión.` : `The host of ${title} couldn't fit you in this time. We hope to see you at another gathering.`], push: es ? `Sin lugar esta vez: ${title}` : `Not this time: ${title}` };
     case 'rsvp_request': return { subject: es ? `Nueva solicitud: ${title}` : `New request: ${title}`, heading: es ? 'Alguien quiere unirse' : 'Someone wants to join', body: [es ? `${s(p['guest'])} pidió unirse a ${title}.` : `${s(p['guest'])} asked to join ${title}.`], cta: { label: es ? 'Revisar' : 'Review', url: `${APP_URL}/event/${s(p['event_id'])}/guests` }, push: es ? `${s(p['guest'])} pidió unirse a ${title}` : `${s(p['guest'])} asked to join ${title}` };
     case 'custom_message': { const subj = s(p['subject']) || s(p['title']); const cta = p['event_id'] ? { label: es ? 'Ver el evento' : 'View the event', url: eventLink(p) } : undefined; return { subject: subj, heading: subj, body: s(p['body']).split(/\n+/).filter(Boolean), ...(cta ? { cta } : {}), push: s(p['body']).slice(0, 120) }; }
+    case 'admin_test': return { subject: es ? 'Correo de prueba de ZoheeWell' : 'ZoheeWell test email', heading: es ? 'El correo funciona' : 'Email is working', body: [es ? 'Este es un correo de prueba enviado desde el panel de administración de ZoheeWell.' : 'This is a test email sent from the ZoheeWell admin console.'], push: es ? 'Correo de prueba' : 'Test email' };
     default: return null;
   }
 }
+
+import { EMAIL_FOOTER_ADDRESS } from '@/lib/company';
 
 const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -86,9 +89,9 @@ export function renderEmail(template: string, lang: Lang, p: P, unsubscribeUrl: 
 <tr><td style="padding:8px 32px 8px;font-size:15px;line-height:1.65;color:#4A4255">${c.body.filter(Boolean).map(b => `<p style="margin:0 0 12px">${esc(b).replace(/\n/g, '<br>')}</p>`).join('')}</td></tr>
 ${c.cta ? `<tr><td style="padding:8px 32px 28px"><a href="${esc(c.cta.url)}" style="display:inline-block;background:#35263F;color:#FFFFFF;text-decoration:none;font-weight:600;font-size:15px;padding:14px 22px;border-radius:12px">${esc(c.cta.label)}</a></td></tr>` : '<tr><td style="padding:0 0 20px"></td></tr>'}
 </table>
-<p style="max-width:520px;font-size:12px;line-height:1.6;color:#8A8296;margin:16px auto 0">${esc(foot)}${unsubscribeUrl ? ` <a href="${esc(unsubscribeUrl)}" style="color:#6A5277">${esc(unsub)}</a>` : ''}</p>
+<p style="max-width:520px;font-size:12px;line-height:1.6;color:#8A8296;margin:16px auto 0">${esc(foot)}${unsubscribeUrl ? ` <a href="${esc(unsubscribeUrl)}" style="color:#6A5277">${esc(unsub)}</a>` : ''}<br>${esc(EMAIL_FOOTER_ADDRESS)}</p>
 </td></tr></table></body></html>`;
-  const text = [c.heading, '', ...c.body.filter(Boolean), '', c.cta ? `${c.cta.label}: ${c.cta.url}` : '', '', foot, unsubscribeUrl ? `${unsub}: ${unsubscribeUrl}` : ''].join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  const text = [c.heading, '', ...c.body.filter(Boolean), '', c.cta ? `${c.cta.label}: ${c.cta.url}` : '', '', foot, unsubscribeUrl ? `${unsub}: ${unsubscribeUrl}` : '', EMAIL_FOOTER_ADDRESS].join('\n').replace(/\n{3,}/g, '\n\n').trim();
   return { subject: c.subject, html, text };
 }
 
