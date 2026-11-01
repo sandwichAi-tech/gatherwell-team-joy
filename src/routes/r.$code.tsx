@@ -11,7 +11,6 @@ import { GatheringCover } from '@/components/gathering-cover';
 import { Confirmation, Stepper } from '@/components/guest-rsvp';
 import { waitlistPositionQuery } from '@/components/early-access';
 import { SignWaiverByCode } from '@/components/team-rsvp';
-import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { Polls, PhotoRoll } from '@/components/event-live';
 import { supabase } from '@/integrations/supabase/client';
 import { rsvpByCodeQuery } from '@/lib/guest';

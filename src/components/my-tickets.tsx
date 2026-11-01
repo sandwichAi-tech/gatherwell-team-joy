@@ -7,7 +7,6 @@ import { toast } from 'sonner';
 import { CalendarDays, MapPin, Video } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { GatheringCover } from '@/components/gathering-cover';
-import { ResponsiveSheet } from '@/components/responsive-sheet';
 import { ListSkeleton } from '@/components/launch-states';
 import { supabase } from '@/integrations/supabase/client';
 import { formatWhen } from '@/lib/guest';

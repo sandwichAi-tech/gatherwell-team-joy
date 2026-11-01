@@ -8181,5 +8181,94 @@
     "heic": "This photo is in HEIC format, which we can’t process yet. On iPhone, pick it from Photos (it converts automatically) or set Camera > Formats to Most Compatible.",
     "type": "Choose a JPG, PNG or WebP photo.",
     "size": "That photo is too large. Choose a smaller one."
+  },
+  "cancellation": {
+    "host": {
+      "title": "Cancel this event",
+      "help": "This can’t be undone. Registration closes right away.",
+      "confirm": "Cancel event",
+      "affected": "Who this affects",
+      "going": "{{count}} registered",
+      "waitlist": "{{count}} on the waitlist",
+      "paid": "{{count}} paid bookings · up to {{amount}} in refund requests",
+      "refundHow": "Each paid booking gets a full refund request for the ticket and add-ons. Booking fees may not come back. A refund only shows as complete after the payment provider confirms it.",
+      "stops": "New registrations stop as soon as you cancel.",
+      "notifyNote": "Messages are queued for guests who can receive them. They are not sent from this screen.",
+      "typeTitle": "Type the event name to confirm: {{title}}",
+      "done": "Event cancelled. Refund requests opened: {{count}}.",
+      "queued": "Cancellation notices queued: {{count}}."
+    },
+    "refunds": {
+      "title": "Refund requests",
+      "providerNote": "Refunds are not complete until the payment provider confirms them. If payments aren’t connected yet, requests stay pending.",
+      "retry": "Try refund again",
+      "approve": "Approve refund"
+    },
+    "status": {
+      "pending": "Refund pending",
+      "review": "Waiting for host review",
+      "submitted": "Refund sent to provider",
+      "succeeded": "Refunded",
+      "failed": "Refund failed"
+    },
+    "policy": {
+      "title": "Cancellation and refunds",
+      "free": "This is a free registration. You can cancel any time before check-in.",
+      "24h": "Full refund until 24 hours before the event.",
+      "7d": "Full refund until 7 days before the event.",
+      "none": "No refunds for this event.",
+      "custom": "The host reviews refund requests using their own policy.",
+      "deadline": "Refund deadline: {{date}}",
+      "paid": "You paid: {{amount}}",
+      "fee": "Booking fee (not refundable): {{amount}}",
+      "hostCancels": "If the host cancels, you get a refund request for the ticket and add-ons."
+    },
+    "attendee": {
+      "outcome": {
+        "free": "Your spot will be released right away.",
+        "full": "We’ll open a refund request for {{amount}}. It shows as refunded only after the payment provider confirms it.",
+        "review": "The host will review a refund request for {{amount}}.",
+        "none": "This booking is past the refund deadline, so no refund will be requested."
+      },
+      "donePending": "Cancelled. Your refund request is pending.",
+      "doneReview": "Cancelled. The host will review your refund request."
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "mismatch": "The name doesn’t match. Type the event name exactly.",
+      "notReady": "Cancellation with refund tracking isn’t available yet. Nothing was changed.",
+      "paidNotReady": "Paid bookings can’t be cancelled here yet because refund tracking isn’t available. Nothing was changed. Contact the host.",
+      "checkedIn": "You’re already checked in, so this booking can’t be cancelled."
+    }
+  },
+  "waiverVersions": {
+    "title": "Waivers for this event",
+    "help": "Each attendee’s signature stays tied to the exact version they accepted.",
+    "pinned": "Version {{version}} in use",
+    "newer": "version {{version}} is in your library",
+    "preview": "Preview",
+    "useNewer": "Use version {{version}}",
+    "editLibrary": "Edit in My waivers",
+    "platformSeparate": "The ZoheeWell event agreement is added automatically and can’t be edited here.",
+    "fileOnly": "This waiver is a PDF file: {{name}}",
+    "confirmTitle": "Use version {{version}} for this event?",
+    "eventOnly": "This changes only this event. Editing in My waivers creates a new library version and never changes events until you choose it here.",
+    "reacceptCount_one": "{{count}} registered attendee who hasn’t checked in will need to accept the new version before check-in.",
+    "reacceptCount_other": "{{count}} registered attendees who haven’t checked in will need to accept the new version before check-in.",
+    "keepsRecords": "Signatures already given stay exactly as signed. Attendees who already checked in aren’t affected.",
+    "future": "Everyone who registers from now on accepts the new version.",
+    "libraryNote": "Other events that use this waiver keep their own version.",
+    "confirm": "Use new version",
+    "applied": "Version {{version}} is now in use for this event.",
+    "attendeeTitle": "Updated waiver to review",
+    "attendeeHelp": "The host updated a waiver after you registered. Please review and accept it before check-in. What you signed before stays on record.",
+    "attendeeSave": "Accept updated waiver",
+    "reaccepted": "Thanks — your acceptance is saved.",
+    "errors": {
+      "generic": "Couldn’t save. Please try again.",
+      "notReady": "Waiver updates for published events aren’t available yet. Nothing was changed.",
+      "countChanged": "Registrations changed since you opened this. Close and try again to see the new count.",
+      "stale": "This waiver changed again. Review the latest version."
+    }
   }
 }
