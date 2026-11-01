@@ -19,7 +19,7 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - All copy uses matched EN/Latin American Spanish JSON; t() literals and finite billing/marketing/progress keys are tested without fallback to catch missing text.
 - GatherwellShell shares desktop/mobile tabs; insights-navigation gates own-host/team access; mobile tabs scroll.
 - localStorage holds only language, theme and a pending invite code (cleared once the join completes); all user data lives in Lovable Cloud with team-scoped RLS.
-- Home-screen installation is manifest-only; the only service worker is public/push-sw.js (push display + click, no caching), registered only after the person turns push on, (offline not requested).
+- Home-screen install is manifest-only; the only service worker is public/push-sw.js (push only, no caching), registered after push is turned on.
 - Visual rules: DESIGN_RULES.md's active Blueprint v4 section only, not historical sections.
 - App screens live under _authenticated/_app: the _authenticated gate redirects signed-out visitors to /login, and the _app layout sends anyone not onboarded (or holding a pending invite) to /onboarding before rendering GatherwellShell.
 - Public pages (marketing + GuestShell /e /h /l /t /i /r) SSR in English, then applySavedLanguage(); loaders prefetchPublic() and the router dehydrates the cache for crawlers. Render stays window-free and deterministic. AuthFrame pages (/login, /join, /terms, /privacy) use ClientOnly.
@@ -70,4 +70,4 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Assessments: immutable private receipts + approved scope; preview writes none. Stable-ID edits preserve choices; publish requires saved destinations.
 - Commerce/removal/waiver-version ledger rules live in supabase/AGENTS.md (database-owned).
 - QA test kit: personas/seed/cleanup live only in src/lib/qa-lab*.ts behind Admin > QA Lab; profiles.is_test is backend-set and drives hiding, message suppression and live-charge blocking, so test data never touches real users.
-- Unapproved legal drafts live only in docs/legal/drafts/<id>/ (original file + checksums + README); they enter consent_text_versions only once approved, because platform rows there are readable by all and that table has no draft state.
+- Unapproved legal drafts stay in docs/legal/drafts/<id>/ until approved (consent_text_versions has no draft state and platform rows are world-readable).
