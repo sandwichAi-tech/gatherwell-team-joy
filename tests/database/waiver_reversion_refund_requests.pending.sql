@@ -114,7 +114,7 @@ CREATE POLICY refund_requests_host_read ON public.refund_requests FOR SELECT TO 
 CREATE POLICY refund_requests_buyer_read ON public.refund_requests FOR SELECT TO authenticated USING (buyer_user_id = auth.uid());
 
 -- Refundable amount = what the guest paid minus the non-refundable booking/service fee. Policy decides eligibility.
-CREATE OR REPLACE FUNCTION public.refund_eligibility(_policy text, _starts timestamptz, _host_cancel boolean) RETURNS text LANGUAGE sql IMMUTABLE AS $$
+CREATE OR REPLACE FUNCTION public.refund_eligibility(_policy text, _starts timestamptz, _host_cancel boolean) RETURNS text LANGUAGE sql STABLE AS $$
   SELECT CASE WHEN _host_cancel THEN 'full'
     WHEN _policy='24h' AND now() <= _starts - interval '24 hours' THEN 'full'
     WHEN _policy='7d' AND now() <= _starts - interval '7 days' THEN 'full'
@@ -201,3 +201,25 @@ BEGIN
 END $$;
 REVOKE ALL ON FUNCTION public.retry_refund_request(uuid) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.retry_refund_request(uuid) TO authenticated;
+
+-- Host approves a custom-policy request for submission (review -> pending). Still not "refunded".
+CREATE OR REPLACE FUNCTION public.approve_refund_request(_id uuid) RETURNS text LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$
+DECLARE q refund_requests;
+BEGIN
+  SELECT * INTO q FROM refund_requests WHERE id=_id FOR UPDATE;
+  IF NOT FOUND OR auth.uid() IS NULL OR q.host_id IS DISTINCT FROM auth.uid() THEN RAISE EXCEPTION 'forbidden'; END IF;
+  IF q.status='review' THEN UPDATE refund_requests SET status='pending', updated_at=now() WHERE id=q.id; RETURN 'pending'; END IF;
+  RETURN q.status;
+END $$;
+REVOKE ALL ON FUNCTION public.approve_refund_request(uuid) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.approve_refund_request(uuid) TO authenticated;
+
+-- Provider confirmation only (service role, from the verified webhook).
+CREATE OR REPLACE FUNCTION public.confirm_refund_request(_payment uuid, _provider_refund text, _status text, _reason text DEFAULT NULL) RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$
+BEGIN
+  IF _status NOT IN ('succeeded','failed') THEN RAISE EXCEPTION 'invalid_status'; END IF;
+  UPDATE refund_requests SET status=_status, provider_refund_id=coalesce(provider_refund_id,_provider_refund), failure_reason=CASE WHEN _status='failed' THEN left(coalesce(_reason,'failed'),200) END, updated_at=now()
+   WHERE payment_id=_payment AND status IN ('pending','submitted');
+END $$;
+REVOKE ALL ON FUNCTION public.confirm_refund_request(uuid,text,text,text) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.confirm_refund_request(uuid,text,text,text) TO service_role;
