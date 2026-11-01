@@ -9790,6 +9790,7 @@ export type Database = {
       personal_home: { Args: never; Returns: Json }
       pin_unpinned_published_events: { Args: never; Returns: number }
       plan_limits: { Args: { _plan: string }; Returns: Json }
+      platform_agreement_text: { Args: { _locale: string }; Returns: Json }
       platform_fee_cents: {
         Args: { _amount: number; _host: string }
         Returns: number
