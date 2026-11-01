@@ -37,7 +37,7 @@ export function HostEventCancelSheet({ event, open, onClose, onDone }: { event: 
     if (notify) toast.message(t('cancellation.host.queued', { count: queued }));
     await onDone();
   };
-  return <ResponsiveSheet open={open} onOpenChange={o => !o && onClose()} title={t('cancellation.host.title')} description={t('cancellation.host.help')} icon="Ban"
+  return <ResponsiveSheet open={open} onOpenChange={o => !o && onClose()} title={t('cancellation.host.title')} description={t('cancellation.host.help')}
     footer={<div className="confirm-actions"><Button variant="secondary" onClick={onClose}>{t('gathering.keep')}</Button>
       <Button className="danger-button" disabled={!ready || busy || unavailable} aria-busy={busy} onClick={() => void submit()}>{t('cancellation.host.confirm')}</Button></div>}>
     <div className="edit-form cancel-sheet">
