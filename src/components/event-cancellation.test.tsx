@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 const state = vi.hoisted(() => ({ rpc: vi.fn(), toast: { success: vi.fn(), message: vi.fn(), error: vi.fn() } }));
 vi.mock('@/integrations/supabase/client', () => ({ supabase: { rpc: state.rpc, from: vi.fn() } }));
-vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (k: string, o?: Record<string, unknown>) => (o?.title ? `${k}:${o.title}` : k), i18n: { resolvedLanguage: 'en' } }) }));
+vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (k: string, o?: Record<string, unknown>) => (o?.['title'] ? `${k}:${String(o['title'])}` : k), i18n: { resolvedLanguage: 'en' } }) }));
 vi.mock('@/components/responsive-sheet', () => ({ ResponsiveSheet: ({ open, children, footer }: any) => open ? <div role="dialog">{children}{footer}</div> : null }));
 vi.mock('sonner', () => ({ toast: state.toast }));
 import { HostEventCancelSheet, RegistrationCancelSheet } from './event-cancellation';
