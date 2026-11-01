@@ -702,6 +702,7 @@ function QaLab() {
       <strong>{a.label}</strong> <span className="muted-copy">{a.email} · {a.phone}</span>
       {a.hasAccount ? (shown[a.persona] ? <code aria-label={t('admin.qa.password')}>{shown[a.persona]}</code> : <Button type="button" size="sm" variant="ghost" onClick={() => void show(a.persona)}>{t('admin.qa.showPassword')}</Button>) : <span className="muted-copy"> · {t('admin.qa.noAccount')}</span>}
     </li>)}</ul>}
+    <p className="muted-copy">{t('admin.qa.overviewExcludes', { count: counts?.accounts ?? 0 })}</p>
     <h3 className="field-label">{t('admin.qa.counts')}</h3>
     <table className="qa-counts"><thead><tr><th scope="col">{t('admin.qa.item')}</th>{result && <th scope="col">{t('admin.qa.before')}</th>}<th scope="col">{result ? t('admin.qa.after') : t('admin.qa.now')}</th></tr></thead>
       <tbody>{keys.map(k => <tr key={k}><td>{t(`admin.qa.kinds.${k}`)}</td>{result && <td>{num(result.before[k], lang)}</td>}<td>{num(result ? result.after[k] : counts?.[k], lang)}</td></tr>)}</tbody></table>

@@ -2086,6 +2086,7 @@
       "out_of_range": "Ese día no es parte del reto.",
       "invalid_message": "Escribe hasta 280 caracteres.",
       "not_allowed": "No tienes acceso a este reto.",
+      "test_account_live_mode": "Las cuentas de prueba solo pueden pagar en el modo de prueba de Stripe.",
       "checkout_setup_required": "La inscripción de pago no está disponible hasta verificar el cobro, los pedidos y los reembolsos. Puedes guardar un borrador de pago.",
       "access_revoked": "Esta inscripción ya no está activa.",
       "challenge_full": "Este reto está lleno.",
@@ -3606,7 +3607,8 @@
         "messages": "Mensajes",
         "files": "Archivos",
         "adminRoles": "Roles de administrador"
-      }
+      },
+      "overviewExcludes": "Los números y gráficos del panel excluyen los datos de prueba (incl. {{count}} de prueba)."
     }
   },
   "legalDocs": {
