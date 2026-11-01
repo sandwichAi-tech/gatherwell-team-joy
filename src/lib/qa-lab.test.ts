@@ -4,7 +4,7 @@ vi.mock('@/integrations/supabase/client.server', () => ({ supabaseAdmin: { rpc: 
   ? { select: () => ({ eq: () => ({ maybeSingle: () => Promise.resolve({ data: mocks.profile }) }) }) }
   : { update: mocks.update } } }));
 import { processOutbox } from './notify/process.server';
-import { QA_PERSONAS, blocksLiveCharge, isTestRecipient, qaEmail, qaName, qaPhone } from './qa-lab';
+import { QA_PERSONAS, blocksLiveCharge, blocksTestLiveCheckout, isTestRecipient, qaEmail, qaName, qaPhone } from './qa-lab';
 
 afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); vi.clearAllMocks(); });
 const run = (row: object) => {
@@ -58,5 +58,14 @@ describe('test accounts are never charged in live mode', () => {
     expect(blocksLiveCharge('sk_live_x', 'zz-test+member@example.com')).toBe(true);
     expect(blocksLiveCharge('sk_test_x', 'zz-test+member@example.com')).toBe(false);
     expect(blocksLiveCharge('sk_live_x', 'buyer@gmail.com')).toBe(false);
+  });
+});
+
+describe('challenge checkout uses the same live-mode rule', () => {
+  it('blocks live mode for flagged or test-email accounts, allows sandbox and real buyers', () => {
+    expect(blocksTestLiveCheckout('live', true, 'real@gmail.com')).toBe(true);
+    expect(blocksTestLiveCheckout('live', false, 'zz-test+member@example.com')).toBe(true);
+    expect(blocksTestLiveCheckout('sandbox', true, 'zz-test+member@example.com')).toBe(false);
+    expect(blocksTestLiveCheckout('live', false, 'buyer@gmail.com')).toBe(false);
   });
 });
