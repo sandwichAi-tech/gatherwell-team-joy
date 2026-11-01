@@ -8321,5 +8321,12 @@
       "countChanged": "Los registros cambiaron desde que abriste esto. Cierra e inténtalo de nuevo para ver el nuevo número.",
       "stale": "Esta exención volvió a cambiar. Revisa la versión más reciente."
     }
+  },
+  "legalAgreement": {
+    "metaDesc": "El Acuerdo de la plataforma ZoheeWell que se aplica a los registros de eventos.",
+    "loadFailed": "No pudimos cargar el acuerdo. Revisa tu conexión e inténtalo de nuevo.",
+    "retry": "Intentar de nuevo",
+    "unavailable": "El acuerdo de la plataforma no está disponible en este momento.",
+    "versionLine": "Versión {{version}} · Vigente desde el 1 de noviembre de 2026"
   }
 }

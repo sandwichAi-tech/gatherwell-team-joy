@@ -11,7 +11,7 @@
 
 Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file covers engineering. Read supabase/AGENTS.md for that directory.
 
-## ZoheeWell architecture (internal names such as Gatherwell*/gathering are legacy identifiers)
+## ZoheeWell architecture (Gatherwell*/gathering = legacy names)
 - BrandLogo: original CDN SVGs/theme variants; BrandImage: photos; preserve logo colors, no photo grading.
 - Marketing GwIcon: duotone silhouettes/scoped contour reinforcement; preserve signed-in icon weights.
 - Keep homepage hosting paths, steps and tool inventory inside the existing landing page and reuse login intent/discovery routes; marketing copy never claims a provider or checkout is live before it is verified.
@@ -22,13 +22,13 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Home-screen install is manifest-only; the only service worker is public/push-sw.js (push only, no caching), registered after push is turned on.
 - Visual rules: DESIGN_RULES.md's active Blueprint v4 section only, not historical sections.
 - App screens live under _authenticated/_app: the _authenticated gate redirects signed-out visitors to /login, and the _app layout sends anyone not onboarded (or holding a pending invite) to /onboarding before rendering GatherwellShell.
-- Public pages (marketing + GuestShell /e /h /l /t /i /r) SSR in English, then applySavedLanguage(); loaders prefetchPublic() and the router dehydrates the cache for crawlers. Render stays window-free and deterministic. AuthFrame pages (/login, /join, /terms, /privacy) use ClientOnly.
+- Public pages (marketing + GuestShell /e /h /l /t /i /r) SSR in English then applySavedLanguage(); loaders prefetchPublic(), router dehydrates cache. Render window-free; AuthFrame pages use ClientOnly.
 - Uploads go to private media under the uploader's folder, shown via signed URLs (public buckets blocked).
 - Host forms use owner-only save_host_form and immutable versions. Replacement never advances event picks; reads check caller/invite context, consent binds versions, private PDFs validate bounded readability. Builder and Me share /waivers.
 - Event detail: app /event/$id; public /e/$id. Invite-only links come only from src/lib/event-invite.ts (/e/:id?k=), and un-onboarded visitors on /event are redirected to /e, because the app route sits behind team onboarding.
 - Signed-out visitors may call only guest RPCs (public event/price, RSVP by code, polls, invites, email prefs by token); all else needs sign-in + team role, as the guest page is the only anonymous surface.
 - Event photos live in the private event-photos bucket and are uploaded/listed only through event-day server functions (host via bearer, guests via checked-in checkin_code), with signed URLs.
-- All outbound messages go via notification_outbox, sent only by src/lib/notify/process.server.ts through /api/public/outbox/process (app_config token, 5 min); missing provider secrets mark rows 'simulated', so a channel needs only its secrets.
+- Outbound messages go via notification_outbox, sent only by src/lib/notify/process.server.ts via /api/public/outbox/process; missing provider secrets mark rows 'simulated'.
 - Provider webhooks live under /api/public/{sms/inbound,email/resend,email/mailgun}, verify signatures, and return 503 until their secrets exist.
 - Icons use Phosphor via GwIcon only; icons.tsx re-exports wrappers.
 - Photos render only through BrandImage and come from site_media slots (private site-media bucket, signed URLs, anonymous read); only user_roles admins (has_role) can edit them at /admin/site-media.
@@ -45,13 +45,13 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Covers/add-on images reuse private uploader media and shared cropping. Sign only after resolving authorized host/event, never caller paths; add-on cleanup preserves saved references.
 - Day-60 scoreboard: raw counts come only from admin_day60(); targets and the go/adjust/rethink verdict are evaluated in src/lib/day60.ts so thresholds live in one tested place.
 - Parked features are gated by feature_* flags via src/lib/feature-flags.tsx; admins always see them and off routes throw notFound, so launch scope changes from /admin?tab=flags.
-- Resources: /learn + feature_learn, type-first create. Destinations (Team/Coach flags + course placements as reference lessons) are written only by set_resource_destinations and read by resource_destinations; course-only items follow the course gate via resource_course_included; legacy NULL flags derive from placement. Resolve visibility before signing. Paid checkout blocked until orders/refunds verified.
+- Resources: /learn + feature_learn. Destinations written only by set_resource_destinations, read by resource_destinations; course-only items follow resource_course_included. Resolve visibility before signing; paid checkout blocked until orders/refunds verified.
 - Home/brief: caller-only personal_home; clear caches on identity/mode changes, broadcast mode invalidation only. Shortcuts use local event days. Insights: UTC.
 - Admin password sign-in: public /admin-login with existing Cloud Auth accounts; getAdminAccess checks the role before navigation and every admin handler re-checks, so sign-in never grants privileges.
 - Challenges: retry-keyed saves; public/team/invite eligibility applies to enrollment and access; owner-only draft copies/archive, leave preserves history. Private progress stays scoped; paid remains guarded; extras reuse event media.
 - Platform fees come only from versioned fee_rules (calc_platform_fee_cents, mirrored in src/lib/fees.ts); orders snapshot the rule.
 - Database role regressions live in tests/database and run only by explicit invocation against a disposable copy; never connect these fixture-writing tests to production, preview, or the ordinary automated suite.
-- Identity: one auth user = one profile; return paths only via src/lib/return-to.ts; emailed links use single-use auth_intents; 18+ via confirm_adult(); view_mode display-only (host-return eligibility: src/lib/host-eligibility.ts, never admin/mode); guest rows link only via claim_guest_records().
+- Identity: one auth user = one profile; return paths via src/lib/return-to.ts; emailed links use single-use auth_intents; 18+ via confirm_adult(); view_mode display-only (host-return: src/lib/host-eligibility.ts); guest rows link via claim_guest_records().
 
 - WhichPlan guides pricing; no capability tables.
 - Templates copy as drafts. Resource journeys use scoped entitlements, idempotent in-app delivery. Coach consent needs verified accounts or hashed expiring links; no sender = requests stay pending. Segments expose counts only.
@@ -61,13 +61,13 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Event images use share-image.ts for all outputs; admin menu uses role checks.
 - Event cover category selection and display-only title casing use event-presentation.ts; default photos resolve through site_media so admin photo changes propagate without changing event records.
 - usePublicSession affects navigation display only, never access.
-- Course drip is decided only by lesson_unlock_at()/lesson_is_unlocked() (mirrored in src/lib/course-release.ts) and enforced by restrictive RLS on lessons, summaries and learn-media; browsers get locked titles only via my_locked_lessons().
+- Course drip: only lesson_unlock_at()/lesson_is_unlocked() (mirrored in src/lib/course-release.ts), enforced by restrictive RLS on lessons/summaries/learn-media; locked titles only via my_locked_lessons().
 - Event Builder partial drafts use manager-only event_builder_drafts snapshots; publish validates and writes canonical event fields, so incomplete input never becomes attendee data.
 - Door actions use guarded receipts, event-bound retries and staff attendance_totals; merged/inactive rows cannot inflate counts. QR unchanged; waiver snapshots never rewrite acceptances.
 - Owner approves joins. Team reads check caller before/after; consent purges caches. Draft copy retries bind source/team/destination. Channels hide during access rechecks, not ordinary polling; unread/mute keys include account.
-- Event identity uses get_public_host eligibility; host waiver libraries are owner-only and published-once events lock snapshots. The ZoheeWell event agreement (consent kind event_agreement) is platform-owned: the database pins it on publish or when one is approved, never blocks hosts, never rewrites a pin, and only registration fails closed without it.
+- Event identity uses get_public_host eligibility; host waiver libraries are owner-only; published events lock snapshots. Platform event_agreement: DB pins on publish/approval, never blocks hosts or rewrites pins; only registration fails closed.
 - Resource courses use lesson slots for ordered quiz/assessment/reference items, checked full-ID reorder and detach-only removal to preserve source identity/history; references keep current source access until inclusion is verified.
 - Assessments: immutable private receipts + approved scope; preview writes none. Stable-ID edits preserve choices; publish requires saved destinations.
 - Commerce/removal/waiver-version ledger rules live in supabase/AGENTS.md (database-owned).
 - QA test kit: personas/seed/cleanup live only in src/lib/qa-lab*.ts behind Admin > QA Lab; profiles.is_test is backend-set and drives hiding, message suppression and live-charge blocking, so test data never touches real users.
-- Unapproved legal drafts stay in docs/legal/drafts/<id>/ until approved: consent_text_versions has no draft state.
+- Legal drafts stay in docs/legal/drafts/<id>/; active platform agreement text lives only in consent_text_versions, shown at /legal/platform-agreement via platform_agreement_text().

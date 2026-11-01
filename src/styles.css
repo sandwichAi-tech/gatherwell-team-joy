@@ -3004,3 +3004,14 @@ a.legal-doc-card:hover, a.legal-doc-card:focus-visible { border-color: var(--pri
 .quick-more svg { transition: transform .15s ease; }
 .quick-more .quick-more-open { transform: rotate(90deg); }
 .gathering-more { display: contents; }
+
+/* Stored legal agreement text */
+.legal-agreement { grid-template-columns: minmax(0, 760px) !important; justify-content: center; }
+.legal-md h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 16px; }
+.legal-md h2 { font-size: 1.2rem; margin: 28px 0 8px; }
+.legal-md p, .legal-md li { line-height: 1.6; margin: 0 0 12px; overflow-wrap: anywhere; }
+.legal-md ol, .legal-md ul { padding-left: 1.25rem; }
+.legal-md-note { border-left: 4px solid var(--primary); background: var(--muted); padding: 12px 16px; margin: 0 0 20px; border-radius: 8px; }
+.legal-md-table { overflow-x: auto; margin: 0 0 16px; }
+.legal-md-table table { border-collapse: collapse; min-width: 560px; font-size: 0.9rem; }
+.legal-md-table th, .legal-md-table td { border: 1px solid var(--border); padding: 8px; text-align: left; vertical-align: top; }

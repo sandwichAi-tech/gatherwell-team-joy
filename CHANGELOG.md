@@ -1,5 +1,10 @@
 # ZoheeWell Change Log
 
+## 2026-11-01 — Platform agreement v2.0 activated (owner authorization)
+- Activated owner-approved (not attorney-reviewed) Platform Agreement v2.0 as consent_text_versions event_agreement v1 (en + labeled English fallback for es); 13 already-published events pinned by the existing trigger. Registration now opens with explicit unchecked acceptance.
+- New public page /legal/platform-agreement reads the active text from the database (platform_agreement_text RPC, migration 0220); viewer opens our own legal URLs on the current site.
+- Activation copy and hashes in docs/legal/active/platform-agreement-v2.0/. Fee rules not changed (see report: per-plan v5 rules still active alongside flat 5%).
+
 ## 2026-11-01 — Platform agreement draft rev1 (still DRAFT)
 - Added docs/legal/drafts/platform-agreement-v2.0-draft/ZoheeWell_Platform_Agreement.rev1-2026-11-01.docx (+ .en.md): Zoheewell LLC, Nov 1 2026 dates, flat 5% in 10.2, Wyoming law / Sheridan County venue in 25.1. Original .docx unchanged. Not approved, not active; no runtime fee or registration change. Alterations logged in the draft README.
 
