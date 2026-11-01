@@ -14,6 +14,16 @@ const PRESETS = [
 ] as const;
 const MAX = 2400;
 export const supportedCropType = (type: string) => ['image/jpeg', 'image/png', 'image/webp'].includes(type);
+export type PhotoReject = 'type' | 'size' | 'heic';
+/** HEIC/HEIF can't be decoded by the crop canvas in most browsers, so detect it by type or name (some phones send an empty type). */
+export function classifyPhotoFile(f: { type: string; name: string; size: number }, maxBytes: number): PhotoReject | null {
+  const type = (f.type || '').toLowerCase(); const name = (f.name || '').toLowerCase();
+  if (/^image\/hei[cf](-sequence)?$/.test(type) || /\.(heic|heif)$/.test(name)) return 'heic';
+  if (!supportedCropType(type)) return 'type';
+  if (f.size > maxBytes) return 'size';
+  return null;
+}
+export const photoRejectKey = (r: PhotoReject) => `photoUpload.${r}`;
 
 type View = { w: number; h: number };
 
@@ -120,10 +130,10 @@ export function ImageCropSheet({ file, kind, withSquare, onCancel, onDone }: { f
 }
 
 /** Hidden file input + crop step. Drop inside an existing upload label in place of the raw input. */
-export function CropFileInput({ kind, withSquare, capture, disabled = false, onCropped, onRejected, maxBytes = 15 * 1024 * 1024, className = 'sr-only' }: { disabled?: boolean; kind: CropKind; withSquare?: boolean | undefined; capture?: 'user' | 'environment'; onCropped: (r: CropResult) => void; onRejected?: (reason: 'type' | 'size') => void; maxBytes?: number; className?: string }) {
+export function CropFileInput({ kind, withSquare, capture, disabled = false, onCropped, onRejected, maxBytes = 15 * 1024 * 1024, className = 'sr-only' }: { disabled?: boolean; kind: CropKind; withSquare?: boolean | undefined; capture?: 'user' | 'environment'; onCropped: (r: CropResult) => void; onRejected?: (reason: PhotoReject) => void; maxBytes?: number; className?: string }) {
   const [file, setFile] = useState<File | null>(null);
   return <>
-    <input type="file" accept="image/jpeg,image/png,image/webp" disabled={disabled} className={className} {...(capture ? { capture } : {})} onChange={e => { const f = e.target.files?.[0]; e.target.value = ''; if (!f) return; if (!supportedCropType(f.type)) { onRejected?.('type'); return; } if (f.size > maxBytes) { onRejected?.('size'); return; } setFile(f); }} />
+    <input type="file" accept="image/jpeg,image/png,image/webp" disabled={disabled} className={className} {...(capture ? { capture } : {})} onChange={e => { const f = e.target.files?.[0]; e.target.value = ''; if (!f) return; const bad = classifyPhotoFile(f, maxBytes); if (bad) { onRejected?.(bad); return; } setFile(f); }} />
     <ImageCropSheet file={file} kind={kind} withSquare={withSquare} onCancel={() => setFile(null)} onDone={r => { setFile(null); onCropped(r); }} />
   </>;
 }
