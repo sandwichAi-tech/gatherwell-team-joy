@@ -36,6 +36,7 @@ import { Route as JoinCodeRouteImport } from './routes/join.$code'
 import { Route as LSlugRouteImport } from './routes/l.$slug'
 import { Route as LegalIndexRouteImport } from './routes/legal.index'
 import { Route as LegalDocRouteImport } from './routes/legal.$doc'
+import { Route as LegalPlatformAgreementRouteImport } from './routes/legal.platform-agreement'
 import { Route as OIdRouteImport } from './routes/o.$id'
 import { Route as RCodeRouteImport } from './routes/r.$code'
 import { Route as TSlugRouteImport } from './routes/t.$slug'
@@ -239,6 +240,11 @@ const LegalIndexRoute = LegalIndexRouteImport.update({
 const LegalDocRoute = LegalDocRouteImport.update({
   id: '/legal/$doc',
   path: '/legal/$doc',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalPlatformAgreementRoute = LegalPlatformAgreementRouteImport.update({
+  id: '/legal/platform-agreement',
+  path: '/legal/platform-agreement',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OIdRoute = OIdRouteImport.update({
@@ -655,6 +661,7 @@ export interface FileRoutesByFullPath {
   '/join/$code': typeof JoinCodeRoute
   '/l/$slug': typeof LSlugRoute
   '/legal/$doc': typeof LegalDocRoute
+  '/legal/platform-agreement': typeof LegalPlatformAgreementRoute
   '/o/$id': typeof OIdRoute
   '/r/$code': typeof RCodeRoute
   '/t/$slug': typeof TSlugRoute
@@ -753,6 +760,7 @@ export interface FileRoutesByTo {
   '/join/$code': typeof JoinCodeRoute
   '/l/$slug': typeof LSlugRoute
   '/legal/$doc': typeof LegalDocRoute
+  '/legal/platform-agreement': typeof LegalPlatformAgreementRoute
   '/o/$id': typeof OIdRoute
   '/r/$code': typeof RCodeRoute
   '/t/$slug': typeof TSlugRoute
@@ -854,6 +862,7 @@ export interface FileRoutesById {
   '/join/$code': typeof JoinCodeRoute
   '/l/$slug': typeof LSlugRoute
   '/legal/$doc': typeof LegalDocRoute
+  '/legal/platform-agreement': typeof LegalPlatformAgreementRoute
   '/o/$id': typeof OIdRoute
   '/r/$code': typeof RCodeRoute
   '/t/$slug': typeof TSlugRoute
@@ -954,6 +963,7 @@ export interface FileRouteTypes {
     | '/join/$code'
     | '/l/$slug'
     | '/legal/$doc'
+    | '/legal/platform-agreement'
     | '/o/$id'
     | '/r/$code'
     | '/t/$slug'
@@ -1052,6 +1062,7 @@ export interface FileRouteTypes {
     | '/join/$code'
     | '/l/$slug'
     | '/legal/$doc'
+    | '/legal/platform-agreement'
     | '/o/$id'
     | '/r/$code'
     | '/t/$slug'
@@ -1152,6 +1163,7 @@ export interface FileRouteTypes {
     | '/join/$code'
     | '/l/$slug'
     | '/legal/$doc'
+    | '/legal/platform-agreement'
     | '/o/$id'
     | '/r/$code'
     | '/t/$slug'
@@ -1251,6 +1263,7 @@ export interface RootRouteChildren {
   JoinCodeRoute: typeof JoinCodeRoute
   LSlugRoute: typeof LSlugRoute
   LegalDocRoute: typeof LegalDocRoute
+  LegalPlatformAgreementRoute: typeof LegalPlatformAgreementRoute
   OIdRoute: typeof OIdRoute
   RCodeRoute: typeof RCodeRoute
   TSlugRoute: typeof TSlugRoute
@@ -1460,6 +1473,13 @@ declare module '@tanstack/react-router' {
       path: '/legal/$doc'
       fullPath: '/legal/$doc'
       preLoaderRoute: typeof LegalDocRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/platform-agreement': {
+      id: '/legal/platform-agreement'
+      path: '/legal/platform-agreement'
+      fullPath: '/legal/platform-agreement'
+      preLoaderRoute: typeof LegalPlatformAgreementRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/o/$id': {
@@ -2119,6 +2139,7 @@ const rootRouteChildren: RootRouteChildren = {
   JoinCodeRoute: JoinCodeRoute,
   LSlugRoute: LSlugRoute,
   LegalDocRoute: LegalDocRoute,
+  LegalPlatformAgreementRoute: LegalPlatformAgreementRoute,
   OIdRoute: OIdRoute,
   RCodeRoute: RCodeRoute,
   TSlugRoute: TSlugRoute,

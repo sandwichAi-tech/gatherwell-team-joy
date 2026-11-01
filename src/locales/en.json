@@ -8321,5 +8321,12 @@
       "countChanged": "Registrations changed since you opened this. Close and try again to see the new count.",
       "stale": "This waiver changed again. Review the latest version."
     }
+  },
+  "legalAgreement": {
+    "metaDesc": "The ZoheeWell Platform Agreement that applies to event registrations.",
+    "loadFailed": "We couldn't load the agreement. Check your connection and try again.",
+    "retry": "Try again",
+    "unavailable": "The platform agreement isn't available right now.",
+    "versionLine": "Version {{version}} · In effect since November 1, 2026"
   }
 }
