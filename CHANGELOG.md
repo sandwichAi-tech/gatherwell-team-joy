@@ -1,5 +1,11 @@
 # ZoheeWell Change Log
 
+## 2026-11-01 — QA Lab test kit (no product behavior change for real accounts)
+- Admin > QA Lab (/admin?tab=qa, admins only; new qa_lab switch stays OFF for regular users): "Create test accounts" seeds P1–P10 ZZ-TEST personas (P1 guest has no account; P10 gets a temporary admin role). Random passwords are stored server-side only and revealed on demand to admins (audited).
+- Test-account safety: profiles.is_test (settable only by backend code); test hosts are never publicly listed, their team pages return nothing and public member counts exclude test accounts, their events are forced unlisted (invite); all email/SMS/push to them is skipped as "test_account" and listed in the QA Lab; Stripe checkout for a test email is refused when the key is live.
+- "Delete all test data" removes accounts, events, RSVPs, teams, memberships, resources, files, messages and P10's admin role, with before/after counts.
+- docs/QA_REPORT.md report template. Tests: src/lib/qa-lab.test.ts. Live check: seed → delete reached 0 on every count → seed again.
+
 ## 2026-11-01 — Transactional email via Resend (owner-approved: Scott, Nov 1 2026)
 - Outbox backlog check before enabling: 0 rows pending/sending/failed (52 earlier email rows are already "simulated", which the sender never re-claims), so nothing needed to be marked skipped and no backlog can be sent.
 - Senders live in src/lib/company.ts: app emails "ZoheeWell <hello@zoheewell.com>"; team announcements "<Leader first name> on ZoheeWell <team@zoheewell.com>"; reply-to support@zoheewell.com on both. Placeholder yourdomain.com senders removed.
