@@ -16,6 +16,8 @@ import { LanguageToggle, pageHead, setLanguage } from '@/components/auth-frame';
 import { supabase } from '@/integrations/supabase/client';
 import { takeNext } from '@/lib/return-to';
 import { recordPendingHostInvite } from '@/lib/discovery';
+import { eventSignupSteps, isEventSignupReturn } from '@/lib/event-invite';
+import { peekNext } from '@/lib/return-to';
 import { clearPendingInvite, pendingInvite, initialsOf, joinLink, markProfileOnboarded, parseJoinCode, profileQuery, uploadMedia, workspaceQuery } from '@/lib/account';
 import { NOINDEX_META } from '@/lib/seo';
 import { VerificationStatusCard } from '@/components/coach-trust';
@@ -78,6 +80,9 @@ function Onboarding() {
       if (!profile?.role_intent) list.push('role');
       if (!workspace && !joinedTeam && profile?.role_intent !== 'guest') list.push('team');
       setJoined(joinedTeam); if (joinedTeam) requestPushMoment('joined');
+      // Returning to an event signup: only 18+ and name; no team code, role or team joining.
+      const eventReturn = isEventSignupReturn(peekNext()) && !joinedTeam;
+      if (eventReturn) { list.splice(0, list.length, ...eventSignupSteps(list)); setStart('find'); }
       setSteps(list);
       if (!list.length && !joinedTeam) await finish();
     })();

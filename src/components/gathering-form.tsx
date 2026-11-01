@@ -89,7 +89,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const [descEn, setDescEn] = useState(''); const [descEs, setDescEs] = useState(''); const [descTab, setDescTab] = useState<'en' | 'es'>(lang);
   const [wholeSeries, setWholeSeries] = useState(false); const [tpl, setTpl] = useState<{ id: string; title: string } | null>(null);
   const tr = useTranslateFill(); const [busy, setBusy] = useState(false); const [uploading, setUploading] = useState(false);
-  const [done, setDone] = useState<{ id: string; visibility: string } | null>(null); const [tried, setTried] = useState(false); const [ready, setReady] = useState(false);
+  const [done, setDone] = useState<{ id: string; visibility: string; invite_token?: string | null } | null>(null); const [tried, setTried] = useState(false); const [ready, setReady] = useState(false);
   const addressRef = useRef<HTMLInputElement>(null);
   // Quick create is the default for brand-new gatherings; templates, duplicates and edits open the full form.
   const [rule, setRule] = useState<RepeatRule>({ kind: 'none', monthly: 'date', days: [], endMode: 'count', count: 8, until: '' });
@@ -348,7 +348,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     if (!(await saveWaivers(data)))return;
     if (publish&&staged) {const published=await supabase.from('events').update({status:'published'}).eq('id',data);if(published.error){toast.error(publishError(published.error));void navigate({to:'/gathering/$id/edit',params:{id:data}});return;}}
     await queryClient.invalidateQueries();
-    if (publish) setDone({ id: data, visibility }); else { toast.success(t('gathering.draftSaved')); void navigate({ to: '/event/$id', params: { id: data } }); }
+    if (publish) { let invite_token: string | null = null; if (visibility === 'invite') { const { data: ev } = await supabase.from('events').select('invite_token').eq('id', data).maybeSingle(); invite_token = (ev as { invite_token?: string } | null)?.invite_token ?? null; } setDone({ id: data, visibility, invite_token }); } else { toast.success(t('gathering.draftSaved')); void navigate({ to: '/event/$id', params: { id: data } }); }
     } catch { setSaveError(t('profile.saveError')); } finally { setBusy(false); }
   };
 

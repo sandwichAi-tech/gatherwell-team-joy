@@ -27,6 +27,14 @@ export function rememberNext(path: string, now = Date.now()) {
   const safe = safeReturnPath(path); if (!safe) return;
   try { sessionStorage.setItem(NEXT_KEY, JSON.stringify({ p: safe, t: now })); } catch { /* storage unavailable */ }
 }
+/** Read the remembered return path without consuming it. */
+export function peekNext(now = Date.now()): string | null {
+  try {
+    const raw = sessionStorage.getItem(NEXT_KEY); if (!raw) return null;
+    const v = JSON.parse(raw) as { p?: unknown; t?: unknown };
+    return typeof v.t === 'number' && now - v.t <= NEXT_TTL_MS ? safeReturnPath(v.p) : null;
+  } catch { return null; }
+}
 export function takeNext(now = Date.now()): string | null {
   try {
     const raw = sessionStorage.getItem(NEXT_KEY); sessionStorage.removeItem(NEXT_KEY);
