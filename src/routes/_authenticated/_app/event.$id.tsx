@@ -31,7 +31,6 @@ import { eventDetailQuery, type ChecklistItem } from '@/lib/templates';
 import { gatherwellHead } from '@/lib/gatherwell-head';
 import { storyImage } from '@/lib/guest';
 import { Switch } from '@/components/ui/switch';
-import { useServerFn } from '@tanstack/react-start';
 import { ShareKit } from '@/components/share-kit';
 import { NetworkShareToggle } from '@/components/network-share';
 import { MembersOnlyPicker } from '@/components/offers';
