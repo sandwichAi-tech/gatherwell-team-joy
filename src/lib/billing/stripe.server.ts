@@ -1,5 +1,6 @@
 // Minimal Stripe REST client (fetch-based, Worker-safe). Server-only.
 import { createHmac, timingSafeEqual } from 'crypto';
+import { blocksLiveCharge } from '@/lib/qa-lab';
 
 export const stripeKey = () => process.env['STRIPE_SECRET_KEY'] || '';
 
@@ -17,6 +18,7 @@ function encode(obj: Record<string, unknown>, prefix = '', out: string[] = []): 
 export async function stripe<T = any>(path: string, params?: Record<string, unknown>, method: 'GET' | 'POST' = 'POST'): Promise<T> {
   const key = stripeKey();
   if (!key) throw new Error('not_connected');
+  if (method === 'POST' && path === 'checkout/sessions' && blocksLiveCharge(key, params?.['customer_email'])) throw new Error('test_account_live_mode');
   const body = params ? encode(params).join('&') : undefined;
   const res = await fetch(`https://api.stripe.com/v1/${path}${method === 'GET' && body ? `?${body}` : ''}`, {
     method, headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/x-www-form-urlencoded' },

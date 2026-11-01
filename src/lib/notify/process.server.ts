@@ -7,10 +7,8 @@ type Result = { status: 'sent' | 'simulated' | 'failed' | 'skipped'; providerId?
 
 import { EMAIL_SENDERS, teamAnnouncementFrom } from '@/lib/company';
 
-/** Test accounts (ZZ-TEST names, example.* addresses) never receive real email. */
-export function isTestRecipient(email: string, name?: string | null) {
-  return /@([a-z0-9-]+\.)*example\.(com|org|net|invalid)$/i.test(email.trim()) || /zz-test/i.test(email) || /^\s*zz-test/i.test(name ?? '');
-}
+import { isTestRecipient } from '@/lib/qa-lab';
+export { isTestRecipient };
 
 /** Sends one rendered email through Resend. No key => simulated, never a fake "sent". */
 async function sendViaResend(to: string, msg: { subject: string; html: string; text: string }, from: string, unsub: string | null): Promise<Result> {
@@ -109,13 +107,15 @@ export async function processOutbox(limit = 100) {
   const tally: Record<string, number> = {};
   for (const row of rows) {
     let result: Result;
-    let testName: string | null = null;
-    if (row.channel === 'email' && row.user_id) {
-      const { data: prof } = await supabaseAdmin.from('profiles').select('full_name').eq('id', row.user_id).maybeSingle();
-      testName = prof?.full_name ?? null;
+    let testName: string | null = null; let testFlag = false;
+    if (row.user_id) {
+      const { data: prof } = await supabaseAdmin.from('profiles').select('full_name, is_test').eq('id', row.user_id).maybeSingle();
+      testName = prof?.full_name ?? null; testFlag = prof?.is_test === true;
     }
     try {
       if (row.skip_reason) result = { status: 'skipped', error: row.skip_reason };
+      // Test accounts: suppressed and logged (shown in Admin > QA Lab), never sent on any channel.
+      else if (testFlag || isTestRecipient(row.recipient, testName)) result = { status: 'skipped', error: 'test_account' };
       else if (typeof row.payload['attendance_audience'] === 'string') {
         const { data: eligible, error } = await supabaseAdmin.rpc('attendance_message_eligible', {
           _rsvp: String(row.payload['rsvp_id'] ?? ''), _audience: row.payload['attendance_audience'], _channel: row.channel,
