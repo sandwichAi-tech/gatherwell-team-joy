@@ -16,7 +16,7 @@ import { LanguageToggle, pageHead, setLanguage } from '@/components/auth-frame';
 import { supabase } from '@/integrations/supabase/client';
 import { peekNext, takeNext } from '@/lib/return-to';
 import { recordPendingHostInvite } from '@/lib/discovery';
-import { eventSignupSteps, isEventSignupReturn } from '@/lib/event-invite';
+import { eventSignupSteps, isEventSignupReturn, onboardingEntry } from '@/lib/event-invite';
 import { clearPendingInvite, pendingInvite, initialsOf, joinLink, markProfileOnboarded, parseJoinCode, profileQuery, uploadMedia, workspaceQuery } from '@/lib/account';
 import { NOINDEX_META } from '@/lib/seo';
 import { VerificationStatusCard } from '@/components/coach-trust';
