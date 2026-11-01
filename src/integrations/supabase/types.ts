@@ -5190,6 +5190,7 @@ export type Database = {
           host_org: string | null
           host_public: boolean
           id: string
+          is_test: boolean
           language: string
           live_at: string | null
           no_limits_until: string | null
@@ -5219,6 +5220,7 @@ export type Database = {
           host_org?: string | null
           host_public?: boolean
           id: string
+          is_test?: boolean
           language?: string
           live_at?: string | null
           no_limits_until?: string | null
@@ -5248,6 +5250,7 @@ export type Database = {
           host_org?: string | null
           host_public?: boolean
           id?: string
+          is_test?: boolean
           language?: string
           live_at?: string | null
           no_limits_until?: string | null
@@ -5478,6 +5481,36 @@ export type Database = {
           id?: string
           p256dh?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      qa_test_accounts: {
+        Row: {
+          created_at: string
+          email: string
+          label: string
+          password: string | null
+          persona: string
+          phone: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          label: string
+          password?: string | null
+          persona: string
+          phone: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          label?: string
+          password?: string | null
+          persona?: string
+          phone?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -9478,6 +9511,7 @@ export type Database = {
         Args: { _roles: string[]; _team_id: string }
         Returns: boolean
       }
+      is_test_user: { Args: { _user: string }; Returns: boolean }
       is_verified_coach: { Args: { _user: string }; Returns: boolean }
       issue_certificate: { Args: { _offer: string }; Returns: Json }
       join_free_offer: { Args: { _offer: string }; Returns: undefined }
