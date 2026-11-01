@@ -62,7 +62,7 @@ function Onboarding() {
       const toEvent = isEventSignupReturn(peekNext());
       if (toEvent && pendingInvite()) clearPendingInvite();
       const pending = pendingInvite();
-      if (profile?.onboarded && !pending && profile.adult_confirmed_at) { void navigate({ to: '/home', replace: true }); return; }
+      if (profile?.onboarded && !pending && profile.adult_confirmed_at) { const back = toEvent ? takeNext() : null; void navigate(back ? { href: back, replace: true } : { to: '/home', replace: true }); return; }
       let joinedTeam: { team: string; leader: string | null } | null = null;
       if (pending && !toEvent) {
         const { data: invite } = await supabase.rpc('get_team_invite', { _code: pending });
