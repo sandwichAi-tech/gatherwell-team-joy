@@ -5,34 +5,61 @@ import { sendWebPush } from './webpush.server';
 type Row = { id: string; channel: string; recipient: string; language: string; template: string; kind: string; payload: Record<string, unknown>; user_id: string | null; attempts: number; skip_reason: string | null; unsub_token: string | null };
 type Result = { status: 'sent' | 'simulated' | 'failed' | 'skipped'; providerId?: string | null; error?: string | null };
 
-const RESEND_FROM = 'ZoheeWell <hello@mail.yourdomain.com>';
-const MAILGUN_FROM = 'Your Team on ZoheeWell <team@team.yourdomain.com>';
+import { EMAIL_SENDERS, teamAnnouncementFrom } from '@/lib/company';
 
-async function sendEmail(row: Row): Promise<Result> {
+/** Test accounts (ZZ-TEST names, example.* addresses) never receive real email. */
+export function isTestRecipient(email: string, name?: string | null) {
+  return /@([a-z0-9-]+\.)*example\.(com|org|net|invalid)$/i.test(email.trim()) || /zz-test/i.test(email) || /^\s*zz-test/i.test(name ?? '');
+}
+
+/** Sends one rendered email through Resend. No key => simulated, never a fake "sent". */
+async function sendViaResend(to: string, msg: { subject: string; html: string; text: string }, from: string, unsub: string | null): Promise<Result> {
+  const key = process.env['RESEND_API_KEY'];
+  if (!key) return { status: 'simulated' };
+  const headers = unsub ? { 'List-Unsubscribe': `<${unsub}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' } : undefined;
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from, to: [to], reply_to: EMAIL_SENDERS.replyTo, subject: msg.subject, html: msg.html, text: msg.text, ...(headers ? { headers } : {}) }),
+  });
+  const text = await res.text();
+  if (!res.ok) return { status: 'failed', error: `resend ${res.status}: ${text.slice(0, 300)}` };
+  let id: string | null = null; try { id = (JSON.parse(text) as { id?: string }).id ?? null; } catch { /* ignore */ }
+  return { status: 'sent', providerId: id };
+}
+
+/** Admin console test: one message to the signed-in admin. */
+export async function sendAdminTestEmail(to: string, lang: 'en' | 'es'): Promise<Result> {
+  if (isTestRecipient(to)) return { status: 'skipped', error: 'test_account' };
+  const msg = renderEmail('admin_test', lang, {}, null);
+  if (!msg) return { status: 'skipped', error: 'unknown_template' };
+  return sendViaResend(to, msg, EMAIL_SENDERS.app, null);
+}
+
+// Kept for reference; team announcements now send through Resend.
+const MAILGUN_FROM = teamAnnouncementFrom(null);
+
+async function sendEmail(row: Row, testName: string | null = null): Promise<Result> {
   const lang = row.language === 'es' ? 'es' : 'en';
   const unsub = row.unsub_token ? `${APP_URL}/unsubscribe/${row.unsub_token}` : null;
   const msg = renderEmail(row.template, lang, row.payload, unsub);
   if (!msg) return { status: 'skipped', error: 'unknown_template' };
+  if (isTestRecipient(row.recipient, testName)) return { status: 'skipped', error: 'test_account' };
+  const from = row.template === 'team_announcement' ? teamAnnouncementFrom(typeof row.payload['author'] === 'string' ? row.payload['author'] : null) : EMAIL_SENDERS.app;
+  const result = await sendViaResend(row.recipient, msg, from, unsub);
+  if (result.status === 'simulated') console.info('[outbox] simulated resend', row.id, row.template);
+  return result;
+}
+
+/** Unused: Mailgun path retained for a possible future switch. */
+export async function sendViaMailgun(row: Row, msg: { subject: string; html: string; text: string }, unsub: string | null): Promise<Result> {
   const env = process.env;
-  if (row.template === 'team_announcement') {
-    const key = env['MAILGUN_API_KEY']; const domain = env['MAILGUN_DOMAIN'];
-    if (!key || !domain) { console.info('[outbox] simulated mailgun', row.id, row.template); return { status: 'simulated' }; }
-    const form = new URLSearchParams({ from: MAILGUN_FROM, to: row.recipient, subject: msg.subject, html: msg.html, text: msg.text });
-    if (unsub) { form.set('h:List-Unsubscribe', `<${unsub}>`); form.set('h:List-Unsubscribe-Post', 'List-Unsubscribe=One-Click'); }
-    const res = await fetch(`https://api.mailgun.net/v3/${domain}/messages`, { method: 'POST', headers: { Authorization: `Basic ${btoa(`api:${key}`)}` }, body: form });
-    const text = await res.text();
-    if (!res.ok) return { status: 'failed', error: `mailgun ${res.status}: ${text.slice(0, 300)}` };
-    let id: string | null = null; try { id = (JSON.parse(text) as { id?: string }).id ?? null; } catch { /* ignore */ }
-    return { status: 'sent', providerId: id };
-  }
-  const key = env['RESEND_API_KEY'];
-  if (!key) { console.info('[outbox] simulated resend', row.id, row.template); return { status: 'simulated' }; }
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from: RESEND_FROM, to: [row.recipient], subject: msg.subject, html: msg.html, text: msg.text, ...(unsub ? { headers: { 'List-Unsubscribe': `<${unsub}>` } } : {}) }),
-  });
+  const key = env['MAILGUN_API_KEY']; const domain = env['MAILGUN_DOMAIN'];
+  if (!key || !domain) return { status: 'simulated' };
+  const form = new URLSearchParams({ from: MAILGUN_FROM, to: row.recipient, subject: msg.subject, html: msg.html, text: msg.text });
+  if (unsub) { form.set('h:List-Unsubscribe', `<${unsub}>`); form.set('h:List-Unsubscribe-Post', 'List-Unsubscribe=One-Click'); }
+  const res = await fetch(`https://api.mailgun.net/v3/${domain}/messages`, { method: 'POST', headers: { Authorization: `Basic ${btoa(`api:${key}`)}` }, body: form });
   const text = await res.text();
-  if (!res.ok) return { status: 'failed', error: `resend ${res.status}: ${text.slice(0, 300)}` };
+  if (!res.ok) return { status: 'failed', error: `mailgun ${res.status}: ${text.slice(0, 300)}` };
   let id: string | null = null; try { id = (JSON.parse(text) as { id?: string }).id ?? null; } catch { /* ignore */ }
   return { status: 'sent', providerId: id };
 }
@@ -82,6 +109,11 @@ export async function processOutbox(limit = 100) {
   const tally: Record<string, number> = {};
   for (const row of rows) {
     let result: Result;
+    let testName: string | null = null;
+    if (row.channel === 'email' && row.user_id) {
+      const { data: prof } = await supabaseAdmin.from('profiles').select('full_name').eq('id', row.user_id).maybeSingle();
+      testName = prof?.full_name ?? null;
+    }
     try {
       if (row.skip_reason) result = { status: 'skipped', error: row.skip_reason };
       else if (typeof row.payload['attendance_audience'] === 'string') {
@@ -90,11 +122,11 @@ export async function processOutbox(limit = 100) {
         });
         if (error) result = { status: 'failed', error: 'eligibility_check_failed' };
         else if (!eligible) result = { status: 'skipped', error: 'attendance_or_preference_changed' };
-        else if (row.channel === 'email') result = await sendEmail(row);
+        else if (row.channel === 'email') result = await sendEmail(row, testName);
         else if (row.channel === 'sms') result = await sendSms(row);
         else result = { status: 'skipped', error: 'invalid_channel' };
       }
-      else if (row.channel === 'email') result = await sendEmail(row);
+      else if (row.channel === 'email') result = await sendEmail(row, testName);
       else if (row.channel === 'sms') result = await sendSms(row);
       else result = await sendPush(row, supabaseAdmin);
     } catch (e) { result = { status: 'failed', error: e instanceof Error ? e.message : 'send_error' }; }
