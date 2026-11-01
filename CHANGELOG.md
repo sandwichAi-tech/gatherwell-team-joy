@@ -1,5 +1,11 @@
 # ZoheeWell Change Log
 
+## 2026-11-01 — Check-in waiver viewer and mobile photo validation
+- Fixed: opening a waiver file used `window.open(..., 'noopener')`, which always returns null, so the app fell back to navigating the current page to the PDF — losing the in-progress registration/check-in and leaving no way back. Waiver files, past acceptances and the platform agreement now open in an in-page viewer with "Close and go back"; browser Back closes the viewer; viewing marks the document opened but never accepted.
+- Photo uploads detect HEIC/HEIF (by type or file name) and explain how to pick a compatible photo; cover uploads in offers/retreats no longer say "too large" for wrong file types. Copy no longer claims HEIC is accepted.
+- Tests: event-waivers.accept.test.tsx (in-page, no navigation, Back closes), photo-upload.test.ts. Full suite 130 files / 1007 tests.
+- Unverified: real iOS Safari/Android PDF iframe rendering, nested phone sheets on devices, camera capture. Event-edit waiver for published events, cancellation/refunds not implemented this pass.
+
 ## 2026-10-31 — Waivers rows 64 / 85 / 86 (partial)
 - Preserved automatic platform pinning without a builder callout or event creation/publish blocker; missing approved agreement still blocks registration only. Locally verified auto pin, immutable reference and host version/archive separation.
 - Fixed file-opening failure/retry, context-bound unchecked acceptance, invitation-aware waiver caches, caller-scoped library/status reads, account editor reset and mode-cache purge. Select from My waivers reads exact versions; library replacement no longer advances an existing selection. PDF uploads now validate private bounded readability; legacy editor shares guarded upload/cleanup. EN/ES 320px metadata overflow corrected.

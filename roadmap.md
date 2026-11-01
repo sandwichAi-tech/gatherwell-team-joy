@@ -1,5 +1,12 @@
 # Challenge commerce and course/assessment lifecycle closure
 
+## November 1 sprint
+- [x] Check-in waiver viewer trap fixed (in-page viewer, Close/Back, view ≠ accept).
+- [x] Photo uploader HEIC detection and correct rejection messages.
+- [ ] Event edit waiver for published events — needs owner decision on re-acceptance for already-registered attendees (published events lock waivers today by rule).
+- [ ] Host event cancellation affected-bookings summary + attendee refund requests — needs connected-payments refund states; not started.
+- [ ] Physical iOS/Android device checks for viewer and camera upload.
+
 ## Waivers rows 64 / 85 / 86 — October 31 continuation
 - [x] Fix file-opening recovery, document-bound consent, invite-context cache identity, caller-scoped library queries and explicit version selection; preserve automatic platform agreement.
 - [x] Actual-function disposable pin/version/receipt and admission pre/post checks; 59 focused / 1003 full tests, EN/ES 320/390/1280 component checks, documentation.
