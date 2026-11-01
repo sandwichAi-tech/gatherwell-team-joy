@@ -18,15 +18,15 @@ describe('Resend senders', () => {
   it('app emails come from hello@ with support reply-to', async () => {
     vi.stubEnv('RESEND_API_KEY', 'k'); const f = ok(); vi.stubGlobal('fetch', f);
     await run(base);
-    const body = JSON.parse(f.mock.calls[0][1].body);
+    const body = JSON.parse((f.mock.calls[0]![1] as RequestInit).body as string);
     expect(body.from).toBe('ZoheeWell <hello@zoheewell.com>');
     expect(body.reply_to).toBe('support@zoheewell.com');
   });
   it('team announcements use the leader first name via Resend and keep unsubscribe headers', async () => {
     vi.stubEnv('RESEND_API_KEY', 'k'); const f = ok(); vi.stubGlobal('fetch', f);
     await run({ ...base, template: 'team_announcement', kind: 'announcements', payload: { team: 'A', author: 'Maria Lopez', body: 'hi' }, unsub_token: '00000000-0000-0000-0000-000000000001' });
-    expect(f.mock.calls[0][0]).toBe('https://api.resend.com/emails');
-    const body = JSON.parse(f.mock.calls[0][1].body);
+    expect(f.mock.calls[0]![0]).toBe('https://api.resend.com/emails');
+    const body = JSON.parse((f.mock.calls[0]![1] as RequestInit).body as string);
     expect(body.from).toBe('Maria on ZoheeWell <team@zoheewell.com>');
     expect(body.reply_to).toBe('support@zoheewell.com');
     expect(body.headers['List-Unsubscribe']).toContain('/unsubscribe/');
