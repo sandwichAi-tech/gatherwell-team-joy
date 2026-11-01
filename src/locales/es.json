@@ -910,7 +910,7 @@
     "shopInvalid": "Usa un enlace completo que empiece con https://",
     "nameRequired": "Ingresa tu nombre.",
     "photoTooLarge": "Elige una foto de menos de 5 MB.",
-    "photoNotImage": "Elige un archivo de imagen (JPG, PNG, WebP o HEIC).",
+    "photoNotImage": "Elige un archivo de imagen (JPG, PNG o WebP).",
     "switchTeam": "Cambiar de equipo",
     "myGatherings": "Mis eventos",
     "gatheringsEmpty": "Aquí verás los eventos que organizas o a los que te sumas.",
@@ -7376,6 +7376,12 @@
       "upload": "No pudimos subir ese archivo. Inténtalo de nuevo.",
       "processing": "No pudimos leer este PDF. Usa un PDF legible sin contraseña o escribe el texto del documento.",
       "save": "No pudimos guardar la exención. Revisa el título y el texto e inténtalo de nuevo."
+    },
+    "viewer": {
+      "help": "Lee el documento aquí. Verlo no significa que aceptas; tu registro sigue donde lo dejaste.",
+      "close": "Cerrar y volver",
+      "failed": "No se pudo mostrar el documento aquí. Ábrelo en una pestaña nueva y luego regresa.",
+      "newTab": "Abrir en una pestaña nueva"
     }
   },
   "referral": {
@@ -8170,5 +8176,10 @@
     "checkedIn_one": "{{count}} check-in",
     "checkedIn_other": "{{count}} check-ins",
     "leaderNote": "Los registros son inscripciones, no asistencia. Solo tú, como líder, ves esto, y solo lo que el coach eligió compartir."
+  },
+  "photoUpload": {
+    "heic": "Esta foto está en formato HEIC, que aún no podemos procesar. En iPhone, elígela desde Fotos (se convierte automáticamente) o en Cámara > Formatos elige Más compatible.",
+    "type": "Elige una foto JPG, PNG o WebP.",
+    "size": "Esa foto es demasiado grande. Elige una más pequeña."
   }
 }

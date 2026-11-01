@@ -9,7 +9,7 @@ import { RetreatEditor, cleanRetreat } from '@/components/retreat';
 import { EventDetailsSections, detailsFromEvent, detailsPayload, emptyDetails, type EventDetails } from '@/components/event-details-form';
 import { asRetreat, emptyRetreat, type Retreat } from '@/lib/retreat';
 import { CATEGORIES, isCategory, type Category } from '@/lib/landing';
-import { CropFileInput, type CropResult } from '@/components/image-crop';
+import { CropFileInput, type CropResult, photoRejectKey } from '@/components/image-crop';
 import { capacityValue, readinessBlockers, validHttps } from '@/lib/event-builder';
 import { isLowResolution } from '@/lib/media-renditions';
 import { CopyButton } from '@/components/copy-button';
@@ -413,7 +413,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         {coverPath && coverWidth != null && isLowResolution(coverWidth) && <p className="field-hint crop-lowres" role="status">{t('gathering.coverLowRes', { width: coverWidth })}</p>}
         <div className="cover-actions">
           <label className="file-button"><Camera /><span>{uploading ? t('onboarding.saving') : t(coverPath ? 'gathering.changePhoto' : 'gathering.addPhoto')}</span>
-            <CropFileInput kind="cover" withSquare maxBytes={8 * 1024 * 1024} disabled={uploading} onCropped={r => void onPhoto(r)} onRejected={reason => setPhotoError(t(reason === 'type' ? 'eventReliability.photoType' : 'gathering.photoTooBig'))} /></label>
+            <CropFileInput kind="cover" withSquare maxBytes={8 * 1024 * 1024} disabled={uploading} onCropped={r => void onPhoto(r)} onRejected={reason => setPhotoError(t(reason === 'type' ? 'eventReliability.photoType' : reason === 'size' ? 'gathering.photoTooBig' : photoRejectKey(reason)))} /></label>
           {coverPath && <Button variant="ghost" onClick={() => setCoverPath(null)}>{t('gathering.useDefault')}</Button>}
           {(coverOverlay !== 0 || coverFocal !== '50% 50%' || coverAlt) && <Button variant="ghost" onClick={() => { setCoverOverlay(0); setCoverFocal('50% 50%'); setCoverAlt(''); }}>{t('gathering.coverReset')}</Button>}
         </div>

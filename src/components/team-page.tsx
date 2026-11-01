@@ -4,7 +4,7 @@ import { teamEditIssues, TEAM_DESCRIPTION_MAX } from '@/lib/profile-ia';
 import { Feature } from '@/lib/feature-flags';
 import { SharedProgress } from '@/components/my-progress';
 import { readChatLinks, tgShare } from '@/lib/chat-links';
-import { CropFileInput } from '@/components/image-crop';
+import { CropFileInput, photoRejectKey } from '@/components/image-crop';
 import { CopyButton, ShareButton } from '@/components/copy-button';
 import { trackEvent } from '@/lib/analytics';
 import { EmptyState, ListSkeleton } from "@/components/launch-states";
@@ -359,7 +359,7 @@ function EditTeamSheet({ open, onOpenChange, team, userId }: { open: boolean; on
       <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
         <div className="cover-edit" style={shown ? undefined : color ? { background: `linear-gradient(135deg, ${color}, var(--lavender))` } : undefined}>{shown && <BrandImage key={preview ?? 'saved'} src={shown} alt="" className="offer-cover-photo" sizes="(min-width: 768px) 560px, 100vw" onNaturalWidth={(w: number) => setCoverWidth(preview ? null : w)} />}{!shown && <span className="team-cover-initial">{(name.trim()[0] ?? 'G').toUpperCase()}</span>}</div>
         {!preview && current && coverWidth != null && isLowResolution(coverWidth) && <p className="field-hint crop-lowres" role="status">{t('gathering.coverLowRes', { width: coverWidth })}</p>}
-        <div className="photo-row"><label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" maxBytes={5 * 1024 * 1024} onCropped={r => { setFile(r.file); setPreview(r.previewUrl); setRemoveCover(false); }} onRejected={why => toast.error(t(why === 'type' ? 'profile.photoNotImage' : 'profile.photoTooLarge'))} /></label>
+        <div className="photo-row"><label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" className="hidden" maxBytes={5 * 1024 * 1024} onCropped={r => { setFile(r.file); setPreview(r.previewUrl); setRemoveCover(false); }} onRejected={why => toast.error(t(why === 'size' ? 'profile.photoTooLarge' : photoRejectKey(why)))} /></label>
           {shown && <button type="button" className="auth-link" onClick={() => { setFile(null); setPreview(null); setRemoveCover(true); }}>{t('onboarding.removePhoto')}</button>}</div></div>
       <div className="form-field"><span className="field-label">{t('teamSpace.brandColor')}</span>
         <div className="swatches">{TEAM_COLORS.map(value => <button type="button" key={value} className={`swatch ${color === value ? 'is-selected' : ''}`} style={{ background: value }} aria-label={value} aria-pressed={color === value} onClick={() => setColor(value)}>{color === value && <Check />}</button>)}

@@ -910,7 +910,7 @@
     "shopInvalid": "Use a full link that starts with https://",
     "nameRequired": "Enter your name.",
     "photoTooLarge": "Choose a photo under 5 MB.",
-    "photoNotImage": "Choose an image file (JPG, PNG, WebP or HEIC).",
+    "photoNotImage": "Choose an image file (JPG, PNG or WebP).",
     "switchTeam": "Switch team",
     "myGatherings": "My events",
     "gatheringsEmpty": "Events you host or join will show here.",
@@ -7376,6 +7376,12 @@
       "upload": "We couldn't upload that file. Please try again.",
       "processing": "We couldn't read this PDF. Use a readable, unencrypted PDF or enter the document text.",
       "save": "We couldn't save the waiver. Check the title and text and try again."
+    },
+    "viewer": {
+      "help": "Read the document here. Viewing does not mean you agree — your registration stays where you left it.",
+      "close": "Close and go back",
+      "failed": "This document could not be shown here. Open it in a new tab, then come back.",
+      "newTab": "Open in a new tab"
     }
   },
   "referral": {
@@ -8170,5 +8176,10 @@
     "checkedIn_one": "{{count}} checked in",
     "checkedIn_other": "{{count}} checked in",
     "leaderNote": "Registrations are sign-ups, not attendance. Only you, as leader, see this, and only what the coach chose to share."
+  },
+  "photoUpload": {
+    "heic": "This photo is in HEIC format, which we can’t process yet. On iPhone, pick it from Photos (it converts automatically) or set Camera > Formats to Most Compatible.",
+    "type": "Choose a JPG, PNG or WebP photo.",
+    "size": "That photo is too large. Choose a smaller one."
   }
 }

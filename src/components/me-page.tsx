@@ -4,7 +4,7 @@ import { useFeature } from '@/lib/feature-flags';
 import { SPANISH_ENABLED } from '@/lib/i18n';
 import { useIsFounding } from '@/components/founding';
 import { useIsVerified, VerificationStatusCard } from '@/components/coach-trust';
-import { CropFileInput } from '@/components/image-crop';
+import { CropFileInput, photoRejectKey } from '@/components/image-crop';
 import { GatheringCover } from '@/components/gathering-cover';
 import { CalendarFeedPanel } from '@/components/follow';
 import { EmptyState } from '@/components/launch-states';
@@ -142,7 +142,7 @@ function EditProfile({ open, onOpenChange, userId }: { open: boolean; onOpenChan
       <div className="form-field">
         <span className="field-label">{t('onboarding.cover')}</span>
         <div className="photo-row flex-wrap">
-          <Button asChild variant="secondary"><label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" maxBytes={5 * 1024 * 1024} onCropped={r => { setCoverFile(r.file); setCoverPreview(r.previewUrl); setRemoveCover(false); }} onRejected={why => toast.error(t(why === 'type' ? 'profile.photoNotImage' : 'profile.photoTooLarge'))} /></label></Button>
+          <Button asChild variant="secondary"><label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" maxBytes={5 * 1024 * 1024} onCropped={r => { setCoverFile(r.file); setCoverPreview(r.previewUrl); setRemoveCover(false); }} onRejected={why => toast.error(t(why === 'size' ? 'profile.photoTooLarge' : photoRejectKey(why)))} /></label></Button>
           {(coverPreview || (profile?.cover_url && !removeCover)) && <Button variant="ghost" onClick={() => { setCoverFile(null); setCoverPreview(null); setRemoveCover(true); }}>{t('onboarding.removePhoto')}</Button>}
         </div>
       </div>

@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { GwFeatureTile, GwIcon } from '@/components/gw-icon';
 import { GatheringCover } from '@/components/gathering-cover';
-import { CropFileInput } from '@/components/image-crop';
+import { CropFileInput, photoRejectKey } from '@/components/image-crop';
 import { formatMoney } from '@/lib/billing';
 import { linesOf, paymentSchedule, tripDays, type Retreat, type RetreatPayment } from '@/lib/retreat';
 
@@ -30,7 +30,7 @@ export function RetreatEditor({ value, onChange, end, setEnd, priceCents, onUplo
     <div className="retreat-gallery-edit">
       {value.gallery.map((p, i) => <div key={p} className="retreat-thumb"><GatheringCover path={p} title="" className="retreat-thumb-img" /><button type="button" aria-label={t('retreat.removePhoto')} onClick={() => set({ gallery: value.gallery.filter((_, j) => j !== i) })}><GwIcon name="X" size={16} /></button></div>)}
       {value.gallery.length < 6 && <label className="file-button retreat-add-photo"><GwIcon name="Camera" /><span>{uploading ? t('onboarding.saving') : t('retreat.addPhoto')}</span>
-        <CropFileInput kind="cover" onCropped={async r => { const path = await onUpload(r.file); if (path) set({ gallery: [...value.gallery, path] }); }} onRejected={() => toast.error(t('gathering.photoTooBig'))} /></label>}
+        <CropFileInput kind="cover" onCropped={async r => { const path = await onUpload(r.file); if (path) set({ gallery: [...value.gallery, path] }); }} onRejected={reason => toast.error(t(photoRejectKey(reason)))} /></label>}
     </div>
 
     <span className="field-label">{t('retreat.itinerary')}</span>

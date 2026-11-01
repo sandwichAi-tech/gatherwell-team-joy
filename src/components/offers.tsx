@@ -7,7 +7,7 @@ import { VerifiedMark, useIsVerified } from '@/components/coach-trust';
 import { PromoField } from '@/components/promo-field';
 import { promoDiscount, type Promo } from '@/lib/promo';
 import { EmptyState } from '@/components/launch-states';
-import { CropFileInput } from '@/components/image-crop';
+import { CropFileInput, photoRejectKey } from '@/components/image-crop';
 import { BrandImage } from '@/components/brand-image';
 import { DocumentViewer } from '@/components/document-viewer';
 import { useEffect, useState } from 'react';
@@ -166,7 +166,7 @@ function OfferEditor({ offer, teamId, onClose, bundleMode }: { offer: Partial<Of
       <div className="form-field"><span className="field-label">{t('onboarding.cover')}</span>
         <OfferCover offer={f} wide preview={coverPreview} />
         <div className="photo-row flex-wrap">
-          <Button asChild variant="secondary"><label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" onCropped={r => { setCoverFile(r.file); setCoverPreview(r.previewUrl); }} onRejected={() => toast.error(t('gathering.photoTooBig'))} /></label></Button>
+          <Button asChild variant="secondary"><label className="file-button"><Upload />{t('onboarding.uploadCover')}<CropFileInput kind="cover" onCropped={r => { setCoverFile(r.file); setCoverPreview(r.previewUrl); }} onRejected={reason => toast.error(t(photoRejectKey(reason)))} /></label></Button>
           {(coverFile || f.cover_url) && <Button variant="ghost" onClick={() => { setCoverFile(null); setCoverPreview(null); setF(v => ({ ...v, cover_url: null })); }}>{t('onboarding.removePhoto')}</Button>}
         </div>
         <div className="cover-styles" role="group" aria-label={t('onboarding.cover')}>{COVER_STYLES.map((bg, i) => <button key={i} type="button" className={`cover-swatch ${f.cover_style === i ? 'is-selected' : ''}`} style={{ backgroundImage: bg }} aria-label={`${t('onboarding.cover')} ${i + 1}`} aria-pressed={f.cover_style === i} onClick={() => setF({ ...f, cover_style: i })} />)}</div></div>

@@ -4,7 +4,7 @@ import { useServerFn } from '@tanstack/react-start';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Camera, Trash2 } from '@/components/icons';
-import { CropFileInput, type CropResult } from '@/components/image-crop';
+import { CropFileInput, type CropResult, photoRejectKey } from '@/components/image-crop';
 import { BrandImage } from '@/components/brand-image';
 import { mediaUrl, uploadMedia } from '@/lib/account';
 import { ADDON_IMAGE_BYTES, ADDON_IMAGE_RATIO } from '@/lib/addon-images';
@@ -39,7 +39,7 @@ export function AddonImageInput({ userId, name, path, onChange, onBusy }: { user
       <Button type="button" variant="secondary" disabled={busy} onClick={() => input.current?.querySelector<HTMLInputElement>('input')?.click()}><Camera />{t(path ? 'addonImages.replace' : 'addonImages.upload')}</Button>
       {path && <Button type="button" variant="ghost" disabled={busy} onClick={() => { candidates.current.add(path); onChange(null); setError(''); }}><Trash2 />{t('addonImages.remove')}</Button>}
     </div>
-    <span ref={input}><CropFileInput kind="addon" disabled={busy} maxBytes={ADDON_IMAGE_BYTES} onCropped={r => void cropped(r)} onRejected={reason => setError(reason === 'type' ? 'addonImages.type' : 'addonImages.size')} /></span>
+    <span ref={input}><CropFileInput kind="addon" disabled={busy} maxBytes={ADDON_IMAGE_BYTES} onCropped={r => void cropped(r)} onRejected={reason => setError(reason === 'type' ? 'addonImages.type' : reason === 'size' ? 'addonImages.size' : photoRejectKey(reason))} /></span>
     {busy && <p role="status" className="field-hint">{t('addonImages.uploading')}</p>}
     {error && <p role="alert" className="field-error">{t(error)}</p>}
   </div>;
