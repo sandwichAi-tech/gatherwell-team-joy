@@ -1,5 +1,15 @@
 # ZoheeWell Change Log
 
+## 2026-11-01 — Transactional email via Resend (owner-approved: Scott, Nov 1 2026)
+- Outbox backlog check before enabling: 0 rows pending/sending/failed (52 earlier email rows are already "simulated", which the sender never re-claims), so nothing needed to be marked skipped and no backlog can be sent.
+- Senders live in src/lib/company.ts: app emails "ZoheeWell <hello@zoheewell.com>"; team announcements "<Leader first name> on ZoheeWell <team@zoheewell.com>"; reply-to support@zoheewell.com on both. Placeholder yourdomain.com senders removed.
+- Team announcements now send through Resend with List-Unsubscribe + one-click headers; Mailgun code kept but unused.
+- Test accounts (ZZ-TEST names, example.com/.org/.net/.invalid addresses) are skipped as "test_account" and never receive real email.
+- Every email footer carries "ZoheeWell LLC · 30 N Gould St, Ste R, Sheridan, WY 82801"; the unsubscribe link appears only on non-required (announcement/reminder/follow-up) messages, as before.
+- Admin > Mail: "Send test email" button (EN/ES) sends one message to the signed-in admin and is audited.
+- Sign-up confirmation and password-reset emails: Lovable Cloud does not offer custom SMTP, so these are not routed through Resend (see report). No DNS changes made.
+- Tests: new resend-senders tests; full suite 133 files / 1023 tests.
+
 ## 2026-11-01 (continued) — Published-event waiver versions, cancellation and refund requests
 - Waivers: hosts see each event's pinned library waiver with Preview, "Use version N" (with a confirmation showing how many registered, not-checked-in attendees must re-accept, that signed records stay unchanged, and that this changes only this event), and "Edit in My waivers". Attendees see an "Updated waiver to review" card on their booking. Check-in now requires the current version; already checked-in attendees are never re-blocked.
 - Cancellation: host event cancel now requires typing the event name, shows who is affected and paid refund totals, stops registration, opens one refund request per paid booking and queues (does not send) notices. Attendee cancel shows the policy outcome; free bookings cancel immediately; paid bookings open a refund request; past the cutoff, no request; custom policy goes to host review. Booking pages show policy, deadline, amount paid and the non-refundable booking fee.
