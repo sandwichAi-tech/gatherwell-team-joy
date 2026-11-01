@@ -492,7 +492,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         <div className="segmented full vis-choice" role="group" aria-labelledby="g-vis-label">{(['public', 'invite', 'team'] as const).map(v => <Button key={v} variant="ghost" className={visibility === v ? 'selected' : ''} aria-pressed={visibility === v} onClick={() => setVisibility(v)}>{t(`gathering.vis.${v}`)}</Button>)}</div>
       </section>
 
-      {moreFirst && <Button variant="ghost" className="quick-more" aria-expanded={full} aria-controls="g-more" onClick={() => setFull(f => !f)}>{t(full ? 'gathering.fewerOptions' : 'gathering.moreOptions')}<ChevronRight className={full ? 'quick-more-open' : undefined} /></Button>}
+      {moreFirst && <Button variant="ghost" className="quick-more" aria-expanded={full} aria-controls="g-more" onClick={() => setFull(f => !f)}>{t(full ? 'gathering.fewerOptions' : 'gathering.moreOptions')}<ChevronRight className={full ? 'quick-more-open' : ''} /></Button>}
       {full && <div id="g-more" className="gathering-more">
       {moreFirst && coverSection}
       {moreFirst && <section className="form-section">{durationBlock}</section>}
