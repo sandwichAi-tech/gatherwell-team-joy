@@ -224,3 +224,21 @@ BEGIN
 END $$;
 REVOKE ALL ON FUNCTION public.confirm_refund_request(uuid,text,text,text) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.confirm_refund_request(uuid,text,text,text) TO service_role;
+
+-- Attendee booking view (by private code): policy, cutoff, what was paid, what is refundable, current refund state.
+CREATE OR REPLACE FUNCTION public.registration_cancel_preview(_code text) RETURNS jsonb LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path=public AS $$
+DECLARE r rsvps; e events; p payments; q refund_requests;
+BEGIN
+  IF length(coalesce(_code,''))<16 THEN RETURN NULL; END IF;
+  SELECT * INTO r FROM rsvps WHERE checkin_code=_code AND merged_into_rsvp_id IS NULL;
+  IF NOT FOUND THEN RETURN NULL; END IF;
+  SELECT * INTO e FROM events WHERE id=r.event_id;
+  SELECT * INTO p FROM payments WHERE rsvp_id=r.id AND kind='gathering' AND status IN ('paid','refunded') ORDER BY created_at DESC LIMIT 1;
+  SELECT * INTO q FROM refund_requests WHERE rsvp_id=r.id ORDER BY attempt DESC LIMIT 1;
+  RETURN jsonb_build_object('policy', coalesce(e.refund_policy,'none'), 'starts_at', e.starts_at, 'event_status', e.status,
+    'checked_in', r.checked_in_at IS NOT NULL, 'status', r.status,
+    'paid_cents', p.amount_cents, 'booking_fee_cents', p.booking_fee_cents,
+    'eligibility', CASE WHEN p.id IS NULL THEN 'free' ELSE refund_eligibility(e.refund_policy, e.starts_at, e.status='cancelled') END,
+    'refund_status', q.status, 'refund_cents', q.amount_cents);
+END $$;
+GRANT EXECUTE ON FUNCTION public.registration_cancel_preview(text) TO anon, authenticated;
