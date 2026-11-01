@@ -3168,7 +3168,8 @@
       "support": "Support",
       "offerings": "Offerings",
       "communities": "Community restrictions",
-      "flags": "Switches"
+      "flags": "Switches",
+      "qa": "QA Lab"
     },
     "period": {
       "week": "This week",
@@ -3568,7 +3569,45 @@
     "updatedAt": "Updated {{time}}",
     "refresh": "Refresh",
     "refreshing": "Refreshing…",
-    "loadError": "Couldn't load these numbers. Nothing shown here is current."
+    "loadError": "Couldn't load these numbers. Nothing shown here is current.",
+    "qa": {
+      "title": "QA Lab",
+      "intro": "Test accounts for QA only. They are hidden from public pages, never receive email, text or push, and can never be charged in live mode.",
+      "seed": "Create test accounts",
+      "wipe": "Delete all test data",
+      "working": "Working…",
+      "seeded": "Created {{count}} test accounts.",
+      "seedPartial": "Some test accounts could not be created. Check the list and try again.",
+      "wiped": "All test data was removed.",
+      "wipeIncomplete": "Some test data could not be removed. Check the counts and try again.",
+      "failed": "Something went wrong. Please try again.",
+      "wipeTitle": "Delete all test data?",
+      "wipeBody": "This permanently removes every ZZ-TEST account and everything they created, and removes the test admin role. Real accounts are not touched.",
+      "accounts": "Personas",
+      "none": "No test accounts yet.",
+      "password": "Password",
+      "showPassword": "Show password",
+      "noAccount": "No account (guest)",
+      "counts": "Test data",
+      "item": "Item",
+      "before": "Before",
+      "after": "After",
+      "now": "Now",
+      "suppressed": "Suppressed messages",
+      "noSuppressed": "No messages to test accounts yet.",
+      "kinds": {
+        "accounts": "Test accounts",
+        "registry": "Persona records",
+        "events": "Events",
+        "rsvps": "RSVPs",
+        "teams": "Teams",
+        "teamMembers": "Team memberships",
+        "resources": "Resources, courses and challenges",
+        "messages": "Messages",
+        "files": "Files",
+        "adminRoles": "Admin roles"
+      }
+    }
   },
   "legalDocs": {
     "draft": "Draft — pending legal review",

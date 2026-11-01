@@ -22,10 +22,11 @@ import { updatePlanSettings,
   listAdminTeams, listAdminUsers, listReports, moderateReport, reorderLibrary, saveLibraryItem, sendBroadcast, setFlag, setLibraryPublished, type AdminReport, listRecentTexts, simulateSmsReply, listMail, retryMail, sendAdminTestEmailFn, listVerifications, decideVerification, type AdminVerification,
   listAdminTickets, replyAdminTicket, closeAdminTicket, type AdminTicket,
 } from '@/lib/admin.functions';
+import { deleteQaData, getQaLab, revealQaPassword, seedQaAccounts, type QaCounts } from '@/lib/qa-lab.functions';
 
-export const ADMIN_TABS = ['overview', 'teams', 'users', 'offerings', 'moderation', 'communities', 'verify', 'library', 'broadcasts', 'founding', 'day60', 'settings', 'flags', 'audit', 'mail', 'support'] as const;
+export const ADMIN_TABS = ['overview', 'teams', 'users', 'offerings', 'moderation', 'communities', 'verify', 'library', 'broadcasts', 'founding', 'day60', 'settings', 'flags', 'audit', 'mail', 'support', 'qa'] as const;
 export type AdminTab = (typeof ADMIN_TABS)[number];
-const TAB_ICONS: Record<AdminTab, GwIconProps['name']> = { overview: 'BarChart3', teams: 'UsersRound', users: 'UserRound', offerings: 'BookOpen', communities: 'ShieldCheck', moderation: 'Flag', verify: 'BadgeCheck', library: 'BookOpen', broadcasts: 'Megaphone', founding: 'Medal', day60: 'Trophy', settings: 'Settings2', flags: 'Settings2', audit: 'FileText', mail: 'Mail', support: 'LifeBuoy' };
+const TAB_ICONS: Record<AdminTab, GwIconProps['name']> = { overview: 'BarChart3', teams: 'UsersRound', users: 'UserRound', offerings: 'BookOpen', communities: 'ShieldCheck', moderation: 'Flag', verify: 'BadgeCheck', library: 'BookOpen', broadcasts: 'Megaphone', founding: 'Medal', day60: 'Trophy', settings: 'Settings2', flags: 'Settings2', audit: 'FileText', mail: 'Mail', support: 'LifeBuoy', qa: 'ShieldCheck' };
 
 const useLang = () => { const { i18n } = useTranslation(); return i18n.resolvedLanguage === 'es' ? 'es' : 'en'; };
 const fmtDate = (iso: string | null | undefined, lang: string, time = false) => iso ? new Intl.DateTimeFormat(lang === 'es' ? 'es-MX' : 'en-US', time ? { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' } : { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(iso)) : '—';
@@ -57,6 +58,7 @@ export function AdminConsole({ tab }: { tab: AdminTab }) {
     {tab === 'audit' && <AdminSafety key={tab} kind="audit" />}
     {tab === 'mail' && <MailLog />}
     {tab === 'support' && <SupportTickets />}
+    {tab === 'qa' && <QaLab />}
   </div>;
 }
 
@@ -660,5 +662,50 @@ function SupportTickets() {
         </li>
       ))}</ul>
     )}
+  </section>;
+}
+
+function QaLab() {
+  const { t } = useTranslation(); const lang = useLang(); const qc = useQueryClient();
+  const load = useServerFn(getQaLab); const seed = useServerFn(seedQaAccounts); const wipe = useServerFn(deleteQaData); const reveal = useServerFn(revealQaPassword);
+  const { data, isLoading, refetch } = useQuery({ queryKey: ['admin', 'qa'], queryFn: () => load() });
+  const [busy, setBusy] = useState<'seed' | 'wipe' | null>(null);
+  const [shown, setShown] = useState<Record<string, string>>({});
+  const [result, setResult] = useState<{ before: QaCounts; after: QaCounts } | null>(null);
+  const doSeed = async () => {
+    if (busy) return; setBusy('seed');
+    try { const r = await seed(); if (r.errors.length) toast.error(t('admin.qa.seedPartial')); else toast.success(t('admin.qa.seeded', { count: r.created.length })); }
+    catch { toast.error(t('admin.qa.failed')); } finally { setBusy(null); await refetch(); }
+  };
+  const doWipe = async () => {
+    if (busy) return;
+    if (!(await confirmAction({ title: t('admin.qa.wipeTitle'), body: t('admin.qa.wipeBody'), confirmLabel: t('admin.qa.wipe') }))) return;
+    setBusy('wipe');
+    try { const r = await wipe(); setResult({ before: r.before, after: r.after }); if (r.clean) toast.success(t('admin.qa.wiped')); else toast.error(t('admin.qa.wipeIncomplete')); }
+    catch { toast.error(t('admin.qa.failed')); } finally { setBusy(null); setShown({}); await qc.invalidateQueries({ queryKey: ['admin', 'qa'] }); }
+  };
+  const show = async (persona: string) => {
+    try { const r = await reveal({ data: { persona } }); if (r.password) setShown(s => ({ ...s, [persona]: r.password! })); } catch { toast.error(t('admin.qa.failed')); }
+  };
+  if (isLoading) return <ListSkeleton />;
+  const counts = data?.counts;
+  const keys = counts ? (Object.keys(counts) as (keyof QaCounts)[]) : [];
+  return <section className="panel qa-lab">
+    <h2 className="section-title">{t('admin.qa.title')}</h2>
+    <p className="muted-copy">{t('admin.qa.intro')}</p>
+    <div className="admin-toolbar">
+      <Button type="button" onClick={() => void doSeed()} disabled={!!busy} aria-busy={busy === 'seed'}>{busy === 'seed' ? t('admin.qa.working') : t('admin.qa.seed')}</Button>
+      <Button type="button" variant="destructive" onClick={() => void doWipe()} disabled={!!busy} aria-busy={busy === 'wipe'}>{busy === 'wipe' ? t('admin.qa.working') : t('admin.qa.wipe')}</Button>
+    </div>
+    <h3 className="field-label">{t('admin.qa.accounts')}</h3>
+    {!data?.accounts.length ? <p className="muted-copy">{t('admin.qa.none')}</p> : <ul className="qa-accounts">{data.accounts.map(a => <li key={a.persona}>
+      <strong>{a.label}</strong> <span className="muted-copy">{a.email} · {a.phone}</span>
+      {a.hasAccount ? (shown[a.persona] ? <code aria-label={t('admin.qa.password')}>{shown[a.persona]}</code> : <Button type="button" size="sm" variant="ghost" onClick={() => void show(a.persona)}>{t('admin.qa.showPassword')}</Button>) : <span className="muted-copy"> · {t('admin.qa.noAccount')}</span>}
+    </li>)}</ul>}
+    <h3 className="field-label">{t('admin.qa.counts')}</h3>
+    <table className="qa-counts"><thead><tr><th scope="col">{t('admin.qa.item')}</th>{result && <th scope="col">{t('admin.qa.before')}</th>}<th scope="col">{result ? t('admin.qa.after') : t('admin.qa.now')}</th></tr></thead>
+      <tbody>{keys.map(k => <tr key={k}><td>{t(`admin.qa.kinds.${k}`)}</td>{result && <td>{num(result.before[k], lang)}</td>}<td>{num(result ? result.after[k] : counts?.[k], lang)}</td></tr>)}</tbody></table>
+    <h3 className="field-label">{t('admin.qa.suppressed')}</h3>
+    {!data?.suppressed.length ? <p className="muted-copy">{t('admin.qa.noSuppressed')}</p> : <ul>{data.suppressed.map(m => <li key={m.id}>{fmtDate(m.created_at, lang, true)} · {m.channel} · {m.template} · {m.recipient}</li>)}</ul>}
   </section>;
 }

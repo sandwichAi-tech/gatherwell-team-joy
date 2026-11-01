@@ -3168,7 +3168,8 @@
       "support": "Ayuda",
       "offerings": "Ofertas",
       "communities": "Restricciones de comunidad",
-      "flags": "Interruptores"
+      "flags": "Interruptores",
+      "qa": "Pruebas"
     },
     "period": {
       "week": "Esta semana",
@@ -3568,7 +3569,45 @@
     "updatedAt": "Actualizado a las {{time}}",
     "refresh": "Actualizar",
     "refreshing": "Actualizando…",
-    "loadError": "No se pudieron cargar estas cifras. Lo que ves aquí no está actualizado."
+    "loadError": "No se pudieron cargar estas cifras. Lo que ves aquí no está actualizado.",
+    "qa": {
+      "title": "Laboratorio de pruebas",
+      "intro": "Cuentas solo para pruebas. Están ocultas de las páginas públicas, nunca reciben correos, mensajes de texto ni notificaciones, y nunca se les puede cobrar en modo real.",
+      "seed": "Crear cuentas de prueba",
+      "wipe": "Borrar todos los datos de prueba",
+      "working": "Procesando…",
+      "seeded": "Se crearon {{count}} cuentas de prueba.",
+      "seedPartial": "No se pudieron crear algunas cuentas de prueba. Revisa la lista e inténtalo de nuevo.",
+      "wiped": "Se borraron todos los datos de prueba.",
+      "wipeIncomplete": "No se pudieron borrar algunos datos de prueba. Revisa los conteos e inténtalo de nuevo.",
+      "failed": "Algo salió mal. Inténtalo de nuevo.",
+      "wipeTitle": "¿Borrar todos los datos de prueba?",
+      "wipeBody": "Esto borra para siempre todas las cuentas ZZ-TEST y todo lo que crearon, y quita el rol de administrador de prueba. Las cuentas reales no se tocan.",
+      "accounts": "Personas",
+      "none": "Todavía no hay cuentas de prueba.",
+      "password": "Contraseña",
+      "showPassword": "Mostrar contraseña",
+      "noAccount": "Sin cuenta (invitado)",
+      "counts": "Datos de prueba",
+      "item": "Elemento",
+      "before": "Antes",
+      "after": "Después",
+      "now": "Ahora",
+      "suppressed": "Mensajes suprimidos",
+      "noSuppressed": "Todavía no hay mensajes para cuentas de prueba.",
+      "kinds": {
+        "accounts": "Cuentas de prueba",
+        "registry": "Registros de personas",
+        "events": "Eventos",
+        "rsvps": "Confirmaciones",
+        "teams": "Equipos",
+        "teamMembers": "Membresías de equipo",
+        "resources": "Recursos, cursos y retos",
+        "messages": "Mensajes",
+        "files": "Archivos",
+        "adminRoles": "Roles de administrador"
+      }
+    }
   },
   "legalDocs": {
     "draft": "Borrador — pendiente de revisión legal",
