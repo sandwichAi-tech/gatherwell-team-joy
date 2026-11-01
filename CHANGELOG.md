@@ -1,5 +1,14 @@
 # ZoheeWell Change Log
 
+## 2026-11-01 — Invite-only event customer signup (tracker row 126)
+- Root cause: after publishing an Invite only event, the builder's share step had no invitation key, so the copied link fell back to the signed-in /event page; new customers were sent through team onboarding ("Join your team" / team code). The assistant's invite card had the same fallback.
+- Invite-only share links now always use the event signup page with the invitation (/e/:id?k=…); the builder fetches the key after publishing. New shared helper src/lib/event-invite.ts.
+- Anyone not yet onboarded who opens an /event/:id link (including links already sent) is redirected to that event's signup page, keeping a valid invitation key. Onboarding that returns to an event signup asks only 18+ and name — no team code, role, team approval or automatic team joining — then returns to the event.
+- Invalid/revoked invitation keys show an event-specific message (EN/ES) instead of a generic not-found.
+- Unchanged: invitation authorization (get_public_event_k / RSVP token checks), payment, waivers, My team only eligibility, optional group (team) ticket registration. Public listings already include only visibility='public' events (public_upcoming feeds the coach page and embed; discover_catalog; sitemap lists no events) — confirmed from function definitions.
+- Tests: src/lib/event-invite.test.ts (10). Full suite 135 files / 1038 tests; typecheck clean. Browser: invalid invite message at 320/390/1280 with no overflow; signed-out /event link goes to sign-in with the return path kept.
+- Not verified: a full signed-in new-customer signup end to end against a real invite-only event, paid checkout on an invite-only event, and an already-onboarded non-team customer opening an old /event link (they still see the app page).
+
 ## 2026-11-01 — Q0 gap closure (no new features)
 - Challenge checkout follows the event rule: a test account (is_test flag or test email) is refused in Stripe live mode ("test_account_live_mode", EN/ES); Stripe test mode still works. Test added in src/lib/qa-lab.test.ts.
 - Admin overview numbers and charts (signups, teams, events, RSVPs, check-ins, AI, messages, plans, paid, licenses, weekly chart, time-to-live) exclude test accounts and their data. QA Lab alone shows "incl. N test".
