@@ -8,6 +8,7 @@
 - [ ] Apply tests/database/waiver_reversion_refund_requests.pending.sql to an authorized backend; then full signed-in acceptance.
 - [ ] Refund submission to the payment provider (pending -> submitted) is not built; needs verified payments setup.
 - [ ] Waiver controls inside the Edit event form itself and switching to a different library waiver on a published event.
+- [ ] Verification: typecheck + production build after test type fix.
 - [ ] Physical iOS/Android device checks for viewer and camera upload.
 
 ## Waivers rows 64 / 85 / 86 — October 31 continuation
