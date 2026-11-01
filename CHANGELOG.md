@@ -3,9 +3,9 @@
 ## 2026-11-01 — Row 126 follow-up: legacy invite links for existing customers
 - Onboarded people who don't manage the event and open an old /event/:id?k= link now go to the event signup page (/e/:id?k=) with the same invitation; hosts, co-hosts and leaders (can_manage_event) keep the management page. No token = no redirect and nothing revealed; the "not available" page now explains how to get a fresh invitation (EN/ES).
 - Onboarding that returns to an event signup drops a stale pending team code instead of auto-joining a team, and already-onboarded people return to the event instead of Home.
-- Tests: 4 new cases in src/lib/event-invite.test.ts. Unverified: signed-in browser runs (no existing test-account invite-only event; no shared fixtures written).
-
+- Tests: 4 new cases in src/lib/event-invite.test.ts. 
 - Verification (2026-11-01 22:35–22:50 UTC): one ZZ-TEST invite-only event created as the QA host via the normal create path, browser-checked at 390/1280, then removed with its auto-created badges/activity; QA personas kept. Onboarding entry decision moved into onboardingEntry() with 4 tests. Positive registration is blocked (no approved ZoheeWell platform agreement — fails closed as designed).
+
 ## 2026-11-01 — Invite-only event customer signup (tracker row 126)
 - Root cause: after publishing an Invite only event, the builder's share step had no invitation key, so the copied link fell back to the signed-in /event page; new customers were sent through team onboarding ("Join your team" / team code). The assistant's invite card had the same fallback.
 - Invite-only share links now always use the event signup page with the invitation (/e/:id?k=…); the builder fetches the key after publishing. New shared helper src/lib/event-invite.ts.
