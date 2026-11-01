@@ -86,12 +86,13 @@ export async function deleteQa(db: Db, actor: string) {
   const run = async (label: string, q: PromiseLike<{ error: { message: string } | null }>) => { const { error } = await q; if (error) errors.push(`${label}: ${error.message}`); };
   await run('outbox', db.from('notification_outbox').delete().or(`user_id.in.(${s.userIds.join(',')}),recipient.ilike.${EMAIL_LIKE},recipient.in.(${PHONES.join(',')})`));
   await run('rsvps', db.from('rsvps').delete().or(`user_id.in.(${s.userIds.join(',')}),guest_email.ilike.${EMAIL_LIKE},event_id.in.(${s.eventIds.join(',')})`));
-  await run('team_members', db.from('team_members').delete().or(`user_id.in.(${s.userIds.join(',')}),team_id.in.(${s.teamIds.join(',')})`));
   await run('events', db.from('events').delete().in('host_id', s.userIds));
   await run('challenges', db.from('challenges').delete().in('created_by', s.userIds));
   await run('offers', db.from('offers').delete().in('host_id', s.userIds));
   await run('tracks', db.from('tracks').delete().in('host_id', s.userIds));
   await run('teams', db.from('teams').delete().in('owner_id', s.userIds));
+  // After teams: removing a team's last leader directly is refused by design.
+  await run('team_members', db.from('team_members').delete().or(`user_id.in.(${s.userIds.join(',')}),team_id.in.(${s.teamIds.join(',')})`));
   const { data: buckets } = await db.storage.listBuckets();
   for (const b of buckets ?? []) for (const id of s.ids) {
     const { data } = await db.storage.from(b.id).list(id, { limit: 1000 });
