@@ -1,5 +1,8 @@
 # ZoheeWell Change Log
 
+## 2026-11-01 — Platform Agreement v2.0 draft imported (not in effect)
+- Owner-supplied DOCX stored byte-identical, with a text extraction, in docs/legal/drafts/platform-agreement-v2.0-draft/ (private source, no route, no database row). Not approved or active; registration gate, fees and current agreements unchanged.
+
 ## 2026-11-01 — Event form visibility layout
 - "Who can see it" choices now wrap without clipping and sit before More options in quick create; More options opens downward (with Fewer options to close). Values and visibility rules unchanged.
 
