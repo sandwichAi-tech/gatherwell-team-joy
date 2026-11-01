@@ -9,7 +9,7 @@ import { processOutbox } from './process.server';
 afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); vi.clearAllMocks(); });
 
 describe('retried messages use normal outbox delivery', () => {
-  const row = { id: 'retry-test', channel: 'email', recipient: 'retry-test@example.invalid', language: 'en', template: 'rsvp_confirmed', kind: 'transactional', payload: { title: 'Test gathering' }, user_id: null, attempts: 1, skip_reason: null, unsub_token: null };
+  const row = { id: 'retry-test', channel: 'email', recipient: 'retry-test@zoheewell.test', language: 'en', template: 'rsvp_confirmed', kind: 'transactional', payload: { title: 'Test gathering' }, user_id: null, attempts: 1, skip_reason: null, unsub_token: null };
   it('records simulation instead of contacting a provider when no sending secret exists', async () => {
     vi.stubEnv('RESEND_API_KEY', undefined);
     const fetch = vi.fn(); vi.stubGlobal('fetch', fetch);
