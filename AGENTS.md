@@ -70,3 +70,4 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Assessments: immutable private receipts + approved scope; preview writes none. Stable-ID edits preserve choices; publish requires saved destinations.
 - Commerce/removal/waiver-version ledger rules live in supabase/AGENTS.md (database-owned).
 - QA test kit: personas/seed/cleanup live only in src/lib/qa-lab*.ts behind Admin > QA Lab; profiles.is_test is backend-set and drives hiding, message suppression and live-charge blocking, so test data never touches real users.
+- Unapproved legal drafts live only in docs/legal/drafts/<id>/ (original file + checksums + README); they enter consent_text_versions only once approved, because platform rows there are readable by all and that table has no draft state.
