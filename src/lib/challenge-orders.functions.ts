@@ -27,6 +27,11 @@ export const beginChallengeOrder = createServerFn({ method: 'POST' }).middleware
     const extras = c.addons as unknown as PublicChallenge['addons'];
     const paid = c.is_paid || data.extras.some(s => (extras.find(a => a.id === s.id)?.price_cents ?? 0) > 0);
     if (paid) { const flag = await context.supabase.rpc('flag_on', { _key: 'feature_selling' }); if (flag.error || !flag.data) return { error: 'checkout_setup_required' }; }
+    if (paid && data.environment === 'live') {
+      const { blocksTestLiveCheckout } = await import('@/lib/qa-lab');
+      const t = await context.supabase.rpc('is_test_user', { _user: context.userId });
+      if (t.error || blocksTestLiveCheckout('live', !!t.data, context.claims.email)) return { error: 'test_account_live_mode' };
+    }
     if (paid && !process.env[data.environment === 'live' ? 'STRIPE_LIVE_API_KEY' : 'STRIPE_SANDBOX_API_KEY']) return { error: 'checkout_setup_required' };
     const r = await context.supabase.rpc('create_challenge_order', { _c: data.id, _request: data.request, _extras: data.extras, _environment: data.environment });
     if (r.error) return { error: r.error.message };

@@ -25,6 +25,11 @@ export function isTestRecipient(recipient: string, name?: string | null) {
   return /^\s*zz-test/i.test(name ?? '');
 }
 
+/** Challenge/event checkout: a test account (flagged or by email) may only use Stripe test mode. */
+export function blocksTestLiveCheckout(environment: 'sandbox' | 'live', isTestFlag: boolean, email: unknown) {
+  return environment === 'live' && (isTestFlag || (typeof email === 'string' && isTestRecipient(email)));
+}
+
 /** Stripe live mode must never charge a test account. */
 export function blocksLiveCharge(key: string, customerEmail: unknown) {
   return key.startsWith('sk_live') || key.startsWith('rk_live') ? typeof customerEmail === 'string' && isTestRecipient(customerEmail) : false;

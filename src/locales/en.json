@@ -2086,6 +2086,7 @@
       "out_of_range": "That day isn't part of this challenge.",
       "invalid_message": "Write up to 280 characters.",
       "not_allowed": "You don't have access to this challenge.",
+      "test_account_live_mode": "Test accounts can only check out in Stripe test mode.",
       "checkout_setup_required": "Paid enrollment is unavailable until checkout, orders and refunds are verified. You can save a paid draft.",
       "access_revoked": "This enrollment is no longer active.",
       "challenge_full": "This challenge is full.",
@@ -3606,7 +3607,8 @@
         "messages": "Messages",
         "files": "Files",
         "adminRoles": "Admin roles"
-      }
+      },
+      "overviewExcludes": "Admin overview numbers and charts exclude test data (incl. {{count}} test)."
     }
   },
   "legalDocs": {
