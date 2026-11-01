@@ -3538,7 +3538,13 @@
         "simulated": "Simulated",
         "failed": "Failed",
         "skipped": "Skipped"
-      }
+      },
+      "testButton": "Send test email",
+      "testSending": "Sending…",
+      "testSent": "Test email sent to your address.",
+      "testSimulated": "Email sending is not connected yet, so nothing was delivered.",
+      "testSkipped": "This is a test account, so no real email was sent.",
+      "testFailed": "The test email could not be sent. Please try again."
     },
     "support": {
       "title": "Support tickets",

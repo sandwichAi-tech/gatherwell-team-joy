@@ -582,3 +582,17 @@ export const closeAdminTicket = createServerFn({ method: 'POST' }).middleware([r
     if (error) return { ok: false as const, error: 'failed' };
     return { ok: true as const };
   });
+
+/** Admin-only: sends one test email to the signed-in admin's own address. */
+export const sendAdminTestEmailFn = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ lang: z.enum(['en', 'es']) }).parse(d))
+  .handler(async ({ data, context }) => {
+    const db = await assertAdmin(context);
+    const { data: u } = await db.auth.admin.getUserById(context.userId);
+    const to = u.user?.email;
+    if (!to) return { status: 'failed' as const, error: 'no_email' };
+    const { sendAdminTestEmail } = await import('./notify/process.server');
+    const r = await sendAdminTestEmail(to, data.lang);
+    await audit(db, context.userId, 'send_test_email', 'user', context.userId, null, { status: r.status, lang: data.lang });
+    return { status: r.status, error: r.error ?? null };
+  });

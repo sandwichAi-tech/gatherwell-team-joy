@@ -3538,7 +3538,13 @@
         "simulated": "Simulado",
         "failed": "Falló",
         "skipped": "Omitido"
-      }
+      },
+      "testButton": "Enviar correo de prueba",
+      "testSending": "Enviando…",
+      "testSent": "Enviamos el correo de prueba a tu dirección.",
+      "testSimulated": "El envío de correos aún no está conectado, así que no se entregó nada.",
+      "testSkipped": "Esta es una cuenta de prueba, así que no se envió ningún correo real.",
+      "testFailed": "No se pudo enviar el correo de prueba. Inténtalo de nuevo."
     },
     "support": {
       "title": "Solicitudes de ayuda",
