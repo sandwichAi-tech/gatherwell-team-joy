@@ -42,5 +42,78 @@ INSERT INTO waiver_library VALUES ('00000000-0000-0000-0000-0000000000b1','00000
 INSERT INTO waiver_library_versions VALUES ('00000000-0000-0000-0000-0000000000b1',1,'ZZ-TEST Release','v1 text','',NULL,NULL),('00000000-0000-0000-0000-0000000000b1',2,'ZZ-TEST Release','v2 text','',NULL,NULL);
 INSERT INTO event_waivers(id,event_id,library_id,library_version,title_en,title_es,body_en,body_es) VALUES ('00000000-0000-0000-0000-0000000000d1','00000000-0000-0000-0000-0000000000e1','00000000-0000-0000-0000-0000000000b1',1,'ZZ-TEST Release','ZZ-TEST Release','v1 text','');
 UPDATE events SET status='published';
+INSERT INTO events VALUES ('00000000-0000-0000-0000-0000000000e2','00000000-0000-0000-0000-00000000000b','ZZ-TEST Other','published',now()+interval '10 days','none');
+-- c1 registered+accepted v1, not checked in; c2 checked in on v1; c3 paid ticket; c4 free on waitlist.
 INSERT INTO rsvps VALUES
- ('00000000-0000-0000-0000-0000000000r1'::text::uuid,'00000000-0000-0000-0000-0000000000e1','00000000-0000-0000-0000-0000000000c1','going','zztestcode000000001',NULL,NULL);
+ ('00000000-0000-0000-0000-000000000101','00000000-0000-0000-0000-0000000000e1','00000000-0000-0000-0000-0000000000c1','going','zztestcode0000000001',NULL,NULL),
+ ('00000000-0000-0000-0000-000000000102','00000000-0000-0000-0000-0000000000e1','00000000-0000-0000-0000-0000000000c2','going','zztestcode0000000002',now(),NULL),
+ ('00000000-0000-0000-0000-000000000103','00000000-0000-0000-0000-0000000000e1','00000000-0000-0000-0000-0000000000c3','going','zztestcode0000000003',NULL,NULL),
+ ('00000000-0000-0000-0000-000000000104','00000000-0000-0000-0000-0000000000e1','00000000-0000-0000-0000-0000000000c4','waitlist','zztestcode0000000004',NULL,NULL);
+SELECT store_event_waivers(id, jsonb_build_array(jsonb_build_object('id','00000000-0000-0000-0000-0000000000d1','version',1)),'rsvp',NULL) FROM rsvps WHERE event_id='00000000-0000-0000-0000-0000000000e1' AND status='going';
+INSERT INTO payments VALUES ('00000000-0000-0000-0000-000000000201','gathering','00000000-0000-0000-0000-0000000000e1','00000000-0000-0000-0000-000000000103','00000000-0000-0000-0000-00000000000a',3500,300,'paid');
+
+SELECT ok(checkin_blocker('00000000-0000-0000-0000-000000000101') IS NULL, 'v1 acceptance passes before a new version');
+-- outsider host B cannot count or replace
+SELECT set_config('t.uid','00000000-0000-0000-0000-00000000000b',false);
+SELECT expect_error($$SELECT waiver_reaccept_count('00000000-0000-0000-0000-0000000000e1')$$,'forbidden');
+SELECT expect_error($$SELECT replace_event_waiver_version('00000000-0000-0000-0000-0000000000e1','00000000-0000-0000-0000-0000000000d1',2,2)$$,'forbidden');
+SELECT expect_error($$UPDATE event_waivers SET body_en='hijack' WHERE id='00000000-0000-0000-0000-0000000000d1'$$,'waiver_pinned');
+SELECT set_config('t.uid','00000000-0000-0000-0000-00000000000a',false);
+SELECT ok(waiver_reaccept_count('00000000-0000-0000-0000-0000000000e1')=2, 'two registered, not-checked-in attendees need re-accept');
+SELECT expect_error($$SELECT replace_event_waiver_version('00000000-0000-0000-0000-0000000000e1','00000000-0000-0000-0000-0000000000d1',2,5)$$,'reaccept_count_changed');
+SELECT expect_error($$UPDATE event_waivers SET body_en='direct edit' WHERE id='00000000-0000-0000-0000-0000000000d1'$$,'waiver_pinned');
+SELECT ok(replace_event_waiver_version('00000000-0000-0000-0000-0000000000e1','00000000-0000-0000-0000-0000000000d1',2,2)=2, 'new version 2 pinned');
+SELECT ok(replace_event_waiver_version('00000000-0000-0000-0000-0000000000e1','00000000-0000-0000-0000-0000000000d1',2,99)=2, 'retry with same library version is idempotent');
+SELECT ok((SELECT count(*) FROM event_waiver_versions WHERE waiver_id='00000000-0000-0000-0000-0000000000d1')=2, 'v1 snapshot kept, v2 added');
+SELECT ok((SELECT count(*) FROM event_waiver_acceptances WHERE version=1)=3, 'prior v1 acceptances unchanged');
+SELECT expect_error($$UPDATE event_waiver_versions SET content_sha256='x'$$,'history_immutable');
+SELECT ok(checkin_blocker('00000000-0000-0000-0000-000000000101')='waiver_required', 'not-checked-in attendee must re-accept before check-in');
+SELECT ok(checkin_blocker('00000000-0000-0000-0000-000000000102') IS NULL, 'already checked-in attendee is not retroactively blocked');
+SELECT ok(jsonb_array_length(waivers_needing_reaccept('zztestcode0000000001'))=1, 'attendee sees the waiver to re-accept');
+SELECT ok(jsonb_array_length(waivers_needing_reaccept('zztestcode0000000002'))=0, 'checked-in attendee sees nothing');
+SELECT expect_error($$SELECT reaccept_event_waivers('zztestcode0000000001', jsonb_build_array(jsonb_build_object('id','00000000-0000-0000-0000-0000000000d1','version',1)))$$,'waiver_stale');
+SELECT ok(reaccept_event_waivers('zztestcode0000000001', jsonb_build_array(jsonb_build_object('id','00000000-0000-0000-0000-0000000000d1','version',2))), 're-accept v2');
+SELECT ok(reaccept_event_waivers('zztestcode0000000001', jsonb_build_array(jsonb_build_object('id','00000000-0000-0000-0000-0000000000d1','version',2))), 're-accept retry is idempotent');
+SELECT ok((SELECT count(*) FROM event_waiver_acceptances WHERE rsvp_id='00000000-0000-0000-0000-000000000101')=2, 'attendee keeps v1 and v2 records, no duplicates');
+SELECT ok(checkin_blocker('00000000-0000-0000-0000-000000000101') IS NULL, 'check-in allowed after re-accept');
+
+-- Refunds/cancellation
+SELECT ok((cancel_my_registration('zztestcode0000000003')->>'refund')='pending', 'paid attendee before 24h cutoff: refund request pending (not refunded)');
+SELECT ok((cancel_my_registration('zztestcode0000000003')->>'refund')='pending', 'repeat cancel is idempotent');
+SELECT ok((SELECT count(*) FROM refund_requests)=1, 'exactly one refund request');
+SELECT ok((SELECT amount_cents FROM refund_requests)=3200, 'refund excludes non-refundable booking fee (3500-300)');
+SELECT ok((SELECT status FROM payments WHERE id='00000000-0000-0000-0000-000000000201')='paid', 'payment not marked refunded by a request');
+SELECT ok((cancel_my_registration('zztestcode0000000002')->>'result')='checked_in', 'checked-in attendee cannot self-cancel');
+SELECT ok((cancel_my_registration('zztestcode0000000001')->>'refund')='free', 'free cancellation immediate');
+SELECT ok((SELECT status FROM rsvps WHERE id='00000000-0000-0000-0000-000000000101')='cancelled', 'free booking cancelled');
+SELECT confirm_refund_request('00000000-0000-0000-0000-000000000201','re_zztest_1','failed','card_closed');
+SELECT ok((SELECT status FROM refund_requests)='failed', 'provider failure recorded');
+SELECT set_config('t.uid','00000000-0000-0000-0000-00000000000b',false);
+SELECT expect_error($$SELECT retry_refund_request((SELECT id FROM refund_requests))$$,'forbidden');
+SELECT expect_error($$SELECT cancel_event_with_refunds('00000000-0000-0000-0000-0000000000e1','ZZ-TEST Yoga')$$,'forbidden');
+SELECT set_config('t.uid','00000000-0000-0000-0000-00000000000a',false);
+SELECT ok(retry_refund_request((SELECT id FROM refund_requests WHERE attempt=1)) IS NOT NULL, 'host retries failed refund');
+SELECT ok(retry_refund_request((SELECT id FROM refund_requests WHERE attempt=1)) = (SELECT id FROM refund_requests WHERE attempt=2), 'repeat retry returns same open attempt');
+SELECT expect_error($$SELECT retry_refund_request((SELECT id FROM refund_requests WHERE attempt=2))$$,'not_retryable');
+SELECT confirm_refund_request('00000000-0000-0000-0000-000000000201','re_zztest_2','succeeded');
+SELECT ok((SELECT status FROM refund_requests WHERE attempt=2)='succeeded', 'only provider confirmation sets succeeded');
+SELECT expect_error($$SELECT cancel_event_with_refunds('00000000-0000-0000-0000-0000000000e1','yes')$$,'confirm_mismatch');
+SELECT ok((cancel_event_with_refunds('00000000-0000-0000-0000-0000000000e1',' zz-test yoga ')->>'refund_requests')='0', 'event cancel: already-refunded payment not duplicated');
+SELECT ok((SELECT status FROM events WHERE id='00000000-0000-0000-0000-0000000000e1')='cancelled', 'event cancelled; registration stops');
+SELECT ok((cancel_event_with_refunds('00000000-0000-0000-0000-0000000000e1','ZZ-TEST Yoga')->>'result')='cancelled', 'event cancel retry idempotent');
+-- Policy cutoff: 'none' policy + attendee cancel -> no refund request
+INSERT INTO rsvps VALUES ('00000000-0000-0000-0000-000000000105','00000000-0000-0000-0000-0000000000e2','00000000-0000-0000-0000-0000000000c5','going','zztestcode0000000005',NULL,NULL);
+INSERT INTO payments VALUES ('00000000-0000-0000-0000-000000000202','gathering','00000000-0000-0000-0000-0000000000e2','00000000-0000-0000-0000-000000000105','00000000-0000-0000-0000-00000000000b',2000,0,'paid');
+SELECT ok((cancel_my_registration('zztestcode0000000005')->>'refund')='not_eligible', 'no-refund policy: cancel without refund request');
+UPDATE events SET refund_policy='24h', starts_at=now()+interval '2 hours' WHERE id='00000000-0000-0000-0000-0000000000e2';
+UPDATE payments SET id=id WHERE false;
+INSERT INTO rsvps VALUES ('00000000-0000-0000-0000-000000000106','00000000-0000-0000-0000-0000000000e2','00000000-0000-0000-0000-0000000000c6','going','zztestcode0000000006',NULL,NULL);
+INSERT INTO payments VALUES ('00000000-0000-0000-0000-000000000203','gathering','00000000-0000-0000-0000-0000000000e2','00000000-0000-0000-0000-000000000106','00000000-0000-0000-0000-00000000000b',2000,0,'paid');
+SELECT ok((cancel_my_registration('zztestcode0000000006')->>'refund')='not_eligible', 'past 24h cutoff: no refund request');
+UPDATE events SET refund_policy='custom' WHERE id='00000000-0000-0000-0000-0000000000e2';
+INSERT INTO rsvps VALUES ('00000000-0000-0000-0000-000000000107','00000000-0000-0000-0000-0000000000e2','00000000-0000-0000-0000-0000000000c7','going','zztestcode0000000007',NULL,NULL);
+INSERT INTO payments VALUES ('00000000-0000-0000-0000-000000000204','gathering','00000000-0000-0000-0000-0000000000e2','00000000-0000-0000-0000-000000000107','00000000-0000-0000-0000-00000000000b',2000,0,'paid');
+SELECT ok((cancel_my_registration('zztestcode0000000007')->>'refund')='review', 'custom policy: request waits for host review');
+SELECT expect_error($$SELECT approve_refund_request((SELECT id FROM refund_requests WHERE status='review'))$$,'forbidden');
+SELECT set_config('t.uid','00000000-0000-0000-0000-00000000000b',false);
+SELECT ok(approve_refund_request((SELECT id FROM refund_requests WHERE status='review'))='pending', 'owning host approves review -> pending');
