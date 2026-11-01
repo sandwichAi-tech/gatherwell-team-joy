@@ -39,6 +39,8 @@ import { NetworkShareToggle } from '@/components/network-share';
 import { MembersOnlyPicker } from '@/components/offers';
 import { PlatformAgreementNotice, usePlatformAgreement } from '@/components/platform-event-agreement';
 import { EventWaiversManager } from '@/components/event-waivers';
+import { EventWaiverVersions } from '@/components/event-waiver-versions';
+import { HostEventCancelSheet, HostRefundRequests } from '@/components/event-cancellation';
 import { RsvpSettingsPanel } from '@/components/rsvp-questions';
 import { EventComments, GroupChatLink } from '@/components/conversation';
 import { HostUpdates } from '@/components/host-updates';
@@ -189,6 +191,8 @@ function EventDetailPage() {
     {event.status !== 'draft' && ((event as { discussion_enabled?: boolean }).discussion_enabled ? <EventComments eventId={event.id} teamId={event.team_id} me={userId} /> : !manages && <p className="muted">{t('discussion.disabled')}</p>)}
     {!manages && event.status === 'published' && <div className="guest-button-row"><ContactHostButton eventId={event.id} /></div>}
     {isHost && event.status === 'draft' && !event.agreements_locked && <EventWaiversManager eventId={event.id} userId={userId} />}
+    {isHost && (event.status === 'published' || event.agreements_locked) && event.status !== 'cancelled' && <EventWaiverVersions eventId={event.id} userId={userId} />}
+    {isHost && <HostRefundRequests eventId={event.id} userId={userId} />}
     {isHost && <PlatformAgreementNotice agreement={platformAgreement.data} loading={platformAgreement.isPending} />}
     {(manages || cohostIds.length > 0) && <CohostsPanel eventId={event.id} teamId={event.team_id} hostId={event.host_id} canEdit={event.host_id === userId || leadsTeam} />}
 
@@ -201,11 +205,7 @@ function EventDetailPage() {
       {isHost && event.status === 'published' && <EarlyAccessPanel eventId={event.id} hostId={event.host_id} />}
     </ResponsiveSheet>
     {manages && event.status !== 'draft' && <OutboxSummary eventId={id} />}
-    <ResponsiveSheet open={sheet === 'cancel'} onOpenChange={o => !o && setSheet(null)} title={t('gathering.cancelTitle')} description={t('gathering.cancelText')}>
-      <div className="edit-form"><label className="switch-row"><Checkbox checked={notify} onCheckedChange={v => setNotify(!!v)} /><span><strong>{t('gathering.notifyGuests')}</strong><small>{t('notify.cancelNote')}</small></span></label>
-        {!!event.price_cents && <label className="switch-row"><Checkbox checked={refund} onCheckedChange={v => setRefund(!!v)} /><span><strong>{t('billing.refundEveryone')}</strong><small>{gate.connected ? t('billing.refundOnCancel') : t('billing.refundNotConnected')}</small></span></label>}
-        <div className="confirm-actions"><Button variant="secondary" onClick={() => setSheet(null)}>{t('gathering.keep')}</Button><Button className="danger-button" disabled={saving} onClick={() => setStatus('cancelled')}>{t('gathering.cancel')}</Button></div></div>
-    </ResponsiveSheet>
+    <HostEventCancelSheet event={{ id: event.id, title: event.title }} open={sheet === 'cancel'} onClose={() => setSheet(null)} onDone={async () => { setSheet(null); void queryClient.invalidateQueries({ queryKey: ['outbox-summary', id] }); await refresh(); }} />
     <ResponsiveSheet open={sheet === 'archive'} onOpenChange={o => !o && setSheet(null)} title={t('builder.archiveTitle')} description={t('builder.archiveText')}>
       <div className="confirm-actions"><Button variant="secondary" onClick={() => setSheet(null)}>{t('gathering.keep')}</Button><Button disabled={saving} onClick={() => setStatus('archived')}>{t('builder.archive')}</Button></div>
     </ResponsiveSheet>

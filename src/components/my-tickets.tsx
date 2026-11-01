@@ -1,3 +1,4 @@
+import { RegistrationCancelSheet } from '@/components/event-cancellation';
 import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -40,17 +41,7 @@ export function MyTickets() {
   const queryClient = useQueryClient();
   const { data = [], isLoading } = useQuery(myTicketsQuery());
   const [cancelling, setCancelling] = useState<MyTicket | null>(null);
-  const [busy, setBusy] = useState(false);
 
-  const cancel = async () => {
-    if (!cancelling) return;
-    setBusy(true);
-    const { error } = await supabase.rpc('cancel_rsvp_by_code', { _code: cancelling.checkin_code });
-    setBusy(false); setCancelling(null);
-    if (error) { toast.error(t('guest.errors.generic')); return; }
-    toast.success(t('guest.toastCancelled'));
-    await queryClient.invalidateQueries({ queryKey: ['my-tickets'] });
-  };
 
   if (isLoading) return <ListSkeleton />;
   if (!data.length) return <section className="panel empty-gatherings">
@@ -91,8 +82,6 @@ export function MyTickets() {
         </article>;
       })}
     </div>
-    <ResponsiveSheet open={!!cancelling} onOpenChange={o => !o && setCancelling(null)} title={t('tickets.cancelTitle')} description={t('tickets.cancelText')}>
-      <div className="confirm-actions"><Button variant="secondary" onClick={() => setCancelling(null)}>{t('tickets.keep')}</Button><Button className="danger-button" disabled={busy} onClick={cancel}>{t('tickets.cancel')}</Button></div>
-    </ResponsiveSheet>
+    {cancelling && <RegistrationCancelSheet code={cancelling.checkin_code} open onClose={() => setCancelling(null)} onDone={async () => { setCancelling(null); await queryClient.invalidateQueries({ queryKey: ['my-tickets'] }); }} />}
   </>;
 }

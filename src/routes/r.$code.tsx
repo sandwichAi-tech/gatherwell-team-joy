@@ -1,3 +1,5 @@
+import { BookingPolicy, RegistrationCancelSheet } from '@/components/event-cancellation';
+import { ReacceptWaivers } from '@/components/event-waiver-versions';
 import { RetreatChecklist } from '@/components/retreat';
 import { useEffect, useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
@@ -39,11 +41,6 @@ function ManageRsvp() {
     if (error) { toast.error(t('guest.errors.generic')); return; }
     toast.success(t(st === 'waitlist' ? 'guest.toastWaitlist' : 'guest.toastSaved')); await refresh();
   };
-  const cancel = async () => {
-    setBusy(true); const { error } = await supabase.rpc('cancel_rsvp_by_code', { _code: code }); setBusy(false); setConfirmCancel(false);
-    if (error) { toast.error(t('guest.errors.generic')); return; }
-    toast.success(t('guest.toastCancelled')); await refresh();
-  };
   const open = !['cancelled', 'requested', 'declined'].includes(data.status) && data.event.status === 'published';
   return <>
     <GatheringCover path={data.event.cover_url} style={data.event.cover_style} title={data.event.title} className="guest-cover" />
@@ -53,6 +50,8 @@ function ManageRsvp() {
       <RetreatChecklist code={code} />
       {data.status === 'waitlist' && position != null && <p className="waitlist-position" role="status"><strong>{t('guest.waitlistPosition', { n: position })}</strong></p>}
       {open && <SignWaiverByCode eventId={data.event_id} code={code} />}
+      {open && <ReacceptWaivers code={code} />}
+      <BookingPolicy code={code} />
       {open && <section className="guest-card guest-manage">
         <h2 className="guest-subhead">{t('guest.manageTitle')}</h2>
         <div className="guest-plus"><span className="field-label">{t('guest.plusOnes')}</span><Stepper value={plus} onChange={setPlus} label={t('guest.plusOnes')} /></div>
@@ -65,8 +64,6 @@ function ManageRsvp() {
       {data.status !== 'cancelled' && <><Polls eventId={data.event_id} code={code} /><PhotoRoll eventId={data.event_id} code={code} canAdd={!!data.checked_in_at} /></>}
       <GuestWelcomeCard checkin={code} />
     </article>
-    <ResponsiveSheet open={confirmCancel} onOpenChange={setConfirmCancel} title={t('guest.cancelRsvpTitle')} description={t('guest.cancelRsvpText')}>
-      <div className="confirm-actions"><Button variant="secondary" onClick={() => setConfirmCancel(false)}>{t('gathering.keep')}</Button><Button className="danger-button" disabled={busy} onClick={cancel}>{t('guest.cancelRsvp')}</Button></div>
-    </ResponsiveSheet>
+    <RegistrationCancelSheet code={code} open={confirmCancel} onClose={() => setConfirmCancel(false)} onDone={async () => { setConfirmCancel(false); await refresh(); }} />
   </>;
 }
