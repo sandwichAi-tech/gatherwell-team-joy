@@ -1,5 +1,11 @@
 # ZoheeWell Change Log
 
+## 2026-11-01 — Q0 gap closure (no new features)
+- Challenge checkout follows the event rule: a test account (is_test flag or test email) is refused in Stripe live mode ("test_account_live_mode", EN/ES); Stripe test mode still works. Test added in src/lib/qa-lab.test.ts.
+- Admin overview numbers and charts (signups, teams, events, RSVPs, check-ins, AI, messages, plans, paid, licenses, weekly chart, time-to-live) exclude test accounts and their data. QA Lab alone shows "incl. N test".
+- Signed-out leak check with a deliberately public ZZ-TEST probe event/team/host: Discover, search, hosts directory, host page, team page, event page and sitemap.xml showed none (probe removed afterwards).
+- Re-ran "Delete all test data": every count reached 0 with no errors; 10 personas re-seeded.
+
 ## 2026-11-01 — QA Lab test kit (no product behavior change for real accounts)
 - Admin > QA Lab (/admin?tab=qa, admins only; new qa_lab switch stays OFF for regular users): "Create test accounts" seeds P1–P10 ZZ-TEST personas (P1 guest has no account; P10 gets a temporary admin role). Random passwords are stored server-side only and revealed on demand to admins (audited).
 - Test-account safety: profiles.is_test (settable only by backend code); test hosts are never publicly listed, their team pages return nothing and public member counts exclude test accounts, their events are forced unlisted (invite); all email/SMS/push to them is skipped as "test_account" and listed in the QA Lab; Stripe checkout for a test email is refused when the key is live.
