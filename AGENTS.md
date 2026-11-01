@@ -22,7 +22,7 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Home-screen install is manifest-only; the only service worker is public/push-sw.js (push only, no caching), registered after push is turned on.
 - Visual rules: DESIGN_RULES.md's active Blueprint v4 section only, not historical sections.
 - App screens live under _authenticated/_app: the _authenticated gate redirects signed-out visitors to /login, and the _app layout sends anyone not onboarded (or holding a pending invite) to /onboarding before rendering GatherwellShell.
-- Public pages (marketing + GuestShell /e /h /l /t /i /r) SSR in English, then applySavedLanguage(); loaders prefetchPublic() and the router dehydrates the cache for crawlers. Render stays window-free and deterministic. AuthFrame pages (/login, /join, /terms, /privacy) use ClientOnly.
+- Public pages (marketing + GuestShell /e /h /l /t /i /r) SSR in English then applySavedLanguage(); loaders prefetchPublic(), router dehydrates cache. Render window-free; AuthFrame pages use ClientOnly.
 - Uploads go to private media under the uploader's folder, shown via signed URLs (public buckets blocked).
 - Host forms use owner-only save_host_form and immutable versions. Replacement never advances event picks; reads check caller/invite context, consent binds versions, private PDFs validate bounded readability. Builder and Me share /waivers.
 - Event detail: app /event/$id; public /e/$id. Invite-only links come only from src/lib/event-invite.ts (/e/:id?k=), and un-onboarded visitors on /event are redirected to /e, because the app route sits behind team onboarding.
@@ -51,7 +51,7 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Challenges: retry-keyed saves; public/team/invite eligibility applies to enrollment and access; owner-only draft copies/archive, leave preserves history. Private progress stays scoped; paid remains guarded; extras reuse event media.
 - Platform fees come only from versioned fee_rules (calc_platform_fee_cents, mirrored in src/lib/fees.ts); orders snapshot the rule.
 - Database role regressions live in tests/database and run only by explicit invocation against a disposable copy; never connect these fixture-writing tests to production, preview, or the ordinary automated suite.
-- Identity: one auth user = one profile; return paths only via src/lib/return-to.ts; emailed links use single-use auth_intents; 18+ via confirm_adult(); view_mode display-only (host-return eligibility: src/lib/host-eligibility.ts, never admin/mode); guest rows link only via claim_guest_records().
+- Identity: one auth user = one profile; return paths via src/lib/return-to.ts; emailed links use single-use auth_intents; 18+ via confirm_adult(); view_mode display-only (host-return: src/lib/host-eligibility.ts); guest rows link via claim_guest_records().
 
 - WhichPlan guides pricing; no capability tables.
 - Templates copy as drafts. Resource journeys use scoped entitlements, idempotent in-app delivery. Coach consent needs verified accounts or hashed expiring links; no sender = requests stay pending. Segments expose counts only.
