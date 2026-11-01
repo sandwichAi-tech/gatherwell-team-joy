@@ -32,8 +32,6 @@ import { gatherwellHead } from '@/lib/gatherwell-head';
 import { storyImage } from '@/lib/guest';
 import { Switch } from '@/components/ui/switch';
 import { useServerFn } from '@tanstack/react-start';
-import { refundPayments } from '@/lib/billing.functions';
-import { usePaymentGate } from '@/components/plan-page';
 import { ShareKit } from '@/components/share-kit';
 import { NetworkShareToggle } from '@/components/network-share';
 import { MembersOnlyPicker } from '@/components/offers';
@@ -69,9 +67,9 @@ function EventDetailPage() {
   const { data: summary } = useQuery({ queryKey: ['event', id, 'summary', live?.checked_in], enabled: manages && ended && event?.status === 'published',
     queryFn: async () => (await supabase.rpc('event_summary', { _event: id })).data as null | Record<'rsvps' | 'checkins' | 'walk_ins' | 'first_timers' | 'photos', number> });
   const [draft, setDraft] = useState<TemplateDraft | null>(null);
-  const [saving, setSaving] = useState(false); const [sheet, setSheet] = useState<'share' | 'cancel' | 'delete' | 'archive' | null>(null); const [notify, setNotify] = useState(true);
+  const [saving, setSaving] = useState(false); const [sheet, setSheet] = useState<'share' | 'cancel' | 'delete' | 'archive' | null>(null);
   const { data: planStatus } = useQuery(planStatusQuery(userId));
-  const [refund, setRefund] = useState(true); const gate = usePaymentGate(); const refundFn = useServerFn(refundPayments);
+
   const { data: planWaiting = 0 } = useQuery({ queryKey: ['event', id, 'plan-waitlist'], enabled: manages && event?.status === 'published',
     queryFn: async () => {
       const { data: hit } = await supabase.from('event_plan_waitlist').select('event_id').eq('event_id', id).maybeSingle();
