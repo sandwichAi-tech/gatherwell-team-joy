@@ -25,7 +25,7 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Public pages (marketing + GuestShell /e /h /l /t /i /r) SSR in English, then applySavedLanguage(); loaders prefetchPublic() and the router dehydrates the cache for crawlers. Render stays window-free and deterministic. AuthFrame pages (/login, /join, /terms, /privacy) use ClientOnly.
 - Uploads go to private media under the uploader's folder, shown via signed URLs (public buckets blocked).
 - Host forms use owner-only save_host_form and immutable versions. Replacement never advances event picks; reads check caller/invite context, consent binds versions, private PDFs validate bounded readability. Builder and Me share /waivers.
-- Event detail: app /event/$id; public /e/$id.
+- Event detail: app /event/$id; public /e/$id. Invite-only links come only from src/lib/event-invite.ts (/e/:id?k=), and un-onboarded visitors on /event are redirected to /e, because the app route sits behind team onboarding.
 - Signed-out visitors may call only guest RPCs (public event/price, RSVP by code, polls, invites, email prefs by token); all else needs sign-in + team role, as the guest page is the only anonymous surface.
 - Event photos live in the private event-photos bucket and are uploaded/listed only through event-day server functions (host via bearer, guests via checked-in checkin_code), with signed URLs.
 - All outbound messages go via notification_outbox, sent only by src/lib/notify/process.server.ts through /api/public/outbox/process (app_config token, 5 min); missing provider secrets mark rows 'simulated', so a channel needs only its secrets.

@@ -1,3 +1,4 @@
+import { eventShareLink } from '@/lib/event-invite';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { LibrarySource, AssistantCard, GatheringDraft, Lang, RecipeCard, UpcomingItem } from './config';
 
@@ -31,7 +32,7 @@ export async function upcoming(ctx: ToolCtx): Promise<UpcomingItem[]> {
 }
 
 async function findGathering(ctx: ToolCtx, id: string) {
-  const q = ctx.supabase.from('events').select('id,title,starts_at,timezone,location_name,address,lat,lng,meeting_note,online_url,visibility');
+  const q = ctx.supabase.from('events').select('id,title,starts_at,timezone,location_name,address,lat,lng,meeting_note,online_url,visibility,invite_token');
   const { data } = /^[0-9a-f-]{36}$/i.test(id) ? await q.eq('id', id).maybeSingle()
     : await q.eq('status', 'published').gte('starts_at', new Date().toISOString()).order('starts_at').limit(1).maybeSingle();
   return data as any;
@@ -58,7 +59,7 @@ export async function runTool(name: string, input: Record<string, unknown>, ctx:
       const g = await findGathering(ctx, str(input['gathering_id']));
       if (!g) return { result: 'No upcoming gathering found. Ask the user to create one first.' };
       const channel = (['whatsapp', 'instagram', 'text'] as const).find(x => x === input['channel']) ?? 'whatsapp';
-      const link = `${ctx.origin}${g.visibility === 'public' ? '/e/' : '/event/'}${g.id}`;
+      const link = eventShareLink(ctx.origin, g) ?? `${ctx.origin}/e/${g.id}`;
       const place = g.location_name || g.address || (es ? 'en línea' : 'online');
       const date = when(g.starts_at, g.timezone, ctx.lang);
       const text = channel === 'instagram'

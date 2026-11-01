@@ -1,3 +1,4 @@
+import { eventShareLink } from '@/lib/event-invite';
 import { queryOptions } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
@@ -46,8 +47,8 @@ export const seriesQuery = (seriesId: string | null) => queryOptions({
 });
 
 export function shareLink(e: Pick<Gathering, 'id' | 'visibility'> & { invite_token?: string | null }) {
-  if (e.visibility === 'invite' && e.invite_token) return `${window.location.origin}/e/${e.id}?k=${e.invite_token}`;
-  return `${window.location.origin}${e.visibility === 'public' ? '/e/' : '/event/'}${e.id}`;
+  // Invite-only never falls back to the team-gated /event page (that asked invitees for a team code).
+  return eventShareLink(window.location.origin, e) ?? `${window.location.origin}/e/${e.id}`;
 }
 
 export const isOnline = (e: Pick<Gathering, 'online_url' | 'location_name' | 'address'>) => !!e.online_url && !e.location_name && !e.address;
