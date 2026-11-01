@@ -92,14 +92,9 @@ function EventDetailPage() {
     const { error } = await supabase.from('event_checklists').update({ items, updated_at: new Date().toISOString() }).eq('event_id', id);
     if (error) { toast.error(t('profile.saveError')); await refresh(); }
   };
-  const setStatus = async (status: 'published' | 'cancelled' | 'draft' | 'archived') => {
+  const setStatus = async (status: 'published' | 'draft' | 'archived') => {
     setSaving(true); const { error } = await supabase.from('events').update({ status }).eq('id', id); setSaving(false);
     if (error) { toast.error(t('profile.saveError')); return; }
-    if (status === 'cancelled' && refund && event.price_cents) {
-      if (!gate.connected) toast.message(t('billing.refundNotConnected'));
-      else { try { const r = await refundFn({ data: { eventId: id } }); if (r.ok) toast.success(t('billing.refundedCount', { count: r.refunded })); else toast.message(t('billing.refundNotConnected')); } catch { toast.error(t('billing.error')); } }
-    }
-    if (status === 'cancelled' && notify) { const { data: n } = await supabase.rpc('notify_gathering_cancelled', { _event: id }); toast.success(t('notify.cancelQueued', { count: n ?? 0 })); }
     void queryClient.invalidateQueries({ queryKey: ['outbox-summary', id] });
     toast.success(t(status === 'published' ? 'templates.launchedToast' : status === 'draft' ? 'builder.unpublished' : status === 'archived' ? 'builder.archived' : 'gathering.cancelled')); setSheet(null); await refresh();
   };
