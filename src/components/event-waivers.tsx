@@ -38,23 +38,49 @@ export function useEventWaivers(eventId: string | undefined) {
   });
 }
 
-function useOpenWaiverFile() {
+/** Signs a waiver file URL without navigating away, so in-progress RSVP/check-in state is never lost. */
+function useSignWaiverFile() {
   const sign = useServerFn(signEventWaiverFile);
   return async (waiverId: string, opts: { code?: string; version?: number } = {}) => {
-    const tab = window.open('', '_blank', 'noopener');
     try {
       const { url } = await sign({ data: { waiverId, token: inviteToken(), code: opts.code ?? null, version: opts.version ?? null } });
-      if (!url) { tab?.close(); return false; }
-      if (tab) tab.location.href = url; else window.location.assign(url);
-      return true;
-    } catch { tab?.close(); return false; }
+      return url || null;
+    } catch { return null; }
   };
+}
+
+export type ViewerDoc = { url: string; title: string };
+
+/** In-page document viewer with an obvious Close/Back control. Browser Back closes it instead of leaving the page. Viewing never accepts. */
+export function WaiverDocumentViewer({ doc, onClose }: { doc: ViewerDoc | null; onClose: () => void }) {
+  const { t } = useTranslation();
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    setFailed(false);
+    if (!doc || typeof window === 'undefined') return;
+    window.history.pushState({ ...(window.history.state ?? {}), zwWaiverViewer: true }, '');
+    let closedByBack = false;
+    const onPop = () => { closedByBack = true; onClose(); };
+    window.addEventListener('popstate', onPop);
+    return () => {
+      window.removeEventListener('popstate', onPop);
+      if (!closedByBack && window.history.state?.zwWaiverViewer) window.history.back();
+    };
+  }, [doc?.url]); // eslint-disable-line react-hooks/exhaustive-deps
+  return <ResponsiveSheet open={!!doc} onOpenChange={o => !o && onClose()} title={doc?.title ?? ''} description={t('eventWaivers.viewer.help')}
+    footer={<Button className="onboarding-continue" onClick={onClose}>{t('eventWaivers.viewer.close')}</Button>}>
+    {doc && <div className="waiver-viewer">
+      {failed ? <p className="field-error" role="alert">{t('eventWaivers.viewer.failed')}</p>
+        : <iframe className="waiver-viewer-frame" src={doc.url} title={doc.title} onError={() => setFailed(true)} />}
+      <a className="waiver-viewer-external" href={doc.url} target="_blank" rel="noopener noreferrer"><ExternalLink aria-hidden="true" />{t('eventWaivers.viewer.newTab')}</a>
+    </div>}
+  </ResponsiveSheet>;
 }
 
 /** Attendee review-and-accept list. Checkboxes always start unchecked; documents must be opened first. */
 export function EventWaiversAccept({ waivers, choices, onChange }: { waivers: PublicWaiver[]; choices: WaiverChoices; onChange: (c: WaiverChoices) => void }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
-  const open = useOpenWaiverFile(); const [busy, setBusy] = useState<string | null>(null);
+  const sign = useSignWaiverFile(); const [busy, setBusy] = useState<string | null>(null); const [viewer, setViewer] = useState<ViewerDoc | null>(null);
   if (!waivers.length) return null;
   const set = (id: string, patch: Partial<WaiverChoices[string]>) => onChange({ ...choices, [id]: { accepted: false, opened: false, ...choices[id], ...patch } });
   return <div className="event-waivers" role="group" aria-label={t('eventWaivers.groupLabel')}>
@@ -67,7 +93,7 @@ export function EventWaiversAccept({ waivers, choices, onChange }: { waivers: Pu
           <span>{t('waiver.version', { n: w.version })}</span></p>
         {body && <div className="waiver-text" tabIndex={0} role="document" aria-label={title}>{body.split(/\n{2,}/).map((p, i) => <p key={i}>{p}</p>)}</div>}
         {w.has_file && <Button type="button" variant="secondary" aria-busy={busy === w.id} disabled={busy === w.id}
-          onClick={async () => { setBusy(w.id); try { const ok = await open(w.id); if (ok) set(w.id, { opened: true }); else toast.error(t('eventWaivers.errors.file')); } finally { setBusy(null); } }}>
+          onClick={async () => { setBusy(w.id); try { const url = await sign(w.id); if (url) { setViewer({ url, title }); set(w.id, { opened: true }); } else toast.error(t('eventWaivers.errors.file')); } finally { setBusy(null); } }}>
           <ExternalLink />{t('eventWaivers.openFile', { name: w.file_name || t('eventWaivers.document') })}</Button>}
         {w.has_file && !c?.opened && <p className="field-hint" id={`ew-${w.id}-hint`}>{t('eventWaivers.openFirst')}</p>}
         <label className="guest-consent">
@@ -77,6 +103,7 @@ export function EventWaiversAccept({ waivers, choices, onChange }: { waivers: Pu
         </label>
       </fieldset>;
     })}
+    <WaiverDocumentViewer doc={viewer} onClose={() => setViewer(null)} />
   </div>;
 }
 
@@ -85,7 +112,7 @@ type Accepted = { waiver_id: string; version: number; kind: WaiverKind; title_en
 /** Exactly what this attendee accepted (by their private RSVP code). */
 export function MyWaiverAcceptances({ code }: { code: string }) {
   const { t, i18n } = useTranslation(); const lang = i18n.resolvedLanguage ?? 'en';
-  const open = useOpenWaiverFile();
+  const sign = useSignWaiverFile(); const [viewer, setViewer] = useState<ViewerDoc | null>(null);
   const { data } = useQuery({ queryKey: ['my-event-waivers', code], enabled: !!code, queryFn: async () => {
     const { data: d, error } = await db.rpc('my_event_waiver_acceptances', { _code: code }); if (error) throw error; return (d ?? []) as Accepted[];
   } });
@@ -96,9 +123,10 @@ export function MyWaiverAcceptances({ code }: { code: string }) {
     <ul className="plain-list">{data.map(a => <li key={`${a.waiver_id}-${a.version}`}>
       <details><summary><strong>{waiverTitle(a, lang)}</strong> · {t('waiver.version', { n: a.version })} · {fmt.format(new Date(a.accepted_at))}</summary>
         {waiverBody(a, lang) && <div className="waiver-text">{waiverBody(a, lang).split(/\n{2,}/).map((p, i) => <p key={i}>{p}</p>)}</div>}
-        {a.has_file && <Button type="button" variant="ghost" onClick={async () => { if (!(await open(a.waiver_id, { code, version: a.version }))) toast.error(t('eventWaivers.errors.file')); }}>
+        {a.has_file && <Button type="button" variant="ghost" onClick={async () => { const url = await sign(a.waiver_id, { code, version: a.version }); if (url) setViewer({ url, title: waiverTitle(a, lang) }); else toast.error(t('eventWaivers.errors.file')); }}>
           <ExternalLink />{t('eventWaivers.openFile', { name: a.file_name || t('eventWaivers.document') })}</Button>}
       </details></li>)}</ul>
+    <WaiverDocumentViewer doc={viewer} onClose={() => setViewer(null)} />
   </section>;
 }
 
