@@ -17,17 +17,18 @@ export function parseLegalMarkdown(src: string): LegalBlock[] {
     const block = raw.trim();
     if (!block) continue;
     const h = /^(#{1,3})\s+(.*)$/.exec(block);
-    if (h && !block.includes('\n')) { out.push({ type: 'h', level: h[1].length as 1 | 2 | 3, text: h[2] }); continue; }
+    if (h && !block.includes('\n')) { out.push({ type: 'h', level: (h[1] ?? '#').length as 1 | 2 | 3, text: h[2] ?? '' }); continue; }
     const lines = block.split('\n');
-    if (lines[0].startsWith('|') && lines.length >= 2 && /^\|[\s|:-]+\|?$/.test(lines[1])) {
-      out.push({ type: 'table', head: cells(lines[0]), rows: lines.slice(2).map(cells) }); continue;
+    const first = lines[0] ?? '';
+    if (first.startsWith('|') && lines.length >= 2 && /^\|[\s|:-]+\|?$/.test(lines[1] ?? '')) {
+      out.push({ type: 'table', head: cells(first), rows: lines.slice(2).map(cells) }); continue;
     }
     if (lines.every(l => l.startsWith('>'))) { out.push({ type: 'quote', text: lines.map(l => l.replace(/^>\s?/, '')).join(' ') }); continue; }
     const li = /^(\d+\.|-)\s+/;
-    if (li.test(lines[0])) {
+    if (li.test(first)) {
       const items: string[] = [];
       for (const l of lines) { if (li.test(l.trimStart())) items.push(l.trimStart().replace(li, '')); else if (items.length) items[items.length - 1] += ' ' + l.trim(); }
-      out.push({ type: 'list', ordered: /^\d/.test(lines[0]), items }); continue;
+      out.push({ type: 'list', ordered: /^\d/.test(first), items }); continue;
     }
     out.push({ type: 'p', text: lines.join(' ') });
   }

@@ -19,7 +19,7 @@ export const platformAgreementQuery = (locale: 'en' | 'es') => queryOptions({
 });
 
 export const Route = createFileRoute('/legal/platform-agreement')({
-  validateSearch: (s: Record<string, unknown>): { lang?: 'es' } => (s.lang === 'es' ? { lang: 'es' } : {}),
+  validateSearch: (s: Record<string, unknown>): { lang?: 'es' } => (s['lang'] === 'es' ? { lang: 'es' } : {}),
   head: () => legalHead('eventAgreements.title', 'legalAgreement.metaDesc', '/legal/platform-agreement'),
   component: PlatformAgreementPage,
 });
