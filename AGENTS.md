@@ -69,3 +69,4 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Resource courses use lesson slots for ordered quiz/assessment/reference items, checked full-ID reorder and detach-only removal to preserve source identity/history; references keep current source access until inclusion is verified.
 - Assessments: immutable private receipts + approved scope; preview writes none. Stable-ID edits preserve choices; publish requires saved destinations.
 - Commerce/removal/waiver-version ledger rules live in supabase/AGENTS.md (database-owned).
+- QA test kit: personas/seed/cleanup live only in src/lib/qa-lab*.ts behind Admin > QA Lab; profiles.is_test is backend-set and drives hiding, message suppression and live-charge blocking, so test data never touches real users.
