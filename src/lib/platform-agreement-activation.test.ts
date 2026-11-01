@@ -29,7 +29,7 @@ describe('active platform agreement v2.0', () => {
   });
   it('renders headings, Schedule A table and the Spanish notice', () => {
     const blocks = parseLegalMarkdown(es);
-    expect(blocks[0].type).toBe('quote');
+    expect(blocks[0]?.type).toBe('quote');
     expect(blocks.some(b => b.type === 'table' && b.rows.length === 7)).toBe(true);
     expect(blocks.filter(b => b.type === 'h' && b.level === 2).length).toBeGreaterThanOrEqual(27);
   });
