@@ -177,7 +177,8 @@ BEGIN
   IF lower(btrim(coalesce(_confirm,''))) <> lower(btrim(e.title)) THEN RAISE EXCEPTION 'confirm_mismatch'; END IF;
   IF e.status NOT IN ('published','cancelled') THEN RAISE EXCEPTION 'event_closed'; END IF;
   IF e.status<>'cancelled' THEN UPDATE events SET status='cancelled' WHERE id=e.id; END IF;
-  FOR p IN SELECT * FROM payments WHERE event_id=e.id AND kind='gathering' AND status='paid' LOOP
+  FOR p IN SELECT * FROM payments WHERE event_id=e.id AND kind='gathering' AND status='paid'
+    AND NOT EXISTS(SELECT 1 FROM refund_requests q WHERE q.payment_id=payments.id AND q.status IN ('pending','review','submitted','succeeded')) LOOP
     IF open_refund_request(p, e, 'host_cancel', true) IS NOT NULL THEN n := n+1; END IF;
   END LOOP;
   RETURN jsonb_build_object('result','cancelled','refund_requests',n);
