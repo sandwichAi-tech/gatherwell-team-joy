@@ -1183,7 +1183,8 @@
     "backToTeam": "Back to Team",
     "hostedBy": "Hosted by {{name}}",
     "checklist": "Your checklist",
-    "onlyYou": "Only you"
+    "onlyYou": "Only you",
+    "notFoundInviteHint": "If you were invited, open the invitation link the host sent you, or ask the host for a new one."
   },
   "insights": {
     "eyebrow": "Hosting",

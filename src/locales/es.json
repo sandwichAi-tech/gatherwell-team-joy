@@ -1183,7 +1183,8 @@
     "backToTeam": "Volver a Equipo",
     "hostedBy": "Organiza {{name}}",
     "checklist": "Tu lista",
-    "onlyYou": "Solo tú"
+    "onlyYou": "Solo tú",
+    "notFoundInviteHint": "Si te invitaron, abre el enlace de invitación que te envió el anfitrión o pídele uno nuevo."
   },
   "insights": {
     "eyebrow": "Anfitrión",
