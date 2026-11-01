@@ -2999,3 +2999,8 @@ a.legal-doc-card:hover, a.legal-doc-card:focus-visible { border-color: var(--pri
 .refund-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; min-height: 48px; }
 .waiver-version-row { display: grid; gap: 0.5rem; padding-block: 0.75rem; border-bottom: 1px solid var(--border); min-width: 0; overflow-wrap: anywhere; }
 .booking-policy ul, .booking-policy p { overflow-wrap: anywhere; }
+/* Visibility choices wrap instead of clipping on narrow screens */
+.segmented.vis-choice > button { height: auto; min-height: 48px; white-space: normal; line-height: 1.25; padding-block: 8px; text-align: center; overflow-wrap: anywhere; }
+.quick-more svg { transition: transform .15s ease; }
+.quick-more .quick-more-open { transform: rotate(90deg); }
+.gathering-more { display: contents; }
