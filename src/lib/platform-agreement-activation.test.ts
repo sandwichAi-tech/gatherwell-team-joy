@@ -34,3 +34,13 @@ describe('active platform agreement v2.0', () => {
     expect(blocks.filter(b => b.type === 'h' && b.level === 2).length).toBeGreaterThanOrEqual(27);
   });
 });
+
+import { agreementViewUrl } from './event-agreements';
+describe('agreement viewer url', () => {
+  it('opens our legal page on the current site', () => {
+    expect(agreementViewUrl('https://zoheewell.com/legal/platform-agreement?lang=es', 'http://localhost:8080')).toBe('http://localhost:8080/legal/platform-agreement?lang=es');
+  });
+  it('leaves other hosts untouched', () => {
+    expect(agreementViewUrl('https://files.example.org/a.pdf', 'http://localhost:8080')).toBe('https://files.example.org/a.pdf');
+  });
+});

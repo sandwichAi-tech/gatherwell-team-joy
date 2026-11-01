@@ -4,7 +4,7 @@ import { WaiverDocumentViewer, type ViewerDoc } from '@/components/event-waivers
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { platformSelection, type PlatformAgreement } from '@/lib/event-agreements';
+import { agreementViewUrl, platformSelection, type PlatformAgreement } from '@/lib/event-agreements';
 import { waiverInviteToken } from '@/lib/waiver-consent-context';
 export function usePlatformAgreement(eventId: string | undefined) {
   const token = waiverInviteToken();
@@ -15,5 +15,5 @@ export function usePlatformAgreement(eventId: string | undefined) {
 }
 export function PlatformAgreementNotice({ agreement, loading }: { agreement: PlatformAgreement | null | undefined; loading: boolean }) {
   const { t, i18n } = useTranslation(); const selected = platformSelection(agreement, i18n.resolvedLanguage ?? 'en'); const [viewer, setViewer] = useState<ViewerDoc | null>(null);
-  return <section className="waiver-block" aria-busy={loading}><strong>{t('eventAgreements.title')}</strong>{loading ? <p>{t('publicEvent.loading')}</p> : !selected ? <p role="alert">{t('eventAgreements.legalRequired')}</p> : <><p>{t('waiver.version', { n: selected.version })}</p><Button type="button" variant="secondary" disabled={!selected.url} onClick={() => selected.url && setViewer({ url: selected.url, title: t('eventAgreements.title') })}>{t('eventAgreements.open')}</Button></>}<WaiverDocumentViewer doc={viewer} onClose={() => setViewer(null)} /></section>;
+  return <section className="waiver-block" aria-busy={loading}><strong>{t('eventAgreements.title')}</strong>{loading ? <p>{t('publicEvent.loading')}</p> : !selected ? <p role="alert">{t('eventAgreements.legalRequired')}</p> : <><p>{t('waiver.version', { n: selected.version })}</p><Button type="button" variant="secondary" disabled={!selected.url} onClick={() => { const url = agreementViewUrl(selected.url, window.location.origin); if (url) setViewer({ url, title: t('eventAgreements.title') }); }}>{t('eventAgreements.open')}</Button></>}<WaiverDocumentViewer doc={viewer} onClose={() => setViewer(null)} /></section>;
 }
