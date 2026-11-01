@@ -28,7 +28,7 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Event detail: app /event/$id; public /e/$id. Invite-only links come only from src/lib/event-invite.ts (/e/:id?k=), and un-onboarded visitors on /event are redirected to /e, because the app route sits behind team onboarding.
 - Signed-out visitors may call only guest RPCs (public event/price, RSVP by code, polls, invites, email prefs by token); all else needs sign-in + team role, as the guest page is the only anonymous surface.
 - Event photos live in the private event-photos bucket and are uploaded/listed only through event-day server functions (host via bearer, guests via checked-in checkin_code), with signed URLs.
-- All outbound messages go via notification_outbox, sent only by src/lib/notify/process.server.ts through /api/public/outbox/process (app_config token, 5 min); missing provider secrets mark rows 'simulated', so a channel needs only its secrets.
+- Outbound messages go via notification_outbox, sent only by src/lib/notify/process.server.ts via /api/public/outbox/process; missing provider secrets mark rows 'simulated'.
 - Provider webhooks live under /api/public/{sms/inbound,email/resend,email/mailgun}, verify signatures, and return 503 until their secrets exist.
 - Icons use Phosphor via GwIcon only; icons.tsx re-exports wrappers.
 - Photos render only through BrandImage and come from site_media slots (private site-media bucket, signed URLs, anonymous read); only user_roles admins (has_role) can edit them at /admin/site-media.
