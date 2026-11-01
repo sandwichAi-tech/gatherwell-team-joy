@@ -1454,6 +1454,7 @@
     },
     "quickTitle": "Creación rápida",
     "moreOptions": "Más opciones",
+    "fewerOptions": "Menos opciones",
     "repeats": {
       "none": "No se repite",
       "daily": "Todos los días",
