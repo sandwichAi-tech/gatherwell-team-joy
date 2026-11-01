@@ -95,6 +95,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
   const [rule, setRule] = useState<RepeatRule>({ kind: 'none', monthly: 'date', days: [], endMode: 'count', count: 8, until: '' });
   const [teamReg, setTeamReg] = useState({ on: false, min: 2, max: 6, mode: 'person' as 'person' | 'team' });
   const [full, setFull] = useState(editing || !!templateId || !!fromId);
+  // Quick create shows More options before the extra fields so opening it expands downward.
+  const moreFirst = !(editing || !!templateId || !!fromId);
   const [retreatsOn] = useFeature('feature_retreats');
   const [sellingOn] = useFeature('feature_selling');
   const [retreatOn, setRetreatOn] = useState(false); const [retreat, setRetreat] = useState<Retreat>(emptyRetreat); const [retreatEnd, setRetreatEnd] = useState(''); const [galleryBusy, setGalleryBusy] = useState(false);
@@ -379,36 +381,8 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
     </div></div>;
   }
 
-  return <div className="gathering-screen">
-    <div className="gathering-form">
-      <header className="gathering-form-head">
-        <Button variant="ghost" size="icon" onClick={close} aria-label={t('common.close')}><X /></Button>
-        <h1>{t(editing ? 'gathering.editTitle' : full ? 'gathering.newTitle' : 'gathering.quickTitle')}</h1>
-        {tpl && <span className="chip">{t('gathering.fromTemplate', { title: tpl.title })}</span>}
-      </header>
-
-      {saveError && <div id="g-errors" className="field-error" role="alert" tabIndex={-1}><strong>{saveError}</strong><ul>{[...blockers.map(b => ({ id: ({ title: 'g-title', date: 'g-start', place: 'g-location', online_link: 'g-online', reg_window: 'g-reg-open', min_age: 'g-min-age', tier_invalid: 'g-tiers', retreat_dates: 'g-retreat', payouts: 'g-price' })[b], text: t(`eventReliability.errors.${b}`) })), ...extraIssues].map((e, i) => <li key={i}><Button variant="link" onClick={() => { const target = document.getElementById(e.id); target?.focus(); target?.scrollIntoView({ block: 'center' }); }}>{e.text}</Button></li>)}</ul></div>}
-      <section className="form-section">
-        <span className="field-label" id="g-format-label">{t('builder.experience.label')}</span>
-        <div className="format-cards" role="radiogroup" aria-labelledby="g-format-label">
-          {eventFormats({ retreatsEnabled: retreatsOn, retreatActive: retreatOn, isSeries: !!source?.event.series_id }).map(f => {
-            const selected = formatOf(multi, retreatOn) === f;
-            return <button key={f} type="button" role="radio" aria-checked={selected} className={`format-card ${selected ? 'is-selected' : ''}`} onClick={() => pickFormat(f)}>
-              <strong>{t(`builder.experience.${f}`)}</strong>
-              <small>{t(`builder.experience.desc.${f}`)}</small>
-            </button>;
-          })}
-        </div>
-      </section>
-      {multi && <section className="form-section"><p>{t('sessions.scope')}</p>{sessions.map((s,i)=><fieldset key={i} className="form-section"><legend>{t('sessions.session',{count:i+1})}</legend>{(['title','starts_at','ends_at','place'] as const).map(key=><label key={key} className="field-label">{t(`sessions.${key}`)}<Input type={key.endsWith('_at')?'datetime-local':'text'} value={key.endsWith('_at')?toLocalInput(new Date(s[key])):s[key]} maxLength={key==='title'?100:300} onChange={e=>setSessions(rows=>rows.map((row,j)=>j===i?{...row,[key]:key.endsWith('_at')&&e.target.value?new Date(e.target.value).toISOString():e.target.value}:row))}/></label>)}<Button variant="ghost" onClick={()=>setSessions(rows=>rows.filter((_,j)=>j!==i))}>{t('sessions.remove')}</Button></fieldset>)}<Button variant="secondary" disabled={sessions.length>=20} onClick={()=>setSessions(rows=>[...rows,{title:'',starts_at:new Date().toISOString(),ends_at:new Date(Date.now()+3600000).toISOString(),place:''}])}>{t('builder.experience.add')}</Button></section>}
-
-      {!editing && !templateId && !fromId && (() => { const list = templates.filter(x => x.is_published || x.created_by === userId).slice(0, 8); return list.length > 0 && <section className="form-section blueprint-pick" aria-label={t('templates.startFrom')}>
-        <span className="field-label">{t('templates.startFrom')}</span>
-        <div className="chip-row">{list.map(x => <button key={x.id} type="button" className="preset-chip" onClick={() => void navigate({ to: '/gathering/new', search: { template: x.id } })}>{x.title}</button>)}</div>
-        <small className="field-hint">{t('templates.orScratch')}</small>
-      </section>; })()}
-
-      {full && <section className="form-section" aria-label={t('gathering.coverStyle')}>
+  const coverSection = (
+      <section className="form-section" aria-label={t('gathering.coverStyle')}>
         <GatheringCover path={coverPath} style={coverStyle} title={title || 'G'} className="form-cover" overlay={coverOverlay} focal={coverFocal} alt={coverAlt || null} sizes="(min-width: 720px) 720px, 100vw" onNaturalWidth={setCoverWidth} />
         {coverPath && coverWidth != null && isLowResolution(coverWidth) && <p className="field-hint crop-lowres" role="status">{t('gathering.coverLowRes', { width: coverWidth })}</p>}
         <div className="cover-actions">
@@ -440,7 +414,45 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
             </div>
           </>}
         </div>
-      </section>}
+      </section>
+  );
+  const durationBlock = <>
+        <span className="field-label">{t('gathering.duration')}</span>
+        <div className="chip-row">{DURATIONS.map(d => <button key={d} type="button" className={`preset-chip ${!customDuration && duration === d ? 'is-selected' : ''}`} aria-pressed={!customDuration && duration === d} onClick={() => { setCustomDuration(false); setDuration(d); }}>{t(`gathering.durations.${d}`)}</button>)}
+          <button type="button" className={`preset-chip ${customDuration ? 'is-selected' : ''}`} aria-pressed={customDuration} onClick={() => setCustomDuration(true)}>{t('gathering.customDuration')}</button></div>
+        {customDuration && <div className="inline-field"><Input type="number" min={5} max={1440} className="field-input" value={duration} onChange={e => setDuration(Math.max(5, Math.min(1440, Number(e.target.value) || 5)))} aria-label={t('gathering.minutes')} /><span>{t('gathering.minutes')}</span></div>}
+        {!editing && <PlaybookCard context="create" compact />}
+  </>;
+  return <div className="gathering-screen">
+    <div className="gathering-form">
+      <header className="gathering-form-head">
+        <Button variant="ghost" size="icon" onClick={close} aria-label={t('common.close')}><X /></Button>
+        <h1>{t(editing ? 'gathering.editTitle' : full ? 'gathering.newTitle' : 'gathering.quickTitle')}</h1>
+        {tpl && <span className="chip">{t('gathering.fromTemplate', { title: tpl.title })}</span>}
+      </header>
+
+      {saveError && <div id="g-errors" className="field-error" role="alert" tabIndex={-1}><strong>{saveError}</strong><ul>{[...blockers.map(b => ({ id: ({ title: 'g-title', date: 'g-start', place: 'g-location', online_link: 'g-online', reg_window: 'g-reg-open', min_age: 'g-min-age', tier_invalid: 'g-tiers', retreat_dates: 'g-retreat', payouts: 'g-price' })[b], text: t(`eventReliability.errors.${b}`) })), ...extraIssues].map((e, i) => <li key={i}><Button variant="link" onClick={() => { const target = document.getElementById(e.id); target?.focus(); target?.scrollIntoView({ block: 'center' }); }}>{e.text}</Button></li>)}</ul></div>}
+      <section className="form-section">
+        <span className="field-label" id="g-format-label">{t('builder.experience.label')}</span>
+        <div className="format-cards" role="radiogroup" aria-labelledby="g-format-label">
+          {eventFormats({ retreatsEnabled: retreatsOn, retreatActive: retreatOn, isSeries: !!source?.event.series_id }).map(f => {
+            const selected = formatOf(multi, retreatOn) === f;
+            return <button key={f} type="button" role="radio" aria-checked={selected} className={`format-card ${selected ? 'is-selected' : ''}`} onClick={() => pickFormat(f)}>
+              <strong>{t(`builder.experience.${f}`)}</strong>
+              <small>{t(`builder.experience.desc.${f}`)}</small>
+            </button>;
+          })}
+        </div>
+      </section>
+      {multi && <section className="form-section"><p>{t('sessions.scope')}</p>{sessions.map((s,i)=><fieldset key={i} className="form-section"><legend>{t('sessions.session',{count:i+1})}</legend>{(['title','starts_at','ends_at','place'] as const).map(key=><label key={key} className="field-label">{t(`sessions.${key}`)}<Input type={key.endsWith('_at')?'datetime-local':'text'} value={key.endsWith('_at')?toLocalInput(new Date(s[key])):s[key]} maxLength={key==='title'?100:300} onChange={e=>setSessions(rows=>rows.map((row,j)=>j===i?{...row,[key]:key.endsWith('_at')&&e.target.value?new Date(e.target.value).toISOString():e.target.value}:row))}/></label>)}<Button variant="ghost" onClick={()=>setSessions(rows=>rows.filter((_,j)=>j!==i))}>{t('sessions.remove')}</Button></fieldset>)}<Button variant="secondary" disabled={sessions.length>=20} onClick={()=>setSessions(rows=>[...rows,{title:'',starts_at:new Date().toISOString(),ends_at:new Date(Date.now()+3600000).toISOString(),place:''}])}>{t('builder.experience.add')}</Button></section>}
+
+      {!editing && !templateId && !fromId && (() => { const list = templates.filter(x => x.is_published || x.created_by === userId).slice(0, 8); return list.length > 0 && <section className="form-section blueprint-pick" aria-label={t('templates.startFrom')}>
+        <span className="field-label">{t('templates.startFrom')}</span>
+        <div className="chip-row">{list.map(x => <button key={x.id} type="button" className="preset-chip" onClick={() => void navigate({ to: '/gathering/new', search: { template: x.id } })}>{x.title}</button>)}</div>
+        <small className="field-hint">{t('templates.orScratch')}</small>
+      </section>; })()}
+
+      {full && !moreFirst && coverSection}
 
       <section className="form-section">
         <label className="field-label" htmlFor="g-title">{t('gathering.title')} · {t('eventReliability.required')}</label>
@@ -453,13 +465,7 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         <div className="chip-row">{usual && (() => { const v = toLocalInput(usual); return <button type="button" className={`preset-chip is-usual ${start === v ? 'is-selected' : ''}`} aria-pressed={start === v} onClick={() => setStart(v)}>{t('gathering.presets.usual', { day: usual.toLocaleDateString(lang, { weekday: 'short' }), time: usual.toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' }) })}</button>; })()}{presets.map(p => { const v = toLocalInput(p.date); return <button key={p.key} type="button" className={`preset-chip ${start === v ? 'is-selected' : ''}`} aria-pressed={start === v} onClick={() => setStart(v)}>{t(`gathering.presets.${p.key}`, { time: p.date.toLocaleTimeString(lang, { hour: 'numeric', minute: '2-digit' }) })}</button>; })}</div>
         <label className="field-label" htmlFor="g-start">{t('gathering.when')} · {t('eventReliability.required')}</label><Input id="g-start" aria-invalid={tried && blockers.includes('date')} type="datetime-local" className="field-input" value={start} onChange={e => setStart(e.target.value)} aria-label={t('gathering.custom')} />
         {tried && blockers.includes('date') && <p className="field-error">{t('eventReliability.errors.date')}</p>}<small className="field-hint">{t('eventReliability.timezone', { zone: source?.event.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone })}</small>
-        {full && <>
-        <span className="field-label">{t('gathering.duration')}</span>
-        <div className="chip-row">{DURATIONS.map(d => <button key={d} type="button" className={`preset-chip ${!customDuration && duration === d ? 'is-selected' : ''}`} aria-pressed={!customDuration && duration === d} onClick={() => { setCustomDuration(false); setDuration(d); }}>{t(`gathering.durations.${d}`)}</button>)}
-          <button type="button" className={`preset-chip ${customDuration ? 'is-selected' : ''}`} aria-pressed={customDuration} onClick={() => setCustomDuration(true)}>{t('gathering.customDuration')}</button></div>
-        {customDuration && <div className="inline-field"><Input type="number" min={5} max={1440} className="field-input" value={duration} onChange={e => setDuration(Math.max(5, Math.min(1440, Number(e.target.value) || 5)))} aria-label={t('gathering.minutes')} /><span>{t('gathering.minutes')}</span></div>}
-        {!editing && <PlaybookCard context="create" compact />}
-        </>}
+        {full && !moreFirst && durationBlock}
       </section>
 
       <section className="form-section">
@@ -481,7 +487,15 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         </>}
       </section>
 
-      {full && <>
+      <section className="form-section">
+        <span className="field-label" id="g-vis-label">{t('gathering.visibility')}</span>
+        <div className="segmented full vis-choice" role="group" aria-labelledby="g-vis-label">{(['public', 'invite', 'team'] as const).map(v => <Button key={v} variant="ghost" className={visibility === v ? 'selected' : ''} aria-pressed={visibility === v} onClick={() => setVisibility(v)}>{t(`gathering.vis.${v}`)}</Button>)}</div>
+      </section>
+
+      {moreFirst && <Button variant="ghost" className="quick-more" aria-expanded={full} aria-controls="g-more" onClick={() => setFull(f => !f)}>{t(full ? 'gathering.fewerOptions' : 'gathering.moreOptions')}<ChevronRight className={full ? 'quick-more-open' : ''} /></Button>}
+      {full && <div id="g-more" className="gathering-more">
+      {moreFirst && coverSection}
+      {moreFirst && <section className="form-section">{durationBlock}</section>}
       <section className="form-section">
         <label className="field-label" htmlFor="g-category">{t('marketing.category')}</label>
         <select id="g-category" className="field-input" value={category} onChange={e => { if (isCategory(e.target.value)) setCategory(e.target.value); }}>
@@ -503,8 +517,6 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
           <PriceGuidance category={category} />
           {!!priceCents && <label className="settings-row is-static gathering-cover-fee"><span className="settings-label">{t('billing.coverFee')}<small className="field-hint">{coverFee ? t('billing.coverFeeOn') : t('billing.coverFeeOff')}</small></span><Switch aria-label={t('billing.coverFee')} checked={coverFee} onCheckedChange={setCoverFee} /></label>}
           {!!priceCents && <><label className="field-label" htmlFor="g-cseats">{t('community.seatsField')}</label><Input id="g-cseats" inputMode="numeric" className="field-input" value={communitySeats} onChange={e => setCommunitySeats(e.target.value.replace(/\D/g, '').slice(0, 3))} placeholder={t('community.seatsNone')} /><small className="field-hint">{t('community.seatsHint')}</small></>}</div>}
-        <div><span className="field-label">{t('gathering.visibility')}</span>
-          <div className="segmented full" role="group" aria-label={t('gathering.visibility')}>{(['public', 'invite', 'team'] as const).map(v => <Button key={v} variant="ghost" className={visibility === v ? 'selected' : ''} aria-pressed={visibility === v} onClick={() => setVisibility(v)}>{t(`gathering.vis.${v}`)}</Button>)}</div></div>
       </section>
 
       <section className="form-section">
@@ -552,10 +564,9 @@ export function GatheringForm({ eventId, templateId, fromId }: Props) {
         <span className="field-label">{t('gathering.applyTo')}</span>
         <div className="segmented full" role="group" aria-label={t('gathering.applyTo')}>{([false, true] as const).map(w => <Button key={String(w)} variant="ghost" className={wholeSeries === w ? 'selected' : ''} aria-pressed={wholeSeries === w} onClick={() => setWholeSeries(w)}>{t(w ? 'gathering.thisAndLater' : 'gathering.thisDate')}</Button>)}</div>
       </section> : null}
-      </>}
+      </div>}
       <EventAgreementsSection teamId={teamId} userId={userId} eventId={eventId} locked={agreementsLocked} isNew={!editing && !fromId} value={libraryWaivers} onChange={setLibraryWaivers} library={agreements.library} />
       {teamWaiver && <p className="field-hint">{t('eventAgreements.legacyPinned')}</p>}
-      {!full && <Button variant="ghost" className="quick-more" onClick={() => setFull(true)}>{t('gathering.moreOptions')}<ChevronRight /></Button>}
       {tpl && <p className="auth-subtitle">{t('gathering.checklistNote', { count: checklistOf(templates.find(x => x.id === tpl.id) ?? { checklist: [] }).length })}</p>}
     </div>
     <div className="sticky-actions">
