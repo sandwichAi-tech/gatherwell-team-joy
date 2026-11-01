@@ -46,3 +46,20 @@ describe('onboarding when returning to event signup', () => {
     expect(eventSignupSteps(['adult', 'start', 'name', 'place', 'role', 'team'])).toEqual(['adult', 'name']);
   });
 });
+
+import { inviteTokenFrom, legacyInviteRedirect } from './event-invite';
+describe('legacy /event/:id?k= link for an onboarded customer', () => {
+  it('non-manager (existing non-team customer) goes to event signup with the invitation', () => {
+    expect(legacyInviteRedirect(ID, `?k=${TOKEN}`, false)).toBe(`/e/${ID}?k=${TOKEN}`);
+  });
+  it('host or manager keeps the app management page', () => {
+    expect(legacyInviteRedirect(ID, `?k=${TOKEN}`, true)).toBeNull();
+  });
+  it('no token: nothing is minted or revealed', () => {
+    expect(legacyInviteRedirect(ID, '', false)).toBeNull();
+  });
+  it('malformed token is ignored', () => {
+    expect(inviteTokenFrom('?k=<script>')).toBeNull();
+    expect(legacyInviteRedirect(ID, '?k=short', false)).toBeNull();
+  });
+});

@@ -10,7 +10,8 @@ import { EarlyAccessPanel } from '@/components/early-access';
 import { CopyButton } from '@/components/copy-button';
 import { OutboxSummary } from '@/components/notifications';
 import { useState } from 'react';
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router';
+import { inviteTokenFrom, legacyInviteRedirect } from '@/lib/event-invite';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -45,7 +46,14 @@ import { ContactHostButton } from '@/components/contact-host';
 import { CohostsPanel, cohostsQuery } from '@/components/cohosts';
 import { Polls, PhotoRoll, useLiveCounts } from '@/components/event-live';
 
-export const Route = createFileRoute('/_authenticated/_app/event/$id')({ head: () => gatherwellHead('events'), component: EventDetailPage });
+export const Route = createFileRoute('/_authenticated/_app/event/$id')({
+  beforeLoad: async ({ params, location }) => {
+    if (!inviteTokenFrom(location.searchStr ?? '')) return;
+    const { data: manages } = await supabase.rpc('can_manage_event', { _event_id: params.id });
+    const to = legacyInviteRedirect(params.id, location.searchStr ?? '', !!manages);
+    if (to) throw redirect({ href: to });
+  },
+  head: () => gatherwellHead('events'), component: EventDetailPage });
 
 function EventDetailPage() {
   const { id } = Route.useParams();
@@ -77,7 +85,7 @@ function EventDetailPage() {
       return count ?? 0;
     } });
   if (isLoading) return <div className="panel"><p className="auth-subtitle">{t('publicEvent.loading')}</p></div>;
-  if (!data || !event) return <section className="panel"><h2>{t('eventDetail.notFound')}</h2><Button asChild variant="secondary" className="mt-4"><Link to="/events"><ArrowLeft />{t('gathering.backToGatherings')}</Link></Button></section>;
+  if (!data || !event) return <section className="panel"><h2>{t('eventDetail.notFound')}</h2><p className="muted">{t('eventDetail.notFoundInviteHint')}</p><Button asChild variant="secondary" className="mt-4"><Link to="/events"><ArrowLeft />{t('gathering.backToGatherings')}</Link></Button></section>;
   const { hostName, going, teamName, checklist } = data;
   const isHost = event.host_id === userId;
   const description = lang === 'es' ? event.description_es || event.description_en : event.description_en || event.description_es;

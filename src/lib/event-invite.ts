@@ -41,3 +41,21 @@ export function guestEventRedirect(pathname: string, search: string): string | n
 export function eventSignupSteps<T extends string>(all: T[]): T[] {
   return all.filter(s => s === 'adult' || s === 'name');
 }
+
+/** Invitation token from a legacy /event/:id?k= link, only when well-formed. */
+export function inviteTokenFrom(search: string): string | null {
+  const k = new URLSearchParams(search).get('k');
+  return k && /^[A-Za-z0-9_-]{16,80}$/.test(k) ? k : null;
+}
+
+/**
+ * Onboarded person opening a legacy /event/:id?k= link. Hosts, co-hosts and
+ * leaders who manage the event keep the app management page; everyone else is
+ * sent to event signup with the same invitation (the guest page re-checks it).
+ * Without a token nothing is minted or revealed.
+ */
+export function legacyInviteRedirect(id: string, search: string, manages: boolean): string | null {
+  const k = inviteTokenFrom(search);
+  if (!k || manages) return null;
+  return `/e/${id}?k=${k}`;
+}
