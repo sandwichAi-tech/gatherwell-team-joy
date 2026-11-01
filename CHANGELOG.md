@@ -1,5 +1,8 @@
 # ZoheeWell Change Log
 
+## 2026-11-01 — Platform agreement draft rev1 (still DRAFT)
+- Added docs/legal/drafts/platform-agreement-v2.0-draft/ZoheeWell_Platform_Agreement.rev1-2026-11-01.docx (+ .en.md): Zoheewell LLC, Nov 1 2026 dates, flat 5% in 10.2, Wyoming law / Sheridan County venue in 25.1. Original .docx unchanged. Not approved, not active; no runtime fee or registration change. Alterations logged in the draft README.
+
 ## 2026-11-01 — Platform Agreement v2.0 draft imported (not in effect)
 - Owner-supplied DOCX stored byte-identical, with a text extraction, in docs/legal/drafts/platform-agreement-v2.0-draft/ (private source, no route, no database row). Not approved or active; registration gate, fees and current agreements unchanged.
 
