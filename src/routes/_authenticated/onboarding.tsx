@@ -59,12 +59,12 @@ function Onboarding() {
       const profile = await queryClient.fetchQuery(profileQuery(user.id));
       const workspace = await queryClient.fetchQuery(workspaceQuery(user.id));
       // Event signup never auto-joins a team: a stale pending team code is dropped, not redeemed.
-      const toEvent = isEventSignupReturn(peekNext());
-      if (toEvent && pendingInvite()) clearPendingInvite();
-      const pending = pendingInvite();
-      if (profile?.onboarded && !pending && profile.adult_confirmed_at) { const back = toEvent ? takeNext() : null; void navigate(back ? { href: back, replace: true } : { to: '/home', replace: true }); return; }
+      const entry = onboardingEntry({ next: peekNext(), pending: pendingInvite(), onboarded: !!profile?.onboarded, adult: !!profile?.adult_confirmed_at });
+      if (entry.dropPending) clearPendingInvite();
+      const pending = entry.redeem;
+      if (entry.leave) { const back = entry.leave === 'event' ? takeNext() : null; void navigate(back ? { href: back, replace: true } : { to: '/home', replace: true }); return; }
       let joinedTeam: { team: string; leader: string | null } | null = null;
-      if (pending && !toEvent) {
+      if (pending) {
         const { data: invite } = await supabase.rpc('get_team_invite', { _code: pending });
         const { error: joinError } = await supabase.rpc('join_team_by_code', { _code: pending });
         clearPendingInvite();

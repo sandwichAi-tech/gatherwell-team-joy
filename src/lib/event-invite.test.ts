@@ -63,3 +63,21 @@ describe('legacy /event/:id?k= link for an onboarded customer', () => {
     expect(legacyInviteRedirect(ID, '?k=short', false)).toBeNull();
   });
 });
+
+import { onboardingEntry } from './event-invite';
+describe('onboarding entry for event signup', () => {
+  const ev = `/e/${ID}?k=${TOKEN}`;
+  it('stale team code is dropped, never redeemed, when returning to an event', () => {
+    expect(onboardingEntry({ next: ev, pending: '1FD0CE4A', onboarded: false, adult: false })).toMatchObject({ dropPending: true, redeem: null, leave: null });
+  });
+  it('team code is still redeemed on ordinary onboarding', () => {
+    expect(onboardingEntry({ next: null, pending: '1FD0CE4A', onboarded: false, adult: false })).toMatchObject({ dropPending: false, redeem: '1FD0CE4A' });
+  });
+  it('already set-up person returns to the event, not Home', () => {
+    expect(onboardingEntry({ next: ev, pending: '1FD0CE4A', onboarded: true, adult: true }).leave).toBe('event');
+    expect(onboardingEntry({ next: null, pending: null, onboarded: true, adult: true }).leave).toBe('home');
+  });
+  it('adult confirmation still required before leaving for the event', () => {
+    expect(onboardingEntry({ next: ev, pending: null, onboarded: true, adult: false }).leave).toBeNull();
+  });
+});

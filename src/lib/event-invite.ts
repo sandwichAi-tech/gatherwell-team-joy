@@ -59,3 +59,14 @@ export function legacyInviteRedirect(id: string, search: string, manages: boolea
   if (!k || manages) return null;
   return `/e/${id}?k=${k}`;
 }
+
+/**
+ * Onboarding entry decision. Returning to an event signup drops (never redeems)
+ * a stale pending team code; an already set-up person goes back to the event, others to Home.
+ */
+export function onboardingEntry(s: { next: string | null; pending: string | null; onboarded: boolean; adult: boolean }) {
+  const toEvent = isEventSignupReturn(s.next);
+  const redeem = toEvent ? null : s.pending;
+  const leave: 'event' | 'home' | null = s.onboarded && s.adult && !redeem ? (toEvent ? 'event' : 'home') : null;
+  return { toEvent, dropPending: toEvent && !!s.pending, redeem, leave };
+}
