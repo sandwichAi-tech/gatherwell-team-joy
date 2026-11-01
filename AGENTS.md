@@ -61,7 +61,7 @@ Read SOURCE_OF_TRUTH.md first: Blueprint v4 governs product rules; this file cov
 - Event images use share-image.ts for all outputs; admin menu uses role checks.
 - Event cover category selection and display-only title casing use event-presentation.ts; default photos resolve through site_media so admin photo changes propagate without changing event records.
 - usePublicSession affects navigation display only, never access.
-- Course drip is decided only by lesson_unlock_at()/lesson_is_unlocked() (mirrored in src/lib/course-release.ts) and enforced by restrictive RLS on lessons, summaries and learn-media; browsers get locked titles only via my_locked_lessons().
+- Course drip: only lesson_unlock_at()/lesson_is_unlocked() (mirrored in src/lib/course-release.ts), enforced by restrictive RLS on lessons/summaries/learn-media; locked titles only via my_locked_lessons().
 - Event Builder partial drafts use manager-only event_builder_drafts snapshots; publish validates and writes canonical event fields, so incomplete input never becomes attendee data.
 - Door actions use guarded receipts, event-bound retries and staff attendance_totals; merged/inactive rows cannot inflate counts. QR unchanged; waiver snapshots never rewrite acceptances.
 - Owner approves joins. Team reads check caller before/after; consent purges caches. Draft copy retries bind source/team/destination. Channels hide during access rechecks, not ordinary polling; unread/mute keys include account.
