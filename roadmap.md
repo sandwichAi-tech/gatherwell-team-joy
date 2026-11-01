@@ -3,8 +3,11 @@
 ## November 1 sprint
 - [x] Check-in waiver viewer trap fixed (in-page viewer, Close/Back, view ≠ accept).
 - [x] Photo uploader HEIC detection and correct rejection messages.
-- [ ] Event edit waiver for published events — needs owner decision on re-acceptance for already-registered attendees (published events lock waivers today by rule).
-- [ ] Host event cancellation affected-bookings summary + attendee refund requests — needs connected-payments refund states; not started.
+- [x] Published-event waiver versioning + attendee re-accept (code + pending SQL, disposable DB verified).
+- [x] Cancellation/refund request ledger, host typed cancel, attendee cancel/policy view (code + pending SQL).
+- [ ] Apply tests/database/waiver_reversion_refund_requests.pending.sql to an authorized backend; then full signed-in acceptance.
+- [ ] Refund submission to the payment provider (pending -> submitted) is not built; needs verified payments setup.
+- [ ] Waiver controls inside the Edit event form itself and switching to a different library waiver on a published event.
 - [ ] Physical iOS/Android device checks for viewer and camera upload.
 
 ## Waivers rows 64 / 85 / 86 — October 31 continuation

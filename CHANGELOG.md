@@ -1,5 +1,12 @@
 # ZoheeWell Change Log
 
+## 2026-11-01 (continued) — Published-event waiver versions, cancellation and refund requests
+- Waivers: hosts see each event's pinned library waiver with Preview, "Use version N" (with a confirmation showing how many registered, not-checked-in attendees must re-accept, that signed records stay unchanged, and that this changes only this event), and "Edit in My waivers". Attendees see an "Updated waiver to review" card on their booking. Check-in now requires the current version; already checked-in attendees are never re-blocked.
+- Cancellation: host event cancel now requires typing the event name, shows who is affected and paid refund totals, stops registration, opens one refund request per paid booking and queues (does not send) notices. Attendee cancel shows the policy outcome; free bookings cancel immediately; paid bookings open a refund request; past the cutoff, no request; custom policy goes to host review. Booking pages show policy, deadline, amount paid and the non-refundable booking fee.
+- Refunds read as "Refunded" only after the payment provider webhook confirms. Failed refunds can be retried (one open attempt at a time). The old cancel flow that called the provider and immediately said "refunded" was removed; earnings refund copy no longer claims completion.
+- Database changes are PENDING in tests/database/waiver_reversion_refund_requests.pending.sql (not applied). Until applied, the new screens fail closed: paid cancellations are refused with a clear message, free cancellations use the existing path.
+- Tests: 36 disposable-database assertions, cancellation rules/screens tests; full suite 132 files / 1018 tests. Waiver viewer browser-checked EN/ES at 320/390/1280.
+
 ## 2026-11-01 — Check-in waiver viewer and mobile photo validation
 - Fixed: opening a waiver file used `window.open(..., 'noopener')`, which always returns null, so the app fell back to navigating the current page to the PDF — losing the in-progress registration/check-in and leaving no way back. Waiver files, past acceptances and the platform agreement now open in an in-page viewer with "Close and go back"; browser Back closes the viewer; viewing marks the document opened but never accepted.
 - Photo uploads detect HEIC/HEIF (by type or file name) and explain how to pick a compatible photo; cover uploads in offers/retreats no longer say "too large" for wrong file types. Copy no longer claims HEIC is accepted.

@@ -8181,5 +8181,94 @@
     "heic": "Esta foto está en formato HEIC, que aún no podemos procesar. En iPhone, elígela desde Fotos (se convierte automáticamente) o en Cámara > Formatos elige Más compatible.",
     "type": "Elige una foto JPG, PNG o WebP.",
     "size": "Esa foto es demasiado grande. Elige una más pequeña."
+  },
+  "cancellation": {
+    "host": {
+      "title": "Cancelar este evento",
+      "help": "No se puede deshacer. El registro se cierra de inmediato.",
+      "confirm": "Cancelar evento",
+      "affected": "A quién afecta",
+      "going": "{{count}} registrados",
+      "waitlist": "{{count}} en lista de espera",
+      "paid": "{{count}} reservas pagadas · hasta {{amount}} en solicitudes de reembolso",
+      "refundHow": "Cada reserva pagada recibe una solicitud de reembolso completo del boleto y los extras. Es posible que la tarifa de reserva no se devuelva. Un reembolso solo aparece como completado cuando el proveedor de pagos lo confirma.",
+      "stops": "Los nuevos registros se detienen en cuanto canceles.",
+      "notifyNote": "Los mensajes quedan en cola para los invitados que pueden recibirlos. No se envían desde esta pantalla.",
+      "typeTitle": "Escribe el nombre del evento para confirmar: {{title}}",
+      "done": "Evento cancelado. Solicitudes de reembolso abiertas: {{count}}.",
+      "queued": "Avisos de cancelación en cola: {{count}}."
+    },
+    "refunds": {
+      "title": "Solicitudes de reembolso",
+      "providerNote": "Los reembolsos no están completos hasta que el proveedor de pagos los confirma. Si los pagos aún no están conectados, las solicitudes quedan pendientes.",
+      "retry": "Intentar reembolso de nuevo",
+      "approve": "Aprobar reembolso"
+    },
+    "status": {
+      "pending": "Reembolso pendiente",
+      "review": "En revisión del anfitrión",
+      "submitted": "Reembolso enviado al proveedor",
+      "succeeded": "Reembolsado",
+      "failed": "Reembolso fallido"
+    },
+    "policy": {
+      "title": "Cancelación y reembolsos",
+      "free": "Este registro es gratis. Puedes cancelar en cualquier momento antes del check-in.",
+      "24h": "Reembolso completo hasta 24 horas antes del evento.",
+      "7d": "Reembolso completo hasta 7 días antes del evento.",
+      "none": "Este evento no tiene reembolsos.",
+      "custom": "El anfitrión revisa las solicitudes de reembolso según su propia política.",
+      "deadline": "Fecha límite de reembolso: {{date}}",
+      "paid": "Pagaste: {{amount}}",
+      "fee": "Tarifa de reserva (no reembolsable): {{amount}}",
+      "hostCancels": "Si el anfitrión cancela, recibes una solicitud de reembolso del boleto y los extras."
+    },
+    "attendee": {
+      "outcome": {
+        "free": "Tu lugar se liberará de inmediato.",
+        "full": "Abriremos una solicitud de reembolso por {{amount}}. Aparece como reembolsada solo cuando el proveedor de pagos lo confirma.",
+        "review": "El anfitrión revisará una solicitud de reembolso por {{amount}}.",
+        "none": "Esta reserva pasó la fecha límite de reembolso, así que no se solicitará reembolso."
+      },
+      "donePending": "Cancelado. Tu solicitud de reembolso está pendiente.",
+      "doneReview": "Cancelado. El anfitrión revisará tu solicitud de reembolso."
+    },
+    "errors": {
+      "generic": "Algo salió mal. Inténtalo de nuevo.",
+      "mismatch": "El nombre no coincide. Escribe el nombre del evento tal como aparece.",
+      "notReady": "La cancelación con seguimiento de reembolsos aún no está disponible. No se cambió nada.",
+      "paidNotReady": "Las reservas pagadas aún no se pueden cancelar aquí porque el seguimiento de reembolsos no está disponible. No se cambió nada. Contacta al anfitrión.",
+      "checkedIn": "Ya hiciste check-in, así que esta reserva no se puede cancelar."
+    }
+  },
+  "waiverVersions": {
+    "title": "Exenciones de este evento",
+    "help": "La firma de cada asistente queda ligada a la versión exacta que aceptó.",
+    "pinned": "Versión {{version}} en uso",
+    "newer": "la versión {{version}} está en tu biblioteca",
+    "preview": "Vista previa",
+    "useNewer": "Usar versión {{version}}",
+    "editLibrary": "Editar en Mis exenciones",
+    "platformSeparate": "El acuerdo de evento de ZoheeWell se agrega automáticamente y no se puede editar aquí.",
+    "fileOnly": "Esta exención es un archivo PDF: {{name}}",
+    "confirmTitle": "¿Usar la versión {{version}} en este evento?",
+    "eventOnly": "Esto cambia solo este evento. Editar en Mis exenciones crea una nueva versión en la biblioteca y nunca cambia eventos hasta que la elijas aquí.",
+    "reacceptCount_one": "{{count}} asistente registrado que no ha hecho check-in deberá aceptar la nueva versión antes del check-in.",
+    "reacceptCount_other": "{{count}} asistentes registrados que no han hecho check-in deberán aceptar la nueva versión antes del check-in.",
+    "keepsRecords": "Las firmas ya dadas quedan exactamente como se firmaron. Quienes ya hicieron check-in no se ven afectados.",
+    "future": "Todas las personas que se registren desde ahora aceptan la nueva versión.",
+    "libraryNote": "Otros eventos que usan esta exención conservan su propia versión.",
+    "confirm": "Usar nueva versión",
+    "applied": "La versión {{version}} ya está en uso en este evento.",
+    "attendeeTitle": "Exención actualizada para revisar",
+    "attendeeHelp": "El anfitrión actualizó una exención después de tu registro. Revísala y acéptala antes del check-in. Lo que firmaste antes queda registrado.",
+    "attendeeSave": "Aceptar exención actualizada",
+    "reaccepted": "Gracias, tu aceptación quedó guardada.",
+    "errors": {
+      "generic": "No se pudo guardar. Inténtalo de nuevo.",
+      "notReady": "Las actualizaciones de exenciones en eventos publicados aún no están disponibles. No se cambió nada.",
+      "countChanged": "Los registros cambiaron desde que abriste esto. Cierra e inténtalo de nuevo para ver el nuevo número.",
+      "stale": "Esta exención volvió a cambiar. Revisa la versión más reciente."
+    }
   }
 }

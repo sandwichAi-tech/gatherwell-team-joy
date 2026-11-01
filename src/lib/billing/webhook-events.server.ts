@@ -131,8 +131,10 @@ export async function processPaymentEvent(db: SupabaseClient, evt: PaymentEvent,
         if (pe || me) throw pe ?? me;
         break;
       }
-      const { data: pay } = await db.from('payments').update({ status: 'refunded' }).eq('stripe_payment_intent', o.payment_intent).select('rsvp_id, buyer_email, buyer_name, amount_cents, event_id').maybeSingle();
+      const { data: pay } = await db.from('payments').update({ status: 'refunded' }).eq('stripe_payment_intent', o.payment_intent).select('id, rsvp_id, buyer_email, buyer_name, amount_cents, event_id').maybeSingle();
       if (pay?.rsvp_id) await db.from('rsvps').update({ status: 'cancelled' }).eq('id', pay.rsvp_id);
+      // Provider-confirmed: only now may a refund request read as succeeded. Tolerates the ledger not yet being installed.
+      if (pay?.id) { const c = await db.rpc('confirm_refund_request' as never, <any>{ _payment: pay.id, _provider_refund: (o.refunds?.data?.[0]?.id ?? null), _status: 'succeeded' }); if (c.error) console.warn('refund ledger confirm skipped', c.error.message); }
       if (pay?.buyer_email) {
         const { data: r } = pay.rsvp_id ? await db.from('rsvps').select('language').eq('id', pay.rsvp_id).maybeSingle() : { data: null };
         const { data: ev } = pay.event_id ? await db.from('events').select('title').eq('id', pay.event_id).maybeSingle() : { data: null };
